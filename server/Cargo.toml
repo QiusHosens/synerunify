@@ -1,5 +1,6 @@
 [workspace]
 members = ["common/*", "system"]
+resolver = "2"
 
 [workspace.package]
 version = "0.1.0"
@@ -8,7 +9,7 @@ rust-version = "1.74"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
-[dependencies]
+[workspace.dependencies]
 # https://docs.rs/axum/latest/axum/#required-dependencies
 axum = { version = "0.8.2", default-features = false, features = [
     "matched-path",
