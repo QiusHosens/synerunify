@@ -1,17 +1,22 @@
 [workspace]
-members = ["common/*", "system"]
+members = [
+    "common/*",
+    "framework/*",
+    "module/*"
+]
 resolver = "2"
 
 [workspace.package]
 version = "0.1.0"
 edition = "2021"
-rust-version = "1.74"
+rust-version = "1.85.0"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [workspace.dependencies]
+# axum
 # https://docs.rs/axum/latest/axum/#required-dependencies
-axum = { version = "0.8.2", default-features = false, features = [
+axum = { version = "0.8.1", default-features = false, features = [
     "matched-path",
     "form",
     "tracing",
@@ -21,3 +26,62 @@ axum = { version = "0.8.2", default-features = false, features = [
     "http1",
     "multipart",
 ] }
+axum-macros = "0.5.0"
+axum-extra = { version = "0.10.0", features = ["query"] }
+# async require
+tokio = { version = "1.43.0", default-features = false, features = [
+    "macros",
+    "rt-multi-thread",
+] }
+# log require
+tracing = { version = "0.1.41" }
+tracing-appender = { version = "0.2.3", default-features = false }
+tracing-subscriber = { version = "0.3.19", default-features = false, features = [
+    "env-filter",
+    "time",
+    "local-time",
+    "fmt",
+    "registry",
+    "std",
+] }
+console-subscriber = { version = "0.4.1", default-features = false, features = [
+    "env-filter",
+] }
+chrono = { version = "0.4.39" }
+time = { version = "0.3.37", default-features = false, features = ["macros"] }
+# json require
+serde = { version = "1.0.218", default-features = false, features = ["derive"] }
+serde_json = { version = "1.0.139" }
+serde_repr = { version = "0.1.19" }
+serde_with = { version = "3.12.0" }
+# captcha require
+captcha-rs = { version = "0.2.11" }
+# jwt require
+jsonwebtoken = { version = "9.3.1" }
+# static file require
+tower = { version = "0.5.2", default-features = false, features = ["util"] }
+tower-http = { version = "0.6.2", default-features = false, features = [
+    "fs",
+    "trace",
+] }
+
+# request params validator require
+validator = { version = "0.20.0", features = ["derive"] }
+
+# password encode require
+argon2 = { version = "0.5.3" }
+password-hash = { version = "0.5.0", default-features = false, features = [
+    "alloc",
+    "rand_core",
+] }
+
+# sea-orm
+sea-orm = "1.1.6"
+
+# swagger ui
+utoipa = { version = "5.3.1" }
+# 系统信息
+sysinfo = { version = "0.33.1" }
+# 随机数
+md5 = { version = "0.7.0" }
+rand = { version = "0.9.0" }
