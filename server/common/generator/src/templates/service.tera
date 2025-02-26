@@ -1,29 +1,29 @@
-use sea_orm::{{ 
+use sea_orm::{ 
     prelude::*, 
     sea_query::{Expr, Func},
     DatabaseConnection, EntityTrait, ActiveModelTrait 
-}};
+};
 use async_trait::async_trait;
  
 #[derive(Debug)]
-pub struct {{{{{{{{ service_name }}}}}}}} {
+pub struct {{ service_name }} {
     db: DatabaseConnection 
 }
  
 #[async_trait]
-impl {{{{{{{{ service_name }}}}}}}} {
+impl {{ service_name }} {
     pub fn new(db: DatabaseConnection) -> Self {
         Self { db }
     }
  
     /// 创建记录 (SeaORM ActiveModel模式)
-    pub async fn create(&self, item: {{{{{{{{ model_name }}}}}}}ActiveModel) -> Result<{{{{{{{{ model_name }}}}}}}Model, DbErr> {
+    pub async fn create(&self, item: {{ model_name }}}ActiveModel) -> Result<{{ model_name }}Model, DbErr> {
         item.insert(&self.db).await  
     }
  
     /// 按主键查询 (内置Find方法)
-    pub async fn find_by_id(&self, id: {{{ primary_key_type }}}) -> Result<Option<{{{{{{{{ model_name }}}}}}}Model>, DbErr> {
-        {{{{{{{{ entity_name }}}}}}}}::find_by_id(id)
+    pub async fn find_by_id(&self, id: {{ primary_key_type }}) -> Result<Option<{{ model_name }}Model>, DbErr> {
+        {{ entity_name }}::find_by_id(id)
             .one(&self.db) 
             .await 
     }
@@ -33,8 +33,8 @@ impl {{{{{{{{ service_name }}}}}}}} {
         &self,
         page: u64,
         page_size: u64,
-    ) -> Result<PaginatorResult<{{{{{{{{ model_name }}}}}}}Model>, DbErr> {
-        {{{{{{{{ entity_name }}}}}}}}::find()
+    ) -> Result<PaginatorResult<{{ model_name }}Model>, DbErr> {
+        {{ entity_name }}::find()
             .paginate(&self.db,  page_size)
             .num_pages()
             .and_then(|paginator| paginator.fetch_page(page  - 1))
@@ -46,8 +46,8 @@ impl {{{{{{{{ service_name }}}}}}}} {
         &self,
         filters: Vec<Condition>,
         orders: Option<Order>,
-    ) -> Result<Vec<{{{{{{{{ model_name }}}}}}}Model>, DbErr> {
-        let mut query = {{{{{{{{ entity_name }}}}}}}}::find();
+    ) -> Result<Vec<{{ model_name }}Model>, DbErr> {
+        let mut query = {{ entity_name }}::find();
         
         for filter in filters {
             query = query.filter(filter); 

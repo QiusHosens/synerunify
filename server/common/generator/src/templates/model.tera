@@ -1,4 +1,6 @@
-#[derive(Debug, serde::Serialize, serde::Deserialize)]
+use sea_orm::entity::prelude::*;
+
+#[derive(Clone, Debug, PartialEq, DeriveEntityModel, Eq, serde::Serialize, serde::Deserialize)]
 #[sea_orm(table_name = "{{ table_name }}")]
 pub struct {{ model_name }} {
     {% for column in columns %}
@@ -8,3 +10,8 @@ pub struct {{ model_name }} {
     pub {{ column.column_name }}: {% if column.nullable  %}Option<{{ column.rust_type  }}>{% else %}{{ column.rust_type  }}{% endif %},
     {% endfor %}
 }
+
+#[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
+pub enum Relation {}
+
+impl ActiveModelBehavior for ActiveModel {}

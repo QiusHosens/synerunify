@@ -20,7 +20,8 @@ fn get_table_columns(conn: &mut PooledConn, table: &str) -> Vec<ColumnInfo> {
     let query = format!(
         "SELECT COLUMN_NAME, DATA_TYPE, IS_NULLABLE, COLUMN_COMMENT, COLUMN_KEY
          FROM INFORMATION_SCHEMA.COLUMNS
-         WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = '{}'",
+         WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = '{}'
+         ORDER BY ORDINAL_POSITION ASC",
         table
     );
 
@@ -38,8 +39,7 @@ fn map_data_type(mysql_type: &str) -> &'static str {
         // 整数类型
         "tinyint" => "i8",         // 默认按有符号处理，布尔值另见注释
         "smallint" => "i16",
-        "mediumint" => "i32",
-        "int" | "integer" => "i32",
+        "mediumint" | "int" | "integer" => "i32",
         "bigint" => "i64",
 
         // 浮点数类型
@@ -48,20 +48,10 @@ fn map_data_type(mysql_type: &str) -> &'static str {
         "decimal" | "numeric" => "Decimal", // 需要 rust_decimal crate
 
         // 字符串类型
-        "char" => "String",
-        "varchar" => "String",
-        "tinytext" => "String",
-        "text" => "String",
-        "mediumtext" => "String",
-        "longtext" => "String",
+        "char" | "varchar" | "tinytext" | "text" | "mediumtext" | "longtext" => "String",
 
         // 二进制类型
-        "binary" => "Vec<u8>",
-        "varbinary" => "Vec<u8>",
-        "tinyblob" => "Vec<u8>",
-        "blob" => "Vec<u8>",
-        "mediumblob" => "Vec<u8>",
-        "longblob" => "Vec<u8>",
+        "binary" | "varbinary" | "tinyblob" | "blob" | "mediumblob" | "longblob" => "Vec<u8>",
 
         // 时间类型
         "date" => "NaiveDate",        // chrono::NaiveDate
@@ -70,7 +60,7 @@ fn map_data_type(mysql_type: &str) -> &'static str {
         "timestamp" => "DateTime<Utc>", // chrono::DateTime<Utc>
 
         // 布尔类型
-        "boolean" => "bool",          // MySQL 用 TINYINT(1) 表示
+        "boolean" | "bit" => "bool",          // MySQL 用 TINYINT(1) 表示
 
         // 其他类型
         "json" => "Value",            // serde_json::Value
@@ -111,7 +101,8 @@ fn write_file(file_path: &str, code: &str) -> std::io::Result<()> {
 fn main() {
     let base_path = "common/generator/src";
     // 初始化数据库连接
-    let url = "mysql://synerunify:synerunify@192.168.0.49:30010/synerunify";
+    // let url = "mysql://synerunify:synerunify@192.168.0.49:30010/synerunify";
+    let url = "mysql://synerunify:synerunify@192.168.1.18:30010/synerunify";
     let pool = Pool::new(url).unwrap();
     let mut conn = pool.get_conn().unwrap();
 
@@ -121,6 +112,7 @@ fn main() {
     // 初始化模板引擎
     let mut tera = Tera::default();
     tera.add_template_file(format!("{}/templates/model.tera", base_path),  Some("model")).unwrap();
+    tera.add_template_file(format!("{}/templates/service.tera", base_path),  Some("service")).unwrap();
 
     // 遍历表生成Model
     for table in tables {
@@ -128,6 +120,7 @@ fn main() {
         let mut context = Context::new();
 
         context.insert("model_name",  &format!("{}Model", inflections::case::to_pascal_case(&table)));
+        context.insert("service_name",  &format!("{}Service", inflections::case::to_pascal_case(&table)));
         context.insert("table_name",  &table);
         context.insert("columns",  &columns.into_iter().map( |c| {
             let mut map = serde_json::Map::new();
@@ -139,9 +132,14 @@ fn main() {
             map
         }).collect::<Vec<_>>());
 
-        let code = tera.render("model",  &context).unwrap();
+        // model
+        let model_code = tera.render("model",  &context).unwrap();
+        let file_path = format!("{}/model/{}.rs", base_path, table);
+        write_file(&file_path, &model_code).unwrap();
 
-        let file_path = format!("{}/models/{}.rs", base_path, table);
-        write_file(&file_path, &code).unwrap();
+        // service
+        let service_code = tera.render("service",  &context).unwrap();
+        let file_path = format!("{}/service/{}.rs", base_path, table);
+        write_file(&file_path, &service_code).unwrap();
     }
 }
