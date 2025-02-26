@@ -1,0 +1,16 @@
+[package]
+name = "generator"
+version = { workspace = true }
+edition = { workspace = true }
+rust-version = { workspace = true }
+
+[dependencies]
+# MySQL数据库连接库
+mysql = "26.0.0"
+# 模板引擎
+tera = "1.20.0"
+# 序列化支持
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0.139"
+inflections = "1.1.1"
+chrono = "0.4.39"

@@ -1,0 +1,72 @@
+use sea_orm::{{ 
+    prelude::*, 
+    sea_query::{Expr, Func},
+    DatabaseConnection, EntityTrait, ActiveModelTrait 
+}};
+use async_trait::async_trait;
+ 
+#[derive(Debug)]
+pub struct {{{{{{{{ service_name }}}}}}}} {
+    db: DatabaseConnection 
+}
+ 
+#[async_trait]
+impl {{{{{{{{ service_name }}}}}}}} {
+    pub fn new(db: DatabaseConnection) -> Self {
+        Self { db }
+    }
+ 
+    /// 创建记录 (SeaORM ActiveModel模式)
+    pub async fn create(&self, item: {{{{{{{{ model_name }}}}}}}ActiveModel) -> Result<{{{{{{{{ model_name }}}}}}}Model, DbErr> {
+        item.insert(&self.db).await  
+    }
+ 
+    /// 按主键查询 (内置Find方法)
+    pub async fn find_by_id(&self, id: {{{ primary_key_type }}}) -> Result<Option<{{{{{{{{ model_name }}}}}}}Model>, DbErr> {
+        {{{{{{{{ entity_name }}}}}}}}::find_by_id(id)
+            .one(&self.db) 
+            .await 
+    }
+ 
+    /// 分页查询 (集成Paginator)
+    pub async fn paginate(
+        &self,
+        page: u64,
+        page_size: u64,
+    ) -> Result<PaginatorResult<{{{{{{{{ model_name }}}}}}}Model>, DbErr> {
+        {{{{{{{{ entity_name }}}}}}}}::find()
+            .paginate(&self.db,  page_size)
+            .num_pages()
+            .and_then(|paginator| paginator.fetch_page(page  - 1))
+            .await 
+    }
+ 
+    /// 动态条件查询 (链式构建器)
+    pub async fn find_where(
+        &self,
+        filters: Vec<Condition>,
+        orders: Option<Order>,
+    ) -> Result<Vec<{{{{{{{{ model_name }}}}}}}Model>, DbErr> {
+        let mut query = {{{{{{{{ entity_name }}}}}}}}::find();
+        
+        for filter in filters {
+            query = query.filter(filter); 
+        }
+ 
+        if let Some(order) = orders {
+            query = query.order_by_asc(order); 
+        }
+ 
+        query.all(&self.db).await  
+    }
+ 
+    /// 事务操作 (SeaORM事务支持)
+    pub async fn transaction<F, R>(&self, callback: F) -> Result<R, DbErr>
+    where 
+        F: FnOnce(&DatabaseConnection) -> BoxFuture<'_, Result<R, DbErr>> + Send 
+    {
+        self.db.transaction( |txn| {
+            Box::pin(async move { callback(txn).await })
+        }).await 
+    }
+}
