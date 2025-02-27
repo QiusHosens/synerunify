@@ -1,0 +1,11 @@
+[package]
+name = "common"
+version = { workspace = true }
+edition = { workspace = true }
+rust-version = { workspace = true }
+
+[dependencies]
+serde = { version = "1.0", features = ["derive"] }
+sea-orm = { version = "1.1.6", features = ["sqlx-mysql", "runtime-tokio-native-tls", "macros"] }
+jsonwebtoken = { version = "9.3.1" }  # 添加 JWT 依赖
+chrono = { version = "0.4.39" }       # 用于处理时间
