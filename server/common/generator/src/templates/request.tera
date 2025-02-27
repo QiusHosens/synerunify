@@ -1,0 +1,16 @@
+use serde::{Serialize, Deserialize};
+use crate::model::{{ table_name }}::{{ model_name }};
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Create{{ request_model_name }} {
+    {% for column in columns_request_create %}
+    pub {{ column.column_name }}: {% if column.nullable  %}Option<{{ column.rust_type  }}>{% else %}{{ column.rust_type  }}{% endif %}, // {{ column.column_comment  }}
+    {% endfor %}
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Update{{ request_model_name }} {
+    {% for column in columns_request_update %}
+    pub {{ column.column_name }}: {% if column.nullable  %}Option<{{ column.rust_type  }}>{% else %}{{ column.rust_type  }}{% endif %}, // {{ column.column_comment  }}
+    {% endfor %}
+}

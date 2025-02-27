@@ -1,25 +1,51 @@
-use sea_orm::{ 
-    prelude::*, 
-    sea_query::{Expr, Func},
-    DatabaseConnection, EntityTrait, ActiveModelTrait 
-};
-use async_trait::async_trait;
+use std::sync::Arc;
+use sea_orm::{DatabaseConnection, EntityTrait, Set, ActiveModelTrait, QueryFilter, ColumnTrait};
+use tokio::sync::OnceCell;
+use crate::model::{{ table_name }}::{self, {{ model_name }}};
+use crate::request::{{ table_name }}::{Create{{ request_model_name }}, Update{{ request_model_name }}};
+use crate::response::{{ table_name }}::{{ response_model_name }};
+use anyhow::{Result, anyhow};
  
 #[derive(Debug)]
 pub struct {{ service_name }} {
     db: DatabaseConnection 
 }
+
+static {{ service_name_const }}: OnceCell<Arc<{{ service_name }}>> = OnceCell::const_new();
  
-#[async_trait]
 impl {{ service_name }} {
-    pub fn new(db: DatabaseConnection) -> Self {
-        Self { db }
+    pub async fn get_instance(db: DatabaseConnection) -> Arc<{{ service_name }}> {
+        {{ service_name_const }}
+            .get_or_init(|| async { Arc::new({{ service_name }} { db }) })
+            .await
+            .clone()
+    }
+
+    pub async fn create(&self, request: Create{{ request_model_name }}) -> Result<i64> {
+        let {{ table_name }} = {{ table_name }}::ActiveModel {
+            {% for column in columns_request_create %}
+            {{ column.column_name }}: Set(request.{{ column.column_name }}),
+            {% endfor %}
+            ..Default::default()
+        };
+        let {{ table_name }} = {{ table_name }}.insert(&self.db).await?;
+        Ok({{ table_name }}.id)
+    }
+
+    pub async fn update(&self, request: Update{{ request_model_name }}) -> Result<()> {
+        let user = User::find_by_id(request.id)
+            .one(&self.db)
+            .await?
+            .ok_or_else(|| anyhow!("User with id {} not found", id))?;
+
+        let mut user: user::ActiveModel = user.into();
+        if let Some(name) = req.name { user.name = Set(name); }
+        if let Some(email) = req.email { user.email = Set(email); }
+
+        let updated_user = user.update(&self.db).await?;
+        Ok(updated_user.into())
     }
  
-    /// 创建记录 (SeaORM ActiveModel模式)
-    pub async fn create(&self, item: {{ model_name }}}ActiveModel) -> Result<{{ model_name }}Model, DbErr> {
-        item.insert(&self.db).await  
-    }
  
     /// 按主键查询 (内置Find方法)
     pub async fn find_by_id(&self, id: {{ primary_key_type }}) -> Result<Option<{{ model_name }}Model>, DbErr> {

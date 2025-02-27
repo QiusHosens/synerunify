@@ -7,6 +7,9 @@ use std::io::Write;
 use std::path::Path;
 
 const KEYWORDS: &[&str] = &["type"];
+const CREATE_REQUEST_NOT_NEED_FIELDS: &[&str] = &["id", "creator", "create_time", "updater", "update_time", "deleted", "tenant_id"];
+const UPDATE_REQUEST_NOT_NEED_FIELDS: &[&str] = &["creator", "create_time", "updater", "update_time", "deleted", "tenant_id"];
+const RESPONSE_NOT_NEED_FIELDS: &[&str] = &["deleted", "tenant_id"];
 
 struct ColumnInfo {
     column_name: String,
@@ -75,8 +78,8 @@ fn map_data_type(mysql_type: &str) -> &'static str {
 /**
  * 获取列名,关键字需转义
  */
-fn get_column_name(column_name: String) -> String {
-    if KEYWORDS.contains(&column_name.as_str()) { format!("r#{}", column_name) } else { column_name }
+fn get_column_name(column_name: &str) -> String {
+    if KEYWORDS.contains(&column_name) { format!("r#{}", column_name) } else { column_name.to_string() }
 }
 
 fn write_file(file_path: &str, code: &str) -> std::io::Result<()> {
@@ -99,10 +102,12 @@ fn write_file(file_path: &str, code: &str) -> std::io::Result<()> {
 }
 
 fn main() {
-    let base_path = "common/generator/src";
+    let base_path = "common/generator";
+    let template_base_path = format!("{}/src", base_path);
+    let code_base_path = format!("{}/code", base_path);
     // 初始化数据库连接
-    // let url = "mysql://synerunify:synerunify@192.168.0.49:30010/synerunify";
-    let url = "mysql://synerunify:synerunify@192.168.1.18:30010/synerunify";
+    let url = "mysql://synerunify:synerunify@192.168.0.49:30010/synerunify";
+    // let url = "mysql://synerunify:synerunify@192.168.1.18:30010/synerunify";
     let pool = Pool::new(url).unwrap();
     let mut conn = pool.get_conn().unwrap();
 
@@ -111,35 +116,82 @@ fn main() {
 
     // 初始化模板引擎
     let mut tera = Tera::default();
-    tera.add_template_file(format!("{}/templates/model.tera", base_path),  Some("model")).unwrap();
-    tera.add_template_file(format!("{}/templates/service.tera", base_path),  Some("service")).unwrap();
+    tera.add_template_file(format!("{}/templates/model.tera", template_base_path),  Some("model")).unwrap();
+    tera.add_template_file(format!("{}/templates/request.tera", template_base_path),  Some("request")).unwrap();
+    tera.add_template_file(format!("{}/templates/response.tera", template_base_path),  Some("response")).unwrap();
+
+    tera.add_template_file(format!("{}/templates/service.tera", template_base_path),  Some("service")).unwrap();
 
     // 遍历表生成Model
     for table in tables {
         let columns = get_table_columns(&mut conn, &table);
         let mut context = Context::new();
 
-        context.insert("model_name",  &format!("{}Model", inflections::case::to_pascal_case(&table)));
+        context.insert("model_name",  &format!("{}", inflections::case::to_pascal_case(&table)));
+        context.insert("request_model_name",  &format!("{}Request", inflections::case::to_pascal_case(&table)));
+        context.insert("response_model_name",  &format!("{}Response", inflections::case::to_pascal_case(&table)));
         context.insert("service_name",  &format!("{}Service", inflections::case::to_pascal_case(&table)));
+        context.insert("service_name_const",  &format!("{}_SERVICE", inflections::case::to_upper_case(&table)));
         context.insert("table_name",  &table);
-        context.insert("columns",  &columns.into_iter().map( |c| {
+
+        let mut columns_data: Vec<serde_json::Map<String, serde_json::Value>> = Vec::with_capacity(columns.len());
+        let mut columns_data_request_create: Vec<serde_json::Map<String, serde_json::Value>> = Vec::with_capacity(columns.len() - CREATE_REQUEST_NOT_NEED_FIELDS.len());
+        let mut columns_data_request_update: Vec<serde_json::Map<String, serde_json::Value>> = Vec::with_capacity(columns.len() - UPDATE_REQUEST_NOT_NEED_FIELDS.len());
+        let mut columns_data_response: Vec<serde_json::Map<String, serde_json::Value>> = Vec::with_capacity(columns.len() - RESPONSE_NOT_NEED_FIELDS.len());
+
+        for c in columns {
             let mut map = serde_json::Map::new();
-            map.insert("column_name".into(),  get_column_name(c.column_name).into());
-            map.insert("rust_type".into(),  map_data_type(&c.data_type).into());
-            map.insert("nullable".into(),  (c.is_nullable  == "YES").into());
-            map.insert("column_comment".into(),  c.column_comment.into());
-            map.insert("is_key".into(),  (c.column_key  == "PRI").into());
-            map
-        }).collect::<Vec<_>>());
+            let column_name = get_column_name(&c.column_name);
+            map.insert("column_name".to_string(), column_name.into());
+            let data_type = map_data_type(&c.data_type);
+            map.insert("rust_type".to_string(), data_type.into());
+            map.insert("is_date".to_string(), (data_type == "NaiveDateTime").into());
+            map.insert("nullable".to_string(), (c.is_nullable == "YES").into());
+            map.insert("column_comment".to_string(), c.column_comment.into());
+            
+            let is_key = c.column_key == "PRI";
+            map.insert("is_key".to_string(), is_key.into());
+            
+            if is_key {
+                context.insert("primary_key_type", map_data_type(&c.data_type));
+            }
+
+            columns_data.push(map.clone());
+
+            if !CREATE_REQUEST_NOT_NEED_FIELDS.contains(&c.column_name.as_str()) {
+                columns_data_request_create.push(map.clone());
+            }
+            if !UPDATE_REQUEST_NOT_NEED_FIELDS.contains(&c.column_name.as_str()) {
+                columns_data_request_update.push(map.clone());
+            }
+            if !RESPONSE_NOT_NEED_FIELDS.contains(&c.column_name.as_str()) {
+                columns_data_response.push(map);
+            }
+        }
+        
+        context.insert("columns", &columns_data);
+        context.insert("columns_request_create", &columns_data_request_create);
+        context.insert("columns_request_update", &columns_data_request_update);
+        context.insert("columns_response", &columns_data_response);
 
         // model
         let model_code = tera.render("model",  &context).unwrap();
-        let file_path = format!("{}/model/{}.rs", base_path, table);
+        let file_path = format!("{}/model/{}.rs", code_base_path, table);
+        write_file(&file_path, &model_code).unwrap();
+
+        // request
+        let model_code = tera.render("request",  &context).unwrap();
+        let file_path = format!("{}/request/{}.rs", code_base_path, table);
+        write_file(&file_path, &model_code).unwrap();
+
+        // response
+        let model_code = tera.render("response",  &context).unwrap();
+        let file_path = format!("{}/response/{}.rs", code_base_path, table);
         write_file(&file_path, &model_code).unwrap();
 
         // service
-        let service_code = tera.render("service",  &context).unwrap();
-        let file_path = format!("{}/service/{}.rs", base_path, table);
-        write_file(&file_path, &service_code).unwrap();
+        // let service_code = tera.render("service",  &context).unwrap();
+        // let file_path = format!("{}/service/{}.rs", code_base_path, table);
+        // write_file(&file_path, &service_code).unwrap();
     }
 }

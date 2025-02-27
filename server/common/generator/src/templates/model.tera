@@ -1,13 +1,12 @@
 use sea_orm::entity::prelude::*;
+use sea_orm::sea_query::types::NaiveDateTime;
 
-#[derive(Clone, Debug, PartialEq, DeriveEntityModel, Eq, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, PartialEq, DeriveEntityModel, Eq)]
 #[sea_orm(table_name = "{{ table_name }}")]
 pub struct {{ model_name }} {
-    {% for column in columns %}
-    /// {{ column.column_comment  }}
-    #[serde(rename = "{{ column.column_name  }}")]{% if column.is_key  %}
+    {% for column in columns %}{% if column.is_key  %}
     #[sea_orm(primary_key, auto_increment = false)]{% endif %}
-    pub {{ column.column_name }}: {% if column.nullable  %}Option<{{ column.rust_type  }}>{% else %}{{ column.rust_type  }}{% endif %},
+    pub {{ column.column_name }}: {% if column.nullable  %}Option<{{ column.rust_type  }}>{% else %}{{ column.rust_type  }}{% endif %}, // {{ column.column_comment  }}
     {% endfor %}
 }
 
