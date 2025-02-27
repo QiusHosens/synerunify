@@ -13,4 +13,10 @@ pub struct {{ model_name }} {
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {}
 
+impl Related<super::{{ table_name }}::Entity> for {{ model_name }}Entity {
+    fn to() -> RelationDef {
+        panic!("No relations defined")
+    }
+}
+
 impl ActiveModelBehavior for {{ model_name }}ActiveModel {}

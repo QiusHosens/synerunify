@@ -11,9 +11,9 @@ pub struct Create{{ request_model_name }} {
 impl Create{{ request_model_name }} {
     pub fn to_active_model(&self) -> {{ model_name }}ActiveModel {
         {{ model_name }}ActiveModel {
-            {% for column in columns_request_create %}
+            {% for column in columns_request_create -%}
             {{ column.column_name }}: Set(self.{{ column.column_name }}.clone()),
-            {% endfor %}
+            {% endfor -%}
             ..Default::default()
         }
     }
@@ -29,11 +29,11 @@ pub struct Update{{ request_model_name }} {
 impl Update{{ request_model_name }} {
     pub fn to_active_model(&self, existing: {{ model_name }}) -> {{ model_name }}ActiveModel {
         let mut active_model: {{ model_name }}ActiveModel = existing.into();
-        {% for column in columns_request_create %}
-            if let Some({{ column.column_name }}) = &self.{{ column.column_name }} {
-                active_model.{{ column.column_name }} = Set({{ column.column_name }}.clone());
-            }
-        {% endfor %}
+        {% for column in columns_request_create -%}
+        if let Some({{ column.column_name }}) = &self.{{ column.column_name }} {
+            active_model.{{ column.column_name }} = Set({{ column.column_name }}.clone());
+        }
+        {% endfor -%}
         active_model
     }
 }

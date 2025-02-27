@@ -1,10 +1,11 @@
 use std::sync::Arc;
 use sea_orm::{DatabaseConnection, EntityTrait, Set, ActiveModelTrait, QueryFilter, ColumnTrait};
 use tokio::sync::OnceCell;
-use crate::model::{{ table_name }}::{self, {{ model_name }}};
+use crate::model::{{ table_name }}::{self, {{ model_name }}, {{ model_name }}Entity, Column};
 use crate::request::{{ table_name }}::{Create{{ request_model_name }}, Update{{ request_model_name }}};
 use crate::response::{{ table_name }}::{{ response_model_name }};
 use anyhow::{Result, anyhow};
+use common::base::page::PaginatedResponse;
  
 #[derive(Debug)]
 pub struct {{ service_name }} {
@@ -22,77 +23,60 @@ impl {{ service_name }} {
     }
 
     pub async fn create(&self, request: Create{{ request_model_name }}) -> Result<i64> {
-        let {{ table_name }} = {{ table_name }}::ActiveModel {
-            {% for column in columns_request_create %}
-            {{ column.column_name }}: Set(request.{{ column.column_name }}),
-            {% endfor %}
-            ..Default::default()
-        };
+        let {{ table_name }} = request.to_active_model();
         let {{ table_name }} = {{ table_name }}.insert(&self.db).await?;
         Ok({{ table_name }}.id)
     }
 
     pub async fn update(&self, request: Update{{ request_model_name }}) -> Result<()> {
-        let user = User::find_by_id(request.id)
+        let {{ table_name }} = {{ model_name }}Entity::find_by_id(request.id)
             .one(&self.db)
             .await?
-            .ok_or_else(|| anyhow!("User with id {} not found", id))?;
+            .ok_or_else(|| anyhow!("记录未找到"))?;
 
-        let mut user: user::ActiveModel = user.into();
-        if let Some(name) = req.name { user.name = Set(name); }
-        if let Some(email) = req.email { user.email = Set(email); }
+        let {{ table_name }} = request.to_active_model({{ table_name }});
+        {{ table_name }}.update(&self.db).await?;
+        Ok(())
+    }
 
-        let updated_user = user.update(&self.db).await?;
-        Ok(updated_user.into())
+    pub async fn delete(&self, id: i64) -> Result<()> {
+        let result = {{ model_name }}Entity::delete_by_id(id).exec(&self.db).await?;
+        if result.rows_affected == 0 {
+            return Err(anyhow!("记录未找到"));
+        }
+        Ok(())
     }
- 
- 
-    /// 按主键查询 (内置Find方法)
-    pub async fn find_by_id(&self, id: {{ primary_key_type }}) -> Result<Option<{{ model_name }}Model>, DbErr> {
-        {{ entity_name }}::find_by_id(id)
-            .one(&self.db) 
-            .await 
+
+    pub async fn get_by_id(&self, id: i64) -> Result<Option<{{ response_model_name }}>> {
+        let {{ table_name }} = {{ model_name }}Entity::find_by_id(id).one(&self.db).await?;
+        Ok({{ table_name }}.map({{ response_model_name }}::from))
     }
- 
-    /// 分页查询 (集成Paginator)
-    pub async fn paginate(
-        &self,
-        page: u64,
-        page_size: u64,
-    ) -> Result<PaginatorResult<{{ model_name }}Model>, DbErr> {
-        {{ entity_name }}::find()
-            .paginate(&self.db,  page_size)
-            .num_pages()
-            .and_then(|paginator| paginator.fetch_page(page  - 1))
-            .await 
-    }
- 
-    /// 动态条件查询 (链式构建器)
-    pub async fn find_where(
-        &self,
-        filters: Vec<Condition>,
-        orders: Option<Order>,
-    ) -> Result<Vec<{{ model_name }}Model>, DbErr> {
-        let mut query = {{ entity_name }}::find();
+
+    pub async fn get_paginated(&self, page: u64, size: u64) -> Result<PaginatedResponse> {
+        let paginator = {{ model_name }}Entity::find()
+            .order_by_desc(Column::UpdateTime)
+            .paginate(&self.db, size);
         
-        for filter in filters {
-            query = query.filter(filter); 
-        }
- 
-        if let Some(order) = orders {
-            query = query.order_by_asc(order); 
-        }
- 
-        query.all(&self.db).await  
+        let total_items = paginator.num_items().await?;
+        let total_pages = (total_items + page_size - 1) / page_size; // 向上取整
+        let records = paginator
+            .fetch_page(page - 1) // SeaORM 页码从 0 开始，所以减 1
+            .await?
+            .into_iter()
+            .map({{ response_model_name }}::from)
+            .collect();
+
+        Ok(PaginatedResponse {
+            records,
+            total_pages,
+            current_page: page,
+            page_size,
+            total_items,
+        })
     }
- 
-    /// 事务操作 (SeaORM事务支持)
-    pub async fn transaction<F, R>(&self, callback: F) -> Result<R, DbErr>
-    where 
-        F: FnOnce(&DatabaseConnection) -> BoxFuture<'_, Result<R, DbErr>> + Send 
-    {
-        self.db.transaction( |txn| {
-            Box::pin(async move { callback(txn).await })
-        }).await 
+
+    pub async fn get_all(&self) -> Result<Vec<{{ response_model_name }}>> {
+        let list = {{ model_name }}Entity::find().all(&self.db).await?;
+        Ok(list.into_iter().map({{ response_model_name }}::from).collect())
     }
 }

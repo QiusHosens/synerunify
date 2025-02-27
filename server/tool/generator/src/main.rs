@@ -102,7 +102,7 @@ fn write_file(file_path: &str, code: &str) -> std::io::Result<()> {
 }
 
 fn main() {
-    let base_path = "common/generator";
+    let base_path = "tool/generator";
     let template_base_path = format!("{}/src", base_path);
     let code_base_path = format!("{}/code", base_path);
     // 初始化数据库连接
@@ -190,8 +190,8 @@ fn main() {
         write_file(&file_path, &model_code).unwrap();
 
         // service
-        // let service_code = tera.render("service",  &context).unwrap();
-        // let file_path = format!("{}/service/{}.rs", code_base_path, table);
-        // write_file(&file_path, &service_code).unwrap();
+        let service_code = tera.render("service",  &context).unwrap();
+        let file_path = format!("{}/service/{}.rs", code_base_path, table);
+        write_file(&file_path, &service_code).unwrap();
     }
 }
