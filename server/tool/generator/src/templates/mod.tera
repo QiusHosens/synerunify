@@ -1,0 +1,3 @@
+{% for table_name in table_names -%}
+    pub mod {{ table_name }};
+{% endfor -%}

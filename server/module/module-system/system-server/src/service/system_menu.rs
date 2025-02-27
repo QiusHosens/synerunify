@@ -1,0 +1,82 @@
+use std::sync::Arc;
+use sea_orm::{DatabaseConnection, EntityTrait, Set, ActiveModelTrait, QueryFilter, ColumnTrait};
+use tokio::sync::OnceCell;
+use crate::model::system_menu::{self, SystemMenu, SystemMenuEntity, Column};
+use crate::request::system_menu::{CreateSystemMenuRequest, UpdateSystemMenuRequest};
+use crate::response::system_menu::SystemMenuResponse;
+use anyhow::{Result, anyhow};
+use common::base::page::PaginatedResponse;
+ 
+#[derive(Debug)]
+pub struct SystemMenuService {
+    db: DatabaseConnection 
+}
+
+static SYSTEM_MENU_SERVICE: OnceCell<Arc<SystemMenuService>> = OnceCell::const_new();
+ 
+impl SystemMenuService {
+    pub async fn get_instance(db: DatabaseConnection) -> Arc<SystemMenuService> {
+        SYSTEM_MENU_SERVICE
+            .get_or_init(|| async { Arc::new(SystemMenuService { db }) })
+            .await
+            .clone()
+    }
+
+    pub async fn create(&self, request: CreateSystemMenuRequest) -> Result<i64> {
+        let system_menu = request.to_active_model();
+        let system_menu = system_menu.insert(&self.db).await?;
+        Ok(system_menu.id)
+    }
+
+    pub async fn update(&self, request: UpdateSystemMenuRequest) -> Result<()> {
+        let system_menu = SystemMenuEntity::find_by_id(request.id)
+            .one(&self.db)
+            .await?
+            .ok_or_else(|| anyhow!("记录未找到"))?;
+
+        let system_menu = request.to_active_model(system_menu);
+        system_menu.update(&self.db).await?;
+        Ok(())
+    }
+
+    pub async fn delete(&self, id: i64) -> Result<()> {
+        let result = SystemMenuEntity::delete_by_id(id).exec(&self.db).await?;
+        if result.rows_affected == 0 {
+            return Err(anyhow!("记录未找到"));
+        }
+        Ok(())
+    }
+
+    pub async fn get_by_id(&self, id: i64) -> Result<Option<SystemMenuResponse>> {
+        let system_menu = SystemMenuEntity::find_by_id(id).one(&self.db).await?;
+        Ok(system_menu.map(SystemMenuResponse::from))
+    }
+
+    pub async fn get_paginated(&self, page: u64, size: u64) -> Result<PaginatedResponse> {
+        let paginator = SystemMenuEntity::find()
+            .order_by_desc(Column::UpdateTime)
+            .paginate(&self.db, size);
+        
+        let total_items = paginator.num_items().await?;
+        let total_pages = (total_items + page_size - 1) / page_size; // 向上取整
+        let records = paginator
+            .fetch_page(page - 1) // SeaORM 页码从 0 开始，所以减 1
+            .await?
+            .into_iter()
+            .map(SystemMenuResponse::from)
+            .collect();
+
+        Ok(PaginatedResponse {
+            records,
+            total_pages,
+            current_page: page,
+            page_size,
+            total_items,
+        })
+    }
+
+    pub async fn get_all(&self) -> Result<Vec<SystemMenuResponse>> {
+        let list = SystemMenuEntity::find().all(&self.db).await?;
+        Ok(list.into_iter().map(SystemMenuResponse::from).collect())
+    }
+}

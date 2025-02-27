@@ -106,8 +106,8 @@ fn main() {
     let template_base_path = format!("{}/src", base_path);
     let code_base_path = format!("{}/code", base_path);
     // 初始化数据库连接
-    let url = "mysql://synerunify:synerunify@192.168.0.49:30010/synerunify";
-    // let url = "mysql://synerunify:synerunify@192.168.1.18:30010/synerunify";
+    // let url = "mysql://synerunify:synerunify@192.168.0.49:30010/synerunify";
+    let url = "mysql://synerunify:synerunify@192.168.1.18:30010/synerunify";
     let pool = Pool::new(url).unwrap();
     let mut conn = pool.get_conn().unwrap();
 
@@ -116,14 +116,20 @@ fn main() {
 
     // 初始化模板引擎
     let mut tera = Tera::default();
+    tera.add_template_file(format!("{}/templates/mod.tera", template_base_path),  Some("mod")).unwrap();
+
     tera.add_template_file(format!("{}/templates/model.tera", template_base_path),  Some("model")).unwrap();
     tera.add_template_file(format!("{}/templates/request.tera", template_base_path),  Some("request")).unwrap();
     tera.add_template_file(format!("{}/templates/response.tera", template_base_path),  Some("response")).unwrap();
 
     tera.add_template_file(format!("{}/templates/service.tera", template_base_path),  Some("service")).unwrap();
 
-    // 遍历表生成Model
+    // 遍历表
+    let mut mod_context = Context::new();
+    let mut table_names: Vec<String> = Vec::with_capacity(tables.len());
     for table in tables {
+        table_names.push(table.clone());
+
         let columns = get_table_columns(&mut conn, &table);
         let mut context = Context::new();
 
@@ -180,18 +186,23 @@ fn main() {
         write_file(&file_path, &model_code).unwrap();
 
         // request
-        let model_code = tera.render("request",  &context).unwrap();
+        let request_code = tera.render("request",  &context).unwrap();
         let file_path = format!("{}/request/{}.rs", code_base_path, table);
-        write_file(&file_path, &model_code).unwrap();
+        write_file(&file_path, &request_code).unwrap();
 
         // response
-        let model_code = tera.render("response",  &context).unwrap();
+        let response_code = tera.render("response",  &context).unwrap();
         let file_path = format!("{}/response/{}.rs", code_base_path, table);
-        write_file(&file_path, &model_code).unwrap();
+        write_file(&file_path, &response_code).unwrap();
 
         // service
         let service_code = tera.render("service",  &context).unwrap();
         let file_path = format!("{}/service/{}.rs", code_base_path, table);
         write_file(&file_path, &service_code).unwrap();
     }
+    mod_context.insert("table_names", &table_names);
+    // mod
+    let mod_code = tera.render("mod",  &mod_context).unwrap();
+    let file_path = format!("{}/model/mod.rs", code_base_path);
+    write_file(&file_path, &mod_code).unwrap();
 }

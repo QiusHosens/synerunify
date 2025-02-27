@@ -1,0 +1,82 @@
+use std::sync::Arc;
+use sea_orm::{DatabaseConnection, EntityTrait, Set, ActiveModelTrait, QueryFilter, ColumnTrait};
+use tokio::sync::OnceCell;
+use crate::model::system_user_role::{self, SystemUserRole, SystemUserRoleEntity, Column};
+use crate::request::system_user_role::{CreateSystemUserRoleRequest, UpdateSystemUserRoleRequest};
+use crate::response::system_user_role::SystemUserRoleResponse;
+use anyhow::{Result, anyhow};
+use common::base::page::PaginatedResponse;
+ 
+#[derive(Debug)]
+pub struct SystemUserRoleService {
+    db: DatabaseConnection 
+}
+
+static SYSTEM_USER_ROLE_SERVICE: OnceCell<Arc<SystemUserRoleService>> = OnceCell::const_new();
+ 
+impl SystemUserRoleService {
+    pub async fn get_instance(db: DatabaseConnection) -> Arc<SystemUserRoleService> {
+        SYSTEM_USER_ROLE_SERVICE
+            .get_or_init(|| async { Arc::new(SystemUserRoleService { db }) })
+            .await
+            .clone()
+    }
+
+    pub async fn create(&self, request: CreateSystemUserRoleRequest) -> Result<i64> {
+        let system_user_role = request.to_active_model();
+        let system_user_role = system_user_role.insert(&self.db).await?;
+        Ok(system_user_role.id)
+    }
+
+    pub async fn update(&self, request: UpdateSystemUserRoleRequest) -> Result<()> {
+        let system_user_role = SystemUserRoleEntity::find_by_id(request.id)
+            .one(&self.db)
+            .await?
+            .ok_or_else(|| anyhow!("记录未找到"))?;
+
+        let system_user_role = request.to_active_model(system_user_role);
+        system_user_role.update(&self.db).await?;
+        Ok(())
+    }
+
+    pub async fn delete(&self, id: i64) -> Result<()> {
+        let result = SystemUserRoleEntity::delete_by_id(id).exec(&self.db).await?;
+        if result.rows_affected == 0 {
+            return Err(anyhow!("记录未找到"));
+        }
+        Ok(())
+    }
+
+    pub async fn get_by_id(&self, id: i64) -> Result<Option<SystemUserRoleResponse>> {
+        let system_user_role = SystemUserRoleEntity::find_by_id(id).one(&self.db).await?;
+        Ok(system_user_role.map(SystemUserRoleResponse::from))
+    }
+
+    pub async fn get_paginated(&self, page: u64, size: u64) -> Result<PaginatedResponse> {
+        let paginator = SystemUserRoleEntity::find()
+            .order_by_desc(Column::UpdateTime)
+            .paginate(&self.db, size);
+        
+        let total_items = paginator.num_items().await?;
+        let total_pages = (total_items + page_size - 1) / page_size; // 向上取整
+        let records = paginator
+            .fetch_page(page - 1) // SeaORM 页码从 0 开始，所以减 1
+            .await?
+            .into_iter()
+            .map(SystemUserRoleResponse::from)
+            .collect();
+
+        Ok(PaginatedResponse {
+            records,
+            total_pages,
+            current_page: page,
+            page_size,
+            total_items,
+        })
+    }
+
+    pub async fn get_all(&self) -> Result<Vec<SystemUserRoleResponse>> {
+        let list = SystemUserRoleEntity::find().all(&self.db).await?;
+        Ok(list.into_iter().map(SystemUserRoleResponse::from).collect())
+    }
+}

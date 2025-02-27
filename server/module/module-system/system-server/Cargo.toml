@@ -1,19 +1,10 @@
-[workspace]
-members = [
-    "module/module-system/*",
-    "framework/*",
-    "tool/*",
-]
-resolver = "2"
+[package]
+name = "system-server"
+version = { workspace = true }
+edition = { workspace = true }
+rust-version = { workspace = true }
 
-[workspace.package]
-version = "0.1.0"
-edition = "2021"
-rust-version = "1.85.0"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
-[workspace.dependencies]
+[dependencies]
 # axum
 # https://docs.rs/axum/latest/axum/#required-dependencies
 axum = { version = "0.8.1", default-features = false, features = [
@@ -85,3 +76,6 @@ sysinfo = { version = "0.33.1" }
 # 随机数
 md5 = { version = "0.7.0" }
 rand = { version = "0.9.0" }
+
+common = { path = "../../../framework/common" }
+system-model = { path = "../system-model" }
