@@ -1,52 +1,52 @@
-use serde::{Serialize, Deserialize};
-use crate::model::system_tenant::{self, SystemTenant, SystemTenantActiveModel};
-use crate::request::system_tenant::{CreateSystemTenantRequest, UpdateSystemTenantRequest};
-use crate::response::system_tenant::SystemTenantResponse;
+use sea_orm::{Set, NotSet};
+use crate::model::system_tenant::{self, Model as SystemTenant, ActiveModel as SystemTenantActiveModel};
+use system_model::request::system_tenant::{CreateSystemTenantRequest, UpdateSystemTenantRequest};
+use system_model::response::system_tenant::SystemTenantResponse;
 
 pub fn create_request_to_model(request: &CreateSystemTenantRequest) -> SystemTenantActiveModel {
     SystemTenantActiveModel {
         name: Set(request.name.clone()),
-        contact_user_id: Set(request.contact_user_id.clone()),
-        contact_name: Set(request.contact_name.clone()),
-        contact_mobile: Set(request.contact_mobile.clone()),
-        status: Set(request.status.clone()),
-        website: Set(request.website.clone()),
-        package_id: Set(request.package_id.clone()),
-        expire_time: Set(request.expire_time.clone()),
-        account_count: Set(request.account_count.clone()),
-        ..Default::default()
+            contact_user_id: request.contact_user_id.as_ref().map_or(NotSet, |contact_user_id| Set(Some(contact_user_id.clone()))),
+            contact_name: Set(request.contact_name.clone()),
+            contact_mobile: request.contact_mobile.as_ref().map_or(NotSet, |contact_mobile| Set(Some(contact_mobile.clone()))),
+            status: Set(request.status.clone()),
+            website: request.website.as_ref().map_or(NotSet, |website| Set(Some(website.clone()))),
+            package_id: Set(request.package_id.clone()),
+            expire_time: Set(request.expire_time.clone()),
+            account_count: Set(request.account_count.clone()),
+            ..Default::default()
     }
 }
 
-pub fn update_request_to_model(request: UpdateSystemTenantRequest, existing: SystemTenant) -> SystemTenantActiveModel {
+pub fn update_request_to_model(request: &UpdateSystemTenantRequest, existing: SystemTenant) -> SystemTenantActiveModel {
     let mut active_model: SystemTenantActiveModel = existing.into();
     if let Some(name) = &request.name {
         active_model.name = Set(name.clone());
-    }
+        }
     if let Some(contact_user_id) = &request.contact_user_id {
-        active_model.contact_user_id = Set(contact_user_id.clone());
-    }
+        active_model.contact_user_id = Set(Some(contact_user_id.clone()));
+        }
     if let Some(contact_name) = &request.contact_name {
         active_model.contact_name = Set(contact_name.clone());
-    }
+        }
     if let Some(contact_mobile) = &request.contact_mobile {
-        active_model.contact_mobile = Set(contact_mobile.clone());
-    }
+        active_model.contact_mobile = Set(Some(contact_mobile.clone()));
+        }
     if let Some(status) = &request.status {
         active_model.status = Set(status.clone());
-    }
+        }
     if let Some(website) = &request.website {
-        active_model.website = Set(website.clone());
-    }
+        active_model.website = Set(Some(website.clone()));
+        }
     if let Some(package_id) = &request.package_id {
         active_model.package_id = Set(package_id.clone());
-    }
+        }
     if let Some(expire_time) = &request.expire_time {
         active_model.expire_time = Set(expire_time.clone());
-    }
+        }
     if let Some(account_count) = &request.account_count {
         active_model.account_count = Set(account_count.clone());
-    }
+        }
     active_model
 }
 

@@ -21,13 +21,13 @@ pub struct UpdateSystemPostRequest {
     
     pub id: i64, // 职位ID
     
-    pub code: String, // 职位编码
+    pub code: Option<String>, // 职位编码
     
-    pub name: String, // 职位名称
+    pub name: Option<String>, // 职位名称
     
-    pub sort: i32, // 显示顺序
+    pub sort: Option<i32>, // 显示顺序
     
-    pub status: i8, // 状态（0正常 1停用）
+    pub status: Option<i8>, // 状态（0正常 1停用）
     
     pub remark: Option<String>, // 备注
     
@@ -35,7 +35,7 @@ pub struct UpdateSystemPostRequest {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct PaginatedKeywordRequest {
-    pub page: u64,
-    pub size: u64,
+    #[serde(flatten)]
+    pub base: PaginatedRequest,
     pub keyword: Option<String>,
 }

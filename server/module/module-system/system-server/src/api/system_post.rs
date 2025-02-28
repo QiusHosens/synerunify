@@ -1,12 +1,11 @@
-use axum::{routing::{get, post, put, delete}, Router, extract::{State, Path, Json, Query}, response::IntoResponse};
-use crate::services::system_post::SystemPostService;
-use crate::model::system_post::{self, SystemPost, SystemPostEntity, Column};
-use crate::request::system_post::{CreateSystemPostRequest, UpdateSystemPostRequest, PaginatedKeywordRequest};
-use crate::response::system_post::SystemPostResponse;
-use common::config::database::get_database_instance;
-use crate::config::Config;
 use std::sync::Arc;
-use serde::Deserialize;
+use axum::{routing::{get, post}, Router, extract::{State, Path, Json, Query}, response::IntoResponse};
+use common::config::config::Config;
+use common::base::page::PaginatedResponse;
+use common::config::database::get_database_instance;
+use crate::service::system_post::SystemPostService;
+use system_model::request::system_post::{CreateSystemPostRequest, UpdateSystemPostRequest, PaginatedKeywordRequest};
+use system_model::response::system_post::SystemPostResponse;
 
 pub async fn system_post_route(config: Config) -> Router {
     let db = get_database_instance(&config).await.expect("Failed to get database connection");
@@ -30,7 +29,7 @@ struct AppState {
 async fn create(
     State(state): State<AppState>,
     Json(payload): Json<CreateSystemPostRequest>,
-) -> Result<Json<i32>, axum::http::StatusCode> {
+) -> Result<Json<i64>, axum::http::StatusCode> {
     let id = state.system_post_service.create(payload)
         .await
         .map_err(|_| axum::http::StatusCode::INTERNAL_SERVER_ERROR)?;
@@ -39,10 +38,9 @@ async fn create(
 
 async fn update(
     State(state): State<AppState>,
-    Path(id): Path<i32>,
     Json(payload): Json<UpdateSystemPostRequest>,
 ) -> Result<impl IntoResponse, axum::http::StatusCode> {
-    state.system_post_service.update(id, payload)
+    state.system_post_service.update(payload)
         .await
         .map_err(|_| axum::http::StatusCode::INTERNAL_SERVER_ERROR)?;
     Ok(axum::http::StatusCode::NO_CONTENT)
@@ -60,7 +58,7 @@ async fn delete(
 
 async fn get_by_id(
     State(state): State<AppState>,
-    Path(id): Path<i32>,
+    Path(id): Path<i64>,
 ) -> Result<Json<Option<SystemPostResponse>>, axum::http::StatusCode> {
     let system_post = state.system_post_service.get_by_id(id)
         .await
@@ -71,8 +69,8 @@ async fn get_by_id(
 async fn page(
     State(state): State<AppState>,
     Query(params): Query<PaginatedKeywordRequest>,
-) -> Result<Json<PaginatedResponse>, axum::http::StatusCode> {
-    let paginated = state.system_post_service.get_paginated(params.page, params.page_size)
+) -> Result<Json<PaginatedResponse<SystemPostResponse>>, axum::http::StatusCode> {
+    let paginated = state.system_post_service.get_paginated(params)
         .await
         .map_err(|_| axum::http::StatusCode::INTERNAL_SERVER_ERROR)?;
     Ok(Json(paginated))

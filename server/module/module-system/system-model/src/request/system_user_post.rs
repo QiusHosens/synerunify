@@ -15,15 +15,15 @@ pub struct UpdateSystemUserPostRequest {
     
     pub id: i64, // id
     
-    pub user_id: i64, // 用户ID
+    pub user_id: Option<i64>, // 用户ID
     
-    pub post_id: i64, // 职位ID
+    pub post_id: Option<i64>, // 职位ID
     
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct PaginatedKeywordRequest {
-    pub page: u64,
-    pub size: u64,
+    #[serde(flatten)]
+    pub base: PaginatedRequest,
     pub keyword: Option<String>,
 }

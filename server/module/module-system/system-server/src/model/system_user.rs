@@ -1,9 +1,9 @@
+use chrono::NaiveDateTime;
 use sea_orm::entity::prelude::*;
-use sea_orm::sea_query::types::NaiveDateTime;
 
-#[derive(Clone, Debug, PartialEq, DeriveEntityModel, Eq)]
+#[derive(Clone, Debug, PartialEq, DeriveEntityModel)]
 #[sea_orm(table_name = "system_user")]
-pub struct SystemUser {
+pub struct Model {
     
     #[sea_orm(primary_key, auto_increment = false)]
     pub id: i64, // 用户ID
@@ -53,10 +53,10 @@ pub struct SystemUser {
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {}
 
-impl Related<super::system_user::Entity> for SystemUserEntity {
+impl Related<Entity> for Entity {
     fn to() -> RelationDef {
         panic!("No relations defined")
     }
 }
 
-impl ActiveModelBehavior for SystemUserActiveModel {}
+impl ActiveModelBehavior for ActiveModel {}

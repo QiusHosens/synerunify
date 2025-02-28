@@ -11,13 +11,13 @@ pub struct Create{{ request_model_name }} {
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Update{{ request_model_name }} {
     {% for column in columns_request_update %}
-    pub {{ column.column_name }}: {% if column.nullable  %}Option<{{ column.rust_type  }}>{% else %}{{ column.rust_type  }}{% endif %}, // {{ column.column_comment  }}
+    pub {{ column.column_name }}: {% if column.column_name != "id"  %}Option<{{ column.rust_type  }}>{% else %}{{ column.rust_type  }}{% endif %}, // {{ column.column_comment  }}
     {% endfor %}
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct PaginatedKeywordRequest {
-    pub page: u64,
-    pub size: u64,
+    #[serde(flatten)]
+    pub base: PaginatedRequest,
     pub keyword: Option<String>,
 }

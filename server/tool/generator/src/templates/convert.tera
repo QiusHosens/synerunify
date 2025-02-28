@@ -1,28 +1,36 @@
-use serde::{Serialize, Deserialize};
-use crate::model::{{ table_name }}::{self, {{ model_name }}, {{ model_name }}ActiveModel};
-use crate::request::{{ table_name }}::{Create{{ request_model_name }}, Update{{ request_model_name }}};
-use crate::response::{{ table_name }}::{{ response_model_name }};
+use sea_orm::{Set, NotSet};
+use crate::model::{{ table_name }}::{self, Model as {{ model_name }}, ActiveModel as {{ model_name }}ActiveModel};
+use system_model::request::{{ table_name }}::{Create{{ request_model_name }}, Update{{ request_model_name }}};
+use system_model::response::{{ table_name }}::{{ response_model_name }};
 
 pub fn create_request_to_model(request: &Create{{ request_model_name }}) -> {{ model_name }}ActiveModel {
     {{ model_name }}ActiveModel {
         {% for column in columns_request_create -%}
-        {{ column.column_name }}: Set(request.{{ column.column_name }}.clone()),
+            {% if column.nullable  -%}
+            {{ column.column_name }}: request.{{ column.column_name }}.as_ref().map_or(NotSet, |{{ column.column_name }}| Set(Some({{ column.column_name }}.clone()))),
+            {% else -%}
+            {{ column.column_name }}: Set(request.{{ column.column_name }}.clone()),
+            {% endif -%}
         {% endfor -%}
         ..Default::default()
     }
 }
 
-pub fn update_request_to_model(request: Update{{ request_model_name }}, existing: {{ model_name }}) -> {{ model_name }}ActiveModel {
+pub fn update_request_to_model(request: &Update{{ request_model_name }}, existing: {{ model_name }}) -> {{ model_name }}ActiveModel {
     let mut active_model: {{ model_name }}ActiveModel = existing.into();
     {% for column in columns_request_create -%}
     if let Some({{ column.column_name }}) = &request.{{ column.column_name }} {
+        {% if column.nullable  -%}
+        active_model.{{ column.column_name }} = Set(Some({{ column.column_name }}.clone()));
+        {% else -%}
         active_model.{{ column.column_name }} = Set({{ column.column_name }}.clone());
+        {% endif -%}
     }
     {% endfor -%}
     active_model
 }
 
-fn model_to_response(model: {{ model_name }}) -> {{ response_model_name }} {
+pub fn model_to_response(model: {{ model_name }}) -> {{ response_model_name }} {
     {{ response_model_name }} {
         {% for column in columns_response -%}
         {{ column.column_name }}: model.{{ column.column_name }},

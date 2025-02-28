@@ -1,72 +1,72 @@
-use serde::{Serialize, Deserialize};
-use crate::model::system_user::{self, SystemUser, SystemUserActiveModel};
-use crate::request::system_user::{CreateSystemUserRequest, UpdateSystemUserRequest};
-use crate::response::system_user::SystemUserResponse;
+use sea_orm::{Set, NotSet};
+use crate::model::system_user::{self, Model as SystemUser, ActiveModel as SystemUserActiveModel};
+use system_model::request::system_user::{CreateSystemUserRequest, UpdateSystemUserRequest};
+use system_model::response::system_user::SystemUserResponse;
 
 pub fn create_request_to_model(request: &CreateSystemUserRequest) -> SystemUserActiveModel {
     SystemUserActiveModel {
         username: Set(request.username.clone()),
-        password: Set(request.password.clone()),
-        nickname: Set(request.nickname.clone()),
-        remark: Set(request.remark.clone()),
-        post_ids: Set(request.post_ids.clone()),
-        email: Set(request.email.clone()),
-        mobile: Set(request.mobile.clone()),
-        sex: Set(request.sex.clone()),
-        avatar: Set(request.avatar.clone()),
-        status: Set(request.status.clone()),
-        login_ip: Set(request.login_ip.clone()),
-        login_date: Set(request.login_date.clone()),
-        department_code: Set(request.department_code.clone()),
-        department_id: Set(request.department_id.clone()),
-        ..Default::default()
+            password: Set(request.password.clone()),
+            nickname: Set(request.nickname.clone()),
+            remark: request.remark.as_ref().map_or(NotSet, |remark| Set(Some(remark.clone()))),
+            post_ids: request.post_ids.as_ref().map_or(NotSet, |post_ids| Set(Some(post_ids.clone()))),
+            email: request.email.as_ref().map_or(NotSet, |email| Set(Some(email.clone()))),
+            mobile: request.mobile.as_ref().map_or(NotSet, |mobile| Set(Some(mobile.clone()))),
+            sex: request.sex.as_ref().map_or(NotSet, |sex| Set(Some(sex.clone()))),
+            avatar: request.avatar.as_ref().map_or(NotSet, |avatar| Set(Some(avatar.clone()))),
+            status: Set(request.status.clone()),
+            login_ip: request.login_ip.as_ref().map_or(NotSet, |login_ip| Set(Some(login_ip.clone()))),
+            login_date: request.login_date.as_ref().map_or(NotSet, |login_date| Set(Some(login_date.clone()))),
+            department_code: request.department_code.as_ref().map_or(NotSet, |department_code| Set(Some(department_code.clone()))),
+            department_id: request.department_id.as_ref().map_or(NotSet, |department_id| Set(Some(department_id.clone()))),
+            ..Default::default()
     }
 }
 
-pub fn update_request_to_model(request: UpdateSystemUserRequest, existing: SystemUser) -> SystemUserActiveModel {
+pub fn update_request_to_model(request: &UpdateSystemUserRequest, existing: SystemUser) -> SystemUserActiveModel {
     let mut active_model: SystemUserActiveModel = existing.into();
     if let Some(username) = &request.username {
         active_model.username = Set(username.clone());
-    }
+        }
     if let Some(password) = &request.password {
         active_model.password = Set(password.clone());
-    }
+        }
     if let Some(nickname) = &request.nickname {
         active_model.nickname = Set(nickname.clone());
-    }
+        }
     if let Some(remark) = &request.remark {
-        active_model.remark = Set(remark.clone());
-    }
+        active_model.remark = Set(Some(remark.clone()));
+        }
     if let Some(post_ids) = &request.post_ids {
-        active_model.post_ids = Set(post_ids.clone());
-    }
+        active_model.post_ids = Set(Some(post_ids.clone()));
+        }
     if let Some(email) = &request.email {
-        active_model.email = Set(email.clone());
-    }
+        active_model.email = Set(Some(email.clone()));
+        }
     if let Some(mobile) = &request.mobile {
-        active_model.mobile = Set(mobile.clone());
-    }
+        active_model.mobile = Set(Some(mobile.clone()));
+        }
     if let Some(sex) = &request.sex {
-        active_model.sex = Set(sex.clone());
-    }
+        active_model.sex = Set(Some(sex.clone()));
+        }
     if let Some(avatar) = &request.avatar {
-        active_model.avatar = Set(avatar.clone());
-    }
+        active_model.avatar = Set(Some(avatar.clone()));
+        }
     if let Some(status) = &request.status {
         active_model.status = Set(status.clone());
-    }
+        }
     if let Some(login_ip) = &request.login_ip {
-        active_model.login_ip = Set(login_ip.clone());
-    }
+        active_model.login_ip = Set(Some(login_ip.clone()));
+        }
     if let Some(login_date) = &request.login_date {
-        active_model.login_date = Set(login_date.clone());
-    }
+        active_model.login_date = Set(Some(login_date.clone()));
+        }
     if let Some(department_code) = &request.department_code {
-        active_model.department_code = Set(department_code.clone());
-    }
+        active_model.department_code = Set(Some(department_code.clone()));
+        }
     if let Some(department_id) = &request.department_id {
-        active_model.department_id = Set(department_id.clone());
-    }
+        active_model.department_id = Set(Some(department_id.clone()));
+        }
     active_model
 }
 

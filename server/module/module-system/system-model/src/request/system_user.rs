@@ -39,11 +39,11 @@ pub struct UpdateSystemUserRequest {
     
     pub id: i64, // 用户ID
     
-    pub username: String, // 用户账号
+    pub username: Option<String>, // 用户账号
     
-    pub password: String, // 密码
+    pub password: Option<String>, // 密码
     
-    pub nickname: String, // 用户昵称
+    pub nickname: Option<String>, // 用户昵称
     
     pub remark: Option<String>, // 备注
     
@@ -57,7 +57,7 @@ pub struct UpdateSystemUserRequest {
     
     pub avatar: Option<String>, // 头像地址
     
-    pub status: i8, // 帐号状态（0正常 1停用）
+    pub status: Option<i8>, // 帐号状态（0正常 1停用）
     
     pub login_ip: Option<String>, // 最后登录IP
     
@@ -71,7 +71,7 @@ pub struct UpdateSystemUserRequest {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct PaginatedKeywordRequest {
-    pub page: u64,
-    pub size: u64,
+    #[serde(flatten)]
+    pub base: PaginatedRequest,
     pub keyword: Option<String>,
 }

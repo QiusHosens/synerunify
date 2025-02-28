@@ -1,9 +1,9 @@
+use chrono::NaiveDateTime;
 use sea_orm::entity::prelude::*;
-use sea_orm::sea_query::types::NaiveDateTime;
 
-#[derive(Clone, Debug, PartialEq, DeriveEntityModel, Eq)]
+#[derive(Clone, Debug, PartialEq, DeriveEntityModel)]
 #[sea_orm(table_name = "{{ table_name }}")]
-pub struct {{ model_name }} {
+pub struct Model {
     {% for column in columns %}{% if column.is_key  %}
     #[sea_orm(primary_key, auto_increment = false)]{% endif %}
     pub {{ column.column_name }}: {% if column.nullable  %}Option<{{ column.rust_type  }}>{% else %}{{ column.rust_type  }}{% endif %}, // {{ column.column_comment  }}
@@ -13,10 +13,10 @@ pub struct {{ model_name }} {
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {}
 
-impl Related<super::{{ table_name }}::Entity> for {{ model_name }}Entity {
+impl Related<Entity> for Entity {
     fn to() -> RelationDef {
         panic!("No relations defined")
     }
 }
 
-impl ActiveModelBehavior for {{ model_name }}ActiveModel {}
+impl ActiveModelBehavior for ActiveModel {}

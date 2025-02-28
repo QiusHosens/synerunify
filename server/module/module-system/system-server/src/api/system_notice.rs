@@ -1,12 +1,11 @@
-use axum::{routing::{get, post, put, delete}, Router, extract::{State, Path, Json, Query}, response::IntoResponse};
-use crate::services::system_notice::SystemNoticeService;
-use crate::model::system_notice::{self, SystemNotice, SystemNoticeEntity, Column};
-use crate::request::system_notice::{CreateSystemNoticeRequest, UpdateSystemNoticeRequest, PaginatedKeywordRequest};
-use crate::response::system_notice::SystemNoticeResponse;
-use common::config::database::get_database_instance;
-use crate::config::Config;
 use std::sync::Arc;
-use serde::Deserialize;
+use axum::{routing::{get, post}, Router, extract::{State, Path, Json, Query}, response::IntoResponse};
+use common::config::config::Config;
+use common::base::page::PaginatedResponse;
+use common::config::database::get_database_instance;
+use crate::service::system_notice::SystemNoticeService;
+use system_model::request::system_notice::{CreateSystemNoticeRequest, UpdateSystemNoticeRequest, PaginatedKeywordRequest};
+use system_model::response::system_notice::SystemNoticeResponse;
 
 pub async fn system_notice_route(config: Config) -> Router {
     let db = get_database_instance(&config).await.expect("Failed to get database connection");
@@ -30,7 +29,7 @@ struct AppState {
 async fn create(
     State(state): State<AppState>,
     Json(payload): Json<CreateSystemNoticeRequest>,
-) -> Result<Json<i32>, axum::http::StatusCode> {
+) -> Result<Json<i64>, axum::http::StatusCode> {
     let id = state.system_notice_service.create(payload)
         .await
         .map_err(|_| axum::http::StatusCode::INTERNAL_SERVER_ERROR)?;
@@ -39,10 +38,9 @@ async fn create(
 
 async fn update(
     State(state): State<AppState>,
-    Path(id): Path<i32>,
     Json(payload): Json<UpdateSystemNoticeRequest>,
 ) -> Result<impl IntoResponse, axum::http::StatusCode> {
-    state.system_notice_service.update(id, payload)
+    state.system_notice_service.update(payload)
         .await
         .map_err(|_| axum::http::StatusCode::INTERNAL_SERVER_ERROR)?;
     Ok(axum::http::StatusCode::NO_CONTENT)
@@ -60,7 +58,7 @@ async fn delete(
 
 async fn get_by_id(
     State(state): State<AppState>,
-    Path(id): Path<i32>,
+    Path(id): Path<i64>,
 ) -> Result<Json<Option<SystemNoticeResponse>>, axum::http::StatusCode> {
     let system_notice = state.system_notice_service.get_by_id(id)
         .await
@@ -71,8 +69,8 @@ async fn get_by_id(
 async fn page(
     State(state): State<AppState>,
     Query(params): Query<PaginatedKeywordRequest>,
-) -> Result<Json<PaginatedResponse>, axum::http::StatusCode> {
-    let paginated = state.system_notice_service.get_paginated(params.page, params.page_size)
+) -> Result<Json<PaginatedResponse<SystemNoticeResponse>>, axum::http::StatusCode> {
+    let paginated = state.system_notice_service.get_paginated(params)
         .await
         .map_err(|_| axum::http::StatusCode::INTERNAL_SERVER_ERROR)?;
     Ok(Json(paginated))

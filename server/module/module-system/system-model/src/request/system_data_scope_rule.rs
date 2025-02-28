@@ -21,9 +21,9 @@ pub struct UpdateSystemDataScopeRuleRequest {
     
     pub id: i64, // id
     
-    pub r#type: i8, // 规则类型（0系统定义 1自定义）
+    pub r#type: Option<i8>, // 规则类型（0系统定义 1自定义）
     
-    pub name: String, // 规则名称
+    pub name: Option<String>, // 规则名称
     
     pub field: Option<String>, // 规则字段
     
@@ -35,7 +35,7 @@ pub struct UpdateSystemDataScopeRuleRequest {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct PaginatedKeywordRequest {
-    pub page: u64,
-    pub size: u64,
+    #[serde(flatten)]
+    pub base: PaginatedRequest,
     pub keyword: Option<String>,
 }

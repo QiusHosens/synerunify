@@ -1,6 +1,5 @@
+use chrono::NaiveDateTime;
 use serde::{Serialize, Deserialize};
-use serde_with::{serde_as, DisplayFromStr};
-use sea_orm::sea_query::types::NaiveDateTime;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SystemUserPostResponse {

@@ -29,19 +29,19 @@ pub struct UpdateSystemDictRequest {
     
     pub id: i64, // 主键
     
-    pub category: String, // 类型
+    pub category: Option<String>, // 类型
     
-    pub category_name: String, // 类型名称
+    pub category_name: Option<String>, // 类型名称
     
-    pub code: String, // 编码
+    pub code: Option<String>, // 编码
     
-    pub name: String, // 名称
+    pub name: Option<String>, // 名称
     
     pub remark: Option<String>, // 备注
     
-    pub sort: i32, // 排序
+    pub sort: Option<i32>, // 排序
     
-    pub status: i8, // 状态（0正常 1停用）
+    pub status: Option<i8>, // 状态（0正常 1停用）
     
     pub color_type: Option<String>, // 颜色类型
     
@@ -51,7 +51,7 @@ pub struct UpdateSystemDictRequest {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct PaginatedKeywordRequest {
-    pub page: u64,
-    pub size: u64,
+    #[serde(flatten)]
+    pub base: PaginatedRequest,
     pub keyword: Option<String>,
 }
