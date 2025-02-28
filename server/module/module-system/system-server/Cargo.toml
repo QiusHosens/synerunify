@@ -54,8 +54,8 @@ tower = { version = "0.5.2", default-features = false, features = ["util"] }
 tower-http = { version = "0.6.2", default-features = false, features = [
     "fs",
     "trace",
+    "cors"
 ] }
-
 # request params validator require
 validator = { version = "0.20.0", features = ["derive"] }
 
@@ -76,6 +76,8 @@ sysinfo = { version = "0.33.1" }
 # 随机数
 md5 = { version = "0.7.0" }
 rand = { version = "0.9.0" }
+anyhow = "1.0.96" # 返回
+dotenvy = "0.15.7" # 读取配置文件
 
 common = { path = "../../../framework/common" }
 system-model = { path = "../system-model" }

@@ -1,7 +1,7 @@
 use serde::{Serialize, Deserialize};
-use crate::model::system_notice::{self, SystemNotice, SystemNoticeActiveModel};
+use common::base::page::PaginatedRequest;
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct CreateSystemNoticeRequest {
     
     pub title: String, // 公告标题
@@ -14,19 +14,7 @@ pub struct CreateSystemNoticeRequest {
     
 }
 
-impl CreateSystemNoticeRequest {
-    pub fn to_active_model(&self) -> SystemNoticeActiveModel {
-        SystemNoticeActiveModel {
-            title: Set(self.title.clone()),
-            content: Set(self.content.clone()),
-            r#type: Set(self.r#type.clone()),
-            status: Set(self.status.clone()),
-            ..Default::default()
-        }
-    }
-}
-
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct UpdateSystemNoticeRequest {
     
     pub id: i64, // 公告ID
@@ -41,21 +29,9 @@ pub struct UpdateSystemNoticeRequest {
     
 }
 
-impl UpdateSystemNoticeRequest {
-    pub fn to_active_model(&self, existing: SystemNotice) -> SystemNoticeActiveModel {
-        let mut active_model: SystemNoticeActiveModel = existing.into();
-        if let Some(title) = &self.title {
-            active_model.title = Set(title.clone());
-        }
-        if let Some(content) = &self.content {
-            active_model.content = Set(content.clone());
-        }
-        if let Some(r#type) = &self.r#type {
-            active_model.r#type = Set(r#type.clone());
-        }
-        if let Some(status) = &self.status {
-            active_model.status = Set(status.clone());
-        }
-        active_model
-    }
+#[derive(Serialize, Deserialize, Debug)]
+pub struct PaginatedKeywordRequest {
+    pub page: u64,
+    pub size: u64,
+    pub keyword: Option<String>,
 }

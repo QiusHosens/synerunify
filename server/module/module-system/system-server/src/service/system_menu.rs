@@ -4,18 +4,19 @@ use tokio::sync::OnceCell;
 use crate::model::system_menu::{self, SystemMenu, SystemMenuEntity, Column};
 use crate::request::system_menu::{CreateSystemMenuRequest, UpdateSystemMenuRequest};
 use crate::response::system_menu::SystemMenuResponse;
+use crate::convert::{create_request_to_model, update_request_to_model, model_to_response};
 use anyhow::{Result, anyhow};
 use common::base::page::PaginatedResponse;
  
 #[derive(Debug)]
 pub struct SystemMenuService {
-    db: DatabaseConnection 
+    db: Arc<DatabaseConnection>
 }
 
 static SYSTEM_MENU_SERVICE: OnceCell<Arc<SystemMenuService>> = OnceCell::const_new();
  
 impl SystemMenuService {
-    pub async fn get_instance(db: DatabaseConnection) -> Arc<SystemMenuService> {
+    pub async fn get_instance(db: Arc<DatabaseConnection>) -> Arc<SystemMenuService> {
         SYSTEM_MENU_SERVICE
             .get_or_init(|| async { Arc::new(SystemMenuService { db }) })
             .await
@@ -23,7 +24,7 @@ impl SystemMenuService {
     }
 
     pub async fn create(&self, request: CreateSystemMenuRequest) -> Result<i64> {
-        let system_menu = request.to_active_model();
+        let system_menu = create_request_to_model(&request);
         let system_menu = system_menu.insert(&self.db).await?;
         Ok(system_menu.id)
     }
@@ -34,7 +35,7 @@ impl SystemMenuService {
             .await?
             .ok_or_else(|| anyhow!("记录未找到"))?;
 
-        let system_menu = request.to_active_model(system_menu);
+        let system_menu = update_request_to_model(&request, system_menu);
         system_menu.update(&self.db).await?;
         Ok(())
     }
@@ -49,7 +50,7 @@ impl SystemMenuService {
 
     pub async fn get_by_id(&self, id: i64) -> Result<Option<SystemMenuResponse>> {
         let system_menu = SystemMenuEntity::find_by_id(id).one(&self.db).await?;
-        Ok(system_menu.map(SystemMenuResponse::from))
+        Ok(system_menu.map(model_to_response))
     }
 
     pub async fn get_paginated(&self, page: u64, size: u64) -> Result<PaginatedResponse> {
@@ -63,7 +64,7 @@ impl SystemMenuService {
             .fetch_page(page - 1) // SeaORM 页码从 0 开始，所以减 1
             .await?
             .into_iter()
-            .map(SystemMenuResponse::from)
+            .map(model_to_response)
             .collect();
 
         Ok(PaginatedResponse {
@@ -75,8 +76,8 @@ impl SystemMenuService {
         })
     }
 
-    pub async fn get_all(&self) -> Result<Vec<SystemMenuResponse>> {
+    pub async fn list(&self) -> Result<Vec<SystemMenuResponse>> {
         let list = SystemMenuEntity::find().all(&self.db).await?;
-        Ok(list.into_iter().map(SystemMenuResponse::from).collect())
+        Ok(list.into_iter().map(model_to_response).collect())
     }
 }

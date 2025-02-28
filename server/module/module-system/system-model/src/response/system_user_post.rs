@@ -1,7 +1,6 @@
 use serde::{Serialize, Deserialize};
 use serde_with::{serde_as, DisplayFromStr};
 use sea_orm::sea_query::types::NaiveDateTime;
-use crate::model::system_user_post::SystemUserPost;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SystemUserPostResponse {
@@ -24,19 +23,4 @@ pub struct SystemUserPostResponse {
     #[serde(with = "serde_with::chrono::naive_datetime")]
     pub update_time: NaiveDateTime, // 更新时间
     
-}
-
-impl From<SystemUserPost> for SystemUserPostResponse {
-    fn from(model: SystemUserPost) -> Self {
-        Self {
-            id: model.id,
-            user_id: model.user_id,
-            post_id: model.post_id,
-            creator: model.creator,
-            create_time: model.create_time,
-            updater: model.updater,
-            update_time: model.update_time,
-            
-        }
-    }
 }

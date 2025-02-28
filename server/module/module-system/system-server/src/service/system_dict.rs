@@ -4,18 +4,19 @@ use tokio::sync::OnceCell;
 use crate::model::system_dict::{self, SystemDict, SystemDictEntity, Column};
 use crate::request::system_dict::{CreateSystemDictRequest, UpdateSystemDictRequest};
 use crate::response::system_dict::SystemDictResponse;
+use crate::convert::{create_request_to_model, update_request_to_model, model_to_response};
 use anyhow::{Result, anyhow};
 use common::base::page::PaginatedResponse;
  
 #[derive(Debug)]
 pub struct SystemDictService {
-    db: DatabaseConnection 
+    db: Arc<DatabaseConnection>
 }
 
 static SYSTEM_DICT_SERVICE: OnceCell<Arc<SystemDictService>> = OnceCell::const_new();
  
 impl SystemDictService {
-    pub async fn get_instance(db: DatabaseConnection) -> Arc<SystemDictService> {
+    pub async fn get_instance(db: Arc<DatabaseConnection>) -> Arc<SystemDictService> {
         SYSTEM_DICT_SERVICE
             .get_or_init(|| async { Arc::new(SystemDictService { db }) })
             .await
@@ -23,7 +24,7 @@ impl SystemDictService {
     }
 
     pub async fn create(&self, request: CreateSystemDictRequest) -> Result<i64> {
-        let system_dict = request.to_active_model();
+        let system_dict = create_request_to_model(&request);
         let system_dict = system_dict.insert(&self.db).await?;
         Ok(system_dict.id)
     }
@@ -34,7 +35,7 @@ impl SystemDictService {
             .await?
             .ok_or_else(|| anyhow!("记录未找到"))?;
 
-        let system_dict = request.to_active_model(system_dict);
+        let system_dict = update_request_to_model(&request, system_dict);
         system_dict.update(&self.db).await?;
         Ok(())
     }
@@ -49,7 +50,7 @@ impl SystemDictService {
 
     pub async fn get_by_id(&self, id: i64) -> Result<Option<SystemDictResponse>> {
         let system_dict = SystemDictEntity::find_by_id(id).one(&self.db).await?;
-        Ok(system_dict.map(SystemDictResponse::from))
+        Ok(system_dict.map(model_to_response))
     }
 
     pub async fn get_paginated(&self, page: u64, size: u64) -> Result<PaginatedResponse> {
@@ -63,7 +64,7 @@ impl SystemDictService {
             .fetch_page(page - 1) // SeaORM 页码从 0 开始，所以减 1
             .await?
             .into_iter()
-            .map(SystemDictResponse::from)
+            .map(model_to_response)
             .collect();
 
         Ok(PaginatedResponse {
@@ -75,8 +76,8 @@ impl SystemDictService {
         })
     }
 
-    pub async fn get_all(&self) -> Result<Vec<SystemDictResponse>> {
+    pub async fn list(&self) -> Result<Vec<SystemDictResponse>> {
         let list = SystemDictEntity::find().all(&self.db).await?;
-        Ok(list.into_iter().map(SystemDictResponse::from).collect())
+        Ok(list.into_iter().map(model_to_response).collect())
     }
 }

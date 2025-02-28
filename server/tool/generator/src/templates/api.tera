@@ -1,0 +1,86 @@
+use axum::{routing::{get, post, put, delete}, Router, extract::{State, Path, Json, Query}, response::IntoResponse};
+use crate::services::{{ table_name }}::{{ service_name }};
+use crate::model::{{ table_name }}::{self, {{ model_name }}, {{ model_name }}Entity, Column};
+use crate::request::{{ table_name }}::{Create{{ request_model_name }}, Update{{ request_model_name }}, PaginatedKeywordRequest};
+use crate::response::{{ table_name }}::{{ response_model_name }};
+use common::config::database::get_database_instance;
+use crate::config::Config;
+use std::sync::Arc;
+use serde::Deserialize;
+
+pub async fn {{ table_name }}_route(config: Config) -> Router {
+    let db = get_database_instance(&config).await.expect("Failed to get database connection");
+    let {{ table_name }}_service = {{ service_name }}::get_instance(db).await;
+
+    Router::new()
+        .route("/{{ table_name }}/create", post(create))
+        .route("/{{ table_name }}/update", post(update))
+        .route("/{{ table_name }}/delete", post(delete))
+        .route("/{{ table_name }}/get/:id", get(get_by_id))
+        .route("/{{ table_name }}/list", get(list))
+        .route("/{{ table_name }}/page", get(page))
+        .with_state(AppState { {{ table_name }}_service })
+}
+
+#[derive(Clone)]
+struct AppState {
+    {{ table_name }}_service: Arc<{{ service_name }}>,
+}
+
+async fn create(
+    State(state): State<AppState>,
+    Json(payload): Json<Create{{ request_model_name }}>,
+) -> Result<Json<i32>, axum::http::StatusCode> {
+    let id = state.{{ table_name }}_service.create(payload)
+        .await
+        .map_err(|_| axum::http::StatusCode::INTERNAL_SERVER_ERROR)?;
+    Ok(Json(id))
+}
+
+async fn update(
+    State(state): State<AppState>,
+    Path(id): Path<i32>,
+    Json(payload): Json<Update{{ request_model_name }}>,
+) -> Result<impl IntoResponse, axum::http::StatusCode> {
+    state.{{ table_name }}_service.update(id, payload)
+        .await
+        .map_err(|_| axum::http::StatusCode::INTERNAL_SERVER_ERROR)?;
+    Ok(axum::http::StatusCode::NO_CONTENT)
+}
+
+async fn delete(
+    State(state): State<AppState>,
+    Path(id): Path<i64>,
+) -> Result<impl IntoResponse, axum::http::StatusCode> {
+    state.{{ table_name }}_service.delete(id)
+        .await
+        .map_err(|_| axum::http::StatusCode::INTERNAL_SERVER_ERROR)?;
+    Ok(axum::http::StatusCode::NO_CONTENT)
+}
+
+async fn get_by_id(
+    State(state): State<AppState>,
+    Path(id): Path<i32>,
+) -> Result<Json<Option<{{ response_model_name }}>>, axum::http::StatusCode> {
+    let {{ table_name }} = state.{{ table_name }}_service.get_by_id(id)
+        .await
+        .map_err(|_| axum::http::StatusCode::INTERNAL_SERVER_ERROR)?;
+    Ok(Json({{ table_name }}))
+}
+
+async fn page(
+    State(state): State<AppState>,
+    Query(params): Query<PaginatedKeywordRequest>,
+) -> Result<Json<PaginatedResponse>, axum::http::StatusCode> {
+    let paginated = state.{{ table_name }}_service.get_paginated(params.page, params.page_size)
+        .await
+        .map_err(|_| axum::http::StatusCode::INTERNAL_SERVER_ERROR)?;
+    Ok(Json(paginated))
+}
+
+async fn list(State(state): State<AppState>) -> Result<Json<Vec<{{ response_model_name }}>>, axum::http::StatusCode> {
+    let list = state.{{ table_name }}_service.list()
+        .await
+        .map_err(|_| axum::http::StatusCode::INTERNAL_SERVER_ERROR)?;
+    Ok(Json(list))
+}

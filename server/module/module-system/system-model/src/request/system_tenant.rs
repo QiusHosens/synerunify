@@ -1,7 +1,7 @@
 use serde::{Serialize, Deserialize};
-use crate::model::system_tenant::{self, SystemTenant, SystemTenantActiveModel};
+use common::base::page::PaginatedRequest;
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct CreateSystemTenantRequest {
     
     pub name: String, // 租户名
@@ -24,24 +24,7 @@ pub struct CreateSystemTenantRequest {
     
 }
 
-impl CreateSystemTenantRequest {
-    pub fn to_active_model(&self) -> SystemTenantActiveModel {
-        SystemTenantActiveModel {
-            name: Set(self.name.clone()),
-            contact_user_id: Set(self.contact_user_id.clone()),
-            contact_name: Set(self.contact_name.clone()),
-            contact_mobile: Set(self.contact_mobile.clone()),
-            status: Set(self.status.clone()),
-            website: Set(self.website.clone()),
-            package_id: Set(self.package_id.clone()),
-            expire_time: Set(self.expire_time.clone()),
-            account_count: Set(self.account_count.clone()),
-            ..Default::default()
-        }
-    }
-}
-
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct UpdateSystemTenantRequest {
     
     pub id: i64, // 租户编号
@@ -66,36 +49,9 @@ pub struct UpdateSystemTenantRequest {
     
 }
 
-impl UpdateSystemTenantRequest {
-    pub fn to_active_model(&self, existing: SystemTenant) -> SystemTenantActiveModel {
-        let mut active_model: SystemTenantActiveModel = existing.into();
-        if let Some(name) = &self.name {
-            active_model.name = Set(name.clone());
-        }
-        if let Some(contact_user_id) = &self.contact_user_id {
-            active_model.contact_user_id = Set(contact_user_id.clone());
-        }
-        if let Some(contact_name) = &self.contact_name {
-            active_model.contact_name = Set(contact_name.clone());
-        }
-        if let Some(contact_mobile) = &self.contact_mobile {
-            active_model.contact_mobile = Set(contact_mobile.clone());
-        }
-        if let Some(status) = &self.status {
-            active_model.status = Set(status.clone());
-        }
-        if let Some(website) = &self.website {
-            active_model.website = Set(website.clone());
-        }
-        if let Some(package_id) = &self.package_id {
-            active_model.package_id = Set(package_id.clone());
-        }
-        if let Some(expire_time) = &self.expire_time {
-            active_model.expire_time = Set(expire_time.clone());
-        }
-        if let Some(account_count) = &self.account_count {
-            active_model.account_count = Set(account_count.clone());
-        }
-        active_model
-    }
+#[derive(Serialize, Deserialize, Debug)]
+pub struct PaginatedKeywordRequest {
+    pub page: u64,
+    pub size: u64,
+    pub keyword: Option<String>,
 }

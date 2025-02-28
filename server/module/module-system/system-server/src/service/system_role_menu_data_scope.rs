@@ -4,18 +4,19 @@ use tokio::sync::OnceCell;
 use crate::model::system_role_menu_data_scope::{self, SystemRoleMenuDataScope, SystemRoleMenuDataScopeEntity, Column};
 use crate::request::system_role_menu_data_scope::{CreateSystemRoleMenuDataScopeRequest, UpdateSystemRoleMenuDataScopeRequest};
 use crate::response::system_role_menu_data_scope::SystemRoleMenuDataScopeResponse;
+use crate::convert::{create_request_to_model, update_request_to_model, model_to_response};
 use anyhow::{Result, anyhow};
 use common::base::page::PaginatedResponse;
  
 #[derive(Debug)]
 pub struct SystemRoleMenuDataScopeService {
-    db: DatabaseConnection 
+    db: Arc<DatabaseConnection>
 }
 
 static SYSTEM_ROLE_MENU_DATA_SCOPE_SERVICE: OnceCell<Arc<SystemRoleMenuDataScopeService>> = OnceCell::const_new();
  
 impl SystemRoleMenuDataScopeService {
-    pub async fn get_instance(db: DatabaseConnection) -> Arc<SystemRoleMenuDataScopeService> {
+    pub async fn get_instance(db: Arc<DatabaseConnection>) -> Arc<SystemRoleMenuDataScopeService> {
         SYSTEM_ROLE_MENU_DATA_SCOPE_SERVICE
             .get_or_init(|| async { Arc::new(SystemRoleMenuDataScopeService { db }) })
             .await
@@ -23,7 +24,7 @@ impl SystemRoleMenuDataScopeService {
     }
 
     pub async fn create(&self, request: CreateSystemRoleMenuDataScopeRequest) -> Result<i64> {
-        let system_role_menu_data_scope = request.to_active_model();
+        let system_role_menu_data_scope = create_request_to_model(&request);
         let system_role_menu_data_scope = system_role_menu_data_scope.insert(&self.db).await?;
         Ok(system_role_menu_data_scope.id)
     }
@@ -34,7 +35,7 @@ impl SystemRoleMenuDataScopeService {
             .await?
             .ok_or_else(|| anyhow!("记录未找到"))?;
 
-        let system_role_menu_data_scope = request.to_active_model(system_role_menu_data_scope);
+        let system_role_menu_data_scope = update_request_to_model(&request, system_role_menu_data_scope);
         system_role_menu_data_scope.update(&self.db).await?;
         Ok(())
     }
@@ -49,7 +50,7 @@ impl SystemRoleMenuDataScopeService {
 
     pub async fn get_by_id(&self, id: i64) -> Result<Option<SystemRoleMenuDataScopeResponse>> {
         let system_role_menu_data_scope = SystemRoleMenuDataScopeEntity::find_by_id(id).one(&self.db).await?;
-        Ok(system_role_menu_data_scope.map(SystemRoleMenuDataScopeResponse::from))
+        Ok(system_role_menu_data_scope.map(model_to_response))
     }
 
     pub async fn get_paginated(&self, page: u64, size: u64) -> Result<PaginatedResponse> {
@@ -63,7 +64,7 @@ impl SystemRoleMenuDataScopeService {
             .fetch_page(page - 1) // SeaORM 页码从 0 开始，所以减 1
             .await?
             .into_iter()
-            .map(SystemRoleMenuDataScopeResponse::from)
+            .map(model_to_response)
             .collect();
 
         Ok(PaginatedResponse {
@@ -75,8 +76,8 @@ impl SystemRoleMenuDataScopeService {
         })
     }
 
-    pub async fn get_all(&self) -> Result<Vec<SystemRoleMenuDataScopeResponse>> {
+    pub async fn list(&self) -> Result<Vec<SystemRoleMenuDataScopeResponse>> {
         let list = SystemRoleMenuDataScopeEntity::find().all(&self.db).await?;
-        Ok(list.into_iter().map(SystemRoleMenuDataScopeResponse::from).collect())
+        Ok(list.into_iter().map(model_to_response).collect())
     }
 }

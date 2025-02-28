@@ -1,7 +1,6 @@
 use serde::{Serialize, Deserialize};
 use serde_with::{serde_as, DisplayFromStr};
 use sea_orm::sea_query::types::NaiveDateTime;
-use crate::model::system_role::SystemRole;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SystemRoleResponse {
@@ -36,25 +35,4 @@ pub struct SystemRoleResponse {
     #[serde(with = "serde_with::chrono::naive_datetime")]
     pub update_time: NaiveDateTime, // 更新时间
     
-}
-
-impl From<SystemRole> for SystemRoleResponse {
-    fn from(model: SystemRole) -> Self {
-        Self {
-            id: model.id,
-            r#type: model.r#type,
-            name: model.name,
-            code: model.code,
-            status: model.status,
-            sort: model.sort,
-            data_scope_rule_id: model.data_scope_rule_id,
-            data_scope_department_ids: model.data_scope_department_ids,
-            remark: model.remark,
-            creator: model.creator,
-            create_time: model.create_time,
-            updater: model.updater,
-            update_time: model.update_time,
-            
-        }
-    }
 }

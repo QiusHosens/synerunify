@@ -4,18 +4,19 @@ use tokio::sync::OnceCell;
 use crate::model::system_role_menu::{self, SystemRoleMenu, SystemRoleMenuEntity, Column};
 use crate::request::system_role_menu::{CreateSystemRoleMenuRequest, UpdateSystemRoleMenuRequest};
 use crate::response::system_role_menu::SystemRoleMenuResponse;
+use crate::convert::{create_request_to_model, update_request_to_model, model_to_response};
 use anyhow::{Result, anyhow};
 use common::base::page::PaginatedResponse;
  
 #[derive(Debug)]
 pub struct SystemRoleMenuService {
-    db: DatabaseConnection 
+    db: Arc<DatabaseConnection>
 }
 
 static SYSTEM_ROLE_MENU_SERVICE: OnceCell<Arc<SystemRoleMenuService>> = OnceCell::const_new();
  
 impl SystemRoleMenuService {
-    pub async fn get_instance(db: DatabaseConnection) -> Arc<SystemRoleMenuService> {
+    pub async fn get_instance(db: Arc<DatabaseConnection>) -> Arc<SystemRoleMenuService> {
         SYSTEM_ROLE_MENU_SERVICE
             .get_or_init(|| async { Arc::new(SystemRoleMenuService { db }) })
             .await
@@ -23,7 +24,7 @@ impl SystemRoleMenuService {
     }
 
     pub async fn create(&self, request: CreateSystemRoleMenuRequest) -> Result<i64> {
-        let system_role_menu = request.to_active_model();
+        let system_role_menu = create_request_to_model(&request);
         let system_role_menu = system_role_menu.insert(&self.db).await?;
         Ok(system_role_menu.id)
     }
@@ -34,7 +35,7 @@ impl SystemRoleMenuService {
             .await?
             .ok_or_else(|| anyhow!("记录未找到"))?;
 
-        let system_role_menu = request.to_active_model(system_role_menu);
+        let system_role_menu = update_request_to_model(&request, system_role_menu);
         system_role_menu.update(&self.db).await?;
         Ok(())
     }
@@ -49,7 +50,7 @@ impl SystemRoleMenuService {
 
     pub async fn get_by_id(&self, id: i64) -> Result<Option<SystemRoleMenuResponse>> {
         let system_role_menu = SystemRoleMenuEntity::find_by_id(id).one(&self.db).await?;
-        Ok(system_role_menu.map(SystemRoleMenuResponse::from))
+        Ok(system_role_menu.map(model_to_response))
     }
 
     pub async fn get_paginated(&self, page: u64, size: u64) -> Result<PaginatedResponse> {
@@ -63,7 +64,7 @@ impl SystemRoleMenuService {
             .fetch_page(page - 1) // SeaORM 页码从 0 开始，所以减 1
             .await?
             .into_iter()
-            .map(SystemRoleMenuResponse::from)
+            .map(model_to_response)
             .collect();
 
         Ok(PaginatedResponse {
@@ -75,8 +76,8 @@ impl SystemRoleMenuService {
         })
     }
 
-    pub async fn get_all(&self) -> Result<Vec<SystemRoleMenuResponse>> {
+    pub async fn list(&self) -> Result<Vec<SystemRoleMenuResponse>> {
         let list = SystemRoleMenuEntity::find().all(&self.db).await?;
-        Ok(list.into_iter().map(SystemRoleMenuResponse::from).collect())
+        Ok(list.into_iter().map(model_to_response).collect())
     }
 }

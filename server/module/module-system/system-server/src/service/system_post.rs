@@ -4,18 +4,19 @@ use tokio::sync::OnceCell;
 use crate::model::system_post::{self, SystemPost, SystemPostEntity, Column};
 use crate::request::system_post::{CreateSystemPostRequest, UpdateSystemPostRequest};
 use crate::response::system_post::SystemPostResponse;
+use crate::convert::{create_request_to_model, update_request_to_model, model_to_response};
 use anyhow::{Result, anyhow};
 use common::base::page::PaginatedResponse;
  
 #[derive(Debug)]
 pub struct SystemPostService {
-    db: DatabaseConnection 
+    db: Arc<DatabaseConnection>
 }
 
 static SYSTEM_POST_SERVICE: OnceCell<Arc<SystemPostService>> = OnceCell::const_new();
  
 impl SystemPostService {
-    pub async fn get_instance(db: DatabaseConnection) -> Arc<SystemPostService> {
+    pub async fn get_instance(db: Arc<DatabaseConnection>) -> Arc<SystemPostService> {
         SYSTEM_POST_SERVICE
             .get_or_init(|| async { Arc::new(SystemPostService { db }) })
             .await
@@ -23,7 +24,7 @@ impl SystemPostService {
     }
 
     pub async fn create(&self, request: CreateSystemPostRequest) -> Result<i64> {
-        let system_post = request.to_active_model();
+        let system_post = create_request_to_model(&request);
         let system_post = system_post.insert(&self.db).await?;
         Ok(system_post.id)
     }
@@ -34,7 +35,7 @@ impl SystemPostService {
             .await?
             .ok_or_else(|| anyhow!("记录未找到"))?;
 
-        let system_post = request.to_active_model(system_post);
+        let system_post = update_request_to_model(&request, system_post);
         system_post.update(&self.db).await?;
         Ok(())
     }
@@ -49,7 +50,7 @@ impl SystemPostService {
 
     pub async fn get_by_id(&self, id: i64) -> Result<Option<SystemPostResponse>> {
         let system_post = SystemPostEntity::find_by_id(id).one(&self.db).await?;
-        Ok(system_post.map(SystemPostResponse::from))
+        Ok(system_post.map(model_to_response))
     }
 
     pub async fn get_paginated(&self, page: u64, size: u64) -> Result<PaginatedResponse> {
@@ -63,7 +64,7 @@ impl SystemPostService {
             .fetch_page(page - 1) // SeaORM 页码从 0 开始，所以减 1
             .await?
             .into_iter()
-            .map(SystemPostResponse::from)
+            .map(model_to_response)
             .collect();
 
         Ok(PaginatedResponse {
@@ -75,8 +76,8 @@ impl SystemPostService {
         })
     }
 
-    pub async fn get_all(&self) -> Result<Vec<SystemPostResponse>> {
+    pub async fn list(&self) -> Result<Vec<SystemPostResponse>> {
         let list = SystemPostEntity::find().all(&self.db).await?;
-        Ok(list.into_iter().map(SystemPostResponse::from).collect())
+        Ok(list.into_iter().map(model_to_response).collect())
     }
 }

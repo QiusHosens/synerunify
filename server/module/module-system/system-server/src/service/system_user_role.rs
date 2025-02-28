@@ -4,18 +4,19 @@ use tokio::sync::OnceCell;
 use crate::model::system_user_role::{self, SystemUserRole, SystemUserRoleEntity, Column};
 use crate::request::system_user_role::{CreateSystemUserRoleRequest, UpdateSystemUserRoleRequest};
 use crate::response::system_user_role::SystemUserRoleResponse;
+use crate::convert::{create_request_to_model, update_request_to_model, model_to_response};
 use anyhow::{Result, anyhow};
 use common::base::page::PaginatedResponse;
  
 #[derive(Debug)]
 pub struct SystemUserRoleService {
-    db: DatabaseConnection 
+    db: Arc<DatabaseConnection>
 }
 
 static SYSTEM_USER_ROLE_SERVICE: OnceCell<Arc<SystemUserRoleService>> = OnceCell::const_new();
  
 impl SystemUserRoleService {
-    pub async fn get_instance(db: DatabaseConnection) -> Arc<SystemUserRoleService> {
+    pub async fn get_instance(db: Arc<DatabaseConnection>) -> Arc<SystemUserRoleService> {
         SYSTEM_USER_ROLE_SERVICE
             .get_or_init(|| async { Arc::new(SystemUserRoleService { db }) })
             .await
@@ -23,7 +24,7 @@ impl SystemUserRoleService {
     }
 
     pub async fn create(&self, request: CreateSystemUserRoleRequest) -> Result<i64> {
-        let system_user_role = request.to_active_model();
+        let system_user_role = create_request_to_model(&request);
         let system_user_role = system_user_role.insert(&self.db).await?;
         Ok(system_user_role.id)
     }
@@ -34,7 +35,7 @@ impl SystemUserRoleService {
             .await?
             .ok_or_else(|| anyhow!("记录未找到"))?;
 
-        let system_user_role = request.to_active_model(system_user_role);
+        let system_user_role = update_request_to_model(&request, system_user_role);
         system_user_role.update(&self.db).await?;
         Ok(())
     }
@@ -49,7 +50,7 @@ impl SystemUserRoleService {
 
     pub async fn get_by_id(&self, id: i64) -> Result<Option<SystemUserRoleResponse>> {
         let system_user_role = SystemUserRoleEntity::find_by_id(id).one(&self.db).await?;
-        Ok(system_user_role.map(SystemUserRoleResponse::from))
+        Ok(system_user_role.map(model_to_response))
     }
 
     pub async fn get_paginated(&self, page: u64, size: u64) -> Result<PaginatedResponse> {
@@ -63,7 +64,7 @@ impl SystemUserRoleService {
             .fetch_page(page - 1) // SeaORM 页码从 0 开始，所以减 1
             .await?
             .into_iter()
-            .map(SystemUserRoleResponse::from)
+            .map(model_to_response)
             .collect();
 
         Ok(PaginatedResponse {
@@ -75,8 +76,8 @@ impl SystemUserRoleService {
         })
     }
 
-    pub async fn get_all(&self) -> Result<Vec<SystemUserRoleResponse>> {
+    pub async fn list(&self) -> Result<Vec<SystemUserRoleResponse>> {
         let list = SystemUserRoleEntity::find().all(&self.db).await?;
-        Ok(list.into_iter().map(SystemUserRoleResponse::from).collect())
+        Ok(list.into_iter().map(model_to_response).collect())
     }
 }

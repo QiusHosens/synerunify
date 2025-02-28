@@ -1,7 +1,7 @@
 use serde::{Serialize, Deserialize};
-use crate::model::system_tenant_package::{self, SystemTenantPackage, SystemTenantPackageActiveModel};
+use common::base::page::PaginatedRequest;
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct CreateSystemTenantPackageRequest {
     
     pub name: String, // 套餐名
@@ -14,19 +14,7 @@ pub struct CreateSystemTenantPackageRequest {
     
 }
 
-impl CreateSystemTenantPackageRequest {
-    pub fn to_active_model(&self) -> SystemTenantPackageActiveModel {
-        SystemTenantPackageActiveModel {
-            name: Set(self.name.clone()),
-            status: Set(self.status.clone()),
-            remark: Set(self.remark.clone()),
-            menu_ids: Set(self.menu_ids.clone()),
-            ..Default::default()
-        }
-    }
-}
-
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct UpdateSystemTenantPackageRequest {
     
     pub id: i64, // 套餐编号
@@ -41,21 +29,9 @@ pub struct UpdateSystemTenantPackageRequest {
     
 }
 
-impl UpdateSystemTenantPackageRequest {
-    pub fn to_active_model(&self, existing: SystemTenantPackage) -> SystemTenantPackageActiveModel {
-        let mut active_model: SystemTenantPackageActiveModel = existing.into();
-        if let Some(name) = &self.name {
-            active_model.name = Set(name.clone());
-        }
-        if let Some(status) = &self.status {
-            active_model.status = Set(status.clone());
-        }
-        if let Some(remark) = &self.remark {
-            active_model.remark = Set(remark.clone());
-        }
-        if let Some(menu_ids) = &self.menu_ids {
-            active_model.menu_ids = Set(menu_ids.clone());
-        }
-        active_model
-    }
+#[derive(Serialize, Deserialize, Debug)]
+pub struct PaginatedKeywordRequest {
+    pub page: u64,
+    pub size: u64,
+    pub keyword: Option<String>,
 }

@@ -4,18 +4,19 @@ use tokio::sync::OnceCell;
 use crate::model::system_data_scope_rule::{self, SystemDataScopeRule, SystemDataScopeRuleEntity, Column};
 use crate::request::system_data_scope_rule::{CreateSystemDataScopeRuleRequest, UpdateSystemDataScopeRuleRequest};
 use crate::response::system_data_scope_rule::SystemDataScopeRuleResponse;
+use crate::convert::{create_request_to_model, update_request_to_model, model_to_response};
 use anyhow::{Result, anyhow};
 use common::base::page::PaginatedResponse;
  
 #[derive(Debug)]
 pub struct SystemDataScopeRuleService {
-    db: DatabaseConnection 
+    db: Arc<DatabaseConnection>
 }
 
 static SYSTEM_DATA_SCOPE_RULE_SERVICE: OnceCell<Arc<SystemDataScopeRuleService>> = OnceCell::const_new();
  
 impl SystemDataScopeRuleService {
-    pub async fn get_instance(db: DatabaseConnection) -> Arc<SystemDataScopeRuleService> {
+    pub async fn get_instance(db: Arc<DatabaseConnection>) -> Arc<SystemDataScopeRuleService> {
         SYSTEM_DATA_SCOPE_RULE_SERVICE
             .get_or_init(|| async { Arc::new(SystemDataScopeRuleService { db }) })
             .await
@@ -23,7 +24,7 @@ impl SystemDataScopeRuleService {
     }
 
     pub async fn create(&self, request: CreateSystemDataScopeRuleRequest) -> Result<i64> {
-        let system_data_scope_rule = request.to_active_model();
+        let system_data_scope_rule = create_request_to_model(&request);
         let system_data_scope_rule = system_data_scope_rule.insert(&self.db).await?;
         Ok(system_data_scope_rule.id)
     }
@@ -34,7 +35,7 @@ impl SystemDataScopeRuleService {
             .await?
             .ok_or_else(|| anyhow!("记录未找到"))?;
 
-        let system_data_scope_rule = request.to_active_model(system_data_scope_rule);
+        let system_data_scope_rule = update_request_to_model(&request, system_data_scope_rule);
         system_data_scope_rule.update(&self.db).await?;
         Ok(())
     }
@@ -49,7 +50,7 @@ impl SystemDataScopeRuleService {
 
     pub async fn get_by_id(&self, id: i64) -> Result<Option<SystemDataScopeRuleResponse>> {
         let system_data_scope_rule = SystemDataScopeRuleEntity::find_by_id(id).one(&self.db).await?;
-        Ok(system_data_scope_rule.map(SystemDataScopeRuleResponse::from))
+        Ok(system_data_scope_rule.map(model_to_response))
     }
 
     pub async fn get_paginated(&self, page: u64, size: u64) -> Result<PaginatedResponse> {
@@ -63,7 +64,7 @@ impl SystemDataScopeRuleService {
             .fetch_page(page - 1) // SeaORM 页码从 0 开始，所以减 1
             .await?
             .into_iter()
-            .map(SystemDataScopeRuleResponse::from)
+            .map(model_to_response)
             .collect();
 
         Ok(PaginatedResponse {
@@ -75,8 +76,8 @@ impl SystemDataScopeRuleService {
         })
     }
 
-    pub async fn get_all(&self) -> Result<Vec<SystemDataScopeRuleResponse>> {
+    pub async fn list(&self) -> Result<Vec<SystemDataScopeRuleResponse>> {
         let list = SystemDataScopeRuleEntity::find().all(&self.db).await?;
-        Ok(list.into_iter().map(SystemDataScopeRuleResponse::from).collect())
+        Ok(list.into_iter().map(model_to_response).collect())
     }
 }

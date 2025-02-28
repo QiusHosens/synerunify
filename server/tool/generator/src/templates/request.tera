@@ -1,39 +1,23 @@
 use serde::{Serialize, Deserialize};
-use crate::model::{{ table_name }}::{self, {{ model_name }}, {{ model_name }}ActiveModel};
+use common::base::page::PaginatedRequest;
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct Create{{ request_model_name }} {
     {% for column in columns_request_create %}
     pub {{ column.column_name }}: {% if column.nullable  %}Option<{{ column.rust_type  }}>{% else %}{{ column.rust_type  }}{% endif %}, // {{ column.column_comment  }}
     {% endfor %}
 }
 
-impl Create{{ request_model_name }} {
-    pub fn to_active_model(&self) -> {{ model_name }}ActiveModel {
-        {{ model_name }}ActiveModel {
-            {% for column in columns_request_create -%}
-            {{ column.column_name }}: Set(self.{{ column.column_name }}.clone()),
-            {% endfor -%}
-            ..Default::default()
-        }
-    }
-}
-
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct Update{{ request_model_name }} {
     {% for column in columns_request_update %}
     pub {{ column.column_name }}: {% if column.nullable  %}Option<{{ column.rust_type  }}>{% else %}{{ column.rust_type  }}{% endif %}, // {{ column.column_comment  }}
     {% endfor %}
 }
 
-impl Update{{ request_model_name }} {
-    pub fn to_active_model(&self, existing: {{ model_name }}) -> {{ model_name }}ActiveModel {
-        let mut active_model: {{ model_name }}ActiveModel = existing.into();
-        {% for column in columns_request_create -%}
-        if let Some({{ column.column_name }}) = &self.{{ column.column_name }} {
-            active_model.{{ column.column_name }} = Set({{ column.column_name }}.clone());
-        }
-        {% endfor -%}
-        active_model
-    }
+#[derive(Serialize, Deserialize, Debug)]
+pub struct PaginatedKeywordRequest {
+    pub page: u64,
+    pub size: u64,
+    pub keyword: Option<String>,
 }

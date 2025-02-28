@@ -1,0 +1,14 @@
+pub mod system_data_scope_rule;
+pub mod system_department;
+pub mod system_dict;
+pub mod system_menu;
+pub mod system_notice;
+pub mod system_post;
+pub mod system_role;
+pub mod system_role_menu;
+pub mod system_role_menu_data_scope;
+pub mod system_tenant;
+pub mod system_tenant_package;
+pub mod system_user;
+pub mod system_user_post;
+pub mod system_user_role;

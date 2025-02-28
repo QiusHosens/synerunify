@@ -4,18 +4,19 @@ use tokio::sync::OnceCell;
 use crate::model::system_department::{self, SystemDepartment, SystemDepartmentEntity, Column};
 use crate::request::system_department::{CreateSystemDepartmentRequest, UpdateSystemDepartmentRequest};
 use crate::response::system_department::SystemDepartmentResponse;
+use crate::convert::{create_request_to_model, update_request_to_model, model_to_response};
 use anyhow::{Result, anyhow};
 use common::base::page::PaginatedResponse;
  
 #[derive(Debug)]
 pub struct SystemDepartmentService {
-    db: DatabaseConnection 
+    db: Arc<DatabaseConnection>
 }
 
 static SYSTEM_DEPARTMENT_SERVICE: OnceCell<Arc<SystemDepartmentService>> = OnceCell::const_new();
  
 impl SystemDepartmentService {
-    pub async fn get_instance(db: DatabaseConnection) -> Arc<SystemDepartmentService> {
+    pub async fn get_instance(db: Arc<DatabaseConnection>) -> Arc<SystemDepartmentService> {
         SYSTEM_DEPARTMENT_SERVICE
             .get_or_init(|| async { Arc::new(SystemDepartmentService { db }) })
             .await
@@ -23,7 +24,7 @@ impl SystemDepartmentService {
     }
 
     pub async fn create(&self, request: CreateSystemDepartmentRequest) -> Result<i64> {
-        let system_department = request.to_active_model();
+        let system_department = create_request_to_model(&request);
         let system_department = system_department.insert(&self.db).await?;
         Ok(system_department.id)
     }
@@ -34,7 +35,7 @@ impl SystemDepartmentService {
             .await?
             .ok_or_else(|| anyhow!("记录未找到"))?;
 
-        let system_department = request.to_active_model(system_department);
+        let system_department = update_request_to_model(&request, system_department);
         system_department.update(&self.db).await?;
         Ok(())
     }
@@ -49,7 +50,7 @@ impl SystemDepartmentService {
 
     pub async fn get_by_id(&self, id: i64) -> Result<Option<SystemDepartmentResponse>> {
         let system_department = SystemDepartmentEntity::find_by_id(id).one(&self.db).await?;
-        Ok(system_department.map(SystemDepartmentResponse::from))
+        Ok(system_department.map(model_to_response))
     }
 
     pub async fn get_paginated(&self, page: u64, size: u64) -> Result<PaginatedResponse> {
@@ -63,7 +64,7 @@ impl SystemDepartmentService {
             .fetch_page(page - 1) // SeaORM 页码从 0 开始，所以减 1
             .await?
             .into_iter()
-            .map(SystemDepartmentResponse::from)
+            .map(model_to_response)
             .collect();
 
         Ok(PaginatedResponse {
@@ -75,8 +76,8 @@ impl SystemDepartmentService {
         })
     }
 
-    pub async fn get_all(&self) -> Result<Vec<SystemDepartmentResponse>> {
+    pub async fn list(&self) -> Result<Vec<SystemDepartmentResponse>> {
         let list = SystemDepartmentEntity::find().all(&self.db).await?;
-        Ok(list.into_iter().map(SystemDepartmentResponse::from).collect())
+        Ok(list.into_iter().map(model_to_response).collect())
     }
 }

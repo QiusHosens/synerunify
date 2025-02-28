@@ -1,7 +1,6 @@
 use serde::{Serialize, Deserialize};
 use serde_with::{serde_as, DisplayFromStr};
 use sea_orm::sea_query::types::NaiveDateTime;
-use crate::model::system_department::SystemDepartment;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SystemDepartmentResponse {
@@ -36,25 +35,4 @@ pub struct SystemDepartmentResponse {
     #[serde(with = "serde_with::chrono::naive_datetime")]
     pub update_time: NaiveDateTime, // 更新时间
     
-}
-
-impl From<SystemDepartment> for SystemDepartmentResponse {
-    fn from(model: SystemDepartment) -> Self {
-        Self {
-            id: model.id,
-            code: model.code,
-            name: model.name,
-            parent_id: model.parent_id,
-            sort: model.sort,
-            leader_user_id: model.leader_user_id,
-            phone: model.phone,
-            email: model.email,
-            status: model.status,
-            creator: model.creator,
-            create_time: model.create_time,
-            updater: model.updater,
-            update_time: model.update_time,
-            
-        }
-    }
 }

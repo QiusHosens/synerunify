@@ -4,18 +4,19 @@ use tokio::sync::OnceCell;
 use crate::model::system_notice::{self, SystemNotice, SystemNoticeEntity, Column};
 use crate::request::system_notice::{CreateSystemNoticeRequest, UpdateSystemNoticeRequest};
 use crate::response::system_notice::SystemNoticeResponse;
+use crate::convert::{create_request_to_model, update_request_to_model, model_to_response};
 use anyhow::{Result, anyhow};
 use common::base::page::PaginatedResponse;
  
 #[derive(Debug)]
 pub struct SystemNoticeService {
-    db: DatabaseConnection 
+    db: Arc<DatabaseConnection>
 }
 
 static SYSTEM_NOTICE_SERVICE: OnceCell<Arc<SystemNoticeService>> = OnceCell::const_new();
  
 impl SystemNoticeService {
-    pub async fn get_instance(db: DatabaseConnection) -> Arc<SystemNoticeService> {
+    pub async fn get_instance(db: Arc<DatabaseConnection>) -> Arc<SystemNoticeService> {
         SYSTEM_NOTICE_SERVICE
             .get_or_init(|| async { Arc::new(SystemNoticeService { db }) })
             .await
@@ -23,7 +24,7 @@ impl SystemNoticeService {
     }
 
     pub async fn create(&self, request: CreateSystemNoticeRequest) -> Result<i64> {
-        let system_notice = request.to_active_model();
+        let system_notice = create_request_to_model(&request);
         let system_notice = system_notice.insert(&self.db).await?;
         Ok(system_notice.id)
     }
@@ -34,7 +35,7 @@ impl SystemNoticeService {
             .await?
             .ok_or_else(|| anyhow!("记录未找到"))?;
 
-        let system_notice = request.to_active_model(system_notice);
+        let system_notice = update_request_to_model(&request, system_notice);
         system_notice.update(&self.db).await?;
         Ok(())
     }
@@ -49,7 +50,7 @@ impl SystemNoticeService {
 
     pub async fn get_by_id(&self, id: i64) -> Result<Option<SystemNoticeResponse>> {
         let system_notice = SystemNoticeEntity::find_by_id(id).one(&self.db).await?;
-        Ok(system_notice.map(SystemNoticeResponse::from))
+        Ok(system_notice.map(model_to_response))
     }
 
     pub async fn get_paginated(&self, page: u64, size: u64) -> Result<PaginatedResponse> {
@@ -63,7 +64,7 @@ impl SystemNoticeService {
             .fetch_page(page - 1) // SeaORM 页码从 0 开始，所以减 1
             .await?
             .into_iter()
-            .map(SystemNoticeResponse::from)
+            .map(model_to_response)
             .collect();
 
         Ok(PaginatedResponse {
@@ -75,8 +76,8 @@ impl SystemNoticeService {
         })
     }
 
-    pub async fn get_all(&self) -> Result<Vec<SystemNoticeResponse>> {
+    pub async fn list(&self) -> Result<Vec<SystemNoticeResponse>> {
         let list = SystemNoticeEntity::find().all(&self.db).await?;
-        Ok(list.into_iter().map(SystemNoticeResponse::from).collect())
+        Ok(list.into_iter().map(model_to_response).collect())
     }
 }

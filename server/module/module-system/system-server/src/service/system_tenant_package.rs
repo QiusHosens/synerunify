@@ -4,18 +4,19 @@ use tokio::sync::OnceCell;
 use crate::model::system_tenant_package::{self, SystemTenantPackage, SystemTenantPackageEntity, Column};
 use crate::request::system_tenant_package::{CreateSystemTenantPackageRequest, UpdateSystemTenantPackageRequest};
 use crate::response::system_tenant_package::SystemTenantPackageResponse;
+use crate::convert::{create_request_to_model, update_request_to_model, model_to_response};
 use anyhow::{Result, anyhow};
 use common::base::page::PaginatedResponse;
  
 #[derive(Debug)]
 pub struct SystemTenantPackageService {
-    db: DatabaseConnection 
+    db: Arc<DatabaseConnection>
 }
 
 static SYSTEM_TENANT_PACKAGE_SERVICE: OnceCell<Arc<SystemTenantPackageService>> = OnceCell::const_new();
  
 impl SystemTenantPackageService {
-    pub async fn get_instance(db: DatabaseConnection) -> Arc<SystemTenantPackageService> {
+    pub async fn get_instance(db: Arc<DatabaseConnection>) -> Arc<SystemTenantPackageService> {
         SYSTEM_TENANT_PACKAGE_SERVICE
             .get_or_init(|| async { Arc::new(SystemTenantPackageService { db }) })
             .await
@@ -23,7 +24,7 @@ impl SystemTenantPackageService {
     }
 
     pub async fn create(&self, request: CreateSystemTenantPackageRequest) -> Result<i64> {
-        let system_tenant_package = request.to_active_model();
+        let system_tenant_package = create_request_to_model(&request);
         let system_tenant_package = system_tenant_package.insert(&self.db).await?;
         Ok(system_tenant_package.id)
     }
@@ -34,7 +35,7 @@ impl SystemTenantPackageService {
             .await?
             .ok_or_else(|| anyhow!("记录未找到"))?;
 
-        let system_tenant_package = request.to_active_model(system_tenant_package);
+        let system_tenant_package = update_request_to_model(&request, system_tenant_package);
         system_tenant_package.update(&self.db).await?;
         Ok(())
     }
@@ -49,7 +50,7 @@ impl SystemTenantPackageService {
 
     pub async fn get_by_id(&self, id: i64) -> Result<Option<SystemTenantPackageResponse>> {
         let system_tenant_package = SystemTenantPackageEntity::find_by_id(id).one(&self.db).await?;
-        Ok(system_tenant_package.map(SystemTenantPackageResponse::from))
+        Ok(system_tenant_package.map(model_to_response))
     }
 
     pub async fn get_paginated(&self, page: u64, size: u64) -> Result<PaginatedResponse> {
@@ -63,7 +64,7 @@ impl SystemTenantPackageService {
             .fetch_page(page - 1) // SeaORM 页码从 0 开始，所以减 1
             .await?
             .into_iter()
-            .map(SystemTenantPackageResponse::from)
+            .map(model_to_response)
             .collect();
 
         Ok(PaginatedResponse {
@@ -75,8 +76,8 @@ impl SystemTenantPackageService {
         })
     }
 
-    pub async fn get_all(&self) -> Result<Vec<SystemTenantPackageResponse>> {
+    pub async fn list(&self) -> Result<Vec<SystemTenantPackageResponse>> {
         let list = SystemTenantPackageEntity::find().all(&self.db).await?;
-        Ok(list.into_iter().map(SystemTenantPackageResponse::from).collect())
+        Ok(list.into_iter().map(model_to_response).collect())
     }
 }

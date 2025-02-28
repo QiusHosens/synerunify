@@ -106,8 +106,8 @@ fn main() {
     let template_base_path = format!("{}/src", base_path);
     let code_base_path = format!("{}/code", base_path);
     // 初始化数据库连接
-    // let url = "mysql://synerunify:synerunify@192.168.0.49:30010/synerunify";
-    let url = "mysql://synerunify:synerunify@192.168.1.18:30010/synerunify";
+    let url = "mysql://synerunify:synerunify@192.168.0.49:30010/synerunify";
+    // let url = "mysql://synerunify:synerunify@192.168.1.18:30010/synerunify";
     let pool = Pool::new(url).unwrap();
     let mut conn = pool.get_conn().unwrap();
 
@@ -121,7 +121,9 @@ fn main() {
     tera.add_template_file(format!("{}/templates/model.tera", template_base_path),  Some("model")).unwrap();
     tera.add_template_file(format!("{}/templates/request.tera", template_base_path),  Some("request")).unwrap();
     tera.add_template_file(format!("{}/templates/response.tera", template_base_path),  Some("response")).unwrap();
+    tera.add_template_file(format!("{}/templates/convert.tera", template_base_path),  Some("convert")).unwrap();
 
+    tera.add_template_file(format!("{}/templates/api.tera", template_base_path),  Some("api")).unwrap();
     tera.add_template_file(format!("{}/templates/service.tera", template_base_path),  Some("service")).unwrap();
 
     // 遍历表
@@ -194,6 +196,16 @@ fn main() {
         let response_code = tera.render("response",  &context).unwrap();
         let file_path = format!("{}/response/{}.rs", code_base_path, table);
         write_file(&file_path, &response_code).unwrap();
+
+        // convert
+        let convert_code = tera.render("convert",  &context).unwrap();
+        let file_path = format!("{}/convert/{}.rs", code_base_path, table);
+        write_file(&file_path, &convert_code).unwrap();
+
+        // api
+        let api_code = tera.render("api",  &context).unwrap();
+        let file_path = format!("{}/api/{}.rs", code_base_path, table);
+        write_file(&file_path, &api_code).unwrap();
 
         // service
         let service_code = tera.render("service",  &context).unwrap();

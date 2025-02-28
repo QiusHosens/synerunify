@@ -4,18 +4,19 @@ use tokio::sync::OnceCell;
 use crate::model::system_user::{self, SystemUser, SystemUserEntity, Column};
 use crate::request::system_user::{CreateSystemUserRequest, UpdateSystemUserRequest};
 use crate::response::system_user::SystemUserResponse;
+use crate::convert::{create_request_to_model, update_request_to_model, model_to_response};
 use anyhow::{Result, anyhow};
 use common::base::page::PaginatedResponse;
  
 #[derive(Debug)]
 pub struct SystemUserService {
-    db: DatabaseConnection 
+    db: Arc<DatabaseConnection>
 }
 
 static SYSTEM_USER_SERVICE: OnceCell<Arc<SystemUserService>> = OnceCell::const_new();
  
 impl SystemUserService {
-    pub async fn get_instance(db: DatabaseConnection) -> Arc<SystemUserService> {
+    pub async fn get_instance(db: Arc<DatabaseConnection>) -> Arc<SystemUserService> {
         SYSTEM_USER_SERVICE
             .get_or_init(|| async { Arc::new(SystemUserService { db }) })
             .await
@@ -23,7 +24,7 @@ impl SystemUserService {
     }
 
     pub async fn create(&self, request: CreateSystemUserRequest) -> Result<i64> {
-        let system_user = request.to_active_model();
+        let system_user = create_request_to_model(&request);
         let system_user = system_user.insert(&self.db).await?;
         Ok(system_user.id)
     }
@@ -34,7 +35,7 @@ impl SystemUserService {
             .await?
             .ok_or_else(|| anyhow!("记录未找到"))?;
 
-        let system_user = request.to_active_model(system_user);
+        let system_user = update_request_to_model(&request, system_user);
         system_user.update(&self.db).await?;
         Ok(())
     }
@@ -49,7 +50,7 @@ impl SystemUserService {
 
     pub async fn get_by_id(&self, id: i64) -> Result<Option<SystemUserResponse>> {
         let system_user = SystemUserEntity::find_by_id(id).one(&self.db).await?;
-        Ok(system_user.map(SystemUserResponse::from))
+        Ok(system_user.map(model_to_response))
     }
 
     pub async fn get_paginated(&self, page: u64, size: u64) -> Result<PaginatedResponse> {
@@ -63,7 +64,7 @@ impl SystemUserService {
             .fetch_page(page - 1) // SeaORM 页码从 0 开始，所以减 1
             .await?
             .into_iter()
-            .map(SystemUserResponse::from)
+            .map(model_to_response)
             .collect();
 
         Ok(PaginatedResponse {
@@ -75,8 +76,8 @@ impl SystemUserService {
         })
     }
 
-    pub async fn get_all(&self) -> Result<Vec<SystemUserResponse>> {
+    pub async fn list(&self) -> Result<Vec<SystemUserResponse>> {
         let list = SystemUserEntity::find().all(&self.db).await?;
-        Ok(list.into_iter().map(SystemUserResponse::from).collect())
+        Ok(list.into_iter().map(model_to_response).collect())
     }
 }

@@ -1,6 +1,12 @@
 use serde::{Serialize, Deserialize};
 
 #[derive(Serialize, Deserialize, Debug)]
+pub struct PaginatedRequest {
+    pub page: u64,
+    pub size: u64,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
 pub struct PaginatedResponse<T> {
     pub list: Vec<T>,
     pub total_pages: u64,
