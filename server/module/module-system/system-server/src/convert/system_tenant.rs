@@ -50,7 +50,7 @@ pub fn update_request_to_model(request: &UpdateSystemTenantRequest, existing: Sy
     active_model
 }
 
-fn model_to_response(model: SystemTenant) -> SystemTenantResponse {
+pub fn model_to_response(model: SystemTenant) -> SystemTenantResponse {
     SystemTenantResponse {
         id: model.id,
         name: model.name,

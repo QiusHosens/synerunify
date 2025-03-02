@@ -22,7 +22,7 @@ pub fn update_request_to_model(request: &UpdateSystemUserPostRequest, existing: 
     active_model
 }
 
-fn model_to_response(model: SystemUserPost) -> SystemUserPostResponse {
+pub fn model_to_response(model: SystemUserPost) -> SystemUserPostResponse {
     SystemUserPostResponse {
         id: model.id,
         user_id: model.user_id,

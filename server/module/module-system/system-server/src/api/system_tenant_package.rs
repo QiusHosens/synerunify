@@ -1,14 +1,12 @@
 use std::sync::Arc;
+use sea_orm::DatabaseConnection;
 use axum::{routing::{get, post}, Router, extract::{State, Path, Json, Query}, response::IntoResponse};
-use common::config::config::Config;
 use common::base::page::PaginatedResponse;
-use common::config::database::get_database_instance;
 use crate::service::system_tenant_package::SystemTenantPackageService;
 use system_model::request::system_tenant_package::{CreateSystemTenantPackageRequest, UpdateSystemTenantPackageRequest, PaginatedKeywordRequest};
 use system_model::response::system_tenant_package::SystemTenantPackageResponse;
 
-pub async fn system_tenant_package_route(config: Config) -> Router {
-    let db = get_database_instance(&config).await.expect("Failed to get database connection");
+pub async fn system_tenant_package_route(db: Arc<DatabaseConnection>) -> Router {
     let system_tenant_package_service = SystemTenantPackageService::get_instance(db).await;
 
     Router::new()

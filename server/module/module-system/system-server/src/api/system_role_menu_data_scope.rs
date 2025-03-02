@@ -1,14 +1,12 @@
 use std::sync::Arc;
+use sea_orm::DatabaseConnection;
 use axum::{routing::{get, post}, Router, extract::{State, Path, Json, Query}, response::IntoResponse};
-use common::config::config::Config;
 use common::base::page::PaginatedResponse;
-use common::config::database::get_database_instance;
 use crate::service::system_role_menu_data_scope::SystemRoleMenuDataScopeService;
 use system_model::request::system_role_menu_data_scope::{CreateSystemRoleMenuDataScopeRequest, UpdateSystemRoleMenuDataScopeRequest, PaginatedKeywordRequest};
 use system_model::response::system_role_menu_data_scope::SystemRoleMenuDataScopeResponse;
 
-pub async fn system_role_menu_data_scope_route(config: Config) -> Router {
-    let db = get_database_instance(&config).await.expect("Failed to get database connection");
+pub async fn system_role_menu_data_scope_route(db: Arc<DatabaseConnection>) -> Router {
     let system_role_menu_data_scope_service = SystemRoleMenuDataScopeService::get_instance(db).await;
 
     Router::new()

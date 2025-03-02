@@ -46,7 +46,7 @@ pub fn update_request_to_model(request: &UpdateSystemRoleRequest, existing: Syst
     active_model
 }
 
-fn model_to_response(model: SystemRole) -> SystemRoleResponse {
+pub fn model_to_response(model: SystemRole) -> SystemRoleResponse {
     SystemRoleResponse {
         id: model.id,
         r#type: model.r#type,

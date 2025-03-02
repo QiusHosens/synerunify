@@ -1,14 +1,12 @@
 use std::sync::Arc;
+use sea_orm::DatabaseConnection;
 use axum::{routing::{get, post}, Router, extract::{State, Path, Json, Query}, response::IntoResponse};
-use common::config::config::Config;
 use common::base::page::PaginatedResponse;
-use common::config::database::get_database_instance;
 use crate::service::system_dict::SystemDictService;
 use system_model::request::system_dict::{CreateSystemDictRequest, UpdateSystemDictRequest, PaginatedKeywordRequest};
 use system_model::response::system_dict::SystemDictResponse;
 
-pub async fn system_dict_route(config: Config) -> Router {
-    let db = get_database_instance(&config).await.expect("Failed to get database connection");
+pub async fn system_dict_route(db: Arc<DatabaseConnection>) -> Router {
     let system_dict_service = SystemDictService::get_instance(db).await;
 
     Router::new()

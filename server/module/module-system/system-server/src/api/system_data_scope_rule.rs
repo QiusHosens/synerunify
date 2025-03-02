@@ -1,21 +1,19 @@
 use std::sync::Arc;
+use sea_orm::DatabaseConnection;
 use axum::{routing::{get, post}, Router, extract::{State, Path, Json, Query}, response::IntoResponse};
-use common::config::config::Config;
 use common::base::page::PaginatedResponse;
-use common::config::database::get_database_instance;
 use crate::service::system_data_scope_rule::SystemDataScopeRuleService;
 use system_model::request::system_data_scope_rule::{CreateSystemDataScopeRuleRequest, UpdateSystemDataScopeRuleRequest, PaginatedKeywordRequest};
 use system_model::response::system_data_scope_rule::SystemDataScopeRuleResponse;
 
-pub async fn system_data_scope_rule_route(config: Config) -> Router {
-    let db = get_database_instance(&config).await.expect("Failed to get database connection");
+pub async fn system_data_scope_rule_route(db: Arc<DatabaseConnection>) -> Router {
     let system_data_scope_rule_service = SystemDataScopeRuleService::get_instance(db).await;
 
     Router::new()
         .route("/system_data_scope_rule/create", post(create))
         .route("/system_data_scope_rule/update", post(update))
-        .route("/system_data_scope_rule/delete", post(delete))
-        .route("/system_data_scope_rule/get/:id", get(get_by_id))
+        .route("/system_data_scope_rule/delete/{id}", post(delete))
+        .route("/system_data_scope_rule/get/{id}", get(get_by_id))
         .route("/system_data_scope_rule/list", get(list))
         .route("/system_data_scope_rule/page", get(page))
         .with_state(AppState { system_data_scope_rule_service })

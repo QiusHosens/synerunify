@@ -1,4 +1,4 @@
-#[derive(Clone, Debug, PartialEq, DeriveEntityModel, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct BaseModel {
     pub id: i64,
 }

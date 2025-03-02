@@ -4,6 +4,10 @@ version = { workspace = true }
 edition = { workspace = true }
 rust-version = { workspace = true }
 
+[lints.rust]
+unused_imports = "allow"
+warnings = "allow"
+
 [dependencies]
 serde = { version = "1.0.218", default-features = false, features = ["derive"] }
 serde_with = { version = "3.12.0" }
@@ -12,3 +16,5 @@ jsonwebtoken = { version = "9.3.1" }  # 添加 JWT 依赖
 chrono = { version = "0.4.39" }       # 用于处理时间
 anyhow = "1.0.96" # 返回
 dotenvy = "0.15.7" # 读取配置文件
+tokio = { version = "1.43.0", features = ["full"] }
+lazy_static = "1.5.0"

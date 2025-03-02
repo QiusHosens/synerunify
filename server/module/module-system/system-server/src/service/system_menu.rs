@@ -1,7 +1,7 @@
 use std::sync::Arc;
-use sea_orm::{DatabaseConnection, EntityTrait, ActiveModelTrait};
+use sea_orm::{DatabaseConnection, EntityTrait, Set, ActiveModelTrait, QueryFilter, ColumnTrait, PaginatorTrait, QueryOrder};
 use tokio::sync::OnceCell;
-use crate::model::system_menu::{ActiveModel as SystemMenuEntity, Column};
+use crate::model::system_menu::{Entity as SystemMenuEntity, Column};
 use system_model::request::system_menu::{CreateSystemMenuRequest, UpdateSystemMenuRequest, PaginatedKeywordRequest};
 use system_model::response::system_menu::SystemMenuResponse;
 use crate::convert::system_menu::{create_request_to_model, update_request_to_model, model_to_response};

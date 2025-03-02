@@ -50,7 +50,7 @@ pub fn update_request_to_model(request: &UpdateSystemDictRequest, existing: Syst
     active_model
 }
 
-fn model_to_response(model: SystemDict) -> SystemDictResponse {
+pub fn model_to_response(model: SystemDict) -> SystemDictResponse {
     SystemDictResponse {
         id: model.id,
         category: model.category,

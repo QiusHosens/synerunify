@@ -30,7 +30,7 @@ pub fn update_request_to_model(request: &UpdateSystemTenantPackageRequest, exist
     active_model
 }
 
-fn model_to_response(model: SystemTenantPackage) -> SystemTenantPackageResponse {
+pub fn model_to_response(model: SystemTenantPackage) -> SystemTenantPackageResponse {
     SystemTenantPackageResponse {
         id: model.id,
         name: model.name,

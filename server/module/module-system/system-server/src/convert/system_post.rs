@@ -34,7 +34,7 @@ pub fn update_request_to_model(request: &UpdateSystemPostRequest, existing: Syst
     active_model
 }
 
-fn model_to_response(model: SystemPost) -> SystemPostResponse {
+pub fn model_to_response(model: SystemPost) -> SystemPostResponse {
     SystemPostResponse {
         id: model.id,
         code: model.code,

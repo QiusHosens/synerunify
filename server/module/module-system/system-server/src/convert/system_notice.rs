@@ -30,7 +30,7 @@ pub fn update_request_to_model(request: &UpdateSystemNoticeRequest, existing: Sy
     active_model
 }
 
-fn model_to_response(model: SystemNotice) -> SystemNoticeResponse {
+pub fn model_to_response(model: SystemNotice) -> SystemNoticeResponse {
     SystemNoticeResponse {
         id: model.id,
         title: model.title,

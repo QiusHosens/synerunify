@@ -22,7 +22,7 @@ pub fn update_request_to_model(request: &UpdateSystemUserRoleRequest, existing: 
     active_model
 }
 
-fn model_to_response(model: SystemUserRole) -> SystemUserRoleResponse {
+pub fn model_to_response(model: SystemUserRole) -> SystemUserRoleResponse {
     SystemUserRoleResponse {
         id: model.id,
         user_id: model.user_id,

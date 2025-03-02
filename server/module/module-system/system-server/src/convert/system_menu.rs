@@ -66,7 +66,7 @@ pub fn update_request_to_model(request: &UpdateSystemMenuRequest, existing: Syst
     active_model
 }
 
-fn model_to_response(model: SystemMenu) -> SystemMenuResponse {
+pub fn model_to_response(model: SystemMenu) -> SystemMenuResponse {
     SystemMenuResponse {
         id: model.id,
         name: model.name,

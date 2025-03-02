@@ -70,7 +70,7 @@ pub fn update_request_to_model(request: &UpdateSystemUserRequest, existing: Syst
     active_model
 }
 
-fn model_to_response(model: SystemUser) -> SystemUserResponse {
+pub fn model_to_response(model: SystemUser) -> SystemUserResponse {
     SystemUserResponse {
         id: model.id,
         username: model.username,

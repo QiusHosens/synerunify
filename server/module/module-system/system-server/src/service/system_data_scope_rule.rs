@@ -1,7 +1,7 @@
 use std::sync::Arc;
-use sea_orm::{DatabaseConnection, EntityTrait, ActiveModelTrait};
+use sea_orm::{DatabaseConnection, EntityTrait, Set, ActiveModelTrait, QueryFilter, ColumnTrait, PaginatorTrait, QueryOrder};
 use tokio::sync::OnceCell;
-use crate::model::system_data_scope_rule::{ActiveModel as SystemDataScopeRuleEntity, Column};
+use crate::model::system_data_scope_rule::{Entity as SystemDataScopeRuleEntity, Column};
 use system_model::request::system_data_scope_rule::{CreateSystemDataScopeRuleRequest, UpdateSystemDataScopeRuleRequest, PaginatedKeywordRequest};
 use system_model::response::system_data_scope_rule::SystemDataScopeRuleResponse;
 use crate::convert::system_data_scope_rule::{create_request_to_model, update_request_to_model, model_to_response};

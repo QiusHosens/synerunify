@@ -22,7 +22,7 @@ pub fn update_request_to_model(request: &UpdateSystemRoleMenuRequest, existing: 
     active_model
 }
 
-fn model_to_response(model: SystemRoleMenu) -> SystemRoleMenuResponse {
+pub fn model_to_response(model: SystemRoleMenu) -> SystemRoleMenuResponse {
     SystemRoleMenuResponse {
         id: model.id,
         role_id: model.role_id,

@@ -34,7 +34,7 @@ pub fn update_request_to_model(request: &UpdateSystemDataScopeRuleRequest, exist
     active_model
 }
 
-fn model_to_response(model: SystemDataScopeRule) -> SystemDataScopeRuleResponse {
+pub fn model_to_response(model: SystemDataScopeRule) -> SystemDataScopeRuleResponse {
     SystemDataScopeRuleResponse {
         id: model.id,
         r#type: model.r#type,

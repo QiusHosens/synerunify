@@ -1,14 +1,12 @@
 use std::sync::Arc;
+use sea_orm::DatabaseConnection;
 use axum::{routing::{get, post}, Router, extract::{State, Path, Json, Query}, response::IntoResponse};
-use common::config::config::Config;
 use common::base::page::PaginatedResponse;
-use common::config::database::get_database_instance;
 use crate::service::{{ table_name }}::{{ service_name }};
 use system_model::request::{{ table_name }}::{Create{{ request_model_name }}, Update{{ request_model_name }}, PaginatedKeywordRequest};
 use system_model::response::{{ table_name }}::{{ response_model_name }};
 
-pub async fn {{ table_name }}_route(config: Config) -> Router {
-    let db = get_database_instance(&config).await.expect("Failed to get database connection");
+pub async fn {{ table_name }}_route(db: Arc<DatabaseConnection>) -> Router {
     let {{ table_name }}_service = {{ service_name }}::get_instance(db).await;
 
     Router::new()

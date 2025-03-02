@@ -1,7 +1,7 @@
 use std::sync::Arc;
-use sea_orm::{DatabaseConnection, EntityTrait, ActiveModelTrait};
+use sea_orm::{DatabaseConnection, EntityTrait, Set, ActiveModelTrait, QueryFilter, ColumnTrait, PaginatorTrait, QueryOrder};
 use tokio::sync::OnceCell;
-use crate::model::system_role_menu_data_scope::{ActiveModel as SystemRoleMenuDataScopeEntity, Column};
+use crate::model::system_role_menu_data_scope::{Entity as SystemRoleMenuDataScopeEntity, Column};
 use system_model::request::system_role_menu_data_scope::{CreateSystemRoleMenuDataScopeRequest, UpdateSystemRoleMenuDataScopeRequest, PaginatedKeywordRequest};
 use system_model::response::system_role_menu_data_scope::SystemRoleMenuDataScopeResponse;
 use crate::convert::system_role_menu_data_scope::{create_request_to_model, update_request_to_model, model_to_response};

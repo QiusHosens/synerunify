@@ -22,7 +22,7 @@ pub fn update_request_to_model(request: &UpdateSystemRoleMenuDataScopeRequest, e
     active_model
 }
 
-fn model_to_response(model: SystemRoleMenuDataScope) -> SystemRoleMenuDataScopeResponse {
+pub fn model_to_response(model: SystemRoleMenuDataScope) -> SystemRoleMenuDataScopeResponse {
     SystemRoleMenuDataScopeResponse {
         id: model.id,
         role_menu_id: model.role_menu_id,
