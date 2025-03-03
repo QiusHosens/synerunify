@@ -10,12 +10,12 @@ pub async fn system_department_route(db: Arc<DatabaseConnection>) -> Router {
     let system_department_service = SystemDepartmentService::get_instance(db).await;
 
     Router::new()
-        .route("/system_department/create", post(create))
-        .route("/system_department/update", post(update))
-        .route("/system_department/delete", post(delete))
-        .route("/system_department/get/:id", get(get_by_id))
-        .route("/system_department/list", get(list))
-        .route("/system_department/page", get(page))
+        .route("/create", post(create))
+        .route("/update", post(update))
+        .route("/delete/{id}", post(delete))
+        .route("/get/{id}", get(get_by_id))
+        .route("/list", get(list))
+        .route("/page", get(page))
         .with_state(AppState { system_department_service })
 }
 

@@ -10,12 +10,12 @@ pub async fn system_dict_route(db: Arc<DatabaseConnection>) -> Router {
     let system_dict_service = SystemDictService::get_instance(db).await;
 
     Router::new()
-        .route("/system_dict/create", post(create))
-        .route("/system_dict/update", post(update))
-        .route("/system_dict/delete", post(delete))
-        .route("/system_dict/get/:id", get(get_by_id))
-        .route("/system_dict/list", get(list))
-        .route("/system_dict/page", get(page))
+        .route("/create", post(create))
+        .route("/update", post(update))
+        .route("/delete/{id}", post(delete))
+        .route("/get/{id}", get(get_by_id))
+        .route("/list", get(list))
+        .route("/page", get(page))
         .with_state(AppState { system_dict_service })
 }
 

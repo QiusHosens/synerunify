@@ -10,12 +10,12 @@ pub async fn system_role_route(db: Arc<DatabaseConnection>) -> Router {
     let system_role_service = SystemRoleService::get_instance(db).await;
 
     Router::new()
-        .route("/system_role/create", post(create))
-        .route("/system_role/update", post(update))
-        .route("/system_role/delete", post(delete))
-        .route("/system_role/get/:id", get(get_by_id))
-        .route("/system_role/list", get(list))
-        .route("/system_role/page", get(page))
+        .route("/create", post(create))
+        .route("/update", post(update))
+        .route("/delete/{id}", post(delete))
+        .route("/get/{id}", get(get_by_id))
+        .route("/list", get(list))
+        .route("/page", get(page))
         .with_state(AppState { system_role_service })
 }
 

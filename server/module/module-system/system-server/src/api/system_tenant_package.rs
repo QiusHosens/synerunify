@@ -10,12 +10,12 @@ pub async fn system_tenant_package_route(db: Arc<DatabaseConnection>) -> Router 
     let system_tenant_package_service = SystemTenantPackageService::get_instance(db).await;
 
     Router::new()
-        .route("/system_tenant_package/create", post(create))
-        .route("/system_tenant_package/update", post(update))
-        .route("/system_tenant_package/delete", post(delete))
-        .route("/system_tenant_package/get/:id", get(get_by_id))
-        .route("/system_tenant_package/list", get(list))
-        .route("/system_tenant_package/page", get(page))
+        .route("/create", post(create))
+        .route("/update", post(update))
+        .route("/delete/{id}", post(delete))
+        .route("/get/{id}", get(get_by_id))
+        .route("/list", get(list))
+        .route("/page", get(page))
         .with_state(AppState { system_tenant_package_service })
 }
 

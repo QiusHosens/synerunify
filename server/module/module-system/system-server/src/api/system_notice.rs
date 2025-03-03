@@ -10,12 +10,12 @@ pub async fn system_notice_route(db: Arc<DatabaseConnection>) -> Router {
     let system_notice_service = SystemNoticeService::get_instance(db).await;
 
     Router::new()
-        .route("/system_notice/create", post(create))
-        .route("/system_notice/update", post(update))
-        .route("/system_notice/delete", post(delete))
-        .route("/system_notice/get/:id", get(get_by_id))
-        .route("/system_notice/list", get(list))
-        .route("/system_notice/page", get(page))
+        .route("/create", post(create))
+        .route("/update", post(update))
+        .route("/delete/{id}", post(delete))
+        .route("/get/{id}", get(get_by_id))
+        .route("/list", get(list))
+        .route("/page", get(page))
         .with_state(AppState { system_notice_service })
 }
 

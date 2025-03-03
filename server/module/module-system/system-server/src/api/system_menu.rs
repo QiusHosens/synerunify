@@ -10,12 +10,12 @@ pub async fn system_menu_route(db: Arc<DatabaseConnection>) -> Router {
     let system_menu_service = SystemMenuService::get_instance(db).await;
 
     Router::new()
-        .route("/system_menu/create", post(create))
-        .route("/system_menu/update", post(update))
-        .route("/system_menu/delete", post(delete))
-        .route("/system_menu/get/:id", get(get_by_id))
-        .route("/system_menu/list", get(list))
-        .route("/system_menu/page", get(page))
+        .route("/create", post(create))
+        .route("/update", post(update))
+        .route("/delete/{id}", post(delete))
+        .route("/get/{id}", get(get_by_id))
+        .route("/list", get(list))
+        .route("/page", get(page))
         .with_state(AppState { system_menu_service })
 }
 

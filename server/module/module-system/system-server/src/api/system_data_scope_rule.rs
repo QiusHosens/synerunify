@@ -10,12 +10,12 @@ pub async fn system_data_scope_rule_route(db: Arc<DatabaseConnection>) -> Router
     let system_data_scope_rule_service = SystemDataScopeRuleService::get_instance(db).await;
 
     Router::new()
-        .route("/system_data_scope_rule/create", post(create))
-        .route("/system_data_scope_rule/update", post(update))
-        .route("/system_data_scope_rule/delete/{id}", post(delete))
-        .route("/system_data_scope_rule/get/{id}", get(get_by_id))
-        .route("/system_data_scope_rule/list", get(list))
-        .route("/system_data_scope_rule/page", get(page))
+        .route("/create", post(create))
+        .route("/update", post(update))
+        .route("/delete/{id}", post(delete))
+        .route("/get/{id}", get(get_by_id))
+        .route("/list", get(list))
+        .route("/page", get(page))
         .with_state(AppState { system_data_scope_rule_service })
 }
 

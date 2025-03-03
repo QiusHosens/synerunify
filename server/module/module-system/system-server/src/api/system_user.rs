@@ -10,12 +10,12 @@ pub async fn system_user_route(db: Arc<DatabaseConnection>) -> Router {
     let system_user_service = SystemUserService::get_instance(db).await;
 
     Router::new()
-        .route("/system_user/create", post(create))
-        .route("/system_user/update", post(update))
-        .route("/system_user/delete", post(delete))
-        .route("/system_user/get/:id", get(get_by_id))
-        .route("/system_user/list", get(list))
-        .route("/system_user/page", get(page))
+        .route("/create", post(create))
+        .route("/update", post(update))
+        .route("/delete/{id}", post(delete))
+        .route("/get/{id}", get(get_by_id))
+        .route("/list", get(list))
+        .route("/page", get(page))
         .with_state(AppState { system_user_service })
 }
 

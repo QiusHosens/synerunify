@@ -1,0 +1,11 @@
+use axum::Router;
+use sea_orm::DatabaseConnection;
+use std::sync::Arc;
+{% for table_name in table_names -%}
+use crate::api::{{ table_name }}::{{ table_name }}_route;
+{% endfor %}
+
+pub async fn api(database: Arc<DatabaseConnection>) -> Router {
+    Router::new(){% for table_name in table_names %}
+        .nest("/{{ table_name }}", {{ table_name }}_route(database.clone()).await){% endfor %}
+}

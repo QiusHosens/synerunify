@@ -106,8 +106,8 @@ fn main() {
     let template_base_path = format!("{}/src", base_path);
     let code_base_path = format!("{}/code", base_path);
     // 初始化数据库连接
-    // let url = "mysql://synerunify:synerunify@192.168.0.49:30010/synerunify";
-    let url = "mysql://synerunify:synerunify@192.168.1.18:30010/synerunify";
+    let url = "mysql://synerunify:synerunify@192.168.0.99:30010/synerunify";
+    // let url = "mysql://synerunify:synerunify@192.168.1.18:30010/synerunify";
     let pool = Pool::new(url).unwrap();
     let mut conn = pool.get_conn().unwrap();
 
@@ -125,6 +125,7 @@ fn main() {
 
     tera.add_template_file(format!("{}/templates/api.tera", template_base_path),  Some("api")).unwrap();
     tera.add_template_file(format!("{}/templates/service.tera", template_base_path),  Some("service")).unwrap();
+    tera.add_template_file(format!("{}/templates/route.tera", template_base_path),  Some("route")).unwrap();
 
     // 遍历表
     let mut mod_context = Context::new();
@@ -147,6 +148,7 @@ fn main() {
         let mut columns_data_request_update: Vec<serde_json::Map<String, serde_json::Value>> = Vec::with_capacity(columns.len() - UPDATE_REQUEST_NOT_NEED_FIELDS.len());
         let mut columns_data_response: Vec<serde_json::Map<String, serde_json::Value>> = Vec::with_capacity(columns.len() - RESPONSE_NOT_NEED_FIELDS.len());
 
+        let mut request_has_time = false;
         for c in columns {
             let mut map = serde_json::Map::new();
             let column_name = get_column_name(&c.column_name);
@@ -167,6 +169,9 @@ fn main() {
             columns_data.push(map.clone());
 
             if !CREATE_REQUEST_NOT_NEED_FIELDS.contains(&c.column_name.as_str()) {
+                if data_type == "NaiveDateTime" {
+                    request_has_time = true;
+                }
                 columns_data_request_create.push(map.clone());
             }
             if !UPDATE_REQUEST_NOT_NEED_FIELDS.contains(&c.column_name.as_str()) {
@@ -181,6 +186,8 @@ fn main() {
         context.insert("columns_request_create", &columns_data_request_create);
         context.insert("columns_request_update", &columns_data_request_update);
         context.insert("columns_response", &columns_data_response);
+
+        context.insert("request_has_time", &request_has_time);
 
         // model
         let model_code = tera.render("model",  &context).unwrap();
@@ -217,4 +224,9 @@ fn main() {
     let mod_code = tera.render("mod",  &mod_context).unwrap();
     let file_path = format!("{}/model/mod.rs", code_base_path);
     write_file(&file_path, &mod_code).unwrap();
+
+    // route
+    let route_code = tera.render("route",  &mod_context).unwrap();
+    let file_path = format!("{}/route/route.rs", code_base_path);
+    write_file(&file_path, &route_code).unwrap();
 }

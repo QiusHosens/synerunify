@@ -1,8 +1,9 @@
 use chrono::NaiveDateTime;
 use serde::{Serialize, Deserialize};
+use utoipa::ToSchema;
 use common::base::page::PaginatedRequest;
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, ToSchema)]
 pub struct CreateSystemDepartmentRequest {
     
     pub code: String, // 部门编码

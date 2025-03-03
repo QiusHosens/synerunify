@@ -1,9 +1,10 @@
 use chrono::NaiveDateTime;
 use serde::{Serialize, Deserialize};
+use utoipa::ToSchema;
 use serde_with::{serde_as, DisplayFromStr};
 
 // #[serde_as]
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Deserialize, Serialize, Debug, Clone, ToSchema)]
 pub struct {{ response_model_name }} {
     {% for column in columns_response -%}{% if column.is_date %}
     // #[serde_as(as = "DisplayFromStr")]

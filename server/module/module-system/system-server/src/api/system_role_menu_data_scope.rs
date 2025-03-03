@@ -10,12 +10,12 @@ pub async fn system_role_menu_data_scope_route(db: Arc<DatabaseConnection>) -> R
     let system_role_menu_data_scope_service = SystemRoleMenuDataScopeService::get_instance(db).await;
 
     Router::new()
-        .route("/system_role_menu_data_scope/create", post(create))
-        .route("/system_role_menu_data_scope/update", post(update))
-        .route("/system_role_menu_data_scope/delete", post(delete))
-        .route("/system_role_menu_data_scope/get/:id", get(get_by_id))
-        .route("/system_role_menu_data_scope/list", get(list))
-        .route("/system_role_menu_data_scope/page", get(page))
+        .route("/create", post(create))
+        .route("/update", post(update))
+        .route("/delete/{id}", post(delete))
+        .route("/get/{id}", get(get_by_id))
+        .route("/list", get(list))
+        .route("/page", get(page))
         .with_state(AppState { system_role_menu_data_scope_service })
 }
 

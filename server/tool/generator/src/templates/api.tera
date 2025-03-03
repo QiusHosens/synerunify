@@ -10,12 +10,12 @@ pub async fn {{ table_name }}_route(db: Arc<DatabaseConnection>) -> Router {
     let {{ table_name }}_service = {{ service_name }}::get_instance(db).await;
 
     Router::new()
-        .route("/{{ table_name }}/create", post(create))
-        .route("/{{ table_name }}/update", post(update))
-        .route("/{{ table_name }}/delete", post(delete))
-        .route("/{{ table_name }}/get/:id", get(get_by_id))
-        .route("/{{ table_name }}/list", get(list))
-        .route("/{{ table_name }}/page", get(page))
+        .route("/create", post(create))
+        .route("/update", post(update))
+        .route("/delete/{id}", post(delete))
+        .route("/get/{id}", get(get_by_id))
+        .route("/list", get(list))
+        .route("/page", get(page))
         .with_state(AppState { {{ table_name }}_service })
 }
 
