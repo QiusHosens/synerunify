@@ -20,38 +20,38 @@ pub fn create_request_to_model(request: &CreateSystemDictRequest) -> SystemDictA
 
 pub fn update_request_to_model(request: &UpdateSystemDictRequest, existing: SystemDict) -> SystemDictActiveModel {
     let mut active_model: SystemDictActiveModel = existing.into();
-    if let Some(category) = &request.category {
+    if let Some(category) = &request.category { 
         active_model.category = Set(category.clone());
-        }
-    if let Some(category_name) = &request.category_name {
+    }
+    if let Some(category_name) = &request.category_name { 
         active_model.category_name = Set(category_name.clone());
-        }
-    if let Some(code) = &request.code {
+    }
+    if let Some(code) = &request.code { 
         active_model.code = Set(code.clone());
-        }
-    if let Some(name) = &request.name {
+    }
+    if let Some(name) = &request.name { 
         active_model.name = Set(name.clone());
-        }
-    if let Some(remark) = &request.remark {
+    }
+    if let Some(remark) = &request.remark { 
         active_model.remark = Set(Some(remark.clone()));
-        }
-    if let Some(sort) = &request.sort {
+    }
+    if let Some(sort) = &request.sort { 
         active_model.sort = Set(sort.clone());
-        }
-    if let Some(status) = &request.status {
+    }
+    if let Some(status) = &request.status { 
         active_model.status = Set(status.clone());
-        }
-    if let Some(color_type) = &request.color_type {
+    }
+    if let Some(color_type) = &request.color_type { 
         active_model.color_type = Set(Some(color_type.clone()));
-        }
-    if let Some(css_class) = &request.css_class {
+    }
+    if let Some(css_class) = &request.css_class { 
         active_model.css_class = Set(Some(css_class.clone()));
-        }
+    }
     active_model
 }
 
 pub fn model_to_response(model: SystemDict) -> SystemDictResponse {
-    SystemDictResponse {
+    SystemDictResponse { 
         id: model.id,
         category: model.category,
         category_name: model.category_name,
@@ -66,6 +66,5 @@ pub fn model_to_response(model: SystemDict) -> SystemDictResponse {
         create_time: model.create_time,
         updater: model.updater,
         update_time: model.update_time,
-        
     }
 }

@@ -24,50 +24,50 @@ pub fn create_request_to_model(request: &CreateSystemMenuRequest) -> SystemMenuA
 
 pub fn update_request_to_model(request: &UpdateSystemMenuRequest, existing: SystemMenu) -> SystemMenuActiveModel {
     let mut active_model: SystemMenuActiveModel = existing.into();
-    if let Some(name) = &request.name {
+    if let Some(name) = &request.name { 
         active_model.name = Set(name.clone());
-        }
-    if let Some(permission) = &request.permission {
+    }
+    if let Some(permission) = &request.permission { 
         active_model.permission = Set(permission.clone());
-        }
-    if let Some(r#type) = &request.r#type {
+    }
+    if let Some(r#type) = &request.r#type { 
         active_model.r#type = Set(r#type.clone());
-        }
-    if let Some(sort) = &request.sort {
+    }
+    if let Some(sort) = &request.sort { 
         active_model.sort = Set(sort.clone());
-        }
-    if let Some(parent_id) = &request.parent_id {
+    }
+    if let Some(parent_id) = &request.parent_id { 
         active_model.parent_id = Set(parent_id.clone());
-        }
-    if let Some(path) = &request.path {
+    }
+    if let Some(path) = &request.path { 
         active_model.path = Set(Some(path.clone()));
-        }
-    if let Some(icon) = &request.icon {
+    }
+    if let Some(icon) = &request.icon { 
         active_model.icon = Set(Some(icon.clone()));
-        }
-    if let Some(component) = &request.component {
+    }
+    if let Some(component) = &request.component { 
         active_model.component = Set(Some(component.clone()));
-        }
-    if let Some(component_name) = &request.component_name {
+    }
+    if let Some(component_name) = &request.component_name { 
         active_model.component_name = Set(Some(component_name.clone()));
-        }
-    if let Some(status) = &request.status {
+    }
+    if let Some(status) = &request.status { 
         active_model.status = Set(status.clone());
-        }
-    if let Some(visible) = &request.visible {
+    }
+    if let Some(visible) = &request.visible { 
         active_model.visible = Set(visible.clone());
-        }
-    if let Some(keep_alive) = &request.keep_alive {
+    }
+    if let Some(keep_alive) = &request.keep_alive { 
         active_model.keep_alive = Set(keep_alive.clone());
-        }
-    if let Some(always_show) = &request.always_show {
+    }
+    if let Some(always_show) = &request.always_show { 
         active_model.always_show = Set(always_show.clone());
-        }
+    }
     active_model
 }
 
 pub fn model_to_response(model: SystemMenu) -> SystemMenuResponse {
-    SystemMenuResponse {
+    SystemMenuResponse { 
         id: model.id,
         name: model.name,
         permission: model.permission,
@@ -86,6 +86,5 @@ pub fn model_to_response(model: SystemMenu) -> SystemMenuResponse {
         create_time: model.create_time,
         updater: model.updater,
         update_time: model.update_time,
-        
     }
 }

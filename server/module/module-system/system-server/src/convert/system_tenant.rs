@@ -20,38 +20,38 @@ pub fn create_request_to_model(request: &CreateSystemTenantRequest) -> SystemTen
 
 pub fn update_request_to_model(request: &UpdateSystemTenantRequest, existing: SystemTenant) -> SystemTenantActiveModel {
     let mut active_model: SystemTenantActiveModel = existing.into();
-    if let Some(name) = &request.name {
+    if let Some(name) = &request.name { 
         active_model.name = Set(name.clone());
-        }
-    if let Some(contact_user_id) = &request.contact_user_id {
+    }
+    if let Some(contact_user_id) = &request.contact_user_id { 
         active_model.contact_user_id = Set(Some(contact_user_id.clone()));
-        }
-    if let Some(contact_name) = &request.contact_name {
+    }
+    if let Some(contact_name) = &request.contact_name { 
         active_model.contact_name = Set(contact_name.clone());
-        }
-    if let Some(contact_mobile) = &request.contact_mobile {
+    }
+    if let Some(contact_mobile) = &request.contact_mobile { 
         active_model.contact_mobile = Set(Some(contact_mobile.clone()));
-        }
-    if let Some(status) = &request.status {
+    }
+    if let Some(status) = &request.status { 
         active_model.status = Set(status.clone());
-        }
-    if let Some(website) = &request.website {
+    }
+    if let Some(website) = &request.website { 
         active_model.website = Set(Some(website.clone()));
-        }
-    if let Some(package_id) = &request.package_id {
+    }
+    if let Some(package_id) = &request.package_id { 
         active_model.package_id = Set(package_id.clone());
-        }
-    if let Some(expire_time) = &request.expire_time {
+    }
+    if let Some(expire_time) = &request.expire_time { 
         active_model.expire_time = Set(expire_time.clone());
-        }
-    if let Some(account_count) = &request.account_count {
+    }
+    if let Some(account_count) = &request.account_count { 
         active_model.account_count = Set(account_count.clone());
-        }
+    }
     active_model
 }
 
 pub fn model_to_response(model: SystemTenant) -> SystemTenantResponse {
-    SystemTenantResponse {
+    SystemTenantResponse { 
         id: model.id,
         name: model.name,
         contact_user_id: model.contact_user_id,
@@ -66,6 +66,5 @@ pub fn model_to_response(model: SystemTenant) -> SystemTenantResponse {
         create_time: model.create_time,
         updater: model.updater,
         update_time: model.update_time,
-        
     }
 }

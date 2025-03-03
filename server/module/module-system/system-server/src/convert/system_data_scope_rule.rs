@@ -16,26 +16,26 @@ pub fn create_request_to_model(request: &CreateSystemDataScopeRuleRequest) -> Sy
 
 pub fn update_request_to_model(request: &UpdateSystemDataScopeRuleRequest, existing: SystemDataScopeRule) -> SystemDataScopeRuleActiveModel {
     let mut active_model: SystemDataScopeRuleActiveModel = existing.into();
-    if let Some(r#type) = &request.r#type {
+    if let Some(r#type) = &request.r#type { 
         active_model.r#type = Set(r#type.clone());
-        }
-    if let Some(name) = &request.name {
+    }
+    if let Some(name) = &request.name { 
         active_model.name = Set(name.clone());
-        }
-    if let Some(field) = &request.field {
+    }
+    if let Some(field) = &request.field { 
         active_model.field = Set(Some(field.clone()));
-        }
-    if let Some(condition) = &request.condition {
+    }
+    if let Some(condition) = &request.condition { 
         active_model.condition = Set(Some(condition.clone()));
-        }
-    if let Some(value) = &request.value {
+    }
+    if let Some(value) = &request.value { 
         active_model.value = Set(Some(value.clone()));
-        }
+    }
     active_model
 }
 
 pub fn model_to_response(model: SystemDataScopeRule) -> SystemDataScopeRuleResponse {
-    SystemDataScopeRuleResponse {
+    SystemDataScopeRuleResponse { 
         id: model.id,
         r#type: model.r#type,
         name: model.name,
@@ -46,6 +46,5 @@ pub fn model_to_response(model: SystemDataScopeRule) -> SystemDataScopeRuleRespo
         create_time: model.create_time,
         updater: model.updater,
         update_time: model.update_time,
-        
     }
 }

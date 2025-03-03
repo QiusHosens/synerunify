@@ -13,17 +13,17 @@ pub fn create_request_to_model(request: &CreateSystemUserPostRequest) -> SystemU
 
 pub fn update_request_to_model(request: &UpdateSystemUserPostRequest, existing: SystemUserPost) -> SystemUserPostActiveModel {
     let mut active_model: SystemUserPostActiveModel = existing.into();
-    if let Some(user_id) = &request.user_id {
+    if let Some(user_id) = &request.user_id { 
         active_model.user_id = Set(user_id.clone());
-        }
-    if let Some(post_id) = &request.post_id {
+    }
+    if let Some(post_id) = &request.post_id { 
         active_model.post_id = Set(post_id.clone());
-        }
+    }
     active_model
 }
 
 pub fn model_to_response(model: SystemUserPost) -> SystemUserPostResponse {
-    SystemUserPostResponse {
+    SystemUserPostResponse { 
         id: model.id,
         user_id: model.user_id,
         post_id: model.post_id,
@@ -31,6 +31,5 @@ pub fn model_to_response(model: SystemUserPost) -> SystemUserPostResponse {
         create_time: model.create_time,
         updater: model.updater,
         update_time: model.update_time,
-        
     }
 }

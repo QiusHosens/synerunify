@@ -25,53 +25,53 @@ pub fn create_request_to_model(request: &CreateSystemUserRequest) -> SystemUserA
 
 pub fn update_request_to_model(request: &UpdateSystemUserRequest, existing: SystemUser) -> SystemUserActiveModel {
     let mut active_model: SystemUserActiveModel = existing.into();
-    if let Some(username) = &request.username {
+    if let Some(username) = &request.username { 
         active_model.username = Set(username.clone());
-        }
-    if let Some(password) = &request.password {
+    }
+    if let Some(password) = &request.password { 
         active_model.password = Set(password.clone());
-        }
-    if let Some(nickname) = &request.nickname {
+    }
+    if let Some(nickname) = &request.nickname { 
         active_model.nickname = Set(nickname.clone());
-        }
-    if let Some(remark) = &request.remark {
+    }
+    if let Some(remark) = &request.remark { 
         active_model.remark = Set(Some(remark.clone()));
-        }
-    if let Some(post_ids) = &request.post_ids {
+    }
+    if let Some(post_ids) = &request.post_ids { 
         active_model.post_ids = Set(Some(post_ids.clone()));
-        }
-    if let Some(email) = &request.email {
+    }
+    if let Some(email) = &request.email { 
         active_model.email = Set(Some(email.clone()));
-        }
-    if let Some(mobile) = &request.mobile {
+    }
+    if let Some(mobile) = &request.mobile { 
         active_model.mobile = Set(Some(mobile.clone()));
-        }
-    if let Some(sex) = &request.sex {
+    }
+    if let Some(sex) = &request.sex { 
         active_model.sex = Set(Some(sex.clone()));
-        }
-    if let Some(avatar) = &request.avatar {
+    }
+    if let Some(avatar) = &request.avatar { 
         active_model.avatar = Set(Some(avatar.clone()));
-        }
-    if let Some(status) = &request.status {
+    }
+    if let Some(status) = &request.status { 
         active_model.status = Set(status.clone());
-        }
-    if let Some(login_ip) = &request.login_ip {
+    }
+    if let Some(login_ip) = &request.login_ip { 
         active_model.login_ip = Set(Some(login_ip.clone()));
-        }
-    if let Some(login_date) = &request.login_date {
+    }
+    if let Some(login_date) = &request.login_date { 
         active_model.login_date = Set(Some(login_date.clone()));
-        }
-    if let Some(department_code) = &request.department_code {
+    }
+    if let Some(department_code) = &request.department_code { 
         active_model.department_code = Set(Some(department_code.clone()));
-        }
-    if let Some(department_id) = &request.department_id {
+    }
+    if let Some(department_id) = &request.department_id { 
         active_model.department_id = Set(Some(department_id.clone()));
-        }
+    }
     active_model
 }
 
 pub fn model_to_response(model: SystemUser) -> SystemUserResponse {
-    SystemUserResponse {
+    SystemUserResponse { 
         id: model.id,
         username: model.username,
         password: model.password,
@@ -91,6 +91,5 @@ pub fn model_to_response(model: SystemUser) -> SystemUserResponse {
         create_time: model.create_time,
         updater: model.updater,
         update_time: model.update_time,
-        
     }
 }

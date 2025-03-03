@@ -15,23 +15,23 @@ pub fn create_request_to_model(request: &CreateSystemTenantPackageRequest) -> Sy
 
 pub fn update_request_to_model(request: &UpdateSystemTenantPackageRequest, existing: SystemTenantPackage) -> SystemTenantPackageActiveModel {
     let mut active_model: SystemTenantPackageActiveModel = existing.into();
-    if let Some(name) = &request.name {
+    if let Some(name) = &request.name { 
         active_model.name = Set(name.clone());
-        }
-    if let Some(status) = &request.status {
+    }
+    if let Some(status) = &request.status { 
         active_model.status = Set(status.clone());
-        }
-    if let Some(remark) = &request.remark {
+    }
+    if let Some(remark) = &request.remark { 
         active_model.remark = Set(Some(remark.clone()));
-        }
-    if let Some(menu_ids) = &request.menu_ids {
+    }
+    if let Some(menu_ids) = &request.menu_ids { 
         active_model.menu_ids = Set(menu_ids.clone());
-        }
+    }
     active_model
 }
 
 pub fn model_to_response(model: SystemTenantPackage) -> SystemTenantPackageResponse {
-    SystemTenantPackageResponse {
+    SystemTenantPackageResponse { 
         id: model.id,
         name: model.name,
         status: model.status,
@@ -41,6 +41,5 @@ pub fn model_to_response(model: SystemTenantPackage) -> SystemTenantPackageRespo
         create_time: model.create_time,
         updater: model.updater,
         update_time: model.update_time,
-        
     }
 }

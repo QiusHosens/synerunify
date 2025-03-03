@@ -16,26 +16,26 @@ pub fn create_request_to_model(request: &CreateSystemPostRequest) -> SystemPostA
 
 pub fn update_request_to_model(request: &UpdateSystemPostRequest, existing: SystemPost) -> SystemPostActiveModel {
     let mut active_model: SystemPostActiveModel = existing.into();
-    if let Some(code) = &request.code {
+    if let Some(code) = &request.code { 
         active_model.code = Set(code.clone());
-        }
-    if let Some(name) = &request.name {
+    }
+    if let Some(name) = &request.name { 
         active_model.name = Set(name.clone());
-        }
-    if let Some(sort) = &request.sort {
+    }
+    if let Some(sort) = &request.sort { 
         active_model.sort = Set(sort.clone());
-        }
-    if let Some(status) = &request.status {
+    }
+    if let Some(status) = &request.status { 
         active_model.status = Set(status.clone());
-        }
-    if let Some(remark) = &request.remark {
+    }
+    if let Some(remark) = &request.remark { 
         active_model.remark = Set(Some(remark.clone()));
-        }
+    }
     active_model
 }
 
 pub fn model_to_response(model: SystemPost) -> SystemPostResponse {
-    SystemPostResponse {
+    SystemPostResponse { 
         id: model.id,
         code: model.code,
         name: model.name,
@@ -46,6 +46,5 @@ pub fn model_to_response(model: SystemPost) -> SystemPostResponse {
         create_time: model.create_time,
         updater: model.updater,
         update_time: model.update_time,
-        
     }
 }

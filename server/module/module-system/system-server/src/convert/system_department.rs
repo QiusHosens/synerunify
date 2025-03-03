@@ -19,35 +19,35 @@ pub fn create_request_to_model(request: &CreateSystemDepartmentRequest) -> Syste
 
 pub fn update_request_to_model(request: &UpdateSystemDepartmentRequest, existing: SystemDepartment) -> SystemDepartmentActiveModel {
     let mut active_model: SystemDepartmentActiveModel = existing.into();
-    if let Some(code) = &request.code {
+    if let Some(code) = &request.code { 
         active_model.code = Set(code.clone());
-        }
-    if let Some(name) = &request.name {
+    }
+    if let Some(name) = &request.name { 
         active_model.name = Set(name.clone());
-        }
-    if let Some(parent_id) = &request.parent_id {
+    }
+    if let Some(parent_id) = &request.parent_id { 
         active_model.parent_id = Set(parent_id.clone());
-        }
-    if let Some(sort) = &request.sort {
+    }
+    if let Some(sort) = &request.sort { 
         active_model.sort = Set(sort.clone());
-        }
-    if let Some(leader_user_id) = &request.leader_user_id {
+    }
+    if let Some(leader_user_id) = &request.leader_user_id { 
         active_model.leader_user_id = Set(Some(leader_user_id.clone()));
-        }
-    if let Some(phone) = &request.phone {
+    }
+    if let Some(phone) = &request.phone { 
         active_model.phone = Set(Some(phone.clone()));
-        }
-    if let Some(email) = &request.email {
+    }
+    if let Some(email) = &request.email { 
         active_model.email = Set(Some(email.clone()));
-        }
-    if let Some(status) = &request.status {
+    }
+    if let Some(status) = &request.status { 
         active_model.status = Set(status.clone());
-        }
+    }
     active_model
 }
 
 pub fn model_to_response(model: SystemDepartment) -> SystemDepartmentResponse {
-    SystemDepartmentResponse {
+    SystemDepartmentResponse { 
         id: model.id,
         code: model.code,
         name: model.name,
@@ -61,6 +61,5 @@ pub fn model_to_response(model: SystemDepartment) -> SystemDepartmentResponse {
         create_time: model.create_time,
         updater: model.updater,
         update_time: model.update_time,
-        
     }
 }
