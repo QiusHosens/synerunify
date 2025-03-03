@@ -1,15 +1,16 @@
 use std::sync::Arc;
 use sea_orm::DatabaseConnection;
-use axum::{routing::{get, post}, Router, extract::{State, Path, Json, Query}, response::IntoResponse};
+use utoipa_axum::router::OpenApiRouter;
+use axum::{routing::{get, post}, extract::{State, Path, Json, Query}, response::IntoResponse};
 use common::base::page::PaginatedResponse;
 use crate::service::system_dict::SystemDictService;
 use system_model::request::system_dict::{CreateSystemDictRequest, UpdateSystemDictRequest, PaginatedKeywordRequest};
 use system_model::response::system_dict::SystemDictResponse;
 
-pub async fn system_dict_route(db: Arc<DatabaseConnection>) -> Router {
+pub async fn system_dict_route(db: Arc<DatabaseConnection>) -> OpenApiRouter {
     let system_dict_service = SystemDictService::get_instance(db).await;
 
-    Router::new()
+    OpenApiRouter::new()
         .route("/create", post(create))
         .route("/update", post(update))
         .route("/delete/{id}", post(delete))
@@ -24,6 +25,14 @@ struct AppState {
     system_dict_service: Arc<SystemDictService>,
 }
 
+#[utoipa::path(
+    post,
+    path = "/create",
+    request_body(content = CreateSystemDictRequest, description = "create", content_type = "application/json"),
+    responses(
+        (status = 200, description = "id", body = i64, example = json!(1))
+    )
+)]
 async fn create(
     State(state): State<AppState>,
     Json(payload): Json<CreateSystemDictRequest>,
@@ -34,6 +43,14 @@ async fn create(
     Ok(Json(id))
 }
 
+#[utoipa::path(
+    post,
+    path = "/update",
+    request_body(content = UpdateSystemDictRequest, description = "update", content_type = "application/json"),
+    responses(
+        (status = 204, description = "update")
+    )
+)]
 async fn update(
     State(state): State<AppState>,
     Json(payload): Json<UpdateSystemDictRequest>,
@@ -44,6 +61,16 @@ async fn update(
     Ok(axum::http::StatusCode::NO_CONTENT)
 }
 
+#[utoipa::path(
+    post,
+    path = "/delete/{id}",
+    params(
+        ("id" = i64, Path, description = "id")
+    ),
+    responses(
+        (status = 204, description = "delete")
+    )
+)]
 async fn delete(
     State(state): State<AppState>,
     Path(id): Path<i64>,
@@ -54,6 +81,16 @@ async fn delete(
     Ok(axum::http::StatusCode::NO_CONTENT)
 }
 
+#[utoipa::path(
+    get,
+    path = "/get/{id}",
+    params(
+        ("id" = i64, Path, description = "id")
+    ),
+    responses(
+        (status = 200, description = "get by id", body = Option<SystemDictResponse>)
+    )
+)]
 async fn get_by_id(
     State(state): State<AppState>,
     Path(id): Path<i64>,
@@ -64,6 +101,18 @@ async fn get_by_id(
     Ok(Json(system_dict))
 }
 
+#[utoipa::path(
+    get,
+    path = "/page",
+    params(
+        ("page" = u64, Query, description = "page number"),
+        ("page_size" = u64, Query, description = "page size"),
+        ("keyword" = Option<String>, Query, description = "keyword")
+    ),
+    responses(
+        (status = 200, description = "get page", body = SystemDictResponse)
+    )
+)]
 async fn page(
     State(state): State<AppState>,
     Query(params): Query<PaginatedKeywordRequest>,
@@ -74,6 +123,13 @@ async fn page(
     Ok(Json(paginated))
 }
 
+#[utoipa::path(
+    get,
+    path = "/list",
+    responses(
+        (status = 200, description = "list all", body = Vec<SystemDictResponse>)
+    )
+)]
 async fn list(State(state): State<AppState>) -> Result<Json<Vec<SystemDictResponse>>, axum::http::StatusCode> {
     let list = state.system_dict_service.list()
         .await

@@ -1,8 +1,9 @@
-use chrono::NaiveDateTime;
+
 use serde::{Serialize, Deserialize};
+use utoipa::ToSchema;
 use common::base::page::PaginatedRequest;
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, ToSchema)]
 pub struct CreateSystemNoticeRequest {
     
     pub title: String, // 公告标题
@@ -15,7 +16,7 @@ pub struct CreateSystemNoticeRequest {
     
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, ToSchema)]
 pub struct UpdateSystemNoticeRequest {
     
     pub id: i64, // 公告ID
@@ -30,7 +31,7 @@ pub struct UpdateSystemNoticeRequest {
     
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, ToSchema)]
 pub struct PaginatedKeywordRequest {
     #[serde(flatten)]
     pub base: PaginatedRequest,

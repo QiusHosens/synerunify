@@ -1,8 +1,9 @@
-use chrono::NaiveDateTime;
+
 use serde::{Serialize, Deserialize};
+use utoipa::ToSchema;
 use common::base::page::PaginatedRequest;
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, ToSchema)]
 pub struct CreateSystemRoleRequest {
     
     pub r#type: i8, // 角色类型
@@ -23,7 +24,7 @@ pub struct CreateSystemRoleRequest {
     
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, ToSchema)]
 pub struct UpdateSystemRoleRequest {
     
     pub id: i64, // 角色ID
@@ -46,7 +47,7 @@ pub struct UpdateSystemRoleRequest {
     
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, ToSchema)]
 pub struct PaginatedKeywordRequest {
     #[serde(flatten)]
     pub base: PaginatedRequest,

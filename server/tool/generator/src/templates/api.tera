@@ -1,15 +1,16 @@
 use std::sync::Arc;
 use sea_orm::DatabaseConnection;
-use axum::{routing::{get, post}, Router, extract::{State, Path, Json, Query}, response::IntoResponse};
+use utoipa_axum::router::OpenApiRouter;
+use axum::{routing::{get, post}, extract::{State, Path, Json, Query}, response::IntoResponse};
 use common::base::page::PaginatedResponse;
 use crate::service::{{ table_name }}::{{ service_name }};
 use system_model::request::{{ table_name }}::{Create{{ request_model_name }}, Update{{ request_model_name }}, PaginatedKeywordRequest};
 use system_model::response::{{ table_name }}::{{ response_model_name }};
 
-pub async fn {{ table_name }}_route(db: Arc<DatabaseConnection>) -> Router {
+pub async fn {{ table_name }}_route(db: Arc<DatabaseConnection>) -> OpenApiRouter {
     let {{ table_name }}_service = {{ service_name }}::get_instance(db).await;
 
-    Router::new()
+    OpenApiRouter::new()
         .route("/create", post(create))
         .route("/update", post(update))
         .route("/delete/{id}", post(delete))
@@ -24,6 +25,14 @@ struct AppState {
     {{ table_name }}_service: Arc<{{ service_name }}>,
 }
 
+#[utoipa::path(
+    post,
+    path = "/create",
+    request_body(content = Create{{ request_model_name }}, description = "create", content_type = "application/json"),
+    responses(
+        (status = 200, description = "id", body = i64, example = json!(1))
+    )
+)]
 async fn create(
     State(state): State<AppState>,
     Json(payload): Json<Create{{ request_model_name }}>,
@@ -34,6 +43,14 @@ async fn create(
     Ok(Json(id))
 }
 
+#[utoipa::path(
+    post,
+    path = "/update",
+    request_body(content = Update{{ request_model_name }}, description = "update", content_type = "application/json"),
+    responses(
+        (status = 204, description = "update")
+    )
+)]
 async fn update(
     State(state): State<AppState>,
     Json(payload): Json<Update{{ request_model_name }}>,
@@ -44,6 +61,16 @@ async fn update(
     Ok(axum::http::StatusCode::NO_CONTENT)
 }
 
+#[utoipa::path(
+    post,
+    path = "/delete/{id}",
+    params(
+        ("id" = i64, Path, description = "id")
+    ),
+    responses(
+        (status = 204, description = "delete")
+    )
+)]
 async fn delete(
     State(state): State<AppState>,
     Path(id): Path<i64>,
@@ -54,6 +81,16 @@ async fn delete(
     Ok(axum::http::StatusCode::NO_CONTENT)
 }
 
+#[utoipa::path(
+    get,
+    path = "/get/{id}",
+    params(
+        ("id" = i64, Path, description = "id")
+    ),
+    responses(
+        (status = 200, description = "get by id", body = Option<{{ response_model_name }}>)
+    )
+)]
 async fn get_by_id(
     State(state): State<AppState>,
     Path(id): Path<i64>,
@@ -64,6 +101,18 @@ async fn get_by_id(
     Ok(Json({{ table_name }}))
 }
 
+#[utoipa::path(
+    get,
+    path = "/page",
+    params(
+        ("page" = u64, Query, description = "page number"),
+        ("page_size" = u64, Query, description = "page size"),
+        ("keyword" = Option<String>, Query, description = "keyword")
+    ),
+    responses(
+        (status = 200, description = "get page", body = {{ response_model_name }})
+    )
+)]
 async fn page(
     State(state): State<AppState>,
     Query(params): Query<PaginatedKeywordRequest>,
@@ -74,6 +123,13 @@ async fn page(
     Ok(Json(paginated))
 }
 
+#[utoipa::path(
+    get,
+    path = "/list",
+    responses(
+        (status = 200, description = "list all", body = Vec<{{ response_model_name }}>)
+    )
+)]
 async fn list(State(state): State<AppState>) -> Result<Json<Vec<{{ response_model_name }}>>, axum::http::StatusCode> {
     let list = state.{{ table_name }}_service.list()
         .await

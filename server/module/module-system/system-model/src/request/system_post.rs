@@ -1,8 +1,9 @@
-use chrono::NaiveDateTime;
+
 use serde::{Serialize, Deserialize};
+use utoipa::ToSchema;
 use common::base::page::PaginatedRequest;
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, ToSchema)]
 pub struct CreateSystemPostRequest {
     
     pub code: String, // 职位编码
@@ -17,7 +18,7 @@ pub struct CreateSystemPostRequest {
     
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, ToSchema)]
 pub struct UpdateSystemPostRequest {
     
     pub id: i64, // 职位ID
@@ -34,7 +35,7 @@ pub struct UpdateSystemPostRequest {
     
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, ToSchema)]
 pub struct PaginatedKeywordRequest {
     #[serde(flatten)]
     pub base: PaginatedRequest,

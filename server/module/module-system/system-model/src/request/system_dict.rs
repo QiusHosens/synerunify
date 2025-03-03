@@ -1,8 +1,9 @@
-use chrono::NaiveDateTime;
+
 use serde::{Serialize, Deserialize};
+use utoipa::ToSchema;
 use common::base::page::PaginatedRequest;
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, ToSchema)]
 pub struct CreateSystemDictRequest {
     
     pub category: String, // 类型
@@ -25,7 +26,7 @@ pub struct CreateSystemDictRequest {
     
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, ToSchema)]
 pub struct UpdateSystemDictRequest {
     
     pub id: i64, // 主键
@@ -50,7 +51,7 @@ pub struct UpdateSystemDictRequest {
     
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, ToSchema)]
 pub struct PaginatedKeywordRequest {
     #[serde(flatten)]
     pub base: PaginatedRequest,

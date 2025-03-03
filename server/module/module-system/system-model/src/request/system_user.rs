@@ -1,8 +1,9 @@
 use chrono::NaiveDateTime;
 use serde::{Serialize, Deserialize};
+use utoipa::ToSchema;
 use common::base::page::PaginatedRequest;
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, ToSchema)]
 pub struct CreateSystemUserRequest {
     
     pub username: String, // 用户账号
@@ -27,6 +28,9 @@ pub struct CreateSystemUserRequest {
     
     pub login_ip: Option<String>, // 最后登录IP
     
+    // #[serde_as(as = "DisplayFromStr")]
+    // #[serde(with = "serde_with::chrono::naive_datetime")]
+    #[schema(value_type = String, format = Date)]
     pub login_date: Option<NaiveDateTime>, // 最后登录时间
     
     pub department_code: Option<i64>, // 部门编码
@@ -35,7 +39,7 @@ pub struct CreateSystemUserRequest {
     
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, ToSchema)]
 pub struct UpdateSystemUserRequest {
     
     pub id: i64, // 用户ID
@@ -62,6 +66,9 @@ pub struct UpdateSystemUserRequest {
     
     pub login_ip: Option<String>, // 最后登录IP
     
+    // #[serde_as(as = "DisplayFromStr")]
+    // #[serde(with = "serde_with::chrono::naive_datetime")]
+    #[schema(value_type = String, format = Date)]
     pub login_date: Option<NaiveDateTime>, // 最后登录时间
     
     pub department_code: Option<i64>, // 部门编码
@@ -70,7 +77,7 @@ pub struct UpdateSystemUserRequest {
     
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, ToSchema)]
 pub struct PaginatedKeywordRequest {
     #[serde(flatten)]
     pub base: PaginatedRequest,

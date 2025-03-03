@@ -5,14 +5,20 @@ use common::base::page::PaginatedRequest;
 
 #[derive(Serialize, Deserialize, Debug, ToSchema)]
 pub struct Create{{ request_model_name }} {
-    {% for column in columns_request_create %}
+    {% for column in columns_request_create %}{% if column.is_date %}
+    // #[serde_as(as = "DisplayFromStr")]
+    // #[serde(with = "serde_with::chrono::naive_datetime")]
+    #[schema(value_type = String, format = Date)]{% endif %}
     pub {{ column.column_name }}: {% if column.nullable  %}Option<{{ column.rust_type  }}>{% else %}{{ column.rust_type  }}{% endif %}, // {{ column.column_comment  }}
     {% endfor %}
 }
 
 #[derive(Serialize, Deserialize, Debug, ToSchema)]
 pub struct Update{{ request_model_name }} {
-    {% for column in columns_request_update %}
+    {% for column in columns_request_update %}{% if column.is_date %}
+    // #[serde_as(as = "DisplayFromStr")]
+    // #[serde(with = "serde_with::chrono::naive_datetime")]
+    #[schema(value_type = String, format = Date)]{% endif %}
     pub {{ column.column_name }}: {% if column.column_name != "id"  %}Option<{{ column.rust_type  }}>{% else %}{{ column.rust_type  }}{% endif %}, // {{ column.column_comment  }}
     {% endfor %}
 }

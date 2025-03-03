@@ -18,3 +18,6 @@ anyhow = "1.0.96" # 返回
 dotenvy = "0.15.7" # 读取配置文件
 tokio = { version = "1.43.0", features = ["full"] }
 lazy_static = "1.5.0"
+
+# swagger ui
+utoipa = { version = "5.3.1" }
