@@ -1,4 +1,4 @@
-use crate::config::config::Config;
+use common::config::config::Config;
 use chrono::Local;
 use std::fs;
 use std::io;

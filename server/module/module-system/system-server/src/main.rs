@@ -5,7 +5,7 @@ use common::config::database::get_database_instance;
 use once_cell::sync::Lazy;
 use std::sync::Arc;
 use tower_http::cors::{Any, CorsLayer};
-use common::config::logger::init_tracing;
+use middleware::logger::init_tracing;
 
 mod api;
 mod service;

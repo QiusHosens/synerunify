@@ -88,4 +88,5 @@ dotenvy = "0.15.7" # 读取配置文件
 once_cell = "1.20.3"
 
 common = { path = "../../../framework/common" }
+middleware = { path = "../../../framework/middleware" }
 system-model = { path = "../system-model" }
