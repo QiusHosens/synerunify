@@ -5,6 +5,7 @@ use common::config::database::get_database_instance;
 use once_cell::sync::Lazy;
 use std::sync::Arc;
 use tower_http::cors::{Any, CorsLayer};
+use common::config::logger::init_tracing;
 
 mod api;
 mod service;
@@ -19,7 +20,8 @@ pub static RT: Lazy<Arc<tokio::runtime::Runtime>> = Lazy::new(|| {
 
 #[tokio::main]
 async fn main() -> Result<(), anyhow::Error> {
-    let config = Config::load()?;
+    init_tracing().await?;
+    let config = Config::load().await;
     let database = get_database_instance(config.database_url).await;
 
     let cors = CorsLayer::new()

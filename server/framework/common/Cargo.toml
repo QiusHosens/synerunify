@@ -21,3 +21,8 @@ lazy_static = "1.5.0"
 
 # swagger ui
 utoipa = { version = "5.3.1" }
+
+# log
+tracing = { version = "0.1.41" }
+tracing-appender = { version = "0.2.3" }
+tracing-subscriber = { version = "0.3.19" }
