@@ -19,6 +19,11 @@ struct ColumnInfo {
     column_key: String,
 }
 
+fn get_table_comment(conn: &mut PooledConn, table: &str) -> Option<String> {
+    let query = format!("select table_comment from information_schema.TABLES where TABLE_SCHEMA= '{}' and TABLE_NAME= '{}'", "synerunify", table);
+    conn.query_first(query).unwrap()
+}
+
 fn get_table_columns(conn: &mut PooledConn, table: &str) -> Vec<ColumnInfo> {
     let query = format!(
         "SELECT COLUMN_NAME, DATA_TYPE, IS_NULLABLE, COLUMN_COMMENT, COLUMN_KEY
@@ -130,12 +135,21 @@ fn main() {
     // 遍历表
     let mut mod_context = Context::new();
     let mut table_names: Vec<String> = Vec::with_capacity(tables.len());
+    let mut table_info_list: Vec<serde_json::Map<String, serde_json::Value>> = Vec::with_capacity(tables.len());
     for table in tables {
         table_names.push(table.clone());
+
+        let table_comment = get_table_comment(&mut conn, &table);
+        let table_comment = table_comment.unwrap().to_string().replace("表", "");
+        let mut table_info_map = serde_json::Map::new();
+        table_info_map.insert("table_name".to_string(), table.clone().into());
+        table_info_map.insert("table_comment".to_string(), table_comment.clone().into());
+        table_info_list.push(table_info_map);
 
         let columns = get_table_columns(&mut conn, &table);
         let mut context = Context::new();
 
+        context.insert("table_comment",  &table_comment);
         context.insert("model_name",  &format!("{}", inflections::case::to_pascal_case(&table)));
         context.insert("request_model_name",  &format!("{}Request", inflections::case::to_pascal_case(&table)));
         context.insert("response_model_name",  &format!("{}Response", inflections::case::to_pascal_case(&table)));
@@ -220,6 +234,7 @@ fn main() {
         write_file(&file_path, &service_code).unwrap();
     }
     mod_context.insert("table_names", &table_names);
+    mod_context.insert("table_info_list", &table_info_list);
     // mod
     let mod_code = tera.render("mod",  &mod_context).unwrap();
     let file_path = format!("{}/model/mod.rs", code_base_path);

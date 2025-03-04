@@ -12,6 +12,9 @@ use crate::api::{{ table_name }}::{ {{ table_name }}_route, {{ table_name }}_rou
         title = "API",
         description = "api",
         version = "1.0.0"
+    ),
+    tags({% for table_info in table_info_list %}
+        (name = "{{ table_info.table_name }}", description = "{{ table_info.table_comment }}"),{% endfor %}
     )
 )]
 pub struct ApiDocument;

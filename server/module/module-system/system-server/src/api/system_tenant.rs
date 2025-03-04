@@ -45,7 +45,8 @@ struct AppState {
     request_body(content = CreateSystemTenantRequest, description = "create", content_type = "application/json"),
     responses(
         (status = 200, description = "id", body = i64, example = json!(1))
-    )
+    ),
+    tag = "system_tenant"
 )]
 async fn create(
     State(state): State<AppState>,
@@ -63,7 +64,8 @@ async fn create(
     request_body(content = UpdateSystemTenantRequest, description = "update", content_type = "application/json"),
     responses(
         (status = 204, description = "update")
-    )
+    ),
+    tag = "system_tenant"
 )]
 async fn update(
     State(state): State<AppState>,
@@ -83,7 +85,8 @@ async fn update(
     ),
     responses(
         (status = 204, description = "delete")
-    )
+    ),
+    tag = "system_tenant"
 )]
 async fn delete(
     State(state): State<AppState>,
@@ -103,7 +106,8 @@ async fn delete(
     ),
     responses(
         (status = 200, description = "get by id", body = Option<SystemTenantResponse>)
-    )
+    ),
+    tag = "system_tenant"
 )]
 async fn get_by_id(
     State(state): State<AppState>,
@@ -125,7 +129,8 @@ async fn get_by_id(
     ),
     responses(
         (status = 200, description = "get page", body = SystemTenantResponse)
-    )
+    ),
+    tag = "system_tenant"
 )]
 async fn page(
     State(state): State<AppState>,
@@ -142,7 +147,8 @@ async fn page(
     path = "/list",
     responses(
         (status = 200, description = "list all", body = Vec<SystemTenantResponse>)
-    )
+    ),
+    tag = "system_tenant"
 )]
 async fn list(State(state): State<AppState>) -> Result<Json<Vec<SystemTenantResponse>>, axum::http::StatusCode> {
     let list = state.system_tenant_service.list()

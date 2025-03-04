@@ -25,6 +25,22 @@ use crate::api::system_user_role::{ system_user_role_route, system_user_role_rou
         title = "API",
         description = "api",
         version = "1.0.0"
+    ),
+    tags(
+        (name = "system_data_scope_rule", description = "数据权限规则"),
+        (name = "system_department", description = "部门"),
+        (name = "system_dict", description = "系统字典"),
+        (name = "system_menu", description = "菜单权限"),
+        (name = "system_notice", description = "通知公告"),
+        (name = "system_post", description = "职位信息"),
+        (name = "system_role", description = "角色信息"),
+        (name = "system_role_menu", description = "角色和菜单关联"),
+        (name = "system_role_menu_data_scope", description = "角色菜单和数据权限关联"),
+        (name = "system_tenant", description = "租户"),
+        (name = "system_tenant_package", description = "租户套餐"),
+        (name = "system_user", description = "用户信息"),
+        (name = "system_user_post", description = "用户职位"),
+        (name = "system_user_role", description = "用户和角色关联"),
     )
 )]
 pub struct ApiDocument;
