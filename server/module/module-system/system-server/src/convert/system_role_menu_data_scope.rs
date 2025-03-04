@@ -6,8 +6,8 @@ use system_model::response::system_role_menu_data_scope::SystemRoleMenuDataScope
 pub fn create_request_to_model(request: &CreateSystemRoleMenuDataScopeRequest) -> SystemRoleMenuDataScopeActiveModel {
     SystemRoleMenuDataScopeActiveModel {
         role_menu_id: Set(request.role_menu_id.clone()),
-            data_scope_rule_id: Set(request.data_scope_rule_id.clone()),
-            ..Default::default()
+        data_scope_rule_id: Set(request.data_scope_rule_id.clone()),
+        ..Default::default()
     }
 }
 

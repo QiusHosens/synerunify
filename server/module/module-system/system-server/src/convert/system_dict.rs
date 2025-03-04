@@ -6,15 +6,15 @@ use system_model::response::system_dict::SystemDictResponse;
 pub fn create_request_to_model(request: &CreateSystemDictRequest) -> SystemDictActiveModel {
     SystemDictActiveModel {
         category: Set(request.category.clone()),
-            category_name: Set(request.category_name.clone()),
-            code: Set(request.code.clone()),
-            name: Set(request.name.clone()),
-            remark: request.remark.as_ref().map_or(NotSet, |remark| Set(Some(remark.clone()))),
-            sort: Set(request.sort.clone()),
-            status: Set(request.status.clone()),
-            color_type: request.color_type.as_ref().map_or(NotSet, |color_type| Set(Some(color_type.clone()))),
-            css_class: request.css_class.as_ref().map_or(NotSet, |css_class| Set(Some(css_class.clone()))),
-            ..Default::default()
+        category_name: Set(request.category_name.clone()),
+        code: Set(request.code.clone()),
+        name: Set(request.name.clone()),
+        remark: request.remark.as_ref().map_or(NotSet, |remark| Set(Some(remark.clone()))),
+        sort: Set(request.sort.clone()),
+        status: Set(request.status.clone()),
+        color_type: request.color_type.as_ref().map_or(NotSet, |color_type| Set(Some(color_type.clone()))),
+        css_class: request.css_class.as_ref().map_or(NotSet, |css_class| Set(Some(css_class.clone()))),
+        ..Default::default()
     }
 }
 

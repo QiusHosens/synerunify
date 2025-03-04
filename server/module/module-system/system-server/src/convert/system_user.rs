@@ -6,20 +6,20 @@ use system_model::response::system_user::SystemUserResponse;
 pub fn create_request_to_model(request: &CreateSystemUserRequest) -> SystemUserActiveModel {
     SystemUserActiveModel {
         username: Set(request.username.clone()),
-            password: Set(request.password.clone()),
-            nickname: Set(request.nickname.clone()),
-            remark: request.remark.as_ref().map_or(NotSet, |remark| Set(Some(remark.clone()))),
-            post_ids: request.post_ids.as_ref().map_or(NotSet, |post_ids| Set(Some(post_ids.clone()))),
-            email: request.email.as_ref().map_or(NotSet, |email| Set(Some(email.clone()))),
-            mobile: request.mobile.as_ref().map_or(NotSet, |mobile| Set(Some(mobile.clone()))),
-            sex: request.sex.as_ref().map_or(NotSet, |sex| Set(Some(sex.clone()))),
-            avatar: request.avatar.as_ref().map_or(NotSet, |avatar| Set(Some(avatar.clone()))),
-            status: Set(request.status.clone()),
-            login_ip: request.login_ip.as_ref().map_or(NotSet, |login_ip| Set(Some(login_ip.clone()))),
-            login_date: request.login_date.as_ref().map_or(NotSet, |login_date| Set(Some(login_date.clone()))),
-            department_code: request.department_code.as_ref().map_or(NotSet, |department_code| Set(Some(department_code.clone()))),
-            department_id: request.department_id.as_ref().map_or(NotSet, |department_id| Set(Some(department_id.clone()))),
-            ..Default::default()
+        password: Set(request.password.clone()),
+        nickname: Set(request.nickname.clone()),
+        remark: request.remark.as_ref().map_or(NotSet, |remark| Set(Some(remark.clone()))),
+        post_ids: request.post_ids.as_ref().map_or(NotSet, |post_ids| Set(Some(post_ids.clone()))),
+        email: request.email.as_ref().map_or(NotSet, |email| Set(Some(email.clone()))),
+        mobile: request.mobile.as_ref().map_or(NotSet, |mobile| Set(Some(mobile.clone()))),
+        sex: request.sex.as_ref().map_or(NotSet, |sex| Set(Some(sex.clone()))),
+        avatar: request.avatar.as_ref().map_or(NotSet, |avatar| Set(Some(avatar.clone()))),
+        status: Set(request.status.clone()),
+        login_ip: request.login_ip.as_ref().map_or(NotSet, |login_ip| Set(Some(login_ip.clone()))),
+        login_date: request.login_date.as_ref().map_or(NotSet, |login_date| Set(Some(login_date.clone()))),
+        department_code: request.department_code.as_ref().map_or(NotSet, |department_code| Set(Some(department_code.clone()))),
+        department_id: request.department_id.as_ref().map_or(NotSet, |department_id| Set(Some(department_id.clone()))),
+        ..Default::default()
     }
 }
 

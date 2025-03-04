@@ -6,8 +6,8 @@ use system_model::response::system_role_menu::SystemRoleMenuResponse;
 pub fn create_request_to_model(request: &CreateSystemRoleMenuRequest) -> SystemRoleMenuActiveModel {
     SystemRoleMenuActiveModel {
         role_id: Set(request.role_id.clone()),
-            menu_id: Set(request.menu_id.clone()),
-            ..Default::default()
+        menu_id: Set(request.menu_id.clone()),
+        ..Default::default()
     }
 }
 

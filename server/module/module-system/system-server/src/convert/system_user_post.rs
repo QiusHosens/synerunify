@@ -6,8 +6,8 @@ use system_model::response::system_user_post::SystemUserPostResponse;
 pub fn create_request_to_model(request: &CreateSystemUserPostRequest) -> SystemUserPostActiveModel {
     SystemUserPostActiveModel {
         user_id: Set(request.user_id.clone()),
-            post_id: Set(request.post_id.clone()),
-            ..Default::default()
+        post_id: Set(request.post_id.clone()),
+        ..Default::default()
     }
 }
 

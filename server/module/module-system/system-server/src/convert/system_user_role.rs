@@ -6,8 +6,8 @@ use system_model::response::system_user_role::SystemUserRoleResponse;
 pub fn create_request_to_model(request: &CreateSystemUserRoleRequest) -> SystemUserRoleActiveModel {
     SystemUserRoleActiveModel {
         user_id: Set(request.user_id.clone()),
-            role_id: Set(request.role_id.clone()),
-            ..Default::default()
+        role_id: Set(request.role_id.clone()),
+        ..Default::default()
     }
 }
 

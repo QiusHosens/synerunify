@@ -6,19 +6,19 @@ use system_model::response::system_menu::SystemMenuResponse;
 pub fn create_request_to_model(request: &CreateSystemMenuRequest) -> SystemMenuActiveModel {
     SystemMenuActiveModel {
         name: Set(request.name.clone()),
-            permission: Set(request.permission.clone()),
-            r#type: Set(request.r#type.clone()),
-            sort: Set(request.sort.clone()),
-            parent_id: Set(request.parent_id.clone()),
-            path: request.path.as_ref().map_or(NotSet, |path| Set(Some(path.clone()))),
-            icon: request.icon.as_ref().map_or(NotSet, |icon| Set(Some(icon.clone()))),
-            component: request.component.as_ref().map_or(NotSet, |component| Set(Some(component.clone()))),
-            component_name: request.component_name.as_ref().map_or(NotSet, |component_name| Set(Some(component_name.clone()))),
-            status: Set(request.status.clone()),
-            visible: Set(request.visible.clone()),
-            keep_alive: Set(request.keep_alive.clone()),
-            always_show: Set(request.always_show.clone()),
-            ..Default::default()
+        permission: Set(request.permission.clone()),
+        r#type: Set(request.r#type.clone()),
+        sort: Set(request.sort.clone()),
+        parent_id: Set(request.parent_id.clone()),
+        path: request.path.as_ref().map_or(NotSet, |path| Set(Some(path.clone()))),
+        icon: request.icon.as_ref().map_or(NotSet, |icon| Set(Some(icon.clone()))),
+        component: request.component.as_ref().map_or(NotSet, |component| Set(Some(component.clone()))),
+        component_name: request.component_name.as_ref().map_or(NotSet, |component_name| Set(Some(component_name.clone()))),
+        status: Set(request.status.clone()),
+        visible: Set(request.visible.clone()),
+        keep_alive: Set(request.keep_alive.clone()),
+        always_show: Set(request.always_show.clone()),
+        ..Default::default()
     }
 }
 

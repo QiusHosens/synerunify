@@ -6,14 +6,14 @@ use system_model::response::system_role::SystemRoleResponse;
 pub fn create_request_to_model(request: &CreateSystemRoleRequest) -> SystemRoleActiveModel {
     SystemRoleActiveModel {
         r#type: Set(request.r#type.clone()),
-            name: Set(request.name.clone()),
-            code: Set(request.code.clone()),
-            status: Set(request.status.clone()),
-            sort: Set(request.sort.clone()),
-            data_scope_rule_id: Set(request.data_scope_rule_id.clone()),
-            data_scope_department_ids: Set(request.data_scope_department_ids.clone()),
-            remark: request.remark.as_ref().map_or(NotSet, |remark| Set(Some(remark.clone()))),
-            ..Default::default()
+        name: Set(request.name.clone()),
+        code: Set(request.code.clone()),
+        status: Set(request.status.clone()),
+        sort: Set(request.sort.clone()),
+        data_scope_rule_id: Set(request.data_scope_rule_id.clone()),
+        data_scope_department_ids: Set(request.data_scope_department_ids.clone()),
+        remark: request.remark.as_ref().map_or(NotSet, |remark| Set(Some(remark.clone()))),
+        ..Default::default()
     }
 }
 

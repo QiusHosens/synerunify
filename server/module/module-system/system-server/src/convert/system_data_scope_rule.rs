@@ -6,11 +6,11 @@ use system_model::response::system_data_scope_rule::SystemDataScopeRuleResponse;
 pub fn create_request_to_model(request: &CreateSystemDataScopeRuleRequest) -> SystemDataScopeRuleActiveModel {
     SystemDataScopeRuleActiveModel {
         r#type: Set(request.r#type.clone()),
-            name: Set(request.name.clone()),
-            field: request.field.as_ref().map_or(NotSet, |field| Set(Some(field.clone()))),
-            condition: request.condition.as_ref().map_or(NotSet, |condition| Set(Some(condition.clone()))),
-            value: request.value.as_ref().map_or(NotSet, |value| Set(Some(value.clone()))),
-            ..Default::default()
+        name: Set(request.name.clone()),
+        field: request.field.as_ref().map_or(NotSet, |field| Set(Some(field.clone()))),
+        condition: request.condition.as_ref().map_or(NotSet, |condition| Set(Some(condition.clone()))),
+        value: request.value.as_ref().map_or(NotSet, |value| Set(Some(value.clone()))),
+        ..Default::default()
     }
 }
 

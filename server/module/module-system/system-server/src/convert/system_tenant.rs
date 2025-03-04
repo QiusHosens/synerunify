@@ -6,15 +6,15 @@ use system_model::response::system_tenant::SystemTenantResponse;
 pub fn create_request_to_model(request: &CreateSystemTenantRequest) -> SystemTenantActiveModel {
     SystemTenantActiveModel {
         name: Set(request.name.clone()),
-            contact_user_id: request.contact_user_id.as_ref().map_or(NotSet, |contact_user_id| Set(Some(contact_user_id.clone()))),
-            contact_name: Set(request.contact_name.clone()),
-            contact_mobile: request.contact_mobile.as_ref().map_or(NotSet, |contact_mobile| Set(Some(contact_mobile.clone()))),
-            status: Set(request.status.clone()),
-            website: request.website.as_ref().map_or(NotSet, |website| Set(Some(website.clone()))),
-            package_id: Set(request.package_id.clone()),
-            expire_time: Set(request.expire_time.clone()),
-            account_count: Set(request.account_count.clone()),
-            ..Default::default()
+        contact_user_id: request.contact_user_id.as_ref().map_or(NotSet, |contact_user_id| Set(Some(contact_user_id.clone()))),
+        contact_name: Set(request.contact_name.clone()),
+        contact_mobile: request.contact_mobile.as_ref().map_or(NotSet, |contact_mobile| Set(Some(contact_mobile.clone()))),
+        status: Set(request.status.clone()),
+        website: request.website.as_ref().map_or(NotSet, |website| Set(Some(website.clone()))),
+        package_id: Set(request.package_id.clone()),
+        expire_time: Set(request.expire_time.clone()),
+        account_count: Set(request.account_count.clone()),
+        ..Default::default()
     }
 }
 

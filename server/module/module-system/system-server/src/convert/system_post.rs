@@ -6,11 +6,11 @@ use system_model::response::system_post::SystemPostResponse;
 pub fn create_request_to_model(request: &CreateSystemPostRequest) -> SystemPostActiveModel {
     SystemPostActiveModel {
         code: Set(request.code.clone()),
-            name: Set(request.name.clone()),
-            sort: Set(request.sort.clone()),
-            status: Set(request.status.clone()),
-            remark: request.remark.as_ref().map_or(NotSet, |remark| Set(Some(remark.clone()))),
-            ..Default::default()
+        name: Set(request.name.clone()),
+        sort: Set(request.sort.clone()),
+        status: Set(request.status.clone()),
+        remark: request.remark.as_ref().map_or(NotSet, |remark| Set(Some(remark.clone()))),
+        ..Default::default()
     }
 }
 

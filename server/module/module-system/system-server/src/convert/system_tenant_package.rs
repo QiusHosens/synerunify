@@ -6,10 +6,10 @@ use system_model::response::system_tenant_package::SystemTenantPackageResponse;
 pub fn create_request_to_model(request: &CreateSystemTenantPackageRequest) -> SystemTenantPackageActiveModel {
     SystemTenantPackageActiveModel {
         name: Set(request.name.clone()),
-            status: Set(request.status.clone()),
-            remark: request.remark.as_ref().map_or(NotSet, |remark| Set(Some(remark.clone()))),
-            menu_ids: Set(request.menu_ids.clone()),
-            ..Default::default()
+        status: Set(request.status.clone()),
+        remark: request.remark.as_ref().map_or(NotSet, |remark| Set(Some(remark.clone()))),
+        menu_ids: Set(request.menu_ids.clone()),
+        ..Default::default()
     }
 }
 

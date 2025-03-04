@@ -6,10 +6,10 @@ use system_model::response::system_notice::SystemNoticeResponse;
 pub fn create_request_to_model(request: &CreateSystemNoticeRequest) -> SystemNoticeActiveModel {
     SystemNoticeActiveModel {
         title: Set(request.title.clone()),
-            content: Set(request.content.clone()),
-            r#type: Set(request.r#type.clone()),
-            status: Set(request.status.clone()),
-            ..Default::default()
+        content: Set(request.content.clone()),
+        r#type: Set(request.r#type.clone()),
+        status: Set(request.status.clone()),
+        ..Default::default()
     }
 }
 
