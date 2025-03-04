@@ -3,6 +3,7 @@ use sea_orm::DatabaseConnection;
 use utoipa_axum::router::OpenApiRouter;
 use utoipa_axum::routes;
 use axum::{routing::{get, post}, Router, extract::{State, Path, Json, Query}, response::IntoResponse};
+use tracing::info;
 use common::base::page::PaginatedResponse;
 use crate::service::system_dict::SystemDictService;
 use system_model::request::system_dict::{CreateSystemDictRequest, UpdateSystemDictRequest, PaginatedKeywordRequest};
@@ -42,16 +43,18 @@ struct AppState {
 #[utoipa::path(
     post,
     path = "/create",
-    request_body(content = CreateSystemDictRequest, description = "create", content_type = "application/json"),
+    request_body(content = CreateSystemDictRequest, description = "create dict info", content_type = "application/json"),
     responses(
         (status = 200, description = "id", body = i64, example = json!(1))
     ),
     tag = "system_dict"
 )]
+#[tracing::instrument(skip(state))]
 async fn create(
     State(state): State<AppState>,
     Json(payload): Json<CreateSystemDictRequest>,
 ) -> Result<Json<i64>, axum::http::StatusCode> {
+    info!("create dict: category={}", payload.category);
     let id = state.system_dict_service.create(payload)
         .await
         .map_err(|_| axum::http::StatusCode::INTERNAL_SERVER_ERROR)?;
