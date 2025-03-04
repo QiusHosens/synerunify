@@ -1,16 +1,30 @@
 use std::sync::Arc;
 use sea_orm::DatabaseConnection;
 use utoipa_axum::router::OpenApiRouter;
-use axum::{routing::{get, post}, extract::{State, Path, Json, Query}, response::IntoResponse};
+use utoipa_axum::routes;
+use axum::{routing::{get, post}, Router, extract::{State, Path, Json, Query}, response::IntoResponse};
 use common::base::page::PaginatedResponse;
 use crate::service::system_data_scope_rule::SystemDataScopeRuleService;
 use system_model::request::system_data_scope_rule::{CreateSystemDataScopeRuleRequest, UpdateSystemDataScopeRuleRequest, PaginatedKeywordRequest};
 use system_model::response::system_data_scope_rule::SystemDataScopeRuleResponse;
 
-pub async fn system_data_scope_rule_route(db: Arc<DatabaseConnection>) -> OpenApiRouter {
+pub async fn system_data_scope_rule_router(db: Arc<DatabaseConnection>) -> OpenApiRouter {
     let system_data_scope_rule_service = SystemDataScopeRuleService::get_instance(db).await;
 
     OpenApiRouter::new()
+        .routes(routes!(create))
+        .routes(routes!(update))
+        .routes(routes!(delete))
+        .routes(routes!(get_by_id))
+        .routes(routes!(list))
+        .routes(routes!(page))
+        .with_state(AppState { system_data_scope_rule_service })
+}
+
+pub async fn system_data_scope_rule_route(db: Arc<DatabaseConnection>) -> Router {
+    let system_data_scope_rule_service = SystemDataScopeRuleService::get_instance(db).await;
+
+    Router::new()
         .route("/create", post(create))
         .route("/update", post(update))
         .route("/delete/{id}", post(delete))

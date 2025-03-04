@@ -1,9 +1,26 @@
 use axum::Router;
 use sea_orm::DatabaseConnection;
+use utoipa::OpenApi;
+use utoipa_axum::router::OpenApiRouter;
 use std::sync::Arc;{% for table_name in table_names %}
-use crate::api::{{ table_name }}::{{ table_name }}_route;{% endfor %}
+use crate::api::{{ table_name }}::{ {{ table_name }}_route, {{ table_name }}_router };{% endfor %}
+
+// openapi document
+#[derive(OpenApi)]
+#[openapi(
+    info(
+        title = "API",
+        description = "api",
+        version = "1.0.0"
+    )
+)]
+pub struct ApiDocument;
 
 pub async fn api(database: Arc<DatabaseConnection>) -> Router {
-    Router::new(){% for table_name in table_names %}
-        .nest("/{{ table_name }}", {{ table_name }}_route(database.clone()).await){% endfor %}
+    let (router, api) = OpenApiRouter::with_openapi(ApiDocument::openapi()){% for table_name in table_names %}
+        .nest("/{{ table_name }}", {{ table_name }}_router(database.clone()).await){% endfor %}
+        .split_for_parts();
+
+    router
+        .merge(utoipa_swagger_ui::SwaggerUi::new("/swagger-ui").url("/api-docs/openapi.json", api.clone()))
 }
