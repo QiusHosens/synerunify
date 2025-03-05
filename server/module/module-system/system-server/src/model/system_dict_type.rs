@@ -2,29 +2,19 @@ use chrono::NaiveDateTime;
 use sea_orm::entity::prelude::*;
 
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel)]
-#[sea_orm(table_name = "system_dict")]
+#[sea_orm(table_name = "system_dict_type")]
 pub struct Model {
     
-    #[sea_orm(primary_key, auto_increment = false)]
-    pub id: i64, // 主键
+    #[sea_orm(primary_key)]
+    pub id: i64, // id
     
-    pub category: String, // 类型
+    pub name: String, // 字典名称
     
-    pub category_name: String, // 类型名称
-    
-    pub code: String, // 编码
-    
-    pub name: String, // 名称
-    
-    pub remark: Option<String>, // 备注
-    
-    pub sort: i32, // 排序
+    pub r#type: String, // 字典类型
     
     pub status: i8, // 状态（0正常 1停用）
     
-    pub color_type: Option<String>, // 颜色类型
-    
-    pub css_class: Option<String>, // css 样式
+    pub remark: Option<String>, // 备注
     
     pub creator: Option<String>, // 创建者
     
@@ -34,7 +24,9 @@ pub struct Model {
     
     pub update_time: NaiveDateTime, // 更新时间
     
-    pub deleted: bool, // 删除标志,0:未删除;1:已删除
+    pub deleted: bool, // 是否删除
+    
+    pub deleted_time: Option<NaiveDateTime>, // 删除时间
     
 }
 

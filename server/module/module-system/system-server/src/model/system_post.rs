@@ -5,8 +5,8 @@ use sea_orm::entity::prelude::*;
 #[sea_orm(table_name = "system_post")]
 pub struct Model {
     
-    #[sea_orm(primary_key, auto_increment = false)]
-    pub id: i64, // 职位ID
+    #[sea_orm(primary_key)]
+    pub id: i64, // id
     
     pub code: String, // 职位编码
     

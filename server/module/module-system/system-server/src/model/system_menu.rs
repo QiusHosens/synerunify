@@ -5,8 +5,8 @@ use sea_orm::entity::prelude::*;
 #[sea_orm(table_name = "system_menu")]
 pub struct Model {
     
-    #[sea_orm(primary_key, auto_increment = false)]
-    pub id: i64, // 菜单ID
+    #[sea_orm(primary_key)]
+    pub id: i64, // id
     
     pub name: String, // 菜单名称
     

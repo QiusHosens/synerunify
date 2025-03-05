@@ -7,7 +7,7 @@ use serde_with::{serde_as, DisplayFromStr};
 #[derive(Deserialize, Serialize, Debug, Clone, ToSchema)]
 pub struct SystemMenuResponse {
     
-    pub id: i64, // 菜单ID
+    pub id: i64, // id
     
     pub name: String, // 菜单名称
     

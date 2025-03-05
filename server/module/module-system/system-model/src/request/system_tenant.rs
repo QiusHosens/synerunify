@@ -32,7 +32,7 @@ pub struct CreateSystemTenantRequest {
 #[derive(Serialize, Deserialize, Debug, ToSchema)]
 pub struct UpdateSystemTenantRequest {
     
-    pub id: i64, // 租户编号
+    pub id: i64, // id
     
     pub name: Option<String>, // 租户名
     

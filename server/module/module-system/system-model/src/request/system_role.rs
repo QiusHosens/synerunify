@@ -27,7 +27,7 @@ pub struct CreateSystemRoleRequest {
 #[derive(Serialize, Deserialize, Debug, ToSchema)]
 pub struct UpdateSystemRoleRequest {
     
-    pub id: i64, // 角色ID
+    pub id: i64, // id
     
     pub r#type: Option<i8>, // 角色类型
     

@@ -7,7 +7,7 @@ use serde_with::{serde_as, DisplayFromStr};
 #[derive(Deserialize, Serialize, Debug, Clone, ToSchema)]
 pub struct SystemRoleResponse {
     
-    pub id: i64, // 角色ID
+    pub id: i64, // id
     
     pub r#type: i8, // 角色类型
     

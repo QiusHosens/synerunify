@@ -7,7 +7,7 @@ use serde_with::{serde_as, DisplayFromStr};
 #[derive(Deserialize, Serialize, Debug, Clone, ToSchema)]
 pub struct SystemPostResponse {
     
-    pub id: i64, // 职位ID
+    pub id: i64, // id
     
     pub code: String, // 职位编码
     

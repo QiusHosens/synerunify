@@ -5,27 +5,25 @@ use serde_with::{serde_as, DisplayFromStr};
 
 // #[serde_as]
 #[derive(Deserialize, Serialize, Debug, Clone, ToSchema)]
-pub struct SystemDictResponse {
+pub struct SystemDictDataResponse {
     
-    pub id: i64, // 主键
+    pub id: i64, // id
     
-    pub category: String, // 类型
+    pub sort: i32, // 字典排序
     
-    pub category_name: String, // 类型名称
+    pub label: String, // 字典标签
     
-    pub code: String, // 编码
+    pub value: String, // 字典键值
     
-    pub name: String, // 名称
-    
-    pub remark: Option<String>, // 备注
-    
-    pub sort: i32, // 排序
+    pub dict_type: String, // 字典类型
     
     pub status: i8, // 状态（0正常 1停用）
     
     pub color_type: Option<String>, // 颜色类型
     
     pub css_class: Option<String>, // css 样式
+    
+    pub remark: Option<String>, // 备注
     
     pub creator: Option<String>, // 创建者
     

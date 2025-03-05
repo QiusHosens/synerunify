@@ -7,7 +7,7 @@ use serde_with::{serde_as, DisplayFromStr};
 #[derive(Deserialize, Serialize, Debug, Clone, ToSchema)]
 pub struct SystemTenantResponse {
     
-    pub id: i64, // 租户编号
+    pub id: i64, // id
     
     pub name: String, // 租户名
     

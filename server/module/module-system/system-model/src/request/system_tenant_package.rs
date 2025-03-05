@@ -19,7 +19,7 @@ pub struct CreateSystemTenantPackageRequest {
 #[derive(Serialize, Deserialize, Debug, ToSchema)]
 pub struct UpdateSystemTenantPackageRequest {
     
-    pub id: i64, // 套餐编号
+    pub id: i64, // id
     
     pub name: Option<String>, // 套餐名
     

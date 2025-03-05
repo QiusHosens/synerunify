@@ -37,7 +37,7 @@ pub struct CreateSystemMenuRequest {
 #[derive(Serialize, Deserialize, Debug, ToSchema)]
 pub struct UpdateSystemMenuRequest {
     
-    pub id: i64, // 菜单ID
+    pub id: i64, // id
     
     pub name: Option<String>, // 菜单名称
     

@@ -42,7 +42,7 @@ pub struct CreateSystemUserRequest {
 #[derive(Serialize, Deserialize, Debug, ToSchema)]
 pub struct UpdateSystemUserRequest {
     
-    pub id: i64, // 用户ID
+    pub id: i64, // id
     
     pub username: Option<String>, // 用户账号
     

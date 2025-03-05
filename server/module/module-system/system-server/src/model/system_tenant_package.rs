@@ -5,8 +5,8 @@ use sea_orm::entity::prelude::*;
 #[sea_orm(table_name = "system_tenant_package")]
 pub struct Model {
     
-    #[sea_orm(primary_key, auto_increment = false)]
-    pub id: i64, // 套餐编号
+    #[sea_orm(primary_key)]
+    pub id: i64, // id
     
     pub name: String, // 套餐名
     

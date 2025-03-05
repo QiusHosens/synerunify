@@ -4,19 +4,15 @@ use utoipa::ToSchema;
 use common::base::page::PaginatedRequest;
 
 #[derive(Serialize, Deserialize, Debug, ToSchema)]
-pub struct CreateSystemDictRequest {
+pub struct CreateSystemDictDataRequest {
     
-    pub category: String, // 类型
+    pub sort: i32, // 字典排序
     
-    pub category_name: String, // 类型名称
+    pub label: String, // 字典标签
     
-    pub code: String, // 编码
+    pub value: String, // 字典键值
     
-    pub name: String, // 名称
-    
-    pub remark: Option<String>, // 备注
-    
-    pub sort: i32, // 排序
+    pub dict_type: String, // 字典类型
     
     pub status: i8, // 状态（0正常 1停用）
     
@@ -24,30 +20,30 @@ pub struct CreateSystemDictRequest {
     
     pub css_class: Option<String>, // css 样式
     
+    pub remark: Option<String>, // 备注
+    
 }
 
 #[derive(Serialize, Deserialize, Debug, ToSchema)]
-pub struct UpdateSystemDictRequest {
+pub struct UpdateSystemDictDataRequest {
     
-    pub id: i64, // 主键
+    pub id: i64, // id
     
-    pub category: Option<String>, // 类型
+    pub sort: Option<i32>, // 字典排序
     
-    pub category_name: Option<String>, // 类型名称
+    pub label: Option<String>, // 字典标签
     
-    pub code: Option<String>, // 编码
+    pub value: Option<String>, // 字典键值
     
-    pub name: Option<String>, // 名称
-    
-    pub remark: Option<String>, // 备注
-    
-    pub sort: Option<i32>, // 排序
+    pub dict_type: Option<String>, // 字典类型
     
     pub status: Option<i8>, // 状态（0正常 1停用）
     
     pub color_type: Option<String>, // 颜色类型
     
     pub css_class: Option<String>, // css 样式
+    
+    pub remark: Option<String>, // 备注
     
 }
 

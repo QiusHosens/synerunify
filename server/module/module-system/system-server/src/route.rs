@@ -5,7 +5,8 @@ use utoipa_axum::router::OpenApiRouter;
 use std::sync::Arc;
 use crate::api::system_data_scope_rule::{ system_data_scope_rule_route, system_data_scope_rule_router };
 use crate::api::system_department::{ system_department_route, system_department_router };
-use crate::api::system_dict::{ system_dict_route, system_dict_router };
+use crate::api::system_dict_data::{ system_dict_data_route, system_dict_data_router };
+use crate::api::system_dict_type::{ system_dict_type_route, system_dict_type_router };
 use crate::api::system_menu::{ system_menu_route, system_menu_router };
 use crate::api::system_notice::{ system_notice_route, system_notice_router };
 use crate::api::system_post::{ system_post_route, system_post_router };
@@ -29,7 +30,8 @@ use crate::api::system_user_role::{ system_user_role_route, system_user_role_rou
     tags(
         (name = "system_data_scope_rule", description = "数据权限规则"),
         (name = "system_department", description = "部门"),
-        (name = "system_dict", description = "系统字典"),
+        (name = "system_dict_data", description = "字典数据"),
+        (name = "system_dict_type", description = "字典类型"),
         (name = "system_menu", description = "菜单权限"),
         (name = "system_notice", description = "通知公告"),
         (name = "system_post", description = "职位信息"),
@@ -47,20 +49,21 @@ pub struct ApiDocument;
 
 pub async fn api(database: Arc<DatabaseConnection>) -> Router {
     let (router, api) = OpenApiRouter::with_openapi(ApiDocument::openapi())
-        .nest("/system_data_scope_rule", system_data_scope_rule_router(database.clone()).await)
-        .nest("/system_department", system_department_router(database.clone()).await)
-        .nest("/system_dict", system_dict_router(database.clone()).await)
-        .nest("/system_menu", system_menu_router(database.clone()).await)
-        .nest("/system_notice", system_notice_router(database.clone()).await)
-        .nest("/system_post", system_post_router(database.clone()).await)
-        .nest("/system_role", system_role_router(database.clone()).await)
-        .nest("/system_role_menu", system_role_menu_router(database.clone()).await)
-        .nest("/system_role_menu_data_scope", system_role_menu_data_scope_router(database.clone()).await)
-        .nest("/system_tenant", system_tenant_router(database.clone()).await)
-        .nest("/system_tenant_package", system_tenant_package_router(database.clone()).await)
-        .nest("/system_user", system_user_router(database.clone()).await)
-        .nest("/system_user_post", system_user_post_router(database.clone()).await)
-        .nest("/system_user_role", system_user_role_router(database.clone()).await)
+        // .nest("/system_data_scope_rule", system_data_scope_rule_router(database.clone()).await)
+        // .nest("/system_department", system_department_router(database.clone()).await)
+        .nest("/system_dict_data", system_dict_data_router(database.clone()).await)
+        .nest("/system_dict_type", system_dict_type_router(database.clone()).await)
+        // .nest("/system_menu", system_menu_router(database.clone()).await)
+        // .nest("/system_notice", system_notice_router(database.clone()).await)
+        // .nest("/system_post", system_post_router(database.clone()).await)
+        // .nest("/system_role", system_role_router(database.clone()).await)
+        // .nest("/system_role_menu", system_role_menu_router(database.clone()).await)
+        // .nest("/system_role_menu_data_scope", system_role_menu_data_scope_router(database.clone()).await)
+        // .nest("/system_tenant", system_tenant_router(database.clone()).await)
+        // .nest("/system_tenant_package", system_tenant_package_router(database.clone()).await)
+        // .nest("/system_user", system_user_router(database.clone()).await)
+        // .nest("/system_user_post", system_user_post_router(database.clone()).await)
+        // .nest("/system_user_role", system_user_role_router(database.clone()).await)
         .split_for_parts();
 
     router

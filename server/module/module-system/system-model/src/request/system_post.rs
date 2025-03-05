@@ -21,7 +21,7 @@ pub struct CreateSystemPostRequest {
 #[derive(Serialize, Deserialize, Debug, ToSchema)]
 pub struct UpdateSystemPostRequest {
     
-    pub id: i64, // 职位ID
+    pub id: i64, // id
     
     pub code: Option<String>, // 职位编码
     

@@ -5,7 +5,7 @@ use sea_orm::entity::prelude::*;
 #[sea_orm(table_name = "system_role_menu_data_scope")]
 pub struct Model {
     
-    #[sea_orm(primary_key, auto_increment = false)]
+    #[sea_orm(primary_key)]
     pub id: i64, // id
     
     pub role_menu_id: i64, // 角色菜单ID

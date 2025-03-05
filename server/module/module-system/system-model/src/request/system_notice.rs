@@ -19,7 +19,7 @@ pub struct CreateSystemNoticeRequest {
 #[derive(Serialize, Deserialize, Debug, ToSchema)]
 pub struct UpdateSystemNoticeRequest {
     
-    pub id: i64, // 公告ID
+    pub id: i64, // id
     
     pub title: Option<String>, // 公告标题
     

@@ -27,7 +27,7 @@ pub struct CreateSystemDepartmentRequest {
 #[derive(Serialize, Deserialize, Debug, ToSchema)]
 pub struct UpdateSystemDepartmentRequest {
     
-    pub id: i64, // 部门id
+    pub id: i64, // id
     
     pub code: Option<String>, // 部门编码
     

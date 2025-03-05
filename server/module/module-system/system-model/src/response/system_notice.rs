@@ -7,7 +7,7 @@ use serde_with::{serde_as, DisplayFromStr};
 #[derive(Deserialize, Serialize, Debug, Clone, ToSchema)]
 pub struct SystemNoticeResponse {
     
-    pub id: i64, // 公告ID
+    pub id: i64, // id
     
     pub title: String, // 公告标题
     

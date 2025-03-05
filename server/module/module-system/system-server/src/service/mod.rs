@@ -1,6 +1,7 @@
 pub mod system_data_scope_rule;
 pub mod system_department;
-pub mod system_dict;
+pub mod system_dict_data;
+pub mod system_dict_type;
 pub mod system_menu;
 pub mod system_notice;
 pub mod system_post;
