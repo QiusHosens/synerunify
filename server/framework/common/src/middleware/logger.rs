@@ -1,4 +1,3 @@
-use common::config::config::Config;
 use chrono::Local;
 use std::{fs, panic};
 use std::io;
@@ -10,6 +9,7 @@ use tracing_appender::rolling;
 use tracing_subscriber::fmt;
 use tracing_subscriber::prelude::*;
 use tracing_subscriber::EnvFilter;
+use crate::config::config::Config;
 
 // 自定义时间格式器
 struct LocalTimeFormatter;
@@ -25,7 +25,7 @@ pub async fn init_tracing() -> io::Result<()> {
     // let env_filter = EnvFilter::try_from_default_env()
     //     .unwrap_or_else(|_| EnvFilter::new("info"));
     let config = Config::load().await;
-    let env_filter = EnvFilter::new(format!("{},sea_orm=info", config.log_level));
+    let env_filter = EnvFilter::new(format!("{}", config.log_level));
 
     // 配置日志文件路径
     let log_dir = "logs";

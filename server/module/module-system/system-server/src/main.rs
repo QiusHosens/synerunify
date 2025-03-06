@@ -1,11 +1,12 @@
 use axum::handler::HandlerWithoutStateExt;
 use axum::http::Method;
 use common::config::config::Config;
-use common::config::database::get_database_instance;
+use common::database::database::get_database_instance;
 use once_cell::sync::Lazy;
 use std::sync::Arc;
 use tower_http::cors::{Any, CorsLayer};
 use tracing::info;
+use common::middleware::logger;
 
 mod api;
 mod service;
@@ -13,14 +14,15 @@ mod convert;
 mod model;
 mod route;
 
-pub static RT: Lazy<Arc<tokio::runtime::Runtime>> = Lazy::new(|| {
-    let rt = tokio::runtime::Runtime::new().unwrap();
-    Arc::new(rt)
-});
+// pub static RT: Lazy<Arc<tokio::runtime::Runtime>> = Lazy::new(|| {
+//     let rt = tokio::runtime::Runtime::new().unwrap();
+//     Arc::new(rt)
+// });
 
 #[tokio::main]
 async fn main() -> Result<(), anyhow::Error> {
-    middleware::logger::init_tracing().await?;
+    // 初始化日志
+    logger::init_tracing().await?;
     let config = Config::load().await;
     let database = get_database_instance(config.database_url).await;
 
@@ -34,7 +36,7 @@ async fn main() -> Result<(), anyhow::Error> {
     //     .layer(cors);
     let app = route::api(database).await
         .layer(cors)
-        .layer(axum::middleware::from_fn(middleware::logger::panic_handler)); // 添加异常处理中间件
+        .layer(axum::middleware::from_fn(logger::panic_handler)); // 添加异常处理中间件
 
     let addr = format!("0.0.0.0:{}", config.server_port);
     let listener = tokio::net::TcpListener::bind(&addr).await?;
