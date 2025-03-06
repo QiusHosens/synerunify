@@ -1,24 +1,23 @@
 use serde::Deserialize;
 use std::env;
-use std::sync::Arc;
+use std::sync::{Arc, OnceLock};
 use lazy_static::lazy_static;
 use tokio::sync::OnceCell;
 
 #[derive(Deserialize, Debug, Clone)]
 pub struct Config {
-    pub server_port: u16,
-    pub database_url: String,
-    pub api_prefix: String,
-    pub log_level: String,
+    pub server_port: u16, // 服务端口
+    pub database_url: String, // 数据库地址
+    pub api_prefix: String, // api前缀
+    pub log_level: String, // 日志级别
+    pub redis_url: String, // redis地址
 }
 
-lazy_static! {
-    static ref CONFIG_INSTANCE: OnceCell<Config> = OnceCell::new();
-}
+static CONFIG_INSTANCE: OnceLock<Config> = OnceLock::new();
 
 impl Config {
-    pub async fn load() -> Config {
-        CONFIG_INSTANCE.get_or_init(|| async {
+    pub fn load() -> Config {
+        CONFIG_INSTANCE.get_or_init(|| {
             let server_port = env::var("SERVER_PORT")
                 .unwrap_or_else(|_| "9000".to_string())
                 .parse::<u16>().unwrap_or_else(|_| 9000);
@@ -28,13 +27,16 @@ impl Config {
                 .unwrap_or_else(|_| "".to_string());
             let log_level = env::var("LOG_LEVEL")
                 .unwrap_or_else(|_| "info".to_string());
+            let redis_url = env::var("REDIS_URL")
+                .unwrap_or_else(|_| "redis://127.0.0.1:6379/".to_string());
 
             Config {
                 server_port,
                 database_url,
                 api_prefix,
                 log_level,
+                redis_url,
             }
-        }).await.clone()
+        }).clone()
     }
 }

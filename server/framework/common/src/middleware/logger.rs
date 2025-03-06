@@ -24,7 +24,7 @@ pub async fn init_tracing() -> io::Result<()> {
     // 从环境变量 RUST_LOG 获取日志级别，默认为 info
     // let env_filter = EnvFilter::try_from_default_env()
     //     .unwrap_or_else(|_| EnvFilter::new("info"));
-    let config = Config::load().await;
+    let config = Config::load();
     let env_filter = EnvFilter::new(format!("{}", config.log_level));
 
     // 配置日志文件路径

@@ -1,0 +1,1 @@
+pub const REDIS_KEY_TENANTS_LIST: &'static str = "system:tenants:list";
