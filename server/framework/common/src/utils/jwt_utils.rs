@@ -6,9 +6,11 @@ use axum_extra::TypedHeader;
 use chrono::{Duration, Utc};
 use jsonwebtoken::{decode, encode, Algorithm, DecodingKey, EncodingKey, Header, Validation};
 use once_cell::sync::Lazy;
+use redis::RedisResult;
+use sea_orm::sea_query::ExprTrait;
 use serde::{Deserialize, Serialize};
 use serde_json::json;
-use std::sync::Arc;
+use crate::context::context::{LoginUserContext, UserTenantContext};
 
 static SECRET_KEY: Lazy<Vec<u8>> = Lazy::new(|| b"synerunify:token:secret-key".to_vec());
 
@@ -28,13 +30,6 @@ struct RefreshClaims {
     tenant_id: i64, // 租户id
     exp: i64, // 过期时间
     iat: i64, // 签发时间
-}
-
-// Token 对结构
-#[derive(Serialize)]
-struct TokenPair {
-    access_token: String,
-    refresh_token: String,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -98,11 +93,6 @@ where
     type Rejection = AuthError;
 
     async fn from_request_parts(parts: &mut Parts, _state: &S) -> Result<Self, Self::Rejection> {
-        let state = parts
-            .extensions
-            .get::<Arc<AppState>>()
-            .ok_or(AuthError::InvalidToken)?;
-
         // 使用 TypedHeader 提取 Authorization Bearer token
         let TypedHeader(auth) = TypedHeader::<Authorization<headers::authorization::Bearer>>::from_request_parts(parts, _state)
             .await
@@ -125,6 +115,13 @@ where
         if !is_valid_tenant(claims.tenant_id).await? {
             return Err(AuthError::WrongCredentials);
         }
+
+        // 获取用户登录信息
+        let context = RedisManager::get::<_, String>(claims.sub);
+        parts.extensions.insert(UserTenantContext {
+            id: claims.sub.clone(),  // 用户id
+            tenant_id: claims.tenant_id.clone(), // 租户id
+        });
 
         Ok(claims)
     }

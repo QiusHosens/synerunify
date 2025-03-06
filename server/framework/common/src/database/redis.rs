@@ -19,7 +19,7 @@ impl RedisManager {
     }
 
     // String 操作（使用泛型）
-    pub fn set_string<K, V>(key: K, value: V) -> RedisResult<()>
+    pub fn set<K, V>(key: K, value: V) -> RedisResult<()>
     where
         K: ToRedisArgs,
         V: ToRedisArgs,
@@ -29,7 +29,7 @@ impl RedisManager {
         Ok(())
     }
 
-    pub fn get_string<K, V>(key: K) -> RedisResult<Option<V>>
+    pub fn get<K, V>(key: K) -> RedisResult<Option<V>>
     where
         K: ToRedisArgs,
         V: FromRedisValue,
