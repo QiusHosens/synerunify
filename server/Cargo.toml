@@ -2,7 +2,7 @@
 members = [
     "module/module-system/*",
     "framework/*",
-    "tool/*",
+    "tool/*", "module/module-test",
 ]
 resolver = "2"
 

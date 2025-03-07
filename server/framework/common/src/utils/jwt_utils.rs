@@ -118,10 +118,17 @@ where
 
         // 获取用户登录信息
         let context = RedisManager::get::<_, String>(claims.sub);
-        parts.extensions.insert(UserTenantContext {
-            id: claims.sub.clone(),  // 用户id
-            tenant_id: claims.tenant_id.clone(), // 租户id
-        });
+        let login_user = match context {
+            Ok(Some(ctx_str)) => serde_json::from_str::<LoginUserContext>(&ctx_str)
+                .map_err(|_| AuthError::WrongCredentials),
+            Ok(None) => Err(AuthError::WrongCredentials),
+            Err(_) => Err(AuthError::WrongCredentials),
+        }?;
+        parts.extensions.insert(login_user);
+        // parts.extensions.insert(UserTenantContext {
+        //     id: claims.sub.clone(),  // 用户id
+        //     tenant_id: claims.tenant_id.clone(), // 租户id
+        // });
 
         Ok(claims)
     }

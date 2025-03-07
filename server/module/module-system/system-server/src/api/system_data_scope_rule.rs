@@ -2,8 +2,9 @@ use std::sync::Arc;
 use sea_orm::DatabaseConnection;
 use utoipa_axum::router::OpenApiRouter;
 use utoipa_axum::routes;
-use axum::{routing::{get, post}, Router, extract::{State, Path, Json, Query}, response::IntoResponse};
+use axum::{routing::{get, post}, Router, extract::{State, Path, Json, Query}, response::IntoResponse, Extension};
 use common::base::page::PaginatedResponse;
+use common::context::context::LoginUserContext;
 use crate::service::system_data_scope_rule::SystemDataScopeRuleService;
 use system_model::request::system_data_scope_rule::{CreateSystemDataScopeRuleRequest, UpdateSystemDataScopeRuleRequest, PaginatedKeywordRequest};
 use system_model::response::system_data_scope_rule::SystemDataScopeRuleResponse;
@@ -70,7 +71,12 @@ async fn create(
 async fn update(
     State(state): State<AppState>,
     Json(payload): Json<UpdateSystemDataScopeRuleRequest>,
+    Extension(user): Extension<Option<LoginUserContext>>
 ) -> Result<impl IntoResponse, axum::http::StatusCode> {
+    if user.is_none() {
+        return Err(axum::http::StatusCode::UNAUTHORIZED);
+    }
+
     state.system_data_scope_rule_service.update(payload)
         .await
         .map_err(|_| axum::http::StatusCode::INTERNAL_SERVER_ERROR)?;

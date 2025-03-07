@@ -1,0 +1,36 @@
+[package]
+name = "module-test"
+version = { workspace = true }
+edition = { workspace = true }
+rust-version = { workspace = true }
+
+[lints.rust]
+unused_imports = "allow"
+warnings = "allow"
+
+[dependencies]
+# axum
+axum = { version = "0.8.1", default-features = false, features = [
+    "matched-path",
+    "form",
+    "tracing",
+    "query",
+    "json",
+    "tokio",
+    "http1",
+    "multipart",
+] }
+axum-macros = "0.5.0"
+axum-extra = { version = "0.10.0", features = ["query"] }
+# async require
+tokio = { version = "1.43.0", default-features = false, features = [
+    "macros",
+    "rt-multi-thread",
+] }
+# utoipa
+utoipa = { version = "5.3.1" }
+utoipa-swagger-ui = { version = "9.0.0", features = ["axum"] }
+utoipa-axum = { version = "0.2.0" }
+
+serde = { version = "1.0.218", default-features = false, features = ["derive"] }
+anyhow = "1.0.97"
