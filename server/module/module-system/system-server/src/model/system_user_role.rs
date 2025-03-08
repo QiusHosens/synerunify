@@ -12,15 +12,15 @@ pub struct Model {
     
     pub role_id: i64, // 角色ID
     
-    pub creator: Option<String>, // 创建者
+    pub creator: Option<i64>, // 创建者id
     
-    pub create_time: Option<NaiveDateTime>, // 创建时间
+    pub create_time: NaiveDateTime, // 创建时间
     
-    pub updater: Option<String>, // 更新者
+    pub updater: Option<i64>, // 更新者id
     
-    pub update_time: Option<NaiveDateTime>, // 更新时间
+    pub update_time: NaiveDateTime, // 更新时间
     
-    pub deleted: Option<bool>, // 是否删除
+    pub deleted: bool, // 是否删除
     
     pub tenant_id: i64, // 租户编号
     

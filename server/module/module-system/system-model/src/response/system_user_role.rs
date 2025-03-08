@@ -13,18 +13,18 @@ pub struct SystemUserRoleResponse {
     
     pub role_id: i64, // 角色ID
     
-    pub creator: Option<String>, // 创建者
+    pub creator: Option<i64>, // 创建者id
     
     // #[serde_as(as = "DisplayFromStr")]
     // #[serde(with = "serde_with::chrono::naive_datetime")]
     #[schema(value_type = String, format = Date)]
-    pub create_time: Option<NaiveDateTime>, // 创建时间
+    pub create_time: NaiveDateTime, // 创建时间
     
-    pub updater: Option<String>, // 更新者
+    pub updater: Option<i64>, // 更新者id
     
     // #[serde_as(as = "DisplayFromStr")]
     // #[serde(with = "serde_with::chrono::naive_datetime")]
     #[schema(value_type = String, format = Date)]
-    pub update_time: Option<NaiveDateTime>, // 更新时间
+    pub update_time: NaiveDateTime, // 更新时间
     
 }

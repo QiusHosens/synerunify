@@ -33,7 +33,7 @@ pub struct CreateSystemUserRequest {
     #[schema(value_type = String, format = Date)]
     pub login_date: Option<NaiveDateTime>, // 最后登录时间
     
-    pub department_code: Option<i64>, // 部门编码
+    pub department_code: String, // 部门编码
     
     pub department_id: Option<i64>, // 部门ID
     
@@ -71,7 +71,7 @@ pub struct UpdateSystemUserRequest {
     #[schema(value_type = String, format = Date)]
     pub login_date: Option<NaiveDateTime>, // 最后登录时间
     
-    pub department_code: Option<i64>, // 部门编码
+    pub department_code: Option<String>, // 部门编码
     
     pub department_id: Option<i64>, // 部门ID
     

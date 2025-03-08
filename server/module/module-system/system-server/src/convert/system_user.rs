@@ -17,7 +17,7 @@ pub fn create_request_to_model(request: &CreateSystemUserRequest) -> SystemUserA
         status: Set(request.status.clone()),
         login_ip: request.login_ip.as_ref().map_or(NotSet, |login_ip| Set(Some(login_ip.clone()))),
         login_date: request.login_date.as_ref().map_or(NotSet, |login_date| Set(Some(login_date.clone()))),
-        department_code: request.department_code.as_ref().map_or(NotSet, |department_code| Set(Some(department_code.clone()))),
+        department_code: Set(request.department_code.clone()),
         department_id: request.department_id.as_ref().map_or(NotSet, |department_id| Set(Some(department_id.clone()))),
         ..Default::default()
     }
@@ -62,7 +62,7 @@ pub fn update_request_to_model(request: &UpdateSystemUserRequest, existing: Syst
         active_model.login_date = Set(Some(login_date.clone()));
     }
     if let Some(department_code) = &request.department_code { 
-        active_model.department_code = Set(Some(department_code.clone()));
+        active_model.department_code = Set(department_code.clone());
     }
     if let Some(department_id) = &request.department_id { 
         active_model.department_id = Set(Some(department_id.clone()));

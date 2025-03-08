@@ -16,11 +16,11 @@ pub struct Model {
     
     pub menu_ids: String, // 关联的菜单编号
     
-    pub creator: String, // 创建者
+    pub creator: Option<i64>, // 创建者id
     
     pub create_time: NaiveDateTime, // 创建时间
     
-    pub updater: Option<String>, // 更新者
+    pub updater: Option<i64>, // 更新者id
     
     pub update_time: NaiveDateTime, // 更新时间
     

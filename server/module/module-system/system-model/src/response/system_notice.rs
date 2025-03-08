@@ -17,14 +17,14 @@ pub struct SystemNoticeResponse {
     
     pub status: i8, // 公告状态（0正常 1关闭）
     
-    pub creator: Option<String>, // 创建者
+    pub creator: Option<i64>, // 创建者id
     
     // #[serde_as(as = "DisplayFromStr")]
     // #[serde(with = "serde_with::chrono::naive_datetime")]
     #[schema(value_type = String, format = Date)]
     pub create_time: NaiveDateTime, // 创建时间
     
-    pub updater: Option<String>, // 更新者
+    pub updater: Option<i64>, // 更新者id
     
     // #[serde_as(as = "DisplayFromStr")]
     // #[serde(with = "serde_with::chrono::naive_datetime")]

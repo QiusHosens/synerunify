@@ -9,7 +9,6 @@ pub fn create_request_to_model(request: &CreateSystemDictTypeRequest) -> SystemD
         r#type: Set(request.r#type.clone()),
         status: Set(request.status.clone()),
         remark: request.remark.as_ref().map_or(NotSet, |remark| Set(Some(remark.clone()))),
-        deleted_time: request.deleted_time.as_ref().map_or(NotSet, |deleted_time| Set(Some(deleted_time.clone()))),
         ..Default::default()
     }
 }
@@ -28,9 +27,6 @@ pub fn update_request_to_model(request: &UpdateSystemDictTypeRequest, existing: 
     if let Some(remark) = &request.remark { 
         active_model.remark = Set(Some(remark.clone()));
     }
-    if let Some(deleted_time) = &request.deleted_time { 
-        active_model.deleted_time = Set(Some(deleted_time.clone()));
-    }
     active_model
 }
 
@@ -45,6 +41,5 @@ pub fn model_to_response(model: SystemDictType) -> SystemDictTypeResponse {
         create_time: model.create_time,
         updater: model.updater,
         update_time: model.update_time,
-        deleted_time: model.deleted_time,
     }
 }

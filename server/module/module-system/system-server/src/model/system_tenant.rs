@@ -26,15 +26,15 @@ pub struct Model {
     
     pub account_count: i32, // 账号数量
     
-    pub creator: String, // 创建者
+    pub creator: Option<i64>, // 创建者id
     
     pub create_time: NaiveDateTime, // 创建时间
     
-    pub updater: Option<String>, // 更新者
+    pub updater: Option<i64>, // 更新者id
     
     pub update_time: NaiveDateTime, // 更新时间
     
-    pub deleted: bool, // 是否删除,0:未删除;1:已删除
+    pub deleted: bool, // 是否删除
     
 }
 
