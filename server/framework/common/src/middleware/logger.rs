@@ -6,9 +6,8 @@ use axum::http::{Request, StatusCode};
 use axum::response::{IntoResponse, Response};
 use tracing::error;
 use tracing_appender::rolling;
-use tracing_subscriber::fmt;
+use tracing_subscriber::{fmt, EnvFilter};
 use tracing_subscriber::prelude::*;
-use tracing_subscriber::EnvFilter;
 use crate::config::config::Config;
 
 // 自定义时间格式器

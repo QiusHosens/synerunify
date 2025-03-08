@@ -39,8 +39,8 @@ struct AppState {}
 )]
 async fn update(
     State(_state): State<AppState>,
-    // Json(payload): Json<UpdateSystemDataScopeRuleRequest>,
-    Extension(user): Extension<LoginUserContext>,
+    Json(payload): Json<UpdateSystemDataScopeRuleRequest>,
+    // Extension(user): Extension<LoginUserContext>,
     // req: Request<axum::body::Body>,
 ) -> Result<impl IntoResponse, StatusCode> {
     // let user = req.extensions().get::<LoginUserContext>();
@@ -48,7 +48,7 @@ async fn update(
     //     return Err(StatusCode::UNAUTHORIZED);
     // }
     // let payload = req.body()
-    println!("User: {:?}", user);
+    // println!("User: {:?}", user);
     // println!("User: {:?}, Payload: {:?}", user, payload);
     Ok(StatusCode::NO_CONTENT)
 }
@@ -80,7 +80,7 @@ async fn main() -> Result<(), anyhow::Error> {
     ;
 
     // let app = axum::Router::new().merge(router);
-    let listener = tokio::net::TcpListener::bind(&"127.0.0.1:3000").await?;
+    let listener = tokio::net::TcpListener::bind(&"127.0.0.1:3100").await?;
     axum::serve(listener, app.into_make_service_with_connect_info::<std::net::SocketAddr>()).await?;
     Ok(())
     // axum::Server::bind(&"127.0.0.1:3000".parse().unwrap())

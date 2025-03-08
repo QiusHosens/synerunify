@@ -10,6 +10,7 @@ use redis::RedisResult;
 use sea_orm::sea_query::ExprTrait;
 use serde::{Deserialize, Serialize};
 use serde_json::json;
+use utoipa::ToSchema;
 use crate::context::context::{LoginUserContext, UserTenantContext};
 
 static SECRET_KEY: Lazy<Vec<u8>> = Lazy::new(|| b"synerunify:token:secret-key".to_vec());
@@ -32,7 +33,7 @@ struct RefreshClaims {
     iat: i64, // 签发时间
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, ToSchema)]
 pub struct AuthBody {
     access_token: String,
     refresh_token: String,

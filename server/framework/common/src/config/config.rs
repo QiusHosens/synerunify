@@ -19,10 +19,10 @@ impl Config {
     pub fn load() -> Config {
         CONFIG_INSTANCE.get_or_init(|| {
             let server_port = env::var("SERVER_PORT")
-                .unwrap_or_else(|_| "9000".to_string())
-                .parse::<u16>().unwrap_or_else(|_| 9000);
+                .unwrap_or_else(|_| "3000".to_string())
+                .parse::<u16>().unwrap_or_else(|_| 3000);
             let database_url = env::var("DATABASE_URL")
-                .unwrap_or_else(|_| "mysql://synerunify:synerunify@192.168.1.18:30010/synerunify".to_string());
+                .unwrap_or_else(|_| "mysql://synerunify:synerunify@127.0.0.1:3306/synerunify".to_string());
             let api_prefix = env::var("API_PREFIX")
                 .unwrap_or_else(|_| "".to_string());
             let log_level = env::var("LOG_LEVEL")

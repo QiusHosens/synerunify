@@ -3,7 +3,8 @@ use sea_orm::DatabaseConnection;
 use utoipa::OpenApi;
 use utoipa_axum::router::OpenApiRouter;
 use std::sync::Arc;
-use crate::api::system_data_scope_rule::{ system_data_scope_rule_route, system_data_scope_rule_router };
+use crate::api::system_auth::system_auth_router;
+use crate::api::system_data_scope_rule::{system_data_scope_rule_route, system_data_scope_rule_router };
 use crate::api::system_department::{ system_department_route, system_department_router };
 use crate::api::system_dict_data::{ system_dict_data_route, system_dict_data_router };
 use crate::api::system_dict_type::{ system_dict_type_route, system_dict_type_router };
@@ -43,6 +44,7 @@ use crate::api::system_user_role::{ system_user_role_route, system_user_role_rou
         (name = "system_user", description = "用户信息"),
         (name = "system_user_post", description = "用户职位"),
         (name = "system_user_role", description = "用户和角色关联"),
+        (name = "system_auth", description = "认证"),
     )
 )]
 pub struct ApiDocument;
@@ -64,6 +66,7 @@ pub async fn api(database: Arc<DatabaseConnection>) -> Router {
         .nest("/system_user", system_user_router(database.clone()).await)
         .nest("/system_user_post", system_user_post_router(database.clone()).await)
         .nest("/system_user_role", system_user_role_router(database.clone()).await)
+        .nest("/system_auth", system_auth_router(database.clone()).await)
         .split_for_parts();
 
     router
