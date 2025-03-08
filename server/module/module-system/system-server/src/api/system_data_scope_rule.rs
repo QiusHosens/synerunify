@@ -2,9 +2,8 @@ use std::sync::Arc;
 use sea_orm::DatabaseConnection;
 use utoipa_axum::router::OpenApiRouter;
 use utoipa_axum::routes;
-use axum::{routing::{get, post}, Router, extract::{State, Path, Json, Query}, response::IntoResponse, Extension};
+use axum::{routing::{get, post}, Router, extract::{State, Path, Json, Query}, response::IntoResponse};
 use common::base::page::PaginatedResponse;
-use common::context::context::LoginUserContext;
 use crate::service::system_data_scope_rule::SystemDataScopeRuleService;
 use system_model::request::system_data_scope_rule::{CreateSystemDataScopeRuleRequest, UpdateSystemDataScopeRuleRequest, PaginatedKeywordRequest};
 use system_model::response::system_data_scope_rule::SystemDataScopeRuleResponse;
@@ -43,6 +42,7 @@ struct AppState {
 #[utoipa::path(
     post,
     path = "/create",
+    operation_id = "system_data_scope_rule_create",
     request_body(content = CreateSystemDataScopeRuleRequest, description = "create", content_type = "application/json"),
     responses(
         (status = 200, description = "id", body = i64, example = json!(1))
@@ -62,6 +62,7 @@ async fn create(
 #[utoipa::path(
     post,
     path = "/update",
+    operation_id = "system_data_scope_rule_update",
     request_body(content = UpdateSystemDataScopeRuleRequest, description = "update", content_type = "application/json"),
     responses(
         (status = 204, description = "update")
@@ -71,12 +72,7 @@ async fn create(
 async fn update(
     State(state): State<AppState>,
     Json(payload): Json<UpdateSystemDataScopeRuleRequest>,
-    Extension(user): Extension<Option<LoginUserContext>>
 ) -> Result<impl IntoResponse, axum::http::StatusCode> {
-    if user.is_none() {
-        return Err(axum::http::StatusCode::UNAUTHORIZED);
-    }
-
     state.system_data_scope_rule_service.update(payload)
         .await
         .map_err(|_| axum::http::StatusCode::INTERNAL_SERVER_ERROR)?;
@@ -86,6 +82,7 @@ async fn update(
 #[utoipa::path(
     post,
     path = "/delete/{id}",
+    operation_id = "system_data_scope_rule_delete",
     params(
         ("id" = i64, Path, description = "id")
     ),
@@ -107,6 +104,7 @@ async fn delete(
 #[utoipa::path(
     get,
     path = "/get/{id}",
+    operation_id = "system_data_scope_rule_get_by_id",
     params(
         ("id" = i64, Path, description = "id")
     ),
@@ -128,6 +126,7 @@ async fn get_by_id(
 #[utoipa::path(
     get,
     path = "/page",
+    operation_id = "system_data_scope_rule_page",
     params(
         ("page" = u64, Query, description = "page number"),
         ("page_size" = u64, Query, description = "page size"),
@@ -151,6 +150,7 @@ async fn page(
 #[utoipa::path(
     get,
     path = "/list",
+    operation_id = "system_data_scope_rule_list",
     responses(
         (status = 200, description = "list all", body = Vec<SystemDataScopeRuleResponse>)
     ),

@@ -42,6 +42,7 @@ struct AppState {
 #[utoipa::path(
     post,
     path = "/create",
+    operation_id = "{{ table_name }}_create",
     request_body(content = Create{{ request_model_name }}, description = "create", content_type = "application/json"),
     responses(
         (status = 200, description = "id", body = i64, example = json!(1))
@@ -61,6 +62,7 @@ async fn create(
 #[utoipa::path(
     post,
     path = "/update",
+    operation_id = "{{ table_name }}_update",
     request_body(content = Update{{ request_model_name }}, description = "update", content_type = "application/json"),
     responses(
         (status = 204, description = "update")
@@ -80,6 +82,7 @@ async fn update(
 #[utoipa::path(
     post,
     path = "/delete/{id}",
+    operation_id = "{{ table_name }}_delete",
     params(
         ("id" = i64, Path, description = "id")
     ),
@@ -101,6 +104,7 @@ async fn delete(
 #[utoipa::path(
     get,
     path = "/get/{id}",
+    operation_id = "{{ table_name }}_get_by_id",
     params(
         ("id" = i64, Path, description = "id")
     ),
@@ -122,6 +126,7 @@ async fn get_by_id(
 #[utoipa::path(
     get,
     path = "/page",
+    operation_id = "{{ table_name }}_page",
     params(
         ("page" = u64, Query, description = "page number"),
         ("page_size" = u64, Query, description = "page size"),
@@ -145,6 +150,7 @@ async fn page(
 #[utoipa::path(
     get,
     path = "/list",
+    operation_id = "{{ table_name }}_list",
     responses(
         (status = 200, description = "list all", body = Vec<{{ response_model_name }}>)
     ),

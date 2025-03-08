@@ -42,6 +42,7 @@ struct AppState {
 #[utoipa::path(
     post,
     path = "/create",
+    operation_id = "system_role_menu_data_scope_create",
     request_body(content = CreateSystemRoleMenuDataScopeRequest, description = "create", content_type = "application/json"),
     responses(
         (status = 200, description = "id", body = i64, example = json!(1))
@@ -61,6 +62,7 @@ async fn create(
 #[utoipa::path(
     post,
     path = "/update",
+    operation_id = "system_role_menu_data_scope_update",
     request_body(content = UpdateSystemRoleMenuDataScopeRequest, description = "update", content_type = "application/json"),
     responses(
         (status = 204, description = "update")
@@ -80,6 +82,7 @@ async fn update(
 #[utoipa::path(
     post,
     path = "/delete/{id}",
+    operation_id = "system_role_menu_data_scope_delete",
     params(
         ("id" = i64, Path, description = "id")
     ),
@@ -101,6 +104,7 @@ async fn delete(
 #[utoipa::path(
     get,
     path = "/get/{id}",
+    operation_id = "system_role_menu_data_scope_get_by_id",
     params(
         ("id" = i64, Path, description = "id")
     ),
@@ -122,6 +126,7 @@ async fn get_by_id(
 #[utoipa::path(
     get,
     path = "/page",
+    operation_id = "system_role_menu_data_scope_page",
     params(
         ("page" = u64, Query, description = "page number"),
         ("page_size" = u64, Query, description = "page size"),
@@ -145,6 +150,7 @@ async fn page(
 #[utoipa::path(
     get,
     path = "/list",
+    operation_id = "system_role_menu_data_scope_list",
     responses(
         (status = 200, description = "list all", body = Vec<SystemRoleMenuDataScopeResponse>)
     ),

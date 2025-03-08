@@ -111,8 +111,8 @@ fn main() {
     let template_base_path = format!("{}/src", base_path);
     let code_base_path = format!("{}/code", base_path);
     // 初始化数据库连接
-    let url = "mysql://synerunify:synerunify@192.168.0.99:30010/synerunify";
-    // let url = "mysql://synerunify:synerunify@192.168.1.18:30010/synerunify";
+    // let url = "mysql://synerunify:synerunify@192.168.0.99:30010/synerunify";
+    let url = "mysql://synerunify:synerunify@192.168.1.18:30010/synerunify";
     let pool = Pool::new(url).unwrap();
     let mut conn = pool.get_conn().unwrap();
 
