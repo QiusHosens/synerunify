@@ -4,6 +4,7 @@ use sea_orm::{ActiveModelTrait, ColumnTrait, DatabaseConnection, EntityTrait, Qu
 use std::sync::Arc;
 use system_model::request::system_auth::LoginRequest;
 use tokio::sync::OnceCell;
+use tracing::{error, info};
 use tracing_subscriber::filter::filter_fn;
 use common::constants::common_status::is_enable;
 use common::utils::crypt_utils::verify_password;
@@ -27,6 +28,7 @@ impl SystemAuthService {
     }
 
     pub async fn login(&self, request: LoginRequest) -> Result<AuthBody> {
+        info!("into login: {:?}", request);
         // 验证验证码
 
         // 查询用户
@@ -35,9 +37,9 @@ impl SystemAuthService {
             .one(&*self.db).await? {
             Some(user) => {
                 if is_enable(user.status) {
-                    return Err(anyhow!("用户已被禁用"));
-                } else {
                     user
+                } else {
+                    return Err(anyhow!("用户已被禁用"));
                 }
             }
             None => {
@@ -66,7 +68,7 @@ impl SystemAuthService {
                 return Err(anyhow!("服务端异常"));
             }
         };
-
+        info!("{:?}", auth);
         // 保存登录用户信息
         Ok(auth)
     }
