@@ -69,11 +69,13 @@ impl SystemAuthService {
             }
         };
         info!("{:?}", auth);
-        // 保存登录用户信息
+        // 更新登录用户最近登录IP和时间
+        // 记录登录日志
+        // 保存登录用户信息缓存
         Ok(auth)
     }
 
-    pub fn save_login_user(&self, id: i64) {
+    pub fn cache_login_user(&self, id: i64) {
 
     }
 }
