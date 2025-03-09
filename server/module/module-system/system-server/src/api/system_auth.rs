@@ -35,8 +35,7 @@ struct AppState {
     operation_id = "system_auth_login",
     request_body(content = LoginRequest, description = "login", content_type = "application/json"),
     responses(
-        (status = 200, description = "login success", body = CommonResult<AuthBody>),
-        (status = 500, description = "login error", body = CommonResult<String>)
+        (status = 200, description = "login success", body = CommonResult<AuthBody>)
     ),
     tag = "system_auth"
 )]

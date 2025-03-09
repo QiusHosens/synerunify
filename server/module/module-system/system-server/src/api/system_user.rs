@@ -7,6 +7,7 @@ use common::base::page::PaginatedResponse;
 use crate::service::system_user::SystemUserService;
 use system_model::request::system_user::{CreateSystemUserRequest, UpdateSystemUserRequest, PaginatedKeywordRequest};
 use system_model::response::system_user::SystemUserResponse;
+use common::base::model::CommonResult;
 
 pub async fn system_user_router(db: Arc<DatabaseConnection>) -> OpenApiRouter {
     let system_user_service = SystemUserService::get_instance(db).await;
@@ -45,18 +46,18 @@ struct AppState {
     operation_id = "system_user_create",
     request_body(content = CreateSystemUserRequest, description = "create", content_type = "application/json"),
     responses(
-        (status = 200, description = "id", body = i64, example = json!(1))
+        (status = 200, description = "id", body = CommonResult<i64>)
     ),
     tag = "system_user"
 )]
 async fn create(
     State(state): State<AppState>,
     Json(payload): Json<CreateSystemUserRequest>,
-) -> Result<Json<i64>, axum::http::StatusCode> {
-    let id = state.system_user_service.create(payload)
-        .await
-        .map_err(|_| axum::http::StatusCode::INTERNAL_SERVER_ERROR)?;
-    Ok(Json(id))
+) -> CommonResult<i64> {
+    match state.system_user_service.create(payload).await {
+        Ok(id) => {CommonResult::with_data(id)}
+        Err(e) => {CommonResult::with_err(&e.to_string())}
+    }
 }
 
 #[utoipa::path(
@@ -72,11 +73,11 @@ async fn create(
 async fn update(
     State(state): State<AppState>,
     Json(payload): Json<UpdateSystemUserRequest>,
-) -> Result<impl IntoResponse, axum::http::StatusCode> {
-    state.system_user_service.update(payload)
-        .await
-        .map_err(|_| axum::http::StatusCode::INTERNAL_SERVER_ERROR)?;
-    Ok(axum::http::StatusCode::NO_CONTENT)
+) -> CommonResult<()> {
+    match state.system_user_service.update(payload).await {
+        Ok(_) => {CommonResult::with_none()}
+        Err(e) => {CommonResult::with_err(&e.to_string())}
+    }
 }
 
 #[utoipa::path(
@@ -94,11 +95,11 @@ async fn update(
 async fn delete(
     State(state): State<AppState>,
     Path(id): Path<i64>,
-) -> Result<impl IntoResponse, axum::http::StatusCode> {
-    state.system_user_service.delete(id)
-        .await
-        .map_err(|_| axum::http::StatusCode::INTERNAL_SERVER_ERROR)?;
-    Ok(axum::http::StatusCode::NO_CONTENT)
+) -> CommonResult<()> {
+    match state.system_user_service.delete(id).await {
+        Ok(_) => {CommonResult::with_none()}
+        Err(e) => {CommonResult::with_err(&e.to_string())}
+    }
 }
 
 #[utoipa::path(
@@ -109,18 +110,19 @@ async fn delete(
         ("id" = i64, Path, description = "id")
     ),
     responses(
-        (status = 200, description = "get by id", body = Option<SystemUserResponse>)
+        (status = 200, description = "get by id", body = CommonResult<SystemUserResponse>)
     ),
     tag = "system_user"
 )]
 async fn get_by_id(
     State(state): State<AppState>,
     Path(id): Path<i64>,
-) -> Result<Json<Option<SystemUserResponse>>, axum::http::StatusCode> {
-    let system_user = state.system_user_service.get_by_id(id)
-        .await
-        .map_err(|_| axum::http::StatusCode::INTERNAL_SERVER_ERROR)?;
-    Ok(Json(system_user))
+) -> CommonResult<SystemUserResponse> {
+    match state.system_user_service.get_by_id(id).await {
+        Ok(Some(data)) => {CommonResult::with_data(data)}
+        Ok(None) => {CommonResult::with_none()}
+        Err(e) => {CommonResult::with_err(&e.to_string())}
+    }
 }
 
 #[utoipa::path(
@@ -133,18 +135,18 @@ async fn get_by_id(
         ("keyword" = Option<String>, Query, description = "keyword")
     ),
     responses(
-        (status = 200, description = "get page", body = SystemUserResponse)
+        (status = 200, description = "get page", body = CommonResult<PaginatedResponse<SystemUserResponse>>)
     ),
     tag = "system_user"
 )]
 async fn page(
     State(state): State<AppState>,
     Query(params): Query<PaginatedKeywordRequest>,
-) -> Result<Json<PaginatedResponse<SystemUserResponse>>, axum::http::StatusCode> {
-    let paginated = state.system_user_service.get_paginated(params)
-        .await
-        .map_err(|_| axum::http::StatusCode::INTERNAL_SERVER_ERROR)?;
-    Ok(Json(paginated))
+) -> CommonResult<PaginatedResponse<SystemUserResponse>> {
+    match state.system_user_service.get_paginated(params).await {
+        Ok(data) => {CommonResult::with_data(data)}
+        Err(e) => {CommonResult::with_err(&e.to_string())}
+    }
 }
 
 #[utoipa::path(
@@ -152,13 +154,15 @@ async fn page(
     path = "/list",
     operation_id = "system_user_list",
     responses(
-        (status = 200, description = "list all", body = Vec<SystemUserResponse>)
+        (status = 200, description = "list all", body = CommonResult<Vec<SystemUserResponse>>)
     ),
     tag = "system_user"
 )]
-async fn list(State(state): State<AppState>) -> Result<Json<Vec<SystemUserResponse>>, axum::http::StatusCode> {
-    let list = state.system_user_service.list()
-        .await
-        .map_err(|_| axum::http::StatusCode::INTERNAL_SERVER_ERROR)?;
-    Ok(Json(list))
+async fn list(
+    State(state): State<AppState>
+) -> CommonResult<Vec<SystemUserResponse>> {
+    match state.system_user_service.list().await {
+        Ok(data) => {CommonResult::with_data(data)}
+        Err(e) => {CommonResult::with_err(&e.to_string())}
+    }
 }

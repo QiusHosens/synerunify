@@ -52,6 +52,14 @@ where
 
 impl<T: Serialize> CommonResult<T> {
 
+    pub fn with_none() -> Self {
+        Self {
+            code: Some(200),
+            data: None,
+            message: Some("success".to_string()),
+        }
+    }
+
     pub fn with_data(data: T) -> Self {
         Self {
             code: Some(200),
