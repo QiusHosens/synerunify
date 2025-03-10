@@ -19,6 +19,7 @@ use crate::api::system_tenant_package::{ system_tenant_package_route, system_ten
 use crate::api::system_user::{ system_user_route, system_user_router };
 use crate::api::system_user_post::{ system_user_post_route, system_user_post_router };
 use crate::api::system_user_role::{ system_user_role_route, system_user_role_router };
+use crate::AppState;
 
 // openapi document
 #[derive(OpenApi)]
@@ -49,24 +50,24 @@ use crate::api::system_user_role::{ system_user_role_route, system_user_role_rou
 )]
 pub struct ApiDocument;
 
-pub async fn api(database: Arc<DatabaseConnection>) -> Router {
+pub async fn api(state: AppState) -> Router {
     let (router, api) = OpenApiRouter::with_openapi(ApiDocument::openapi())
-        .nest("/system_data_scope_rule", system_data_scope_rule_router(database.clone()).await)
-        .nest("/system_department", system_department_router(database.clone()).await)
-        .nest("/system_dict_data", system_dict_data_router(database.clone()).await)
-        .nest("/system_dict_type", system_dict_type_router(database.clone()).await)
-        .nest("/system_menu", system_menu_router(database.clone()).await)
-        .nest("/system_notice", system_notice_router(database.clone()).await)
-        .nest("/system_post", system_post_router(database.clone()).await)
-        .nest("/system_role", system_role_router(database.clone()).await)
-        .nest("/system_role_menu", system_role_menu_router(database.clone()).await)
-        .nest("/system_role_menu_data_scope", system_role_menu_data_scope_router(database.clone()).await)
-        .nest("/system_tenant", system_tenant_router(database.clone()).await)
-        .nest("/system_tenant_package", system_tenant_package_router(database.clone()).await)
-        .nest("/system_user", system_user_router(database.clone()).await)
-        .nest("/system_user_post", system_user_post_router(database.clone()).await)
-        .nest("/system_user_role", system_user_role_router(database.clone()).await)
-        .nest("/system_auth", system_auth_router(database.clone()).await)
+        .nest("/system_data_scope_rule", system_data_scope_rule_router(state.clone()).await)
+        .nest("/system_department", system_department_router(state.clone()).await)
+        .nest("/system_dict_data", system_dict_data_router(state.clone()).await)
+        .nest("/system_dict_type", system_dict_type_router(state.clone()).await)
+        .nest("/system_menu", system_menu_router(state.clone()).await)
+        .nest("/system_notice", system_notice_router(state.clone()).await)
+        .nest("/system_post", system_post_router(state.clone()).await)
+        .nest("/system_role", system_role_router(state.clone()).await)
+        .nest("/system_role_menu", system_role_menu_router(state.clone()).await)
+        .nest("/system_role_menu_data_scope", system_role_menu_data_scope_router(state.clone()).await)
+        .nest("/system_tenant", system_tenant_router(state.clone()).await)
+        .nest("/system_tenant_package", system_tenant_package_router(state.clone()).await)
+        .nest("/system_user", system_user_router(state.clone()).await)
+        .nest("/system_user_post", system_user_post_router(state.clone()).await)
+        .nest("/system_user_role", system_user_role_router(state.clone()).await)
+        .nest("/system_auth", system_auth_router(state).await)
         .split_for_parts();
 
     router

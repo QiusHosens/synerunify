@@ -1,8 +1,7 @@
-use redis::{Client, Commands, RedisResult, ToRedisArgs, FromRedisValue};
+use crate::config::config::Config;
+use redis::{Client, Commands, FromRedisValue, RedisResult, ToRedisArgs};
 use std::collections::HashMap;
 use std::sync::OnceLock;
-use std::env;
-use crate::config::config::Config;
 
 // 全局静态的 Redis Client
 static REDIS_CLIENT: OnceLock<Client> = OnceLock::new();

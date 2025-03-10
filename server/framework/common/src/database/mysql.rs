@@ -1,16 +1,12 @@
-use lazy_static::lazy_static;
 use sea_orm::{ConnectOptions, Database, DatabaseConnection};
-use std::sync::Arc;
 use std::time::Duration;
 use tokio::sync::OnceCell;
 
-lazy_static! {
-    static ref DATABASE_INSTANCE: OnceCell<Arc<DatabaseConnection>> = OnceCell::new();
-}
+pub static DATABASE_INSTANCE: OnceCell<DatabaseConnection> = OnceCell::const_new();
 
-pub async fn get_database_instance(database_url: String) -> Arc<DatabaseConnection> {
+pub async fn get_database_instance(database_url: String) -> &'static DatabaseConnection {
     DATABASE_INSTANCE
-        .get_or_init(|| async {
+        .get_or_init(|| async move {
             let mut opt = ConnectOptions::new(&database_url);
             opt.max_connections(1000)
                 .min_connections(5)
@@ -21,8 +17,7 @@ pub async fn get_database_instance(database_url: String) -> Arc<DatabaseConnecti
             let conn = Database::connect(opt)
                 .await
                 .expect("Failed to initialize database connection");
-            Arc::new(conn)
+            conn
         })
         .await
-        .clone()
 }

@@ -4,6 +4,7 @@ use utoipa::OpenApi;
 use utoipa_axum::router::OpenApiRouter;
 use std::sync::Arc;{% for table_name in table_names %}
 use crate::api::{{ table_name }}::{ {{ table_name }}_route, {{ table_name }}_router };{% endfor %}
+use crate::AppState;
 
 // openapi document
 #[derive(OpenApi)]
@@ -19,9 +20,9 @@ use crate::api::{{ table_name }}::{ {{ table_name }}_route, {{ table_name }}_rou
 )]
 pub struct ApiDocument;
 
-pub async fn api(database: Arc<DatabaseConnection>) -> Router {
+pub async fn api(state: AppState) -> Router {
     let (router, api) = OpenApiRouter::with_openapi(ApiDocument::openapi()){% for table_name in table_names %}
-        .nest("/{{ table_name }}", {{ table_name }}_router(database.clone()).await){% endfor %}
+        .nest("/{{ table_name }}", {{ table_name }}_router(state.clone()).await){% endfor %}
         .split_for_parts();
 
     router

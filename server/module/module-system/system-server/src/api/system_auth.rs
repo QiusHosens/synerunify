@@ -1,32 +1,21 @@
-use crate::service::system_auth::SystemAuthService;
+use crate::{service, AppState};
 use axum::{extract::{Json, State}, routing::post, Router};
+use common::base::model::CommonResult;
 use common::utils::jwt_utils::AuthBody;
-use sea_orm::DatabaseConnection;
-use std::sync::Arc;
 use system_model::request::system_auth::LoginRequest;
 use utoipa_axum::router::OpenApiRouter;
 use utoipa_axum::routes;
-use common::base::model::CommonResult;
 
-pub async fn system_auth_router(db: Arc<DatabaseConnection>) -> OpenApiRouter {
-    let system_auth_service = SystemAuthService::get_instance(db).await;
-
+pub async fn system_auth_router(state: AppState) -> OpenApiRouter {
     OpenApiRouter::new()
         .routes(routes!(login))
-        .with_state(AppState { system_auth_service })
+        .with_state(state)
 }
 
-pub async fn system_auth_route(db: Arc<DatabaseConnection>) -> Router {
-    let system_auth_service = SystemAuthService::get_instance(db).await;
-
+pub async fn system_auth_route(state: AppState) -> Router {
     Router::new()
         .route("/login", post(login))
-        .with_state(AppState { system_auth_service })
-}
-
-#[derive(Clone)]
-struct AppState {
-    system_auth_service: Arc<SystemAuthService>,
+        .with_state(state)
 }
 
 #[utoipa::path(
@@ -43,7 +32,7 @@ async fn login(
     State(state): State<AppState>,
     Json(payload): Json<LoginRequest>,
 ) -> CommonResult<AuthBody> {
-    match state.system_auth_service.login(payload).await {
+    match service::system_auth::login(&state.db, payload).await {
         Ok(data) => {CommonResult::with_data(data)}
         Err(e) => {CommonResult::with_err(&e.to_string())}
     }

@@ -35,7 +35,7 @@ pub struct CreateSystemUserRequest {
     
     pub department_code: String, // 部门编码
     
-    pub department_id: Option<i64>, // 部门ID
+    pub department_id: i64, // 部门ID
     
 }
 

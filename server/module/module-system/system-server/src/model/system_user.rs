@@ -34,7 +34,7 @@ pub struct Model {
     
     pub department_code: String, // 部门编码
     
-    pub department_id: Option<i64>, // 部门ID
+    pub department_id: i64, // 部门ID
     
     pub creator: Option<i64>, // 创建者id
     

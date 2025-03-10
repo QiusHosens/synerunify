@@ -4,14 +4,12 @@ use utoipa_axum::router::OpenApiRouter;
 use utoipa_axum::routes;
 use axum::{routing::{get, post}, Router, extract::{State, Path, Json, Query}, response::IntoResponse};
 use common::base::page::PaginatedResponse;
-use crate::service::system_dict_data::SystemDictDataService;
 use system_model::request::system_dict_data::{CreateSystemDictDataRequest, UpdateSystemDictDataRequest, PaginatedKeywordRequest};
 use system_model::response::system_dict_data::SystemDictDataResponse;
 use common::base::model::CommonResult;
+use crate::{service, AppState};
 
-pub async fn system_dict_data_router(db: Arc<DatabaseConnection>) -> OpenApiRouter {
-    let system_dict_data_service = SystemDictDataService::get_instance(db).await;
-
+pub async fn system_dict_data_router(state: AppState) -> OpenApiRouter {
     OpenApiRouter::new()
         .routes(routes!(create))
         .routes(routes!(update))
@@ -19,12 +17,10 @@ pub async fn system_dict_data_router(db: Arc<DatabaseConnection>) -> OpenApiRout
         .routes(routes!(get_by_id))
         .routes(routes!(list))
         .routes(routes!(page))
-        .with_state(AppState { system_dict_data_service })
+        .with_state(state)
 }
 
-pub async fn system_dict_data_route(db: Arc<DatabaseConnection>) -> Router {
-    let system_dict_data_service = SystemDictDataService::get_instance(db).await;
-
+pub async fn system_dict_data_route(state: AppState) -> Router {
     Router::new()
         .route("/create", post(create))
         .route("/update", post(update))
@@ -32,12 +28,7 @@ pub async fn system_dict_data_route(db: Arc<DatabaseConnection>) -> Router {
         .route("/get/{id}", get(get_by_id))
         .route("/list", get(list))
         .route("/page", get(page))
-        .with_state(AppState { system_dict_data_service })
-}
-
-#[derive(Clone)]
-struct AppState {
-    system_dict_data_service: Arc<SystemDictDataService>,
+        .with_state(state)
 }
 
 #[utoipa::path(
@@ -54,7 +45,7 @@ async fn create(
     State(state): State<AppState>,
     Json(payload): Json<CreateSystemDictDataRequest>,
 ) -> CommonResult<i64> {
-    match state.system_dict_data_service.create(payload).await {
+    match service::system_dict_data::create(&state.db, payload).await {
         Ok(id) => {CommonResult::with_data(id)}
         Err(e) => {CommonResult::with_err(&e.to_string())}
     }
@@ -74,7 +65,7 @@ async fn update(
     State(state): State<AppState>,
     Json(payload): Json<UpdateSystemDictDataRequest>,
 ) -> CommonResult<()> {
-    match state.system_dict_data_service.update(payload).await {
+    match service::system_dict_data::update(&state.db, payload).await {
         Ok(_) => {CommonResult::with_none()}
         Err(e) => {CommonResult::with_err(&e.to_string())}
     }
@@ -96,7 +87,7 @@ async fn delete(
     State(state): State<AppState>,
     Path(id): Path<i64>,
 ) -> CommonResult<()> {
-    match state.system_dict_data_service.delete(id).await {
+    match service::system_dict_data::delete(&state.db, id).await {
         Ok(_) => {CommonResult::with_none()}
         Err(e) => {CommonResult::with_err(&e.to_string())}
     }
@@ -118,7 +109,7 @@ async fn get_by_id(
     State(state): State<AppState>,
     Path(id): Path<i64>,
 ) -> CommonResult<SystemDictDataResponse> {
-    match state.system_dict_data_service.get_by_id(id).await {
+    match service::system_dict_data::get_by_id(&state.db, id).await {
         Ok(Some(data)) => {CommonResult::with_data(data)}
         Ok(None) => {CommonResult::with_none()}
         Err(e) => {CommonResult::with_err(&e.to_string())}
@@ -143,7 +134,7 @@ async fn page(
     State(state): State<AppState>,
     Query(params): Query<PaginatedKeywordRequest>,
 ) -> CommonResult<PaginatedResponse<SystemDictDataResponse>> {
-    match state.system_dict_data_service.get_paginated(params).await {
+    match service::system_dict_data::get_paginated(&state.db, params).await {
         Ok(data) => {CommonResult::with_data(data)}
         Err(e) => {CommonResult::with_err(&e.to_string())}
     }
@@ -161,7 +152,7 @@ async fn page(
 async fn list(
     State(state): State<AppState>
 ) -> CommonResult<Vec<SystemDictDataResponse>> {
-    match state.system_dict_data_service.list().await {
+    match service::system_dict_data::list(&state.db).await {
         Ok(data) => {CommonResult::with_data(data)}
         Err(e) => {CommonResult::with_err(&e.to_string())}
     }

@@ -4,14 +4,12 @@ use utoipa_axum::router::OpenApiRouter;
 use utoipa_axum::routes;
 use axum::{routing::{get, post}, Router, extract::{State, Path, Json, Query}, response::IntoResponse};
 use common::base::page::PaginatedResponse;
-use crate::service::system_role_menu_data_scope::SystemRoleMenuDataScopeService;
 use system_model::request::system_role_menu_data_scope::{CreateSystemRoleMenuDataScopeRequest, UpdateSystemRoleMenuDataScopeRequest, PaginatedKeywordRequest};
 use system_model::response::system_role_menu_data_scope::SystemRoleMenuDataScopeResponse;
 use common::base::model::CommonResult;
+use crate::{service, AppState};
 
-pub async fn system_role_menu_data_scope_router(db: Arc<DatabaseConnection>) -> OpenApiRouter {
-    let system_role_menu_data_scope_service = SystemRoleMenuDataScopeService::get_instance(db).await;
-
+pub async fn system_role_menu_data_scope_router(state: AppState) -> OpenApiRouter {
     OpenApiRouter::new()
         .routes(routes!(create))
         .routes(routes!(update))
@@ -19,12 +17,10 @@ pub async fn system_role_menu_data_scope_router(db: Arc<DatabaseConnection>) -> 
         .routes(routes!(get_by_id))
         .routes(routes!(list))
         .routes(routes!(page))
-        .with_state(AppState { system_role_menu_data_scope_service })
+        .with_state(state)
 }
 
-pub async fn system_role_menu_data_scope_route(db: Arc<DatabaseConnection>) -> Router {
-    let system_role_menu_data_scope_service = SystemRoleMenuDataScopeService::get_instance(db).await;
-
+pub async fn system_role_menu_data_scope_route(state: AppState) -> Router {
     Router::new()
         .route("/create", post(create))
         .route("/update", post(update))
@@ -32,12 +28,7 @@ pub async fn system_role_menu_data_scope_route(db: Arc<DatabaseConnection>) -> R
         .route("/get/{id}", get(get_by_id))
         .route("/list", get(list))
         .route("/page", get(page))
-        .with_state(AppState { system_role_menu_data_scope_service })
-}
-
-#[derive(Clone)]
-struct AppState {
-    system_role_menu_data_scope_service: Arc<SystemRoleMenuDataScopeService>,
+        .with_state(state)
 }
 
 #[utoipa::path(
@@ -54,7 +45,7 @@ async fn create(
     State(state): State<AppState>,
     Json(payload): Json<CreateSystemRoleMenuDataScopeRequest>,
 ) -> CommonResult<i64> {
-    match state.system_role_menu_data_scope_service.create(payload).await {
+    match service::system_role_menu_data_scope::create(&state.db, payload).await {
         Ok(id) => {CommonResult::with_data(id)}
         Err(e) => {CommonResult::with_err(&e.to_string())}
     }
@@ -74,7 +65,7 @@ async fn update(
     State(state): State<AppState>,
     Json(payload): Json<UpdateSystemRoleMenuDataScopeRequest>,
 ) -> CommonResult<()> {
-    match state.system_role_menu_data_scope_service.update(payload).await {
+    match service::system_role_menu_data_scope::update(&state.db, payload).await {
         Ok(_) => {CommonResult::with_none()}
         Err(e) => {CommonResult::with_err(&e.to_string())}
     }
@@ -96,7 +87,7 @@ async fn delete(
     State(state): State<AppState>,
     Path(id): Path<i64>,
 ) -> CommonResult<()> {
-    match state.system_role_menu_data_scope_service.delete(id).await {
+    match service::system_role_menu_data_scope::delete(&state.db, id).await {
         Ok(_) => {CommonResult::with_none()}
         Err(e) => {CommonResult::with_err(&e.to_string())}
     }
@@ -118,7 +109,7 @@ async fn get_by_id(
     State(state): State<AppState>,
     Path(id): Path<i64>,
 ) -> CommonResult<SystemRoleMenuDataScopeResponse> {
-    match state.system_role_menu_data_scope_service.get_by_id(id).await {
+    match service::system_role_menu_data_scope::get_by_id(&state.db, id).await {
         Ok(Some(data)) => {CommonResult::with_data(data)}
         Ok(None) => {CommonResult::with_none()}
         Err(e) => {CommonResult::with_err(&e.to_string())}
@@ -143,7 +134,7 @@ async fn page(
     State(state): State<AppState>,
     Query(params): Query<PaginatedKeywordRequest>,
 ) -> CommonResult<PaginatedResponse<SystemRoleMenuDataScopeResponse>> {
-    match state.system_role_menu_data_scope_service.get_paginated(params).await {
+    match service::system_role_menu_data_scope::get_paginated(&state.db, params).await {
         Ok(data) => {CommonResult::with_data(data)}
         Err(e) => {CommonResult::with_err(&e.to_string())}
     }
@@ -161,7 +152,7 @@ async fn page(
 async fn list(
     State(state): State<AppState>
 ) -> CommonResult<Vec<SystemRoleMenuDataScopeResponse>> {
-    match state.system_role_menu_data_scope_service.list().await {
+    match service::system_role_menu_data_scope::list(&state.db).await {
         Ok(data) => {CommonResult::with_data(data)}
         Err(e) => {CommonResult::with_err(&e.to_string())}
     }

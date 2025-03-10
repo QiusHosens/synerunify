@@ -1,5 +1,5 @@
 use crate::database::redis::RedisManager;
-use crate::database::redis_constants::REDIS_KEY_TENANTS_LIST;
+use crate::database::redis_constants::{REDIS_KEY_LOGIN_USER_PREFIX, REDIS_KEY_TENANTS_LIST};
 use axum::{extract::FromRequestParts, http::{request::Parts, StatusCode}, response::{IntoResponse, Response}, Json, RequestPartsExt};
 use axum_extra::headers::Authorization;
 use axum_extra::TypedHeader;
@@ -118,7 +118,7 @@ where
         }
 
         // 获取用户登录信息
-        let context = RedisManager::get::<_, String>(claims.sub);
+        let context = RedisManager::get::<_, String>(format!("{}{}", REDIS_KEY_LOGIN_USER_PREFIX, claims.sub));
         let login_user = match context {
             Ok(Some(ctx_str)) => serde_json::from_str::<LoginUserContext>(&ctx_str)
                 .map_err(|_| AuthError::WrongCredentials),

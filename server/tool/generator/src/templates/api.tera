@@ -4,14 +4,12 @@ use utoipa_axum::router::OpenApiRouter;
 use utoipa_axum::routes;
 use axum::{routing::{get, post}, Router, extract::{State, Path, Json, Query}, response::IntoResponse};
 use common::base::page::PaginatedResponse;
-use crate::service::{{ table_name }}::{{ service_name }};
 use system_model::request::{{ table_name }}::{Create{{ request_model_name }}, Update{{ request_model_name }}, PaginatedKeywordRequest};
 use system_model::response::{{ table_name }}::{{ response_model_name }};
 use common::base::model::CommonResult;
+use crate::{service, AppState};
 
-pub async fn {{ table_name }}_router(db: Arc<DatabaseConnection>) -> OpenApiRouter {
-    let {{ table_name }}_service = {{ service_name }}::get_instance(db).await;
-
+pub async fn {{ table_name }}_router(state: AppState) -> OpenApiRouter {
     OpenApiRouter::new()
         .routes(routes!(create))
         .routes(routes!(update))
@@ -19,12 +17,10 @@ pub async fn {{ table_name }}_router(db: Arc<DatabaseConnection>) -> OpenApiRout
         .routes(routes!(get_by_id))
         .routes(routes!(list))
         .routes(routes!(page))
-        .with_state(AppState { {{ table_name }}_service })
+        .with_state(state)
 }
 
-pub async fn {{ table_name }}_route(db: Arc<DatabaseConnection>) -> Router {
-    let {{ table_name }}_service = {{ service_name }}::get_instance(db).await;
-
+pub async fn {{ table_name }}_route(state: AppState) -> Router {
     Router::new()
         .route("/create", post(create))
         .route("/update", post(update))
@@ -32,12 +28,7 @@ pub async fn {{ table_name }}_route(db: Arc<DatabaseConnection>) -> Router {
         .route("/get/{id}", get(get_by_id))
         .route("/list", get(list))
         .route("/page", get(page))
-        .with_state(AppState { {{ table_name }}_service })
-}
-
-#[derive(Clone)]
-struct AppState {
-    {{ table_name }}_service: Arc<{{ service_name }}>,
+        .with_state(state)
 }
 
 #[utoipa::path(
@@ -54,7 +45,7 @@ async fn create(
     State(state): State<AppState>,
     Json(payload): Json<Create{{ request_model_name }}>,
 ) -> CommonResult<i64> {
-    match state.{{ table_name }}_service.create(payload).await {
+    match service::{{ table_name }}::create(&state.db, payload).await {
         Ok(id) => {CommonResult::with_data(id)}
         Err(e) => {CommonResult::with_err(&e.to_string())}
     }
@@ -74,7 +65,7 @@ async fn update(
     State(state): State<AppState>,
     Json(payload): Json<Update{{ request_model_name }}>,
 ) -> CommonResult<()> {
-    match state.{{ table_name }}_service.update(payload).await {
+    match service::{{ table_name }}::update(&state.db, payload).await {
         Ok(_) => {CommonResult::with_none()}
         Err(e) => {CommonResult::with_err(&e.to_string())}
     }
@@ -96,7 +87,7 @@ async fn delete(
     State(state): State<AppState>,
     Path(id): Path<i64>,
 ) -> CommonResult<()> {
-    match state.{{ table_name }}_service.delete(id).await {
+    match service::{{ table_name }}::delete(&state.db, id).await {
         Ok(_) => {CommonResult::with_none()}
         Err(e) => {CommonResult::with_err(&e.to_string())}
     }
@@ -118,7 +109,7 @@ async fn get_by_id(
     State(state): State<AppState>,
     Path(id): Path<i64>,
 ) -> CommonResult<{{ response_model_name }}> {
-    match state.{{ table_name }}_service.get_by_id(id).await {
+    match service::{{ table_name }}::get_by_id(&state.db, id).await {
         Ok(Some(data)) => {CommonResult::with_data(data)}
         Ok(None) => {CommonResult::with_none()}
         Err(e) => {CommonResult::with_err(&e.to_string())}
@@ -143,7 +134,7 @@ async fn page(
     State(state): State<AppState>,
     Query(params): Query<PaginatedKeywordRequest>,
 ) -> CommonResult<PaginatedResponse<{{ response_model_name }}>> {
-    match state.{{ table_name }}_service.get_paginated(params).await {
+    match service::{{ table_name }}::get_paginated(&state.db, params).await {
         Ok(data) => {CommonResult::with_data(data)}
         Err(e) => {CommonResult::with_err(&e.to_string())}
     }
@@ -161,7 +152,7 @@ async fn page(
 async fn list(
     State(state): State<AppState>
 ) -> CommonResult<Vec<{{ response_model_name }}>> {
-    match state.{{ table_name }}_service.list().await {
+    match service::{{ table_name }}::list(&state.db).await {
         Ok(data) => {CommonResult::with_data(data)}
         Err(e) => {CommonResult::with_err(&e.to_string())}
     }
