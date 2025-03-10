@@ -15,3 +15,12 @@ pub struct LoginUserContext {
     pub department_code: String, // 部门编码
     pub role_id: i64, // 角色id
 }
+
+#[derive(Clone, Debug, Default)]
+pub struct RequestContext {
+    pub original_uri: String,
+    pub method: String,
+    pub path: String,
+    pub path_params: String,
+    pub data: String,
+}

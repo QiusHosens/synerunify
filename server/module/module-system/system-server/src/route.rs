@@ -3,6 +3,7 @@ use sea_orm::DatabaseConnection;
 use utoipa::OpenApi;
 use utoipa_axum::router::OpenApiRouter;
 use std::sync::Arc;
+use utoipa_axum::routes;
 use crate::api::system_auth::system_auth_router;
 use crate::api::system_data_scope_rule::{system_data_scope_rule_route, system_data_scope_rule_router };
 use crate::api::system_department::{ system_department_route, system_department_router };
@@ -52,6 +53,21 @@ pub struct ApiDocument;
 
 pub async fn api(state: AppState) -> Router {
     let (router, api) = OpenApiRouter::with_openapi(ApiDocument::openapi())
+        .merge(no_auth_router(state.clone()).await)
+        .merge(auth_router(state.clone()).await)
+        .split_for_parts();
+
+    router
+        .merge(utoipa_swagger_ui::SwaggerUi::new("/swagger-ui").url("/api-docs/openapi.json", api.clone()))
+}
+
+pub async fn no_auth_router(state: AppState) -> OpenApiRouter {
+    OpenApiRouter::new()
+        .nest("/system_auth", system_auth_router(state).await)
+}
+
+pub async fn auth_router(state: AppState) -> OpenApiRouter {
+    OpenApiRouter::new()
         .nest("/system_data_scope_rule", system_data_scope_rule_router(state.clone()).await)
         .nest("/system_department", system_department_router(state.clone()).await)
         .nest("/system_dict_data", system_dict_data_router(state.clone()).await)
@@ -67,9 +83,4 @@ pub async fn api(state: AppState) -> Router {
         .nest("/system_user", system_user_router(state.clone()).await)
         .nest("/system_user_post", system_user_post_router(state.clone()).await)
         .nest("/system_user_role", system_user_role_router(state.clone()).await)
-        .nest("/system_auth", system_auth_router(state).await)
-        .split_for_parts();
-
-    router
-        .merge(utoipa_swagger_ui::SwaggerUi::new("/swagger-ui").url("/api-docs/openapi.json", api.clone()))
 }
