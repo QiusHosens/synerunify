@@ -1,5 +1,5 @@
-use sea_orm::{DatabaseConnection, EntityTrait, ActiveModelTrait, PaginatorTrait, QueryOrder};
-use crate::model::system_user_role::{Model as SystemUserRoleModel, Entity as SystemUserRoleEntity, Column};
+use sea_orm::{DatabaseConnection, EntityTrait, ActiveModelTrait, PaginatorTrait, QueryOrder, QueryFilter, ColumnTrait};
+use crate::model::system_user_role::{Model as SystemUserRoleModel, Entity as SystemUserRoleEntity, Column, Model};
 use system_model::request::system_user_role::{CreateSystemUserRoleRequest, UpdateSystemUserRoleRequest, PaginatedKeywordRequest};
 use system_model::response::system_user_role::SystemUserRoleResponse;
 use crate::convert::system_user_role::{create_request_to_model, update_request_to_model, model_to_response};
@@ -62,4 +62,12 @@ pub async fn get_paginated(db: &DatabaseConnection, params: PaginatedKeywordRequ
 pub async fn list(db: &DatabaseConnection) -> Result<Vec<SystemUserRoleResponse>> {
     let list = SystemUserRoleEntity::find().all(db).await?;
     Ok(list.into_iter().map(model_to_response).collect())
+}
+
+pub async fn get_role_id_by_user_id(db: &DatabaseConnection, user_id: i64) -> Result<i64> {
+    let system_user_role = SystemUserRoleEntity::find().filter(Column::UserId.eq(user_id)).one(db).await?;
+    match system_user_role {
+        None => Ok(0),
+        Some(user_role) => Ok(user_role.role_id)
+    }
 }

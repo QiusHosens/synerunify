@@ -6,7 +6,7 @@ use std::sync::OnceLock;
 // 全局静态的 Redis Client
 static REDIS_CLIENT: OnceLock<Client> = OnceLock::new();
 
-pub(crate) struct RedisManager;
+pub struct RedisManager;
 
 impl RedisManager {
     // 获取单例的 Client 实例

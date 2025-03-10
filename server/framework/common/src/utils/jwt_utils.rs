@@ -1,3 +1,4 @@
+use crate::context::context::LoginUserContext;
 use crate::database::redis::RedisManager;
 use crate::database::redis_constants::{REDIS_KEY_LOGIN_USER_PREFIX, REDIS_KEY_TENANTS_LIST};
 use axum::{extract::FromRequestParts, http::{request::Parts, StatusCode}, response::{IntoResponse, Response}, Json, RequestPartsExt};
@@ -6,12 +7,9 @@ use axum_extra::TypedHeader;
 use chrono::{Duration, Utc};
 use jsonwebtoken::{decode, encode, Algorithm, DecodingKey, EncodingKey, Header, Validation};
 use once_cell::sync::Lazy;
-use redis::RedisResult;
-use sea_orm::sea_query::ExprTrait;
 use serde::{Deserialize, Serialize};
 use serde_json::json;
 use utoipa::ToSchema;
-use crate::context::context::{LoginUserContext, UserTenantContext};
 
 static SECRET_KEY: Lazy<Vec<u8>> = Lazy::new(|| b"synerunify:token:secret-key".to_vec());
 

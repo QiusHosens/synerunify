@@ -9,21 +9,21 @@ use tracing::{error, info};
 use tracing_subscriber::filter::filter_fn;
 use common::constants::common_status::is_enable;
 use common::context::context::LoginUserContext;
+use common::database::redis::RedisManager;
 use common::database::redis_constants::REDIS_KEY_LOGIN_USER_PREFIX;
 use common::utils::crypt_utils::verify_password;
 use common::utils::jwt_utils::{generate_token_pair, AuthBody, AuthError};
-use crate::service::system_user;
-use crate::service::system_department;
-use crate::service::system_user_role;
-use crate::service::system_role;
+use system_model::response::system_department::SystemDepartmentResponse;
+use crate::model::system_user::{Model as SystemUserModel};
+use crate::service;
 
 pub async fn login(db: &DatabaseConnection, request: LoginRequest) -> Result<AuthBody> {
     info!("into login: {:?}", request);
     // 验证验证码
 
     // 查询用户
-    let user_result = system_user::get_by_username(db, request.username).await?;
-    let user = match user_result {
+    let user_result = service::system_user::get_by_username(db, request.username).await?;
+    let user: SystemUserModel = match user_result {
         Some(user) => {
             if is_enable(user.status) {
                 user
@@ -36,7 +36,7 @@ pub async fn login(db: &DatabaseConnection, request: LoginRequest) -> Result<Aut
         }
     };
     // 比较密码
-    let is_match = match verify_password(request.password, user.password) {
+    let is_match = match verify_password(request.password, user.clone().password) {
         Ok(isMatch) => {
             isMatch
         }
@@ -61,15 +61,26 @@ pub async fn login(db: &DatabaseConnection, request: LoginRequest) -> Result<Aut
     // 更新登录用户最近登录IP和时间
     // 记录登录日志
     // 保存登录用户信息缓存
+    cache_login_user(db, user.clone()).await?;
     Ok(auth)
 }
 
-// pub async fn cache_login_user(db: &DatabaseConnection, user: SystemUserModel) {
-//     // 查询部门信息
-//     let department = system_dep
-//     let role = match SystemRoleEntity::find {  };
-//     let login_user = LoginUserContext {
-//
-//     };
-//     RedisManager::set::<_, String>(format!("{}{}", REDIS_KEY_LOGIN_USER_PREFIX, id))
-// }
+pub async fn cache_login_user(db: &DatabaseConnection, user: SystemUserModel) -> Result<()> {
+    // 查询部门信息
+    let department_result = service::system_department::find_by_id(db, user.department_id).await?;
+    let department = match department_result {
+        None => {}
+        Some(d) => {d;}
+    };
+    let role_result = service::system_user_role::get_role_id_by_user_id(db, user.id).await?;
+    let login_user = LoginUserContext {
+        id: user.id,
+        nickname: user.nickname,
+        tenant_id: user.tenant_id,
+        department_id: user.department_id,
+        department_code: user.department_code,
+        role_id: role_result
+    };
+    RedisManager::set::<_, String>(format!("{}{}", REDIS_KEY_LOGIN_USER_PREFIX, user.id), serde_json::to_string(&login_user)?)?;
+    Ok(())
+}

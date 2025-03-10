@@ -63,3 +63,8 @@ pub async fn list(db: &DatabaseConnection) -> Result<Vec<SystemDepartmentRespons
     let list = SystemDepartmentEntity::find().all(db).await?;
     Ok(list.into_iter().map(model_to_response).collect())
 }
+
+pub async fn find_by_id(db: &DatabaseConnection, id: i64) -> Result<Option<SystemDepartmentModel>> {
+    let system_department = SystemDepartmentEntity::find_by_id(id).one(db).await?;
+    Ok(system_department)
+}
