@@ -6,19 +6,20 @@ use axum::{
     response::IntoResponse,
 };
 use axum::body::to_bytes;
+use tracing::info;
 use crate::config::config::Config;
 use crate::context::context::RequestContext;
 
 /// req上下文注入中间件 同时进行jwt授权验证
-pub async fn ctx_fn_mid(req: Request, next: Next) -> Result<impl IntoResponse, (StatusCode, String)> {
+pub async fn request_context_handler(req: axum::http::Request<Body>, next: axum::middleware::Next) -> impl IntoResponse {
     let config = Config::load();
     // 请求信息ctx注入
-    let ori_uri_path = if let Some(path) = req.extensions().get::<OriginalUri>() {
+    let original_uri_path = if let Some(path) = req.extensions().get::<OriginalUri>() {
         path.0.path().to_owned()
     } else {
         req.uri().path().to_owned()
     };
-    let path = ori_uri_path.replacen(&(config.api_prefix.clone() + "/"), "", 1);
+    let path = original_uri_path.replacen(&(config.api_prefix.clone() + "/"), "", 1);
     let method = req.method().to_string();
     let path_params = req.uri().query().unwrap_or("").to_string();
 
@@ -29,20 +30,20 @@ pub async fn ctx_fn_mid(req: Request, next: Next) -> Result<impl IntoResponse, (
         Ok((x, y)) => (x, y),
     };
 
-    let req_ctx = RequestContext {
-        original_uri: if path_params.is_empty() { ori_uri_path } else { ori_uri_path + "?" + &path_params },
+    let request_context = RequestContext {
+        original_uri: if path_params.is_empty() { original_uri_path } else { original_uri_path + "?" + &path_params },
         path,
         path_params,
         method: method.to_string(),
         data: body_data.clone(),
     };
+    info!("request context: {:?}", request_context);
+    let mut request = Request::from_parts(parts, Body::from(bytes));
 
-    let mut req = Request::from_parts(parts, Body::from(bytes));
+    request.extensions_mut().insert(request_context);
 
-    req.extensions_mut().insert(req_ctx);
-
-    let res = next.run(req).await;
-    Ok(res)
+    let response = next.run(request).await;
+    Ok(response)
 }
 
 //  获取body数据
@@ -87,7 +88,7 @@ async fn get_body_data(body: Body) -> Result<(Bytes, String), (StatusCode, Strin
         }
         Err(_) => Ok((
             bytes,
-            "该数据无法转输出，可能为blob，binary".to_string(),
+            "该数据无法转输出，可能为blob,binary".to_string(),
         )),
     }
 }

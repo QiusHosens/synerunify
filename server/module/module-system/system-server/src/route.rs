@@ -1,26 +1,24 @@
+use crate::api::system_auth::system_auth_router;
+use crate::api::system_data_scope_rule::system_data_scope_rule_router;
+use crate::api::system_department::system_department_router;
+use crate::api::system_dict_data::system_dict_data_router;
+use crate::api::system_dict_type::system_dict_type_router;
+use crate::api::system_menu::system_menu_router;
+use crate::api::system_notice::system_notice_router;
+use crate::api::system_post::system_post_router;
+use crate::api::system_role::system_role_router;
+use crate::api::system_role_menu::system_role_menu_router;
+use crate::api::system_role_menu_data_scope::system_role_menu_data_scope_router;
+use crate::api::system_tenant::system_tenant_router;
+use crate::api::system_tenant_package::system_tenant_package_router;
+use crate::api::system_user::system_user_router;
+use crate::api::system_user_post::system_user_post_router;
+use crate::api::system_user_role::system_user_role_router;
+use crate::AppState;
 use axum::Router;
-use sea_orm::DatabaseConnection;
+use common::middleware::request_context::request_context_handler;
 use utoipa::OpenApi;
 use utoipa_axum::router::OpenApiRouter;
-use std::sync::Arc;
-use utoipa_axum::routes;
-use crate::api::system_auth::system_auth_router;
-use crate::api::system_data_scope_rule::{system_data_scope_rule_route, system_data_scope_rule_router };
-use crate::api::system_department::{ system_department_route, system_department_router };
-use crate::api::system_dict_data::{ system_dict_data_route, system_dict_data_router };
-use crate::api::system_dict_type::{ system_dict_type_route, system_dict_type_router };
-use crate::api::system_menu::{ system_menu_route, system_menu_router };
-use crate::api::system_notice::{ system_notice_route, system_notice_router };
-use crate::api::system_post::{ system_post_route, system_post_router };
-use crate::api::system_role::{ system_role_route, system_role_router };
-use crate::api::system_role_menu::{ system_role_menu_route, system_role_menu_router };
-use crate::api::system_role_menu_data_scope::{ system_role_menu_data_scope_route, system_role_menu_data_scope_router };
-use crate::api::system_tenant::{ system_tenant_route, system_tenant_router };
-use crate::api::system_tenant_package::{ system_tenant_package_route, system_tenant_package_router };
-use crate::api::system_user::{ system_user_route, system_user_router };
-use crate::api::system_user_post::{ system_user_post_route, system_user_post_router };
-use crate::api::system_user_role::{ system_user_role_route, system_user_role_router };
-use crate::AppState;
 
 // openapi document
 #[derive(OpenApi)]
@@ -52,6 +50,11 @@ use crate::AppState;
 pub struct ApiDocument;
 
 pub async fn api(state: AppState) -> Router {
+    // Router::new()
+    //     .merge(no_auth_router(state.clone()).await)
+    //     .merge(auth_router(state.clone()).await)
+    //     .merge(utoipa_swagger_ui::SwaggerUi::new("/swagger-ui").url("/api-docs/openapi.json", ApiDocument::openapi()))
+
     let (router, api) = OpenApiRouter::with_openapi(ApiDocument::openapi())
         .merge(no_auth_router(state.clone()).await)
         .merge(auth_router(state.clone()).await)
@@ -64,6 +67,7 @@ pub async fn api(state: AppState) -> Router {
 pub async fn no_auth_router(state: AppState) -> OpenApiRouter {
     OpenApiRouter::new()
         .nest("/system_auth", system_auth_router(state).await)
+        .layer(axum::middleware::from_fn(request_context_handler))
 }
 
 pub async fn auth_router(state: AppState) -> OpenApiRouter {
@@ -83,4 +87,5 @@ pub async fn auth_router(state: AppState) -> OpenApiRouter {
         .nest("/system_user", system_user_router(state.clone()).await)
         .nest("/system_user_post", system_user_post_router(state.clone()).await)
         .nest("/system_user_role", system_user_role_router(state.clone()).await)
+        .layer(axum::middleware::from_fn(request_context_handler))
 }

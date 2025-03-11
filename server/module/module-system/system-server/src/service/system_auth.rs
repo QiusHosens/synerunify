@@ -68,10 +68,6 @@ pub async fn login(db: &DatabaseConnection, request: LoginRequest) -> Result<Aut
 pub async fn cache_login_user(db: &DatabaseConnection, user: SystemUserModel) -> Result<()> {
     // 查询部门信息
     let department_result = service::system_department::find_by_id(db, user.department_id).await?;
-    let department = match department_result {
-        None => {}
-        Some(d) => {d;}
-    };
     let role_result = service::system_user_role::get_role_id_by_user_id(db, user.id).await?;
     let login_user = LoginUserContext {
         id: user.id,
@@ -81,6 +77,7 @@ pub async fn cache_login_user(db: &DatabaseConnection, user: SystemUserModel) ->
         department_code: user.department_code,
         role_id: role_result
     };
+    info!("login user {:?}", login_user);
     RedisManager::set::<_, String>(format!("{}{}", REDIS_KEY_LOGIN_USER_PREFIX, user.id), serde_json::to_string(&login_user)?)?;
     Ok(())
 }

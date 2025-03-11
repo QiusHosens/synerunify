@@ -66,8 +66,5 @@ pub async fn list(db: &DatabaseConnection) -> Result<Vec<SystemUserRoleResponse>
 
 pub async fn get_role_id_by_user_id(db: &DatabaseConnection, user_id: i64) -> Result<i64> {
     let system_user_role = SystemUserRoleEntity::find().filter(Column::UserId.eq(user_id)).one(db).await?;
-    match system_user_role {
-        None => Ok(0),
-        Some(user_role) => Ok(user_role.role_id)
-    }
+    Ok(system_user_role.map_or_else(|| 0, | user_role | user_role.role_id))
 }
