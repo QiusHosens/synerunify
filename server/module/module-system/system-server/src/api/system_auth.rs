@@ -1,7 +1,9 @@
 use crate::{service, AppState};
 use axum::{extract::{Json, State}, routing::post, Router};
 use common::base::model::CommonResult;
+use common::middleware::auth::WithMetadata;
 use common::utils::jwt_utils::AuthBody;
+use macros::require_permissions;
 use system_model::request::system_auth::LoginRequest;
 use utoipa_axum::router::OpenApiRouter;
 use utoipa_axum::routes;
@@ -28,6 +30,7 @@ pub async fn system_auth_route(state: AppState) -> Router {
     ),
     tag = "system_auth"
 )]
+#[require_permissions("user:read")]
 async fn login(
     State(state): State<AppState>,
     Json(payload): Json<LoginRequest>,

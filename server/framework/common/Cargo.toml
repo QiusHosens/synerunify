@@ -43,3 +43,5 @@ tower = "0.5.2"
 md5 = "0.7.0"
 bcrypt = "0.17.0"
 mime = "0.3.17"
+
+macros = { path = "../macros" }

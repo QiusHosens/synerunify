@@ -19,6 +19,7 @@ use axum::Router;
 use common::middleware::request_context::request_context_handler;
 use utoipa::OpenApi;
 use utoipa_axum::router::OpenApiRouter;
+use common::middleware::auth::auth_handler;
 
 // openapi document
 #[derive(OpenApi)]
@@ -67,6 +68,7 @@ pub async fn api(state: AppState) -> Router {
 pub async fn no_auth_router(state: AppState) -> OpenApiRouter {
     OpenApiRouter::new()
         .nest("/system_auth", system_auth_router(state).await)
+        .layer(axum::middleware::from_fn(auth_handler))
         .layer(axum::middleware::from_fn(request_context_handler))
 }
 

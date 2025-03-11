@@ -11,19 +11,19 @@ use crate::config::config::Config;
 use crate::context::context::RequestContext;
 
 /// req上下文注入中间件 同时进行jwt授权验证
-pub async fn request_context_handler(req: axum::http::Request<Body>, next: axum::middleware::Next) -> impl IntoResponse {
+pub async fn request_context_handler(request: Request, next: Next) -> Result<impl IntoResponse, (StatusCode, String)> {
     let config = Config::load();
     // 请求信息ctx注入
-    let original_uri_path = if let Some(path) = req.extensions().get::<OriginalUri>() {
+    let original_uri_path = if let Some(path) = request.extensions().get::<OriginalUri>() {
         path.0.path().to_owned()
     } else {
-        req.uri().path().to_owned()
+        request.uri().path().to_owned()
     };
     let path = original_uri_path.replacen(&(config.api_prefix.clone() + "/"), "", 1);
-    let method = req.method().to_string();
-    let path_params = req.uri().query().unwrap_or("").to_string();
+    let method = request.method().to_string();
+    let path_params = request.uri().query().unwrap_or("").to_string();
 
-    let (parts, req_body) = req.into_parts();
+    let (parts, req_body) = request.into_parts();
 
     let (bytes, body_data) = match get_body_data(req_body).await {
         Err(e) => return Err(e),
@@ -45,28 +45,6 @@ pub async fn request_context_handler(req: axum::http::Request<Body>, next: axum:
     let response = next.run(request).await;
     Ok(response)
 }
-
-//  获取body数据
-// async fn get_body_data<B>(body: B) -> Result<(Bytes, String), (StatusCode, String)>
-// where
-//     B: axum::body::HttpBody<Data = Bytes>,
-//     B::Error: std::fmt::Display,
-// {
-//     let bytes = match body.collect().await {
-//         Ok(collected) => collected.to_bytes(),
-//         Err(err) => {
-//             return Err((StatusCode::BAD_REQUEST, format!("failed to read body: {}", err)));
-//         }
-//     };
-//
-//     match std::str::from_utf8(&bytes) {
-//         Ok(x) => {
-//             let res_data = x.to_string();
-//             Ok((bytes, res_data))
-//         }
-//         Err(_) => Ok((bytes, "该数据无法转输出，可能为blob，binary".to_string())),
-//     }
-// }
 
 async fn get_body_data(body: Body) -> Result<(Bytes, String), (StatusCode, String)> {
     // 将 Body 转换为 Bytes
