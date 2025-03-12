@@ -11,6 +11,7 @@ pub struct Config {
     pub api_prefix: String, // api前缀
     pub log_level: String, // 日志级别
     pub redis_url: String, // redis地址
+    pub mongo_url: String, // mongo地址
 }
 
 static CONFIG_INSTANCE: OnceLock<Config> = OnceLock::new();
@@ -29,6 +30,8 @@ impl Config {
                 .unwrap_or_else(|_| "info".to_string());
             let redis_url = env::var("REDIS_URL")
                 .unwrap_or_else(|_| "redis://127.0.0.1:6379/".to_string());
+            let mongo_url = env::var("MONGO_URL")
+                .unwrap_or_else(|_| "mongodb://127.0.0.1:27017".to_string());
 
             Config {
                 server_port,
@@ -36,6 +39,7 @@ impl Config {
                 api_prefix,
                 log_level,
                 redis_url,
+                mongo_url
             }
         }).clone()
     }

@@ -44,4 +44,7 @@ md5 = "0.7.0"
 bcrypt = "0.17.0"
 mime = "0.3.17"
 
+# mongo
+mongodb = "3.2.2"
+
 macros = { path = "../macros" }
