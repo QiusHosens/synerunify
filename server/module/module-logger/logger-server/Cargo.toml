@@ -47,6 +47,7 @@ utoipa = { version = "5.3.1" }
 utoipa-swagger-ui = { version = "9.0.0", features = ["axum"] }
 utoipa-axum = { version = "0.2.0" }
 utoipa-scalar = { version = "0.3.0" }
+chrono = "0.4.40"
 
 common = { path = "../../../framework/common" }
 macros = { path = "../../../framework/macros" }

@@ -106,6 +106,17 @@ impl RedisManager {
         conn.lpop(key, None)
     }
 
+    pub fn lpop_all<K, V>(key: K) -> RedisResult<Vec<V>>
+    where
+        K: ToRedisArgs,
+        V: FromRedisValue,
+    {
+        let mut conn = Self::client().get_connection()?;
+        let len: usize = conn.llen(&key)?;
+        let count = std::num::NonZeroUsize::new(len);
+        conn.lpop(key, count)
+    }
+
     // Set 操作（使用泛型）
     pub fn add_to_set<K, V>(key: K, value: V) -> RedisResult<()>
     where
