@@ -19,7 +19,7 @@ pub async fn login_logger_router(state: AppState) -> OpenApiRouter {
     operation_id = "login_logger_page",
     params(
         ("page" = u64, Query, description = "page number"),
-        ("page_size" = u64, Query, description = "page size"),
+        ("size" = u64, Query, description = "page size"),
         ("keyword" = Option<String>, Query, description = "keyword")
     ),
     responses(

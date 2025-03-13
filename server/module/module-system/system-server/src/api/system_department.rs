@@ -122,7 +122,7 @@ async fn get_by_id(
     operation_id = "system_department_page",
     params(
         ("page" = u64, Query, description = "page number"),
-        ("page_size" = u64, Query, description = "page size"),
+        ("size" = u64, Query, description = "page size"),
         ("keyword" = Option<String>, Query, description = "keyword")
     ),
     responses(

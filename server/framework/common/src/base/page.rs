@@ -1,9 +1,20 @@
 use serde::{Serialize, Deserialize};
+use serde::de::Error;
 use utoipa::ToSchema;
+
+fn from_str<'de, D, S>(deserializer: D) -> Result<S, D::Error>
+where D: serde::Deserializer<'de>,
+      S: std::str::FromStr
+{
+    let s = <&str as serde::Deserialize>::deserialize(deserializer)?;
+    S::from_str(&s).map_err(|_| D::Error::custom("could not parse string"))
+}
 
 #[derive(Serialize, Deserialize, Debug, ToSchema)]
 pub struct PaginatedRequest {
+    #[serde(deserialize_with="from_str")]
     pub page: u64,
+    #[serde(deserialize_with="from_str")]
     pub size: u64,
 }
 
