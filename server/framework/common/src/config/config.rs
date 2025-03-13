@@ -29,9 +29,9 @@ impl Config {
             let log_level = env::var("LOG_LEVEL")
                 .unwrap_or_else(|_| "info".to_string());
             let redis_url = env::var("REDIS_URL")
-                .unwrap_or_else(|_| "redis://127.0.0.1:6379/".to_string());
+                .unwrap_or_else(|_| "redis://synerunify:synerunify@127.0.0.1:6379/".to_string());
             let mongo_url = env::var("MONGO_URL")
-                .unwrap_or_else(|_| "mongodb://127.0.0.1:27017".to_string());
+                .unwrap_or_else(|_| "mongodb://synerunify:synerunify@127.0.0.1:27017".to_string());
 
             Config {
                 server_port,
