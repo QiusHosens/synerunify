@@ -1,0 +1,31 @@
+use serde::{Serialize, Deserialize};
+use utoipa::ToSchema;
+
+#[derive(Deserialize, Serialize, Debug, Clone, ToSchema)]
+pub struct LoginLoggerResponse {
+
+    pub id: i64, // id
+
+    pub trace_id: String, // 链路追踪编号
+
+    pub user_id: i64, // 用户编号
+
+    pub user_type: i8, // 用户类型
+
+    pub username: String, // 用户账号
+
+    pub result: i8, // 登陆结果
+
+    pub user_ip: String, // 用户 IP
+
+    pub user_agent: String, // 浏览器 UA
+
+    pub department_code: String, // 部门编码
+
+    pub department_id: i64, // 部门ID
+
+    pub operator: Option<i64>, // 操作者id
+
+    pub operate_time: i64, // 操作时间
+
+}

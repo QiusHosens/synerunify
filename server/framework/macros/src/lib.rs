@@ -1,15 +1,23 @@
 extern crate proc_macro;
 
 use proc_macro::TokenStream;
+use proc_macro2::TokenStream as TokenStream2;
 use quote::quote;
 use syn::{parse_macro_input, ItemFn};
 
-#[proc_macro_attribute]
-pub fn require_permissions(attr: TokenStream, item: TokenStream) -> TokenStream {
-    let permissions = attr.to_string()
+// 将权限解析逻辑改为使用 proc_macro2::TokenStream
+fn parse_permissions(attr: TokenStream2) -> Vec<String> {
+    attr.to_string()
         .split(',')
         .map(|s| s.trim().trim_matches('"').to_string())
-        .collect::<Vec<String>>();
+        .collect()
+}
+
+#[proc_macro_attribute]
+pub fn require_permissions(attr: TokenStream, item: TokenStream) -> TokenStream {
+    // 将 proc_macro::TokenStream 转换为 proc_macro2::TokenStream
+    let attr2: TokenStream2 = attr.into();
+    let permissions = parse_permissions(attr2);
 
     let input = parse_macro_input!(item as ItemFn);
     let fn_name = &input.sig.ident;
@@ -36,3 +44,57 @@ pub fn require_permissions(attr: TokenStream, item: TokenStream) -> TokenStream 
 
     TokenStream::from(expanded)
 }
+
+// 示例用法
+/*
+#[cfg(test)]
+mod example {
+    use super::*;
+
+    struct AppState;
+
+    #[require_permissions("read")]
+    async fn test_handler(state: AppState) -> String {
+        "Hello".to_string()
+    }
+}
+*/
+
+// 测试模块
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use quote::quote;
+
+    #[test]
+    fn test_parse_permissions_single() {
+        let attr = quote! { "read" };
+        let permissions = parse_permissions(attr);
+        assert_eq!(permissions, vec!["read"]);
+    }
+
+    #[test]
+    fn test_parse_permissions_multiple() {
+        let attr = quote! { "read", "write" };
+        let permissions = parse_permissions(attr);
+        assert_eq!(permissions, vec!["read", "write"]);
+    }
+
+    #[test]
+    fn test_parse_permissions_empty() {
+        let attr = quote! {};
+        let permissions = parse_permissions(attr);
+        assert_eq!(permissions, Vec::<String>::new());
+    }
+
+    #[test]
+    fn test_parse_permissions_with_spaces() {
+        let attr = quote! { "read" , "write" };
+        let permissions = parse_permissions(attr);
+        assert_eq!(permissions, vec!["read", "write"]);
+    }
+}
+
+// 为测试定义一个简单的 AppState stub
+#[cfg(test)]
+struct AppState;
