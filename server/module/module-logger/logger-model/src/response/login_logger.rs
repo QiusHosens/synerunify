@@ -4,7 +4,7 @@ use utoipa::ToSchema;
 #[derive(Deserialize, Serialize, Debug, Clone, ToSchema)]
 pub struct LoginLoggerResponse {
 
-    pub id: i64, // id
+    pub id: Option<String>, // id
 
     pub trace_id: String, // 链路追踪编号
 
@@ -25,6 +25,8 @@ pub struct LoginLoggerResponse {
     pub department_id: i64, // 部门ID
 
     pub operator: Option<i64>, // 操作者id
+
+    pub operator_nickname: Option<String>, // 操作者昵称
 
     pub operate_time: i64, // 操作时间
 

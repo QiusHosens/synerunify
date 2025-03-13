@@ -1,5 +1,6 @@
 use axum::{extract::Request, http::StatusCode, middleware::Next, response::Response};
 use axum::routing::MethodRouter;
+use anyhow::Result;
 use tracing::info;
 use crate::context::context::{LoginUserContext, RequestContext};
 
@@ -52,22 +53,22 @@ fn has_permission(user: &LoginUserContext, required_codes: &[String]) -> bool {
 }
 
 pub async fn auth_handler(request: Request, next: Next) -> Result<Response, StatusCode> {
-    // 获取目标路由的权限要求
-    let permissions = request.extensions()
-        .get::<Permissions>();
-    info!("permissions: {:?}", permissions);
-    let p = permissions.map(|p| &p.0)
-        .ok_or(StatusCode::UNAUTHORIZED)?;
-
-
-
-    let request_context = request.extensions().get::<RequestContext>().expect("request context not found");
-    let login_user = request.extensions().get::<LoginUserContext>().expect("login user not found");
-
-    // 检查权限
-    if !has_permission(&login_user, p) {
-        return Err(StatusCode::UNAUTHORIZED);
-    }
+    // 获取目标路由的权限要求 TODO
+    // let permissions = request.extensions()
+    //     .get::<Permissions>();
+    // info!("permissions: {:?}", permissions);
+    // let p = permissions.map(|p| &p.0)
+    //     .ok_or(StatusCode::UNAUTHORIZED)?;
+    //
+    //
+    //
+    // let request_context = request.extensions().get::<RequestContext>().expect("request context not found");
+    // let login_user = request.extensions().get::<LoginUserContext>().expect("login user not found");
+    //
+    // // 检查权限
+    // if !has_permission(&login_user, p) {
+    //     return Err(StatusCode::UNAUTHORIZED);
+    // }
 
     Ok(next.run(request).await)
 

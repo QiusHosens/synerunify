@@ -14,6 +14,7 @@ pub fn model_to_response(model: LoginLogger) -> LoginLoggerResponse {
         department_code: model.department_code,
         department_id: model.department_id,
         operator: model.operator,
+        operator_nickname: model.operator_nickname,
         operate_time: model.operate_time,
     }
 }
