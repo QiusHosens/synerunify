@@ -3,7 +3,7 @@ use utoipa::gen::serde_json;
 use common::base::logger::LoginLogger;
 use common::database::redis::RedisManager;
 use common::database::redis_constants::REDIS_KEY_LOGGER_LOGIN_PREFIX;
-use common::task::task_manager::Task;
+use common::task::task_manager::{ErrorAction, Task};
 use crate::service;
 
 // 登录日志任务
@@ -11,9 +11,15 @@ pub struct LoginLoggerTask {
     pub name: String,
 }
 
+impl LoginLoggerTask {
+    pub fn new() -> Self {
+        LoginLoggerTask { name: "login logger".to_string() }
+    }
+}
+
 impl Task for LoginLoggerTask {
-    fn execute(&self) -> Result<(), Box<dyn Error>> {
-        tracing::info!("execute login logger task {}: {:?}", self.name, chrono::Local::now());
+    fn execute(&self) -> Result<(), Box<dyn Error + Send + Sync>> {
+        tracing::info!("execute task {}: {:?}", self.name, chrono::Local::now());
         // 保存登录日志
         let logs = RedisManager::lpop_all::<_, String>(REDIS_KEY_LOGGER_LOGIN_PREFIX)?;
         if logs.is_empty() {
@@ -34,5 +40,10 @@ impl Task for LoginLoggerTask {
             }
         });
         Ok(())
+    }
+
+    fn on_error(&self, error: Box<dyn Error + Send + Sync>) -> ErrorAction {
+        println!("execute login logger task error: {}", error);
+        ErrorAction::Continue
     }
 }

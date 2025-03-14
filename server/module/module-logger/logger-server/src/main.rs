@@ -29,14 +29,9 @@ async fn main() -> Result<(), anyhow::Error> {
     MongoManager::init().await?;
 
     // 初始化任务管理器
-    let mut task_manager = TaskManager::new(10);
-    task_manager.add_task(LoginLoggerTask { name: "login logger".to_string() }).await;
-    task_manager.add_task(OperationLoggerTask { name: "operation logger".to_string() }).await;
-    let task_manager_handle = tokio::spawn(async move {
-        println!("任务管理器线程启动");
-        task_manager.start().await;
-        println!("任务管理器线程结束");
-    });
+    let mut task_manager = TaskManager::new();
+    task_manager.add_task(LoginLoggerTask::new(), 10).await;
+    task_manager.add_task(OperationLoggerTask::new(), 10).await;
 
     let cors = CorsLayer::new()
         .allow_origin(Any)
@@ -66,12 +61,12 @@ async fn main() -> Result<(), anyhow::Error> {
         }
         _ = tokio::signal::ctrl_c() => {
             println!("\n收到退出信号，程序关闭");
-            task_manager_handle.abort();
+            task_manager.shutdown();
             return Ok(());
         }
     }
 
-    task_manager_handle.abort();
+    task_manager.shutdown();
 
     // 组合任务管理器和web服务
     // tokio::select! {

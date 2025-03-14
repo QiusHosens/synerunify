@@ -6,6 +6,7 @@ use axum::middleware::Next;
 use axum::response::Response;
 use chrono::Utc;
 use anyhow::Result;
+use tracing::info;
 use crate::base::logger::OperationLogger;
 use crate::base::model::CommonResultJsonString;
 use crate::context::context::{LoginUserContext, RequestContext};
@@ -31,7 +32,7 @@ pub async fn operation_logger_handler(request: Request, next: Next) -> Result<Re
     Ok(request_end)
 }
 
-async fn add_logger(request_context: RequestContext, login_user: Option<LoginUserContext>, result: String, duration: Duration) {
+fn add_logger(request_context: RequestContext, login_user: Option<LoginUserContext>, result: String, duration: Duration) {
     tokio::spawn(async move {
         match add_logger_redis(request_context, login_user, result, duration).await {
             Ok(_) => {}
@@ -76,7 +77,7 @@ async fn add_logger_redis(request_context: RequestContext, login_user: Option<Lo
         deleted: false,
         tenant_id
     };
-
+    info!("operation logger: {:?}", operation_logger);
     RedisManager::push_list::<_, String>(REDIS_KEY_LOGGER_OPERATION_PREFIX, serde_json::to_string(&operation_logger)?)?;
     Ok(())
 }

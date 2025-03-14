@@ -1,4 +1,4 @@
 pub mod logger;
 pub mod request_context;
 pub mod auth;
-mod operation_logger;
+pub mod operation_logger;
