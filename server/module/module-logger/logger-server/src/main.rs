@@ -55,12 +55,12 @@ async fn main() -> Result<(), anyhow::Error> {
     tokio::select! {
         result = server_future => {
             if let Err(e) = result {
-                eprintln!("Web 服务错误: {}", e);
+                eprintln!("Web server unexpected exit: {}", e);
             }
-            println!("Web 服务已停止");
+            println!("Web server has stopped");
         }
         _ = tokio::signal::ctrl_c() => {
-            println!("\n收到退出信号，程序关闭");
+            println!("The program is closed when the exit signal is received");
             task_manager.shutdown();
             return Ok(());
         }

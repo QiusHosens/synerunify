@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+use std::sync::{Arc, Mutex};
 use axum::{
     extract::{State, Json, Extension},
     http::StatusCode,
@@ -8,9 +10,14 @@ use axum::{
 use axum::http::Request;
 use axum::middleware::Next;
 use axum::response::Response;
-use axum::routing::post;
+use axum::routing::{get, post, MethodRouter};
 use serde::Deserialize;
+use tracing::info;
 use utoipa::OpenApi;
+use macros::require_permissions;
+use once_cell::sync::Lazy;
+use ctor;
+use dashmap::DashMap;
 
 #[derive(Deserialize, Debug, Clone)]
 struct LoginUserContext {
@@ -37,6 +44,7 @@ struct AppState {}
         (status = 500, description = "Internal server error")
     )
 )]
+#[require_permissions("user:read")]
 async fn update(
     State(_state): State<AppState>,
     Json(payload): Json<UpdateSystemDataScopeRuleRequest>,
@@ -53,12 +61,55 @@ async fn update(
     Ok(StatusCode::NO_CONTENT)
 }
 
+#[utoipa::path(
+    get,
+    path = "/user",
+    responses(
+        (status = 204, description = "Update successful"),
+        (status = 401, description = "Unauthorized"),
+        (status = 500, description = "Internal server error")
+    )
+)]
+#[require_permissions("user:read,user:get")]
+async fn user() -> String {
+    "User data".to_string()
+}
+
 #[derive(OpenApi)]
-#[openapi(paths(update))]
+#[openapi(paths(update, user))]
 struct ApiDoc;
 
+// 全局静态变量存储路由和权限的映射
+pub static ROUTE_PERMISSIONS: Lazy<DashMap<String, Vec<String>>> = Lazy::new(|| {
+    DashMap::new()
+});
+
+// 注册路由权限的函数
+pub fn register_route_permissions(route: &str, permissions: Vec<String>) {
+    println!("Registering route: {} with permissions: {:?}", route, permissions);
+    // let mut route_permissions = ROUTE_PERMISSIONS.lock().unwrap();
+    // route_permissions.insert(route.to_string(), permissions);
+    ROUTE_PERMISSIONS.insert(route.to_string(), permissions);
+}
+
+#[derive(Clone)]
+pub struct RequiredPermissions(pub Vec<String>);
+
+pub async fn auth_handler(request: axum::extract::Request, next: Next) -> Result<impl IntoResponse, StatusCode> {
+    // let permissions = request.extensions()
+    //     .get::<Permissions>();
+    // let route_permissions = request.extensions().get::<Vec<String>>().cloned().unwrap_or_default();
+    // let required_perms = required.0;
+    let path = request.uri().path().to_string();
+    // let route_permissions = ROUTE_PERMISSIONS.lock().unwrap();
+    // info!("permissions: {:?}", route_permissions);
+    println!("permissions: {:?}", path);
+    println!("permissions: {:?}", ROUTE_PERMISSIONS);
+    Ok(next.run(request).await)
+}
+
 // 中间件：指定具体的 Body 类型
-async fn auth_middleware(req: Request<axum::body::Body>, next: Next) -> Result<impl IntoResponse, StatusCode> {
+async fn auth_middleware(req: Request<axum::body::Body>, next: Next) -> Result<Response, StatusCode> {
     let (mut parts, body) = req.into_parts();
     let login_user = LoginUserContext {
         id: "123".to_string(),
@@ -72,9 +123,12 @@ async fn auth_middleware(req: Request<axum::body::Body>, next: Next) -> Result<i
 #[tokio::main]
 async fn main() -> Result<(), anyhow::Error> {
     let state = AppState {};
+
     let app = Router::new()
         .route("/update", post(update)) // 使用 Axum 原生路由
-        .layer(axum::middleware::from_fn(auth_middleware))
+        .route("/user", get(user))
+        // .layer(axum::middleware::from_fn(auth_middleware))
+        .layer(axum::middleware::from_fn(auth_handler))
         .with_state(state)
         .merge(utoipa_swagger_ui::SwaggerUi::new("/swagger-ui").url("/api-doc.json", ApiDoc::openapi()))
     ;
