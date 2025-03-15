@@ -48,17 +48,44 @@ extern crate proc_macro;
 
 use proc_macro::TokenStream;
 use quote::quote;
-use syn::{parse_macro_input, ItemFn, LitStr};
+use syn::{parse_macro_input, Expr, ItemFn, Lit, LitStr, Meta, MetaNameValue};
+use syn::punctuated::Punctuated;
+use syn::token::Comma;
 
 #[proc_macro_attribute]
 pub fn require_permissions(args: TokenStream, input: TokenStream) -> TokenStream {
+    let args = parse_macro_input!(args with Punctuated::<MetaNameValue, Comma>::parse_terminated);
+    println!("args: {:?}", args);
     // 解析权限字符串
-    let args = parse_macro_input!(args as LitStr);
-    let permissions: Vec<String> = args
-        .value()
-        .split(',')
-        .map(|s| s.trim().to_string())
-        .collect();
+    // let args = parse_macro_input!(args as LitStr);
+    // let permissions: Vec<String> = args
+    //     .value()
+    //     .split(',')
+    //     .map(|s| s.trim().to_string())
+    //     .collect();
+
+    // 提取 operation_id 和 authorize 参数
+    let mut operation_id = String::new();
+    let mut authorizes = Vec::new();
+
+    for arg in args {
+        if arg.path.is_ident("operation_id") {
+            if let Expr::Lit(expr_lit) = &arg.value {
+                if let Lit::Str(lit) = &expr_lit.lit {
+                    operation_id = lit.value();
+                }
+            }
+        } else if arg.path.is_ident("authorize") {
+            if let Expr::Lit(expr_lit) = &arg.value {
+                if let Lit::Str(lit) = &expr_lit.lit {
+                    authorizes = lit.value()
+                        .split(',')
+                        .map(|s| s.trim().to_string())
+                        .collect();
+                }
+            }
+        }
+    }
 
     // 解析函数名
     let item_fn = parse_macro_input!(input as ItemFn);
@@ -81,7 +108,7 @@ pub fn require_permissions(args: TokenStream, input: TokenStream) -> TokenStream
         // 在模块初始化时注册权限
         #[ctor::ctor]
         fn #register_fn_name() {
-            crate::register_route_permissions(#route_path, vec![#(#permissions.to_string()),*]);
+            crate::register_route_permissions(#operation_id, vec![#(#authorizes.to_string()),*]);
         }
     };
 
