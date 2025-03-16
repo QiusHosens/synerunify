@@ -17,9 +17,10 @@ use crate::api::system_user_role::system_user_role_router;
 use crate::AppState;
 use axum::Router;
 use common::middleware::request_context::request_context_handler;
-use utoipa::OpenApi;
+use utoipa::{Modify, OpenApi};
+use utoipa::openapi::security::{Http, HttpAuthScheme, SecurityScheme};
 use utoipa_axum::router::OpenApiRouter;
-use common::middleware::auth::auth_handler;
+use common::middleware::authorize::{authorize_handler, init_route_authorizes};
 use common::middleware::operation_logger::operation_logger_handler;
 
 // openapi document
@@ -47,7 +48,7 @@ use common::middleware::operation_logger::operation_logger_handler;
         (name = "system_user_post", description = "用户职位"),
         (name = "system_user_role", description = "用户和角色关联"),
         (name = "system_auth", description = "认证"),
-    )
+    ),
 )]
 pub struct ApiDocument;
 
@@ -62,6 +63,8 @@ pub async fn api(state: AppState) -> Router {
         .merge(auth_router(state.clone()).await)
         .split_for_parts();
 
+    // 注册路由权限
+    init_route_authorizes(&api);
     router
         .merge(utoipa_swagger_ui::SwaggerUi::new("/swagger-ui").url("/api-docs/openapi.json", api.clone()))
 }
@@ -69,7 +72,7 @@ pub async fn api(state: AppState) -> Router {
 pub async fn no_auth_router(state: AppState) -> OpenApiRouter {
     OpenApiRouter::new()
         .nest("/system_auth", system_auth_router(state).await)
-        .layer(axum::middleware::from_fn(auth_handler))
+        .layer(axum::middleware::from_fn(authorize_handler))
         .layer(axum::middleware::from_fn(operation_logger_handler))
         .layer(axum::middleware::from_fn(request_context_handler))
 }

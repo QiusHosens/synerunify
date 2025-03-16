@@ -43,6 +43,9 @@ tower = "0.5.2"
 md5 = "0.7.0"
 bcrypt = "0.17.0"
 mime = "0.3.17"
+ctor = "0.4.0"
+dashmap = "6.1.0"
+regex = "1.11.1"
 
 # mongo
 mongodb = "3.2.1"

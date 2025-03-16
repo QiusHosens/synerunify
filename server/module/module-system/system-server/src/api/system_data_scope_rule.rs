@@ -2,6 +2,8 @@ use std::sync::Arc;
 use sea_orm::DatabaseConnection;
 use utoipa_axum::router::OpenApiRouter;
 use utoipa_axum::routes;
+use ctor;
+use macros::require_authorize;
 use axum::{routing::{get, post}, Router, extract::{State, Path, Json, Query}, response::IntoResponse};
 use common::base::page::PaginatedResponse;
 use system_model::request::system_data_scope_rule::{CreateSystemDataScopeRuleRequest, UpdateSystemDataScopeRuleRequest, PaginatedKeywordRequest};
@@ -35,12 +37,16 @@ pub async fn system_data_scope_rule_route(state: AppState) -> Router {
     post,
     path = "/create",
     operation_id = "system_data_scope_rule_create",
+    params(
+        ("Authorization" = String, Header, description = "JWT Authorization header (e.g., 'Bearer <token>')")
+    ),
     request_body(content = CreateSystemDataScopeRuleRequest, description = "create", content_type = "application/json"),
     responses(
         (status = 200, description = "id", body = CommonResult<i64>)
     ),
     tag = "system_data_scope_rule"
 )]
+#[require_authorize(operation_id = "system_data_scope_rule_create", authorize = "")]
 async fn create(
     State(state): State<AppState>,
     Json(payload): Json<CreateSystemDataScopeRuleRequest>,
@@ -55,12 +61,16 @@ async fn create(
     post,
     path = "/update",
     operation_id = "system_data_scope_rule_update",
+    params(
+        ("Authorization" = String, Header, description = "JWT Authorization header (e.g., 'Bearer <token>')")
+    ),
     request_body(content = UpdateSystemDataScopeRuleRequest, description = "update", content_type = "application/json"),
     responses(
         (status = 204, description = "update")
     ),
     tag = "system_data_scope_rule"
 )]
+#[require_authorize(operation_id = "system_data_scope_rule_update", authorize = "")]
 async fn update(
     State(state): State<AppState>,
     Json(payload): Json<UpdateSystemDataScopeRuleRequest>,
@@ -76,6 +86,7 @@ async fn update(
     path = "/delete/{id}",
     operation_id = "system_data_scope_rule_delete",
     params(
+        ("Authorization" = String, Header, description = "JWT Authorization header (e.g., 'Bearer <token>')"),
         ("id" = i64, Path, description = "id")
     ),
     responses(
@@ -83,6 +94,7 @@ async fn update(
     ),
     tag = "system_data_scope_rule"
 )]
+#[require_authorize(operation_id = "system_data_scope_rule_delete", authorize = "")]
 async fn delete(
     State(state): State<AppState>,
     Path(id): Path<i64>,
@@ -98,6 +110,7 @@ async fn delete(
     path = "/get/{id}",
     operation_id = "system_data_scope_rule_get_by_id",
     params(
+        ("Authorization" = String, Header, description = "JWT Authorization header (e.g., 'Bearer <token>')"),
         ("id" = i64, Path, description = "id")
     ),
     responses(
@@ -105,6 +118,7 @@ async fn delete(
     ),
     tag = "system_data_scope_rule"
 )]
+#[require_authorize(operation_id = "system_data_scope_rule_get_by_id", authorize = "")]
 async fn get_by_id(
     State(state): State<AppState>,
     Path(id): Path<i64>,
@@ -121,6 +135,7 @@ async fn get_by_id(
     path = "/page",
     operation_id = "system_data_scope_rule_page",
     params(
+        ("Authorization" = String, Header, description = "JWT Authorization header (e.g., 'Bearer <token>')"),
         ("page" = u64, Query, description = "page number"),
         ("size" = u64, Query, description = "page size"),
         ("keyword" = Option<String>, Query, description = "keyword")
@@ -130,6 +145,7 @@ async fn get_by_id(
     ),
     tag = "system_data_scope_rule"
 )]
+#[require_authorize(operation_id = "system_data_scope_rule_page", authorize = "")]
 async fn page(
     State(state): State<AppState>,
     Query(params): Query<PaginatedKeywordRequest>,
@@ -144,11 +160,15 @@ async fn page(
     get,
     path = "/list",
     operation_id = "system_data_scope_rule_list",
+    params(
+        ("Authorization" = String, Header, description = "JWT Authorization header (e.g., 'Bearer <token>')")
+    ),
     responses(
         (status = 200, description = "list all", body = CommonResult<Vec<SystemDataScopeRuleResponse>>)
     ),
     tag = "system_data_scope_rule"
 )]
+#[require_authorize(operation_id = "system_data_scope_rule_list", authorize = "")]
 async fn list(
     State(state): State<AppState>
 ) -> CommonResult<Vec<SystemDataScopeRuleResponse>> {

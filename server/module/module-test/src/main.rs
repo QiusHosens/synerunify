@@ -14,7 +14,7 @@ use axum::routing::{get, post, MethodRouter};
 use serde::Deserialize;
 use tracing::info;
 use utoipa::OpenApi;
-use macros::require_permissions;
+use macros::require_authorize;
 use once_cell::sync::Lazy;
 use ctor;
 use dashmap::DashMap;
@@ -44,7 +44,8 @@ struct AppState {}
         (status = 500, description = "Internal server error")
     )
 )]
-#[require_permissions("user:read")]
+// #[require_permissions("user:read")]
+#[require_authorize(operation_id = "operation_id", authorize = "user:read,user:get")]
 async fn update(
     State(_state): State<AppState>,
     Json(payload): Json<UpdateSystemDataScopeRuleRequest>,
@@ -70,7 +71,8 @@ async fn update(
         (status = 500, description = "Internal server error")
     )
 )]
-#[require_permissions("user:read,user:get")]
+// #[require_permissions("user:read,user:get")]
+#[require_authorize(operation_id = "operation_id", authorize = "user:read,user:get")]
 async fn user() -> String {
     "User data".to_string()
 }
@@ -85,11 +87,11 @@ pub static ROUTE_PERMISSIONS: Lazy<DashMap<String, Vec<String>>> = Lazy::new(|| 
 });
 
 // 注册路由权限的函数
-pub fn register_route_permissions(route: &str, permissions: Vec<String>) {
-    println!("Registering route: {} with permissions: {:?}", route, permissions);
+pub fn register_operation_permissions(operation_id: &str, permissions: Vec<String>) {
+    println!("Registering operation id: {} with permissions: {:?}", operation_id, permissions);
     // let mut route_permissions = ROUTE_PERMISSIONS.lock().unwrap();
     // route_permissions.insert(route.to_string(), permissions);
-    ROUTE_PERMISSIONS.insert(route.to_string(), permissions);
+    ROUTE_PERMISSIONS.insert(operation_id.to_string(), permissions);
 }
 
 #[derive(Clone)]

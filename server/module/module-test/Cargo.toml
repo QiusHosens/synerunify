@@ -44,3 +44,4 @@ macros = { path = "../../framework/macros" }
 once_cell = "1.20.3"
 ctor = "0.4.0"
 dashmap = "6.1.0"
+regex = "1.11.1"
