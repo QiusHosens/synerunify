@@ -1,0 +1,11 @@
+{
+  "app_title": "我的应用",
+  "login": "登录",
+  "username": "用户名",
+  "password": "密码",
+  "dashboard": "仪表盘",
+  "welcome": "欢迎来到仪表盘！",
+  "settings": "设置",
+  "switch_theme": "切换到{{mode}}主题",
+  "nav_position": "导航位置：{{position}}"
+}

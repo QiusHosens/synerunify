@@ -1,0 +1,11 @@
+{
+  "app_title": "Mon Application",
+  "login": "Connexion",
+  "username": "Nom d'utilisateur",
+  "password": "Mot de passe",
+  "dashboard": "Tableau de bord",
+  "welcome": "Bienvenue sur le tableau de bord !",
+  "settings": "Paramètres",
+  "switch_theme": "Passer au thème {{mode}}",
+  "nav_position": "Position de la navigation : {{position}}"
+}

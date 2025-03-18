@@ -1,15 +1,16 @@
-import { AppBar, Toolbar, Typography, Button, IconButton, Menu, MenuItem } from '@mui/material';
-import SettingsIcon from '@mui/icons-material/Settings'; // 引入 MUI 的 Settings 图标
+import { AppBar, Toolbar, Typography, IconButton, Menu, MenuItem } from '@mui/material';
+import SettingsIcon from '@mui/icons-material/Settings';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/store';
 import { setThemeMode, setNavPosition } from '@/store/slices/themeSlice';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 export default function Navigation() {
   const dispatch = useDispatch();
   const { mode, navPosition } = useSelector((state: RootState) => state.theme);
+  const { t, i18n } = useTranslation();
 
-  // 控制 Menu 的状态
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
@@ -31,18 +32,21 @@ export default function Navigation() {
     handleClose();
   };
 
+  const handleLanguageChange = (lng: string) => {
+    i18n.changeLanguage(lng);
+    handleClose();
+  };
+
   return (
     <AppBar position="static" sx={{ width: navPosition === 'left' ? 240 : '100%' }}>
       <Toolbar>
         <Typography variant="h6" sx={{ flexGrow: 1 }}>
-          My App
+          {t('app_title')}
         </Typography>
-        {/* 设置按钮 */}
         <IconButton color="inherit" onClick={handleSettingsClick}>
           <SettingsIcon />
         </IconButton>
 
-        {/* 设置菜单 */}
         <Menu
           anchorEl={anchorEl}
           open={open}
@@ -51,17 +55,21 @@ export default function Navigation() {
           transformOrigin={{ vertical: 'top', horizontal: 'right' }}
         >
           <MenuItem onClick={handleThemeToggle}>
-            Switch to {mode === 'light' ? 'Dark' : 'Light'} Theme
+            {t('switch_theme', { mode: mode === 'light' ? 'Dark' : 'Light' })}
           </MenuItem>
           <MenuItem onClick={() => handleNavPosition('left')}>
-            Nav Position: Left
+            {t('nav_position', { position: 'Left' })}
           </MenuItem>
           <MenuItem onClick={() => handleNavPosition('top')}>
-            Nav Position: Top
+            {t('nav_position', { position: 'Top' })}
           </MenuItem>
           <MenuItem onClick={() => handleNavPosition('bottom')}>
-            Nav Position: Bottom
+            {t('nav_position', { position: 'Bottom' })}
           </MenuItem>
+          {/* 语言切换 */}
+          <MenuItem onClick={() => handleLanguageChange('en')}>English</MenuItem>
+          <MenuItem onClick={() => handleLanguageChange('fr')}>Français</MenuItem>
+          <MenuItem onClick={() => handleLanguageChange('zh')}>中文</MenuItem>
         </Menu>
       </Toolbar>
     </AppBar>
