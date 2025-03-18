@@ -14,10 +14,11 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
+    "allowImportingTsExtensions": true,
     "jsx": "react-jsx",
-    "baseUrl": ".",               // 设置基路径为项目根目录
+    "baseUrl": ".",               // Base path set to project root
     "paths": {
-      "@/*": ["src/*"]            // 配置 @ 指向 src 目录
+      "@/*": ["src/*"]            // Configure @ to point to src directory
     }
   },
   "include": ["src"],
