@@ -1,11 +1,10 @@
 import { Box } from '@mui/material';
 import { Outlet } from 'react-router-dom';
 import Navigation from './Navigation';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../store';
+import { useThemeStore } from '@/store';
 
 export default function Layout() {
-  const { navPosition } = useSelector((state: RootState) => state.theme);
+  const { navPosition } = useThemeStore();
 
   const layoutStyles = {
     display: 'flex',

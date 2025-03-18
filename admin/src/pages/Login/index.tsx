@@ -1,19 +1,18 @@
 import { Button, TextField, Box, Typography } from '@mui/material';
 import { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { login } from '@/store/slices/authSlice';
+import { useAuthStore } from '@/store';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
 export default function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const dispatch = useDispatch();
+  const { login } = useAuthStore();
   const navigate = useNavigate();
   const { t } = useTranslation();
 
   const handleLogin = () => {
-    dispatch(login({ user: username, token: 'mock-token' }));
+    login(username, 'mock-token');
     navigate('/dashboard');
   };
 

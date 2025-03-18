@@ -1,14 +1,11 @@
 import { AppBar, Toolbar, Typography, IconButton, Menu, MenuItem } from '@mui/material';
 import SettingsIcon from '@mui/icons-material/Settings';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '@/store';
-import { setThemeMode, setNavPosition } from '@/store/slices/themeSlice';
+import { useThemeStore } from '@/store';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 export default function Navigation() {
-  const dispatch = useDispatch();
-  const { mode, navPosition } = useSelector((state: RootState) => state.theme);
+  const { mode, navPosition, setThemeMode, setNavPosition } = useThemeStore();
   const { t, i18n } = useTranslation();
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -23,12 +20,12 @@ export default function Navigation() {
   };
 
   const handleThemeToggle = () => {
-    dispatch(setThemeMode(mode === 'light' ? 'dark' : 'light'));
+    setThemeMode(mode === 'light' ? 'dark' : 'light');
     handleClose();
   };
 
   const handleNavPosition = (position: 'left' | 'top' | 'bottom') => {
-    dispatch(setNavPosition(position));
+    setNavPosition(position);
     handleClose();
   };
 
@@ -66,7 +63,6 @@ export default function Navigation() {
           <MenuItem onClick={() => handleNavPosition('bottom')}>
             {t('nav_position', { position: 'Bottom' })}
           </MenuItem>
-          {/* 语言切换 */}
           <MenuItem onClick={() => handleLanguageChange('en')}>English</MenuItem>
           <MenuItem onClick={() => handleLanguageChange('fr')}>Français</MenuItem>
           <MenuItem onClick={() => handleLanguageChange('zh')}>中文</MenuItem>
