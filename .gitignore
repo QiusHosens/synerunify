@@ -48,3 +48,7 @@ dist-ssr
 *.sw?
 package-lock.json
 yarn.lock
+# build generate
+vite.config.js
+vite.config.d.ts
+tsconfig.tsbuildinfo

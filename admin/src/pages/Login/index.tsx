@@ -3,17 +3,23 @@ import { useState } from 'react';
 import { useAuthStore } from '@/store';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { login } from '@/api';
 
 export default function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const { login } = useAuthStore();
+  const { login: loginStore } = useAuthStore(); // 重命名为 loginStore，避免命名冲突
   const navigate = useNavigate();
   const { t } = useTranslation();
 
-  const handleLogin = () => {
-    login(username, 'mock-token');
-    navigate('/dashboard');
+  const handleLogin = async () => {
+    try {
+      const response = await login({ username, password });
+      loginStore(username, response.token);
+      navigate('/dashboard');
+    } catch (error) {
+      console.error('Login failed:', error);
+    }
   };
 
   return (
