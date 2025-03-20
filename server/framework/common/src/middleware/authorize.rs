@@ -174,11 +174,36 @@ pub async fn authorize_handler(request: Request, next: Next) -> Result<Response,
     let authorizes = get_authorizes(path.as_str());
     info!("path: {:?}, authorizes: {:?}", path, authorizes);
     // 没有授权,则直接请求
-    if authorizes.is_none() {
-        Ok(next.run(request).await)
-    } else {
-        let login_user = request.extensions().get::<LoginUserContext>().expect("login user not found");
-        // 校验授权 TODO
-        Ok(next.run(request).await)
+    match authorizes {
+        None => {
+            Ok(next.run(request).await)
+        }
+        Some(auth) => {
+            let login_user = request.extensions().get::<LoginUserContext>();
+            match login_user {
+                None => Err(StatusCode::UNAUTHORIZED),
+                Some(user) => {
+                    // 校验授权
+                    let user_permissions = user.clone().permissions.split(",").map(String::from).collect();
+                    let has_permission = verify_permission(user_permissions, auth);
+                    if has_permission {
+                        Ok(next.run(request).await)
+                    } else {
+                        Err(StatusCode::UNAUTHORIZED)
+                    }
+
+                }
+            }
+        }
     }
+}
+
+pub fn verify_permission(user_permissions: Vec<String>, api_permissions: Vec<String>) -> bool {
+    // 如果API没有任何权限要求，则返回true
+    if api_permissions.is_empty() {
+        return true;
+    }
+
+    // 检查是否有任何一个api_permissions存在于user_permissions中
+    api_permissions.iter().any(|perm| user_permissions.contains(perm))
 }

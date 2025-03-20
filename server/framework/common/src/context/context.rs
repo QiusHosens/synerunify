@@ -14,6 +14,7 @@ pub struct LoginUserContext {
     pub department_id: i64, // 部门id
     pub department_code: String, // 部门编码
     pub role_id: i64, // 角色id
+    pub permissions: String, // 权限标识列表
 }
 
 #[derive(Clone, Debug, Default)]

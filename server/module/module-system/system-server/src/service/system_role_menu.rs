@@ -1,10 +1,11 @@
-use sea_orm::{DatabaseConnection, EntityTrait, ActiveModelTrait, PaginatorTrait, QueryOrder};
+use sea_orm::{DatabaseConnection, EntityTrait, ActiveModelTrait, PaginatorTrait, QueryOrder, QueryFilter, ColumnTrait, QuerySelect};
 use crate::model::system_role_menu::{Model as SystemRoleMenuModel, Entity as SystemRoleMenuEntity, Column};
 use system_model::request::system_role_menu::{CreateSystemRoleMenuRequest, UpdateSystemRoleMenuRequest, PaginatedKeywordRequest};
 use system_model::response::system_role_menu::SystemRoleMenuResponse;
 use crate::convert::system_role_menu::{create_request_to_model, update_request_to_model, model_to_response};
 use anyhow::{Result, anyhow};
 use common::base::page::PaginatedResponse;
+use crate::service;
 
 pub async fn create(db: &DatabaseConnection, request: CreateSystemRoleMenuRequest) -> Result<i64> {
     let system_role_menu = create_request_to_model(&request);
@@ -62,4 +63,13 @@ pub async fn get_paginated(db: &DatabaseConnection, params: PaginatedKeywordRequ
 pub async fn list(db: &DatabaseConnection) -> Result<Vec<SystemRoleMenuResponse>> {
     let list = SystemRoleMenuEntity::find().all(db).await?;
     Ok(list.into_iter().map(model_to_response).collect())
+}
+
+pub async fn get_role_menu_permissions(db: &DatabaseConnection, role_id: i64) -> Result<Vec<String>> {
+    let list = SystemRoleMenuEntity::find()
+        .select_only()
+        .column(Column::MenuId)
+        .filter(Column::RoleId.eq(role_id))
+        .all(db).await?;
+    Ok(service::system_menu::get_menus_permissions(db, list.into_iter().map(|m| m.menu_id).collect()))
 }

@@ -1,4 +1,4 @@
-use sea_orm::{DatabaseConnection, EntityTrait, ActiveModelTrait, PaginatorTrait, QueryOrder};
+use sea_orm::{DatabaseConnection, EntityTrait, ActiveModelTrait, PaginatorTrait, QueryOrder, QueryFilter, ColumnTrait, QuerySelect};
 use crate::model::system_menu::{Model as SystemMenuModel, Entity as SystemMenuEntity, Column};
 use system_model::request::system_menu::{CreateSystemMenuRequest, UpdateSystemMenuRequest, PaginatedKeywordRequest};
 use system_model::response::system_menu::SystemMenuResponse;
@@ -62,4 +62,16 @@ pub async fn get_paginated(db: &DatabaseConnection, params: PaginatedKeywordRequ
 pub async fn list(db: &DatabaseConnection) -> Result<Vec<SystemMenuResponse>> {
     let list = SystemMenuEntity::find().all(db).await?;
     Ok(list.into_iter().map(model_to_response).collect())
+}
+
+pub async fn get_menus_permissions(db: &DatabaseConnection, ids: Vec<i64>) -> Result<Vec<String>> {
+    if ids.is_empty() {
+        return Ok(Vec::new())
+    }
+    let system_menu_list = SystemMenuEntity::find()
+        .select_only()
+        .column(Column::Permission)
+        .filter(Column::Id.is_in(ids))
+        .all(db).await?;
+    Ok(system_menu_list.into_iter().map(|m| m.permission).collect())
 }
