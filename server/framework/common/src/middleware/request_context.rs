@@ -1,4 +1,4 @@
-use std::net::SocketAddr;
+use std::net::{IpAddr, SocketAddr};
 use axum::{
     body::{Body, Bytes},
     extract::{OriginalUri, Request},
@@ -9,6 +9,7 @@ use axum::{
 use anyhow::Result;
 use axum::body::to_bytes;
 use axum::extract::ConnectInfo;
+use axum::http::request::Parts;
 use tracing::info;
 use crate::config::config::Config;
 use crate::context::context::RequestContext;
@@ -32,8 +33,8 @@ pub async fn request_context_handler(request: Request, next: Next) -> Result<imp
     };
 
     // 连接信息
-    let connect_info = parts.extensions.get::<ConnectInfo<SocketAddr>>();
-    let ip = connect_info.map(|info| info.ip().to_string()).unwrap_or("Unknown".to_string());
+    let ip_addr = get_ip(&parts);
+    let ip = ip_addr.map(|ip| ip.to_string()).unwrap_or("Unknown".to_string());
     let user_agent = parts.headers
         .get("User-Agent")
         .and_then(|ua| ua.to_str().ok())
@@ -79,4 +80,17 @@ async fn get_body_data(body: Body) -> Result<(Bytes, String), (StatusCode, Strin
             "该数据无法转输出，可能为blob,binary".to_string(),
         )),
     }
+}
+
+fn get_ip(parts: &Parts) -> Option<IpAddr> {
+     parts.headers
+        .get("X-Forwarded-For")
+        .and_then(|value| value.to_str().ok())
+        .and_then(|xff| xff.split(',').next())
+        .and_then(|ip| ip.trim().parse::<IpAddr>().ok())
+        .or_else(|| {
+            parts.extensions
+                .get::<ConnectInfo<SocketAddr>>()
+                .map(|info| info.ip())
+        })
 }

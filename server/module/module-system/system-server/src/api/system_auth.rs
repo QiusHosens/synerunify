@@ -1,6 +1,7 @@
 use crate::{service, AppState};
-use axum::{extract::{Json, State}, routing::post, Router};
+use axum::{extract::{Json, State}, routing::post, Extension, Router};
 use common::base::model::CommonResult;
+use common::context::context::RequestContext;
 use common::utils::jwt_utils::AuthBody;
 use ctor;
 use system_model::request::system_auth::LoginRequest;
@@ -31,9 +32,10 @@ pub async fn system_auth_route(state: AppState) -> Router {
 )]
 async fn login(
     State(state): State<AppState>,
+    Extension(request_context): Extension<RequestContext>,
     Json(payload): Json<LoginRequest>,
 ) -> CommonResult<AuthBody> {
-    match service::system_auth::login(&state.db, payload).await {
+    match service::system_auth::login(&state.db, payload, request_context).await {
         Ok(data) => {CommonResult::with_data(data)}
         Err(e) => {CommonResult::with_err(&e.to_string())}
     }

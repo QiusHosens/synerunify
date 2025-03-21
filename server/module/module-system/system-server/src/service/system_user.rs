@@ -4,7 +4,10 @@ use system_model::request::system_user::{CreateSystemUserRequest, UpdateSystemUs
 use system_model::response::system_user::SystemUserResponse;
 use crate::convert::system_user::{create_request_to_model, update_request_to_model, model_to_response};
 use anyhow::{Result, anyhow};
+use chrono::Utc;
+use sea_orm::ActiveValue::Set;
 use common::base::page::PaginatedResponse;
+use crate::model::system_user;
 
 pub async fn create(db: &DatabaseConnection, request: CreateSystemUserRequest) -> Result<i64> {
     let system_user = create_request_to_model(&request);
@@ -67,4 +70,15 @@ pub async fn list(db: &DatabaseConnection) -> Result<Vec<SystemUserResponse>> {
 pub async fn get_by_username(db: &DatabaseConnection, username: String) -> Result<Option<SystemUserModel>> {
     let system_user = SystemUserEntity::find().filter(Column::Username.eq(username)).one(db).await?;
     Ok(system_user)
+}
+
+pub async fn update_by_login(db: &DatabaseConnection, id: i64, login_ip: String) -> Result<()> {
+    let system_user = system_user::ActiveModel {
+        id: Set(id),
+        login_ip: Set(Some(login_ip)),
+        login_date: Set(Some(Utc::now().naive_utc())),
+        ..Default::default()
+    };
+    system_user.update(db).await?;
+    Ok(())
 }

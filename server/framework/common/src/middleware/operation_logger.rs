@@ -44,14 +44,6 @@ fn add_logger(request_context: RequestContext, login_user: Option<LoginUserConte
 }
 
 async fn add_logger_redis(request_context: RequestContext, login_user: Option<LoginUserContext>, result: String, duration: Duration) -> Result<()> {
-    // let user_id = match login_user.clone() {
-    //     None => {None}
-    //     Some(user) => Option::from({ user.id })
-    // };
-    // let tenant_id = match login_user.clone() {
-    //     None => {None}
-    //     Some(user) => Option::from({ user.tenant_id })
-    // };
     let user_id = login_user.clone().map(|u| u.id);
     let user_nickname = login_user.clone().map(|u| u.nickname);
     let tenant_id = login_user.clone().map(|u| u.tenant_id);

@@ -10,11 +10,11 @@ pub struct LoginLogger {
 
     pub user_id: i64, // 用户编号
 
-    pub user_type: i8, // 用户类型
+    pub user_type: Option<i8>, // 用户类型
 
     pub username: String, // 用户账号
 
-    pub result: i8, // 登陆结果
+    pub result: String, // 登陆结果
 
     pub user_ip: String, // 用户 IP
 
