@@ -1,3 +1,4 @@
+use std::net::SocketAddr;
 use axum::{
     body::{Body, Bytes},
     extract::{OriginalUri, Request},
@@ -7,20 +8,19 @@ use axum::{
 };
 use anyhow::Result;
 use axum::body::to_bytes;
+use axum::extract::ConnectInfo;
 use tracing::info;
 use crate::config::config::Config;
 use crate::context::context::RequestContext;
 
 /// req上下文注入中间件 同时进行jwt授权验证
 pub async fn request_context_handler(request: Request, next: Next) -> Result<impl IntoResponse, (StatusCode, String)> {
-    let config = Config::load();
-    // 请求信息ctx注入
-    let original_uri_path = if let Some(path) = request.extensions().get::<OriginalUri>() {
+    // 请求信息request context注入
+    let request_url = if let Some(path) = request.extensions().get::<OriginalUri>() {
         path.0.path().to_owned()
     } else {
         request.uri().path().to_owned()
     };
-    let path = original_uri_path.replacen(&(config.api_prefix.clone() + "/"), "", 1);
     let method = request.method().to_string();
     let path_params = request.uri().query().unwrap_or("").to_string();
 
@@ -31,12 +31,21 @@ pub async fn request_context_handler(request: Request, next: Next) -> Result<imp
         Ok((x, y)) => (x, y),
     };
 
+    // 连接信息
+    let connect_info = parts.extensions.get::<ConnectInfo<SocketAddr>>();
+    let ip = connect_info.map(|info| info.ip().to_string()).unwrap_or("Unknown".to_string());
+    let user_agent = parts.headers
+        .get("User-Agent")
+        .and_then(|ua| ua.to_str().ok())
+        .unwrap_or("Unknown");
+
     let request_context = RequestContext {
-        original_uri: if path_params.is_empty() { original_uri_path } else { original_uri_path + "?" + &path_params },
-        path,
+        request_url,
         path_params,
         method: method.to_string(),
         data: body_data.clone(),
+        ip,
+        user_agent: user_agent.to_string()
     };
     info!("request context: {:?}", request_context);
     let mut request = Request::from_parts(parts, Body::from(bytes));

@@ -71,5 +71,6 @@ pub async fn get_role_menu_permissions(db: &DatabaseConnection, role_id: i64) ->
         .column(Column::MenuId)
         .filter(Column::RoleId.eq(role_id))
         .all(db).await?;
-    Ok(service::system_menu::get_menus_permissions(db, list.into_iter().map(|m| m.menu_id).collect()))
+    let permissions = service::system_menu::get_menus_permissions(db, list.into_iter().map(|m| m.menu_id).collect()).await?;
+    Ok(permissions)
 }

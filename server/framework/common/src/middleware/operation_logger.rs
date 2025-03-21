@@ -44,14 +44,19 @@ fn add_logger(request_context: RequestContext, login_user: Option<LoginUserConte
 }
 
 async fn add_logger_redis(request_context: RequestContext, login_user: Option<LoginUserContext>, result: String, duration: Duration) -> Result<()> {
-    let user_id = match login_user.clone() {
-        None => {None}
-        Some(user) => Option::from({ user.id })
-    };
-    let tenant_id = match login_user.clone() {
-        None => {None}
-        Some(user) => Option::from({ user.tenant_id })
-    };
+    // let user_id = match login_user.clone() {
+    //     None => {None}
+    //     Some(user) => Option::from({ user.id })
+    // };
+    // let tenant_id = match login_user.clone() {
+    //     None => {None}
+    //     Some(user) => Option::from({ user.tenant_id })
+    // };
+    let user_id = login_user.clone().map(|u| u.id);
+    let user_nickname = login_user.clone().map(|u| u.nickname);
+    let tenant_id = login_user.clone().map(|u| u.tenant_id);
+    let department_code = login_user.clone().map(|u| u.department_code);
+    let department_id = login_user.clone().map(|u| u.department_id);
     // TODO
     let operation_logger = OperationLogger {
         id: None,
@@ -66,13 +71,13 @@ async fn add_logger_redis(request_context: RequestContext, login_user: Option<Lo
         result,
         extra: "".to_string(),
         request_method: request_context.method,
-        request_url: request_context.original_uri,
-        user_ip: "".to_string(),
-        user_agent: "".to_string(),
-        department_code: None,
-        department_id: None,
+        request_url: request_context.request_url,
+        user_ip: request_context.ip,
+        user_agent: request_context.user_agent,
+        department_code,
+        department_id,
         operator: user_id,
-        operator_nickname: None,
+        operator_nickname: user_nickname,
         operate_time: Utc::now().timestamp(),
         deleted: false,
         tenant_id

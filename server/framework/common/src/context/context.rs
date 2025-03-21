@@ -19,9 +19,10 @@ pub struct LoginUserContext {
 
 #[derive(Clone, Debug, Default)]
 pub struct RequestContext {
-    pub original_uri: String,
-    pub method: String,
-    pub path: String,
-    pub path_params: String,
-    pub data: String,
+    pub request_url: String, // 请求地址
+    pub method: String, // 请求方法
+    pub path_params: String, // 请求地址参数
+    pub data: String, // 请求数据
+    pub ip: String, // ip地址
+    pub user_agent: String, // 用户代理
 }

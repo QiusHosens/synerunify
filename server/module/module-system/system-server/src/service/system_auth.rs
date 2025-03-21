@@ -69,6 +69,7 @@ pub async fn cache_login_user(db: &DatabaseConnection, user: SystemUserModel) ->
     // 查询部门信息
     let department_result = service::system_department::find_by_id(db, user.department_id).await?;
     let role_id = service::system_user_role::get_role_id_by_user_id(db, user.id).await?;
+    // 权限码
     let permissions = service::system_role_menu::get_role_menu_permissions(db, role_id).await?;
     let login_user = LoginUserContext {
         id: user.id,
