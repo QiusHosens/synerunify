@@ -68,6 +68,7 @@ async fn add_logger_redis(request_context: RequestContext, login_user: Option<Lo
         user_agent: request_context.user_agent,
         department_code,
         department_id,
+        duration: duration.as_millis() as i64,
         operator: user_id,
         operator_nickname: user_nickname,
         operate_time: Utc::now().timestamp(),

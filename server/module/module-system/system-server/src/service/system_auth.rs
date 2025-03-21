@@ -63,16 +63,37 @@ pub async fn login(db: &DatabaseConnection, request: LoginRequest, request_conte
     };
     info!("auth: {:?}", auth);
     // 更新登录用户最近登录IP和时间
-    info!("request context: {:?}", request_context);
-    service::system_user::update_by_login(db, user.clone().id, request_context.clone().ip).await?;
-    // 记录登录日志
-    add_login_logger_redis(request_context.clone(), user.clone(), serde_json::to_string(&auth)?).await?;
-    // 保存登录用户信息缓存
-    cache_login_user(db, user.clone()).await?;
+    // info!("request context: {:?}", request_context);
+    // service::system_user::update_by_login(db, user.clone().id, request_context.clone().ip).await?;
+    // // 记录登录日志
+    // add_login_logger_redis(request_context.clone(), user.clone(), &auth).await?;
+    // // 保存登录用户信息缓存
+    // cache_login_user(db, user.clone()).await?;
+    invoke_after_login(db, user.clone(), request_context.clone(), &auth);
     Ok(auth)
 }
 
-pub async fn cache_login_user(db: &DatabaseConnection, user: SystemUserModel) -> Result<()> {
+fn invoke_after_login(db: &DatabaseConnection, user: SystemUserModel, request_context: RequestContext, auth: &AuthBody) {
+    let db_clone = db.clone();
+    let auth_clone = auth.clone();
+    tokio::spawn(async move {
+        // 更新登录用户最近登录IP和时间
+        info!("request context: {:?}", request_context);
+        if let Err(e) = service::system_user::update_by_login(&db_clone, user.clone().id, request_context.clone().ip).await {
+            error!("update login error: {}", e.to_string());
+        }
+        // 记录登录日志
+        if let Err(e) = add_login_logger_redis(request_context.clone(), user.clone(), &auth_clone).await {
+            error!("add login logger error: {}", e.to_string());
+        };
+        // 保存登录用户信息缓存
+        if let Err(e) = cache_login_user(&db_clone, user.clone()).await {
+            error!("cache login user error: {}", e.to_string());
+        }
+    });
+}
+
+async fn cache_login_user(db: &DatabaseConnection, user: SystemUserModel) -> Result<()> {
     // 查询部门信息
     let department_result = service::system_department::find_by_id(db, user.department_id).await?;
     let role_id = service::system_user_role::get_role_id_by_user_id(db, user.id).await?;
@@ -92,7 +113,8 @@ pub async fn cache_login_user(db: &DatabaseConnection, user: SystemUserModel) ->
     Ok(())
 }
 
-async fn add_login_logger_redis(request_context: RequestContext, user: SystemUserModel, result: String) -> Result<()> {
+async fn add_login_logger_redis(request_context: RequestContext, user: SystemUserModel, auth: &AuthBody) -> Result<()> {
+    let result = serde_json::to_string(&auth)?;
     let user_id = user.id;
     let username = user.username;
     let user_nickname = user.nickname;
