@@ -9,6 +9,7 @@ use jsonwebtoken::{decode, encode, Algorithm, DecodingKey, EncodingKey, Header, 
 use once_cell::sync::Lazy;
 use serde::{Deserialize, Serialize};
 use serde_json::json;
+use tracing::info;
 use utoipa::ToSchema;
 
 static SECRET_KEY: Lazy<Vec<u8>> = Lazy::new(|| b"synerunify:token:secret-key".to_vec());
@@ -99,6 +100,8 @@ where
 
         let token = auth.token();
 
+        info!("token: {:?}", token);
+
         let token_data = decode::<AccessClaims>(
             token,
             &DecodingKey::from_secret(&*SECRET_KEY),
@@ -123,6 +126,7 @@ where
             Ok(None) => Err(AuthError::WrongCredentials),
             Err(_) => Err(AuthError::WrongCredentials),
         }?;
+        info!("login user: {:?}", login_user);
         parts.extensions.insert(login_user);
         // parts.extensions.insert(UserTenantContext {
         //     id: claims.sub.clone(),  // 用户id

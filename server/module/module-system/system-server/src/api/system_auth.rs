@@ -1,16 +1,23 @@
 use crate::{service, AppState};
 use axum::{extract::{Json, State}, routing::post, Extension, Router};
 use common::base::model::CommonResult;
-use common::context::context::RequestContext;
+use common::context::context::{LoginUserContext, RequestContext};
 use common::utils::jwt_utils::AuthBody;
 use ctor;
 use system_model::request::system_auth::LoginRequest;
 use utoipa_axum::router::OpenApiRouter;
 use utoipa_axum::routes;
+use system_model::response::system_auth::HomeResponse;
 
 pub async fn system_auth_router(state: AppState) -> OpenApiRouter {
     OpenApiRouter::new()
         .routes(routes!(login))
+        .with_state(state)
+}
+
+pub async fn system_auth_need_router(state: AppState) -> OpenApiRouter {
+    OpenApiRouter::new()
+        .routes(routes!(home))
         .with_state(state)
 }
 
@@ -36,6 +43,28 @@ async fn login(
     Json(payload): Json<LoginRequest>,
 ) -> CommonResult<AuthBody> {
     match service::system_auth::login(&state.db, payload, request_context).await {
+        Ok(data) => {CommonResult::with_data(data)}
+        Err(e) => {CommonResult::with_err(&e.to_string())}
+    }
+}
+
+#[utoipa::path(
+    post,
+    path = "/home",
+    operation_id = "system_auth_home",
+    params(
+        ("Authorization" = String, Header, description = "JWT Authorization header (e.g., 'Bearer <token>')")
+    ),
+    responses(
+        (status = 200, description = "login success", body = CommonResult<HomeResponse>)
+    ),
+    tag = "system_auth"
+)]
+async fn home(
+    State(state): State<AppState>,
+    Extension(login_user): Extension<LoginUserContext>,
+) -> CommonResult<HomeResponse> {
+    match service::system_auth::home(&state.db, login_user).await {
         Ok(data) => {CommonResult::with_data(data)}
         Err(e) => {CommonResult::with_err(&e.to_string())}
     }

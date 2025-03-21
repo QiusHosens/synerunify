@@ -1,4 +1,4 @@
-use crate::api::system_auth::system_auth_router;
+use crate::api::system_auth::{system_auth_need_router, system_auth_router};
 use crate::api::system_data_scope_rule::system_data_scope_rule_router;
 use crate::api::system_department::system_department_router;
 use crate::api::system_dict_data::system_dict_data_router;
@@ -79,6 +79,7 @@ pub async fn no_auth_router(state: AppState) -> OpenApiRouter {
 
 pub async fn auth_router(state: AppState) -> OpenApiRouter {
     OpenApiRouter::new()
+        .nest("/system_auth", system_auth_need_router(state.clone()).await)
         .nest("/system_data_scope_rule", system_data_scope_rule_router(state.clone()).await)
         .nest("/system_department", system_department_router(state.clone()).await)
         .nest("/system_dict_data", system_dict_data_router(state.clone()).await)
@@ -94,6 +95,7 @@ pub async fn auth_router(state: AppState) -> OpenApiRouter {
         .nest("/system_user", system_user_router(state.clone()).await)
         .nest("/system_user_post", system_user_post_router(state.clone()).await)
         .nest("/system_user_role", system_user_role_router(state.clone()).await)
+        .layer(axum::middleware::from_fn(authorize_handler))
         .layer(axum::middleware::from_fn(operation_logger_handler))
         .layer(axum::middleware::from_fn(request_context_handler))
 }

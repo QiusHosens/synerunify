@@ -17,6 +17,7 @@ use common::database::redis::RedisManager;
 use common::database::redis_constants::{REDIS_KEY_LOGGER_LOGIN_PREFIX, REDIS_KEY_LOGGER_OPERATION_PREFIX, REDIS_KEY_LOGIN_USER_PREFIX};
 use common::utils::crypt_utils::verify_password;
 use common::utils::jwt_utils::{generate_token_pair, AuthBody, AuthError};
+use system_model::response::system_auth::HomeResponse;
 use system_model::response::system_department::SystemDepartmentResponse;
 use crate::model::system_user::{Model as SystemUserModel};
 use crate::service;
@@ -71,6 +72,16 @@ pub async fn login(db: &DatabaseConnection, request: LoginRequest, request_conte
     // cache_login_user(db, user.clone()).await?;
     invoke_after_login(db, user.clone(), request_context.clone(), &auth);
     Ok(auth)
+}
+
+pub async fn home(db: &DatabaseConnection, login_user: LoginUserContext) -> Result<HomeResponse> {
+    let system_user = service::system_user::get_by_id(db, login_user.id).await?;
+    let nickname = system_user.map(|u| u.nickname).unwrap_or("".to_string());
+    let response = HomeResponse {
+        nickname,
+        menus: "".to_string()
+    };
+    Ok(response)
 }
 
 fn invoke_after_login(db: &DatabaseConnection, user: SystemUserModel, request_context: RequestContext, auth: &AuthBody) {
