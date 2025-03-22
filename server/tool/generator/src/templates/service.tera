@@ -1,43 +1,56 @@
-use sea_orm::{DatabaseConnection, EntityTrait, ActiveModelTrait, PaginatorTrait, QueryOrder};
-use crate::model::{{ table_name }}::{Model as {{ model_name }}Model, Entity as {{ model_name }}Entity, Column};
+use sea_orm::{DatabaseConnection, EntityTrait, ColumnTrait, ActiveModelTrait, PaginatorTrait, QueryOrder, QueryFilter};
+use crate::model::{{ table_name }}::{Model as {{ model_name }}Model, ActiveModel as {{ model_name }}ActiveModel, Entity as {{ model_name }}Entity, Column};
 use system_model::request::{{ table_name }}::{Create{{ request_model_name }}, Update{{ request_model_name }}, PaginatedKeywordRequest};
 use system_model::response::{{ table_name }}::{{ response_model_name }};
 use crate::convert::{{ table_name }}::{create_request_to_model, update_request_to_model, model_to_response};
 use anyhow::{Result, anyhow};
+use sea_orm::ActiveValue::Set;
 use common::base::page::PaginatedResponse;
+use common::context::context::LoginUserContext;
 
-pub async fn create(db: &DatabaseConnection, request: Create{{ request_model_name }}) -> Result<i64> {
-    let {{ table_name }} = create_request_to_model(&request);
+pub async fn create(db: &DatabaseConnection, login_user: LoginUserContext, request: Create{{ request_model_name }}) -> Result<i64> {
+    let mut {{ table_name }} = create_request_to_model(&request);
+    {{ table_name }}.creator = Set(Some(login_user.id));
+    {{ table_name }}.updater = Set(Some(login_user.id));
+    {% if has_tenant_field  %}{{ table_name }}.tenant_id = Set(login_user.tenant_id);{% endif %}
     let {{ table_name }} = {{ table_name }}.insert(db).await?;
     Ok({{ table_name }}.id)
 }
 
-pub async fn update(db: &DatabaseConnection, request: Update{{ request_model_name }}) -> Result<()> {
+pub async fn update(db: &DatabaseConnection, login_user: LoginUserContext, request: Update{{ request_model_name }}) -> Result<()> {
     let {{ table_name }} = {{ model_name }}Entity::find_by_id(request.id)
         .one(db)
         .await?
         .ok_or_else(|| anyhow!("记录未找到"))?;
 
-    let {{ table_name }} = update_request_to_model(&request, {{ table_name }});
+    let mut {{ table_name }} = update_request_to_model(&request, {{ table_name }});
+    {{ table_name }}.updater = Set(Some(login_user.id));
     {{ table_name }}.update(db).await?;
     Ok(())
 }
 
-pub async fn delete(db: &DatabaseConnection, id: i64) -> Result<()> {
-    let result = {{ model_name }}Entity::delete_by_id(id).exec(db).await?;
-    if result.rows_affected == 0 {
-        return Err(anyhow!("记录未找到"));
-    }
+pub async fn delete(db: &DatabaseConnection, login_user: LoginUserContext, id: i64) -> Result<()> {
+    let {{ table_name }} = {{ model_name }}ActiveModel {
+        id: Set(id),
+        {% if has_tenant_field  %}tenant_id: Set(login_user.tenant_id),{% endif %}
+        deleted: Set(true),
+        ..Default::default()
+    };
+    {{ table_name }}.update(db).await?;
     Ok(())
 }
 
-pub async fn get_by_id(db: &DatabaseConnection, id: i64) -> Result<Option<{{ response_model_name }}>> {
-    let {{ table_name }} = {{ model_name }}Entity::find_by_id(id).one(db).await?;
+pub async fn get_by_id(db: &DatabaseConnection, login_user: LoginUserContext, id: i64) -> Result<Option<{{ response_model_name }}>> {
+    let {{ table_name }} = {{ model_name }}Entity::find()
+        .filter(Column::Id.eq(id))
+        {% if has_tenant_field  %}.filter(Column::TenantId.eq(login_user.tenant_id)){% endif %}
+        .one(db).await?;
     Ok({{ table_name }}.map(model_to_response))
 }
 
-pub async fn get_paginated(db: &DatabaseConnection, params: PaginatedKeywordRequest) -> Result<PaginatedResponse<{{ response_model_name }}>> {
+pub async fn get_paginated(db: &DatabaseConnection, login_user: LoginUserContext, params: PaginatedKeywordRequest) -> Result<PaginatedResponse<{{ response_model_name }}>> {
     let paginator = {{ model_name }}Entity::find()
+        {% if has_tenant_field  %}.filter(Column::TenantId.eq(login_user.tenant_id)){% endif %}
         .order_by_desc(Column::UpdateTime)
         .paginate(db, params.base.size);
 
@@ -59,7 +72,9 @@ pub async fn get_paginated(db: &DatabaseConnection, params: PaginatedKeywordRequ
     })
 }
 
-pub async fn list(db: &DatabaseConnection) -> Result<Vec<{{ response_model_name }}>> {
-    let list = {{ model_name }}Entity::find().all(db).await?;
+pub async fn list(db: &DatabaseConnection, login_user: LoginUserContext) -> Result<Vec<{{ response_model_name }}>> {
+    let list = {{ model_name }}Entity::find()
+        {% if has_tenant_field  %}.filter(Column::TenantId.eq(login_user.tenant_id)){% endif %}
+        .all(db).await?;
     Ok(list.into_iter().map(model_to_response).collect())
 }

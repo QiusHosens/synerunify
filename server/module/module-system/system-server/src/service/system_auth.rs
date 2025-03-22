@@ -75,7 +75,7 @@ pub async fn login(db: &DatabaseConnection, request: LoginRequest, request_conte
 }
 
 pub async fn home(db: &DatabaseConnection, login_user: LoginUserContext) -> Result<HomeResponse> {
-    let system_user = service::system_user::get_by_id(db, login_user.id).await?;
+    let system_user = service::system_user::find_by_id(db, login_user.id).await?;
     let nickname = system_user.map(|u| u.nickname).unwrap_or("".to_string());
     let response = HomeResponse {
         nickname,

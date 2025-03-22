@@ -1,43 +1,56 @@
-use sea_orm::{DatabaseConnection, EntityTrait, ActiveModelTrait, PaginatorTrait, QueryOrder};
-use crate::model::system_tenant::{Model as SystemTenantModel, Entity as SystemTenantEntity, Column};
+use sea_orm::{DatabaseConnection, EntityTrait, ColumnTrait, ActiveModelTrait, PaginatorTrait, QueryOrder, QueryFilter};
+use crate::model::system_tenant::{Model as SystemTenantModel, ActiveModel as SystemTenantActiveModel, Entity as SystemTenantEntity, Column};
 use system_model::request::system_tenant::{CreateSystemTenantRequest, UpdateSystemTenantRequest, PaginatedKeywordRequest};
 use system_model::response::system_tenant::SystemTenantResponse;
 use crate::convert::system_tenant::{create_request_to_model, update_request_to_model, model_to_response};
 use anyhow::{Result, anyhow};
+use sea_orm::ActiveValue::Set;
 use common::base::page::PaginatedResponse;
+use common::context::context::LoginUserContext;
 
-pub async fn create(db: &DatabaseConnection, request: CreateSystemTenantRequest) -> Result<i64> {
-    let system_tenant = create_request_to_model(&request);
+pub async fn create(db: &DatabaseConnection, login_user: LoginUserContext, request: CreateSystemTenantRequest) -> Result<i64> {
+    let mut system_tenant = create_request_to_model(&request);
+    system_tenant.creator = Set(Some(login_user.id));
+    system_tenant.updater = Set(Some(login_user.id));
+    
     let system_tenant = system_tenant.insert(db).await?;
     Ok(system_tenant.id)
 }
 
-pub async fn update(db: &DatabaseConnection, request: UpdateSystemTenantRequest) -> Result<()> {
+pub async fn update(db: &DatabaseConnection, login_user: LoginUserContext, request: UpdateSystemTenantRequest) -> Result<()> {
     let system_tenant = SystemTenantEntity::find_by_id(request.id)
         .one(db)
         .await?
         .ok_or_else(|| anyhow!("记录未找到"))?;
 
-    let system_tenant = update_request_to_model(&request, system_tenant);
+    let mut system_tenant = update_request_to_model(&request, system_tenant);
+    system_tenant.updater = Set(Some(login_user.id));
     system_tenant.update(db).await?;
     Ok(())
 }
 
-pub async fn delete(db: &DatabaseConnection, id: i64) -> Result<()> {
-    let result = SystemTenantEntity::delete_by_id(id).exec(db).await?;
-    if result.rows_affected == 0 {
-        return Err(anyhow!("记录未找到"));
-    }
+pub async fn delete(db: &DatabaseConnection, login_user: LoginUserContext, id: i64) -> Result<()> {
+    let system_tenant = SystemTenantActiveModel {
+        id: Set(id),
+        
+        deleted: Set(true),
+        ..Default::default()
+    };
+    system_tenant.update(db).await?;
     Ok(())
 }
 
-pub async fn get_by_id(db: &DatabaseConnection, id: i64) -> Result<Option<SystemTenantResponse>> {
-    let system_tenant = SystemTenantEntity::find_by_id(id).one(db).await?;
+pub async fn get_by_id(db: &DatabaseConnection, login_user: LoginUserContext, id: i64) -> Result<Option<SystemTenantResponse>> {
+    let system_tenant = SystemTenantEntity::find()
+        .filter(Column::Id.eq(id))
+        
+        .one(db).await?;
     Ok(system_tenant.map(model_to_response))
 }
 
-pub async fn get_paginated(db: &DatabaseConnection, params: PaginatedKeywordRequest) -> Result<PaginatedResponse<SystemTenantResponse>> {
+pub async fn get_paginated(db: &DatabaseConnection, login_user: LoginUserContext, params: PaginatedKeywordRequest) -> Result<PaginatedResponse<SystemTenantResponse>> {
     let paginator = SystemTenantEntity::find()
+        
         .order_by_desc(Column::UpdateTime)
         .paginate(db, params.base.size);
 
@@ -59,8 +72,10 @@ pub async fn get_paginated(db: &DatabaseConnection, params: PaginatedKeywordRequ
     })
 }
 
-pub async fn list(db: &DatabaseConnection) -> Result<Vec<SystemTenantResponse>> {
-    let list = SystemTenantEntity::find().all(db).await?;
+pub async fn list(db: &DatabaseConnection, login_user: LoginUserContext) -> Result<Vec<SystemTenantResponse>> {
+    let list = SystemTenantEntity::find()
+        
+        .all(db).await?;
     Ok(list.into_iter().map(model_to_response).collect())
 }
 

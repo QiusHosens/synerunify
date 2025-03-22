@@ -1,43 +1,56 @@
-use sea_orm::{DatabaseConnection, EntityTrait, ActiveModelTrait, PaginatorTrait, QueryOrder};
-use crate::model::system_role::{Model as SystemRoleModel, Entity as SystemRoleEntity, Column};
+use sea_orm::{DatabaseConnection, EntityTrait, ColumnTrait, ActiveModelTrait, PaginatorTrait, QueryOrder, QueryFilter};
+use crate::model::system_role::{Model as SystemRoleModel, ActiveModel as SystemRoleActiveModel, Entity as SystemRoleEntity, Column};
 use system_model::request::system_role::{CreateSystemRoleRequest, UpdateSystemRoleRequest, PaginatedKeywordRequest};
 use system_model::response::system_role::SystemRoleResponse;
 use crate::convert::system_role::{create_request_to_model, update_request_to_model, model_to_response};
 use anyhow::{Result, anyhow};
+use sea_orm::ActiveValue::Set;
 use common::base::page::PaginatedResponse;
+use common::context::context::LoginUserContext;
 
-pub async fn create(db: &DatabaseConnection, request: CreateSystemRoleRequest) -> Result<i64> {
-    let system_role = create_request_to_model(&request);
+pub async fn create(db: &DatabaseConnection, login_user: LoginUserContext, request: CreateSystemRoleRequest) -> Result<i64> {
+    let mut system_role = create_request_to_model(&request);
+    system_role.creator = Set(Some(login_user.id));
+    system_role.updater = Set(Some(login_user.id));
+    system_role.tenant_id = Set(login_user.tenant_id);
     let system_role = system_role.insert(db).await?;
     Ok(system_role.id)
 }
 
-pub async fn update(db: &DatabaseConnection, request: UpdateSystemRoleRequest) -> Result<()> {
+pub async fn update(db: &DatabaseConnection, login_user: LoginUserContext, request: UpdateSystemRoleRequest) -> Result<()> {
     let system_role = SystemRoleEntity::find_by_id(request.id)
         .one(db)
         .await?
         .ok_or_else(|| anyhow!("记录未找到"))?;
 
-    let system_role = update_request_to_model(&request, system_role);
+    let mut system_role = update_request_to_model(&request, system_role);
+    system_role.updater = Set(Some(login_user.id));
     system_role.update(db).await?;
     Ok(())
 }
 
-pub async fn delete(db: &DatabaseConnection, id: i64) -> Result<()> {
-    let result = SystemRoleEntity::delete_by_id(id).exec(db).await?;
-    if result.rows_affected == 0 {
-        return Err(anyhow!("记录未找到"));
-    }
+pub async fn delete(db: &DatabaseConnection, login_user: LoginUserContext, id: i64) -> Result<()> {
+    let system_role = SystemRoleActiveModel {
+        id: Set(id),
+        tenant_id: Set(login_user.tenant_id),
+        deleted: Set(true),
+        ..Default::default()
+    };
+    system_role.update(db).await?;
     Ok(())
 }
 
-pub async fn get_by_id(db: &DatabaseConnection, id: i64) -> Result<Option<SystemRoleResponse>> {
-    let system_role = SystemRoleEntity::find_by_id(id).one(db).await?;
+pub async fn get_by_id(db: &DatabaseConnection, login_user: LoginUserContext, id: i64) -> Result<Option<SystemRoleResponse>> {
+    let system_role = SystemRoleEntity::find()
+        .filter(Column::Id.eq(id))
+        .filter(Column::TenantId.eq(login_user.tenant_id))
+        .one(db).await?;
     Ok(system_role.map(model_to_response))
 }
 
-pub async fn get_paginated(db: &DatabaseConnection, params: PaginatedKeywordRequest) -> Result<PaginatedResponse<SystemRoleResponse>> {
+pub async fn get_paginated(db: &DatabaseConnection, login_user: LoginUserContext, params: PaginatedKeywordRequest) -> Result<PaginatedResponse<SystemRoleResponse>> {
     let paginator = SystemRoleEntity::find()
+        .filter(Column::TenantId.eq(login_user.tenant_id))
         .order_by_desc(Column::UpdateTime)
         .paginate(db, params.base.size);
 
@@ -59,7 +72,9 @@ pub async fn get_paginated(db: &DatabaseConnection, params: PaginatedKeywordRequ
     })
 }
 
-pub async fn list(db: &DatabaseConnection) -> Result<Vec<SystemRoleResponse>> {
-    let list = SystemRoleEntity::find().all(db).await?;
+pub async fn list(db: &DatabaseConnection, login_user: LoginUserContext) -> Result<Vec<SystemRoleResponse>> {
+    let list = SystemRoleEntity::find()
+        .filter(Column::TenantId.eq(login_user.tenant_id))
+        .all(db).await?;
     Ok(list.into_iter().map(model_to_response).collect())
 }

@@ -163,10 +163,11 @@ fn main() {
         let mut columns_data_response: Vec<serde_json::Map<String, serde_json::Value>> = Vec::with_capacity(columns.len() - RESPONSE_NOT_NEED_FIELDS.len());
 
         let mut request_has_time = false;
+        let mut has_tenant_field = false;
         for c in columns {
             let mut map = serde_json::Map::new();
             let column_name = get_column_name(&c.column_name);
-            map.insert("column_name".to_string(), column_name.into());
+            map.insert("column_name".to_string(), column_name.clone().into());
             let data_type = map_data_type(&c.data_type);
             map.insert("rust_type".to_string(), data_type.into());
             map.insert("is_date".to_string(), (data_type == "NaiveDateTime").into());
@@ -194,6 +195,9 @@ fn main() {
             if !RESPONSE_NOT_NEED_FIELDS.contains(&c.column_name.as_str()) {
                 columns_data_response.push(map);
             }
+            if column_name.clone() == "tenant_id" {
+                has_tenant_field = true;
+            }
         }
         
         context.insert("columns", &columns_data);
@@ -202,6 +206,7 @@ fn main() {
         context.insert("columns_response", &columns_data_response);
 
         context.insert("request_has_time", &request_has_time);
+        context.insert("has_tenant_field", &has_tenant_field);
 
         // model
         let model_code = tera.render("model",  &context).unwrap();

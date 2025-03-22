@@ -1,43 +1,56 @@
-use sea_orm::{DatabaseConnection, EntityTrait, ActiveModelTrait, PaginatorTrait, QueryOrder, QueryFilter, ColumnTrait};
-use crate::model::system_user_role::{Model as SystemUserRoleModel, Entity as SystemUserRoleEntity, Column, Model};
+use sea_orm::{DatabaseConnection, EntityTrait, ColumnTrait, ActiveModelTrait, PaginatorTrait, QueryOrder, QueryFilter};
+use crate::model::system_user_role::{Model as SystemUserRoleModel, ActiveModel as SystemUserRoleActiveModel, Entity as SystemUserRoleEntity, Column};
 use system_model::request::system_user_role::{CreateSystemUserRoleRequest, UpdateSystemUserRoleRequest, PaginatedKeywordRequest};
 use system_model::response::system_user_role::SystemUserRoleResponse;
 use crate::convert::system_user_role::{create_request_to_model, update_request_to_model, model_to_response};
 use anyhow::{Result, anyhow};
+use sea_orm::ActiveValue::Set;
 use common::base::page::PaginatedResponse;
+use common::context::context::LoginUserContext;
 
-pub async fn create(db: &DatabaseConnection, request: CreateSystemUserRoleRequest) -> Result<i64> {
-    let system_user_role = create_request_to_model(&request);
+pub async fn create(db: &DatabaseConnection, login_user: LoginUserContext, request: CreateSystemUserRoleRequest) -> Result<i64> {
+    let mut system_user_role = create_request_to_model(&request);
+    system_user_role.creator = Set(Some(login_user.id));
+    system_user_role.updater = Set(Some(login_user.id));
+    system_user_role.tenant_id = Set(login_user.tenant_id);
     let system_user_role = system_user_role.insert(db).await?;
     Ok(system_user_role.id)
 }
 
-pub async fn update(db: &DatabaseConnection, request: UpdateSystemUserRoleRequest) -> Result<()> {
+pub async fn update(db: &DatabaseConnection, login_user: LoginUserContext, request: UpdateSystemUserRoleRequest) -> Result<()> {
     let system_user_role = SystemUserRoleEntity::find_by_id(request.id)
         .one(db)
         .await?
         .ok_or_else(|| anyhow!("记录未找到"))?;
 
-    let system_user_role = update_request_to_model(&request, system_user_role);
+    let mut system_user_role = update_request_to_model(&request, system_user_role);
+    system_user_role.updater = Set(Some(login_user.id));
     system_user_role.update(db).await?;
     Ok(())
 }
 
-pub async fn delete(db: &DatabaseConnection, id: i64) -> Result<()> {
-    let result = SystemUserRoleEntity::delete_by_id(id).exec(db).await?;
-    if result.rows_affected == 0 {
-        return Err(anyhow!("记录未找到"));
-    }
+pub async fn delete(db: &DatabaseConnection, login_user: LoginUserContext, id: i64) -> Result<()> {
+    let system_user_role = SystemUserRoleActiveModel {
+        id: Set(id),
+        tenant_id: Set(login_user.tenant_id),
+        deleted: Set(true),
+        ..Default::default()
+    };
+    system_user_role.update(db).await?;
     Ok(())
 }
 
-pub async fn get_by_id(db: &DatabaseConnection, id: i64) -> Result<Option<SystemUserRoleResponse>> {
-    let system_user_role = SystemUserRoleEntity::find_by_id(id).one(db).await?;
+pub async fn get_by_id(db: &DatabaseConnection, login_user: LoginUserContext, id: i64) -> Result<Option<SystemUserRoleResponse>> {
+    let system_user_role = SystemUserRoleEntity::find()
+        .filter(Column::Id.eq(id))
+        .filter(Column::TenantId.eq(login_user.tenant_id))
+        .one(db).await?;
     Ok(system_user_role.map(model_to_response))
 }
 
-pub async fn get_paginated(db: &DatabaseConnection, params: PaginatedKeywordRequest) -> Result<PaginatedResponse<SystemUserRoleResponse>> {
+pub async fn get_paginated(db: &DatabaseConnection, login_user: LoginUserContext, params: PaginatedKeywordRequest) -> Result<PaginatedResponse<SystemUserRoleResponse>> {
     let paginator = SystemUserRoleEntity::find()
+        .filter(Column::TenantId.eq(login_user.tenant_id))
         .order_by_desc(Column::UpdateTime)
         .paginate(db, params.base.size);
 
@@ -59,8 +72,10 @@ pub async fn get_paginated(db: &DatabaseConnection, params: PaginatedKeywordRequ
     })
 }
 
-pub async fn list(db: &DatabaseConnection) -> Result<Vec<SystemUserRoleResponse>> {
-    let list = SystemUserRoleEntity::find().all(db).await?;
+pub async fn list(db: &DatabaseConnection, login_user: LoginUserContext) -> Result<Vec<SystemUserRoleResponse>> {
+    let list = SystemUserRoleEntity::find()
+        .filter(Column::TenantId.eq(login_user.tenant_id))
+        .all(db).await?;
     Ok(list.into_iter().map(model_to_response).collect())
 }
 

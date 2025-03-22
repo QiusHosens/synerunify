@@ -1,43 +1,56 @@
-use sea_orm::{DatabaseConnection, EntityTrait, ActiveModelTrait, PaginatorTrait, QueryOrder};
-use crate::model::system_department::{Model as SystemDepartmentModel, Entity as SystemDepartmentEntity, Column};
+use sea_orm::{DatabaseConnection, EntityTrait, ColumnTrait, ActiveModelTrait, PaginatorTrait, QueryOrder, QueryFilter};
+use crate::model::system_department::{Model as SystemDepartmentModel, ActiveModel as SystemDepartmentActiveModel, Entity as SystemDepartmentEntity, Column};
 use system_model::request::system_department::{CreateSystemDepartmentRequest, UpdateSystemDepartmentRequest, PaginatedKeywordRequest};
 use system_model::response::system_department::SystemDepartmentResponse;
 use crate::convert::system_department::{create_request_to_model, update_request_to_model, model_to_response};
 use anyhow::{Result, anyhow};
+use sea_orm::ActiveValue::Set;
 use common::base::page::PaginatedResponse;
+use common::context::context::LoginUserContext;
 
-pub async fn create(db: &DatabaseConnection, request: CreateSystemDepartmentRequest) -> Result<i64> {
-    let system_department = create_request_to_model(&request);
+pub async fn create(db: &DatabaseConnection, login_user: LoginUserContext, request: CreateSystemDepartmentRequest) -> Result<i64> {
+    let mut system_department = create_request_to_model(&request);
+    system_department.creator = Set(Some(login_user.id));
+    system_department.updater = Set(Some(login_user.id));
+    system_department.tenant_id = Set(login_user.tenant_id);
     let system_department = system_department.insert(db).await?;
     Ok(system_department.id)
 }
 
-pub async fn update(db: &DatabaseConnection, request: UpdateSystemDepartmentRequest) -> Result<()> {
+pub async fn update(db: &DatabaseConnection, login_user: LoginUserContext, request: UpdateSystemDepartmentRequest) -> Result<()> {
     let system_department = SystemDepartmentEntity::find_by_id(request.id)
         .one(db)
         .await?
         .ok_or_else(|| anyhow!("记录未找到"))?;
 
-    let system_department = update_request_to_model(&request, system_department);
+    let mut system_department = update_request_to_model(&request, system_department);
+    system_department.updater = Set(Some(login_user.id));
     system_department.update(db).await?;
     Ok(())
 }
 
-pub async fn delete(db: &DatabaseConnection, id: i64) -> Result<()> {
-    let result = SystemDepartmentEntity::delete_by_id(id).exec(db).await?;
-    if result.rows_affected == 0 {
-        return Err(anyhow!("记录未找到"));
-    }
+pub async fn delete(db: &DatabaseConnection, login_user: LoginUserContext, id: i64) -> Result<()> {
+    let system_department = SystemDepartmentActiveModel {
+        id: Set(id),
+        tenant_id: Set(login_user.tenant_id),
+        deleted: Set(true),
+        ..Default::default()
+    };
+    system_department.update(db).await?;
     Ok(())
 }
 
-pub async fn get_by_id(db: &DatabaseConnection, id: i64) -> Result<Option<SystemDepartmentResponse>> {
-    let system_department = SystemDepartmentEntity::find_by_id(id).one(db).await?;
+pub async fn get_by_id(db: &DatabaseConnection, login_user: LoginUserContext, id: i64) -> Result<Option<SystemDepartmentResponse>> {
+    let system_department = SystemDepartmentEntity::find()
+        .filter(Column::Id.eq(id))
+        .filter(Column::TenantId.eq(login_user.tenant_id))
+        .one(db).await?;
     Ok(system_department.map(model_to_response))
 }
 
-pub async fn get_paginated(db: &DatabaseConnection, params: PaginatedKeywordRequest) -> Result<PaginatedResponse<SystemDepartmentResponse>> {
+pub async fn get_paginated(db: &DatabaseConnection, login_user: LoginUserContext, params: PaginatedKeywordRequest) -> Result<PaginatedResponse<SystemDepartmentResponse>> {
     let paginator = SystemDepartmentEntity::find()
+        .filter(Column::TenantId.eq(login_user.tenant_id))
         .order_by_desc(Column::UpdateTime)
         .paginate(db, params.base.size);
 
@@ -59,8 +72,10 @@ pub async fn get_paginated(db: &DatabaseConnection, params: PaginatedKeywordRequ
     })
 }
 
-pub async fn list(db: &DatabaseConnection) -> Result<Vec<SystemDepartmentResponse>> {
-    let list = SystemDepartmentEntity::find().all(db).await?;
+pub async fn list(db: &DatabaseConnection, login_user: LoginUserContext) -> Result<Vec<SystemDepartmentResponse>> {
+    let list = SystemDepartmentEntity::find()
+        .filter(Column::TenantId.eq(login_user.tenant_id))
+        .all(db).await?;
     Ok(list.into_iter().map(model_to_response).collect())
 }
 

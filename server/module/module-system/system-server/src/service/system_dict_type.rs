@@ -1,43 +1,56 @@
-use sea_orm::{DatabaseConnection, EntityTrait, ActiveModelTrait, PaginatorTrait, QueryOrder};
-use crate::model::system_dict_type::{Model as SystemDictTypeModel, Entity as SystemDictTypeEntity, Column};
+use sea_orm::{DatabaseConnection, EntityTrait, ColumnTrait, ActiveModelTrait, PaginatorTrait, QueryOrder, QueryFilter};
+use crate::model::system_dict_type::{Model as SystemDictTypeModel, ActiveModel as SystemDictTypeActiveModel, Entity as SystemDictTypeEntity, Column};
 use system_model::request::system_dict_type::{CreateSystemDictTypeRequest, UpdateSystemDictTypeRequest, PaginatedKeywordRequest};
 use system_model::response::system_dict_type::SystemDictTypeResponse;
 use crate::convert::system_dict_type::{create_request_to_model, update_request_to_model, model_to_response};
 use anyhow::{Result, anyhow};
+use sea_orm::ActiveValue::Set;
 use common::base::page::PaginatedResponse;
+use common::context::context::LoginUserContext;
 
-pub async fn create(db: &DatabaseConnection, request: CreateSystemDictTypeRequest) -> Result<i64> {
-    let system_dict_type = create_request_to_model(&request);
+pub async fn create(db: &DatabaseConnection, login_user: LoginUserContext, request: CreateSystemDictTypeRequest) -> Result<i64> {
+    let mut system_dict_type = create_request_to_model(&request);
+    system_dict_type.creator = Set(Some(login_user.id));
+    system_dict_type.updater = Set(Some(login_user.id));
+    
     let system_dict_type = system_dict_type.insert(db).await?;
     Ok(system_dict_type.id)
 }
 
-pub async fn update(db: &DatabaseConnection, request: UpdateSystemDictTypeRequest) -> Result<()> {
+pub async fn update(db: &DatabaseConnection, login_user: LoginUserContext, request: UpdateSystemDictTypeRequest) -> Result<()> {
     let system_dict_type = SystemDictTypeEntity::find_by_id(request.id)
         .one(db)
         .await?
         .ok_or_else(|| anyhow!("记录未找到"))?;
 
-    let system_dict_type = update_request_to_model(&request, system_dict_type);
+    let mut system_dict_type = update_request_to_model(&request, system_dict_type);
+    system_dict_type.updater = Set(Some(login_user.id));
     system_dict_type.update(db).await?;
     Ok(())
 }
 
-pub async fn delete(db: &DatabaseConnection, id: i64) -> Result<()> {
-    let result = SystemDictTypeEntity::delete_by_id(id).exec(db).await?;
-    if result.rows_affected == 0 {
-        return Err(anyhow!("记录未找到"));
-    }
+pub async fn delete(db: &DatabaseConnection, login_user: LoginUserContext, id: i64) -> Result<()> {
+    let system_dict_type = SystemDictTypeActiveModel {
+        id: Set(id),
+        
+        deleted: Set(true),
+        ..Default::default()
+    };
+    system_dict_type.update(db).await?;
     Ok(())
 }
 
-pub async fn get_by_id(db: &DatabaseConnection, id: i64) -> Result<Option<SystemDictTypeResponse>> {
-    let system_dict_type = SystemDictTypeEntity::find_by_id(id).one(db).await?;
+pub async fn get_by_id(db: &DatabaseConnection, login_user: LoginUserContext, id: i64) -> Result<Option<SystemDictTypeResponse>> {
+    let system_dict_type = SystemDictTypeEntity::find()
+        .filter(Column::Id.eq(id))
+        
+        .one(db).await?;
     Ok(system_dict_type.map(model_to_response))
 }
 
-pub async fn get_paginated(db: &DatabaseConnection, params: PaginatedKeywordRequest) -> Result<PaginatedResponse<SystemDictTypeResponse>> {
+pub async fn get_paginated(db: &DatabaseConnection, login_user: LoginUserContext, params: PaginatedKeywordRequest) -> Result<PaginatedResponse<SystemDictTypeResponse>> {
     let paginator = SystemDictTypeEntity::find()
+        
         .order_by_desc(Column::UpdateTime)
         .paginate(db, params.base.size);
 
@@ -59,7 +72,9 @@ pub async fn get_paginated(db: &DatabaseConnection, params: PaginatedKeywordRequ
     })
 }
 
-pub async fn list(db: &DatabaseConnection) -> Result<Vec<SystemDictTypeResponse>> {
-    let list = SystemDictTypeEntity::find().all(db).await?;
+pub async fn list(db: &DatabaseConnection, login_user: LoginUserContext) -> Result<Vec<SystemDictTypeResponse>> {
+    let list = SystemDictTypeEntity::find()
+        
+        .all(db).await?;
     Ok(list.into_iter().map(model_to_response).collect())
 }
