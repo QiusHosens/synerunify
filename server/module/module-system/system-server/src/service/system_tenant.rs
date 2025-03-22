@@ -63,3 +63,7 @@ pub async fn list(db: &DatabaseConnection) -> Result<Vec<SystemTenantResponse>> 
     let list = SystemTenantEntity::find().all(db).await?;
     Ok(list.into_iter().map(model_to_response).collect())
 }
+
+pub async fn list_all(db: &DatabaseConnection) -> Result<Vec<SystemTenantModel>> {
+    Ok(SystemTenantEntity::find().all(db).await?)
+}

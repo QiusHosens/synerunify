@@ -9,14 +9,14 @@ use jsonwebtoken::{decode, encode, Algorithm, DecodingKey, EncodingKey, Header, 
 use once_cell::sync::Lazy;
 use serde::{Deserialize, Serialize};
 use serde_json::json;
-use tracing::info;
+use tracing::{error, info};
 use utoipa::ToSchema;
 
 static SECRET_KEY: Lazy<Vec<u8>> = Lazy::new(|| b"synerunify:token:secret-key".to_vec());
 
 // Access Token Claims
 #[derive(Debug, Serialize, Deserialize)]
-struct AccessClaims {
+pub struct AccessClaims {
     sub: i64,  // 用户id
     tenant_id: i64, // 租户id
     exp: i64, // 过期时间
@@ -67,11 +67,13 @@ pub enum AuthError {
     InvalidToken,
     CheckOutToken,
     TokenExpired,
+    InvalidTenant
 }
 impl IntoResponse for AuthError {
     fn into_response(self) -> Response {
         let (status, error_message) = match self {
             AuthError::WrongCredentials => (StatusCode::UNAUTHORIZED, "Wrong credentials"),
+            AuthError::InvalidTenant => (StatusCode::UNAUTHORIZED, "Invalid tenant"),
             AuthError::MissingCredentials => (StatusCode::BAD_REQUEST, "Missing credentials"),
             AuthError::TokenCreation => (StatusCode::INTERNAL_SERVER_ERROR, "Token creation error"),
             AuthError::InvalidToken => (StatusCode::BAD_REQUEST, "Invalid token"),
@@ -106,8 +108,12 @@ where
             token,
             &DecodingKey::from_secret(&*SECRET_KEY),
             &Validation::new(Algorithm::HS256),
-        ).map_err(|e| AuthError::InvalidToken)?;
+        ).map_err(|e| {
+            error!("decode token error, {}", e.to_string());
+            AuthError::InvalidToken
+        })?;
 
+        info!("token data: {:?}", token_data);
         let claims = token_data.claims;
         let now = Utc::now().timestamp();
         if claims.exp < now {
@@ -115,7 +121,7 @@ where
         }
 
         if !is_valid_tenant(claims.tenant_id).await? {
-            return Err(AuthError::WrongCredentials);
+            return Err(AuthError::InvalidTenant);
         }
 
         // 获取用户登录信息
@@ -139,7 +145,7 @@ where
 
 pub async fn is_valid_tenant(tenant_id: i64) -> Result<bool, AuthError> {
     let exists: bool = RedisManager::is_set_member(REDIS_KEY_TENANTS_LIST, tenant_id)
-        .map_err(|e| AuthError::WrongCredentials)?;
+        .map_err(|e| AuthError::InvalidTenant)?;
 
     Ok(exists)
 }
@@ -199,7 +205,7 @@ pub async fn refresh_token(
     }
 
     if is_valid_tenant(token_data.claims.tenant_id).await? {
-        return Err(AuthError::WrongCredentials);
+        return Err(AuthError::InvalidTenant);
     }
 
     let new_tokens = generate_token_pair(token_data.claims.sub, token_data.claims.tenant_id)?;

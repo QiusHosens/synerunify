@@ -22,6 +22,7 @@ use utoipa::openapi::security::{Http, HttpAuthScheme, SecurityScheme};
 use utoipa_axum::router::OpenApiRouter;
 use common::middleware::authorize::{authorize_handler, init_route_authorizes};
 use common::middleware::operation_logger::operation_logger_handler;
+use common::utils::jwt_utils::AccessClaims;
 
 // openapi document
 #[derive(OpenApi)]
@@ -32,6 +33,7 @@ use common::middleware::operation_logger::operation_logger_handler;
         version = "1.0.0"
     ),
     tags(
+        (name = "system_auth", description = "认证"),
         (name = "system_data_scope_rule", description = "数据权限规则"),
         (name = "system_department", description = "部门"),
         (name = "system_dict_data", description = "字典数据"),
@@ -47,8 +49,8 @@ use common::middleware::operation_logger::operation_logger_handler;
         (name = "system_user", description = "用户信息"),
         (name = "system_user_post", description = "用户职位"),
         (name = "system_user_role", description = "用户和角色关联"),
-        (name = "system_auth", description = "认证"),
     ),
+    modifiers(&SecurityAddon)
 )]
 pub struct ApiDocument;
 
@@ -98,4 +100,22 @@ pub async fn auth_router(state: AppState) -> OpenApiRouter {
         .layer(axum::middleware::from_fn(authorize_handler))
         .layer(axum::middleware::from_fn(operation_logger_handler))
         .layer(axum::middleware::from_fn(request_context_handler))
+        .layer(axum::middleware::from_extractor::<AccessClaims>())
+}
+
+struct SecurityAddon;
+
+impl Modify for SecurityAddon {
+    fn modify(&self, openapi: &mut utoipa::openapi::OpenApi) {
+        let components = openapi.components.get_or_insert_with(Default::default);
+        components.security_schemes.insert(
+            "bearerAuth".to_string(),
+            utoipa::openapi::security::SecurityScheme::Http(
+                utoipa::openapi::security::HttpBuilder::new()
+                    .scheme(utoipa::openapi::security::HttpAuthScheme::Bearer)
+                    .bearer_format("JWT")
+                    .build()
+            ),
+        );
+    }
 }

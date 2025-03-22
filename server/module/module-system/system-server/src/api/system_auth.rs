@@ -52,13 +52,13 @@ async fn login(
     post,
     path = "/home",
     operation_id = "system_auth_home",
-    params(
-        ("Authorization" = String, Header, description = "JWT Authorization header (e.g., 'Bearer <token>')")
-    ),
     responses(
         (status = 200, description = "login success", body = CommonResult<HomeResponse>)
     ),
-    tag = "system_auth"
+    tag = "system_auth",
+    security(
+        ("bearerAuth" = [])
+    )
 )]
 async fn home(
     State(state): State<AppState>,

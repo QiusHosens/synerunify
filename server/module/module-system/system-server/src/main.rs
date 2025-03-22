@@ -8,12 +8,14 @@ use sea_orm::DatabaseConnection;
 use tower_http::cors::{Any, CorsLayer};
 use tracing::info;
 use common::middleware::logger;
+use crate::initializer::initialize;
 
 mod api;
 mod service;
 mod convert;
 mod model;
 mod route;
+mod initializer;
 
 #[tokio::main]
 async fn main() -> Result<(), anyhow::Error> {
@@ -28,6 +30,9 @@ async fn main() -> Result<(), anyhow::Error> {
         .allow_headers(Any);
 
     let state = AppState { db: database.clone() };
+
+    // 执行初始化
+    initialize(state.clone()).await;
 
     // let app = Router::new()
     //     .fallback_service(config.api_prefix.as_ref(), route::api(database).await)
