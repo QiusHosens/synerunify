@@ -1,7 +1,7 @@
 import { useRoutes } from 'react-router-dom';
-import Layout from '../components/Layout';
-import Login from '../pages/Login';
-import Dashboard from '../pages/Dashboard';
+import Layout from '@/layout';
+import Login from '@/pages/Login';
+import Dashboard from '@/pages/Dashboard';
 
 const routes = [
   {
