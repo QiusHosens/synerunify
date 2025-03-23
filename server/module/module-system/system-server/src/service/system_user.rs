@@ -97,7 +97,9 @@ pub async fn update_by_login(db: &DatabaseConnection, id: i64, login_ip: String)
 }
 
 pub async fn find_by_id(db: &DatabaseConnection, id: i64) -> Result<Option<SystemUserResponse>> {
-    let system_user = SystemUserEntity::find_by_id(id)
+    let system_user = SystemUserEntity::find()
+        .filter(Column::Id.eq(id))
+        .filter(Column::Deleted.eq(false))
         .one(db).await?;
     Ok(system_user.map(model_to_response))
 }
