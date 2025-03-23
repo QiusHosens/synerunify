@@ -4,8 +4,7 @@ import { useAuthStore } from '@/store';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { login } from '@/api';
-import SettingsButton from '@/components/SettingsButton';
-import './styles.scss';
+import LoginLayout from '@/layout/LoginLayout';
 
 export default function Login() {
   const [username, setUsername] = useState('');
@@ -25,9 +24,20 @@ export default function Login() {
   };
 
   return (
-    <Box className="login-page">
-      <Box className="login-container">
-        <Typography variant="h4" className="login-title">
+    <LoginLayout>
+      <Box
+        sx={{
+          maxWidth: 400,
+          width: '100%',
+          p: 2,
+        }}
+      >
+        <Typography
+          variant="h4"
+          sx={{
+            mb: 2,
+          }}
+        >
           {t('login')}
         </Typography>
         <TextField
@@ -48,14 +58,14 @@ export default function Login() {
         <Button
           variant="contained"
           fullWidth
-          className="login-button"
+          sx={{
+            mt: 2,
+          }}
           onClick={handleLogin}
         >
           {t('login')}
         </Button>
       </Box>
-
-      <SettingsButton />
-    </Box>
+    </LoginLayout>
   );
 }

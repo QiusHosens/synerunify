@@ -1,5 +1,6 @@
 import { useRoutes } from 'react-router-dom';
 import Layout from '@/layout';
+import LoginLayout from '@/layout/LoginLayout'; // 新增导入
 import Login from '@/pages/Login';
 import Dashboard from '@/pages/Dashboard';
 
@@ -11,7 +12,14 @@ const routes = [
       { path: 'dashboard', element: <Dashboard /> },
     ],
   },
-  { path: '/login', element: <Login /> },
+  {
+    path: '/login',
+    element: (
+      <LoginLayout>
+        <Login />
+      </LoginLayout>
+    ),
+  },
 ];
 
 export default function Router() {

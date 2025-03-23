@@ -1,12 +1,24 @@
-import { IconButton, Menu, MenuItem } from '@mui/material';
+import { IconButton, Menu, MenuItem, Divider } from '@mui/material';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { useState } from 'react';
 import { useThemeStore } from '@/store';
 import { useTranslation } from 'react-i18next';
-import './styles.scss';
 
 export default function SettingsButton() {
-  const { mode, navPosition, setThemeMode, setNavPosition } = useThemeStore();
+  const {
+    mode,
+    navPosition,
+    primary,
+    secondary,
+    fontFamily,
+    fontSize,
+    setThemeMode,
+    setNavPosition,
+    setPrimary,
+    setSecondary,
+    setFontFamily,
+    setFontSize,
+  } = useThemeStore();
   const { t, i18n } = useTranslation();
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -35,10 +47,34 @@ export default function SettingsButton() {
     handleClose();
   };
 
+  const handlePrimaryChange = (newColor: string) => {
+    setPrimary(newColor);
+    handleClose();
+  };
+
+  const handleSecondaryChange = (newColor: string) => {
+    setSecondary(newColor);
+    handleClose();
+  };
+
+  const handleFontChange = (newFont: 'Roboto' | 'Poppins' | 'Inter') => {
+    setFontFamily(newFont);
+    handleClose();
+  };
+
+  const handleFontSizeChange = (newSize: number) => {
+    setFontSize(newSize);
+    handleClose();
+  };
+
   return (
     <>
       <IconButton
-        className="settings-button"
+        sx={{
+          position: 'absolute',
+          top: 2,
+          right: 2,
+        }}
         color="inherit"
         onClick={handleSettingsClick}
       >
@@ -52,9 +88,12 @@ export default function SettingsButton() {
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
       >
+        {/* 主题模式 */}
         <MenuItem onClick={handleThemeToggle}>
           {t('switch_theme', { mode: mode === 'light' ? 'Dark' : 'Light' })}
         </MenuItem>
+
+        {/* 导航位置 */}
         <MenuItem onClick={() => handleNavPosition('left')}>
           {t('nav_position', { position: 'Left' })}
         </MenuItem>
@@ -64,9 +103,83 @@ export default function SettingsButton() {
         <MenuItem onClick={() => handleNavPosition('bottom')}>
           {t('nav_position', { position: 'Bottom' })}
         </MenuItem>
-        <MenuItem onClick={() => handleLanguageChange('en')}>English</MenuItem>
-        <MenuItem onClick={() => handleLanguageChange('fr')}>Français</MenuItem>
-        <MenuItem onClick={() => handleLanguageChange('zh')}>中文</MenuItem>
+
+        <Divider />
+
+        {/* Primary 颜色 */}
+        <MenuItem onClick={() => handlePrimaryChange('#1976d2')}>
+          Primary: Blue {primary === '#1976d2' && '(Selected)'}
+        </MenuItem>
+        <MenuItem onClick={() => handlePrimaryChange('#2e7d32')}>
+          Primary: Green {primary === '#2e7d32' && '(Selected)'}
+        </MenuItem>
+        <MenuItem onClick={() => handlePrimaryChange('#7b1fa2')}>
+          Primary: Purple {primary === '#7b1fa2' && '(Selected)'}
+        </MenuItem>
+        <MenuItem onClick={() => handlePrimaryChange('#d32f2f')}>
+          Primary: Red {primary === '#d32f2f' && '(Selected)'}
+        </MenuItem>
+        <MenuItem onClick={() => handlePrimaryChange('#f57c00')}>
+          Primary: Orange {primary === '#f57c00' && '(Selected)'}
+        </MenuItem>
+
+        <Divider />
+
+        {/* Secondary 颜色 */}
+        <MenuItem onClick={() => handleSecondaryChange('#dc004e')}>
+          Secondary: Pink {secondary === '#dc004e' && '(Selected)'}
+        </MenuItem>
+        <MenuItem onClick={() => handleSecondaryChange('#0288d1')}>
+          Secondary: Light Blue {secondary === '#0288d1' && '(Selected)'}
+        </MenuItem>
+        <MenuItem onClick={() => handleSecondaryChange('#388e3c')}>
+          Secondary: Green {secondary === '#388e3c' && '(Selected)'}
+        </MenuItem>
+
+        <Divider />
+
+        {/* 字体 */}
+        <MenuItem onClick={() => handleFontChange('Roboto')}>
+          Font: Roboto {fontFamily === 'Roboto' && '(Selected)'}
+        </MenuItem>
+        <MenuItem onClick={() => handleFontChange('Poppins')}>
+          Font: Poppins {fontFamily === 'Poppins' && '(Selected)'}
+        </MenuItem>
+        <MenuItem onClick={() => handleFontChange('Inter')}>
+          Font: Inter {fontFamily === 'Inter' && '(Selected)'}
+        </MenuItem>
+
+        <Divider />
+
+        {/* 字体大小 */}
+        <MenuItem onClick={() => handleFontSizeChange(12)}>
+          Font Size: 12px {fontSize === 12 && '(Selected)'}
+        </MenuItem>
+        <MenuItem onClick={() => handleFontSizeChange(14)}>
+          Font Size: 14px {fontSize === 14 && '(Selected)'}
+        </MenuItem>
+        <MenuItem onClick={() => handleFontSizeChange(16)}>
+          Font Size: 16px {fontSize === 16 && '(Selected)'}
+        </MenuItem>
+        <MenuItem onClick={() => handleFontSizeChange(18)}>
+          Font Size: 18px {fontSize === 18 && '(Selected)'}
+        </MenuItem>
+        <MenuItem onClick={() => handleFontSizeChange(20)}>
+          Font Size: 20px {fontSize === 20 && '(Selected)'}
+        </MenuItem>
+
+        <Divider />
+
+        {/* 语言 */}
+        <MenuItem onClick={() => handleLanguageChange('en')}>
+          English {i18n.language === 'en' && '(Selected)'}
+        </MenuItem>
+        <MenuItem onClick={() => handleLanguageChange('fr')}>
+          Français {i18n.language === 'fr' && '(Selected)'}
+        </MenuItem>
+        <MenuItem onClick={() => handleLanguageChange('zh')}>
+          中文 {i18n.language === 'zh' && '(Selected)'}
+        </MenuItem>
       </Menu>
     </>
   );
