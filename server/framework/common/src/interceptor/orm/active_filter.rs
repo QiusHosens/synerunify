@@ -1,5 +1,5 @@
-use sea_orm::{Condition, DatabaseConnection, EntityTrait, Iterable, PrimaryKeyToColumn, PrimaryKeyTrait, QueryFilter, Select, ColumnTrait};
 use sea_orm::sea_query::IntoValueTuple;
+use sea_orm::{ColumnTrait, Condition, EntityTrait, Iterable, PrimaryKeyToColumn, PrimaryKeyTrait, QueryFilter, Select};
 
 pub trait ActiveFilterEntityTrait: EntityTrait {
     fn active_condition() -> Condition
