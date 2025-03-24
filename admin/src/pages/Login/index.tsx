@@ -1,4 +1,4 @@
-import { Button, TextField, Box, Typography } from '@mui/material';
+import { Button, TextField, Box, Typography, useTheme } from '@mui/material';
 import { useState } from 'react';
 import { useAuthStore } from '@/store';
 import { useNavigate } from 'react-router-dom';
@@ -7,6 +7,7 @@ import { login } from '@/api';
 import LoginLayout from '@/layout/LoginLayout';
 
 export default function Login() {
+  const theme = useTheme();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const { login: loginStore } = useAuthStore();
@@ -36,6 +37,7 @@ export default function Login() {
           variant="h4"
           sx={{
             mb: 2,
+            color: theme.palette.text.primary,
           }}
         >
           {t('login')}

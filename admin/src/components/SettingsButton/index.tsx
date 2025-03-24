@@ -1,10 +1,11 @@
-import { IconButton, Menu, MenuItem, Divider } from '@mui/material';
+import { IconButton, Menu, MenuItem, Divider, useTheme } from '@mui/material';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { useState } from 'react';
 import { useThemeStore } from '@/store';
 import { useTranslation } from 'react-i18next';
 
 export default function SettingsButton() {
+  const theme = useTheme();
   const {
     mode,
     navPosition,
@@ -74,6 +75,7 @@ export default function SettingsButton() {
           position: 'absolute',
           top: 2,
           right: 2,
+          color: theme.palette.text.primary,
         }}
         color="inherit"
         onClick={handleSettingsClick}
