@@ -5,7 +5,9 @@ use anyhow::{anyhow, Result};
 use sea_orm::{ActiveModelTrait, ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter, QuerySelect};
 use std::sync::Arc;
 use std::time::Duration;
+use axum::Json;
 use chrono::Utc;
+use jsonwebtoken::{decode, Algorithm, DecodingKey, Validation};
 use system_model::request::system_auth::LoginRequest;
 use tokio::sync::OnceCell;
 use tracing::{error, info};
@@ -16,13 +18,13 @@ use common::context::context::{LoginUserContext, RequestContext};
 use common::database::redis::RedisManager;
 use common::database::redis_constants::{REDIS_KEY_LOGGER_LOGIN_PREFIX, REDIS_KEY_LOGGER_OPERATION_PREFIX, REDIS_KEY_LOGIN_USER_PREFIX};
 use common::utils::crypt_utils::verify_password;
-use common::utils::jwt_utils::{generate_token_pair, AuthBody, AuthError};
+use common::utils::jwt_utils::{generate_token_pair, is_valid_tenant, AuthBody, AuthError};
 use system_model::response::system_auth::HomeResponse;
 use system_model::response::system_department::SystemDepartmentResponse;
 use crate::model::system_user::{Model as SystemUserModel};
 use crate::service;
 
-pub async fn login(db: &DatabaseConnection, request: LoginRequest, request_context: RequestContext) -> Result<AuthBody> {
+pub async fn login(db: &DatabaseConnection, request_context: RequestContext, request: LoginRequest) -> Result<AuthBody> {
     info!("into login: {:?}", request);
     // 验证验证码
 
@@ -55,9 +57,7 @@ pub async fn login(db: &DatabaseConnection, request: LoginRequest, request_conte
 
     // 创建token
     let auth = match generate_token_pair(user.clone().id, user.tenant_id) {
-        Ok(auth) => {
-            auth
-        }
+        Ok(auth) => auth,
         Err(_) => {
             return Err(anyhow!("服务端异常"));
         }
@@ -71,6 +71,16 @@ pub async fn login(db: &DatabaseConnection, request: LoginRequest, request_conte
     // // 保存登录用户信息缓存
     // cache_login_user(db, user.clone()).await?;
     invoke_after_login(db, user.clone(), request_context.clone(), &auth);
+    Ok(auth)
+}
+
+pub async fn refresh_token(db: &DatabaseConnection, request_context: RequestContext, refresh_token: String) -> Result<AuthBody> {
+    let auth = match common::utils::jwt_utils::refresh_token(refresh_token).await {
+        Ok(auth) => auth,
+        Err(_) => {
+            return Err(anyhow!("服务端异常"));
+        }
+    };
     Ok(auth)
 }
 

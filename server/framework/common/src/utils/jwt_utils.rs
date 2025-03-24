@@ -67,13 +67,15 @@ pub enum AuthError {
     InvalidToken,
     CheckOutToken,
     TokenExpired,
-    InvalidTenant
+    InvalidTenant,
+    InvalidUser,
 }
 impl IntoResponse for AuthError {
     fn into_response(self) -> Response {
         let (status, error_message) = match self {
             AuthError::WrongCredentials => (StatusCode::UNAUTHORIZED, "Wrong credentials"),
             AuthError::InvalidTenant => (StatusCode::UNAUTHORIZED, "Invalid tenant"),
+            AuthError::InvalidUser => (StatusCode::UNAUTHORIZED, "Invalid user"),
             AuthError::MissingCredentials => (StatusCode::BAD_REQUEST, "Missing credentials"),
             AuthError::TokenCreation => (StatusCode::INTERNAL_SERVER_ERROR, "Token creation error"),
             AuthError::InvalidToken => (StatusCode::BAD_REQUEST, "Invalid token"),
@@ -129,7 +131,7 @@ where
         let login_user = match context {
             Ok(Some(ctx_str)) => serde_json::from_str::<LoginUserContext>(&ctx_str)
                 .map_err(|_| AuthError::WrongCredentials),
-            Ok(None) => Err(AuthError::WrongCredentials),
+            Ok(None) => Err(AuthError::InvalidUser),
             Err(_) => Err(AuthError::WrongCredentials),
         }?;
         info!("login user: {:?}", login_user);
@@ -185,32 +187,28 @@ pub fn generate_token_pair(user_id: i64, tenant_id: i64) -> Result<AuthBody, Aut
 }
 
 // 刷新 token
-pub async fn refresh_token(
-    Json(payload): Json<serde_json::Value>,
-) -> Result<impl IntoResponse, AuthError> {
-    let refresh_token = payload
-        .get("refresh_token")
-        .and_then(|v| v.as_str())
-        .ok_or(AuthError::MissingCredentials)?;
-
+pub async fn refresh_token(refresh_token: String) -> Result<AuthBody, AuthError> {
+    info!("refresh token: {:?}", refresh_token);
     let token_data = decode::<RefreshClaims>(
-        refresh_token,
+        refresh_token.as_str(),
         &DecodingKey::from_secret(&*SECRET_KEY),
         &Validation::new(Algorithm::HS256),
     )
         .map_err(|e| AuthError::InvalidToken)?;
 
+    info!("refresh token data: {:?}", token_data);
     let now = Utc::now().timestamp();
     if token_data.claims.exp < now {
+        error!("token expired");
         return Err(AuthError::TokenExpired);
     }
 
-    if is_valid_tenant(token_data.claims.tenant_id).await? {
+    if !is_valid_tenant(token_data.claims.tenant_id).await? {
+        error!("invalid tenant");
         return Err(AuthError::InvalidTenant);
     }
 
-    let new_tokens = generate_token_pair(token_data.claims.sub, token_data.claims.tenant_id)?;
-    Ok(Json(new_tokens))
+    generate_token_pair(token_data.claims.sub, token_data.claims.tenant_id)
 }
 
 // 受保护的路由

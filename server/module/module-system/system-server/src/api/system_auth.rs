@@ -17,6 +17,7 @@ pub async fn system_auth_router(state: AppState) -> OpenApiRouter {
 
 pub async fn system_auth_need_router(state: AppState) -> OpenApiRouter {
     OpenApiRouter::new()
+        .routes(routes!(refresh_token))
         .routes(routes!(home))
         .with_state(state)
 }
@@ -42,7 +43,31 @@ async fn login(
     Extension(request_context): Extension<RequestContext>,
     Json(payload): Json<LoginRequest>,
 ) -> CommonResult<AuthBody> {
-    match service::system_auth::login(&state.db, payload, request_context).await {
+    match service::system_auth::login(&state.db, request_context, payload).await {
+        Ok(data) => {CommonResult::with_data(data)}
+        Err(e) => {CommonResult::with_err(&e.to_string())}
+    }
+}
+
+#[utoipa::path(
+    post,
+    path = "/refresh_token",
+    operation_id = "system_auth_refresh_token",
+    request_body(content = String, description = "refresh token", content_type = "application/json"),
+    responses(
+        (status = 200, description = "login success", body = CommonResult<AuthBody>)
+    ),
+    tag = "system_auth",
+    security(
+        ("bearerAuth" = [])
+    )
+)]
+async fn refresh_token(
+    State(state): State<AppState>,
+    Extension(request_context): Extension<RequestContext>,
+    Json(payload): Json<String>,
+) -> CommonResult<AuthBody> {
+    match service::system_auth::refresh_token(&state.db, request_context, payload).await {
         Ok(data) => {CommonResult::with_data(data)}
         Err(e) => {CommonResult::with_err(&e.to_string())}
     }
