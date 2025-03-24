@@ -1,4 +1,4 @@
-use sea_orm::{DatabaseConnection, EntityTrait, ColumnTrait, ActiveModelTrait, PaginatorTrait, QueryOrder, QueryFilter};
+use sea_orm::{DatabaseConnection, EntityTrait, ColumnTrait, ActiveModelTrait, PaginatorTrait, QueryOrder, QueryFilter, Condition};
 use crate::model::system_post::{Model as SystemPostModel, ActiveModel as SystemPostActiveModel, Entity as SystemPostEntity, Column};
 use system_model::request::system_post::{CreateSystemPostRequest, UpdateSystemPostRequest, PaginatedKeywordRequest};
 use system_model::response::system_post::SystemPostResponse;
@@ -7,6 +7,7 @@ use anyhow::{Result, anyhow};
 use sea_orm::ActiveValue::Set;
 use common::base::page::PaginatedResponse;
 use common::context::context::LoginUserContext;
+use common::interceptor::orm::active_filter::ActiveFilterEntityTrait;
 
 pub async fn create(db: &DatabaseConnection, login_user: LoginUserContext, request: CreateSystemPostRequest) -> Result<i64> {
     let mut system_post = create_request_to_model(&request);
@@ -41,16 +42,17 @@ pub async fn delete(db: &DatabaseConnection, login_user: LoginUserContext, id: i
 }
 
 pub async fn get_by_id(db: &DatabaseConnection, login_user: LoginUserContext, id: i64) -> Result<Option<SystemPostResponse>> {
-    let system_post = SystemPostEntity::find()
-        .filter(Column::Id.eq(id))
-        .filter(Column::TenantId.eq(login_user.tenant_id))
+    let condition = Condition::all()
+            .add(Column::Id.eq(id))
+            .add(Column::TenantId.eq(login_user.tenant_id));
+            
+    let system_post = SystemPostEntity::find_active_with_condition(condition)
         .one(db).await?;
     Ok(system_post.map(model_to_response))
 }
 
 pub async fn get_paginated(db: &DatabaseConnection, login_user: LoginUserContext, params: PaginatedKeywordRequest) -> Result<PaginatedResponse<SystemPostResponse>> {
-    let paginator = SystemPostEntity::find()
-        .filter(Column::TenantId.eq(login_user.tenant_id))
+    let condition = Condition::all().add(Column::TenantId.eq(login_user.tenant_id));let paginator = SystemPostEntity::find_active_with_condition(condition)
         .order_by_desc(Column::UpdateTime)
         .paginate(db, params.base.size);
 
@@ -73,8 +75,7 @@ pub async fn get_paginated(db: &DatabaseConnection, login_user: LoginUserContext
 }
 
 pub async fn list(db: &DatabaseConnection, login_user: LoginUserContext) -> Result<Vec<SystemPostResponse>> {
-    let list = SystemPostEntity::find()
-        .filter(Column::TenantId.eq(login_user.tenant_id))
+    let condition = Condition::all().add(Column::TenantId.eq(login_user.tenant_id));let list = SystemPostEntity::find_active_with_condition(condition)
         .all(db).await?;
     Ok(list.into_iter().map(model_to_response).collect())
 }

@@ -1,4 +1,4 @@
-use sea_orm::{DatabaseConnection, EntityTrait, ColumnTrait, ActiveModelTrait, PaginatorTrait, QueryOrder, QuerySelect, QueryFilter};
+use sea_orm::{DatabaseConnection, EntityTrait, ColumnTrait, ActiveModelTrait, PaginatorTrait, QueryOrder, QueryFilter, Condition, QuerySelect};
 use crate::model::system_menu::{Model as SystemMenuModel, ActiveModel as SystemMenuActiveModel, Entity as SystemMenuEntity, Column};
 use system_model::request::system_menu::{CreateSystemMenuRequest, UpdateSystemMenuRequest, PaginatedKeywordRequest};
 use system_model::response::system_menu::SystemMenuResponse;
@@ -7,6 +7,7 @@ use anyhow::{Result, anyhow};
 use sea_orm::ActiveValue::Set;
 use common::base::page::PaginatedResponse;
 use common::context::context::LoginUserContext;
+use common::interceptor::orm::active_filter::ActiveFilterEntityTrait;
 
 pub async fn create(db: &DatabaseConnection, login_user: LoginUserContext, request: CreateSystemMenuRequest) -> Result<i64> {
     let mut system_menu = create_request_to_model(&request);
@@ -41,16 +42,15 @@ pub async fn delete(db: &DatabaseConnection, login_user: LoginUserContext, id: i
 }
 
 pub async fn get_by_id(db: &DatabaseConnection, login_user: LoginUserContext, id: i64) -> Result<Option<SystemMenuResponse>> {
-    let system_menu = SystemMenuEntity::find()
-        .filter(Column::Id.eq(id))
-        
+    let condition = Condition::all()
+            .add(Column::Id.eq(id));
+    let system_menu = SystemMenuEntity::find_active_with_condition(condition)
         .one(db).await?;
     Ok(system_menu.map(model_to_response))
 }
 
 pub async fn get_paginated(db: &DatabaseConnection, login_user: LoginUserContext, params: PaginatedKeywordRequest) -> Result<PaginatedResponse<SystemMenuResponse>> {
-    let paginator = SystemMenuEntity::find()
-        
+    let paginator = SystemMenuEntity::find_active()
         .order_by_desc(Column::UpdateTime)
         .paginate(db, params.base.size);
 
@@ -73,8 +73,7 @@ pub async fn get_paginated(db: &DatabaseConnection, login_user: LoginUserContext
 }
 
 pub async fn list(db: &DatabaseConnection, login_user: LoginUserContext) -> Result<Vec<SystemMenuResponse>> {
-    let list = SystemMenuEntity::find()
-        
+    let list = SystemMenuEntity::find_active()
         .all(db).await?;
     Ok(list.into_iter().map(model_to_response).collect())
 }
@@ -83,7 +82,7 @@ pub async fn get_menus_permissions(db: &DatabaseConnection, ids: Vec<i64>) -> Re
     if ids.is_empty() {
         return Ok(Vec::new())
     }
-    let system_menu_list = SystemMenuEntity::find()
+    let system_menu_list = SystemMenuEntity::find_active()
         .select_only()
         .column(Column::Permission)
         .filter(Column::Id.is_in(ids))

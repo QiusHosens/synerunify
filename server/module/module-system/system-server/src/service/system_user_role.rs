@@ -1,4 +1,4 @@
-use sea_orm::{DatabaseConnection, EntityTrait, ColumnTrait, ActiveModelTrait, PaginatorTrait, QueryOrder, QueryFilter};
+use sea_orm::{DatabaseConnection, EntityTrait, ColumnTrait, ActiveModelTrait, PaginatorTrait, QueryOrder, QueryFilter, Condition};
 use crate::model::system_user_role::{Model as SystemUserRoleModel, ActiveModel as SystemUserRoleActiveModel, Entity as SystemUserRoleEntity, Column};
 use system_model::request::system_user_role::{CreateSystemUserRoleRequest, UpdateSystemUserRoleRequest, PaginatedKeywordRequest};
 use system_model::response::system_user_role::SystemUserRoleResponse;
@@ -7,6 +7,7 @@ use anyhow::{Result, anyhow};
 use sea_orm::ActiveValue::Set;
 use common::base::page::PaginatedResponse;
 use common::context::context::LoginUserContext;
+use common::interceptor::orm::active_filter::ActiveFilterEntityTrait;
 
 pub async fn create(db: &DatabaseConnection, login_user: LoginUserContext, request: CreateSystemUserRoleRequest) -> Result<i64> {
     let mut system_user_role = create_request_to_model(&request);
@@ -41,16 +42,17 @@ pub async fn delete(db: &DatabaseConnection, login_user: LoginUserContext, id: i
 }
 
 pub async fn get_by_id(db: &DatabaseConnection, login_user: LoginUserContext, id: i64) -> Result<Option<SystemUserRoleResponse>> {
-    let system_user_role = SystemUserRoleEntity::find()
-        .filter(Column::Id.eq(id))
-        .filter(Column::TenantId.eq(login_user.tenant_id))
+    let condition = Condition::all()
+            .add(Column::Id.eq(id))
+            .add(Column::TenantId.eq(login_user.tenant_id));
+            
+    let system_user_role = SystemUserRoleEntity::find_active_with_condition(condition)
         .one(db).await?;
     Ok(system_user_role.map(model_to_response))
 }
 
 pub async fn get_paginated(db: &DatabaseConnection, login_user: LoginUserContext, params: PaginatedKeywordRequest) -> Result<PaginatedResponse<SystemUserRoleResponse>> {
-    let paginator = SystemUserRoleEntity::find()
-        .filter(Column::TenantId.eq(login_user.tenant_id))
+    let condition = Condition::all().add(Column::TenantId.eq(login_user.tenant_id));let paginator = SystemUserRoleEntity::find_active_with_condition(condition)
         .order_by_desc(Column::UpdateTime)
         .paginate(db, params.base.size);
 
@@ -73,13 +75,14 @@ pub async fn get_paginated(db: &DatabaseConnection, login_user: LoginUserContext
 }
 
 pub async fn list(db: &DatabaseConnection, login_user: LoginUserContext) -> Result<Vec<SystemUserRoleResponse>> {
-    let list = SystemUserRoleEntity::find()
-        .filter(Column::TenantId.eq(login_user.tenant_id))
+    let condition = Condition::all().add(Column::TenantId.eq(login_user.tenant_id));let list = SystemUserRoleEntity::find_active_with_condition(condition)
         .all(db).await?;
     Ok(list.into_iter().map(model_to_response).collect())
 }
 
 pub async fn get_role_id_by_user_id(db: &DatabaseConnection, user_id: i64) -> Result<i64> {
-    let system_user_role = SystemUserRoleEntity::find().filter(Column::UserId.eq(user_id)).one(db).await?;
+    let system_user_role = SystemUserRoleEntity::find_active()
+        .filter(Column::UserId.eq(user_id))
+        .one(db).await?;
     Ok(system_user_role.map_or_else(|| 0, | user_role | user_role.role_id))
 }

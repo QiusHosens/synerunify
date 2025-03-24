@@ -1,5 +1,7 @@
 use chrono::NaiveDateTime;
+use sea_orm::Condition;
 use sea_orm::entity::prelude::*;
+use common::interceptor::orm::active_filter::ActiveFilterEntityTrait;
 
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel)]
 #[sea_orm(table_name = "system_notice")]
@@ -36,6 +38,12 @@ pub enum Relation {}
 impl Related<Entity> for Entity {
     fn to() -> RelationDef {
         panic!("No relations defined")
+    }
+}
+
+impl ActiveFilterEntityTrait for Entity {
+    fn active_condition() -> Condition {
+        Condition::all().add(Column::Deleted.eq(false))
     }
 }
 

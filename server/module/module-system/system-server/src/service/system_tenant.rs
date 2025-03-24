@@ -1,4 +1,4 @@
-use sea_orm::{DatabaseConnection, EntityTrait, ColumnTrait, ActiveModelTrait, PaginatorTrait, QueryOrder, QueryFilter};
+use sea_orm::{DatabaseConnection, EntityTrait, ColumnTrait, ActiveModelTrait, PaginatorTrait, QueryOrder, QueryFilter, Condition};
 use crate::model::system_tenant::{Model as SystemTenantModel, ActiveModel as SystemTenantActiveModel, Entity as SystemTenantEntity, Column};
 use system_model::request::system_tenant::{CreateSystemTenantRequest, UpdateSystemTenantRequest, PaginatedKeywordRequest};
 use system_model::response::system_tenant::SystemTenantResponse;
@@ -7,6 +7,7 @@ use anyhow::{Result, anyhow};
 use sea_orm::ActiveValue::Set;
 use common::base::page::PaginatedResponse;
 use common::context::context::LoginUserContext;
+use common::interceptor::orm::active_filter::ActiveFilterEntityTrait;
 
 pub async fn create(db: &DatabaseConnection, login_user: LoginUserContext, request: CreateSystemTenantRequest) -> Result<i64> {
     let mut system_tenant = create_request_to_model(&request);
@@ -41,16 +42,15 @@ pub async fn delete(db: &DatabaseConnection, login_user: LoginUserContext, id: i
 }
 
 pub async fn get_by_id(db: &DatabaseConnection, login_user: LoginUserContext, id: i64) -> Result<Option<SystemTenantResponse>> {
-    let system_tenant = SystemTenantEntity::find()
-        .filter(Column::Id.eq(id))
-        
+    let condition = Condition::all()
+            .add(Column::Id.eq(id));
+    let system_tenant = SystemTenantEntity::find_active_with_condition(condition)
         .one(db).await?;
     Ok(system_tenant.map(model_to_response))
 }
 
 pub async fn get_paginated(db: &DatabaseConnection, login_user: LoginUserContext, params: PaginatedKeywordRequest) -> Result<PaginatedResponse<SystemTenantResponse>> {
-    let paginator = SystemTenantEntity::find()
-        
+    let paginator = SystemTenantEntity::find_active()
         .order_by_desc(Column::UpdateTime)
         .paginate(db, params.base.size);
 
@@ -73,12 +73,11 @@ pub async fn get_paginated(db: &DatabaseConnection, login_user: LoginUserContext
 }
 
 pub async fn list(db: &DatabaseConnection, login_user: LoginUserContext) -> Result<Vec<SystemTenantResponse>> {
-    let list = SystemTenantEntity::find()
-        
+    let list = SystemTenantEntity::find_active()
         .all(db).await?;
     Ok(list.into_iter().map(model_to_response).collect())
 }
 
 pub async fn list_all(db: &DatabaseConnection) -> Result<Vec<SystemTenantModel>> {
-    Ok(SystemTenantEntity::find().all(db).await?)
+    Ok(SystemTenantEntity::find_active().all(db).await?)
 }

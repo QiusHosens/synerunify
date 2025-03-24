@@ -1,4 +1,4 @@
-use sea_orm::{DatabaseConnection, EntityTrait, ColumnTrait, ActiveModelTrait, PaginatorTrait, QueryOrder, QueryFilter};
+use sea_orm::{DatabaseConnection, EntityTrait, ColumnTrait, ActiveModelTrait, PaginatorTrait, QueryOrder, QueryFilter, Condition};
 use crate::model::{{ table_name }}::{Model as {{ model_name }}Model, ActiveModel as {{ model_name }}ActiveModel, Entity as {{ model_name }}Entity, Column};
 use system_model::request::{{ table_name }}::{Create{{ request_model_name }}, Update{{ request_model_name }}, PaginatedKeywordRequest};
 use system_model::response::{{ table_name }}::{{ response_model_name }};
@@ -7,6 +7,7 @@ use anyhow::{Result, anyhow};
 use sea_orm::ActiveValue::Set;
 use common::base::page::PaginatedResponse;
 use common::context::context::LoginUserContext;
+use common::interceptor::orm::active_filter::ActiveFilterEntityTrait;
 
 pub async fn create(db: &DatabaseConnection, login_user: LoginUserContext, request: Create{{ request_model_name }}) -> Result<i64> {
     let mut {{ table_name }} = create_request_to_model(&request);
@@ -41,16 +42,18 @@ pub async fn delete(db: &DatabaseConnection, login_user: LoginUserContext, id: i
 }
 
 pub async fn get_by_id(db: &DatabaseConnection, login_user: LoginUserContext, id: i64) -> Result<Option<{{ response_model_name }}>> {
-    let {{ table_name }} = {{ model_name }}Entity::find()
-        .filter(Column::Id.eq(id))
-        {% if has_tenant_field  %}.filter(Column::TenantId.eq(login_user.tenant_id)){% endif %}
+    let condition = Condition::all()
+            {% if has_tenant_field  %}.add(Column::Id.eq(id))
+            .add(Column::TenantId.eq(login_user.tenant_id));
+            {% else %}.add(Column::Id.eq(id));{% endif %}
+    let {{ table_name }} = {{ model_name }}Entity::find_active_with_condition(condition)
         .one(db).await?;
     Ok({{ table_name }}.map(model_to_response))
 }
 
 pub async fn get_paginated(db: &DatabaseConnection, login_user: LoginUserContext, params: PaginatedKeywordRequest) -> Result<PaginatedResponse<{{ response_model_name }}>> {
-    let paginator = {{ model_name }}Entity::find()
-        {% if has_tenant_field  %}.filter(Column::TenantId.eq(login_user.tenant_id)){% endif %}
+    {% if has_tenant_field  %}let condition = Condition::all().add(Column::TenantId.eq(login_user.tenant_id));{% endif -%}
+    let paginator = {{ model_name }}Entity::{% if has_tenant_field  %}find_active_with_condition(condition){% else %}find_active(){% endif %}
         .order_by_desc(Column::UpdateTime)
         .paginate(db, params.base.size);
 
@@ -73,8 +76,8 @@ pub async fn get_paginated(db: &DatabaseConnection, login_user: LoginUserContext
 }
 
 pub async fn list(db: &DatabaseConnection, login_user: LoginUserContext) -> Result<Vec<{{ response_model_name }}>> {
-    let list = {{ model_name }}Entity::find()
-        {% if has_tenant_field  %}.filter(Column::TenantId.eq(login_user.tenant_id)){% endif %}
+    {% if has_tenant_field  %}let condition = Condition::all().add(Column::TenantId.eq(login_user.tenant_id));{% endif -%}
+    let list = {{ model_name }}Entity::{% if has_tenant_field  %}find_active_with_condition(condition){% else %}find_active(){% endif %}
         .all(db).await?;
     Ok(list.into_iter().map(model_to_response).collect())
 }

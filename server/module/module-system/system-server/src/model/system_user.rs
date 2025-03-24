@@ -1,7 +1,7 @@
 use chrono::NaiveDateTime;
 use sea_orm::Condition;
 use sea_orm::entity::prelude::*;
-use common::interceptor::orm::sea_interceptor::ActiveFilterEntityTrait;
+use common::interceptor::orm::active_filter::ActiveFilterEntityTrait;
 
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel)]
 #[sea_orm(table_name = "system_user")]
