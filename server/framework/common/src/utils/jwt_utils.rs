@@ -150,10 +150,11 @@ pub async fn is_valid_tenant(tenant_id: i64) -> Result<bool, AuthError> {
     Ok(exists)
 }
 
-pub fn set_tenants(tenants: &[i64]) -> Result<(), AuthError> {
+pub fn add_tenants(tenants: &[i64]) {
     // 添加新的租户ID
-    RedisManager::add_to_set(REDIS_KEY_TENANTS_LIST, tenants).expect("add tenants fail");
-    Ok(())
+    if let Err(e) = RedisManager::add_to_set(REDIS_KEY_TENANTS_LIST, tenants) {
+        error!("add tenants fail: {}", e.to_string());
+    }
 }
 
 // 生成 token 对

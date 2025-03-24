@@ -3,6 +3,7 @@ use sea_orm::DatabaseConnection;
 use tracing::error;
 use common::database::redis::RedisManager;
 use common::database::redis_constants::REDIS_KEY_TENANTS_LIST;
+use common::utils::jwt_utils::add_tenants;
 use crate::{service, AppState};
 
 /// 初始化执行
@@ -21,7 +22,5 @@ pub async fn initialize_tenant_cache(db: &DatabaseConnection) {
             Vec::new()
         }
     };
-    if let Err(e) = RedisManager::add_to_set(REDIS_KEY_TENANTS_LIST, tenant_id_list) {
-        error!("cache tenant id error: {}", e.to_string());
-    };
+    add_tenants(tenant_id_list.as_slice());
 }
