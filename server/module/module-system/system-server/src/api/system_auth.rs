@@ -1,6 +1,6 @@
 use crate::{service, AppState};
 use axum::{extract::{Json, State}, routing::post, Extension, Router};
-use common::base::model::CommonResult;
+use common::base::response::CommonResult;
 use common::context::context::{LoginUserContext, RequestContext};
 use common::utils::jwt_utils::AuthBody;
 use ctor;

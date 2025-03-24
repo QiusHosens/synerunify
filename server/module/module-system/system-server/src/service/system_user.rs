@@ -1,4 +1,4 @@
-use sea_orm::{DatabaseConnection, EntityTrait, ColumnTrait, ActiveModelTrait, PaginatorTrait, QueryOrder, QueryFilter};
+use sea_orm::{DatabaseConnection, EntityTrait, ColumnTrait, ActiveModelTrait, PaginatorTrait, QueryOrder, QueryFilter, Condition};
 use crate::model::system_user::{Model as SystemUserModel, ActiveModel as SystemUserActiveModel, Entity as SystemUserEntity, Column};
 use system_model::request::system_user::{CreateSystemUserRequest, UpdateSystemUserRequest, PaginatedKeywordRequest};
 use system_model::response::system_user::SystemUserResponse;
@@ -8,6 +8,7 @@ use chrono::Utc;
 use sea_orm::ActiveValue::Set;
 use common::base::page::PaginatedResponse;
 use common::context::context::LoginUserContext;
+use common::interceptor::orm::sea_interceptor::ActiveFilterEntityTrait;
 
 pub async fn create(db: &DatabaseConnection, login_user: LoginUserContext, request: CreateSystemUserRequest) -> Result<i64> {
     let mut system_user = create_request_to_model(&request);
@@ -74,8 +75,11 @@ pub async fn get_paginated(db: &DatabaseConnection, login_user: LoginUserContext
 }
 
 pub async fn list(db: &DatabaseConnection, login_user: LoginUserContext) -> Result<Vec<SystemUserResponse>> {
-    let list = SystemUserEntity::find()
-        .filter(Column::TenantId.eq(login_user.tenant_id))
+    // let list = SystemUserEntity::find()
+    //     .filter(Column::TenantId.eq(login_user.tenant_id))
+    //     .all(db).await?;
+    let condition = Condition::all().add(Column::TenantId.eq(login_user.tenant_id));
+    let list = SystemUserEntity::find_active_with_condition(&db, condition)
         .all(db).await?;
     Ok(list.into_iter().map(model_to_response).collect())
 }
@@ -97,9 +101,12 @@ pub async fn update_by_login(db: &DatabaseConnection, id: i64, login_ip: String)
 }
 
 pub async fn find_by_id(db: &DatabaseConnection, id: i64) -> Result<Option<SystemUserResponse>> {
-    let system_user = SystemUserEntity::find()
-        .filter(Column::Id.eq(id))
-        .filter(Column::Deleted.eq(false))
+    // let system_user = SystemUserEntity::find()
+    //     .filter(Column::Id.eq(id))
+    //     .filter(Column::Deleted.eq(false))
+    //     .one(db).await?;
+    let condition = Condition::all().add(Column::Id.eq(id));
+    let system_user = SystemUserEntity::find_active_with_condition(&db, condition)
         .one(db).await?;
     Ok(system_user.map(model_to_response))
 }

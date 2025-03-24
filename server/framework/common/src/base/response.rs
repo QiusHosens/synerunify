@@ -5,11 +5,6 @@ use axum::response::{IntoResponse, Response};
 use serde::Serialize;
 use utoipa::ToSchema;
 
-#[derive(Clone, Debug, PartialEq)]
-pub struct BaseModel {
-    pub id: i64,
-}
-
 /// 系统统一返回
 #[derive(Debug, Serialize, Default, ToSchema)]
 pub struct CommonResult<T> {

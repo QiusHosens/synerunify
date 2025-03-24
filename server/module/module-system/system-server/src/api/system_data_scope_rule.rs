@@ -8,7 +8,7 @@ use axum::{routing::{get, post}, Router, extract::{State, Path, Json, Query}, re
 use common::base::page::PaginatedResponse;
 use system_model::request::system_data_scope_rule::{CreateSystemDataScopeRuleRequest, UpdateSystemDataScopeRuleRequest, PaginatedKeywordRequest};
 use system_model::response::system_data_scope_rule::SystemDataScopeRuleResponse;
-use common::base::model::CommonResult;
+use common::base::response::CommonResult;
 use common::context::context::LoginUserContext;
 use crate::{service, AppState};
 

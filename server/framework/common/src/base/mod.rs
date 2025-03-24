@@ -1,3 +1,3 @@
-pub mod model;
+pub mod response;
 pub mod page;
 pub mod logger;

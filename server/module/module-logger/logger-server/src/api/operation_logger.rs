@@ -1,7 +1,7 @@
 use axum::extract::{Query, State};
 use utoipa_axum::router::OpenApiRouter;
 use utoipa_axum::routes;
-use common::base::model::CommonResult;
+use common::base::response::CommonResult;
 use common::base::page::PaginatedResponse;
 use logger_model::request::operation_logger::PaginatedKeywordRequest;
 use logger_model::response::operation_logger::OperationLoggerResponse;

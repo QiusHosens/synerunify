@@ -8,7 +8,7 @@ use chrono::Utc;
 use anyhow::Result;
 use tracing::info;
 use crate::base::logger::OperationLogger;
-use crate::base::model::CommonResultJsonString;
+use crate::base::response::CommonResultJsonString;
 use crate::context::context::{LoginUserContext, RequestContext};
 use crate::database::redis::RedisManager;
 use crate::database::redis_constants::REDIS_KEY_LOGGER_OPERATION_PREFIX;
