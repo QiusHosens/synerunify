@@ -12,7 +12,16 @@ export default function LoginLayout({ children }: { children: React.ReactNode })
       }}
     >
       {children}
-      <SettingsButton />
+      <Box
+        sx={{
+          position: 'absolute',
+          top: 0,
+          right: 0,
+          pt: 3,
+          pr: 3,
+        }}>
+        <SettingsButton />
+      </Box>
     </Box>
   );
 }

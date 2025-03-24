@@ -4,7 +4,6 @@ import { useAuthStore } from '@/store';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { login } from '@/api';
-import LoginLayout from '@/layout/LoginLayout';
 
 export default function Login() {
   const theme = useTheme();
@@ -25,49 +24,47 @@ export default function Login() {
   };
 
   return (
-    <LoginLayout>
-      <Box
+    <Box
+      sx={{
+        maxWidth: 400,
+        width: '100%',
+        p: 2,
+      }}
+    >
+      <Typography
+        variant="h4"
         sx={{
-          maxWidth: 400,
-          width: '100%',
-          p: 2,
+          mb: 2,
+          color: theme.palette.text.primary,
         }}
       >
-        <Typography
-          variant="h4"
-          sx={{
-            mb: 2,
-            color: theme.palette.text.primary,
-          }}
-        >
-          {t('login')}
-        </Typography>
-        <TextField
-          label={t('username')}
-          fullWidth
-          margin="normal"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-        />
-        <TextField
-          label={t('password')}
-          type="password"
-          fullWidth
-          margin="normal"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <Button
-          variant="contained"
-          fullWidth
-          sx={{
-            mt: 2,
-          }}
-          onClick={handleLogin}
-        >
-          {t('login')}
-        </Button>
-      </Box>
-    </LoginLayout>
+        {t('login')}
+      </Typography>
+      <TextField
+        label={t('username')}
+        fullWidth
+        margin="normal"
+        value={username}
+        onChange={(e) => setUsername(e.target.value)}
+      />
+      <TextField
+        label={t('password')}
+        type="password"
+        fullWidth
+        margin="normal"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+      />
+      <Button
+        variant="contained"
+        fullWidth
+        sx={{
+          mt: 2,
+        }}
+        onClick={handleLogin}
+      >
+        {t('login')}
+      </Button>
+    </Box>
   );
 }

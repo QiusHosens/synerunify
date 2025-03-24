@@ -1,4 +1,4 @@
-import { IconButton, Menu, MenuItem, Divider, useTheme } from '@mui/material';
+import { IconButton, Menu, MenuItem, Divider, useTheme, Box } from '@mui/material';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { useState } from 'react';
 import { useThemeStore } from '@/store';
@@ -72,10 +72,12 @@ export default function SettingsButton() {
     <>
       <IconButton
         sx={{
-          position: 'absolute',
-          top: 2,
-          right: 2,
           color: theme.palette.text.primary,
+          animation: 'spin 5s linear infinite', // 添加旋转动画
+          '@keyframes spin': {
+            from: { transform: 'rotate(0deg)' },
+            to: { transform: 'rotate(360deg)' },
+          },
         }}
         color="inherit"
         onClick={handleSettingsClick}
