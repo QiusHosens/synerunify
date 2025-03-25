@@ -1,14 +1,16 @@
 import SettingsButton from '@/components/SettingsButton';
 import { useThemeStore } from '@/store';
 import { AppBar, Toolbar, Typography, Button } from '@mui/material';
+import { SxProps, Theme } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
 
 interface TopNavProps {
+  sx?: SxProps<Theme>;
   leftNavWidth: number;
   height: number;
 }
 
-export default function TopNav({ leftNavWidth, height }: TopNavProps) {
+export default function TopNav({ sx, leftNavWidth, height }: TopNavProps) {
   const { navPosition } = useThemeStore();
   const { t } = useTranslation();
 
@@ -18,7 +20,9 @@ export default function TopNav({ leftNavWidth, height }: TopNavProps) {
       sx={{
         width: navPosition === 'left' ? 'calc(100% - ' + leftNavWidth + 'px)' : '100%',
         height: height,
-        backgroundColor: (theme) => theme.palette.primary.main,
+        translate: 'unset',
+        boxShadow: 'unset',
+        ...sx,
       }}
     >
       <Toolbar

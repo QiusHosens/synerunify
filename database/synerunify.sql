@@ -11,7 +11,7 @@
  Target Server Version : 80100 (8.1.0)
  File Encoding         : 65001
 
- Date: 10/03/2025 14:24:11
+ Date: 25/03/2025 11:18:41
 */
 
 SET NAMES utf8mb4;
@@ -35,7 +35,7 @@ CREATE TABLE `system_data_scope_rule`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '数据权限规则表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '数据权限规则表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of system_data_scope_rule
@@ -142,11 +142,15 @@ CREATE TABLE `system_menu`  (
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '菜单权限表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '菜单权限表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of system_menu
 -- ----------------------------
+INSERT INTO `system_menu` VALUES (1, '系统管理', '', 1, 100, 0, '/system', '#', NULL, NULL, 0, b'1', b'1', b'1', 1, '2025-03-25 03:07:08', 1, '2025-03-25 03:07:08', b'0');
+INSERT INTO `system_menu` VALUES (2, '配置管理', '', 1, 200, 0, '/config', '#', NULL, NULL, 0, b'1', b'1', b'1', 1, '2025-03-25 03:07:08', 1, '2025-03-25 03:07:08', b'0');
+INSERT INTO `system_menu` VALUES (3, '字典管理', '', 2, 1, 2, '/config/dict', '#', NULL, NULL, 0, b'1', b'1', b'1', 1, '2025-03-25 03:07:08', 1, '2025-03-25 03:07:08', b'0');
+INSERT INTO `system_menu` VALUES (4, '菜单管理', '', 2, 2, 2, '/config/menu', '#', NULL, NULL, 0, b'1', b'1', b'1', 1, '2025-03-25 03:07:08', 1, '2025-03-25 03:07:08', b'0');
 
 -- ----------------------------
 -- Table structure for system_notice
@@ -237,7 +241,7 @@ CREATE TABLE `system_role_menu`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '角色和菜单关联表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '角色和菜单关联表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of system_role_menu
@@ -342,12 +346,12 @@ CREATE TABLE `system_user`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '用户信息表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '用户信息表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of system_user
 -- ----------------------------
-INSERT INTO `system_user` VALUES (1, 'admin', '$2b$12$yXSooGoXZ.8sZT27UOc7Reu/BtP7Af19OwBUfUtYogQsXNz38h1RW', '超级管理员', '超级管理员', NULL, '123@qq.com', '18888888888', 0, '', 0, '', NULL, '0000', 1, 1, '2025-03-08 10:14:52', 1, '2025-03-08 10:14:52', b'0', 1);
+INSERT INTO `system_user` VALUES (1, 'admin', '$2b$12$yXSooGoXZ.8sZT27UOc7Reu/BtP7Af19OwBUfUtYogQsXNz38h1RW', '超级管理员', '超级管理员', NULL, '123@qq.com', '18888888888', 0, '', 0, '127.0.0.1', '2025-03-24 07:40:41', '0000', 1, 1, '2025-03-08 10:14:52', 1, '2025-03-24 07:40:40', b'0', 1);
 
 -- ----------------------------
 -- Table structure for system_user_post
@@ -385,7 +389,7 @@ CREATE TABLE `system_user_role`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '用户和角色关联表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '用户和角色关联表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of system_user_role

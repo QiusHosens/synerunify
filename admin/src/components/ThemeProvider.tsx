@@ -11,8 +11,8 @@ export default function ThemeProvider({ children }: { children: React.ReactNode 
       primary: { main: primary },
       secondary: { main: secondary },
       background: {
-        default: mode === 'light' ? '#f5f5f5' : '#141A21',
-        paper: mode === 'light' ? '#ffffff' : '#1e1e1e',
+        default: mode === 'light' ? '#FFF' : '#141A21',
+        paper: mode === 'light' ? '#FFF' : '#1C252E',
       },
     },
     typography: {

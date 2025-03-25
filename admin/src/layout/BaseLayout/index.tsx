@@ -25,14 +25,14 @@ export default function Layout() {
     position: 'relative',
     display: 'flex',
     flexDirection: isVertical ? 'column' : 'row',
-    // flexDirection: navPosition === 'top' ? 'column' : navPosition === 'bottom' ? 'column-reverse' : 'row',
     minHeight: '100vh',
     width: '100%',
+    // bgcolor: 'background.default'
   };
 
   return (
     <>
-      <TopNavFixed leftNavWidth={leftNavWidth} height={topFixedNavHeight} />
+      <TopNavFixed sx={{bgcolor: 'background.default',}} leftNavWidth={leftNavWidth} height={topFixedNavHeight} />
       <Box sx={layoutStyles}>
         {
           navPosition === 'left' ? <LeftNav sx={{
