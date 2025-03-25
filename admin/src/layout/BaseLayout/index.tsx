@@ -1,19 +1,26 @@
 import { Box } from '@mui/material';
 import { Outlet } from 'react-router-dom';
 import TopNavFixed from './TopNavFixed';
-import { useAuthStore, useThemeStore } from '@/store';
+import { useAuthStore, useHomeStore, useThemeStore } from '@/store';
 import LeftNav from './LeftNav';
 import BottomNav from './BottomNav';
 import TopNav from './TopNav';
-import { useEffect } from 'react';
-import { getHome } from '@/api';
+import { useEffect, useState } from 'react';
+import { getHome, HomeMenuResponse } from '@/api';
 
-export default function Layout() {
+interface LayoutProps {
+  children?: React.ReactNode; // 添加 children 属性
+}
+
+export default function Layout({ children }: LayoutProps) {
   const { navPosition } = useThemeStore();
   const topFixedNavHeight = 72; // 固定顶部导航栏高度
   const topNavHeight = 64; // 顶部导航栏高度
   const bottomNavHeight = 72; // 底部导航栏高度
   const leftNavWidth = 288; // 左侧导航栏宽度
+
+  const { access_token } = useAuthStore();
+  const { nickname, routes, fetchAndSetHome } = useHomeStore();
 
   // 导航项
   const navItems = [
@@ -33,19 +40,8 @@ export default function Layout() {
   };
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await getHome();
-        console.log('home data:', data);
-      } catch (error) {
-        console.error('Fetch home failed:', error);
-      }
-    };
-    fetchData();
-    // setInterval(() => {
-    //   fetchData();
-    // }, 1000);
-  }, []);
+    fetchAndSetHome(access_token);
+  }, [access_token]);
 
   return (
     <>
@@ -76,7 +72,7 @@ export default function Layout() {
               : `calc(100vh - ${topFixedNavHeight}px - 48px)`, // 左侧或底部导航时调整高度
           }}
         >
-          <Outlet />
+          {children || <Outlet />}
         </Box>
       </Box>
     </>
