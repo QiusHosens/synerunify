@@ -29,7 +29,7 @@ export const refreshToken = (data: String): Promise<TokenResponse> => {
   return api.post<TokenResponse>(apis.refreshToken, data);
 };
 
-interface HomeMenuResponse {
+export interface HomeMenuResponse {
   name: string; // 菜单名称
   type: number; // 菜单类型
   sort: number; // 显示顺序
