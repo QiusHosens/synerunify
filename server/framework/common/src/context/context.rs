@@ -6,6 +6,7 @@ pub struct UserTenantContext {
     pub(crate) tenant_id: i64, // 租户id
 }
 
+/// 登录用户信息,修改了该信息中的关联内容,都需要清空该缓存,使用户重新登录,以此保证信息的正确性
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct LoginUserContext {
     pub id: i64,  // 用户id

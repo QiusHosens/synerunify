@@ -74,7 +74,7 @@ pub async fn login(db: &DatabaseConnection, request_context: RequestContext, req
     Ok(auth)
 }
 
-pub async fn refresh_token(db: &DatabaseConnection, request_context: RequestContext, refresh_token: String) -> Result<AuthBody> {
+pub async fn refresh_token(_db: &DatabaseConnection, _request_context: RequestContext, refresh_token: String) -> Result<AuthBody> {
     let auth = match common::utils::jwt_utils::refresh_token(refresh_token).await {
         Ok(auth) => auth,
         Err(_) => {
@@ -87,9 +87,13 @@ pub async fn refresh_token(db: &DatabaseConnection, request_context: RequestCont
 pub async fn home(db: &DatabaseConnection, login_user: LoginUserContext) -> Result<HomeResponse> {
     let system_user = service::system_user::find_by_id(db, login_user.id).await?;
     let nickname = system_user.map(|u| u.nickname).unwrap_or("".to_string());
+    // 查询角色菜单
+    let menu_id_list = service::system_role_menu::get_role_menu_ids(db, login_user.role_id).await?;
+    let menus = service::system_menu::get_home_by_ids(db, menu_id_list).await?;
+
     let response = HomeResponse {
         nickname,
-        menus: "".to_string()
+        menus
     };
     Ok(response)
 }
@@ -116,10 +120,14 @@ fn invoke_after_login(db: &DatabaseConnection, user: SystemUserModel, request_co
 
 async fn cache_login_user(db: &DatabaseConnection, user: SystemUserModel) -> Result<()> {
     // 查询部门信息
-    let department_result = service::system_department::find_by_id(db, user.department_id).await?;
+    let _department_result = service::system_department::find_by_id(db, user.department_id).await?;
     let role_id = service::system_user_role::get_role_id_by_user_id(db, user.id).await?;
+    info!("role id {:?}", role_id);
+    let menu_id_list = service::system_role_menu::get_role_menu_ids(db, role_id).await?;
+    info!("menu id list {:?}", menu_id_list);
     // 权限码
-    let permissions = service::system_role_menu::get_role_menu_permissions(db, role_id).await?;
+    let permissions = service::system_menu::get_menus_permissions(db, menu_id_list).await?;
+    info!("permissions {:?}", permissions);
     let login_user = LoginUserContext {
         id: user.id,
         nickname: user.nickname,

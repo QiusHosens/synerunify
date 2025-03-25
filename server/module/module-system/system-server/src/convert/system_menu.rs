@@ -1,7 +1,7 @@
 use sea_orm::{Set, NotSet};
 use crate::model::system_menu::{self, Model as SystemMenu, ActiveModel as SystemMenuActiveModel};
 use system_model::request::system_menu::{CreateSystemMenuRequest, UpdateSystemMenuRequest};
-use system_model::response::system_menu::SystemMenuResponse;
+use system_model::response::system_menu::{HomeMenuResponse, SystemMenuResponse};
 
 pub fn create_request_to_model(request: &CreateSystemMenuRequest) -> SystemMenuActiveModel {
     SystemMenuActiveModel {
@@ -86,5 +86,22 @@ pub fn model_to_response(model: SystemMenu) -> SystemMenuResponse {
         create_time: model.create_time,
         updater: model.updater,
         update_time: model.update_time,
+    }
+}
+
+pub fn model_to_home_response(model: SystemMenu) -> HomeMenuResponse {
+    HomeMenuResponse {
+        name: model.name,
+        r#type: model.r#type,
+        sort: model.sort,
+        parent_id: model.parent_id,
+        path: model.path,
+        icon: model.icon,
+        component: model.component,
+        component_name: model.component_name,
+        status: model.status,
+        visible: model.visible,
+        keep_alive: model.keep_alive,
+        always_show: model.always_show,
     }
 }

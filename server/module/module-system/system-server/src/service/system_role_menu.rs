@@ -5,6 +5,7 @@ use system_model::response::system_role_menu::SystemRoleMenuResponse;
 use crate::convert::system_role_menu::{create_request_to_model, update_request_to_model, model_to_response};
 use anyhow::{Result, anyhow};
 use sea_orm::ActiveValue::Set;
+use tracing::info;
 use common::base::page::PaginatedResponse;
 use common::context::context::LoginUserContext;
 use common::interceptor::orm::active_filter::ActiveFilterEntityTrait;
@@ -81,12 +82,9 @@ pub async fn list(db: &DatabaseConnection, login_user: LoginUserContext) -> Resu
     Ok(list.into_iter().map(model_to_response).collect())
 }
 
-pub async fn get_role_menu_permissions(db: &DatabaseConnection, role_id: i64) -> Result<Vec<String>> {
+pub async fn get_role_menu_ids(db: &DatabaseConnection, role_id: i64) -> Result<Vec<i64>> {
     let list = SystemRoleMenuEntity::find_active()
-        .select_only()
-        .column(Column::MenuId)
         .filter(Column::RoleId.eq(role_id))
         .all(db).await?;
-    let permissions = service::system_menu::get_menus_permissions(db, list.into_iter().map(|m| m.menu_id).collect()).await?;
-    Ok(permissions)
+    Ok(list.into_iter().map(|m| m.menu_id).collect())
 }

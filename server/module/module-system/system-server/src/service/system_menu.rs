@@ -1,8 +1,8 @@
 use sea_orm::{DatabaseConnection, EntityTrait, ColumnTrait, ActiveModelTrait, PaginatorTrait, QueryOrder, QueryFilter, Condition, QuerySelect};
 use crate::model::system_menu::{Model as SystemMenuModel, ActiveModel as SystemMenuActiveModel, Entity as SystemMenuEntity, Column};
 use system_model::request::system_menu::{CreateSystemMenuRequest, UpdateSystemMenuRequest, PaginatedKeywordRequest};
-use system_model::response::system_menu::SystemMenuResponse;
-use crate::convert::system_menu::{create_request_to_model, update_request_to_model, model_to_response};
+use system_model::response::system_menu::{HomeMenuResponse, SystemMenuResponse};
+use crate::convert::system_menu::{create_request_to_model, update_request_to_model, model_to_response, model_to_home_response};
 use anyhow::{Result, anyhow};
 use sea_orm::ActiveValue::Set;
 use common::base::page::PaginatedResponse;
@@ -78,14 +78,22 @@ pub async fn list(db: &DatabaseConnection, login_user: LoginUserContext) -> Resu
     Ok(list.into_iter().map(model_to_response).collect())
 }
 
+pub async fn get_home_by_ids(db: &DatabaseConnection, ids: Vec<i64>) -> Result<Vec<HomeMenuResponse>> {
+    if ids.is_empty() {
+        return Ok(Vec::new())
+    }
+    let system_menu_list = SystemMenuEntity::find_active()
+        .filter(Column::Id.is_in(ids))
+        .all(db).await?;
+    Ok(system_menu_list.into_iter().map(model_to_home_response).collect())
+}
+
 pub async fn get_menus_permissions(db: &DatabaseConnection, ids: Vec<i64>) -> Result<Vec<String>> {
     if ids.is_empty() {
         return Ok(Vec::new())
     }
     let system_menu_list = SystemMenuEntity::find_active()
-        .select_only()
-        .column(Column::Permission)
         .filter(Column::Id.is_in(ids))
         .all(db).await?;
-    Ok(system_menu_list.into_iter().map(|m| m.permission).collect())
+    Ok(system_menu_list.into_iter().map(|m| m.permission).filter(|p| !p.is_empty()).collect())
 }
