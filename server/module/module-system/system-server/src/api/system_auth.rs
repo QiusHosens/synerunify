@@ -4,7 +4,7 @@ use common::base::response::CommonResult;
 use common::context::context::{LoginUserContext, RequestContext};
 use common::utils::jwt_utils::AuthBody;
 use ctor;
-use system_model::request::system_auth::LoginRequest;
+use system_model::request::system_auth::{LoginRequest, RefreshTokenRequest};
 use utoipa_axum::router::OpenApiRouter;
 use utoipa_axum::routes;
 use system_model::response::system_auth::HomeResponse;
@@ -12,12 +12,12 @@ use system_model::response::system_auth::HomeResponse;
 pub async fn system_auth_router(state: AppState) -> OpenApiRouter {
     OpenApiRouter::new()
         .routes(routes!(login))
+        .routes(routes!(refresh_token))
         .with_state(state)
 }
 
 pub async fn system_auth_need_router(state: AppState) -> OpenApiRouter {
     OpenApiRouter::new()
-        .routes(routes!(refresh_token))
         .routes(routes!(home))
         .with_state(state)
 }
@@ -64,17 +64,16 @@ async fn login(
 )]
 async fn refresh_token(
     State(state): State<AppState>,
-    Extension(request_context): Extension<RequestContext>,
-    Json(payload): Json<String>,
+    Json(payload): Json<RefreshTokenRequest>,
 ) -> CommonResult<AuthBody> {
-    match service::system_auth::refresh_token(&state.db, request_context, payload).await {
+    match service::system_auth::refresh_token(&state.db, payload.refresh_token).await {
         Ok(data) => {CommonResult::with_data(data)}
         Err(e) => {CommonResult::with_err(&e.to_string())}
     }
 }
 
 #[utoipa::path(
-    post,
+    get,
     path = "/home",
     operation_id = "system_auth_home",
     responses(

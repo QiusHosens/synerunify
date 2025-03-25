@@ -1,10 +1,12 @@
 import { Box } from '@mui/material';
 import { Outlet } from 'react-router-dom';
 import TopNavFixed from './TopNavFixed';
-import { useThemeStore } from '@/store';
+import { useAuthStore, useThemeStore } from '@/store';
 import LeftNav from './LeftNav';
 import BottomNav from './BottomNav';
 import TopNav from './TopNav';
+import { useEffect } from 'react';
+import { getHome } from '@/api';
 
 export default function Layout() {
   const { navPosition } = useThemeStore();
@@ -30,9 +32,24 @@ export default function Layout() {
     // bgcolor: 'background.default'
   };
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await getHome();
+        console.log('home data:', data);
+      } catch (error) {
+        console.error('Fetch home failed:', error);
+      }
+    };
+    fetchData();
+    // setInterval(() => {
+    //   fetchData();
+    // }, 1000);
+  }, []);
+
   return (
     <>
-      <TopNavFixed sx={{bgcolor: 'background.default',}} leftNavWidth={leftNavWidth} height={topFixedNavHeight} />
+      <TopNavFixed sx={{ bgcolor: 'background.default', }} leftNavWidth={leftNavWidth} height={topFixedNavHeight} />
       <Box sx={layoutStyles}>
         {
           navPosition === 'left' ? <LeftNav sx={{

@@ -11,3 +11,10 @@ pub struct LoginRequest {
     pub password: String, // 密码
     
 }
+
+#[derive(Serialize, Deserialize, Debug, ToSchema)]
+pub struct RefreshTokenRequest {
+
+    pub refresh_token: String, // 刷新token
+
+}

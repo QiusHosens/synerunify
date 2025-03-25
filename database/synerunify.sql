@@ -11,7 +11,7 @@
  Target Server Version : 80100 (8.1.0)
  File Encoding         : 65001
 
- Date: 25/03/2025 11:18:41
+ Date: 25/03/2025 14:05:29
 */
 
 SET NAMES utf8mb4;
@@ -35,7 +35,7 @@ CREATE TABLE `system_data_scope_rule`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '数据权限规则表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '数据权限规则表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of system_data_scope_rule
@@ -89,7 +89,7 @@ CREATE TABLE `system_dict_data`  (
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '字典数据表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '字典数据表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of system_dict_data
@@ -111,7 +111,7 @@ CREATE TABLE `system_dict_type`  (
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '字典类型表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '字典类型表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of system_dict_type
@@ -169,7 +169,7 @@ CREATE TABLE `system_notice`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '通知公告表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '通知公告表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of system_notice
@@ -193,7 +193,7 @@ CREATE TABLE `system_post`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '职位信息表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '职位信息表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of system_post
@@ -220,11 +220,12 @@ CREATE TABLE `system_role`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '角色信息表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '角色信息表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of system_role
 -- ----------------------------
+INSERT INTO `system_role` VALUES (1, 1, '超级管理员', 'super_admin', 0, 1, 1, '', '超级管理员', 1, '2025-03-25 03:28:46', 1, '2025-03-25 03:29:21', b'0', 0);
 
 -- ----------------------------
 -- Table structure for system_role_menu
@@ -241,11 +242,15 @@ CREATE TABLE `system_role_menu`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '角色和菜单关联表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '角色和菜单关联表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of system_role_menu
 -- ----------------------------
+INSERT INTO `system_role_menu` VALUES (1, 1, 1, 1, '2025-03-25 03:29:38', 1, '2025-03-25 03:29:38', b'0', 0);
+INSERT INTO `system_role_menu` VALUES (2, 1, 2, 1, '2025-03-25 03:29:55', 1, '2025-03-25 03:29:55', b'0', 0);
+INSERT INTO `system_role_menu` VALUES (3, 1, 3, 1, '2025-03-25 03:30:03', 1, '2025-03-25 03:30:03', b'0', 0);
+INSERT INTO `system_role_menu` VALUES (4, 1, 4, 1, '2025-03-25 03:30:10', 1, '2025-03-25 03:30:10', b'0', 0);
 
 -- ----------------------------
 -- Table structure for system_role_menu_data_scope
@@ -262,7 +267,7 @@ CREATE TABLE `system_role_menu_data_scope`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '角色菜单和数据权限关联表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '角色菜单和数据权限关联表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of system_role_menu_data_scope
@@ -351,7 +356,7 @@ CREATE TABLE `system_user`  (
 -- ----------------------------
 -- Records of system_user
 -- ----------------------------
-INSERT INTO `system_user` VALUES (1, 'admin', '$2b$12$yXSooGoXZ.8sZT27UOc7Reu/BtP7Af19OwBUfUtYogQsXNz38h1RW', '超级管理员', '超级管理员', NULL, '123@qq.com', '18888888888', 0, '', 0, '127.0.0.1', '2025-03-24 07:40:41', '0000', 1, 1, '2025-03-08 10:14:52', 1, '2025-03-24 07:40:40', b'0', 1);
+INSERT INTO `system_user` VALUES (1, 'admin', '$2b$12$Z3qIuiPAfF1.K75Bo0nDj.Z.XjHeB1vcEUgbxcerws3KYmRXdNfHa', '超级管理员', '超级管理员', NULL, '123@qq.com', '18888888888', 0, '', 0, '127.0.0.1', '2025-03-25 05:59:31', '0000', 1, 1, '2025-03-08 10:14:52', 1, '2025-03-25 05:59:27', b'0', 1);
 
 -- ----------------------------
 -- Table structure for system_user_post
@@ -368,7 +373,7 @@ CREATE TABLE `system_user_post`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '用户职位表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '用户职位表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of system_user_post
@@ -389,10 +394,11 @@ CREATE TABLE `system_user_role`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '用户和角色关联表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '用户和角色关联表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of system_user_role
 -- ----------------------------
+INSERT INTO `system_user_role` VALUES (1, 1, 1, 1, '2025-03-25 03:32:08', 1, '2025-03-25 03:32:08', b'0', 0);
 
 SET FOREIGN_KEY_CHECKS = 1;

@@ -74,7 +74,7 @@ pub async fn login(db: &DatabaseConnection, request_context: RequestContext, req
     Ok(auth)
 }
 
-pub async fn refresh_token(_db: &DatabaseConnection, _request_context: RequestContext, refresh_token: String) -> Result<AuthBody> {
+pub async fn refresh_token(_db: &DatabaseConnection, refresh_token: String) -> Result<AuthBody> {
     let auth = match common::utils::jwt_utils::refresh_token(refresh_token).await {
         Ok(auth) => auth,
         Err(_) => {

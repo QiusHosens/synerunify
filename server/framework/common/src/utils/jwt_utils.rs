@@ -6,6 +6,7 @@ use axum_extra::headers::Authorization;
 use axum_extra::TypedHeader;
 use chrono::{Duration, Utc};
 use jsonwebtoken::{decode, encode, Algorithm, DecodingKey, EncodingKey, Header, Validation};
+use jsonwebtoken::errors::{Error, ErrorKind};
 use once_cell::sync::Lazy;
 use serde::{Deserialize, Serialize};
 use serde_json::json;
@@ -79,7 +80,7 @@ impl IntoResponse for AuthError {
             AuthError::MissingCredentials => (StatusCode::BAD_REQUEST, "Missing credentials"),
             AuthError::TokenCreation => (StatusCode::INTERNAL_SERVER_ERROR, "Token creation error"),
             AuthError::InvalidToken => (StatusCode::BAD_REQUEST, "Invalid token"),
-            AuthError::TokenExpired => (StatusCode::BAD_REQUEST, "Expired token"),
+            AuthError::TokenExpired => (StatusCode::UNAUTHORIZED, "Expired token"),
             AuthError::CheckOutToken => (StatusCode::UNAUTHORIZED, "该账户已经退出"),
         };
         let body = Json(json!({
@@ -112,7 +113,10 @@ where
             &Validation::new(Algorithm::HS256),
         ).map_err(|e| {
             error!("decode token error, {}", e.to_string());
-            AuthError::InvalidToken
+            match e.kind() {
+                ErrorKind::ExpiredSignature => AuthError::TokenExpired,
+                _ => AuthError::InvalidToken
+            }
         })?;
 
         info!("token data: {:?}", token_data);
@@ -163,7 +167,7 @@ pub fn add_tenants(tenants: &[i64]) {
 pub fn generate_token_pair(user_id: i64, tenant_id: i64) -> Result<AuthBody, AuthError> {
     let now = Utc::now();
 
-    let access_exp = now.checked_add_signed(Duration::minutes(15)).unwrap().timestamp();
+    let access_exp = now.checked_add_signed(Duration::minutes(1)).unwrap().timestamp();
     let access_claims = AccessClaims {
         sub: user_id,
         tenant_id,
@@ -194,7 +198,13 @@ pub async fn refresh_token(refresh_token: String) -> Result<AuthBody, AuthError>
         &DecodingKey::from_secret(&*SECRET_KEY),
         &Validation::new(Algorithm::HS256),
     )
-        .map_err(|e| AuthError::InvalidToken)?;
+        .map_err(|e| {
+            error!("decode refresh token error, {}", e.to_string());
+            match e.kind() {
+                ErrorKind::ExpiredSignature => AuthError::TokenExpired,
+                _ => AuthError::InvalidToken
+            }
+        })?;
 
     info!("refresh token data: {:?}", token_data);
     let now = Utc::now().timestamp();
