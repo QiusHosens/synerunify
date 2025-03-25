@@ -1,6 +1,6 @@
 import { Button, TextField, Box, Typography, useTheme, Alert } from '@mui/material';
 import { useState } from 'react';
-import { useAuthStore } from '@/store';
+import { useAuthStore, useHomeStore } from '@/store';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { login } from '@/api';
@@ -12,6 +12,7 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const { login: loginStore } = useAuthStore();
+  const { fetchAndSetHome } = useHomeStore();
   const navigate = useNavigate();
   const { t } = useTranslation();
 
@@ -21,6 +22,10 @@ export default function Login() {
       let password_md5 = Md5.hashStr(password);
       const response = await login({ username, password: password_md5 });
       loginStore(response.token_type, response.access_token, response.refresh_token);
+      
+      // 登录成功后获取动态路由
+      await fetchAndSetHome(response.access_token);
+
       navigate('/dashboard');
     } catch (error) {
       if (error instanceof Error) {

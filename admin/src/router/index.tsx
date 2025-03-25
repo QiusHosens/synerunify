@@ -1,27 +1,59 @@
-import { useRoutes } from 'react-router-dom';
-import Layout from '@/layout/BaseLayout';
-import LoginLayout from '@/layout/LoginLayout'; // 新增导入
+import { lazy, Suspense, useEffect, useState } from 'react';
+import { Routes, Route, useNavigate } from 'react-router-dom';
+import { useAuthStore, useHomeStore } from '@/store';
 import Login from '@/pages/Login';
-import Dashboard from '@/pages/Dashboard';
+import Layout from '@/layout/BaseLayout';
+import React from 'react';
+import LoginLayout from '@/layout/LoginLayout';
 
-const routes = [
-  {
-    path: '/',
-    element: <Layout />,
-    children: [
-      { path: 'dashboard', element: <Dashboard /> },
-    ],
-  },
-  {
-    path: '/login',
-    element: (
-      <LoginLayout>
-        <Login />
-      </LoginLayout>
-    ),
-  },
-];
+// 动态组件映射
+const componentMap: { [key: string]: React.LazyExoticComponent<React.ComponentType<any>> } = {
+  'pages/Dashboard': lazy(() => import('@/pages/Dashboard')),
+  'pages/MenuManage': lazy(() => import('@/pages/MenuManage')),
+  'pages/DictManage': lazy(() => import('@/pages/DictManage')),
+};
 
 export default function Router() {
-  return useRoutes(routes);
+  const { access_token } = useAuthStore();
+  const navigate = useNavigate();
+  const { routes, fetchAndSetHome } = useHomeStore();
+
+  // 获取动态路由
+  useEffect(() => {
+    // console.log('start init router')
+    fetchAndSetHome(access_token);
+  }, [access_token, navigate]);
+
+  // 未登录时跳转到登录页
+  if (!access_token) {
+    navigate('/login');
+  }
+
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <Routes>
+        {/* 静态路由：登录页面 */}
+        <Route path="/login" element={
+          <LoginLayout>
+            <Login />
+          </LoginLayout>} />
+        {/* 动态路由 */}
+        {routes.map((route) => (
+          <Route
+            key={route.path}
+            path={route.path}
+            element={
+              <Layout>
+                {componentMap[route.component] ? (
+                  React.createElement(componentMap[route.component])
+                ) : (
+                  <div>Component not found</div>
+                )}
+              </Layout>
+            }
+          />
+        ))}
+      </Routes>
+    </Suspense>
+  );
 }
