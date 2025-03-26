@@ -4,7 +4,7 @@ use crate::convert::system_data_scope_rule::create_request_to_model;
 use anyhow::{anyhow, Result};
 use sea_orm::{ActiveModelTrait, ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter, QuerySelect};
 use std::sync::Arc;
-use std::time::Duration;
+use std::time::{Duration, Instant};
 use axum::Json;
 use chrono::Utc;
 use jsonwebtoken::{decode, Algorithm, DecodingKey, Validation};
@@ -25,6 +25,7 @@ use crate::model::system_user::{Model as SystemUserModel};
 use crate::service;
 
 pub async fn login(db: &DatabaseConnection, request_context: RequestContext, request: LoginRequest) -> Result<AuthBody> {
+    let start = Instant::now();
     info!("into login: {:?}", request);
     // 验证验证码
 
@@ -42,6 +43,8 @@ pub async fn login(db: &DatabaseConnection, request_context: RequestContext, req
             return Err(anyhow!("用户不存在"));
         }
     };
+    let duration_select = start.elapsed();
+
     // 比较密码
     let is_match = match verify_password(request.password, user.clone().password) {
         Ok(isMatch) => {
@@ -54,6 +57,7 @@ pub async fn login(db: &DatabaseConnection, request_context: RequestContext, req
     if !is_match {
         return Err(anyhow!("账号或密码不正确"));
     }
+    let duration_match = start.elapsed();
 
     // 创建token
     let auth = match generate_token_pair(user.clone().id, user.tenant_id) {
@@ -63,6 +67,7 @@ pub async fn login(db: &DatabaseConnection, request_context: RequestContext, req
         }
     };
     info!("auth: {:?}", auth);
+    let duration_auth = start.elapsed();
     // 更新登录用户最近登录IP和时间
     // info!("request context: {:?}", request_context);
     // service::system_user::update_by_login(db, user.clone().id, request_context.clone().ip).await?;
@@ -71,6 +76,8 @@ pub async fn login(db: &DatabaseConnection, request_context: RequestContext, req
     // // 保存登录用户信息缓存
     // cache_login_user(db, user.clone()).await?;
     invoke_after_login(db, user.clone(), request_context.clone(), &auth);
+    let duration_after = start.elapsed();
+    println!("duration, select: {:?}, match: {:?}, auth: {:?}, after: {:?}", duration_select, duration_match, duration_auth, duration_after);
     Ok(auth)
 }
 
