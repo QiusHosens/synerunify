@@ -1,12 +1,11 @@
 import { Box } from '@mui/material';
 import { Outlet } from 'react-router-dom';
-import TopNavFixed from './TopNavFixed';
+import TopNavFixed from './TopFixed';
 import { useAuthStore, useHomeStore, useThemeStore } from '@/store';
-import LeftNav from './LeftNav';
-import BottomNav from './BottomNav';
-import TopNav from './TopNav';
-import { useEffect, useState } from 'react';
-import { getHome, HomeMenuResponse } from '@/api';
+import LeftNavigation from './LeftNavigation';
+import BottomNavigation from './BottomNavigation';
+import TopNavigation from './TopNavigation';
+import { useEffect } from 'react';
 
 interface LayoutProps {
   children?: React.ReactNode; // 添加 children 属性
@@ -41,17 +40,17 @@ export default function Layout({ children }: LayoutProps) {
       <TopNavFixed sx={{ bgcolor: 'background.default', }} leftNavWidth={leftNavWidth} height={topFixedNavHeight} />
       <Box sx={layoutStyles}>
         {
-          navPosition === 'left' ? <LeftNav sx={{
+          navPosition === 'left' ? <LeftNavigation sx={{
             mt: 0,
             height: '100%'
-          }} routeTree={routeTree} leftNavWidth={leftNavWidth}></LeftNav>
-            : navPosition === 'top' ? <TopNav sx={{
+          }} routeTree={routeTree} leftNavWidth={leftNavWidth}></LeftNavigation>
+            : navPosition === 'top' ? <TopNavigation sx={{
               mt: topFixedNavHeight + 'px',
               height: topNavHeight + 'px'
-            }} routeTree={routeTree}></TopNav> : <BottomNav sx={{
+            }} routeTree={routeTree}></TopNavigation> : <BottomNavigation sx={{
               bottom: '24px',
               height: bottomNavHeight + 'px'
-            }} routeTree={routeTree}></BottomNav>
+            }} routeTree={routeTree}></BottomNavigation>
         }
         <Box
           component="main"
