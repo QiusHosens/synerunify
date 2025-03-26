@@ -91,6 +91,7 @@ pub fn model_to_response(model: SystemMenu) -> SystemMenuResponse {
 
 pub fn model_to_home_response(model: SystemMenu) -> HomeMenuResponse {
     HomeMenuResponse {
+        id: model.id,
         name: model.name,
         r#type: model.r#type,
         sort: model.sort,

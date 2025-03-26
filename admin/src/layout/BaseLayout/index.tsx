@@ -20,14 +20,7 @@ export default function Layout({ children }: LayoutProps) {
   const leftNavWidth = 288; // 左侧导航栏宽度
 
   const { access_token } = useAuthStore();
-  const { nickname, routes, fetchAndSetHome } = useHomeStore();
-
-  // 导航项
-  const navItems = [
-    { label: 'Dashboard', path: '/dashboard' },
-    { label: 'Profile', path: '/profile' },
-    { label: 'Settings', path: '/settings' },
-  ];
+  const { nickname, routes, routeTree, fetchAndSetHome } = useHomeStore();
 
   const isVertical = navPosition === 'top' || navPosition === 'bottom';
   const layoutStyles = {
@@ -41,7 +34,7 @@ export default function Layout({ children }: LayoutProps) {
 
   useEffect(() => {
     fetchAndSetHome(access_token);
-  }, [access_token]);
+  }, [access_token, fetchAndSetHome]);
 
   return (
     <>
@@ -51,14 +44,14 @@ export default function Layout({ children }: LayoutProps) {
           navPosition === 'left' ? <LeftNav sx={{
             mt: 0,
             height: '100%'
-          }} navItems={navItems} leftNavWidth={leftNavWidth}></LeftNav>
+          }} routeTree={routeTree} leftNavWidth={leftNavWidth}></LeftNav>
             : navPosition === 'top' ? <TopNav sx={{
               mt: topFixedNavHeight + 'px',
               height: topNavHeight + 'px'
-            }} navItems={navItems}></TopNav> : <BottomNav sx={{
+            }} routeTree={routeTree}></TopNav> : <BottomNav sx={{
               bottom: '24px',
               height: bottomNavHeight + 'px'
-            }} navItems={navItems}></BottomNav>
+            }} routeTree={routeTree}></BottomNav>
         }
         <Box
           component="main"

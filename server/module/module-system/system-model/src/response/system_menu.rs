@@ -54,6 +54,8 @@ pub struct SystemMenuResponse {
 #[derive(Deserialize, Serialize, Debug, Clone, ToSchema)]
 pub struct HomeMenuResponse {
 
+    pub id: i64, // id
+
     pub name: String, // 菜单名称
 
     pub r#type: i8, // 菜单类型

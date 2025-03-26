@@ -2,13 +2,14 @@ import { Box, Drawer, List, ListItem, ListItemButton, ListItemText } from '@mui/
 import { useNavigate } from 'react-router-dom';
 import { useThemeStore } from '@/store';
 import { SxProps, Theme } from '@mui/material/styles';
+import { HomeMenuResponse } from '@/api';
 
 interface TopNavProps {
   sx?: SxProps<Theme>;
-  navItems: Array<any>;
+  routeTree: HomeMenuResponse[];
 }
 
-export default function TopNav({ sx, navItems }: TopNavProps) {
+export default function TopNav({ sx, routeTree }: TopNavProps) {
   const navigate = useNavigate();
 
   return (
@@ -25,15 +26,15 @@ export default function TopNav({ sx, navItems }: TopNavProps) {
           ...sx, // 合并外部传入的 sx
         }}
       >
-        {navItems.map((item) => (
-          <Box key={item.label} sx={{
+        {routeTree.map((item) => (
+          <Box key={item.id} sx={{
             width: 52,
             height: 52,
             borderRadius: 1,
             border: 1,
             ml: 2
           }}>
-            {item.label}
+            {item.name}
           </Box>
         ))}
       </Box>

@@ -1,13 +1,15 @@
 import { Box, List, ListItem, ListItemButton, ListItemText } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { SxProps, Theme } from '@mui/material/styles';
+import { HomeMenuResponse } from '@/api';
+import RenderMenuItems from './MenuRender';
 
 interface TopNavProps {
   sx?: SxProps<Theme>;
-  navItems: Array<any>;
+  routeTree: HomeMenuResponse[];
 }
 
-export default function TopNav({ sx, navItems }: TopNavProps) {
+export default function TopNav({ sx, routeTree }: TopNavProps) {
   const navigate = useNavigate();
 
   return (
@@ -20,13 +22,7 @@ export default function TopNav({ sx, navItems }: TopNavProps) {
         }}
       >
         <List sx={{ display: 'flex' }}>
-          {navItems.map((item) => (
-            <ListItem key={item.label} disablePadding>
-              <ListItemButton onClick={() => navigate(item.path)}>
-                <ListItemText primary={item.label} />
-              </ListItemButton>
-            </ListItem>
-          ))}
+          <RenderMenuItems routes={routeTree} />
         </List>
       </Box>
     </>

@@ -30,6 +30,7 @@ export const refreshToken = (data: String): Promise<TokenResponse> => {
 };
 
 export interface HomeMenuResponse {
+  id: number; // id
   name: string; // 菜单名称
   type: number; // 菜单类型
   sort: number; // 显示顺序
@@ -42,6 +43,7 @@ export interface HomeMenuResponse {
   visible: boolean; // 是否可见
   keep_alive: boolean; // 是否缓存
   always_show: boolean; // 是否总是显示
+  children?: Array<HomeMenuResponse>; // 子菜单
 }
 
 interface HomeResponse {

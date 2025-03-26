@@ -1,4 +1,5 @@
 import { getHome, HomeMenuResponse } from '@/api';
+import { buildTreeRoutes } from '@/utils/routeUtils';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
@@ -34,9 +35,11 @@ interface AuthState {
 // 主页状态,包括nickname,memus
 interface HomeState {
   nickname: string | null; // 昵称
-  routes: HomeMenuResponse[];
+  routes: HomeMenuResponse[]; // 路由列表
+  routeTree: HomeMenuResponse[]; // 路由树
   setNickname: (nickname: string) => void;
   setRoutes: (routes: HomeMenuResponse[]) => void;
+  setRouteTree: (routeTree: HomeMenuResponse[]) => void;
   fetchAndSetHome: (token: string | null) => Promise<void>;
 }
 
@@ -93,20 +96,31 @@ export const useAuthStore = create<AuthState>()(
   export const useHomeStore = create<HomeState>((set) => ({
     nickname: null,
     routes: [],
+    routeTree: [],
     setNickname: (nickname) => set({ nickname }),
     setRoutes: (routes) => set({ routes }),
+    setRouteTree: (routeTree) => set({ routeTree }),
     fetchAndSetHome: async (token) => {
+      const logout = () => {
+        useAuthStore.getState().logout();
+        window.location.href = '/login';
+      }
       if (token) {
         try {
           const routeData = await getHome();
           set({ nickname: routeData.nickname });
           set({ routes: routeData.menus });
+          set({ routeTree: buildTreeRoutes(routeData.menus) });
         } catch (error) {
           console.error('Failed to fetch routes:', error);
           set({ routes: [] }); // 获取失败时清空路由
+          // 退出登录
+          logout();
         }
       } else {
         set({ routes: [] }); // 无 token 时清空路由
+        // 退出登录
+        logout();
       }
     },
   }));
