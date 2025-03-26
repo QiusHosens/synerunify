@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useState } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 import { Routes, Route, useNavigate } from 'react-router-dom';
 import { useAuthStore, useHomeStore } from '@/store';
 import Login from '@/pages/Login';
@@ -7,7 +7,7 @@ import React from 'react';
 import LoginLayout from '@/layout/LoginLayout';
 
 // 动态组件映射
-const componentMap: { [key: string]: React.LazyExoticComponent<React.ComponentType<any>> } = {
+const componentMap: { [key: string]: React.LazyExoticComponent<React.ComponentType<Element>> } = {
   'pages/Dashboard': lazy(() => import('@/pages/Dashboard')),
   'pages/MenuManage': lazy(() => import('@/pages/MenuManage')),
   'pages/DictManage': lazy(() => import('@/pages/DictManage')),
@@ -22,7 +22,7 @@ export default function Router() {
   useEffect(() => {
     // console.log('start init router')
     fetchAndSetHome(access_token);
-  }, [access_token, navigate]);
+  }, [access_token, fetchAndSetHome, navigate]);
 
   // 未登录时跳转到登录页
   if (!access_token) {
