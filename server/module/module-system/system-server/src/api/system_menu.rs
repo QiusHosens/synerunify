@@ -10,7 +10,8 @@ use system_model::request::system_menu::{CreateSystemMenuRequest, UpdateSystemMe
 use system_model::response::system_menu::SystemMenuResponse;
 use common::base::response::CommonResult;
 use common::context::context::LoginUserContext;
-use crate::{service, AppState};
+use crate::service;
+use common::state::app_state::AppState;
 
 pub async fn system_menu_router(state: AppState) -> OpenApiRouter {
     OpenApiRouter::new()

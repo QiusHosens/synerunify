@@ -7,8 +7,10 @@ use std::sync::Arc;
 use tokio::sync::Mutex;
 use tower_http::cors::{Any, CorsLayer};
 use tracing::info;
+use uaparser::UserAgentParser;
 use common::database::mongo::MongoManager;
 use common::middleware::logger;
+use common::state::app_state::AppState;
 use common::task::task_manager::TaskManager;
 use crate::task::logger_task::LoginLoggerTask;
 use crate::task::operation_logger::OperationLoggerTask;
@@ -38,7 +40,9 @@ async fn main() -> Result<(), anyhow::Error> {
         .allow_methods(vec![Method::GET, Method::POST])
         .allow_headers(Any);
 
-    let state = AppState { };
+    let ua_parser = UserAgentParser::from_yaml("regexes.yaml").expect("Failed to load regexes.yaml");
+
+    let state = AppState { db: Default::default(), ua_parser };
 
     // let app = Router::new()
     //     .fallback_service(config.api_prefix.as_ref(), route::api(database).await)
@@ -110,9 +114,4 @@ async fn main() -> Result<(), anyhow::Error> {
     // server_handle.abort();
 
     Ok(())
-}
-
-#[derive(Clone)]
-pub struct AppState {
-
 }

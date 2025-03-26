@@ -10,7 +10,8 @@ use system_model::request::system_tenant_package::{CreateSystemTenantPackageRequ
 use system_model::response::system_tenant_package::SystemTenantPackageResponse;
 use common::base::response::CommonResult;
 use common::context::context::LoginUserContext;
-use crate::{service, AppState};
+use crate::service;
+use common::state::app_state::AppState;
 
 pub async fn system_tenant_package_router(state: AppState) -> OpenApiRouter {
     OpenApiRouter::new()

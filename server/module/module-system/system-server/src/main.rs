@@ -7,7 +7,9 @@ use std::sync::Arc;
 use sea_orm::DatabaseConnection;
 use tower_http::cors::{Any, CorsLayer};
 use tracing::info;
+use uaparser::UserAgentParser;
 use common::middleware::logger;
+use common::state::app_state::AppState;
 use crate::initializer::initialize;
 
 mod api;
@@ -24,12 +26,14 @@ async fn main() -> Result<(), anyhow::Error> {
     let config = Config::load();
     let database = get_database_instance(config.database_url).await;
 
+    let ua_parser = UserAgentParser::from_yaml("regexes.yaml").expect("Failed to load regexes.yaml");
+
     let cors = CorsLayer::new()
         .allow_origin(Any)
         .allow_methods(vec![Method::GET, Method::POST])
         .allow_headers(Any);
 
-    let state = AppState { db: database.clone() };
+    let state = AppState { db: database.clone(), ua_parser };
 
     // 执行初始化
     initialize(state.clone()).await;
@@ -39,16 +43,12 @@ async fn main() -> Result<(), anyhow::Error> {
     //     .layer(cors);
     let app = route::api(state).await
         .layer(cors)
-        .layer(axum::middleware::from_fn(logger::panic_handler)); // 添加异常处理中间件
+        .layer(axum::middleware::from_fn(logger::panic_handler)) // 添加异常处理中间件
+        ;
 
     let addr = format!("0.0.0.0:{}", config.server_port);
     let listener = tokio::net::TcpListener::bind(&addr).await?;
     info!("Server running on {}", addr);
     axum::serve(listener, app.into_make_service_with_connect_info::<std::net::SocketAddr>()).await?;
     Ok(())
-}
-
-#[derive(Clone)]
-pub struct AppState {
-    db: DatabaseConnection,
 }

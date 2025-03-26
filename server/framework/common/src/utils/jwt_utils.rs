@@ -18,6 +18,7 @@ static SECRET_KEY: Lazy<Vec<u8>> = Lazy::new(|| b"synerunify:token:secret-key".t
 // Access Token Claims
 #[derive(Debug, Serialize, Deserialize)]
 pub struct AccessClaims {
+    device_type: String, // 设备类型
     sub: i64,  // 用户id
     tenant_id: i64, // 租户id
     exp: i64, // 过期时间
@@ -27,6 +28,7 @@ pub struct AccessClaims {
 // Refresh Token Claims
 #[derive(Debug, Serialize, Deserialize)]
 struct RefreshClaims {
+    device_type: String, // 设备类型
     sub: i64,  // 用户id
     tenant_id: i64, // 租户id
     exp: i64, // 过期时间
@@ -131,7 +133,7 @@ where
         }
 
         // 获取用户登录信息
-        let context = RedisManager::get::<_, String>(format!("{}{}", REDIS_KEY_LOGIN_USER_PREFIX, claims.sub));
+        let context = RedisManager::get::<_, String>(format!("{}{}:{}", REDIS_KEY_LOGIN_USER_PREFIX, claims.device_type, claims.sub));
         let login_user = match context {
             Ok(Some(ctx_str)) => serde_json::from_str::<LoginUserContext>(&ctx_str)
                 .map_err(|_| AuthError::WrongCredentials),
@@ -164,11 +166,12 @@ pub fn add_tenants(tenants: &[i64]) {
 }
 
 // 生成 token 对
-pub fn generate_token_pair(user_id: i64, tenant_id: i64) -> Result<AuthBody, AuthError> {
+pub fn generate_token_pair(device_type: String, user_id: i64, tenant_id: i64) -> Result<AuthBody, AuthError> {
     let now = Utc::now();
 
-    let access_exp = now.checked_add_signed(Duration::minutes(1)).unwrap().timestamp();
+    let access_exp = now.checked_add_signed(Duration::minutes(15)).unwrap().timestamp();
     let access_claims = AccessClaims {
+        device_type: device_type.clone(),
         sub: user_id,
         tenant_id,
         exp: access_exp,
@@ -179,6 +182,7 @@ pub fn generate_token_pair(user_id: i64, tenant_id: i64) -> Result<AuthBody, Aut
 
     let refresh_exp = now.checked_add_signed(Duration::days(7)).unwrap().timestamp();
     let refresh_claims = RefreshClaims {
+        device_type: device_type.clone(),
         sub: user_id,
         tenant_id,
         exp: refresh_exp,
@@ -218,5 +222,5 @@ pub async fn refresh_token(refresh_token: String) -> Result<AuthBody, AuthError>
         return Err(AuthError::InvalidTenant);
     }
 
-    generate_token_pair(token_data.claims.sub, token_data.claims.tenant_id)
+    generate_token_pair(token_data.claims.device_type, token_data.claims.sub, token_data.claims.tenant_id)
 }

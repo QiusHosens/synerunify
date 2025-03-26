@@ -4,7 +4,7 @@ use axum::Router;
 use common::middleware::request_context::request_context_handler;
 use utoipa::OpenApi;
 use utoipa_axum::router::OpenApiRouter;
-use common::middleware::authorize::auth_handler;
+use common::middleware::authorize::authorize_handler;
 use common::middleware::operation_logger::operation_logger_handler;
 use crate::api::login_logger::login_logger_router;
 use crate::api::operation_logger::operation_logger_router;
@@ -41,7 +41,7 @@ pub async fn auth_router(state: AppState) -> OpenApiRouter {
     OpenApiRouter::new()
         .nest("/login_logger", login_logger_router(state.clone()).await)
         .nest("/operation_logger", operation_logger_router(state.clone()).await)
-        .layer(axum::middleware::from_fn(auth_handler))
+        .layer(axum::middleware::from_fn(authorize_handler))
         .layer(axum::middleware::from_fn(operation_logger_handler))
-        .layer(axum::middleware::from_fn(request_context_handler))
+        .layer(axum::middleware::from_fn_with_state(state.clone(), request_context_handler))
 }

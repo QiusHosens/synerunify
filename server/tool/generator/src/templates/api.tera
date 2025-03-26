@@ -10,7 +10,8 @@ use system_model::request::{{ table_name }}::{Create{{ request_model_name }}, Up
 use system_model::response::{{ table_name }}::{{ response_model_name }};
 use common::base::response::CommonResult;
 use common::context::context::LoginUserContext;
-use crate::{service, AppState};
+use crate::service;
+use common::state::app_state::AppState;
 
 pub async fn {{ table_name }}_router(state: AppState) -> OpenApiRouter {
     OpenApiRouter::new()

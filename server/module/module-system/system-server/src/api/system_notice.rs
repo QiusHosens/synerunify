@@ -10,7 +10,8 @@ use system_model::request::system_notice::{CreateSystemNoticeRequest, UpdateSyst
 use system_model::response::system_notice::SystemNoticeResponse;
 use common::base::response::CommonResult;
 use common::context::context::LoginUserContext;
-use crate::{service, AppState};
+use crate::service;
+use common::state::app_state::AppState;
 
 pub async fn system_notice_router(state: AppState) -> OpenApiRouter {
     OpenApiRouter::new()

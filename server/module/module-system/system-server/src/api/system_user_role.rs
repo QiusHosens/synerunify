@@ -10,7 +10,8 @@ use system_model::request::system_user_role::{CreateSystemUserRoleRequest, Updat
 use system_model::response::system_user_role::SystemUserRoleResponse;
 use common::base::response::CommonResult;
 use common::context::context::LoginUserContext;
-use crate::{service, AppState};
+use crate::service;
+use common::state::app_state::AppState;
 
 pub async fn system_user_role_router(state: AppState) -> OpenApiRouter {
     OpenApiRouter::new()

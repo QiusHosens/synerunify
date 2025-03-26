@@ -14,14 +14,13 @@ use crate::api::system_tenant_package::system_tenant_package_router;
 use crate::api::system_user::system_user_router;
 use crate::api::system_user_post::system_user_post_router;
 use crate::api::system_user_role::system_user_role_router;
-use crate::AppState;
 use axum::Router;
 use common::middleware::request_context::request_context_handler;
 use utoipa::{Modify, OpenApi};
-use utoipa::openapi::security::{Http, HttpAuthScheme, SecurityScheme};
 use utoipa_axum::router::OpenApiRouter;
 use common::middleware::authorize::{authorize_handler, init_route_authorizes};
 use common::middleware::operation_logger::operation_logger_handler;
+use common::state::app_state::AppState;
 use common::utils::jwt_utils::AccessClaims;
 
 // openapi document
@@ -73,10 +72,10 @@ pub async fn api(state: AppState) -> Router {
 
 pub async fn no_auth_router(state: AppState) -> OpenApiRouter {
     OpenApiRouter::new()
-        .nest("/system_auth", system_auth_router(state).await)
+        .nest("/system_auth", system_auth_router(state.clone()).await)
         .layer(axum::middleware::from_fn(authorize_handler))
         .layer(axum::middleware::from_fn(operation_logger_handler))
-        .layer(axum::middleware::from_fn(request_context_handler))
+        .layer(axum::middleware::from_fn_with_state(state.clone(), request_context_handler))
 }
 
 pub async fn auth_router(state: AppState) -> OpenApiRouter {
@@ -99,7 +98,7 @@ pub async fn auth_router(state: AppState) -> OpenApiRouter {
         .nest("/system_user_role", system_user_role_router(state.clone()).await)
         .layer(axum::middleware::from_fn(authorize_handler))
         .layer(axum::middleware::from_fn(operation_logger_handler))
-        .layer(axum::middleware::from_fn(request_context_handler))
+        .layer(axum::middleware::from_fn_with_state(state.clone(), request_context_handler))
         .layer(axum::middleware::from_extractor::<AccessClaims>())
 }
 

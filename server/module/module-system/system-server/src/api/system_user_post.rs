@@ -10,7 +10,8 @@ use system_model::request::system_user_post::{CreateSystemUserPostRequest, Updat
 use system_model::response::system_user_post::SystemUserPostResponse;
 use common::base::response::CommonResult;
 use common::context::context::LoginUserContext;
-use crate::{service, AppState};
+use crate::service;
+use common::state::app_state::AppState;
 
 pub async fn system_user_post_router(state: AppState) -> OpenApiRouter {
     OpenApiRouter::new()

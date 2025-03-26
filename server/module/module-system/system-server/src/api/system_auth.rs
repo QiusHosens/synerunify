@@ -1,4 +1,4 @@
-use crate::{service, AppState};
+use crate::service;
 use axum::{extract::{Json, State}, routing::post, Extension, Router};
 use common::base::response::CommonResult;
 use common::context::context::{LoginUserContext, RequestContext};
@@ -7,6 +7,7 @@ use ctor;
 use system_model::request::system_auth::{LoginRequest, RefreshTokenRequest};
 use utoipa_axum::router::OpenApiRouter;
 use utoipa_axum::routes;
+use common::state::app_state::AppState;
 use system_model::response::system_auth::HomeResponse;
 
 pub async fn system_auth_router(state: AppState) -> OpenApiRouter {
@@ -18,6 +19,7 @@ pub async fn system_auth_router(state: AppState) -> OpenApiRouter {
 
 pub async fn system_auth_need_router(state: AppState) -> OpenApiRouter {
     OpenApiRouter::new()
+        .routes(routes!(logout))
         .routes(routes!(home))
         .with_state(state)
 }
@@ -58,9 +60,6 @@ async fn login(
         (status = 200, description = "login success", body = CommonResult<AuthBody>)
     ),
     tag = "system_auth",
-    security(
-        ("bearerAuth" = [])
-    )
 )]
 async fn refresh_token(
     State(state): State<AppState>,
@@ -68,6 +67,28 @@ async fn refresh_token(
 ) -> CommonResult<AuthBody> {
     match service::system_auth::refresh_token(&state.db, payload.refresh_token).await {
         Ok(data) => {CommonResult::with_data(data)}
+        Err(e) => {CommonResult::with_err(&e.to_string())}
+    }
+}
+
+#[utoipa::path(
+    post,
+    path = "/logout",
+    operation_id = "system_auth_logout",
+    responses(
+        (status = 200, description = "logout", body = CommonResult<String>)
+    ),
+    tag = "system_auth",
+    security(
+        ("bearerAuth" = [])
+    )
+)]
+async fn logout(
+    State(state): State<AppState>,
+    Extension(login_user): Extension<LoginUserContext>,
+) -> CommonResult<String> {
+    match service::system_auth::logout(&state.db, login_user).await {
+        Ok(_) => {CommonResult::with_none()}
         Err(e) => {CommonResult::with_err(&e.to_string())}
     }
 }

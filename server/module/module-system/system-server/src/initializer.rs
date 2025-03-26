@@ -3,8 +3,9 @@ use sea_orm::DatabaseConnection;
 use tracing::error;
 use common::database::redis::RedisManager;
 use common::database::redis_constants::REDIS_KEY_TENANTS_LIST;
+use common::state::app_state::AppState;
 use common::utils::jwt_utils::add_tenants;
-use crate::{service, AppState};
+use crate::service;
 
 /// 初始化执行
 pub async fn initialize(state: AppState) {

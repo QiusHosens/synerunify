@@ -9,6 +9,7 @@ pub struct UserTenantContext {
 /// 登录用户信息,修改了该信息中的关联内容,都需要清空该缓存,使用户重新登录,以此保证信息的正确性
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct LoginUserContext {
+    pub device_type: String, // 设备类型
     pub id: i64,  // 用户id
     pub nickname: String,  // 用户昵称
     pub tenant_id: i64, // 租户id
@@ -26,4 +27,5 @@ pub struct RequestContext {
     pub data: String, // 请求数据
     pub ip: String, // ip地址
     pub user_agent: String, // 用户代理
+    pub device_type: String, // 设备类型
 }

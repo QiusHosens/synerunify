@@ -51,7 +51,7 @@ pub async fn login(db: &DatabaseConnection, request_context: RequestContext, req
             isMatch
         }
         Err(_) => {
-            return Err(anyhow!("加密失败"));
+            return Err(anyhow!("账号或密码不正确"));
         }
     };
     if !is_match {
@@ -60,7 +60,7 @@ pub async fn login(db: &DatabaseConnection, request_context: RequestContext, req
     let duration_match = start.elapsed();
 
     // 创建token
-    let auth = match generate_token_pair(user.clone().id, user.tenant_id) {
+    let auth = match generate_token_pair(request_context.clone().device_type, user.clone().id, user.tenant_id) {
         Ok(auth) => auth,
         Err(_) => {
             return Err(anyhow!("服务端异常"));
@@ -91,6 +91,12 @@ pub async fn refresh_token(_db: &DatabaseConnection, refresh_token: String) -> R
     Ok(auth)
 }
 
+pub async fn logout(_db: &DatabaseConnection, login_user: LoginUserContext) -> Result<()> {
+    // 删除用户缓存
+    RedisManager::delete::<_>(format!("{}{}:{}", REDIS_KEY_LOGIN_USER_PREFIX, login_user.device_type, login_user.id))?;
+    Ok(())
+}
+
 pub async fn home(db: &DatabaseConnection, login_user: LoginUserContext) -> Result<HomeResponse> {
     let system_user = service::system_user::find_by_id(db, login_user.id).await?;
     let nickname = system_user.map(|u| u.nickname).unwrap_or("".to_string());
@@ -109,6 +115,10 @@ fn invoke_after_login(db: &DatabaseConnection, user: SystemUserModel, request_co
     let db_clone = db.clone();
     let auth_clone = auth.clone();
     tokio::spawn(async move {
+        // 保存登录用户信息缓存
+        if let Err(e) = cache_login_user(&db_clone, request_context.clone(), user.clone()).await {
+            error!("cache login user error: {}", e.to_string());
+        }
         // 更新登录用户最近登录IP和时间
         info!("request context: {:?}", request_context);
         if let Err(e) = service::system_user::update_by_login(&db_clone, user.clone().id, request_context.clone().ip).await {
@@ -118,14 +128,10 @@ fn invoke_after_login(db: &DatabaseConnection, user: SystemUserModel, request_co
         if let Err(e) = add_login_logger_redis(request_context.clone(), user.clone(), &auth_clone).await {
             error!("add login logger error: {}", e.to_string());
         };
-        // 保存登录用户信息缓存
-        if let Err(e) = cache_login_user(&db_clone, user.clone()).await {
-            error!("cache login user error: {}", e.to_string());
-        }
     });
 }
 
-async fn cache_login_user(db: &DatabaseConnection, user: SystemUserModel) -> Result<()> {
+async fn cache_login_user(db: &DatabaseConnection, request_context: RequestContext, user: SystemUserModel) -> Result<()> {
     // 查询部门信息
     let _department_result = service::system_department::find_by_id(db, user.department_id).await?;
     let role_id = service::system_user_role::get_role_id_by_user_id(db, user.id).await?;
@@ -136,6 +142,7 @@ async fn cache_login_user(db: &DatabaseConnection, user: SystemUserModel) -> Res
     let permissions = service::system_menu::get_menus_permissions(db, menu_id_list).await?;
     info!("permissions {:?}", permissions);
     let login_user = LoginUserContext {
+        device_type: request_context.clone().device_type,
         id: user.id,
         nickname: user.nickname,
         tenant_id: user.tenant_id,
@@ -145,7 +152,7 @@ async fn cache_login_user(db: &DatabaseConnection, user: SystemUserModel) -> Res
         permissions: permissions.join(",")
     };
     info!("login user {:?}", login_user);
-    RedisManager::set::<_, String>(format!("{}{}", REDIS_KEY_LOGIN_USER_PREFIX, user.id), serde_json::to_string(&login_user)?)?;
+    RedisManager::set::<_, String>(format!("{}{}:{}", REDIS_KEY_LOGIN_USER_PREFIX, request_context.device_type, user.id), serde_json::to_string(&login_user)?)?;
     Ok(())
 }
 
