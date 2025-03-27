@@ -31,7 +31,7 @@ pub static OPERATION_AUTHORIZES: Lazy<DashMap<String, Vec<String>>> = Lazy::new(
 
 /// 注册操作id和权限的函数
 pub fn register_operation_authorizes(operation_id: &str, authorizes: Vec<String>) {
-    println!("Registering operation id: {} with authorizes: {:?}", operation_id, authorizes);
+    // println!("Registering operation id: {} with authorizes: {:?}", operation_id, authorizes);
     OPERATION_AUTHORIZES.insert(operation_id.to_string(), authorizes);
 }
 
@@ -64,7 +64,7 @@ fn register_route_authorizes(method: Method, path: &str, operation_id: &str) {
     // println!("Registering route: {:?} with operation id: {:?}", path, operation_id);
     if let Some(authorizes) = OPERATION_AUTHORIZES.get(operation_id) {
         let is_dynamic_route = is_dynamic_route(path);
-        println!("Registering {} route: {:?} with authorizes: {:?}", if is_dynamic_route {"dynamic"} else {"static"}, path, authorizes.value());
+        // println!("Registering {} route: {:?} with authorizes: {:?}", if is_dynamic_route {"dynamic"} else {"static"}, path, authorizes.value());
         if is_dynamic_route {
             DYNAMIC_ROUTE_AUTHORIZES.insert(path.to_string(), authorizes.value().clone());
         } else {

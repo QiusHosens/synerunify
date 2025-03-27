@@ -5,9 +5,11 @@ use system_model::response::system_menu::{HomeMenuResponse, SystemMenuResponse};
 use crate::convert::system_menu::{create_request_to_model, update_request_to_model, model_to_response, model_to_home_response};
 use anyhow::{Result, anyhow};
 use sea_orm::ActiveValue::Set;
+use sea_orm::sea_query::{Expr, Query};
 use common::base::page::PaginatedResponse;
 use common::context::context::LoginUserContext;
 use common::interceptor::orm::active_filter::ActiveFilterEntityTrait;
+use crate::model::system_role_menu;
 
 pub async fn create(db: &DatabaseConnection, login_user: LoginUserContext, request: CreateSystemMenuRequest) -> Result<i64> {
     let mut system_menu = create_request_to_model(&request);
@@ -96,4 +98,32 @@ pub async fn get_menus_permissions(db: &DatabaseConnection, ids: Vec<i64>) -> Re
         .filter(Column::Id.is_in(ids))
         .all(db).await?;
     Ok(system_menu_list.into_iter().map(|m| m.permission).filter(|p| !p.is_empty()).collect())
+}
+
+pub async fn get_home_by_role_id(db: &DatabaseConnection, role_id: i64) -> Result<Vec<HomeMenuResponse>> {
+    let system_menu_list = get_role_menus(db, role_id).await?;
+    Ok(system_menu_list.into_iter().map(model_to_home_response).collect())
+}
+
+pub async fn get_role_menus_permissions(db: &DatabaseConnection, role_id: i64) -> Result<Vec<String>> {
+    let system_menu_list = get_role_menus(db, role_id).await?;
+    Ok(system_menu_list.into_iter().map(|m| m.permission).filter(|p| !p.is_empty()).collect())
+}
+
+pub async fn get_role_menus(db: &DatabaseConnection, role_id: i64) -> Result<Vec<SystemMenuModel>> {
+    let system_menu_list = SystemMenuEntity::find_active()
+        .filter(
+            Condition::any().add(
+                Column::Id.in_subquery(
+                    Query::select()
+                        .column(system_role_menu::Column::MenuId)
+                        .from(system_role_menu::Entity)
+                        .and_where(Expr::col(system_role_menu::Column::RoleId).eq(role_id.to_owned().clone()))
+                        .and_where(Expr::col(system_role_menu::Column::Deleted).eq(false))
+                        .to_owned()
+                )
+            )
+        )
+        .all(db).await?;
+    Ok(system_menu_list)
 }

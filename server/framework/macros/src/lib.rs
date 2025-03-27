@@ -9,7 +9,7 @@ use syn::token::Comma;
 #[proc_macro_attribute]
 pub fn require_authorize(args: TokenStream, input: TokenStream) -> TokenStream {
     let args = parse_macro_input!(args with Punctuated::<MetaNameValue, Comma>::parse_terminated);
-    println!("args: {:?}", args);
+    // println!("args: {:?}", args);
 
     // 提取 operation_id 和 authorize 参数
     let mut operation_id = String::new();
