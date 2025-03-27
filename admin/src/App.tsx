@@ -1,14 +1,17 @@
 import { BrowserRouter } from 'react-router-dom';
 import Router from './router';
 import ThemeProvider from './components/ThemeProvider';
+import { StyledEngineProvider } from '@mui/material/styles';
 
 function App() {
   return (
-    <BrowserRouter>
-      <ThemeProvider>
-        <Router />
-      </ThemeProvider>
-    </BrowserRouter>
+    <StyledEngineProvider injectFirst>
+      <BrowserRouter>
+        <ThemeProvider>
+          <Router />
+        </ThemeProvider>
+      </BrowserRouter>
+    </StyledEngineProvider>
   );
 }
 

@@ -32,7 +32,7 @@ const refreshToken = async () => {
     });
 
     const { token_type, access_token, refresh_token: newRefreshToken } = response.data.data;
-    console.log('refresh token', token_type, access_token, newRefreshToken, response.data);
+    // console.log('refresh token', token_type, access_token, newRefreshToken, response.data);
     useAuthStore.getState().login(token_type, access_token, newRefreshToken);
 
     return `${token_type} ${access_token}`;
