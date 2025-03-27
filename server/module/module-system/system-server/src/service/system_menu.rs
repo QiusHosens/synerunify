@@ -35,7 +35,7 @@ pub async fn update(db: &DatabaseConnection, login_user: LoginUserContext, reque
 pub async fn delete(db: &DatabaseConnection, login_user: LoginUserContext, id: i64) -> Result<()> {
     let system_menu = SystemMenuActiveModel {
         id: Set(id),
-        
+        updater: Set(Some(login_user.id)),
         deleted: Set(true),
         ..Default::default()
     };

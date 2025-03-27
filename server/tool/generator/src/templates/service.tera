@@ -34,6 +34,7 @@ pub async fn delete(db: &DatabaseConnection, login_user: LoginUserContext, id: i
     let {{ table_name }} = {{ model_name }}ActiveModel {
         id: Set(id),
         {% if has_tenant_field  %}tenant_id: Set(login_user.tenant_id),{% endif %}
+        updater: Set(Some(login_user.id)),
         deleted: Set(true),
         ..Default::default()
     };

@@ -34,6 +34,7 @@ pub async fn delete(db: &DatabaseConnection, login_user: LoginUserContext, id: i
     let system_department = SystemDepartmentActiveModel {
         id: Set(id),
         tenant_id: Set(login_user.tenant_id),
+        updater: Set(Some(login_user.id)),
         deleted: Set(true),
         ..Default::default()
     };
