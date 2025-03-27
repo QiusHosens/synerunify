@@ -107,6 +107,9 @@ request.interceptors.response.use(
         // 如果是刷新 token 失败后的重试，则直接登出
         logout();
       }
+    } else if (status === 403) {
+      // 403直接退出登录
+      logout();
     }
     return Promise.reject(error);
   }
