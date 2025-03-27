@@ -1,8 +1,7 @@
 use chrono::NaiveDateTime;
-use sea_orm::{Condition, LinkDef};
+use sea_orm::{Condition};
 use sea_orm::entity::prelude::*;
 use common::interceptor::orm::active_filter::ActiveFilterEntityTrait;
-use crate::model::{system_role, system_user_role};
 
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel)]
 #[sea_orm(table_name = "system_user")]
@@ -69,21 +68,3 @@ impl ActiveFilterEntityTrait for Entity {
 }
 
 impl ActiveModelBehavior for ActiveModel {}
-
-// 用户角色链
-pub struct UserRoleLink;
-
-impl Linked for UserRoleLink {
-    type FromEntity = system_role::Entity;
-    type ToEntity = Entity;
-
-    fn link(&self) -> Vec<LinkDef> {
-        vec![
-            system_user_role::Relation::Role.def().rev(),
-            system_user_role::Entity::belongs_to(system_role::Entity)
-                .from(system_user_role::Column::RoleId)
-                .to(system_role::Column::Id)
-                .into(),
-        ]
-    }
-}
