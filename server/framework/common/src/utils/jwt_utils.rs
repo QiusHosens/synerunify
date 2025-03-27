@@ -72,6 +72,7 @@ pub enum AuthError {
     TokenExpired,
     InvalidTenant,
     InvalidUser,
+    UserExpired, // 用户过期,用户权限变化,需重新登录
 }
 impl IntoResponse for AuthError {
     fn into_response(self) -> Response {
@@ -83,6 +84,7 @@ impl IntoResponse for AuthError {
             AuthError::TokenCreation => (StatusCode::INTERNAL_SERVER_ERROR, "Token creation error"),
             AuthError::InvalidToken => (StatusCode::BAD_REQUEST, "Invalid token"),
             AuthError::TokenExpired => (StatusCode::UNAUTHORIZED, "Expired token"),
+            AuthError::UserExpired => (StatusCode::FORBIDDEN, "Expired user"),
             AuthError::CheckOutToken => (StatusCode::UNAUTHORIZED, "该账户已经退出"),
         };
         let body = Json(json!({
@@ -136,9 +138,9 @@ where
         let context = RedisManager::get::<_, String>(format!("{}{}:{}", REDIS_KEY_LOGIN_USER_PREFIX, claims.device_type, claims.sub));
         let login_user = match context {
             Ok(Some(ctx_str)) => serde_json::from_str::<LoginUserContext>(&ctx_str)
-                .map_err(|_| AuthError::WrongCredentials),
-            Ok(None) => Err(AuthError::InvalidUser),
-            Err(_) => Err(AuthError::WrongCredentials),
+                .map_err(|_| AuthError::UserExpired),
+            Ok(None) => Err(AuthError::UserExpired),
+            Err(_) => Err(AuthError::UserExpired),
         }?;
         info!("login user: {:?}", login_user);
         parts.extensions.insert(login_user);
