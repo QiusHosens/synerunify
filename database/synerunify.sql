@@ -11,7 +11,7 @@
  Target Server Version : 80100 (8.1.0)
  File Encoding         : 65001
 
- Date: 25/03/2025 14:05:29
+ Date: 28/03/2025 18:00:18
 */
 
 SET NAMES utf8mb4;
@@ -142,15 +142,16 @@ CREATE TABLE `system_menu`  (
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '菜单权限表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '菜单权限表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of system_menu
 -- ----------------------------
-INSERT INTO `system_menu` VALUES (1, '系统管理', '', 1, 100, 0, '/system', '#', NULL, NULL, 0, b'1', b'1', b'1', 1, '2025-03-25 03:07:08', 1, '2025-03-25 03:07:08', b'0');
-INSERT INTO `system_menu` VALUES (2, '配置管理', '', 1, 200, 0, '/config', '#', NULL, NULL, 0, b'1', b'1', b'1', 1, '2025-03-25 03:07:08', 1, '2025-03-25 03:07:08', b'0');
-INSERT INTO `system_menu` VALUES (3, '字典管理', '', 2, 1, 2, '/config/dict', '#', NULL, NULL, 0, b'1', b'1', b'1', 1, '2025-03-25 03:07:08', 1, '2025-03-25 03:07:08', b'0');
-INSERT INTO `system_menu` VALUES (4, '菜单管理', '', 2, 2, 2, '/config/menu', '#', NULL, NULL, 0, b'1', b'1', b'1', 1, '2025-03-25 03:07:08', 1, '2025-03-25 03:07:08', b'0');
+INSERT INTO `system_menu` VALUES (1, 'Dashboard', '', 2, 50, 0, '/dashboard', '#', 'pages/Dashboard', 'Dashboard', 0, b'1', b'1', b'1', 1, '2025-03-25 03:07:08', 1, '2025-03-28 05:43:18', b'0');
+INSERT INTO `system_menu` VALUES (2, '系统管理', '', 1, 100, 0, '/system', '#', NULL, NULL, 0, b'1', b'1', b'1', 1, '2025-03-25 03:07:08', 1, '2025-03-25 09:40:02', b'0');
+INSERT INTO `system_menu` VALUES (3, '配置管理', '', 1, 200, 0, '/config', '#', NULL, NULL, 0, b'1', b'1', b'1', 1, '2025-03-25 03:07:08', 1, '2025-03-25 09:39:48', b'0');
+INSERT INTO `system_menu` VALUES (4, '字典管理', '', 2, 101, 2, '/config/dict', '#', 'pages/DictManage', 'DictManage', 0, b'1', b'1', b'1', 1, '2025-03-25 03:07:08', 1, '2025-03-28 03:47:29', b'0');
+INSERT INTO `system_menu` VALUES (5, '菜单管理', '', 2, 102, 2, '/config/menu', '#', 'pages/MenuManage', 'MenuManage', 0, b'1', b'1', b'1', 1, '2025-03-25 03:07:08', 1, '2025-03-28 03:47:34', b'0');
 
 -- ----------------------------
 -- Table structure for system_notice
@@ -242,7 +243,7 @@ CREATE TABLE `system_role_menu`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '角色和菜单关联表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '角色和菜单关联表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of system_role_menu
@@ -251,6 +252,7 @@ INSERT INTO `system_role_menu` VALUES (1, 1, 1, 1, '2025-03-25 03:29:38', 1, '20
 INSERT INTO `system_role_menu` VALUES (2, 1, 2, 1, '2025-03-25 03:29:55', 1, '2025-03-25 03:29:55', b'0', 0);
 INSERT INTO `system_role_menu` VALUES (3, 1, 3, 1, '2025-03-25 03:30:03', 1, '2025-03-25 03:30:03', b'0', 0);
 INSERT INTO `system_role_menu` VALUES (4, 1, 4, 1, '2025-03-25 03:30:10', 1, '2025-03-25 03:30:10', b'0', 0);
+INSERT INTO `system_role_menu` VALUES (5, 1, 5, 1, '2025-03-26 02:15:57', 1, '2025-03-26 02:15:57', b'0', 0);
 
 -- ----------------------------
 -- Table structure for system_role_menu_data_scope
@@ -356,7 +358,7 @@ CREATE TABLE `system_user`  (
 -- ----------------------------
 -- Records of system_user
 -- ----------------------------
-INSERT INTO `system_user` VALUES (1, 'admin', '$2b$12$Z3qIuiPAfF1.K75Bo0nDj.Z.XjHeB1vcEUgbxcerws3KYmRXdNfHa', '超级管理员', '超级管理员', NULL, '123@qq.com', '18888888888', 0, '', 0, '127.0.0.1', '2025-03-25 05:59:31', '0000', 1, 1, '2025-03-08 10:14:52', 1, '2025-03-25 05:59:27', b'0', 1);
+INSERT INTO `system_user` VALUES (1, 'admin', '$2b$06$Ohq86rDIvNuy/4ZvsTF4dOw.7I7QJj620LC25PwgYDmrKqKmKsJz6', '超级管理员', '超级管理员', NULL, '123@qq.com', '18888888888', 0, '', 0, '127.0.0.1', '2025-03-28 06:05:49', '0000', 1, 1, '2025-03-08 10:14:52', 1, '2025-03-28 06:05:47', b'0', 1);
 
 -- ----------------------------
 -- Table structure for system_user_post
