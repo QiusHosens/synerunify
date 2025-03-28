@@ -2,7 +2,7 @@ import { lazy, Suspense, useEffect } from 'react';
 import { Routes, Route, useNavigate } from 'react-router-dom';
 import { useAuthStore, useHomeStore } from '@/store';
 import Login from '@/pages/Login';
-import Layout from '@/layout/BaseLayout';
+import Layout from '@/layout/BaseLayout/Layout';
 import React from 'react';
 import LoginLayout from '@/layout/LoginLayout';
 

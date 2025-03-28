@@ -1,4 +1,5 @@
 import { getHome, HomeMenuResponse } from '@/api';
+import { deepClone } from '@/utils/objectUtils';
 import { buildTreeRoutes } from '@/utils/routeUtils';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
@@ -37,9 +38,11 @@ interface HomeState {
   nickname: string | null; // 昵称
   routes: HomeMenuResponse[]; // 路由列表
   routeTree: HomeMenuResponse[]; // 路由树
+  operates: HomeMenuResponse[]; // 操作
   setNickname: (nickname: string) => void;
   setRoutes: (routes: HomeMenuResponse[]) => void;
   setRouteTree: (routeTree: HomeMenuResponse[]) => void;
+  setOperates: (routeTree: HomeMenuResponse[]) => void;
   fetchAndSetHome: (token: string | null) => Promise<void>;
 }
 
@@ -93,34 +96,62 @@ export const useAuthStore = create<AuthState>()(
     name: 'auth-storage', // localStorage 中的键名
   }));
 
-  export const useHomeStore = create<HomeState>((set) => ({
-    nickname: null,
-    routes: [],
-    routeTree: [],
-    setNickname: (nickname) => set({ nickname }),
-    setRoutes: (routes) => set({ routes }),
-    setRouteTree: (routeTree) => set({ routeTree }),
-    fetchAndSetHome: async (token) => {
-      const logout = () => {
-        useAuthStore.getState().logout();
-        window.location.href = '/login';
-      }
-      if (token) {
-        try {
-          const routeData = await getHome();
-          set({ nickname: routeData.nickname });
-          set({ routes: routeData.menus });
-          set({ routeTree: buildTreeRoutes(routeData.menus) });
-        } catch (error) {
-          console.error('Failed to fetch routes:', error);
-          set({ routes: [] }); // 获取失败时清空路由
-          // 退出登录
-          logout();
+export const useHomeStore = create<HomeState>((set) => ({
+  nickname: null,
+  routes: [],
+  routeTree: [],
+  operates: [],
+  setNickname: (nickname) => set({ nickname }),
+  setRoutes: (routes) => set({ routes }),
+  setRouteTree: (routeTree) => set({ routeTree }),
+  setOperates: (operates) => set({ operates }),
+  fetchAndSetHome: async (token) => {
+    const logout = () => {
+      useAuthStore.getState().logout();
+      window.location.href = '/login';
+    }
+    if (token) {
+      try {
+        const routeData = await getHome();
+        set({ nickname: routeData.nickname });
+        let menus = routeData.menus;
+        // 排序
+        menus = menus.sort((m1, m2) => m1.sort - m2.sort);
+        // 处理路由
+        let routes = deepClone(menus);
+        routes = routes.filter(route => route.type == 2);
+        // 添加默认路由为第一个
+        if (routes.length > 0) {
+          let first = deepClone(routes[0]);
+          first.path = '/';
+          routes.splice(0, 0, first);
         }
-      } else {
-        set({ routes: [] }); // 无 token 时清空路由
+
+        // 菜单
+        let menuRoutes = deepClone(menus);
+        menuRoutes = menuRoutes.filter(route => route.type !== 3);
+
+        // 操作
+        let operates = deepClone(menus);
+        operates = operates.filter(route => route.type == 3);
+        
+        set({ routes: routes });
+        set({ routeTree: buildTreeRoutes(menuRoutes) });
+        set({ operates: operates });
+      } catch (error) {
+        console.error('Failed to fetch routes:', error);
+        set({ routes: [] }); // 获取失败时清空路由
+        set({ routeTree: [] });
+        set({ operates: [] });
         // 退出登录
         logout();
       }
-    },
-  }));
+    } else {
+      set({ routes: [] }); // 无 token 时清空路由
+      set({ routeTree: [] });
+      set({ operates: [] });
+      // 退出登录
+      logout();
+    }
+  },
+}));

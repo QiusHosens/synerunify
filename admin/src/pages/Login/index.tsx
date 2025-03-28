@@ -26,7 +26,7 @@ export default function Login() {
       // 登录成功后获取动态路由
       await fetchAndSetHome(response.access_token);
 
-      navigate('/dashboard');
+      navigate('/');
     } catch (error) {
       if (error instanceof Error) {
         setError(error.message || t('login_failed')); // 显示具体错误或默认消息

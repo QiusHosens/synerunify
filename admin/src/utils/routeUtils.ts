@@ -22,5 +22,21 @@ export const buildTreeRoutes = (routes: HomeMenuResponse[]): HomeMenuResponse[] 
     }
   });
 
-  return result;
+  // 递归排序函数
+  const sortRoutes = (routes: HomeMenuResponse[]): HomeMenuResponse[] => {
+    // 按照 sort 字段排序当前层级
+    routes.sort((a, b) => a.sort - b.sort);
+    
+    // 对每个节点的 children 递归排序
+    routes.forEach(route => {
+      if (route.children && route.children.length > 0) {
+        route.children = sortRoutes(route.children);
+      }
+    });
+    
+    return routes;
+  };
+
+  // 对整个树结构进行排序并返回
+  return sortRoutes(result);
 };
