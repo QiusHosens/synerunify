@@ -7,7 +7,7 @@ const apis = {
 }
 
 // 定义请求和响应的类型
-interface LoginRequest {
+export interface LoginRequest {
   username: string;
   password: string;
 }
@@ -23,10 +23,6 @@ interface TokenResponse {
 // API
 export const login = (data: LoginRequest): Promise<TokenResponse> => {
   return api.post<TokenResponse>(apis.login, data);
-};
-
-export const refreshToken = (data: String): Promise<TokenResponse> => {
-  return api.post<TokenResponse>(apis.refreshToken, data);
 };
 
 export interface HomeMenuResponse {

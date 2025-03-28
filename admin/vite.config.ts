@@ -9,7 +9,7 @@ export default defineConfig({
     react(),
     viteMockServe({
       mockPath: 'src/mocks',
-      enable: false,
+      enable: true,
     }),
   ],
   resolve: {
