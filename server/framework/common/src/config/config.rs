@@ -1,3 +1,4 @@
+use dotenvy::dotenv;
 use serde::Deserialize;
 use std::env;
 use std::sync::{Arc, OnceLock};
@@ -6,7 +7,8 @@ use tokio::sync::OnceCell;
 
 #[derive(Deserialize, Debug, Clone)]
 pub struct Config {
-    pub server_port: u16, // 服务端口
+    pub system_server_port: u16, // 服务端口
+    pub logger_server_port: u16, // 服务端口
     pub database_url: String, // 数据库地址
     pub api_prefix: String, // api前缀
     pub log_level: String, // 日志级别
@@ -18,8 +20,12 @@ static CONFIG_INSTANCE: OnceLock<Config> = OnceLock::new();
 
 impl Config {
     pub fn load() -> Config {
+        dotenv().ok();
         CONFIG_INSTANCE.get_or_init(|| {
-            let server_port = env::var("SERVER_PORT")
+            let system_server_port = env::var("SYSTEM_SERVER_PORT")
+                .unwrap_or_else(|_| "3000".to_string())
+                .parse::<u16>().unwrap_or_else(|_| 3000);
+            let logger_server_port = env::var("LOGGER_SERVER_PORT")
                 .unwrap_or_else(|_| "3000".to_string())
                 .parse::<u16>().unwrap_or_else(|_| 3000);
             let database_url = env::var("DATABASE_URL")
@@ -34,7 +40,8 @@ impl Config {
                 .unwrap_or_else(|_| "mongodb://synerunify:synerunify@127.0.0.1:27017".to_string());
 
             Config {
-                server_port,
+                system_server_port,
+                logger_server_port,
                 database_url,
                 api_prefix,
                 log_level,

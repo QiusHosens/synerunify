@@ -46,7 +46,7 @@ async fn main() -> Result<(), anyhow::Error> {
         .layer(axum::middleware::from_fn(logger::panic_handler)) // 添加异常处理中间件
         ;
 
-    let addr = format!("0.0.0.0:{}", config.server_port);
+    let addr = format!("0.0.0.0:{}", config.system_server_port);
     let listener = tokio::net::TcpListener::bind(&addr).await?;
     info!("Server running on {}", addr);
     axum::serve(listener, app.into_make_service_with_connect_info::<std::net::SocketAddr>()).await?;
