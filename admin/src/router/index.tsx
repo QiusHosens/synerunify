@@ -1,11 +1,11 @@
 import { lazy, Suspense, useEffect } from 'react';
 import { Routes, Route, useNavigate } from 'react-router-dom';
 import { useAuthStore, useHomeStore } from '@/store';
-// import Login from '@/pages/Login';
-import Login from '@/pages/Login/SignIn';
+import Login from '@/pages/Login';
+// import Login from '@/pages/Login/SignIn';
 import Layout from '@/layout/BaseLayout/Layout';
 import React from 'react';
-// import LoginLayout from '@/layout/LoginLayout';
+import LoginLayout from '@/layout/LoginLayout';
 
 // 动态组件映射
 const componentMap: { [key: string]: React.LazyExoticComponent<React.ComponentType<Element>> } = {
@@ -35,11 +35,11 @@ export default function Router() {
       <Routes>
         {/* 静态路由：登录页面 */}
         <Route path="/login" 
-        element={<Login />}
-        // element={
-        //   <LoginLayout>
-        //     <Login />
-        //   </LoginLayout>} 
+        // element={<Login />}
+        element={
+          <LoginLayout>
+            <Login />
+          </LoginLayout>} 
           />
         {/* 动态路由 */}
         {routes.map((route) => (
