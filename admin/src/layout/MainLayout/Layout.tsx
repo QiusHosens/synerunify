@@ -7,16 +7,22 @@ import SideMenu from "./SideMenu";
 import { useAuthStore, useHomeStore, useThemeStore } from "@/store";
 import { useEffect } from "react";
 import Header from "./Header";
+import TopMenu from "./TopMenu";
+import BottomMenu from "./BottomMenu";
 
 const xThemeComponents = {};
 
-export default function Layout(props: { disableCustomTheme?: boolean }) {
+interface LayoutProps {
+  children?: React.ReactNode; // 添加 children 属性
+}
+
+export default function Layout({ children }: LayoutProps) {
 
   const { navPosition } = useThemeStore();
-  const topFixedNavHeight = 72; // 固定顶部导航栏高度
-  const topNavHeight = 64; // 顶部导航栏高度
-  const bottomNavHeight = 72; // 底部导航栏高度
-  const leftNavWidth = 288; // 左侧导航栏宽度
+  const headerHeight = 72; // 固定顶部导航栏高度
+  const topMenuHeight = 64; // 顶部导航栏高度
+  const bottomMenuHeight = 72; // 底部导航栏高度
+  const sideMenuWidth = 288; // 左侧导航栏宽度
 
   const { access_token } = useAuthStore();
   const { nickname, routes, routeTree, fetchAndSetHome } = useHomeStore();
@@ -35,24 +41,36 @@ export default function Layout(props: { disableCustomTheme?: boolean }) {
   }, [access_token, fetchAndSetHome]);
 
   return (
-    <AppTheme {...props} themeComponents={xThemeComponents}>
+    <AppTheme themeComponents={xThemeComponents}>
       <CssBaseline enableColorScheme />
+      
       <Box sx={layoutStyles}>
         {
-          navPosition === 'left' ? <SideMenu routeTree={routeTree} sx={{
-            mt: 0,
-            height: '100%'
-          }}></SideMenu>
-            : navPosition === 'top' ? <TopNavigation sx={{
-              mt: topFixedNavHeight + 'px',
-              height: topNavHeight + 'px'
-            }} routeTree={routeTree}></TopNavigation> : <BottomNavigation sx={{
-              bottom: '24px',
-              height: bottomNavHeight + 'px'
-            }} routeTree={routeTree}></BottomNavigation>
+          navPosition === 'left' ?
+            (
+              <SideMenu routeTree={routeTree} sx={{
+                mt: 0,
+                height: '100%'
+              }} sideMenuWidth={sideMenuWidth}></SideMenu>
+            )
+            : navPosition === 'top' ?
+              (
+                <TopMenu sx={{
+                  mt: headerHeight + 'px',
+                  height: topMenuHeight + 'px'
+                }} routeTree={routeTree}></TopMenu>
+              )
+              :
+              (
+                <BottomMenu sx={{
+                  bottom: '1.5rem',
+                  height: bottomMenuHeight + 'px'
+                }} routeTree={routeTree}></BottomMenu>
+              )
         }
-        <Header></Header>
+        <Header sideMenuWidth={sideMenuWidth} height={headerHeight}></Header>
       </Box>
+
     </AppTheme>
   );
 }

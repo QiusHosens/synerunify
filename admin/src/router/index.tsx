@@ -3,7 +3,8 @@ import { Routes, Route, useNavigate } from 'react-router-dom';
 import { useAuthStore, useHomeStore } from '@/store';
 import Login from '@/pages/Login';
 // import Login from '@/pages/Login/SignIn';
-import Layout from '@/layout/BaseLayout/Layout';
+// import Layout from '@/layout/BaseLayout/Layout';
+import Layout from '@/layout/MainLayout/Layout';
 import React from 'react';
 import LoginLayout from '@/layout/LoginLayout';
 

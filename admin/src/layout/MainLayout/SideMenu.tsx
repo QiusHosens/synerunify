@@ -12,6 +12,7 @@ import Logo from "./Logo";
 
 interface SideMenuProps {
   sx?: SxProps<Theme>;
+  sideMenuWidth: number;
   routeTree: HomeMenuResponse[];
 }
 
@@ -28,13 +29,15 @@ const Drawer = styled(MuiDrawer)({
   },
 });
 
-export default function SideMenu({ sx, routeTree }: SideMenuProps) {
+export default function SideMenu({ sx, sideMenuWidth, routeTree }: SideMenuProps) {
   return (
     <Drawer
+      // width={sideMenuWidth}
       variant="permanent"
       sx={{
         display: { xs: "none", md: "block" },
         [`& .${drawerClasses.paper}`]: {
+          // width: {sideMenuWidth},
           backgroundColor: "background.paper",
         },
       }}
