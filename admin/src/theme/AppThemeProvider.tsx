@@ -17,6 +17,8 @@ import {
 export default function AppThemeProvider({ children }: { children: React.ReactNode }) {
   const { mode, primary, fontFamily, fontSize } = useThemeStore();
 
+  console.log('update primary', primary)
+
   let palette = {};
   if (primary) {
     palette = primary;

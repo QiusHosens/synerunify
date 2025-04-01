@@ -68,6 +68,7 @@ export const useThemeStore = create<ThemeState>()(
         function isColorSchemeName(key: string): key is ColorSchemeName {
           return validColorSchemes.includes(key as ColorSchemeName);
         }
+        console.log('update primary', primary)
         if (isColorSchemeName(primary)) {
           set({ primary: systemColorSchemes[primary] })
           return;

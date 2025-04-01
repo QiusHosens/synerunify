@@ -40,9 +40,9 @@ export default function SettingsButton({ sx }: SettingsButtonProps) {
   };
 
   const handleThemeToggle = () => {
-    setThemeMode(mode === 'light' ? 'dark' : 'light');
     // 直接设置模式
     setMode(mode === 'light' ? 'dark' : 'light');
+    setThemeMode(mode === 'light' ? 'dark' : 'light');
     handleClose();
   };
 
