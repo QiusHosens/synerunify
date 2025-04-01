@@ -77,7 +77,7 @@ export const inputsCustomizations: Components<Theme> = {
                 backgroundColor: alpha(theme.palette.primary.main, 0.8),
               },
               ...theme.applyStyles('dark', {
-                color: 'black',
+                color: 'black', // 暂时与white一样
                 // backgroundColor: gray[50],
                 // backgroundImage: `linear-gradient(to bottom, ${gray[100]}, ${gray[50]})`,
                 // boxShadow: 'inset 0 -1px 0  hsl(220, 30%, 80%)',
@@ -404,7 +404,8 @@ export const inputsCustomizations: Components<Theme> = {
         color: (theme.vars || theme).palette.text.primary,
         borderRadius: (theme.vars || theme).shape.borderRadius,
         border: `1px solid ${(theme.vars || theme).palette.divider}`,
-        backgroundColor: (theme.vars || theme).palette.background.default,
+        // backgroundColor: (theme.vars || theme).palette.background.default,
+        backgroundColor: 'unset',
         transition: 'border 120ms ease-in',
         '&:hover': {
           borderColor: gray[400],

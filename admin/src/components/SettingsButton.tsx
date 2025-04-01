@@ -76,11 +76,20 @@ export default function SettingsButton({ sx }: SettingsButtonProps) {
     <>
       <IconButton
         sx={{
-          color: theme.palette.text.primary,
+          // color: theme.palette.text.primary,
           animation: 'spin 5s linear infinite', // 添加旋转动画
           '@keyframes spin': {
             from: { transform: 'rotate(0deg)' },
             to: { transform: 'rotate(360deg)' },
+          },
+          border: 'unset', // 去掉主题样式
+          backgroundColor: 'unset',
+          '&:hover': {
+            backgroundColor: 'unset',
+            borderColor: 'unset',
+          },
+          '&:active': {
+            backgroundColor: 'unset',
           },
           ...sx
         }}
