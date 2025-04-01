@@ -43,14 +43,14 @@ export default function AppThemeProvider({ children }: { children: React.ReactNo
     },
     components: {
       ...inputsCustomizations,
-      // ...dataDisplayCustomizations,
-      // ...feedbackCustomizations,
-      // ...navigationCustomizations,
-      // ...surfacesCustomizations,
-      // ...chartsCustomizations,
-      // ...dataGridCustomizations,
-      // ...datePickersCustomizations,
-      // ...treeViewCustomizations,
+      ...dataDisplayCustomizations,
+      ...feedbackCustomizations,
+      ...navigationCustomizations,
+      ...surfacesCustomizations,
+      ...chartsCustomizations,
+      ...dataGridCustomizations,
+      ...datePickersCustomizations,
+      ...treeViewCustomizations,
     },
   });
 

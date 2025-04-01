@@ -49,7 +49,7 @@ export default function Header({ sx, sideMenuWidth, height }: HeaderProps) {
           <MenuButton showBadge aria-label="Open notifications">
             <NotificationsRoundedIcon />
           </MenuButton>
-          <ColorModeIconDropdown />
+          {/* <ColorModeIconDropdown /> */}
           <SettingsButton />
         </Stack>
       </Stack>
