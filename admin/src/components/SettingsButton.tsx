@@ -1,26 +1,32 @@
 import { IconButton, Menu, MenuItem, Divider, useTheme, Box } from '@mui/material';
+import { styled, SxProps, Theme, useColorScheme } from "@mui/material/styles";
 import SettingsIcon from '@mui/icons-material/Settings';
 import { useState } from 'react';
 import { useThemeStore } from '@/store';
 import { useTranslation } from 'react-i18next';
 
-export default function SettingsButton() {
+interface SettingsButtonProps {
+  sx?: SxProps<Theme>;
+}
+
+export default function SettingsButton({ sx }: SettingsButtonProps) {
   const theme = useTheme();
   const {
     mode,
     navPosition,
+    primaryKey,
     primary,
-    secondary,
     fontFamily,
     fontSize,
     setThemeMode,
     setNavPosition,
+    setPrimaryKey,
     setPrimary,
-    setSecondary,
     setFontFamily,
     setFontSize,
   } = useThemeStore();
   const { t, i18n } = useTranslation();
+  const { setMode } = useColorScheme();
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -35,6 +41,8 @@ export default function SettingsButton() {
 
   const handleThemeToggle = () => {
     setThemeMode(mode === 'light' ? 'dark' : 'light');
+    // 直接设置模式
+    setMode(mode === 'light' ? 'dark' : 'light');
     handleClose();
   };
 
@@ -48,13 +56,9 @@ export default function SettingsButton() {
     handleClose();
   };
 
-  const handlePrimaryChange = (newColor: string) => {
-    setPrimary(newColor);
-    handleClose();
-  };
-
-  const handleSecondaryChange = (newColor: string) => {
-    setSecondary(newColor);
+  const handlePrimaryChange = (primaryKey: string) => {
+    setPrimaryKey(primaryKey);
+    setPrimary(primaryKey);
     handleClose();
   };
 
@@ -78,6 +82,7 @@ export default function SettingsButton() {
             from: { transform: 'rotate(0deg)' },
             to: { transform: 'rotate(360deg)' },
           },
+          ...sx
         }}
         color="inherit"
         onClick={handleSettingsClick}
@@ -111,33 +116,26 @@ export default function SettingsButton() {
         <Divider />
 
         {/* Primary 颜色 */}
-        <MenuItem onClick={() => handlePrimaryChange('#1976d2')}>
-          Primary: Blue {primary === '#1976d2' && '(Selected)'}
+        <MenuItem onClick={() => handlePrimaryChange('default')}>
+          Primary: Default {primaryKey === 'default' && '(Selected)'}
         </MenuItem>
-        <MenuItem onClick={() => handlePrimaryChange('#2e7d32')}>
-          Primary: Green {primary === '#2e7d32' && '(Selected)'}
+        <MenuItem onClick={() => handlePrimaryChange('green')}>
+          Primary: Green {primaryKey === 'green' && '(Selected)'}
         </MenuItem>
-        <MenuItem onClick={() => handlePrimaryChange('#7b1fa2')}>
-          Primary: Purple {primary === '#7b1fa2' && '(Selected)'}
+        <MenuItem onClick={() => handlePrimaryChange('blue')}>
+          Primary: Blue {primaryKey === 'blue' && '(Selected)'}
         </MenuItem>
-        <MenuItem onClick={() => handlePrimaryChange('#d32f2f')}>
-          Primary: Red {primary === '#d32f2f' && '(Selected)'}
+        <MenuItem onClick={() => handlePrimaryChange('purple')}>
+          Primary: Purple {primaryKey === 'purple' && '(Selected)'}
         </MenuItem>
-        <MenuItem onClick={() => handlePrimaryChange('#f57c00')}>
-          Primary: Orange {primary === '#f57c00' && '(Selected)'}
+        <MenuItem onClick={() => handlePrimaryChange('azure')}>
+          Primary: Azure {primaryKey === 'azure' && '(Selected)'}
         </MenuItem>
-
-        <Divider />
-
-        {/* Secondary 颜色 */}
-        <MenuItem onClick={() => handleSecondaryChange('#dc004e')}>
-          Secondary: Pink {secondary === '#dc004e' && '(Selected)'}
+        <MenuItem onClick={() => handlePrimaryChange('orange')}>
+          Primary: Orange {primaryKey === 'orange' && '(Selected)'}
         </MenuItem>
-        <MenuItem onClick={() => handleSecondaryChange('#0288d1')}>
-          Secondary: Light Blue {secondary === '#0288d1' && '(Selected)'}
-        </MenuItem>
-        <MenuItem onClick={() => handleSecondaryChange('#388e3c')}>
-          Secondary: Green {secondary === '#388e3c' && '(Selected)'}
+        <MenuItem onClick={() => handlePrimaryChange('red')}>
+          Primary: Red {primaryKey === 'red' && '(Selected)'}
         </MenuItem>
 
         <Divider />

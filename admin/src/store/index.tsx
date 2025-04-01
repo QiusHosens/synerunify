@@ -1,4 +1,5 @@
 import { getHome, HomeMenuResponse } from '@/api';
+import { systemColorSchemes } from '@/theme/themePrimitives';
 import { deepClone } from '@/utils/objectUtils';
 import { buildTreeRoutes } from '@/utils/routeUtils';
 import { create } from 'zustand';
@@ -11,14 +12,14 @@ type FontFamily = 'Roboto' | 'Poppins' | 'Inter';
 interface ThemeState {
   mode: 'light' | 'dark';
   navPosition: 'left' | 'top' | 'bottom';
-  primary: string; // 直接存储颜色值
-  secondary: string; // 直接存储颜色值
+  primaryKey: string;
+  primary: object | null;
   fontFamily: FontFamily;
   fontSize: number;
   setThemeMode: (mode: 'light' | 'dark') => void;
   setNavPosition: (position: 'left' | 'top' | 'bottom') => void;
+  setPrimaryKey: (primaryKey: string) => void;
   setPrimary: (primary: string) => void;
-  setSecondary: (secondary: string) => void;
   setFontFamily: (fontFamily: FontFamily) => void;
   setFontSize: (fontSize: number) => void;
 }
@@ -52,14 +53,27 @@ export const useThemeStore = create<ThemeState>()(
     (set) => ({
       mode: 'light',
       navPosition: 'left',
-      primary: '#1976d2', // 默认蓝色
-      secondary: '#dc004e', // 默认粉红色
+      primaryKey: '',
+      primary: null,
       fontFamily: 'Roboto',
       fontSize: 16,
-      setThemeMode: (mode) => set({ mode }),
+      setThemeMode: (mode) => {
+        set({ mode })
+      },
       setNavPosition: (position) => set({ navPosition: position }),
-      setPrimary: (primary) => set({ primary }),
-      setSecondary: (secondary) => set({ secondary }),
+      setPrimaryKey: (primaryKey: string) => set({ primaryKey }),
+      setPrimary: (primary: string) => {
+        type ColorSchemeName = keyof typeof systemColorSchemes;
+        const validColorSchemes = Object.keys(systemColorSchemes) as ColorSchemeName[];
+        function isColorSchemeName(key: string): key is ColorSchemeName {
+          return validColorSchemes.includes(key as ColorSchemeName);
+        }
+        if (isColorSchemeName(primary)) {
+          set({ primary: systemColorSchemes[primary] })
+          return;
+        }
+        set({ primary: {} })
+      },
       setFontFamily: (fontFamily) => set({ fontFamily }),
       setFontSize: (fontSize) => set({ fontSize }),
     }), {
@@ -134,7 +148,7 @@ export const useHomeStore = create<HomeState>((set) => ({
         // 操作
         let operates = deepClone(menus);
         operates = operates.filter(route => route.type == 3);
-        
+
         set({ routes: routes });
         set({ routeTree: buildTreeRoutes(menuRoutes) });
         set({ operates: operates });

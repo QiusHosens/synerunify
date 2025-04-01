@@ -53,12 +53,15 @@ export default function LoginLayout({
     //     <SettingsButton />
     //   </Box>
     // </Box>
-    <AppTheme>
-      <CssBaseline enableColorScheme />
+    // <AppTheme>
+    //   <CssBaseline enableColorScheme />
+    <>
       <SignInContainer direction="column" justifyContent="space-between">
-        <ColorModeIconDropdown sx={{ position: 'fixed', top: '1rem', right: '1rem' }} />
+        {/* <ColorModeIconDropdown sx={{ position: 'fixed', top: '1rem', right: '1rem' }} /> */}
+        <SettingsButton sx={{ position: 'fixed', top: '1rem', right: '1rem' }} />
         {children}
       </SignInContainer>
-    </AppTheme>
+    </>
+    // </AppTheme>
   );
 }

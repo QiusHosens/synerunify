@@ -1,4 +1,4 @@
-import { createTheme, alpha, PaletteMode, Shadows } from '@mui/material/styles';
+import { createTheme, alpha, PaletteMode, Shadows, PaletteColorOptions, SimplePaletteColorOptions } from '@mui/material/styles';
 
 declare module '@mui/material/Paper' {
   interface PaperPropsVariantOverrides {
@@ -19,7 +19,7 @@ declare module '@mui/material/styles' {
     900: string;
   }
 
-  interface PaletteColor extends ColorRange {}
+  interface PaletteColor extends ColorRange { }
 
   interface Palette {
     baseShadow: string;
@@ -336,6 +336,71 @@ export const colorSchemes = {
       },
       baseShadow:
         'hsla(220, 30%, 5%, 0.7) 0px 4px 16px 0px, hsla(220, 25%, 10%, 0.8) 0px 8px 16px -5px',
+    },
+  },
+};
+
+// 颜色
+
+export const systemColorSchemes = {
+  green: {
+    primary: {
+      lighter: '#C8FAD6',
+      light: '#5BE49B',
+      main: '#00A76F',
+      dark: '#007867',
+      darker: '#004B50',
+      contrastText: '#FFFFFF',
+    },
+  },
+  blue: {
+    primary: {
+      lighter: '#CCF4FE',
+      light: '#68CDF9',
+      main: '#078DEE',
+      dark: '#0351AB',
+      darker: '#012972',
+      contrastText: '#FFFFFF',
+    },
+  },
+  purple: {
+    primary: {
+      lighter: '#EBD6FD',
+      light: '#B985F4',
+      main: '#7635DC',
+      dark: '#431A9E',
+      darker: '#200A69',
+      contrastText: '#FFFFFF',
+    },
+  },
+  azure: {
+    primary: {
+      lighter: '#CDE9FD',
+      light: '#6BB1F8',
+      main: '#0C68E9',
+      dark: '#063BA7',
+      darker: '#021D6F',
+      contrastText: '#FFFFFF',
+    },
+  },
+  orange: {
+    primary: {
+      lighter: '#FEF4D4',
+      light: '#FED680',
+      main: '#FDA92D',
+      dark: '#B66816',
+      darker: '#793908',
+      contrastText: '#1C252E',
+    },
+  },
+  red: {
+    primary: {
+      lighter: '#FFE3D5',
+      light: '#FFC1AC',
+      main: '#FF3030',
+      dark: '#B71833',
+      darker: '#7A0930',
+      contrastText: '#FFFFFF',
     },
   },
 };

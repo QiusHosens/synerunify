@@ -41,9 +41,11 @@ export default function Layout({ children }: LayoutProps) {
   }, [access_token, fetchAndSetHome]);
 
   return (
-    <AppTheme themeComponents={xThemeComponents}>
-      <CssBaseline enableColorScheme />
-      
+    <>
+      {/* <AppTheme themeComponents={xThemeComponents}> */}
+
+      {/* <CssBaseline enableColorScheme /> */}
+
       <Box sx={layoutStyles}>
         {
           navPosition === 'left' ?
@@ -71,6 +73,7 @@ export default function Layout({ children }: LayoutProps) {
         <Header sideMenuWidth={sideMenuWidth} height={headerHeight}></Header>
       </Box>
 
-    </AppTheme>
+      {/* </AppTheme> */}
+    </>
   );
 }
