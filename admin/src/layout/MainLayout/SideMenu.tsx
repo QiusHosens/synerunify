@@ -60,7 +60,7 @@ export default function SideMenu({ sx, sideMenuWidth, routeTree }: SideMenuProps
           flexDirection: "column",
         }}
       >
-        <MenuContent />
+        <MenuContent routeTree={routeTree} />
       </Box>
     </Drawer>
   );

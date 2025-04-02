@@ -12,6 +12,8 @@ import AssignmentRoundedIcon from '@mui/icons-material/AssignmentRounded';
 import SettingsRoundedIcon from '@mui/icons-material/SettingsRounded';
 import InfoRoundedIcon from '@mui/icons-material/InfoRounded';
 import HelpRoundedIcon from '@mui/icons-material/HelpRounded';
+import { HomeMenuResponse } from '@/api';
+import RenderMenuItems from './MenuRender';
 
 const mainListItems = [
   { text: 'Home', icon: <HomeRoundedIcon /> },
@@ -20,24 +22,23 @@ const mainListItems = [
   { text: 'Tasks', icon: <AssignmentRoundedIcon /> },
 ];
 
-const secondaryListItems = [
-  { text: 'Settings', icon: <SettingsRoundedIcon /> },
-  { text: 'About', icon: <InfoRoundedIcon /> },
-  { text: 'Feedback', icon: <HelpRoundedIcon /> },
-];
+interface MenuContentProps {
+  routeTree: HomeMenuResponse[];
+}
 
-export default function MenuContent() {
+export default function MenuContent({routeTree}: MenuContentProps) {
   return (
     <Stack sx={{ flexGrow: 1, p: 1, justifyContent: 'space-between' }}>
       <List dense>
-        {mainListItems.map((item, index) => (
+        {/* {mainListItems.map((item, index) => (
           <ListItem key={index} disablePadding sx={{ display: 'block' }}>
             <ListItemButton selected={index === 0}>
               <ListItemIcon>{item.icon}</ListItemIcon>
               <ListItemText primary={item.text} />
             </ListItemButton>
           </ListItem>
-        ))}
+        ))} */}
+        <RenderMenuItems routes={routeTree} />
       </List>
     </Stack>
   );

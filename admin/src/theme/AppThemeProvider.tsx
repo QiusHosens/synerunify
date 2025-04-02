@@ -1,7 +1,7 @@
 import { ThemeProvider, createTheme, PaletteColor, PaletteColorOptions, SimplePaletteColorOptions } from '@mui/material/styles';
 import { useThemeStore } from '@/store';
 import { GlobalStyles } from '@mui/material';
-import { colorSchemes } from './themePrimitives';
+import { colorSchemes, typography } from './themePrimitives';
 import {
   inputsCustomizations,
   dataDisplayCustomizations,
@@ -40,6 +40,7 @@ export default function AppThemeProvider({ children }: { children: React.ReactNo
     typography: {
       fontFamily,
       fontSize,
+      ...typography,
     },
     components: {
       ...inputsCustomizations,

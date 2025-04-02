@@ -70,14 +70,14 @@ export default function RenderMenuItems({ routes, depth = 0 }: { routes: HomeMen
                     navigate(item.path);
                   }
                 }}
-                sx={{
-                  '&.Mui-selected': {
-                    backgroundColor: (theme) => theme.palette.action.selected,
-                    '&:hover': {
-                      backgroundColor: (theme) => theme.palette.action.hover,
-                    },
-                  },
-                }}
+                // sx={{
+                //   '&.Mui-selected': {
+                //     backgroundColor: (theme) => theme.palette.action.selected,
+                //     '&:hover': {
+                //       backgroundColor: (theme) => theme.palette.action.hover,
+                //     },
+                //   },
+                // }}
               >
                 <ListItemIcon>{iconMap[item.icon] && React.createElement(iconMap[item.icon])}</ListItemIcon>
                 <ListItemText primary={item.name} />
