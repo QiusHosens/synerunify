@@ -70,7 +70,7 @@ export default function Layout({ children }: LayoutProps) {
                 }} routeTree={routeTree}></BottomMenu>
               )
         }
-        <Header sideMenuWidth={sideMenuWidth} height={headerHeight}></Header>
+        <Header sideMenuWidth={sideMenuWidth} height={headerHeight} routeTree={routeTree}></Header>
       </Box>
 
       {/* </AppTheme> */}

@@ -1,11 +1,7 @@
-import * as React from "react";
 import { styled, SxProps, Theme } from "@mui/material/styles";
-import Avatar from "@mui/material/Avatar";
 import MuiDrawer, { drawerClasses } from "@mui/material/Drawer";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
-import Stack from "@mui/material/Stack";
-import Typography from "@mui/material/Typography";
 import MenuContent from "./MenuContent";
 import { HomeMenuResponse } from "@/api";
 import Logo from "./Logo";
