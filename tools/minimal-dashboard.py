@@ -46,7 +46,7 @@ def login():
         # username_field.send_keys(USERNAME)
         # password_field.send_keys(PASSWORD)
         submit_button.click()
-        time.sleep(5)  # 等待登录完成
+        time.sleep(10)  # 等待登录完成
         print("登录成功")
     except Exception as e:
         print(f"登录失败: {e}")
@@ -95,11 +95,60 @@ def download_images(base_dir="downloaded_images"):
     }
 
     try:
+        downloaded_count = 0
+        downloaded_urls = set()  # 避免重复下载
+
+        # 获取所有网络请求
+        # performance_logs = driver.get_log('performance')
+        #
+        # for entry in performance_logs:
+        #     message = eval(entry['message'])['message']
+        #     if 'Network.requestWillBeSent' in message['method']:
+        #         request_url = message['params'].get('request', {}).get('url', '')
+        #         if request_url.startswith('http'):
+        #             downloaded_urls.add(request_url)
+        #
+        # print(f"urls: {downloaded_urls}")
+
         # 解析HTML
         soup = BeautifulSoup(driver.page_source, "html.parser")
 
-        downloaded_count = 0
-        downloaded_urls = set()  # 避免重复下载
+        span = soup.find('span', class_='css-raduy6')
+
+        if span and span.get('style'):
+            style = span['style']
+            # 解析style
+            style_dict = dict(item.split(':') for item in style.split(';') if ':' in item)
+            mask = style_dict.get('mask') or style_dict.get('-webkit-mask')
+
+            if mask:
+                print(f"找到的span: {span}")
+                print(f"完整Style: {style}")
+                print(f"Mask值: {mask.strip()}")
+            else:
+                print("该span的style中没有mask属性")
+        else:
+            print("未找到符合条件的span元素或该span没有style属性")
+
+        # 查找所有有style属性的元素
+        elements_with_style = soup.find_all(lambda tag: tag.get('style'))
+        for element in elements_with_style:
+            style = element.get('style')  # 获取style属性值
+        if style and 'mask' in style.lower():  # 检查是否包含mask
+            # 简单解析style字符串
+            style_dict = {}
+            for prop in style.split(';'):
+                if ':' in prop:
+                    key, value = prop.split(':', 1)
+                    style_dict[key.strip()] = value.strip()
+
+            # 获取mask属性
+            mask_value = style_dict.get('mask') or style_dict.get('-webkit-mask')
+            if mask_value:
+                print(f"元素: {element.name}")
+                print(f"完整Style: {style}")
+                print(f"Mask值: {mask_value}")
+                print("---")
 
         # 1. 下载img标签中的图片
         img_tags = soup.find_all('img')
