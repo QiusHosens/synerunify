@@ -51,30 +51,58 @@ export default function Layout({ children }: LayoutProps) {
         {
           navPosition === 'left' ?
             (
-              <Box>
+              <Box sx={{
+                width: '100%',
+                minHeight: '100vh',
+                display: 'flex',
+                flexDirection: 'row',
+              }}>
                 <SideMenu routeTree={routeTree} sx={{
                   mt: 0,
                   height: '100%'
                 }} sideMenuWidth={sideMenuWidth}></SideMenu>
-                <Box>
-                  <Header sideMenuWidth={sideMenuWidth} height={headerHeight} routeTree={routeTree}></Header>
-                  <MainGrid headerHeight={headerHeight} sideMenuWidth={sideMenuWidth} topMenuHeight={topMenuHeight} bottomMenuHeight={bottomMenuHeight} children={children} />
+                <Box sx={{
+                  width: `calc(100% - ${sideMenuWidth}px)`,
+                  minHeight: '100vh',
+                  display: 'flex',
+                  flexDirection: 'column',
+                }}>
+                  <Header height={headerHeight} routeTree={routeTree}></Header>
+                  <MainGrid headerHeight={headerHeight} topMenuHeight={topMenuHeight} children={children} />
                 </Box>
               </Box>
             )
             : navPosition === 'top' ?
               (
-                <TopMenu sx={{
-                  mt: headerHeight + 'px',
-                  height: topMenuHeight + 'px'
-                }} routeTree={routeTree}></TopMenu>
+                <Box sx={{
+                  width: '100%',
+                  minHeight: '100vh',
+                  display: 'flex',
+                  flexDirection: 'column',
+                }}>
+                  <Header height={headerHeight} routeTree={routeTree}></Header>
+                  <TopMenu sx={{
+                    mt: headerHeight + 'px',
+                    height: topMenuHeight + 'px'
+                  }} routeTree={routeTree}></TopMenu>
+                  <MainGrid headerHeight={headerHeight} topMenuHeight={topMenuHeight} children={children} />
+                </Box>
               )
               :
               (
-                <BottomMenu sx={{
-                  bottom: '1.5rem',
-                  height: bottomMenuHeight + 'px'
-                }} routeTree={routeTree}></BottomMenu>
+                <Box sx={{
+                  width: '100%',
+                  minHeight: '100vh',
+                  display: 'flex',
+                  flexDirection: 'column',
+                }}>
+                  <Header height={headerHeight} routeTree={routeTree}></Header>
+                  <MainGrid headerHeight={headerHeight} topMenuHeight={topMenuHeight} children={children} />
+                  <BottomMenu sx={{
+                    bottom: '1.5rem',
+                    height: bottomMenuHeight + 'px'
+                  }} routeTree={routeTree}></BottomMenu>
+                </Box>
               )
         }
 

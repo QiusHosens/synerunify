@@ -5,28 +5,25 @@ import NavbarBreadcrumbs from './NavbarBreadcrumbs';
 import MenuButton from './MenuButton';
 
 import Search from './Search';
-import { useThemeStore } from '@/store';
 import SettingsButton from '@/components/SettingsButton';
 import { HomeMenuResponse } from '@/api';
 
 interface HeaderProps {
   sx?: SxProps<Theme>;
-  sideMenuWidth: number;
   height: number;
   routeTree: HomeMenuResponse[];
 }
 
-export default function Header({ sx, sideMenuWidth, height, routeTree }: HeaderProps) {
-  const { navPosition } = useThemeStore();
+export default function Header({ sx, height, routeTree }: HeaderProps) {
 
   return (
     <Stack
       // position="fixed"
       sx={{
-        display: 'flex',
-        width: navPosition === 'left' ? 'calc(100% - ' + sideMenuWidth + 'px)' : '100%',
+        // display: 'flex',
+        width: '100%',
         height: height,
-        left: sideMenuWidth + 'px',
+        // left: sideMenuWidth + 'px',
         alignItems: 'center',
         justifyContent: 'center',
       }}>
