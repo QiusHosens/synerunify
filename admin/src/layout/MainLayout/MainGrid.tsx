@@ -12,7 +12,7 @@ interface MainGridProps {
   children?: React.ReactNode; // 添加 children 属性
 }
 
-export default function TopNav({ sx, headerHeight, sideMenuWidth, topMenuHeight, bottomMenuHeight, children }: MainGridProps) {
+export default function MainGrid({ sx, headerHeight, sideMenuWidth, topMenuHeight, bottomMenuHeight, children }: MainGridProps) {
   const { navPosition } = useThemeStore();
 
   return (

@@ -9,6 +9,7 @@ import { useEffect } from "react";
 import Header from "./Header";
 import TopMenu from "./TopMenu";
 import BottomMenu from "./BottomMenu";
+import MainGrid from "./MainGrid";
 
 const xThemeComponents = {};
 
@@ -50,10 +51,16 @@ export default function Layout({ children }: LayoutProps) {
         {
           navPosition === 'left' ?
             (
-              <SideMenu routeTree={routeTree} sx={{
-                mt: 0,
-                height: '100%'
-              }} sideMenuWidth={sideMenuWidth}></SideMenu>
+              <Box>
+                <SideMenu routeTree={routeTree} sx={{
+                  mt: 0,
+                  height: '100%'
+                }} sideMenuWidth={sideMenuWidth}></SideMenu>
+                <Box>
+                  <Header sideMenuWidth={sideMenuWidth} height={headerHeight} routeTree={routeTree}></Header>
+                  <MainGrid headerHeight={headerHeight} sideMenuWidth={sideMenuWidth} topMenuHeight={topMenuHeight} bottomMenuHeight={bottomMenuHeight} children={children} />
+                </Box>
+              </Box>
             )
             : navPosition === 'top' ?
               (
@@ -70,7 +77,7 @@ export default function Layout({ children }: LayoutProps) {
                 }} routeTree={routeTree}></BottomMenu>
               )
         }
-        <Header sideMenuWidth={sideMenuWidth} height={headerHeight} routeTree={routeTree}></Header>
+
       </Box>
 
       {/* </AppTheme> */}
