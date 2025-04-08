@@ -82,7 +82,7 @@ export default function Layout({ children }: LayoutProps) {
                 }}>
                   <Header height={headerHeight} routeTree={routeTree}></Header>
                   <TopMenu sx={{
-                    mt: headerHeight + 'px',
+                    // mt: headerHeight + 'px',
                     height: topMenuHeight + 'px'
                   }} routeTree={routeTree}></TopMenu>
                   <MainGrid headerHeight={headerHeight} topMenuHeight={topMenuHeight} children={children} />
