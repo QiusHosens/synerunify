@@ -2,7 +2,8 @@ import { Paper, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useEffect, useState } from 'react';
 import { MenuQueryCondition, pageMenu, SystemMenuResponse } from '@/api';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridSortModel } from '@mui/x-data-grid';
+import { DataGridPro, DataGridProProps } from '@mui/x-data-grid-pro';
 
 
 export default function MenuManage() {
@@ -15,24 +16,24 @@ export default function MenuManage() {
   const [keyword, setKeyword] = useState<string>();
 
   const [records, setRecords] = useState<Array<SystemMenuResponse>>([]);
+  const [sortModel, setSortModel] = useState<GridSortModel>([
+    { field: 'recruitmentDate', sort: 'asc' },
+  ]);
+
 
   const columns: GridColDef[] = [
-    { field: 'id', headerName: 'ID', width: 70 },
-    { field: 'firstName', headerName: 'First name', width: 130 },
-    { field: 'lastName', headerName: 'Last name', width: 130 },
+    { field: 'name', headerName: '菜单名', width: 130 },
+    { field: 'permission', headerName: '权限标识', width: 130 },
     {
-      field: 'age',
-      headerName: 'Age',
-      type: 'number',
+      field: 'type',
+      headerName: '菜单类型',
       width: 90,
     },
     {
-      field: 'fullName',
-      headerName: 'Full name',
-      description: 'This column has a value getter and is not sortable.',
-      sortable: false,
+      field: 'sort',
+      headerName: '显示顺序',
+      type: 'number',
       width: 160,
-      valueGetter: (value, row) => `${row.firstName || ''} ${row.lastName || ''}`,
     },
   ];
 
@@ -46,19 +47,22 @@ export default function MenuManage() {
     setRecords(result.list);
   }
 
+  const getTreeDataPath: DataGridProProps['getTreeDataPath'] = (row) => row.hierarchy;
+
   useEffect(() => {
     queryRecords();
   }, []);
 
   return (
     <Paper sx={{ height: 400, width: '100%' }}>
-      <DataGrid
-        rows={rows}
+      <DataGridPro
+        treeData
+        rows={records}
         columns={columns}
-        initialState={{ pagination: { paginationModel } }}
-        pageSizeOptions={[5, 10]}
-        checkboxSelection
-        sx={{ border: 0 }}
+        getTreeDataPath={getTreeDataPath}
+        // sortModel={sortModel}
+        onSortModelChange={setSortModel}
+        defaultGroupingExpansionDepth={-1}
       />
     </Paper>
   );
