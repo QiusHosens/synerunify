@@ -117,8 +117,14 @@ request.interceptors.response.use(
 
 // 类型化的请求方法
 export const api = {
-  get: <T>(url: string, config?: InternalAxiosRequestConfig): Promise<T> =>
-    request.get(url, config),
+  get: <T>(url: string, param?: any, config?: InternalAxiosRequestConfig): Promise<T> => {
+    const requestConfig = {
+      ...(config || {}),
+      params: param !== undefined ? param : config?.params,
+    } as InternalAxiosRequestConfig;
+    return request.get(url, requestConfig);
+  },
+    
   post: <T>(url: string, data?: any, config?: InternalAxiosRequestConfig): Promise<T> =>
     request.post(url, data, config),
 };
