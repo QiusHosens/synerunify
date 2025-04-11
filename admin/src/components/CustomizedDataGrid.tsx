@@ -9,7 +9,7 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { GridColDef, GridRowsProp } from '@mui/x-data-grid';
 
-interface CustomizedTableProps {
+interface CustomizedDataGridProps {
   columns: GridColDef[];
   rows: GridRowsProp[];
 }
@@ -52,7 +52,7 @@ const rows = [
   createData('Gingerbread', 356, 16.0, 49, 3.9),
 ];
 
-export default function CustomizedTable(props: CustomizedTableProps) {
+export default function CustomizedDataGrid(props: CustomizedDataGridProps) {
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 700 }} aria-label="customized table">
