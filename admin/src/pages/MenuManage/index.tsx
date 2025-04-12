@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { MenuQueryCondition, pageMenu, SystemMenuResponse } from '@/api';
 import { DataGrid, GridColDef, GridSortModel } from '@mui/x-data-grid';
 import { DataGridPro, DataGridProProps } from '@mui/x-data-grid-pro';
+import CustomizedDataGrid from '@/components/CustomizedDataGrid';
 
 
 export default function MenuManage() {
@@ -55,8 +56,8 @@ export default function MenuManage() {
 
   return (
     <Paper sx={{ height: 400, width: '100%' }}>
-      <DataGridPro
-        treeData
+      <CustomizedDataGrid
+        // treeData
         rows={records}
         columns={columns}
         getTreeDataPath={getTreeDataPath}
