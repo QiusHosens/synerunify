@@ -11,7 +11,8 @@ import { GridColDef, GridRowsProp } from '@mui/x-data-grid';
 
 interface CustomizedDataGridProps {
   columns: GridColDef[];
-  rows: GridRowsProp[];
+  rows: GridRowsProp<any>[];
+  getTreeDataPath: (row: any) => readonly string[];
 }
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({

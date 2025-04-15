@@ -42,6 +42,8 @@ export interface SystemMenuResponse {
   visible: boolean; // 是否可见
   keep_alive: boolean; // 是否缓存
   always_show: boolean; // 是否总是显示
+
+  hierarchy: string[];
 }
 
 export interface MenuQueryCondition extends PaginatedRequest {

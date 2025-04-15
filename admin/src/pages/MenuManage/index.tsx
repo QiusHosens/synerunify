@@ -1,10 +1,10 @@
 import { Paper, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useEffect, useState } from 'react';
-import { MenuQueryCondition, pageMenu, SystemMenuResponse } from '@/api';
+import { listMenu, MenuQueryCondition, pageMenu, SystemMenuResponse } from '@/api';
 import { DataGrid, GridColDef, GridSortModel } from '@mui/x-data-grid';
 import { DataGridPro, DataGridProProps } from '@mui/x-data-grid-pro';
-import CustomizedDataGrid from '@/components/CustomizedDataGrid';
+import CustomizedDataGridPro from '@/components/CustomizedDataGridPro';
 
 
 export default function MenuManage() {
@@ -23,7 +23,7 @@ export default function MenuManage() {
 
 
   const columns: GridColDef[] = [
-    { field: 'name', headerName: '菜单名', width: 130 },
+    { field: 'name', headerName: '菜单名', width: 200 },
     { field: 'permission', headerName: '权限标识', width: 130 },
     {
       field: 'type',
@@ -44,26 +44,56 @@ export default function MenuManage() {
       size,
       keyword
     };
-    let result = await pageMenu(condition);
-    setRecords(result.list);
+    let result = await listMenu();
+    console.log('menu list', result);
+    result.forEach(menu => {
+      let path = menu.path;
+      let hierarchy = [];
+      if (path) {
+        let paths = path.split('/');
+        for (let p of paths) {
+          if (p) {
+            hierarchy.push(p);
+          }
+        }
+      }
+      menu.hierarchy = hierarchy;
+    })
+    setRecords(result);
   }
 
-  const getTreeDataPath: DataGridProProps['getTreeDataPath'] = (row) => row.hierarchy;
+  const getTreeDataPath = (row: any) => row.hierarchy;
 
   useEffect(() => {
     queryRecords();
   }, []);
 
+  // const columns: GridColDef[] = [
+  //   { field: 'name', headerName: 'Name', width: 150 },
+  //   {
+  //     field: 'path',
+  //     headerName: 'Path',
+  //     width: 200,
+  //   },
+  //   { field: 'value', headerName: 'Value', width: 100 },
+  // ];
+
+  // const initialRows = [
+  //   { id: 1, name: 'Root A', path: ['a'], value: 100 },
+  //   { id: 2, name: 'Child B', path: ['a', 'b'], value: 20 },
+  //   { id: 3, name: 'Grandchild C', path: ['a', 'b', 'c'], value: 30 },
+  //   { id: 4, name: 'Root D', path: ['d'], value: 400 },
+  //   { id: 5, name: 'Child E', path: ['d', 'e'], value: 50 },
+  // ];
+
   return (
     <Paper sx={{ height: 400, width: '100%' }}>
-      <CustomizedDataGrid
-        // treeData
-        rows={records}
+      <CustomizedDataGridPro
         columns={columns}
+        initialRows={records}
+        // getTreeDataPath={(row) => row?.path || []}
         getTreeDataPath={getTreeDataPath}
-        // sortModel={sortModel}
-        onSortModelChange={setSortModel}
-        defaultGroupingExpansionDepth={-1}
+        hideFooter={true}
       />
     </Paper>
   );
