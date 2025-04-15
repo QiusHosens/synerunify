@@ -150,7 +150,7 @@ const CustomizedDataGridPro: React.FC<CustomizedDataGridProProps> = ({
     renderCell: col.field === 'name' ? renderCell : undefined,
     valueGetter:
       col.field === 'path'
-        ? (params) => getTreeDataPath(params.row)?.join(' / ') || ''
+        ? (params: any) => getTreeDataPath(params.row)?.join(' / ') || ''
         : col.valueGetter,
   }));
 
