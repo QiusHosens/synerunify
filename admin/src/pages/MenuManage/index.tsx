@@ -1,11 +1,10 @@
-import { Paper, Typography } from '@mui/material';
+import { InputAdornment, Paper, SvgIcon, TextField, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useEffect, useState } from 'react';
 import { listMenu, MenuQueryCondition, pageMenu, SystemMenuResponse } from '@/api';
-import { DataGrid, GridColDef, GridSortModel } from '@mui/x-data-grid';
-import { DataGridPro, DataGridProProps } from '@mui/x-data-grid-pro';
+import { GridColDef, GridSortModel } from '@mui/x-data-grid';
 import CustomizedDataGridPro from '@/components/CustomizedDataGridPro';
-
+import SearchIcon from '@/assets/image/svg/search.svg?react';
 
 export default function MenuManage() {
   const { t } = useTranslation();
@@ -17,10 +16,6 @@ export default function MenuManage() {
   const [keyword, setKeyword] = useState<string>();
 
   const [records, setRecords] = useState<Array<SystemMenuResponse>>([]);
-  const [sortModel, setSortModel] = useState<GridSortModel>([
-    { field: 'recruitmentDate', sort: 'asc' },
-  ]);
-
 
   const columns: GridColDef[] = [
     { field: 'name', headerName: '菜单名', width: 200 },
@@ -87,14 +82,28 @@ export default function MenuManage() {
   // ];
 
   return (
-    <Paper sx={{ height: 400, width: '100%' }}>
-      <CustomizedDataGridPro
-        columns={columns}
-        initialRows={records}
-        // getTreeDataPath={(row) => row?.path || []}
-        getTreeDataPath={getTreeDataPath}
-        hideFooter={true}
-      />
-    </Paper>
+    <>
+      <div>
+        <TextField
+          label="With normal TextField"
+          id="outlined-start-adornment"
+          sx={{ m: 1, width: '25ch' }}
+          slotProps={{
+            input: {
+              startAdornment: <InputAdornment position="start"><SvgIcon component={SearchIcon} inheritViewBox/></InputAdornment>,
+            },
+          }}
+        />
+      </div>
+      <Paper sx={{ height: 400, width: '100%' }}>
+        <CustomizedDataGridPro
+          columns={columns}
+          initialRows={records}
+          // getTreeDataPath={(row) => row?.path || []}
+          getTreeDataPath={getTreeDataPath}
+          hideFooter={true}
+        />
+      </Paper>
+    </>
   );
 }
