@@ -20,8 +20,9 @@
     "paths": {
       "@/*": ["src/*"]            // Configure @ to point to src directory
     },
+    // "types": ["vite-plugin-svgr/client"]
     "types": ["vite/client"],
-    "typeRoots": ["./types", "./node_modules/@types"]
+    // "typeRoots": ["./src/types", "./node_modules/@types"]
   },
   "include": ["src"],
   "references": [{ "path": "./tsconfig.node.json" }]

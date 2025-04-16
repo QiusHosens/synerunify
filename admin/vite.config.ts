@@ -8,15 +8,13 @@ import path from 'path';
 export default defineConfig({
   plugins: [
     react(),
-    viteMockServe({
-      mockPath: 'src/mocks',
-      enable: false,
-      logger: true,
-      watchFiles: true, // 监视文件更改
-      ignore: () => true,
-    }),
     svgr({
       svgrOptions: {
+        // plugins: ["@svgr/plugin-svgo", "@svgr/plugin-jsx"],
+        // svgoConfig: {
+        //   floatPrecision: 2,
+        // },
+        // exportType: 'named',
         icon: true, // 使 SVG 尺寸可继承，适合图标
         svgo: true, // 优化 SVG
         svgoConfig: {
@@ -32,8 +30,16 @@ export default defineConfig({
           ],
         },
       },
-      // include: '**/*.svg', // 处理所有 SVG 文件
-      include: '/src/assets/image/svg/*.svg', // 处理所有 SVG 文件
+      include: '**/*.svg', // 处理所有 SVG 文件
+      // include: '/src/assets/image/svg/*.svg?react', // 处理所有 SVG 文件
+      exclude: []
+    }),
+    viteMockServe({
+      mockPath: 'src/mocks',
+      enable: false,
+      logger: true,
+      watchFiles: true, // 监视文件更改
+      ignore: () => true,
     }),
   ],
   // assetsInclude: ['**/*.svg'], // 确保 Vite 识别 SVG 作为静态资源（如果不转为组件）
