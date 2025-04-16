@@ -4,8 +4,7 @@ import { useEffect, useState } from 'react';
 import { listMenu, MenuQueryCondition, pageMenu, SystemMenuResponse } from '@/api';
 import { GridColDef, GridSortModel } from '@mui/x-data-grid';
 import CustomizedDataGridPro from '@/components/CustomizedDataGridPro';
-import SearchIcon from '@/assets/image/svg/search.svg?react';
-// import SearchIcon from '@/assets/image/svg/search.svg?component';
+import SearchIcon from '@/assets/image/svg/search.svg';
 
 export default function MenuManage() {
   const { t } = useTranslation();
@@ -33,8 +32,6 @@ export default function MenuManage() {
       width: 160,
     },
   ];
-
-  console.log(SearchIcon);
 
   const queryRecords = async () => {
     let condition: MenuQueryCondition = {
@@ -94,8 +91,8 @@ export default function MenuManage() {
           slotProps={{
             input: {
               startAdornment: <InputAdornment position="start">
-                {/* <SvgIcon component={SearchIcon} inheritViewBox/> */}
-                <SearchIcon width={24} height={24} />;
+                <SvgIcon component={SearchIcon} inheritViewBox/>
+                {/* <SearchIcon width={24} height={24} /> */}
                 </InputAdornment>,
             },
           }}

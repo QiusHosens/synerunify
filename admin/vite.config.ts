@@ -10,11 +10,6 @@ export default defineConfig({
     react(),
     svgr({
       svgrOptions: {
-        // plugins: ["@svgr/plugin-svgo", "@svgr/plugin-jsx"],
-        // svgoConfig: {
-        //   floatPrecision: 2,
-        // },
-        // exportType: 'named',
         icon: true, // 使 SVG 尺寸可继承，适合图标
         svgo: true, // 优化 SVG
         svgoConfig: {
