@@ -18,16 +18,16 @@ export default function MenuManage() {
   const [records, setRecords] = useState<Array<SystemMenuResponse>>([]);
 
   const columns: GridColDef[] = [
-    { field: 'name', headerName: '菜单名', width: 200 },
-    { field: 'permission', headerName: '权限标识', width: 130 },
+    { field: 'name', headerName: t("page.menu.title.name"), width: 200 },
+    { field: 'permission', headerName: t("page.menu.title.permission"), width: 130 },
     {
       field: 'type',
-      headerName: '菜单类型',
+      headerName: t("page.menu.title.type"),
       width: 90,
     },
     {
       field: 'sort',
-      headerName: '显示顺序',
+      headerName: t("page.menu.title.sort"),
       type: 'number',
       width: 160,
     },

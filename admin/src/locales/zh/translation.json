@@ -7,5 +7,10 @@
   "welcome": "欢迎来到仪表盘！",
   "settings": "设置",
   "switch_theme": "切换到{{mode}}主题",
-  "nav_position": "导航位置：{{position}}"
+  "nav_position": "导航位置：{{position}}",
+
+  "page.menu.title.name": "菜单名",
+  "page.menu.title.permission": "权限标识",
+  "page.menu.title.type": "菜单类型",
+  "page.menu.title.sort": "显示顺序"
 }
