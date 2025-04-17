@@ -1,10 +1,12 @@
-import { InputAdornment, Paper, SvgIcon, TextField, Typography } from '@mui/material';
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, FormControlLabel, InputAdornment, InputLabel, MenuItem, Paper, Select, SvgIcon, Switch, TextField, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useEffect, useState } from 'react';
 import { listMenu, MenuQueryCondition, pageMenu, SystemMenuResponse } from '@/api';
 import { GridColDef, GridSortModel } from '@mui/x-data-grid';
 import CustomizedDataGridPro from '@/components/CustomizedDataGridPro';
 import SearchIcon from '@/assets/image/svg/search.svg';
+import { DialogProps } from '@mui/material/Dialog';
+import { SelectChangeEvent } from '@mui/material/Select';
 
 export default function MenuManage() {
   const { t } = useTranslation();
@@ -17,19 +19,23 @@ export default function MenuManage() {
 
   const [records, setRecords] = useState<Array<SystemMenuResponse>>([]);
 
+  const [open, setOpen] = useState(false);
+  const [fullWidth, setFullWidth] = useState(true);
+  const [maxWidth, setMaxWidth] = useState<DialogProps['maxWidth']>('sm');
+
   const columns: GridColDef[] = [
     { field: 'name', headerName: t("page.menu.title.name"), width: 200 },
-    { field: 'permission', headerName: t("page.menu.title.permission"), width: 130 },
+    { field: 'permission', headerName: t("page.menu.title.permission"), width: 200 },
     {
       field: 'type',
       headerName: t("page.menu.title.type"),
-      width: 90,
+      width: 200,
     },
     {
       field: 'sort',
       headerName: t("page.menu.title.sort"),
-      type: 'number',
-      width: 160,
+      // type: 'number',
+      width: 200,
     },
   ];
 
@@ -59,45 +65,46 @@ export default function MenuManage() {
 
   const getTreeDataPath = (row: any) => row.hierarchy;
 
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleMaxWidthChange = (event: SelectChangeEvent<typeof maxWidth>) => {
+    setMaxWidth(
+      // @ts-expect-error autofill of arbitrary value is not handled.
+      event.target.value,
+    );
+  };
+
+  const handleFullWidthChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setFullWidth(event.target.checked);
+  };
+
   useEffect(() => {
     queryRecords();
   }, []);
 
-  // const columns: GridColDef[] = [
-  //   { field: 'name', headerName: 'Name', width: 150 },
-  //   {
-  //     field: 'path',
-  //     headerName: 'Path',
-  //     width: 200,
-  //   },
-  //   { field: 'value', headerName: 'Value', width: 100 },
-  // ];
-
-  // const initialRows = [
-  //   { id: 1, name: 'Root A', path: ['a'], value: 100 },
-  //   { id: 2, name: 'Child B', path: ['a', 'b'], value: 20 },
-  //   { id: 3, name: 'Grandchild C', path: ['a', 'b', 'c'], value: 30 },
-  //   { id: 4, name: 'Root D', path: ['d'], value: 400 },
-  //   { id: 5, name: 'Child E', path: ['d', 'e'], value: 50 },
-  // ];
-
   return (
     <>
-      <div>
+      <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between', }}>
         <TextField
-          label="With normal TextField"
-          id="outlined-start-adornment"
-          sx={{ m: 1, width: '25ch' }}
+          label={t('global.condition.keyword')}
+          // id="outlined-start-adornment"
+          sx={{ m: 0, width: '25ch' }}
           slotProps={{
             input: {
               startAdornment: <InputAdornment position="start">
-                <SvgIcon component={SearchIcon} inheritViewBox/>
-                {/* <SearchIcon width={24} height={24} /> */}
-                </InputAdornment>,
+                <SvgIcon component={SearchIcon} inheritViewBox />
+              </InputAdornment>,
             },
           }}
         />
-      </div>
+        <Button variant="contained" onClick={handleClickOpen}>{t('global.operate.add')}</Button>
+      </Box>
       <Paper sx={{ height: 400, width: '100%' }}>
         <CustomizedDataGridPro
           columns={columns}
@@ -107,6 +114,61 @@ export default function MenuManage() {
           hideFooter={true}
         />
       </Paper>
+      <Dialog
+        fullWidth={fullWidth}
+        maxWidth={maxWidth}
+        open={open}
+        onClose={handleClose}
+      >
+        <DialogTitle>{t('global.operate.add')}{t('global.page.menu')}</DialogTitle>
+        <DialogContent>
+          {/* <DialogContentText>
+            You can set my maximum width and whether to adapt or not.
+          </DialogContentText> */}
+          <Box
+            noValidate
+            component="form"
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              m: 'auto',
+              width: 'fit-content',
+            }}
+          >
+            <FormControl sx={{ mt: 2, minWidth: 120 }}>
+              <InputLabel htmlFor="max-width">maxWidth</InputLabel>
+              <Select
+                autoFocus
+                value={maxWidth}
+                onChange={handleMaxWidthChange}
+                label="maxWidth"
+                inputProps={{
+                  name: 'max-width',
+                  id: 'max-width',
+                }}
+              >
+                <MenuItem value={false as any}>false</MenuItem>
+                <MenuItem value="xs">xs</MenuItem>
+                <MenuItem value="sm">sm</MenuItem>
+                <MenuItem value="md">md</MenuItem>
+                <MenuItem value="lg">lg</MenuItem>
+                <MenuItem value="xl">xl</MenuItem>
+              </Select>
+            </FormControl>
+            <FormControlLabel
+              sx={{ mt: 1 }}
+              control={
+                <Switch checked={fullWidth} onChange={handleFullWidthChange} />
+              }
+              label="Full width"
+            />
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>{t('global.operate.confirm')}</Button>
+          <Button onClick={handleClose}>{t('global.operate.cancel')}</Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 }

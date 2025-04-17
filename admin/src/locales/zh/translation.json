@@ -9,6 +9,12 @@
   "switch_theme": "切换到{{mode}}主题",
   "nav_position": "导航位置：{{position}}",
 
+  "global.condition.keyword": "请输入关键字",
+  "global.operate.add": "新增",
+  "global.operate.confirm": "确定",
+  "global.operate.cancel": "取消",
+  "global.page.menu": "菜单",
+  
   "page.menu.title.name": "菜单名",
   "page.menu.title.permission": "权限标识",
   "page.menu.title.type": "菜单类型",

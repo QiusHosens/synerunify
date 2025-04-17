@@ -36,6 +36,8 @@ export default function Header({ sx, height, routeTree }: HeaderProps) {
           justifyContent: 'space-between',
           maxWidth: { sm: '100%', md: '1700px' },
           pt: 1.5,
+          pl: 3,
+          pr: 3,
           ...sx
         }}
         spacing={2}
