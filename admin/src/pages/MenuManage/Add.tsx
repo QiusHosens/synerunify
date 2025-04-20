@@ -1,12 +1,8 @@
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, FormControlLabel, InputAdornment, InputLabel, MenuItem, Paper, Select, SvgIcon, Switch, TextField, Typography } from '@mui/material';
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormControlLabel, InputLabel, MenuItem, Select, Switch } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { useEffect, useState } from 'react';
+import { useImperativeHandle, useState } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
 import { SelectChangeEvent } from '@mui/material/Select';
-
-interface MenuAddProps {
-  
-}
 
 export default function MenuAdd() {
   const { t } = useTranslation();
@@ -14,6 +10,15 @@ export default function MenuAdd() {
   const [open, setOpen] = useState(false);
   const [fullWidth, setFullWidth] = useState(true);
   const [maxWidth, setMaxWidth] = useState<DialogProps['maxWidth']>('sm');
+
+  useImperativeHandle(ref, () => ({
+    show() {
+      setOpen(true);
+    },
+    hide() {
+      setOpen(false);
+    },
+  }));
 
   const handleClickOpen = () => {
     setOpen(true);

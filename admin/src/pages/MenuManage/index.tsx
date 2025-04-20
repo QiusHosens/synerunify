@@ -1,12 +1,10 @@
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, FormControlLabel, InputAdornment, InputLabel, MenuItem, Paper, Select, SvgIcon, Switch, TextField, Typography } from '@mui/material';
+import { Box, Button, InputAdornment, Paper, SvgIcon, TextField } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { useEffect, useState } from 'react';
-import { listMenu, MenuQueryCondition, pageMenu, SystemMenuResponse } from '@/api';
-import { GridColDef, GridSortModel } from '@mui/x-data-grid';
+import { useEffect, useRef, useState } from 'react';
+import { listMenu, MenuQueryCondition, SystemMenuResponse } from '@/api';
+import { GridColDef } from '@mui/x-data-grid';
 import CustomizedDataGridPro from '@/components/CustomizedDataGridPro';
 import SearchIcon from '@/assets/image/svg/search.svg';
-import { DialogProps } from '@mui/material/Dialog';
-import { SelectChangeEvent } from '@mui/material/Select';
 import MenuAdd from './Add';
 
 export default function MenuManage() {
@@ -19,6 +17,8 @@ export default function MenuManage() {
   const [keyword, setKeyword] = useState<string>();
 
   const [records, setRecords] = useState<Array<SystemMenuResponse>>([]);
+
+  const addMenu = useRef();
 
   const columns: GridColDef[] = [
     { field: 'name', headerName: t("page.menu.title.name"), width: 200 },
@@ -62,9 +62,7 @@ export default function MenuManage() {
 
   const getTreeDataPath = (row: any) => row.hierarchy;
 
-  const addMenu = () => {
-
-  }
+  
 
   useEffect(() => {
     queryRecords();
@@ -96,7 +94,7 @@ export default function MenuManage() {
           hideFooter={true}
         />
       </Paper>
-      <MenuAdd></MenuAdd>
+      <MenuAdd ref={addMenu}></MenuAdd>
     </>
   );
 }
