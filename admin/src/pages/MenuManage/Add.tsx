@@ -1,10 +1,10 @@
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormControlLabel, InputLabel, MenuItem, Select, Switch } from '@mui/material';
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormControlLabel, InputLabel, MenuItem, Select, Switch, TextField } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { useImperativeHandle, useState } from 'react';
+import { forwardRef, useImperativeHandle, useState } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
 import { SelectChangeEvent } from '@mui/material/Select';
 
-export default function MenuAdd() {
+const MenuAdd = forwardRef((props, ref) => {
   const { t } = useTranslation();
 
   const [open, setOpen] = useState(false);
@@ -62,6 +62,7 @@ export default function MenuAdd() {
           }}
         >
           <FormControl sx={{ mt: 2, minWidth: 120 }}>
+            <TextField label="Search field" />
             <InputLabel htmlFor="max-width">maxWidth</InputLabel>
             <Select
               autoFocus
@@ -96,4 +97,6 @@ export default function MenuAdd() {
       </DialogActions>
     </Dialog>
   )
-}
+});
+
+export default MenuAdd;

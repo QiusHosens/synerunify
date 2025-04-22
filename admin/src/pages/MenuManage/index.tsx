@@ -62,7 +62,9 @@ export default function MenuManage() {
 
   const getTreeDataPath = (row: any) => row.hierarchy;
 
-  
+  const handleClickOpen = () => {
+    (addMenu.current as any).show();
+  }
 
   useEffect(() => {
     queryRecords();
