@@ -403,14 +403,14 @@ export const inputsCustomizations: Components<Theme> = {
         padding: '8px 12px',
         color: (theme.vars || theme).palette.text.primary,
         borderRadius: (theme.vars || theme).shape.borderRadius,
-        border: `1px solid ${(theme.vars || theme).palette.divider}`,
+        // border: `1px solid ${(theme.vars || theme).palette.divider}`,
         backgroundColor: (theme.vars || theme).palette.background.default,
         transition: 'border 120ms ease-in',
         '&:hover': {
           borderColor: gray[400],
         },
         [`&.${outlinedInputClasses.focused}`]: {
-          outline: `3px solid ${alpha(brand[500], 0.5)}`,
+          // outline: `3px solid ${alpha(brand[500], 0.5)}`,
           borderColor: brand[400],
         },
         ...theme.applyStyles('dark', {
@@ -437,9 +437,9 @@ export const inputsCustomizations: Components<Theme> = {
           },
         ],
       }),
-      notchedOutline: {
-        border: 'none',
-      },
+      // notchedOutline: {
+      //   border: 'none',
+      // },
     },
   },
   MuiInputAdornment: {

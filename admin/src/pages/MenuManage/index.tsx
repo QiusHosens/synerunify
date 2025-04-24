@@ -71,32 +71,34 @@ export default function MenuManage() {
   }, []);
 
   return (
-    <>
-      <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between', }}>
+    <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+      <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between' }}>
         <TextField
           label={t('global.condition.keyword')}
-          // id="outlined-start-adornment"
           sx={{ m: 0, width: '25ch' }}
           slotProps={{
             input: {
-              startAdornment: <InputAdornment position="start">
-                <SvgIcon component={SearchIcon} inheritViewBox />
-              </InputAdornment>,
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SvgIcon component={SearchIcon} inheritViewBox />
+                </InputAdornment>
+              ),
             },
           }}
         />
-        <Button variant="contained" onClick={handleClickOpen}>{t('global.operate.add')}</Button>
+        <Button variant="contained" onClick={handleClickOpen}>
+          {t('global.operate.add')}
+        </Button>
       </Box>
-      <Paper sx={{ height: 400, width: '100%' }}>
+      <Paper sx={{ flex: 1, width: '100%' }}>
         <CustomizedDataGridPro
           columns={columns}
           initialRows={records}
-          // getTreeDataPath={(row) => row?.path || []}
           getTreeDataPath={getTreeDataPath}
           hideFooter={true}
         />
       </Paper>
-      <MenuAdd ref={addMenu}></MenuAdd>
-    </>
+      <MenuAdd ref={addMenu} />
+    </Box>
   );
 }

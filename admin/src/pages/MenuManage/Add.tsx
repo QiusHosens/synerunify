@@ -62,8 +62,9 @@ const MenuAdd = forwardRef((props, ref) => {
           }}
         >
           <FormControl sx={{ mt: 2, minWidth: 120 }}>
-            <TextField label="Search field" />
-            <InputLabel htmlFor="max-width">maxWidth</InputLabel>
+            <TextField label={t("page.menu.title.name")} />
+            <TextField label={t("page.menu.title.permission")} />
+            <TextField label={t("page.menu.title.permission")} />
             <Select
               autoFocus
               value={maxWidth}
