@@ -64,8 +64,10 @@ export const navigationCustomizations: Components<Theme> = {
     },
     styleOverrides: {
       root: ({ theme }) => ({
+        // color: (theme.vars || theme).palette.text.primary,
+        padding: '0 14px',
         borderRadius: (theme.vars || theme).shape.borderRadius,
-        border: '1px solid',
+        // border: '1px solid',
         borderColor: gray[200],
         backgroundColor: (theme.vars || theme).palette.background.paper,
         boxShadow: `inset 0 1px 0 1px hsla(220, 0%, 100%, 0.6), inset 0 -1px 0 1px hsla(220, 35%, 90%, 0.5)`,
@@ -80,6 +82,9 @@ export const navigationCustomizations: Components<Theme> = {
         },
         '&:before, &:after': {
           display: 'none',
+        },
+        ['& .MuiOutlinedInput-input']: {
+          color: (theme.vars || theme).palette.text.secondary,
         },
 
         ...theme.applyStyles('dark', {
@@ -102,11 +107,20 @@ export const navigationCustomizations: Components<Theme> = {
         }),
       }),
       select: ({ theme }) => ({
-        display: 'flex',
-        alignItems: 'center',
+        // display: 'flex',
+        // alignItems: 'center',
+        // MuiInputBase: {
+        //   styleOverrides
+        //   input: {
+
+        //   }
+        // }
+        // ['& .MuiOutlinedInput-input']: {
+        //   paddingLeft: '14px',
+        // },
         ...theme.applyStyles('dark', {
-          display: 'flex',
-          alignItems: 'center',
+          // display: 'flex',
+          // alignItems: 'center',
           '&:focus-visible': {
             backgroundColor: gray[900],
           },

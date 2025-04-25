@@ -86,6 +86,7 @@ export default function MenuManage() {
             },
           }}
         />
+        <TextField label={t("page.menu.title.name")} />
         <Button variant="contained" onClick={handleClickOpen}>
           {t('global.operate.add')}
         </Button>
