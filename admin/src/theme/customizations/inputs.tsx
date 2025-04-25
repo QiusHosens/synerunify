@@ -8,6 +8,7 @@ import CheckBoxOutlineBlankRoundedIcon from '@mui/icons-material/CheckBoxOutline
 import CheckRoundedIcon from '@mui/icons-material/CheckRounded';
 import RemoveRoundedIcon from '@mui/icons-material/RemoveRounded';
 import { gray, brand } from '../themePrimitives';
+import { inputLabelClasses } from '@mui/material';
 
 /* eslint-disable import/prefer-default-export */
 export const inputsCustomizations: Components<Theme> = {
@@ -400,7 +401,7 @@ export const inputsCustomizations: Components<Theme> = {
         padding: 0,
       },
       root: ({ theme }) => ({
-        padding: '8px 12px',
+        // padding: '8px 12px',
         color: (theme.vars || theme).palette.text.primary,
         borderRadius: (theme.vars || theme).shape.borderRadius,
         // border: `1px solid ${(theme.vars || theme).palette.divider}`,
@@ -412,6 +413,14 @@ export const inputsCustomizations: Components<Theme> = {
         [`&.${outlinedInputClasses.focused}`]: {
           // outline: `3px solid ${alpha(brand[500], 0.5)}`,
           borderColor: brand[400],
+          // borderColor: (theme.vars || theme).palette.background.default,
+          ['& .MuiOutlinedInput-notchedOutline']: {
+            // border: 'none',
+            // borderColor: (theme.vars || theme).palette.background.default,
+            ['& > legend']: {
+              maxWidth: '100%',
+            }
+          },
         },
         ...theme.applyStyles('dark', {
           '&:hover': {
@@ -437,10 +446,30 @@ export const inputsCustomizations: Components<Theme> = {
           },
         ],
       }),
-      // notchedOutline: {
-      //   border: 'none',
-      // },
+      notchedOutline: {
+        // border: 'none',
+        // borderColor: (theme.vars || theme).palette.background.default,
+        ['& > legend']: {
+          maxWidth: '0.01px',
+        }
+      },
     },
+  },
+  MuiInputLabel: {
+    styleOverrides: {
+      root: ({ theme }) => ({
+        transform: 'translate(14px, 10px) scale(1)',
+        [`&.${inputLabelClasses.focused}`]: {
+          transform: 'translate(14px, -9px) scale(0.75)',
+        },
+      }),
+      shrink: ({ theme }) => ({
+        transform: 'translate(52px, 10px) scale(1)',
+        // [`&.${inputLabelClasses.focused}`]: {
+        //   transform: 'translate(14px, -9px) scale(0.75)',
+        // },
+      }),
+    }
   },
   MuiInputAdornment: {
     styleOverrides: {
