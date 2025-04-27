@@ -14,6 +14,18 @@
   "global.operate.confirm": "确定",
   "global.operate.cancel": "取消",
   "global.page.menu": "菜单",
+
+  "page.dict.title.name": "字典名称",
+  "page.dict.title.type": "字典类型",
+  "page.dict.title.type.status": "字典类型状态",
+  "page.dict.title.type.remark": "字典类型备注",
+  "page.dict.title.label": "字典标签",
+  "page.dict.title.value": "字典键值",
+  "page.dict.title.status": "字典状态",
+  "page.dict.title.sort": "字典排序",
+  "page.dict.title.color.type": "颜色类型",
+  "page.dict.title.css.class": "css样式",
+  "page.dict.title.remark": "备注",
   
   "page.menu.title.name": "菜单名",
   "page.menu.title.permission": "权限标识",
