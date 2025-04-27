@@ -395,26 +395,26 @@ export const inputsCustomizations: Components<Theme> = {
       },
     },
   },
-  MuiTextField: {
-    styleOverrides: {
-      root: ({ theme }) => ({
-        '& .MuiInputLabel-outlined': {
-          transform: 'translate(14px, 10px) scale(1)',
-          [`&.${inputLabelClasses.focused}`]: {
-            transform: 'translate(14px, -9px) scale(0.75)',
-          },
-        },
-        '& .MuiInputLabel-shrink': {
-          transform: 'translate(52px, 10px) scale(1)',
-        }
-      })
-    }
-  },
+  // MuiTextField: {
+  //   styleOverrides: {
+  //     root: ({ theme }) => ({
+  //       '& .MuiInputLabel-outlined': {
+  //         transform: 'translate(14px, 10px) scale(1)',
+  //         [`&.${inputLabelClasses.focused}`]: {
+  //           transform: 'translate(14px, -9px) scale(0.75)',
+  //         },
+  //       },
+  //       '& .MuiInputLabel-shrink': {
+  //         transform: 'translate(52px, 10px) scale(1)',
+  //       }
+  //     })
+  //   }
+  // },
   MuiOutlinedInput: {
     styleOverrides: {
-      input: {
-        padding: 0,
-      },
+      // input: {
+      //   padding: 0,
+      // },
       root: ({ theme }) => ({
         // padding: '8px 12px',
         color: (theme.vars || theme).palette.text.primary,
@@ -425,33 +425,6 @@ export const inputsCustomizations: Components<Theme> = {
         '&:hover': {
           borderColor: gray[400],
         },
-        // [`&.${outlinedInputClasses.focused}`]: {
-        //   // outline: `3px solid ${alpha(brand[500], 0.5)}`,
-        //   borderColor: brand[400],
-        //   // borderColor: (theme.vars || theme).palette.background.default,
-        //   ['& .MuiOutlinedInput-notchedOutline']: {
-        //     // border: 'none',
-        //     // borderColor: (theme.vars || theme).palette.background.default,
-        //     ['& > legend']: {
-        //       maxWidth: '100%',
-        //     }
-        //   },
-        // },
-        // MuiSelect: {
-        //   styleOverrides: {
-        //     root: ({ theme }) => ({
-        //       borderColor: brand[400],
-        //       // borderColor: (theme.vars || theme).palette.background.default,
-        //       ['& .MuiOutlinedInput-notchedOutline']: {
-        //         // border: 'none',
-        //         // borderColor: (theme.vars || theme).palette.background.default,
-        //         ['& > legend']: {
-        //           maxWidth: '100%',
-        //         }
-        //       },
-        //     })
-        //   }
-        // },
         [`&.Mui-focused`]: {
           // outline: `3px solid ${alpha(brand[500], 0.5)}`,
           borderColor: brand[400],
@@ -512,7 +485,15 @@ export const inputsCustomizations: Components<Theme> = {
         }
       }),
       shrink: ({ theme }) => ({
-        transform: 'translate(52px, 10px) scale(1)',
+        // transform: 'translate(52px, 10px) scale(1)',
+        transform: 'translate(14px, -9px) scale(0.75)',
+        '& ~.MuiOutlinedInput-root': {
+          ['& .MuiOutlinedInput-notchedOutline']: {
+            ['& > legend']: {
+              maxWidth: '100%',
+            }
+          },
+        },
         '&.CustomInputLabelShrinkSelect': {
           transform: 'translate(22px, 0px) scale(0.75)',
           [`&.${inputLabelClasses.focused}`]: {

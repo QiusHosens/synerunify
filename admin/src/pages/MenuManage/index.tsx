@@ -75,7 +75,7 @@ export default function MenuManage() {
       <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between' }}>
         <TextField
           label={t('global.condition.keyword')}
-          sx={{ m: 0, width: '25ch' }}
+          sx={{ m: 0, width: '200px' }}
           slotProps={{
             input: {
               startAdornment: (
@@ -86,7 +86,6 @@ export default function MenuManage() {
             },
           }}
         />
-        <TextField label={t("page.menu.title.name")} />
         <Button variant="contained" onClick={handleClickOpen}>
           {t('global.operate.add')}
         </Button>

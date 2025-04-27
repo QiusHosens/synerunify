@@ -8,7 +8,7 @@ const MenuAdd = forwardRef((props, ref) => {
   const { t } = useTranslation();
 
   const [open, setOpen] = useState(false);
-  const [type, setType] = useState<string | number>(1);
+  const [type, setType] = useState<number>(1);
   const [fullWidth, setFullWidth] = useState(true);
   const [maxWidth, setMaxWidth] = useState<DialogProps['maxWidth']>('sm');
 
@@ -70,7 +70,7 @@ const MenuAdd = forwardRef((props, ref) => {
             <TextField label={t("page.menu.title.name")} />
             <TextField label={t("page.menu.title.permission")} />
           </FormControl>
-          <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiSelect-root': { m: 1, width: '200px' } }}>
+          <FormControl sx={{ minWidth: 120, '& .MuiSelect-root': { m: 1, width: '200px' } }}>
             <InputLabel classes={{ root: 'CustomInputLabelRootSelect', shrink: 'CustomInputLabelShrinkSelect' }} id="menu-type-select-label">{t("page.menu.title.type")}</InputLabel>
             <Select
               classes={{ select: 'CustomSelectSelect' }}
@@ -78,15 +78,14 @@ const MenuAdd = forwardRef((props, ref) => {
               value={type}
               onChange={handleTypeChange}
               label={t("page.menu.title.type")}
-            // inputProps={{
-            //   name: 'max-width',
-            //   id: 'max-width',
-            // }}
             >
               <MenuItem value={1}>菜单组</MenuItem>
               <MenuItem value={2}>菜单</MenuItem>
               <MenuItem value={3}>操作</MenuItem>
             </Select>
+          </FormControl>
+          <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { m: 1, width: '200px' } }}>
+            <TextField type="number" label={t("page.menu.title.sort")} />
           </FormControl>
           {/* <Select
               autoFocus

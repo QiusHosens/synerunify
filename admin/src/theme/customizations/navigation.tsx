@@ -65,7 +65,7 @@ export const navigationCustomizations: Components<Theme> = {
     styleOverrides: {
       root: ({ theme }) => ({
         // color: (theme.vars || theme).palette.text.primary,
-        padding: '0 14px',
+        // padding: '0 14px',
         borderRadius: (theme.vars || theme).shape.borderRadius,
         // border: '1px solid',
         borderColor: gray[200],
