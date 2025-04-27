@@ -395,6 +395,21 @@ export const inputsCustomizations: Components<Theme> = {
       },
     },
   },
+  MuiTextField: {
+    styleOverrides: {
+      root: ({ theme }) => ({
+        '& .MuiInputLabel-outlined': {
+          transform: 'translate(14px, 10px) scale(1)',
+          [`&.${inputLabelClasses.focused}`]: {
+            transform: 'translate(14px, -9px) scale(0.75)',
+          },
+        },
+        '& .MuiInputLabel-shrink': {
+          transform: 'translate(52px, 10px) scale(1)',
+        }
+      })
+    }
+  },
   MuiOutlinedInput: {
     styleOverrides: {
       input: {
@@ -410,7 +425,34 @@ export const inputsCustomizations: Components<Theme> = {
         '&:hover': {
           borderColor: gray[400],
         },
-        [`&.${outlinedInputClasses.focused}`]: {
+        // [`&.${outlinedInputClasses.focused}`]: {
+        //   // outline: `3px solid ${alpha(brand[500], 0.5)}`,
+        //   borderColor: brand[400],
+        //   // borderColor: (theme.vars || theme).palette.background.default,
+        //   ['& .MuiOutlinedInput-notchedOutline']: {
+        //     // border: 'none',
+        //     // borderColor: (theme.vars || theme).palette.background.default,
+        //     ['& > legend']: {
+        //       maxWidth: '100%',
+        //     }
+        //   },
+        // },
+        // MuiSelect: {
+        //   styleOverrides: {
+        //     root: ({ theme }) => ({
+        //       borderColor: brand[400],
+        //       // borderColor: (theme.vars || theme).palette.background.default,
+        //       ['& .MuiOutlinedInput-notchedOutline']: {
+        //         // border: 'none',
+        //         // borderColor: (theme.vars || theme).palette.background.default,
+        //         ['& > legend']: {
+        //           maxWidth: '100%',
+        //         }
+        //       },
+        //     })
+        //   }
+        // },
+        [`&.Mui-focused`]: {
           // outline: `3px solid ${alpha(brand[500], 0.5)}`,
           borderColor: brand[400],
           // borderColor: (theme.vars || theme).palette.background.default,
@@ -462,12 +504,21 @@ export const inputsCustomizations: Components<Theme> = {
         [`&.${inputLabelClasses.focused}`]: {
           transform: 'translate(14px, -9px) scale(0.75)',
         },
+        '&.CustomInputLabelRootSelect': {
+          transform: 'translate(22px, 18px) scale(1)',
+          // [`&.${inputLabelClasses.focused}`]: {
+          //   transform: 'translate(22px, -5px) scale(0.75)',
+          // },
+        }
       }),
       shrink: ({ theme }) => ({
         transform: 'translate(52px, 10px) scale(1)',
-        // [`&.${inputLabelClasses.focused}`]: {
-        //   transform: 'translate(14px, -9px) scale(0.75)',
-        // },
+        '&.CustomInputLabelShrinkSelect': {
+          transform: 'translate(22px, 0px) scale(0.75)',
+          [`&.${inputLabelClasses.focused}`]: {
+            transform: 'translate(22px, 0px) scale(0.75)',
+          },
+        }
       }),
     }
   },

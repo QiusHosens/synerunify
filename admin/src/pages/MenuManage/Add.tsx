@@ -8,7 +8,7 @@ const MenuAdd = forwardRef((props, ref) => {
   const { t } = useTranslation();
 
   const [open, setOpen] = useState(false);
-  const [type, setType] = useState<number>(1);
+  const [type, setType] = useState<string | number>(1);
   const [fullWidth, setFullWidth] = useState(true);
   const [maxWidth, setMaxWidth] = useState<DialogProps['maxWidth']>('sm');
 
@@ -66,11 +66,14 @@ const MenuAdd = forwardRef((props, ref) => {
             width: 'fit-content',
           }}
         >
-          <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiTextField-root': { m: 1, width: '200px' }, '& .MuiSelect-root': { m: 1, width: '200px' } }}>
+          <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiTextField-root': { m: 1, width: '200px' } }}>
             <TextField label={t("page.menu.title.name")} />
             <TextField label={t("page.menu.title.permission")} />
-            <InputLabel id="menu-type-select-label">{t("page.menu.title.type")}</InputLabel>
+          </FormControl>
+          <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiSelect-root': { m: 1, width: '200px' } }}>
+            <InputLabel classes={{ root: 'CustomInputLabelRootSelect', shrink: 'CustomInputLabelShrinkSelect' }} id="menu-type-select-label">{t("page.menu.title.type")}</InputLabel>
             <Select
+              classes={{ select: 'CustomSelectSelect' }}
               labelId="menu-type-select-label"
               value={type}
               onChange={handleTypeChange}
@@ -84,7 +87,8 @@ const MenuAdd = forwardRef((props, ref) => {
               <MenuItem value={2}>菜单</MenuItem>
               <MenuItem value={3}>操作</MenuItem>
             </Select>
-            {/* <Select
+          </FormControl>
+          {/* <Select
               autoFocus
               value={maxWidth}
               onChange={handleMaxWidthChange}
@@ -101,7 +105,7 @@ const MenuAdd = forwardRef((props, ref) => {
               <MenuItem value="lg">lg</MenuItem>
               <MenuItem value="xl">xl</MenuItem>
             </Select> */}
-          </FormControl>
+
           {/* <FormControlLabel
             sx={{ mt: 1 }}
             control={
@@ -115,7 +119,7 @@ const MenuAdd = forwardRef((props, ref) => {
         <Button onClick={handleClose}>{t('global.operate.confirm')}</Button>
         <Button onClick={handleClose}>{t('global.operate.cancel')}</Button>
       </DialogActions>
-    </Dialog>
+    </Dialog >
   )
 });
 
