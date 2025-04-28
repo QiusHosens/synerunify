@@ -1,3 +1,4 @@
+use common::constants::common_status::STATUS_ENABLE;
 use sea_orm::{DatabaseConnection, EntityTrait, ColumnTrait, ActiveModelTrait, PaginatorTrait, QueryOrder, QueryFilter, Condition};
 use crate::model::system_dict_type::{Model as SystemDictTypeModel, ActiveModel as SystemDictTypeActiveModel, Entity as SystemDictTypeEntity, Column};
 use system_model::request::system_dict_type::{CreateSystemDictTypeRequest, UpdateSystemDictTypeRequest, PaginatedKeywordRequest};
@@ -11,6 +12,7 @@ use common::interceptor::orm::active_filter::ActiveFilterEntityTrait;
 
 pub async fn create(db: &DatabaseConnection, login_user: LoginUserContext, request: CreateSystemDictTypeRequest) -> Result<i64> {
     let mut system_dict_type = create_request_to_model(&request);
+    system_dict_type.status = Set(STATUS_ENABLE);
     system_dict_type.creator = Set(Some(login_user.id));
     system_dict_type.updater = Set(Some(login_user.id));
     

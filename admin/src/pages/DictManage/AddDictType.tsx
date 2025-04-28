@@ -1,0 +1,138 @@
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, TextField } from '@mui/material';
+import { useTranslation } from 'react-i18next';
+import { forwardRef, useImperativeHandle, useState } from 'react';
+import { DialogProps } from '@mui/material/Dialog';
+import { createDictType, SystemDictTypeRequest } from '@/api/dict';
+
+interface FormValues {
+  name: string;
+  type: string;
+  remark: string;
+}
+
+interface FormErrors {
+  name?: string;
+  type?: string;
+}
+
+const DictTypeAdd = forwardRef((props, ref) => {
+  const { t } = useTranslation();
+
+  const [open, setOpen] = useState(false);
+  const [fullWidth, setFullWidth] = useState(true);
+  const [maxWidth, setMaxWidth] = useState<DialogProps['maxWidth']>('sm');
+  const [formValues, setFormValues] = useState<FormValues>({
+    name: '',
+    type: '',
+    remark: ''
+  });
+  const [errors, setErrors] = useState<FormErrors>({});
+
+  useImperativeHandle(ref, () => ({
+    show() {
+      setOpen(true);
+    },
+    hide() {
+      setOpen(false);
+    },
+  }));
+
+  const validateForm = (): boolean => {
+    const newErrors: FormErrors = {};
+    
+    if (!formValues.name.trim()) {
+      newErrors.name = t('page.dict.error.name');
+    }
+    
+    if (!formValues.type.trim()) {
+      newErrors.type = t('page.dict.error.type');
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    setFormValues({ name: '', type: '', remark: '' });
+    setErrors({});
+  };
+
+  const handleSubmit = async () => {
+    if (validateForm()) {
+      await createDictType(formValues as SystemDictTypeRequest);
+      handleClose();
+    }
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormValues(prev => ({
+      ...prev,
+      [name]: value
+    }));
+    
+    // Clear error when user starts typing
+    if (errors[name as keyof FormErrors]) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: undefined
+      }));
+    }
+  };
+
+  return (
+    <Dialog
+      fullWidth={fullWidth}
+      maxWidth={maxWidth}
+      open={open}
+      onClose={handleClose}
+    >
+      <DialogTitle>{t('global.operate.add')}{t('global.page.dict.type')}</DialogTitle>
+      <DialogContent>
+        <Box
+          component="form"
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            m: 'auto',
+            width: 'fit-content',
+          }}
+        >
+          <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiTextField-root': { m: 1, width: '200px' } }}>
+            <TextField
+              required
+              label={t("page.dict.title.name")}
+              name="name"
+              value={formValues.name}
+              onChange={handleInputChange}
+              error={!!errors.name}
+              helperText={errors.name}
+            />
+            <TextField
+              required
+              label={t("page.dict.title.type")}
+              name="type"
+              value={formValues.type}
+              onChange={handleInputChange}
+              error={!!errors.type}
+              helperText={errors.type}
+            />
+            <TextField
+              label={t("page.dict.title.remark")}
+              name="remark"
+              value={formValues.remark}
+              onChange={handleInputChange}
+            />
+          </FormControl>
+        </Box>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={handleSubmit}>{t('global.operate.confirm')}</Button>
+        <Button onClick={handleClose}>{t('global.operate.cancel')}</Button>
+      </DialogActions>
+    </Dialog>
+  )
+});
+
+export default DictTypeAdd;

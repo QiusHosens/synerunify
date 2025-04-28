@@ -1,7 +1,7 @@
-use sea_orm::{DatabaseConnection, EntityTrait, ColumnTrait, ActiveModelTrait, PaginatorTrait, QueryOrder, QueryFilter, Condition};
-use crate::model::system_dict_data::{Model as SystemDictDataModel, ActiveModel as SystemDictDataActiveModel, Entity as SystemDictDataEntity, Column};
+use sea_orm::{ActiveModelTrait, ColumnTrait, Condition, DatabaseConnection, EntityTrait, JoinType, PaginatorTrait, QueryFilter, QueryOrder, QuerySelect, RelationTrait};
+use crate::model::system_dict_data::{Model as SystemDictDataModel, ActiveModel as SystemDictDataActiveModel, Entity as SystemDictDataEntity, Column, Relation};
 use system_model::request::system_dict_data::{CreateSystemDictDataRequest, UpdateSystemDictDataRequest, PaginatedKeywordRequest};
-use system_model::response::system_dict_data::SystemDictDataResponse;
+use system_model::response::system_dict_data::{SystemDictDataResponse, SystemDictDataDetailResponse};
 use crate::convert::system_dict_data::{create_request_to_model, update_request_to_model, model_to_response};
 use anyhow::{Result, anyhow};
 use sea_orm::ActiveValue::Set;
@@ -51,7 +51,9 @@ pub async fn get_by_id(db: &DatabaseConnection, login_user: LoginUserContext, id
 
 pub async fn get_paginated(db: &DatabaseConnection, login_user: LoginUserContext, params: PaginatedKeywordRequest) -> Result<PaginatedResponse<SystemDictDataResponse>> {
     let paginator = SystemDictDataEntity::find_active()
+        .join(JoinType::LeftJoin, Relation::DictType.def())
         .order_by_desc(Column::UpdateTime)
+        .into_model()
         .paginate(db, params.base.size);
 
     let total = paginator.num_items().await?;

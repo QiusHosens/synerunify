@@ -2,6 +2,7 @@ use chrono::NaiveDateTime;
 use sea_orm::Condition;
 use sea_orm::entity::prelude::*;
 use common::interceptor::orm::active_filter::ActiveFilterEntityTrait;
+use crate::model::system_dict_type;
 
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel)]
 #[sea_orm(table_name = "system_dict_data")]
@@ -39,7 +40,15 @@ pub struct Model {
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
-pub enum Relation {}
+pub enum Relation {
+
+    #[sea_orm(
+        belongs_to = "super::system_dict_type::Entity",
+        from = "Column::DictType",
+        to = "system_dict_type::Column::Type"
+    )]
+    DictType,
+}
 
 impl Related<Entity> for Entity {
     fn to() -> RelationDef {

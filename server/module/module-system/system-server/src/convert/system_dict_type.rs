@@ -7,7 +7,6 @@ pub fn create_request_to_model(request: &CreateSystemDictTypeRequest) -> SystemD
     SystemDictTypeActiveModel {
         name: Set(request.name.clone()),
         r#type: Set(request.r#type.clone()),
-        status: Set(request.status.clone()),
         remark: request.remark.as_ref().map_or(NotSet, |remark| Set(Some(remark.clone()))),
         ..Default::default()
     }
@@ -20,9 +19,6 @@ pub fn update_request_to_model(request: &UpdateSystemDictTypeRequest, existing: 
     }
     if let Some(r#type) = &request.r#type { 
         active_model.r#type = Set(r#type.clone());
-    }
-    if let Some(status) = &request.status { 
-        active_model.status = Set(status.clone());
     }
     if let Some(remark) = &request.remark { 
         active_model.remark = Set(Some(remark.clone()));

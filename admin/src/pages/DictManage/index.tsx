@@ -5,7 +5,8 @@ import { listMenu, MenuQueryCondition, SystemMenuResponse } from '@/api';
 import { GridColDef } from '@mui/x-data-grid';
 import CustomizedDataGridPro from '@/components/CustomizedDataGridPro';
 import SearchIcon from '@/assets/image/svg/search.svg';
-import MenuAdd from './Add';
+import DictTypeAdd from './AddDictType';
+import DictAdd from './AddDict';
 
 export default function DictManage() {
   const { t } = useTranslation();
@@ -18,13 +19,14 @@ export default function DictManage() {
 
   const [records, setRecords] = useState<Array<SystemMenuResponse>>([]);
 
-  const addMenu = useRef();
+  const addDict = useRef();
+  const addDictType = useRef();
 
   const columns: GridColDef[] = [
     { field: 'name', headerName: t("page.dict.title.name"), width: 200 },
     { field: 'type', headerName: t("page.dict.title.type"), width: 200 },
     {
-      field: 'type',
+      field: 'remark',
       headerName: t("page.dict.title.type.remark"),
       width: 200,
     },
@@ -62,8 +64,12 @@ export default function DictManage() {
 
   const getTreeDataPath = (row: any) => row.hierarchy;
 
-  const handleClickOpen = () => {
-    (addMenu.current as any).show();
+  const handleClickOpenDictType = () => {
+    (addDictType.current as any).show();
+  }
+
+  const handleClickOpenDict = () => {
+    (addDict.current as any).show();
   }
 
   useEffect(() => {
@@ -86,9 +92,14 @@ export default function DictManage() {
             },
           }}
         />
-        <Button variant="contained" onClick={handleClickOpen}>
-          {t('global.operate.add')}
-        </Button>
+        <Box>
+          <Button variant="contained" onClick={handleClickOpenDictType}>
+            {t('global.operate.add')}{t('global.page.dict.type')}
+          </Button>
+          <Button variant="contained" onClick={handleClickOpenDict} sx={{ ml: 2 }}>
+            {t('global.operate.add')}{t('global.page.dict')}
+          </Button>
+        </Box>
       </Box>
       <Paper sx={{ flex: 1, width: '100%' }}>
         <CustomizedDataGridPro
@@ -98,7 +109,8 @@ export default function DictManage() {
           hideFooter={true}
         />
       </Paper>
-      <MenuAdd ref={addMenu} />
-    </Box>
+      <DictTypeAdd ref={addDictType} />
+      <DictAdd ref={addDict} />
+    </Box >
   );
 }

@@ -14,8 +14,6 @@ pub struct CreateSystemDictDataRequest {
     
     pub dict_type: String, // 字典类型
     
-    pub status: i8, // 状态（0正常 1停用）
-    
     pub color_type: Option<String>, // 颜色类型
     
     pub css_class: Option<String>, // css 样式
@@ -36,8 +34,6 @@ pub struct UpdateSystemDictDataRequest {
     pub value: Option<String>, // 字典键值
     
     pub dict_type: Option<String>, // 字典类型
-    
-    pub status: Option<i8>, // 状态（0正常 1停用）
     
     pub color_type: Option<String>, // 颜色类型
     

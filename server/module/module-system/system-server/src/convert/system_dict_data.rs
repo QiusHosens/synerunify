@@ -9,7 +9,7 @@ pub fn create_request_to_model(request: &CreateSystemDictDataRequest) -> SystemD
         label: Set(request.label.clone()),
         value: Set(request.value.clone()),
         dict_type: Set(request.dict_type.clone()),
-        status: Set(request.status.clone()),
+        // status: Set(request.status.clone()),
         color_type: request.color_type.as_ref().map_or(NotSet, |color_type| Set(Some(color_type.clone()))),
         css_class: request.css_class.as_ref().map_or(NotSet, |css_class| Set(Some(css_class.clone()))),
         remark: request.remark.as_ref().map_or(NotSet, |remark| Set(Some(remark.clone()))),
@@ -31,9 +31,9 @@ pub fn update_request_to_model(request: &UpdateSystemDictDataRequest, existing: 
     if let Some(dict_type) = &request.dict_type { 
         active_model.dict_type = Set(dict_type.clone());
     }
-    if let Some(status) = &request.status { 
-        active_model.status = Set(status.clone());
-    }
+    // if let Some(status) = &request.status { 
+    //     active_model.status = Set(status.clone());
+    // }
     if let Some(color_type) = &request.color_type { 
         active_model.color_type = Set(Some(color_type.clone()));
     }
