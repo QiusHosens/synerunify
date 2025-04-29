@@ -223,7 +223,7 @@ export const inputsCustomizations: Components<Theme> = {
               variant: 'operate',
             },
             style: {
-              // color: 'unset',
+              color: (theme.vars || theme).palette.primary.main,
               minWidth: 'auto',
               padding: '8px',
               borderRadius: '50%',

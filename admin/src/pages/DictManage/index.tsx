@@ -1,4 +1,4 @@
-import { Box, Button, FormControl, InputAdornment, InputLabel, MenuItem, Paper, Select, SvgIcon, TextField } from '@mui/material';
+import { Box, Button, FormControl, InputAdornment, InputLabel, MenuItem, Paper, Select, SvgIcon, Switch, TextField } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useEffect, useRef, useState } from 'react';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
@@ -49,6 +49,17 @@ export default function DictManage() {
     { field: 'color_type', headerName: t("page.dict.title.color.type"), flex: 1, minWidth: 150 },
     { field: 'css_class', headerName: t("page.dict.title.css.class"), flex: 1, minWidth: 150 },
     {
+      field: 'status',
+      headerName: t("page.dict.title.status"),
+      flex: 1,
+      minWidth: 150,
+      renderCell: (params: GridRenderCellParams) => (
+        <Box sx={{ height: '100%', display: 'flex', gap: 1, alignItems: 'center' }}>
+          <Switch checked={params.row.status} onChange={handleStatusChange} />
+        </Box>
+      ),
+    },
+    {
       field: 'actions',
       headerName: t("global.operate.actions"),
       flex: 1,
@@ -58,13 +69,22 @@ export default function DictManage() {
           <Button
             size="small"
             variant='operate'
+            title={t('page.dict.operate.edit.type')}
             startIcon={<EditIcon />}
             onClick={() => handleEdit(params.row.id)}
           />
           <Button
             size="small"
             variant='operate'
-            color="error"
+            title={t('page.dict.operate.edit')}
+            startIcon={<EditIcon />}
+            onClick={() => handleEdit(params.row.id)}
+          />
+          <Button
+            sx={{ color: 'error.main' }}
+            size="small"
+            variant='operate'
+            // color="error"
             startIcon={<DeleteIcon />}
             onClick={() => handleDelete(params.row.id)}
           />
@@ -117,6 +137,26 @@ export default function DictManage() {
     }
 
     queryRecords(c);
+  };
+
+  const handleStatusChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // console.log('target', e.target);
+    const { name, value, type } = e.target;
+    let c = condition;
+    if (type == 'number') {
+      const numberValue = Number(value);
+      (c as any)[name] = numberValue;
+      setCondition(prev => ({
+        ...prev,
+        [name]: numberValue
+      }));
+    } else {
+      (c as any)[name] = value;
+      setCondition(prev => ({
+        ...prev,
+        [name]: value
+      }));
+    }
   };
 
   return (
