@@ -118,13 +118,13 @@ export const navigationCustomizations: Components<Theme> = {
         ['& .MuiOutlinedInput-input']: {
           paddingLeft: '14px',
         },
-        ['& ~.MuiOutlinedInput-notchedOutline']: {
-          // border: 'none',
-          // borderColor: (theme.vars || theme).palette.background.default,
-          ['& > legend']: {
-            maxWidth: '100%',
-          }
-        },
+        // ['& ~.MuiOutlinedInput-notchedOutline']: {
+        //   // border: 'none',
+        //   // borderColor: (theme.vars || theme).palette.background.default,
+        //   ['& > legend']: {
+        //     maxWidth: '100%',
+        //   }
+        // },
         ...theme.applyStyles('dark', {
           // display: 'flex',
           // alignItems: 'center',

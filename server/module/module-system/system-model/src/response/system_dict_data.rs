@@ -78,11 +78,11 @@ pub struct SystemDictDataDetailResponse {
 
     /************** 字典类型字段 *************/
     
-    pub name: String, // 字典名称
+    pub name: Option<String>, // 字典名称
     
-    pub r#type: String, // 字典类型
+    pub r#type: Option<String>, // 字典类型
     
-    pub type_status: i8, // 状态（0正常 1停用）
+    pub type_status: Option<i8>, // 状态（0正常 1停用）
     
-    pub type_remark: Option<String>, // 备注
+    pub type_remark: Option<Option<String>>, // 备注
 }

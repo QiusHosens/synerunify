@@ -48,4 +48,5 @@ pub struct PaginatedKeywordRequest {
     #[serde(flatten)]
     pub base: PaginatedRequest,
     pub keyword: Option<String>,
+    pub dict_type: Option<String>,
 }

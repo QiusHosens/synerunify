@@ -11,8 +11,13 @@
 
   "global.condition.keyword": "请输入关键字",
   "global.operate.add": "新增",
+  "global.operate.confirm.continue": "保存并继续",
   "global.operate.confirm": "确定",
   "global.operate.cancel": "取消",
+
+  "global.operate.actions": "操作",
+  "global.operate.edit": "编辑",
+  "global.operate.delete": "删除",
 
   "global.page.menu": "菜单",
   "global.page.dict": "字典",

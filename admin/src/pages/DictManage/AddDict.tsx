@@ -93,8 +93,12 @@ const DictAdd = forwardRef((props, ref) => {
 
   const handleClose = () => {
     setOpen(false);
+    reset();
+  };
+
+  const reset = () => {
     setFormValues({
-      dict_type: '',
+      dict_type: formValues.dict_type,
       label: '',
       value: '',
       sort: 0,
@@ -103,7 +107,7 @@ const DictAdd = forwardRef((props, ref) => {
       remark: '',
     });
     setErrors({});
-  };
+  }
 
   const handleSubmit = async () => {
     if (validateForm()) {
@@ -112,12 +116,30 @@ const DictAdd = forwardRef((props, ref) => {
     }
   };
 
+  const handleSubmitAndContinue = async () => {
+    if (validateForm()) {
+      await createDict(formValues as SystemDictDataRequest);
+      reset();
+    }
+  };
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormValues(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    // console.log('target', e.target);
+    const { name, value, type } = e.target;
+    if (type == 'number') {
+      const numberValue = Number(value);
+      setFormValues(prev => ({
+        ...prev,
+        [name]: numberValue
+      }));
+    } else {
+      setFormValues(prev => ({
+        ...prev,
+        [name]: value
+      }));
+    }
+
+    // console.log('formValues', formValues);
 
     // Clear error when user starts typing
     if (errors[name as keyof FormErrors]) {
@@ -212,6 +234,7 @@ const DictAdd = forwardRef((props, ref) => {
         </Box>
       </DialogContent>
       <DialogActions>
+        <Button onClick={handleSubmitAndContinue}>{t('global.operate.confirm.continue')}</Button>
         <Button onClick={handleSubmit}>{t('global.operate.confirm')}</Button>
         <Button onClick={handleClose}>{t('global.operate.cancel')}</Button>
       </DialogActions>

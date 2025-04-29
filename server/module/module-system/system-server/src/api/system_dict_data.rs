@@ -6,7 +6,7 @@ use ctor;
 use macros::require_authorize;
 use axum::{routing::{get, post}, Router, extract::{State, Path, Json, Query}, response::IntoResponse, Extension};
 use common::base::page::PaginatedResponse;
-use system_model::request::system_dict_data::{CreateSystemDictDataRequest, UpdateSystemDictDataRequest, PaginatedKeywordRequest};
+use system_model::{request::system_dict_data::{CreateSystemDictDataRequest, PaginatedKeywordRequest, UpdateSystemDictDataRequest}, response::system_dict_data::SystemDictDataDetailResponse};
 use system_model::response::system_dict_data::SystemDictDataResponse;
 use common::base::response::CommonResult;
 use common::context::context::LoginUserContext;
@@ -162,7 +162,7 @@ async fn page(
     State(state): State<AppState>,
     Extension(login_user): Extension<LoginUserContext>,
     Query(params): Query<PaginatedKeywordRequest>,
-) -> CommonResult<PaginatedResponse<SystemDictDataResponse>> {
+) -> CommonResult<PaginatedResponse<SystemDictDataDetailResponse>> {
     match service::system_dict_data::get_paginated(&state.db, login_user, params).await {
         Ok(data) => {CommonResult::with_data(data)}
         Err(e) => {CommonResult::with_err(&e.to_string())}

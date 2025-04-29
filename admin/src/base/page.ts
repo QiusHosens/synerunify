@@ -1,7 +1,7 @@
 export interface PaginatedRequest {
   page: number;
   size: number;
-  keyword: string | undefined;
+  keyword?: string;
 }
 
 export interface PaginatedResponse<T> {

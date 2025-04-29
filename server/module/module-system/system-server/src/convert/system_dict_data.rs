@@ -1,7 +1,8 @@
 use sea_orm::{Set, NotSet};
 use crate::model::system_dict_data::{self, Model as SystemDictData, ActiveModel as SystemDictDataActiveModel};
+use crate::model::system_dict_type::{self, Model as SystemDictType, ActiveModel as SystemDictTypeActiveModel};
 use system_model::request::system_dict_data::{CreateSystemDictDataRequest, UpdateSystemDictDataRequest};
-use system_model::response::system_dict_data::SystemDictDataResponse;
+use system_model::response::system_dict_data::{SystemDictDataDetailResponse, SystemDictDataResponse};
 
 pub fn create_request_to_model(request: &CreateSystemDictDataRequest) -> SystemDictDataActiveModel {
     SystemDictDataActiveModel {
@@ -61,5 +62,38 @@ pub fn model_to_response(model: SystemDictData) -> SystemDictDataResponse {
         create_time: model.create_time,
         updater: model.updater,
         update_time: model.update_time,
+    }
+}
+
+pub fn model_to_detail_response(model: SystemDictData, type_model: Option<SystemDictType>) -> SystemDictDataDetailResponse {
+    let (name, r#type, type_status, type_remark) = match type_model {
+        Some(t) => (
+            Some(t.name.clone()),
+            Some(t.r#type.clone()),
+            Some(t.status),
+            Some(t.remark.clone()),
+        ),
+        None => (None, None, None, None),
+    };
+    
+    SystemDictDataDetailResponse { 
+        id: model.id,
+        sort: model.sort,
+        label: model.label,
+        value: model.value,
+        dict_type: model.dict_type,
+        status: model.status,
+        color_type: model.color_type,
+        css_class: model.css_class,
+        remark: model.remark,
+        creator: model.creator,
+        create_time: model.create_time,
+        updater: model.updater,
+        update_time: model.update_time,
+
+        name,
+        r#type,
+        type_status,
+        type_remark,
     }
 }

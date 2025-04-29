@@ -194,12 +194,47 @@ export const inputsCustomizations: Components<Theme> = {
               variant: 'text',
             },
             style: {
-              color: gray[600],
+              // color: gray[600],
+              // minWidth: 'auto',
+              // padding: '8px',
+              // borderRadius: '50%',
               '&:hover': {
                 backgroundColor: gray[100],
               },
               '&:active': {
                 backgroundColor: gray[200],
+              },
+              // '& > span': {
+              //   margin: 0,
+              // },
+              ...theme.applyStyles('dark', {
+                color: gray[50],
+                '&:hover': {
+                  backgroundColor: gray[700],
+                },
+                '&:active': {
+                  backgroundColor: alpha(gray[700], 0.7),
+                },
+              }),
+            },
+          },
+          {
+            props: {
+              variant: 'operate',
+            },
+            style: {
+              // color: 'unset',
+              minWidth: 'auto',
+              padding: '8px',
+              borderRadius: '50%',
+              '&:hover': {
+                backgroundColor: gray[100],
+              },
+              '&:active': {
+                backgroundColor: gray[200],
+              },
+              '& > span': {
+                margin: 0,
               },
               ...theme.applyStyles('dark', {
                 color: gray[50],
