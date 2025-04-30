@@ -15,7 +15,7 @@ interface FormErrors {
   type?: string;
 }
 
-const DictTypeAdd = forwardRef((props, ref) => {
+const DictTypeAdd = forwardRef(({ onSubmit }, ref) => {
   const { t } = useTranslation();
 
   const [open, setOpen] = useState(false);
@@ -39,17 +39,23 @@ const DictTypeAdd = forwardRef((props, ref) => {
 
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
-    
+
     if (!formValues.name.trim()) {
       newErrors.name = t('page.dict.error.name');
     }
-    
+
     if (!formValues.type.trim()) {
       newErrors.type = t('page.dict.error.type');
     }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
+  };
+
+  const handleCancel = () => {
+    setOpen(false);
+    setFormValues({ name: '', type: '', remark: '' });
+    setErrors({});
   };
 
   const handleClose = () => {
@@ -62,6 +68,7 @@ const DictTypeAdd = forwardRef((props, ref) => {
     if (validateForm()) {
       await createDictType(formValues as SystemDictTypeRequest);
       handleClose();
+      onSubmit();
     }
   };
 
@@ -71,7 +78,7 @@ const DictTypeAdd = forwardRef((props, ref) => {
       ...prev,
       [name]: value
     }));
-    
+
     // Clear error when user starts typing
     if (errors[name as keyof FormErrors]) {
       setErrors(prev => ({
@@ -129,7 +136,7 @@ const DictTypeAdd = forwardRef((props, ref) => {
       </DialogContent>
       <DialogActions>
         <Button onClick={handleSubmit}>{t('global.operate.confirm')}</Button>
-        <Button onClick={handleClose}>{t('global.operate.cancel')}</Button>
+        <Button onClick={handleCancel}>{t('global.operate.cancel')}</Button>
       </DialogActions>
     </Dialog>
   )

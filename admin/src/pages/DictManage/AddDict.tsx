@@ -21,7 +21,7 @@ interface FormErrors {
   sort?: string;
 }
 
-const DictAdd = forwardRef(({ onCancel }, ref) => {
+const DictAdd = forwardRef(({ onSubmit }, ref) => {
   const { t } = useTranslation();
 
   const [open, setOpen] = useState(false);
@@ -94,7 +94,6 @@ const DictAdd = forwardRef(({ onCancel }, ref) => {
   const handleCancel = () => {
     setOpen(false);
     reset();
-    onCancel();
   };
 
   const handleClose = () => {
@@ -119,6 +118,7 @@ const DictAdd = forwardRef(({ onCancel }, ref) => {
     if (validateForm()) {
       await createDict(formValues as SystemDictDataRequest);
       handleClose();
+      onSubmit();
     }
   };
 
@@ -126,6 +126,7 @@ const DictAdd = forwardRef(({ onCancel }, ref) => {
     if (validateForm()) {
       await createDict(formValues as SystemDictDataRequest);
       reset();
+      onSubmit();
     }
   };
 

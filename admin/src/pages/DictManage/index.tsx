@@ -152,6 +152,9 @@ export default function DictManage() {
 
   const refreshData = () => {
     queryRecords(condition);
+  }
+
+  const refreshType = () => {
     listType();
   }
 
@@ -212,8 +215,8 @@ export default function DictManage() {
           onSortModelChange={handleSortModelChange}
         />
       </Paper>
-      <DictTypeAdd ref={addDictType} />
-      <DictAdd ref={addDict} onCancel={refreshData} />
+      <DictTypeAdd ref={addDictType} onSubmit={refreshType} />
+      <DictAdd ref={addDict} onSubmit={refreshData} />
     </Box >
   );
 }
