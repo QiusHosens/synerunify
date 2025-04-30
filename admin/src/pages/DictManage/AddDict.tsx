@@ -21,7 +21,7 @@ interface FormErrors {
   sort?: string;
 }
 
-const DictAdd = forwardRef((props, ref) => {
+const DictAdd = forwardRef(({ onCancel }, ref) => {
   const { t } = useTranslation();
 
   const [open, setOpen] = useState(false);
@@ -89,6 +89,12 @@ const DictAdd = forwardRef((props, ref) => {
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
+  };
+
+  const handleCancel = () => {
+    setOpen(false);
+    reset();
+    onCancel();
   };
 
   const handleClose = () => {
@@ -236,7 +242,7 @@ const DictAdd = forwardRef((props, ref) => {
       <DialogActions>
         <Button onClick={handleSubmitAndContinue}>{t('global.operate.confirm.continue')}</Button>
         <Button onClick={handleSubmit}>{t('global.operate.confirm')}</Button>
-        <Button onClick={handleClose}>{t('global.operate.cancel')}</Button>
+        <Button onClick={handleCancel}>{t('global.operate.cancel')}</Button>
       </DialogActions>
     </Dialog>
   )

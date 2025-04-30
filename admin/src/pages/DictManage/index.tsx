@@ -47,7 +47,7 @@ export default function DictManage() {
     { field: 'remark', headerName: t("page.dict.title.remark"), flex: 1, minWidth: 150 },
     { field: 'sort', headerName: t("page.dict.title.sort"), flex: 1, minWidth: 150 },
     { field: 'dict_type', headerName: t("page.dict.title.type"), flex: 1, minWidth: 150 },
-    { field: 'name', sortable: false, headerName: t("page.dict.title.type.name"), flex: 1, minWidth: 150 },
+    { field: 'type_name', sortable: false, headerName: t("page.dict.title.type.name"), flex: 1, minWidth: 150 },
     { field: 'color_type', headerName: t("page.dict.title.color.type"), flex: 1, minWidth: 150 },
     { field: 'css_class', headerName: t("page.dict.title.css.class"), flex: 1, minWidth: 150 },
     {
@@ -150,6 +150,11 @@ export default function DictManage() {
     queryRecords(condition);
   }
 
+  const refreshData = () => {
+    queryRecords(condition);
+    listType();
+  }
+
   return (
     <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
       <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between' }}>
@@ -208,7 +213,7 @@ export default function DictManage() {
         />
       </Paper>
       <DictTypeAdd ref={addDictType} />
-      <DictAdd ref={addDict} />
+      <DictAdd ref={addDict} onCancel={refreshData} />
     </Box >
   );
 }
