@@ -66,14 +66,15 @@ pub fn model_to_response(model: SystemDictData) -> SystemDictDataResponse {
 }
 
 pub fn model_to_detail_response(model: SystemDictData, type_model: Option<SystemDictType>) -> SystemDictDataDetailResponse {
-    let (name, r#type, type_status, type_remark) = match type_model {
+    let (type_id, type_name, r#type, type_status, type_remark) = match type_model {
         Some(t) => (
+            Some(t.id.clone()),
             Some(t.name.clone()),
             Some(t.r#type.clone()),
             Some(t.status),
             Some(t.remark.clone()),
         ),
-        None => (None, None, None, None),
+        None => (None, None, None, None, None),
     };
     
     SystemDictDataDetailResponse { 
@@ -91,7 +92,8 @@ pub fn model_to_detail_response(model: SystemDictData, type_model: Option<System
         updater: model.updater,
         update_time: model.update_time,
 
-        name,
+        type_id,
+        type_name,
         r#type,
         type_status,
         type_remark,

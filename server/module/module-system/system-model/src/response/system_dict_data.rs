@@ -77,12 +77,14 @@ pub struct SystemDictDataDetailResponse {
     pub update_time: NaiveDateTime, // 更新时间
 
     /************** 字典类型字段 *************/
+
+    pub type_id: Option<i64>, // 字典类型id
     
-    pub name: Option<String>, // 字典名称
+    pub type_name: Option<String>, // 字典类型名称
     
     pub r#type: Option<String>, // 字典类型
     
-    pub type_status: Option<i8>, // 状态（0正常 1停用）
+    pub type_status: Option<i8>, // 类型状态（0正常 1停用）
     
-    pub type_remark: Option<Option<String>>, // 备注
+    pub type_remark: Option<Option<String>>, // 类型备注
 }

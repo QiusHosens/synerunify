@@ -3,6 +3,7 @@ import { useThemeStore } from '@/store';
 import { GlobalStyles } from '@mui/material';
 import { colorSchemes, typography } from './themePrimitives';
 import {
+  buttonsCustomizations,
   inputsCustomizations,
   dataDisplayCustomizations,
   feedbackCustomizations,
@@ -43,15 +44,16 @@ export default function AppThemeProvider({ children }: { children: React.ReactNo
       ...typography,
     },
     components: {
-      ...inputsCustomizations,
-      ...dataDisplayCustomizations,
-      ...feedbackCustomizations,
-      ...navigationCustomizations,
-      ...surfacesCustomizations,
-      ...chartsCustomizations,
-      ...dataGridCustomizations,
-      ...datePickersCustomizations,
-      ...treeViewCustomizations,
+      ...buttonsCustomizations,
+      // ...inputsCustomizations,
+      // ...dataDisplayCustomizations,
+      // ...feedbackCustomizations,
+      // ...navigationCustomizations,
+      // ...surfacesCustomizations,
+      // ...chartsCustomizations,
+      // ...dataGridCustomizations,
+      // ...datePickersCustomizations,
+      // ...treeViewCustomizations,
     },
   });
 

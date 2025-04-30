@@ -25,6 +25,7 @@
 
   "page.dict.title.name": "名称",
   "page.dict.title.type": "类型",
+  "page.dict.title.type.name": "类型名称",
   "page.dict.title.type.status": "字典类型状态",
   "page.dict.title.type.remark": "字典类型备注",
   "page.dict.title.label": "标签",

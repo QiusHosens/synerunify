@@ -57,7 +57,8 @@ export interface SystemDictDataResponse {
   remark?: string; // 备注
   update_time: string; // 更新时间
   /************** 字典类型字段 *************/
-  name: string; // 字典名称
+  type_id: number; // 类型id
+  type_name: string; // 字典名称
   type: string; // 字典类型
   type_status: number; // 状态（0正常 1停用）
   type_remark?: string; // 备注
@@ -65,6 +66,7 @@ export interface SystemDictDataResponse {
 
 export interface DictQueryCondition extends PaginatedRequest {
   dict_type?: string;
+  
 }
 
 export const createDictType = (menu: SystemDictTypeRequest): Promise<number> => {

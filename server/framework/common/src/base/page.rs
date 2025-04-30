@@ -16,6 +16,9 @@ pub struct PaginatedRequest {
     pub page: u64,
     #[serde(deserialize_with="from_str")]
     pub size: u64,
+    pub keyword: Option<String>,
+    pub field: Option<String>,
+    pub sort: Option<String>,
 }
 
 #[derive(Serialize, Deserialize, Debug, ToSchema)]
