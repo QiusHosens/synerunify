@@ -4,6 +4,8 @@ import { GlobalStyles } from '@mui/material';
 import { colorSchemes, typography } from './themePrimitives';
 import {
   buttonsCustomizations,
+  popoversCustomizations,
+  dataGridsCustomizations,
   inputsCustomizations,
   dataDisplayCustomizations,
   feedbackCustomizations,
@@ -45,6 +47,8 @@ export default function AppThemeProvider({ children }: { children: React.ReactNo
     },
     components: {
       ...buttonsCustomizations,
+      ...popoversCustomizations,
+      ...dataGridsCustomizations,
       // ...inputsCustomizations,
       // ...dataDisplayCustomizations,
       // ...feedbackCustomizations,

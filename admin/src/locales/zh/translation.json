@@ -43,6 +43,7 @@
   "page.dict.error.sort": "请输入排序",
   "page.dict.operate.edit.type": "编辑字典类型",
   "page.dict.operate.edit": "编辑字典",
+  "page.dict.operate.delete": "删除字典",
   
   "page.menu.title.name": "名称",
   "page.menu.title.permission": "权限标识",

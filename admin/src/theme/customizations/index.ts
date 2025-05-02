@@ -9,3 +9,5 @@ export { navigationCustomizations } from './navigation';
 export { surfacesCustomizations } from './surfaces';
 
 export { buttonsCustomizations } from './buttons';
+export { popoversCustomizations } from './popovers';
+export { dataGridsCustomizations } from './dataGrids';

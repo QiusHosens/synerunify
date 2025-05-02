@@ -89,20 +89,20 @@ CREATE TABLE `system_dict_data`  (
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 11 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '字典数据表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 10 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '字典数据表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of system_dict_data
 -- ----------------------------
-INSERT INTO `system_dict_data` VALUES (2, 0, '男', '0', 'sex', 0, '', '', '男', 1, '2025-04-28 09:26:26', 1, '2025-04-28 09:26:26', b'0');
-INSERT INTO `system_dict_data` VALUES (3, 1, '女', '1', 'sex', 0, '', '', '女', 1, '2025-04-29 01:30:04', 1, '2025-04-29 01:30:04', b'0');
-INSERT INTO `system_dict_data` VALUES (4, 0, '目录', '0', 'menu_type', 0, '', '', '目录', 1, '2025-04-29 01:31:29', 1, '2025-04-29 01:31:29', b'0');
-INSERT INTO `system_dict_data` VALUES (5, 1, '菜单', '1', 'menu_type', 0, '', '', '菜单', 1, '2025-04-29 01:31:41', 1, '2025-04-29 01:31:41', b'0');
-INSERT INTO `system_dict_data` VALUES (6, 2, '操作', '2', 'menu_type', 0, '', '', '操作', 1, '2025-04-29 01:31:58', 1, '2025-04-29 01:31:58', b'0');
-INSERT INTO `system_dict_data` VALUES (7, 0, '正常', '0', 'status', 0, '', '', '正常', 1, '2025-04-29 01:38:14', 1, '2025-04-29 01:38:14', b'0');
-INSERT INTO `system_dict_data` VALUES (8, 1, '停用', '1', 'status', 0, '', '', '停用', 1, '2025-04-29 01:38:39', 1, '2025-04-29 01:38:39', b'0');
-INSERT INTO `system_dict_data` VALUES (9, 0, '未删除', '0', 'deleted', 0, '', '', '未删除', 1, '2025-04-30 07:04:27', 1, '2025-04-30 07:04:27', b'0');
-INSERT INTO `system_dict_data` VALUES (10, 1, '已删除', '1', 'deleted', 0, '', '', '已删除', 1, '2025-04-30 07:04:39', 1, '2025-04-30 07:04:39', b'0');
+INSERT INTO `system_dict_data` VALUES (1, 0, '男', '0', 'sex', 0, '', '', '男', 1, '2025-04-28 09:26:26', 1, '2025-04-28 09:26:26', b'0');
+INSERT INTO `system_dict_data` VALUES (2, 1, '女', '1', 'sex', 0, '', '', '女', 1, '2025-04-29 01:30:04', 1, '2025-04-29 01:30:04', b'0');
+INSERT INTO `system_dict_data` VALUES (3, 0, '目录', '0', 'menu_type', 0, '', '', '目录', 1, '2025-04-29 01:31:29', 1, '2025-04-29 01:31:29', b'0');
+INSERT INTO `system_dict_data` VALUES (4, 1, '菜单', '1', 'menu_type', 0, '', '', '菜单', 1, '2025-04-29 01:31:41', 1, '2025-04-29 01:31:41', b'0');
+INSERT INTO `system_dict_data` VALUES (5, 2, '操作', '2', 'menu_type', 0, '', '', '操作', 1, '2025-04-29 01:31:58', 1, '2025-04-29 01:31:58', b'0');
+INSERT INTO `system_dict_data` VALUES (6, 0, '正常', '0', 'status', 0, '', '', '正常', 1, '2025-04-29 01:38:14', 1, '2025-04-29 01:38:14', b'0');
+INSERT INTO `system_dict_data` VALUES (7, 1, '停用', '1', 'status', 0, '', '', '停用', 1, '2025-04-29 01:38:39', 1, '2025-04-29 01:38:39', b'0');
+INSERT INTO `system_dict_data` VALUES (8, 0, '未删除', '0', 'deleted', 0, '', '', '未删除', 1, '2025-04-30 07:04:27', 1, '2025-04-30 07:04:27', b'0');
+INSERT INTO `system_dict_data` VALUES (9, 1, '已删除', '1', 'deleted', 0, '', '', '已删除', 1, '2025-04-30 07:04:39', 1, '2025-04-30 07:04:39', b'0');
 
 -- ----------------------------
 -- Table structure for system_dict_type

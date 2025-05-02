@@ -16,7 +16,7 @@ URL = "https://minimals.cc/auth/amplify/sign-in"
 USERNAME = "demo@minimals.cc"
 PASSWORD = "@2Minimal"
 DRIVER_PATH = "C:/Users/zy/AppData/Local/Google/Chrome/Application/chromedriver-win64/chromedriver.exe"
-DOWNLOAD_DIR = "downloaded_images"
+DOWNLOAD_DIR = "parser_result"
 
 # 创建下载目录
 if not os.path.exists(DOWNLOAD_DIR):
@@ -79,11 +79,26 @@ def login():
 #         except Exception as e:
 #             print(f"下载 {img_url} 时出错: {e}")
 
+def enter_page(url):
+    """进入url"""
+    driver.get(url)
+    time.sleep(5)
+
+    more_button = WebDriverWait(driver, 10).until(
+        EC.element_to_be_clickable((By.CSS_SELECTOR, "tbody > tr:first-child > td:last-child > div > :last-child"))
+    )
+    more_button.click()
+    time.sleep(5)
+
 def download_images(base_dir="downloaded_images"):
     # 创建基础目录和子目录
-    svg_dir = os.path.join(base_dir, "svg")
-    png_dir = os.path.join(base_dir, "png")
-    url_dir = os.path.join(base_dir, "url")
+    base_path = os.path.join(DOWNLOAD_DIR, base_dir)
+    if not os.path.exists(base_path):
+        os.makedirs(base_path)
+
+    svg_dir = os.path.join(DOWNLOAD_DIR, base_dir, "svg")
+    png_dir = os.path.join(DOWNLOAD_DIR, base_dir, "png")
+    url_dir = os.path.join(DOWNLOAD_DIR, base_dir, "url")
 
     for directory in [svg_dir, png_dir, url_dir]:
         if not os.path.exists(directory):
@@ -259,7 +274,10 @@ def download_file(file_url, save_dir, headers, downloaded_urls, sub_dir=None):
 def main():
     try:
         login()
-        download_images()
+        download_images('dashboard')
+
+        enter_page('https://minimals.cc/dashboard/user/list')
+        download_images('user-list')
     finally:
         driver.quit()
 

@@ -107,10 +107,13 @@ export const buttonsCustomizations: Components<Theme> = {
               padding: '8px',
               borderRadius: '50%',
               '&:hover': {
-                backgroundColor: gray[100],
+                // backgroundColor: gray[100],
+                // backgroundColor: `${alpha((theme.vars || theme).palette.primary.main, 0.2)}`
+                backgroundColor: alpha(theme.palette.primary.main, 0.2)
               },
               '&:active': {
-                backgroundColor: gray[200],
+                // backgroundColor: gray[200],
+                backgroundColor: alpha(theme.palette.primary.main, 0.2)
               },
               '& > span': {
                 margin: 0,

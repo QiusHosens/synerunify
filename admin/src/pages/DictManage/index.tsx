@@ -1,13 +1,16 @@
-import { Box, Button, FormControl, InputAdornment, InputLabel, MenuItem, Paper, Select, SvgIcon, Switch, TextField } from '@mui/material';
+import { Box, Button, FormControl, InputAdornment, InputLabel, MenuItem, Paper, Popover, Select, SvgIcon, Switch, TextField } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useEffect, useRef, useState } from 'react';
 import { DataGrid, GridCallbackDetails, GridColDef, GridRenderCellParams, GridSortModel } from '@mui/x-data-grid';
 import SearchIcon from '@/assets/image/svg/search.svg';
+import EditIcon from '@/assets/image/svg/edit.svg';
+import MoreIcon from '@/assets/image/svg/more.svg';
+import DeleteIcon from '@/assets/image/svg/delete.svg';
 import DictTypeAdd from './AddDictType';
 import DictAdd from './AddDict';
 import { DictQueryCondition, listDictType, pageDict, SystemDictDataResponse, SystemDictTypeResponse } from '@/api/dict';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
+// import EditIcon from '@mui/icons-material/Edit';
+// import DeleteIcon from '@mui/icons-material/Delete';
 
 export default function DictManage() {
   const { t } = useTranslation();
@@ -25,6 +28,10 @@ export default function DictManage() {
 
   const [sortModel, setSortModel] = useState<GridSortModel>([]);
 
+  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+  const open = Boolean(anchorEl);
+  const popoverId = open ? 'simple-popover' : undefined;
+
   const addDict = useRef();
   const addDictType = useRef();
 
@@ -39,6 +46,14 @@ export default function DictManage() {
     // Implement delete logic here
     console.log('Delete record:', id);
     // You might want to show a confirmation dialog and then call API to delete
+  };
+
+  const handleMoreClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMoreClose = () => {
+    setAnchorEl(null);
   };
 
   const columns: GridColDef[] = [
@@ -67,16 +82,9 @@ export default function DictManage() {
       sortable: false,
       headerName: t("global.operate.actions"),
       flex: 1,
-      minWidth: 150,
+      minWidth: 100,
       renderCell: (params: GridRenderCellParams) => (
         <Box sx={{ height: '100%', display: 'flex', gap: 1, alignItems: 'center' }}>
-          <Button
-            size="small"
-            variant='customOperate'
-            title={t('page.dict.operate.edit.type')}
-            startIcon={<EditIcon />}
-            onClick={() => handleEdit(params.row.id)}
-          />
           <Button
             size="small"
             variant='customOperate'
@@ -85,13 +93,50 @@ export default function DictManage() {
             onClick={() => handleEdit(params.row.id)}
           />
           <Button
+            size="small"
+            variant='customOperate'
+            aria-describedby={popoverId}
+            startIcon={<MoreIcon />}
+            // onClick={() => handleEdit(params.row.id)}
+            onClick={handleMoreClick}
+          />
+          <Popover
+            id={popoverId}
+            open={open}
+            anchorEl={anchorEl}
+            onClose={handleMoreClose}
+            anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'left',
+            }}
+          >
+            <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+              <Button
+                size="small"
+                variant='customOperate'
+                title={t('page.dict.operate.edit.type')}
+                startIcon={<EditIcon />}
+                onClick={() => handleEdit(params.row.id)}
+              />
+              <Button
+                sx={{ mt: 1, color: 'error.main' }}
+                size="small"
+                variant='customOperate'
+                title={t('page.dict.operate.delete')}
+                // color="error"
+                startIcon={<DeleteIcon />}
+                onClick={() => handleDelete(params.row.id)}
+              />
+            </Box>
+          </Popover>
+          {/* <Button
             sx={{ color: 'error.main' }}
             size="small"
             variant='customOperate'
             // color="error"
             startIcon={<DeleteIcon />}
             onClick={() => handleDelete(params.row.id)}
-          />
+          /> */}
         </Box>
       ),
     },

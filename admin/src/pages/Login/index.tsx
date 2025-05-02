@@ -90,6 +90,7 @@ export default function Login() {
         <FormControl>
           <FormLabel htmlFor="email">{t("username")}</FormLabel>
           <TextField
+            size="small"
             fullWidth
             margin="normal"
             value={username}
@@ -99,6 +100,7 @@ export default function Login() {
         <FormControl>
           <FormLabel htmlFor="password">{t("password")}</FormLabel>
           <TextField
+            size="small"
             type="password"
             fullWidth
             margin="normal"
