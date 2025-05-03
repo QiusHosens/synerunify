@@ -1,18 +1,8 @@
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, TextField } from '@mui/material';
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, InputLabel, MenuItem, Select, TextField } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
+import { forwardRef, useImperativeHandle, useState } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
-import { createDict, createDictType, listDictType, SystemDictDataRequest, SystemDictTypeRequest, SystemDictTypeResponse } from '@/api/dict';
-
-interface FormValues {
-  dict_type: string;
-  label: string;
-  value: string;
-  sort: number;
-  color_type: string;
-  css_class: string;
-  remark: string;
-}
+import { listDictType, SystemDictDataRequest, SystemDictDataResponse, SystemDictTypeResponse, updateDict } from '@/api/dict';
 
 interface FormErrors {
   dict_type?: string;
@@ -21,18 +11,19 @@ interface FormErrors {
   sort?: string;
 }
 
-interface DictAddProps {
+interface DictEditProps {
   onSubmit: () => void;
 }
 
-const DictAdd = forwardRef(({ onSubmit }: DictAddProps, ref) => {
+const DictEdit = forwardRef(({ onSubmit }: DictEditProps, ref) => {
   const { t } = useTranslation();
 
   const [open, setOpen] = useState(false);
   const [types, setTypes] = useState<SystemDictTypeResponse[]>([]);
   const [fullWidth, setFullWidth] = useState(true);
   const [maxWidth, setMaxWidth] = useState<DialogProps['maxWidth']>('sm');
-  const [formValues, setFormValues] = useState<FormValues>({
+  const [dict, setDict] = useState<SystemDictDataRequest>({
+    id: 0,
     dict_type: '',
     label: '',
     value: '',
@@ -44,8 +35,10 @@ const DictAdd = forwardRef(({ onSubmit }: DictAddProps, ref) => {
   const [errors, setErrors] = useState<FormErrors>({});
 
   useImperativeHandle(ref, () => ({
-    show() {
-      listType();
+    show(dict: SystemDictDataResponse) {
+      setDict(dict);
+      listTypes();
+      initForm();
       setOpen(true);
     },
     hide() {
@@ -53,33 +46,33 @@ const DictAdd = forwardRef(({ onSubmit }: DictAddProps, ref) => {
     },
   }));
 
-  const listType = async () => {
+  const listTypes = async () => {
     const types = await listDictType();
     setTypes(types);
-    if (types.length > 0) {
-      setFormValues(prev => ({
-        ...prev,
-        dict_type: types[0].type
-      }));
-    }
+    // if (types.length > 0) {
+    //   setFormValues(prev => ({
+    //     ...prev,
+    //     dict_type: types[0].type
+    //   }));
+    // }
   }
 
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
 
-    if (!formValues.dict_type.trim()) {
+    if (!dict.dict_type.trim()) {
       newErrors.dict_type = t('page.dict.error.dict.type');
     }
 
-    if (!formValues.label.trim()) {
+    if (!dict.label.trim()) {
       newErrors.label = t('page.dict.error.label');
     }
 
-    if (!formValues.value.trim()) {
+    if (!dict.value.trim()) {
       newErrors.value = t('page.dict.error.value');
     }
 
-    if (!formValues.sort && formValues.sort != 0) {
+    if (!dict.sort && dict.sort != 0) {
       newErrors.sort = t('page.dict.error.sort');
     }
 
@@ -91,39 +84,32 @@ const DictAdd = forwardRef(({ onSubmit }: DictAddProps, ref) => {
 
   const handleCancel = () => {
     setOpen(false);
-    reset();
+    // reset();
   };
 
   const handleClose = () => {
     setOpen(false);
-    reset();
+    // reset();
   };
 
-  const reset = () => {
-    setFormValues({
-      dict_type: formValues.dict_type,
-      label: '',
-      value: '',
-      sort: 0,
-      color_type: '',
-      css_class: '',
-      remark: '',
+  const initForm = () => {
+    setDict({
+      id: dict.id,
+      dict_type: dict.dict_type,
+      label: dict.label,
+      value: dict.value,
+      sort: dict.sort,
+      color_type: dict.color_type as string,
+      css_class: dict.css_class as string,
+      remark: dict.remark as string,
     });
     setErrors({});
   }
 
   const handleSubmit = async () => {
     if (validateForm()) {
-      await createDict(formValues as SystemDictDataRequest);
+      await updateDict(dict);
       handleClose();
-      onSubmit();
-    }
-  };
-
-  const handleSubmitAndContinue = async () => {
-    if (validateForm()) {
-      await createDict(formValues as SystemDictDataRequest);
-      reset();
       onSubmit();
     }
   };
@@ -133,12 +119,12 @@ const DictAdd = forwardRef(({ onSubmit }: DictAddProps, ref) => {
     const { name, value, type } = e.target;
     if (type == 'number') {
       const numberValue = Number(value);
-      setFormValues(prev => ({
+      setDict(prev => ({
         ...prev,
         [name]: numberValue
       }));
     } else {
-      setFormValues(prev => ({
+      setDict(prev => ({
         ...prev,
         [name]: value
       }));
@@ -155,15 +141,6 @@ const DictAdd = forwardRef(({ onSubmit }: DictAddProps, ref) => {
     }
   };
 
-  const handleTypeChange = (event: SelectChangeEvent<number>) => {
-    const value = event.target.value as string;
-    setType(value);
-    setFormValues(prev => ({
-      ...prev,
-      dict_type: value
-    }));
-  }
-
   return (
     <Dialog
       fullWidth={fullWidth}
@@ -171,7 +148,7 @@ const DictAdd = forwardRef(({ onSubmit }: DictAddProps, ref) => {
       open={open}
       onClose={handleClose}
     >
-      <DialogTitle>{t('global.operate.add')}{t('global.page.dict')}</DialogTitle>
+      <DialogTitle>{t('global.operate.edit')}{t('global.page.dict')}</DialogTitle>
       <DialogContent>
         <Box
           component="form"
@@ -190,7 +167,7 @@ const DictAdd = forwardRef(({ onSubmit }: DictAddProps, ref) => {
               classes={{ select: 'CustomSelectSelect' }}
               labelId="dict-type-select-label"
               name="dict_type"
-              value={formValues.dict_type}
+              value={dict.dict_type}
               onChange={handleInputChange}
               // value={type}
               // onChange={handleTypeChange}
@@ -207,7 +184,7 @@ const DictAdd = forwardRef(({ onSubmit }: DictAddProps, ref) => {
               size="small"
               label={t("page.dict.title.label")}
               name="label"
-              value={formValues.label}
+              value={dict.label}
               onChange={handleInputChange}
               error={!!errors.label}
               helperText={errors.label}
@@ -217,7 +194,7 @@ const DictAdd = forwardRef(({ onSubmit }: DictAddProps, ref) => {
               size="small"
               label={t("page.dict.title.value")}
               name="value"
-              value={formValues.value}
+              value={dict.value}
               onChange={handleInputChange}
               error={!!errors.value}
               helperText={errors.value}
@@ -228,7 +205,7 @@ const DictAdd = forwardRef(({ onSubmit }: DictAddProps, ref) => {
               type="number"
               label={t("page.dict.title.sort")}
               name="sort"
-              value={formValues.sort}
+              value={dict.sort}
               onChange={handleInputChange}
               error={!!errors.sort}
               helperText={errors.sort}
@@ -237,19 +214,18 @@ const DictAdd = forwardRef(({ onSubmit }: DictAddProps, ref) => {
               size="small"
               label={t("page.dict.title.remark")}
               name="remark"
-              value={formValues.remark}
+              value={dict.remark}
               onChange={handleInputChange}
             />
           </FormControl>
         </Box>
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleSubmitAndContinue}>{t('global.operate.confirm.continue')}</Button>
-        <Button onClick={handleSubmit}>{t('global.operate.confirm')}</Button>
+        <Button onClick={handleSubmit}>{t('global.operate.update')}</Button>
         <Button onClick={handleCancel}>{t('global.operate.cancel')}</Button>
       </DialogActions>
     </Dialog>
   )
 });
 
-export default DictAdd;
+export default DictEdit;

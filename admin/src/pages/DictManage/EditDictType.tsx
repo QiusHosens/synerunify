@@ -2,9 +2,10 @@ import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormCon
 import { useTranslation } from 'react-i18next';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
-import { createDictType, SystemDictTypeRequest } from '@/api/dict';
+import { getDictType, SystemDictTypeRequest, SystemDictTypeResponse, updateDictType } from '@/api/dict';
 
 interface FormValues {
+  id: number;
   name: string;
   type: string;
   remark: string;
@@ -15,17 +16,18 @@ interface FormErrors {
   type?: string;
 }
 
-interface DictTypeAddProps {
+interface DictTypeEditProps {
   onSubmit: () => void;
 }
 
-const DictTypeAdd = forwardRef(({ onSubmit }: DictTypeAddProps, ref) => {
+const DictTypeEdit = forwardRef(({ onSubmit }: DictTypeEditProps, ref) => {
   const { t } = useTranslation();
 
   const [open, setOpen] = useState(false);
   const [fullWidth, setFullWidth] = useState(true);
   const [maxWidth, setMaxWidth] = useState<DialogProps['maxWidth']>('sm');
-  const [formValues, setFormValues] = useState<FormValues>({
+  const [dictType, setDictType] = useState<SystemDictTypeRequest>({
+    id: 0,
     name: '',
     type: '',
     remark: ''
@@ -33,7 +35,8 @@ const DictTypeAdd = forwardRef(({ onSubmit }: DictTypeAddProps, ref) => {
   const [errors, setErrors] = useState<FormErrors>({});
 
   useImperativeHandle(ref, () => ({
-    show() {
+    show(id: number) {
+      initForm(id);
       setOpen(true);
     },
     hide() {
@@ -44,11 +47,11 @@ const DictTypeAdd = forwardRef(({ onSubmit }: DictTypeAddProps, ref) => {
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
 
-    if (!formValues.name.trim()) {
+    if (!dictType.name.trim()) {
       newErrors.name = t('page.dict.error.name');
     }
 
-    if (!formValues.type.trim()) {
+    if (!dictType.type.trim()) {
       newErrors.type = t('page.dict.error.type');
     }
 
@@ -58,30 +61,51 @@ const DictTypeAdd = forwardRef(({ onSubmit }: DictTypeAddProps, ref) => {
 
   const handleCancel = () => {
     setOpen(false);
-    setFormValues({ name: '', type: '', remark: '' });
-    setErrors({});
+    // reset();
   };
 
   const handleClose = () => {
     setOpen(false);
-    setFormValues({ name: '', type: '', remark: '' });
-    setErrors({});
+    // reset();
   };
+
+  const initForm = (id: number) => {
+    getDictType(id).then((data) => {
+      setDictType({
+        id: data.id,
+        name: data.name,
+        type: data.type,
+        remark: data.remark as string,
+      });
+      setErrors({});
+    })
+  }
 
   const handleSubmit = async () => {
     if (validateForm()) {
-      await createDictType(formValues as SystemDictTypeRequest);
+      await updateDictType(dictType as SystemDictTypeRequest);
       handleClose();
       onSubmit();
     }
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormValues(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    // console.log('target', e.target);
+    const { name, value, type } = e.target;
+    if (type == 'number') {
+      const numberValue = Number(value);
+      setDictType(prev => ({
+        ...prev,
+        [name]: numberValue
+      }));
+    } else {
+      setDictType(prev => ({
+        ...prev,
+        [name]: value
+      }));
+    }
+
+    // console.log('formValues', formValues);
 
     // Clear error when user starts typing
     if (errors[name as keyof FormErrors]) {
@@ -99,7 +123,7 @@ const DictTypeAdd = forwardRef(({ onSubmit }: DictTypeAddProps, ref) => {
       open={open}
       onClose={handleClose}
     >
-      <DialogTitle>{t('global.operate.add')}{t('global.page.dict.type')}</DialogTitle>
+      <DialogTitle>{t('global.operate.edit')}{t('global.page.dict.type')}</DialogTitle>
       <DialogContent>
         <Box
           component="form"
@@ -116,7 +140,7 @@ const DictTypeAdd = forwardRef(({ onSubmit }: DictTypeAddProps, ref) => {
               size="small"
               label={t("page.dict.title.name")}
               name="name"
-              value={formValues.name}
+              value={dictType.name}
               onChange={handleInputChange}
               error={!!errors.name}
               helperText={errors.name}
@@ -126,7 +150,7 @@ const DictTypeAdd = forwardRef(({ onSubmit }: DictTypeAddProps, ref) => {
               size="small"
               label={t("page.dict.title.type")}
               name="type"
-              value={formValues.type}
+              value={dictType.type}
               onChange={handleInputChange}
               error={!!errors.type}
               helperText={errors.type}
@@ -135,18 +159,18 @@ const DictTypeAdd = forwardRef(({ onSubmit }: DictTypeAddProps, ref) => {
               size="small"
               label={t("page.dict.title.remark")}
               name="remark"
-              value={formValues.remark}
+              value={dictType.remark}
               onChange={handleInputChange}
             />
           </FormControl>
         </Box>
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleSubmit}>{t('global.operate.confirm')}</Button>
+        <Button onClick={handleSubmit}>{t('global.operate.update')}</Button>
         <Button onClick={handleCancel}>{t('global.operate.cancel')}</Button>
       </DialogActions>
     </Dialog>
   )
 });
 
-export default DictTypeAdd;
+export default DictTypeEdit;

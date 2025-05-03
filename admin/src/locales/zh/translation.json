@@ -13,6 +13,7 @@
   "global.operate.add": "新增",
   "global.operate.confirm.continue": "保存并继续",
   "global.operate.confirm": "确定",
+  "global.operate.update": "更新",
   "global.operate.cancel": "取消",
 
   "global.operate.actions": "操作",
@@ -44,6 +45,7 @@
   "page.dict.operate.edit.type": "编辑字典类型",
   "page.dict.operate.edit": "编辑字典",
   "page.dict.operate.delete": "删除字典",
+  "page.dict.description.delete": "确定删除记录?",
   
   "page.menu.title.name": "名称",
   "page.menu.title.permission": "权限标识",

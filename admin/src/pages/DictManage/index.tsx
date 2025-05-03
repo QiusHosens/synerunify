@@ -9,8 +9,9 @@ import DeleteIcon from '@/assets/image/svg/delete.svg';
 import DictTypeAdd from './AddDictType';
 import DictAdd from './AddDict';
 import { DictQueryCondition, listDictType, pageDict, SystemDictDataResponse, SystemDictTypeResponse } from '@/api/dict';
-// import EditIcon from '@mui/icons-material/Edit';
-// import DeleteIcon from '@mui/icons-material/Delete';
+import DictEdit from './EditDict';
+import DictTypeEdit from './EditDictType';
+import DictDelete from './DeleteDict';
 
 export default function DictManage() {
   const { t } = useTranslation();
@@ -34,27 +35,9 @@ export default function DictManage() {
 
   const addDict = useRef();
   const addDictType = useRef();
-
-  const handleEdit = (id: string) => {
-    // Implement edit logic here
-    console.log('Edit record:', id);
-    // You might want to open the DictAdd dialog with existing data
-    // (addDict.current as any).show(recordData);
-  };
-
-  const handleDelete = (id: string) => {
-    // Implement delete logic here
-    console.log('Delete record:', id);
-    // You might want to show a confirmation dialog and then call API to delete
-  };
-
-  const handleMoreClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleMoreClose = () => {
-    setAnchorEl(null);
-  };
+  const editDictType = useRef();
+  const editDict = useRef();
+  const deleteDict = useRef();
 
   const columns: GridColDef[] = [
     { field: 'label', headerName: t("page.dict.title.label"), flex: 1, minWidth: 150 },
@@ -90,7 +73,7 @@ export default function DictManage() {
             variant='customOperate'
             title={t('page.dict.operate.edit')}
             startIcon={<EditIcon />}
-            onClick={() => handleEdit(params.row.id)}
+            onClick={() => handleClickEditDict(params.row)}
           />
           <Button
             size="small"
@@ -116,7 +99,7 @@ export default function DictManage() {
                 variant='customOperate'
                 title={t('page.dict.operate.edit.type')}
                 startIcon={<EditIcon />}
-                onClick={() => handleEdit(params.row.id)}
+                onClick={() => handleClickEditDictType(params.row.type_id)}
               />
               <Button
                 sx={{ mt: 1, color: 'error.main' }}
@@ -125,28 +108,28 @@ export default function DictManage() {
                 title={t('page.dict.operate.delete')}
                 // color="error"
                 startIcon={<DeleteIcon />}
-                onClick={() => handleDelete(params.row.id)}
+                onClick={() => handleClickDeleteDict(params.row.id)}
               />
             </Box>
           </Popover>
-          {/* <Button
-            sx={{ color: 'error.main' }}
-            size="small"
-            variant='customOperate'
-            // color="error"
-            startIcon={<DeleteIcon />}
-            onClick={() => handleDelete(params.row.id)}
-          /> */}
         </Box>
       ),
     },
   ];
 
   const queryRecords = async (condition: DictQueryCondition) => {
-    let result = await pageDict(condition);
+    const result = await pageDict(condition);
     console.log('dict list', result);
     setRecords(result.list);
   }
+
+  const handleMoreClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMoreClose = () => {
+    setAnchorEl(null);
+  };
 
   const handleClickOpenDictType = () => {
     (addDictType.current as any).show();
@@ -156,13 +139,25 @@ export default function DictManage() {
     (addDict.current as any).show();
   }
 
+  const handleClickEditDictType = (typeId: number) => {
+    (editDictType.current as any).show(typeId);
+  }
+
+  const handleClickEditDict = (dict: SystemDictDataResponse) => {
+    (editDict.current as any).show(dict);
+  }
+
+  const handleClickDeleteDict = (id: number) => {
+    (deleteDict.current as any).show(id);
+  }
+
   useEffect(() => {
     queryRecords(condition);
     listType();
   }, []);
 
   const listType = async () => {
-    let types = await listDictType();
+    const types = await listDictType();
     setTypes(types);
   }
 
@@ -218,7 +213,7 @@ export default function DictManage() {
               label={t("page.menu.title.type")}
             >
               <MenuItem value={undefined}>请选择</MenuItem>
-              {types.map(item => (<MenuItem value={item.type}>{item.name}</MenuItem>))}
+              {types.map(item => (<MenuItem key={item.id} value={item.type}>{item.name}</MenuItem>))}
             </Select>
           </FormControl>
           <FormControl sx={{ ml: 2, minWidth: 120, '& .MuiTextField-root': { width: '200px' } }}>
@@ -252,16 +247,22 @@ export default function DictManage() {
       </Box>
       <Paper sx={{ flex: 1, width: '100%' }}>
         <DataGrid
+          // pageSizeOptions={[20, 30, 50, 100]}
           columns={columns}
           rows={records}
           getRowId={(row) => row.id}
           sortingMode="server"
           sortModel={sortModel}
           onSortModelChange={handleSortModelChange}
+          // paginationMode='server'
+          // paginationModel={{ page: condition.page, pageSize: condition.size }}
         />
       </Paper>
       <DictTypeAdd ref={addDictType} onSubmit={refreshType} />
       <DictAdd ref={addDict} onSubmit={refreshData} />
+      <DictTypeEdit ref={editDictType} onSubmit={refreshType} />
+      <DictEdit ref={editDict} onSubmit={refreshData} />
+      <DictDelete ref={deleteDict} onSubmit={refreshData} />
     </Box >
   );
 }
