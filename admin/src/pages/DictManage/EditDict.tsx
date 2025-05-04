@@ -36,9 +36,8 @@ const DictEdit = forwardRef(({ onSubmit }: DictEditProps, ref) => {
 
   useImperativeHandle(ref, () => ({
     show(dict: SystemDictDataResponse) {
-      setDict(dict);
       listTypes();
-      initForm();
+      initForm(dict);
       setOpen(true);
     },
     hide() {
@@ -92,7 +91,7 @@ const DictEdit = forwardRef(({ onSubmit }: DictEditProps, ref) => {
     // reset();
   };
 
-  const initForm = () => {
+  const initForm = (dict: SystemDictDataResponse) => {
     setDict({
       id: dict.id,
       dict_type: dict.dict_type,

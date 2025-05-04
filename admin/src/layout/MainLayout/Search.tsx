@@ -12,25 +12,24 @@ export default function Search() {
   
   return (
     <FormControl sx={{ width: { xs: '100%' }, '& .MuiTextField-root': { width: '200px' } }} variant="outlined">
-      <OutlinedInput
+      {/* <OutlinedInput
         size="small"
         id="search"
         placeholder="Search…"
         sx={{ flexGrow: 1 }}
         startAdornment={
           <InputAdornment position="start" sx={{ color: 'text.primary' }}>
-            {/* <SearchRoundedIcon fontSize="small" /> */}
             <SvgIcon component={SearchIcon} />
           </InputAdornment>
         }
         inputProps={{
           'aria-label': 'search',
         }}
-      />
-      {/* <TextField
+      /> */}
+      <TextField
         size="small"
         sx={{ m: 0, width: '200px' }}
-        label={t('global.condition.keyword')}
+        // label={t('global.condition.keyword')}
         name="keyword"
         // value={condition.keyword}
         // onChange={handleInputChange}
@@ -43,7 +42,7 @@ export default function Search() {
             ),
           },
         }}
-      /> */}
+      />
     </FormControl>
   );
 }

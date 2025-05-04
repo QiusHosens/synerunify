@@ -16,17 +16,14 @@ import DictDelete from './DeleteDict';
 export default function DictManage() {
   const { t } = useTranslation();
 
-  const [pages, setPages] = useState<number>(0);
   const [total, setTotal] = useState<number>(0);
   const [condition, setCondition] = useState<DictQueryCondition>({
     page: 1,
-    size: 10,
+    size: 20,
   });
 
   const [records, setRecords] = useState<Array<SystemDictDataResponse>>([]);
-
   const [types, setTypes] = useState<SystemDictTypeResponse[]>([]);
-
   const [sortModel, setSortModel] = useState<GridSortModel>([]);
 
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
@@ -63,6 +60,7 @@ export default function DictManage() {
     {
       field: 'actions',
       sortable: false,
+      resizable: false,
       headerName: t("global.operate.actions"),
       flex: 1,
       minWidth: 100,
@@ -80,7 +78,6 @@ export default function DictManage() {
             variant='customOperate'
             aria-describedby={popoverId}
             startIcon={<MoreIcon />}
-            // onClick={() => handleEdit(params.row.id)}
             onClick={handleMoreClick}
           />
           <Popover
@@ -106,7 +103,6 @@ export default function DictManage() {
                 size="small"
                 variant='customOperate'
                 title={t('page.dict.operate.delete')}
-                // color="error"
                 startIcon={<DeleteIcon />}
                 onClick={() => handleClickDeleteDict(params.row.id)}
               />
@@ -119,9 +115,9 @@ export default function DictManage() {
 
   const queryRecords = async (condition: DictQueryCondition) => {
     const result = await pageDict(condition);
-    console.log('dict list', result);
     setRecords(result.list);
-  }
+    setTotal(result.total);
+  };
 
   const handleMoreClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -133,70 +129,72 @@ export default function DictManage() {
 
   const handleClickOpenDictType = () => {
     (addDictType.current as any).show();
-  }
+  };
 
   const handleClickOpenDict = () => {
     (addDict.current as any).show();
-  }
+  };
 
   const handleClickEditDictType = (typeId: number) => {
     (editDictType.current as any).show(typeId);
-  }
+  };
 
   const handleClickEditDict = (dict: SystemDictDataResponse) => {
     (editDict.current as any).show(dict);
-  }
+  };
 
   const handleClickDeleteDict = (id: number) => {
     (deleteDict.current as any).show(id);
-  }
+  };
+
+  useEffect(() => {
+    listType();
+  }, []);
 
   useEffect(() => {
     queryRecords(condition);
-    listType();
-  }, []);
+  }, [condition]);
 
   const listType = async () => {
     const types = await listDictType();
     setTypes(types);
-  }
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // console.log('target', e.target);
     const { name, value, type } = e.target;
-    if (type == 'number') {
+    if (type === 'number') {
       const numberValue = Number(value);
-
-      Object.assign(condition, { [name]: numberValue });
-      setCondition(condition);
+      setCondition((prev) => ({ ...prev, [name]: numberValue }));
     } else {
-      Object.assign(condition, { [name]: value });
-      setCondition(condition);
+      setCondition((prev) => ({ ...prev, [name]: value }));
     }
+  };
 
-    queryRecords(condition);
+  const handlePageSizeChange = (e: React.ChangeEvent<{ value: unknown }>) => {
+    const newSize = Number(e.target.value);
+    setCondition((prev) => ({ ...prev, size: newSize, page: 1 }));
+  };
+
+  const handlePageChange = (newPage: number) => {
+    setCondition((prev) => ({ ...prev, page: newPage + 1 }));
   };
 
   const handleStatusChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log('target', e.target);
-    const { name, value, type } = e.target;
-
+    console.log('status change', e.target);
   };
 
   const handleSortModelChange = (model: GridSortModel, details: GridCallbackDetails) => {
-    console.log('sort model change', model, details);
-    Object.assign(condition, model[0]);
-    setCondition(condition);
-    queryRecords(condition);
-  }
+    setSortModel(model);
+    setCondition((prev) => ({ ...prev, ...model[0] }));
+  };
 
   const refreshData = () => {
     queryRecords(condition);
-  }
+  };
 
   const refreshType = () => {
     listType();
-  }
+  };
 
   return (
     <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
@@ -208,12 +206,14 @@ export default function DictManage() {
               size="small"
               labelId="dict-type-select-label"
               name="dict_type"
-              value={condition.dict_type}
+              value={condition.dict_type || ''}
               onChange={handleInputChange}
-              label={t("page.menu.title.type")}
+              label={t("page.dict.title.type")}
             >
-              <MenuItem value={undefined}>请选择</MenuItem>
-              {types.map(item => (<MenuItem key={item.id} value={item.type}>{item.name}</MenuItem>))}
+              <MenuItem value="">请选择</MenuItem>
+              {types.map(item => (
+                <MenuItem key={item.id} value={item.type}>{item.name}</MenuItem>
+              ))}
             </Select>
           </FormControl>
           <FormControl sx={{ ml: 2, minWidth: 120, '& .MuiTextField-root': { width: '200px' } }}>
@@ -222,7 +222,7 @@ export default function DictManage() {
               sx={{ m: 0, width: '200px' }}
               label={t('global.condition.keyword')}
               name="keyword"
-              value={condition.keyword}
+              value={condition.keyword || ''}
               onChange={handleInputChange}
               slotProps={{
                 input: {
@@ -245,24 +245,31 @@ export default function DictManage() {
           </Button>
         </Box>
       </Box>
-      <Paper sx={{ flex: 1, width: '100%' }}>
-        <DataGrid
-          // pageSizeOptions={[20, 30, 50, 100]}
-          columns={columns}
-          rows={records}
-          getRowId={(row) => row.id}
-          sortingMode="server"
-          sortModel={sortModel}
-          onSortModelChange={handleSortModelChange}
-          // paginationMode='server'
-          // paginationModel={{ page: condition.page, pageSize: condition.size }}
-        />
-      </Paper>
+      <DataGrid
+        rowCount={total}
+        rows={records}
+        columns={columns}
+        getRowId={(row) => row.id}
+        pagination
+        paginationMode="server"
+        sortingMode="server"
+        sortModel={sortModel}
+        onSortModelChange={handleSortModelChange}
+        pageSizeOptions={[10, 20, 50, 100]}
+        paginationModel={{ page: condition.page - 1, pageSize: condition.size }}
+        onPaginationModelChange={(model) => {
+          setCondition((prev) => ({
+            ...prev,
+            page: model.page + 1,
+            size: model.pageSize,
+          }));
+        }}
+      />
       <DictTypeAdd ref={addDictType} onSubmit={refreshType} />
       <DictAdd ref={addDict} onSubmit={refreshData} />
       <DictTypeEdit ref={editDictType} onSubmit={refreshType} />
       <DictEdit ref={editDict} onSubmit={refreshData} />
       <DictDelete ref={deleteDict} onSubmit={refreshData} />
-    </Box >
+    </Box>
   );
 }
