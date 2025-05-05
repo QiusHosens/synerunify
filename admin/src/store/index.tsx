@@ -1,4 +1,5 @@
 import { getHome, HomeMenuResponse } from '@/api';
+import { listDict, SystemDictDataResponse } from '@/api/dict';
 import { systemColorSchemes } from '@/theme/themePrimitives';
 import { deepClone } from '@/utils/objectUtils';
 import { buildTreeRoutes } from '@/utils/routeUtils';
@@ -137,7 +138,7 @@ export const useHomeStore = create<HomeState>((set) => ({
         routes = routes.filter(route => route.type == 2);
         // 添加默认路由为第一个
         if (routes.length > 0) {
-          let first = deepClone(routes[0]);
+          const first = deepClone(routes[0]);
           first.path = '/';
           routes.splice(0, 0, first);
         }
@@ -169,4 +170,36 @@ export const useHomeStore = create<HomeState>((set) => ({
       logout();
     }
   },
+}));
+
+// 字典
+interface DictState {
+  dictOfType: Map<string, SystemDictDataResponse[]>; // 字典列表
+  setDictOfType: (dictOfType: Map<string, SystemDictDataResponse[]>) => void;
+  fetchAndSetDict: () => Promise<void>;
+}
+
+export const useDictStore = create<DictState>((set) => ({
+  dictOfType: new Map<string, SystemDictDataResponse[]>(),
+  setDictOfType: (dictOfType) => set({ dictOfType }),
+  fetchAndSetDict: async () => {
+    try {
+      const data = await listDict();
+      
+      // 将数据转换为 Map 格式
+      const dictMap = new Map<string, SystemDictDataResponse[]>();
+      data.forEach((item) => {
+        if (item.dict_type) {
+          const existing = dictMap.get(item.dict_type) || [];
+          dictMap.set(item.dict_type, [...existing, item]);
+        }
+      });
+      
+      set({ dictOfType: dictMap });
+    } catch (error) {
+      console.error('Failed to fetch dictionary data:', error);
+      // 可以根据需要添加错误处理逻辑
+      set({ dictOfType: new Map() });
+    }
+  }
 }));

@@ -4,7 +4,7 @@ import CssBaseline from "@mui/material/CssBaseline";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import SideMenu from "./SideMenu";
-import { useAuthStore, useHomeStore, useThemeStore } from "@/store";
+import { useAuthStore, useDictStore, useHomeStore, useThemeStore } from "@/store";
 import { useEffect } from "react";
 import Header from "./Header";
 import TopMenu from "./TopMenu";
@@ -27,6 +27,7 @@ export default function Layout({ children }: LayoutProps) {
 
   const { access_token } = useAuthStore();
   const { nickname, routes, routeTree, fetchAndSetHome } = useHomeStore();
+  const { fetchAndSetDict } = useDictStore();
 
   const isVertical = navPosition === 'top' || navPosition === 'bottom';
   const layoutStyles = {
@@ -39,6 +40,7 @@ export default function Layout({ children }: LayoutProps) {
 
   useEffect(() => {
     fetchAndSetHome(access_token);
+    fetchAndSetDict();
   }, [access_token, fetchAndSetHome]);
 
   return (

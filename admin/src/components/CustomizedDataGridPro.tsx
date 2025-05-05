@@ -147,7 +147,7 @@ const CustomizedDataGridPro: React.FC<CustomizedDataGridProProps> = ({
   // 更新列定义以支持分组头和路径显示
   const updatedColumns = columns.map((col) => ({
     ...col,
-    renderCell: col.field === 'name' ? renderCell : undefined,
+    renderCell: col.field === 'name' ? renderCell : (col.renderCell != null ? col.renderCell : undefined),
     valueGetter:
       col.field === 'path'
         ? (params: any) => getTreeDataPath(params.row)?.join(' / ') || ''

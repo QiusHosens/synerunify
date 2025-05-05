@@ -1,55 +1,97 @@
-import { Box, Button, InputAdornment, Paper, SvgIcon, TextField } from '@mui/material';
+import { Box, Button, InputAdornment, Paper, Popover, SvgIcon, TextField } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useEffect, useRef, useState } from 'react';
 import { listMenu, MenuQueryCondition, SystemMenuResponse } from '@/api';
-import { GridColDef } from '@mui/x-data-grid';
+import { GridColDef, GridRenderCellParams, GridSortModel } from '@mui/x-data-grid';
 import CustomizedDataGridPro from '@/components/CustomizedDataGridPro';
 import SearchIcon from '@/assets/image/svg/search.svg';
+import EditIcon from '@/assets/image/svg/edit.svg';
+import MoreIcon from '@/assets/image/svg/more.svg';
+import DeleteIcon from '@/assets/image/svg/delete.svg';
 import MenuAdd from './Add';
+import { SystemDictDataResponse } from '@/api/dict';
 
 export default function MenuManage() {
   const { t } = useTranslation();
 
-  const [page, setPage] = useState<number>(1);
-  const [size, setSize] = useState<number>(10);
-  const [pages, setPages] = useState<number>(0);
-  const [total, setTotal] = useState<number>(0);
-  const [keyword, setKeyword] = useState<string>();
-
   const [records, setRecords] = useState<Array<SystemMenuResponse>>([]);
+  const [sortModel, setSortModel] = useState<GridSortModel>([]);
 
   const addMenu = useRef();
 
   const columns: GridColDef[] = [
-    { field: 'name', headerName: t("page.menu.title.name"), width: 200 },
-    { field: 'permission', headerName: t("page.menu.title.permission"), width: 200 },
+    { field: 'name', headerName: t("page.menu.title.name"), flex: 1, width: 200 },
+    { field: 'permission', headerName: t("page.menu.title.permission"), flex: 1, width: 200 },
     {
       field: 'type',
       headerName: t("page.menu.title.type"),
+      flex: 1,
       width: 200,
     },
     {
       field: 'sort',
       headerName: t("page.menu.title.sort"),
-      // type: 'number',
+      flex: 1,
       width: 200,
+    },
+    {
+      field: 'actions',
+      sortable: false,
+      resizable: false,
+      headerName: t("global.operate.actions"),
+      flex: 1,
+      minWidth: 100,
+      renderCell: (params: GridRenderCellParams) => (
+        <Box sx={{ height: '100%', display: 'flex', gap: 1, alignItems: 'center' }}>
+          <Button
+            size="small"
+            variant='customOperate'
+            title={t('page.dict.operate.edit')}
+            startIcon={<EditIcon />}
+          // onClick={() => handleClickEditDict(params.row)}
+          />
+          <Button
+            sx={{ color: 'error.main' }}
+            size="small"
+            variant='customOperate'
+            title={t('page.dict.operate.delete')}
+            startIcon={<DeleteIcon />}
+          // onClick={() => handleClickDeleteDict(params.row.id)}
+          />
+        </Box>
+      ),
     },
   ];
 
+  // const handleClickOpenDictType = () => {
+  //   (addDictType.current as any).show();
+  // };
+
+  // const handleClickOpenDict = () => {
+  //   (addDict.current as any).show();
+  // };
+
+  // const handleClickEditDictType = (typeId: number) => {
+  //   (editDictType.current as any).show(typeId);
+  // };
+
+  // const handleClickEditDict = (dict: SystemDictDataResponse) => {
+  //   (editDict.current as any).show(dict);
+  // };
+
+  // const handleClickDeleteDict = (id: number) => {
+  //   (deleteDict.current as any).show(id);
+  // };
+
   const queryRecords = async () => {
-    let condition: MenuQueryCondition = {
-      page,
-      size,
-      keyword
-    };
-    let result = await listMenu();
+    const result = await listMenu();
     console.log('menu list', result);
     result.forEach(menu => {
-      let path = menu.path;
-      let hierarchy = [];
+      const path = menu.path;
+      const hierarchy = [];
       if (path) {
-        let paths = path.split('/');
-        for (let p of paths) {
+        const paths = path.split('/');
+        for (const p of paths) {
           if (p) {
             hierarchy.push(p);
           }
@@ -73,31 +115,17 @@ export default function MenuManage() {
   return (
     <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
       <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between' }}>
-        <TextField
-          label={t('global.condition.keyword')}
-          sx={{ m: 0, width: '200px' }}
-          slotProps={{
-            input: {
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SvgIcon component={SearchIcon} inheritViewBox />
-                </InputAdornment>
-              ),
-            },
-          }}
-        />
-        <Button variant="contained" onClick={handleClickOpen}>
+        <Box></Box>
+        <Button variant="customContained" onClick={handleClickOpen}>
           {t('global.operate.add')}
         </Button>
       </Box>
-      <Paper sx={{ flex: 1, width: '100%' }}>
-        <CustomizedDataGridPro
-          columns={columns}
-          initialRows={records}
-          getTreeDataPath={getTreeDataPath}
-          hideFooter={true}
-        />
-      </Paper>
+      <CustomizedDataGridPro
+        columns={columns}
+        initialRows={records}
+        getTreeDataPath={getTreeDataPath}
+        hideFooter={true}
+      />
       <MenuAdd ref={addMenu} />
     </Box>
   );

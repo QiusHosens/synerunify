@@ -28,7 +28,7 @@ export default function DictManage() {
 
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const open = Boolean(anchorEl);
-  const popoverId = open ? 'simple-popover' : undefined;
+  const popoverId = open ? 'custom-popover' : undefined;
 
   const addDict = useRef();
   const addDictType = useRef();

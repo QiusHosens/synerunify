@@ -66,7 +66,6 @@ export interface SystemDictDataResponse {
 
 export interface DictQueryCondition extends PaginatedRequest {
   dict_type?: string;
-  
 }
 
 export const createDictType = (menu: SystemDictTypeRequest): Promise<number> => {
