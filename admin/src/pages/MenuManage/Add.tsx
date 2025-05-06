@@ -218,13 +218,16 @@ const MenuAdd = forwardRef(({ onSubmit }: MenuAddProps, ref) => {
             width: 'fit-content',
           }}
         >
+          <DictSelect sx={{ mt: 2 }} type='menu_type' value={type} onChange={handleTypeChange} label={t("page.menu.title.type")}></DictSelect>
           <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' } }}>
             <TextField size="small" label={t("page.menu.title.name")} />
             <TextField size="small" label={t("page.menu.title.permission")} />
-          </FormControl>
-          <DictSelect sx={{ mt: 2 }} type='menu_type' value={type} onChange={handleTypeChange} label={t("page.menu.title.type")}></DictSelect>
-          <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' } }}>
             <TextField size="small" type="number" label={t("page.menu.title.sort")} />
+            <TextField size="small" label={t("page.menu.title.permission")} />
+            <TextField size="small" label={t("page.menu.title.permission")} />
+            <TextField size="small" label={t("page.menu.title.permission")} />
+            <TextField size="small" label={t("page.menu.title.permission")} />
+            <TextField size="small" label={t("page.menu.title.permission")} />
           </FormControl>
         </Box>
       </DialogContent>

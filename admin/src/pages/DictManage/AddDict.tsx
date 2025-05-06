@@ -155,15 +155,6 @@ const DictAdd = forwardRef(({ onSubmit }: DictAddProps, ref) => {
     }
   };
 
-  const handleTypeChange = (event: SelectChangeEvent<number>) => {
-    const value = event.target.value as string;
-    setType(value);
-    setFormValues(prev => ({
-      ...prev,
-      dict_type: value
-    }));
-  }
-
   return (
     <Dialog
       fullWidth={fullWidth}
