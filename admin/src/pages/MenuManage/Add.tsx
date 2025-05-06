@@ -1,9 +1,10 @@
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormControlLabel, InputLabel, MenuItem, Select, Switch, TextField } from '@mui/material';
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormControlLabel, InputLabel, MenuItem, Select, Stack, Switch, TextField, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { forwardRef, ReactNode, useImperativeHandle, useState } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
 import { SelectChangeEvent } from '@mui/material/Select';
 import DictSelect from '@/components/DictSelect';
+import { createMenu } from '@/api';
 
 interface FormValues {
   name: string; // 菜单名称
@@ -154,7 +155,7 @@ const MenuAdd = forwardRef(({ onSubmit }: MenuAddProps, ref) => {
 
   const handleSubmit = async () => {
     if (validateForm()) {
-      await createDict(formValues as SystemDictDataRequest);
+      await createMenu(formValues as SystemMenuRequest);
       handleClose();
       onSubmit();
     }
@@ -162,7 +163,7 @@ const MenuAdd = forwardRef(({ onSubmit }: MenuAddProps, ref) => {
 
   const handleSubmitAndContinue = async () => {
     if (validateForm()) {
-      await createDict(formValues as SystemDictDataRequest);
+      await createMenu(formValues as SystemMenuRequest);
       reset();
       onSubmit();
     }
@@ -223,12 +224,20 @@ const MenuAdd = forwardRef(({ onSubmit }: MenuAddProps, ref) => {
             <TextField size="small" label={t("page.menu.title.name")} />
             <TextField size="small" label={t("page.menu.title.permission")} />
             <TextField size="small" type="number" label={t("page.menu.title.sort")} />
-            <TextField size="small" label={t("page.menu.title.permission")} />
-            <TextField size="small" label={t("page.menu.title.permission")} />
-            <TextField size="small" label={t("page.menu.title.permission")} />
-            <TextField size="small" label={t("page.menu.title.permission")} />
-            <TextField size="small" label={t("page.menu.title.permission")} />
+            <TextField size="small" label={t("page.menu.title.path")} />
+            <TextField size="small" label={t("page.menu.title.icon")} />
+            <TextField size="small" label={t("page.menu.title.component")} />
+            <TextField size="small" label={t("page.menu.title.component.name")} />
           </FormControl>
+          <Stack direction="row" spacing={2} sx={{ mt: 2, alignItems: 'center' }}>
+            <Typography>{t("page.menu.title.status")}</Typography>
+            <Switch value={!!formValues.status} onChange={handleInputChange} />
+            <Typography>On</Typography>
+          </Stack>
+          {/* <FormControlLabel
+            control={<Switch sx={{ mt: 2 }} checked={!!formValues.status} onChange={handleInputChange} />}
+            label={t("page.menu.title.status")}
+          /> */}
         </Box>
       </DialogContent>
       <DialogActions>
