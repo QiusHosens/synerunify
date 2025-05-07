@@ -1,10 +1,11 @@
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormControlLabel, InputLabel, MenuItem, Select, Stack, Switch, TextField, Typography } from '@mui/material';
+import { Badge, Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormControlLabel, IconButton, InputLabel, MenuItem, Select, Stack, Switch, TextField, Tooltip, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { forwardRef, ReactNode, useImperativeHandle, useState } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
 import { SelectChangeEvent } from '@mui/material/Select';
 import DictSelect from '@/components/DictSelect';
-import { createMenu } from '@/api';
+import { createMenu, SystemMenuRequest } from '@/api';
+import QuestionBadge from '@/components/QuestionBadge';
 
 interface FormValues {
   name: string; // 菜单名称
@@ -230,17 +231,37 @@ const MenuAdd = forwardRef(({ onSubmit }: MenuAddProps, ref) => {
             <TextField size="small" label={t("page.menu.title.component.name")} />
           </FormControl>
           <Stack direction="row" spacing={2} sx={{ mt: 2, alignItems: 'center' }}>
-            <Typography>{t("page.menu.title.status")}</Typography>
+            <QuestionBadge title="这是一个提示信息">
+              <Typography>{t("page.menu.title.status")}</Typography>
+            </QuestionBadge>
             <Switch value={!!formValues.status} onChange={handleInputChange} />
             <Typography>On</Typography>
           </Stack>
-          {/* <FormControlLabel
-            control={<Switch sx={{ mt: 2 }} checked={!!formValues.status} onChange={handleInputChange} />}
-            label={t("page.menu.title.status")}
-          /> */}
+          <Stack direction="row" spacing={2} sx={{ mt: 2, alignItems: 'center' }}>
+            <QuestionBadge title="这是一个提示信息">
+              <Typography>{t("page.menu.title.visible")}</Typography>
+            </QuestionBadge>
+            <Switch value={formValues.visible} onChange={handleInputChange} />
+            <Typography>On</Typography>
+          </Stack>
+          <Stack direction="row" spacing={2} sx={{ mt: 2, alignItems: 'center' }}>
+            <QuestionBadge title="这是一个提示信息">
+              <Typography>{t("page.menu.title.always.show")}</Typography>
+            </QuestionBadge>
+            <Switch value={formValues.always_show} onChange={handleInputChange} />
+            <Typography>On</Typography>
+          </Stack>
+          <Stack direction="row" spacing={2} sx={{ mt: 2, alignItems: 'center' }}>
+            <QuestionBadge title="这是一个提示信息">
+              <Typography>{t("page.menu.title.keep.alive")}</Typography>
+            </QuestionBadge>
+            <Switch value={formValues.keep_alive} onChange={handleInputChange} />
+            <Typography>On</Typography>
+          </Stack>
         </Box>
       </DialogContent>
       <DialogActions>
+        <Button onClick={handleSubmitAndContinue}>{t('global.operate.confirm.continue')}</Button>
         <Button onClick={handleSubmit}>{t('global.operate.confirm')}</Button>
         <Button onClick={handleCancel}>{t('global.operate.cancel')}</Button>
       </DialogActions>
