@@ -238,14 +238,14 @@ const MenuAdd = forwardRef(({ onSubmit }: MenuAddProps, ref) => {
             <Typography>On</Typography>
           </Stack>
           <Stack direction="row" spacing={2} sx={{ mt: 2, alignItems: 'center' }}>
-            <QuestionBadge title="这是一个提示信息">
+            <QuestionBadge title={t("page.menu.tip.visible")}>
               <Typography>{t("page.menu.title.visible")}</Typography>
             </QuestionBadge>
             <Switch value={formValues.visible} onChange={handleInputChange} />
             <Typography>On</Typography>
           </Stack>
           <Stack direction="row" spacing={2} sx={{ mt: 2, alignItems: 'center' }}>
-            <QuestionBadge title="这是一个提示信息">
+            <QuestionBadge title={t("page.menu.tip.always.show")}>
               <Typography>{t("page.menu.title.always.show")}</Typography>
             </QuestionBadge>
             <Switch value={formValues.always_show} onChange={handleInputChange} />

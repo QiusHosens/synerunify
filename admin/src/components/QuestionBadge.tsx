@@ -1,12 +1,14 @@
 import React from 'react';
 import { Badge, Tooltip } from '@mui/material';
+import { SxProps, Theme } from '@mui/material/styles';
 
 interface QuestionBadgeProps {
   title: string;
-  children: React.ReactNode
+  children: React.ReactNode;
+  sx?: SxProps<Theme>;
 }
 
-const QuestionBadge = ({ title, children }: QuestionBadgeProps) => {
+const QuestionBadge = ({ title, children, sx }: QuestionBadgeProps) => {
   return (
     <Badge
       badgeContent={
@@ -17,13 +19,10 @@ const QuestionBadge = ({ title, children }: QuestionBadgeProps) => {
         </Tooltip>
       }
       color="primary"
+      className='customQuestionBadge'
+      variant='customQuestion'
       sx={{
-        '& .MuiBadge-badge': {
-          fontSize: '0.75rem',
-          minWidth: '16px',
-          height: '16px',
-          padding: '0 4px',
-        },
+        ...sx
       }}
     >
       {children}

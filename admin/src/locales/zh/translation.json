@@ -60,6 +60,8 @@
   "page.menu.title.visible": "是否可见",
   "page.menu.title.always.show": "总是显示",
   "page.menu.title.keep.alive": "是否缓存",
+  "page.menu.tip.visible": "不可见时，路由将不会出现在侧边栏，但仍然可以访问",
+  "page.menu.tip.always.show": "不总是显示时，当该菜单只有一个子菜单时，不展示自己，直接展示子菜单",
   "page.menu.error.name": "请输入名称",
   "page.menu.error.permission": "请输入权限标识",
   "page.menu.error.type": "请输入类型",

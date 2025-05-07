@@ -12,3 +12,4 @@ export { buttonsCustomizations } from './buttons';
 export { popoversCustomizations } from './popovers';
 export { dataGridsCustomizations } from './dataGrids';
 export { switchsCustomizations } from './switchs';
+export { badgesCustomizations } from './badges';

@@ -7,6 +7,7 @@ import {
   popoversCustomizations,
   dataGridsCustomizations,
   switchsCustomizations,
+  badgesCustomizations,
 
   // inputsCustomizations,
   // dataDisplayCustomizations,
@@ -52,6 +53,7 @@ export default function AppThemeProvider({ children }: { children: React.ReactNo
       ...popoversCustomizations,
       ...dataGridsCustomizations,
       ...switchsCustomizations,
+      ...badgesCustomizations,
       // ...inputsCustomizations,
       // ...dataDisplayCustomizations,
       // ...feedbackCustomizations,
