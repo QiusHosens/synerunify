@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from 'react';
 import { DataGrid, GridCallbackDetails, GridColDef, GridRenderCellParams, GridSortModel } from '@mui/x-data-grid';
 import SearchIcon from '@/assets/image/svg/search.svg';
 import EditIcon from '@/assets/image/svg/edit.svg';
-import MoreIcon from '@/assets/image/svg/more.svg';
 import DeleteIcon from '@/assets/image/svg/delete.svg';
 import DictTypeAdd from './AddDictType';
 import DictAdd from './AddDict';
@@ -12,6 +11,7 @@ import { DictQueryCondition, listDictType, pageDict, SystemDictDataResponse, Sys
 import DictEdit from './EditDict';
 import DictTypeEdit from './EditDictType';
 import DictDelete from './DeleteDict';
+import CustomizedMore from '@/components/CustomizedMore';
 
 export default function DictManage() {
   const { t } = useTranslation();
@@ -25,10 +25,6 @@ export default function DictManage() {
   const [records, setRecords] = useState<Array<SystemDictDataResponse>>([]);
   const [types, setTypes] = useState<SystemDictTypeResponse[]>([]);
   const [sortModel, setSortModel] = useState<GridSortModel>([]);
-
-  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
-  const open = Boolean(anchorEl);
-  const popoverId = open ? 'custom-popover' : undefined;
 
   const addDict = useRef();
   const addDictType = useRef();
@@ -73,23 +69,7 @@ export default function DictManage() {
             startIcon={<EditIcon />}
             onClick={() => handleClickEditDict(params.row)}
           />
-          <Button
-            size="small"
-            variant='customOperate'
-            aria-describedby={popoverId}
-            startIcon={<MoreIcon />}
-            onClick={handleMoreClick}
-          />
-          <Popover
-            id={popoverId}
-            open={open}
-            anchorEl={anchorEl}
-            onClose={handleMoreClose}
-            anchorOrigin={{
-              vertical: 'bottom',
-              horizontal: 'left',
-            }}
-          >
+          <CustomizedMore>
             <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
               <Button
                 size="small"
@@ -107,7 +87,7 @@ export default function DictManage() {
                 onClick={() => handleClickDeleteDict(params.row.id)}
               />
             </Box>
-          </Popover>
+          </CustomizedMore>
         </Box>
       ),
     },
@@ -117,14 +97,6 @@ export default function DictManage() {
     const result = await pageDict(condition);
     setRecords(result.list);
     setTotal(result.total);
-  };
-
-  const handleMoreClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleMoreClose = () => {
-    setAnchorEl(null);
   };
 
   const handleClickOpenDictType = () => {

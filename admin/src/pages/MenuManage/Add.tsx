@@ -6,6 +6,7 @@ import { SelectChangeEvent } from '@mui/material/Select';
 import DictSelect from '@/components/DictSelect';
 import { createMenu, SystemMenuRequest } from '@/api';
 import QuestionBadge from '@/components/QuestionBadge';
+import SelectTree from '@/components/SelectTree';
 
 interface FormValues {
   name: string; // 菜单名称
@@ -38,6 +39,31 @@ interface FormErrors {
   keep_alive?: string; // 是否缓存
   always_show?: string; // 是否总是显示
 }
+
+interface TreeNode {
+  id: string;
+  label: string;
+  children?: TreeNode[];
+}
+
+const sampleTreeData: TreeNode[] = [
+  {
+    id: '1',
+    label: 'Root 1',
+    children: [
+      { id: '1-1', label: 'Child 1-1' },
+      { id: '1-2', label: 'Child 1-2' },
+    ],
+  },
+  {
+    id: '2',
+    label: 'Root 2',
+    children: [
+      { id: '2-1', label: 'Child 2-1' },
+      { id: '2-2', label: 'Child 2-2' },
+    ],
+  },
+];
 
 interface MenuAddProps {
   onSubmit: () => void;
@@ -164,9 +190,10 @@ const MenuAdd = forwardRef(({ onSubmit }: MenuAddProps, ref) => {
 
   const handleSubmitAndContinue = async () => {
     if (validateForm()) {
-      await createMenu(formValues as SystemMenuRequest);
-      reset();
-      onSubmit();
+      console.log('formValues', formValues);
+      // await createMenu(formValues as SystemMenuRequest);
+      // reset();
+      // onSubmit();
     }
   };
 
@@ -201,6 +228,13 @@ const MenuAdd = forwardRef(({ onSubmit }: MenuAddProps, ref) => {
     setType(event.target.value as number);
   }
 
+  const [selectedValue, setSelectedValue] = useState<string>('');
+
+  const handleChange = (value: string) => {
+    setSelectedValue(value);
+    console.log('Selected:', value);
+  };
+
   return (
     <Dialog
       fullWidth={fullWidth}
@@ -220,7 +254,18 @@ const MenuAdd = forwardRef(({ onSubmit }: MenuAddProps, ref) => {
             width: 'fit-content',
           }}
         >
-          <DictSelect sx={{ mt: 2 }} type='menu_type' value={type} onChange={handleTypeChange} label={t("page.menu.title.type")}></DictSelect>
+          <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiSelect-root': { width: '200px' } }}>
+            <DictSelect type='menu_type' value={type} onChange={handleTypeChange} label={t("page.menu.title.type")}></DictSelect>
+          </FormControl>
+          <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiSelect-root': { width: '200px' } }}>
+            <SelectTree
+              size="small"
+              label="Select Category"
+              treeData={sampleTreeData}
+              value={selectedValue}
+              onChange={handleChange}
+            />
+          </FormControl>
           <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' } }}>
             <TextField size="small" label={t("page.menu.title.name")} />
             <TextField size="small" label={t("page.menu.title.permission")} />

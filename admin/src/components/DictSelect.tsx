@@ -30,7 +30,7 @@ const DictSelect: React.FC<DictSelectProps> = ({
     }, [dictOfType]);
 
     return (
-        <FormControl sx={{ minWidth: 120, '& .MuiSelect-root': { width: '200px' }, ...sx }}>
+        <>
             <InputLabel size="small" id="custom-dict-select-label">{label}</InputLabel>
             <Select
                 size="small"
@@ -45,7 +45,7 @@ const DictSelect: React.FC<DictSelectProps> = ({
                     <MenuItem key={item.id} value={item.value}>{item.label}</MenuItem>
                 ))}
             </Select>
-        </FormControl>
+        </>
     )
 }
 
