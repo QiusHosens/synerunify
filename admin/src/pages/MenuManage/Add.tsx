@@ -198,13 +198,19 @@ const MenuAdd = forwardRef(({ onSubmit }: MenuAddProps, ref) => {
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // console.log('target', e.target);
+    console.log('target', e.target);
     const { name, value, type } = e.target;
     if (type == 'number') {
       const numberValue = Number(value);
       setFormValues(prev => ({
         ...prev,
         [name]: numberValue
+      }));
+    } else if (type == 'checkbox') {
+      const boolValue = Boolean(value);
+      setFormValues(prev => ({
+        ...prev,
+        [name]: boolValue
       }));
     } else {
       setFormValues(prev => ({
@@ -213,7 +219,7 @@ const MenuAdd = forwardRef(({ onSubmit }: MenuAddProps, ref) => {
       }));
     }
 
-    // console.log('formValues', formValues);
+    console.log('formValues', formValues);
 
     // Clear error when user starts typing
     if (errors[name as keyof FormErrors]) {
@@ -260,14 +266,14 @@ const MenuAdd = forwardRef(({ onSubmit }: MenuAddProps, ref) => {
           <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiSelect-root': { width: '200px' } }}>
             <SelectTree
               size="small"
-              label="Select Category"
+              label={t('page.menu.title.parent')}
               treeData={sampleTreeData}
               value={selectedValue}
               onChange={handleChange}
             />
           </FormControl>
           <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' } }}>
-            <TextField size="small" label={t("page.menu.title.name")} />
+            <TextField size="small" name='name' label={t("page.menu.title.name")} />
             <TextField size="small" label={t("page.menu.title.permission")} />
             <TextField size="small" type="number" label={t("page.menu.title.sort")} />
             <TextField size="small" label={t("page.menu.title.path")} />
@@ -279,29 +285,29 @@ const MenuAdd = forwardRef(({ onSubmit }: MenuAddProps, ref) => {
             <QuestionBadge title="这是一个提示信息">
               <Typography>{t("page.menu.title.status")}</Typography>
             </QuestionBadge>
-            <Switch value={!!formValues.status} onChange={handleInputChange} />
-            <Typography>On</Typography>
+            <Switch name='status' value={!!formValues.status} onChange={handleInputChange} />
+            <Typography>{formValues.status == 0 ? t('page.menu.switch.status.true') : t('page.menu.switch.status.false')}</Typography>
           </Stack>
           <Stack direction="row" spacing={2} sx={{ mt: 2, alignItems: 'center' }}>
             <QuestionBadge title={t("page.menu.tip.visible")}>
               <Typography>{t("page.menu.title.visible")}</Typography>
             </QuestionBadge>
-            <Switch value={formValues.visible} onChange={handleInputChange} />
-            <Typography>On</Typography>
+            <Switch name='visible' value={formValues.visible} onChange={handleInputChange} />
+            <Typography>{formValues.status == 0 ? t('page.menu.switch.visible.true') : t('page.menu.switch.visible.false')}</Typography>
           </Stack>
           <Stack direction="row" spacing={2} sx={{ mt: 2, alignItems: 'center' }}>
             <QuestionBadge title={t("page.menu.tip.always.show")}>
               <Typography>{t("page.menu.title.always.show")}</Typography>
             </QuestionBadge>
-            <Switch value={formValues.always_show} onChange={handleInputChange} />
-            <Typography>On</Typography>
+            <Switch name='always_show' value={formValues.always_show} onChange={handleInputChange} />
+            <Typography>{formValues.status == 0 ? t('page.menu.switch.always.true') : t('page.menu.switch.always.false')}</Typography>
           </Stack>
           <Stack direction="row" spacing={2} sx={{ mt: 2, alignItems: 'center' }}>
-            <QuestionBadge title="这是一个提示信息">
+            <QuestionBadge title={t("page.menu.tip.keep.alive")}>
               <Typography>{t("page.menu.title.keep.alive")}</Typography>
             </QuestionBadge>
-            <Switch value={formValues.keep_alive} onChange={handleInputChange} />
-            <Typography>On</Typography>
+            <Switch name='keep_alive' value={formValues.keep_alive} onChange={handleInputChange} />
+            <Typography>{formValues.status == 0 ? t('page.menu.switch.keep.true') : t('page.menu.switch.keep.false')}</Typography>
           </Stack>
         </Box>
       </DialogContent>

@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { styled } from '@mui/material/styles';
 import {
   Select,
@@ -25,7 +25,7 @@ interface TreeNode {
 }
 
 interface SelectTreeProps {
-  size: string;
+  size?: 'small' | 'medium';
   label: string;
   treeData: TreeNode[];
   onChange: (value: string) => void;
@@ -54,7 +54,16 @@ const StyledPopper = styled(Popper)(({ theme }: { theme: any }) => ({
 const SelectTree = ({ size, label, treeData, onChange, value }: SelectTreeProps) => {
   const [open, setOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectWidth, setSelectWidth] = useState<number | null>(null);
   const anchorRef = useRef<HTMLDivElement>(null);
+
+  // Update selectWidth when the component mounts or size changes
+  useEffect(() => {
+    if (anchorRef.current) {
+      const width = anchorRef.current.getBoundingClientRect().width;
+      setSelectWidth(width);
+    }
+  }, [size]);
 
   const handleToggle = () => {
     setOpen((prev) => !prev);
@@ -68,7 +77,7 @@ const SelectTree = ({ size, label, treeData, onChange, value }: SelectTreeProps)
     setSearchTerm('');
   };
 
-  const handleSelect = (event: React.MouseEvent, nodeId: string) => {
+  const handleSelect = (nodeId: string) => {
     onChange(nodeId);
     setOpen(false);
     setSearchTerm('');
@@ -96,8 +105,16 @@ const SelectTree = ({ size, label, treeData, onChange, value }: SelectTreeProps)
       <TreeItem
         key={node.id}
         itemId={node.id}
-        label={node.label}
-        onClick={(e: React.MouseEvent) => handleSelect(e, node.id)}
+        // label={node.label}
+        // onClick={(e: React.MouseEvent) => handleSelect(e, node.id)}
+        label={
+          <div
+            style={{ cursor: 'pointer' }}
+            onClick={() => handleSelect(node.id)}
+          >
+            {node.label}
+          </div>
+        }
       >
         {node.children && renderTree(node.children)}
       </TreeItem>
@@ -106,13 +123,15 @@ const SelectTree = ({ size, label, treeData, onChange, value }: SelectTreeProps)
 
   return (
     <StyledFormControl>
-      <InputLabel>{label}</InputLabel>
+      <InputLabel size={size}>{label}</InputLabel>
       <Select
-        size=''
+        size={size}
+        // labelId="custom-select-tree-label"
         ref={anchorRef}
         open={false}
         onClick={handleToggle}
         value={value}
+        label={label}
         renderValue={(selected) => {
           const selectedNode = findNodeById(treeData, selected as string);
           return selectedNode ? selectedNode.label : '';
@@ -126,23 +145,26 @@ const SelectTree = ({ size, label, treeData, onChange, value }: SelectTreeProps)
         open={open}
         anchorEl={anchorRef.current}
         placement="bottom-start"
+        style={{ width: selectWidth ? `${selectWidth}px` : 'auto' }}
       >
         <ClickAwayListener onClickAway={handleClose}>
-          <Paper elevation={3} sx={{
-            p: 1,
-          }}>
+          <Paper
+            elevation={3}
+            sx={{
+              p: 1,
+            }}
+          >
             <TextField
               size={size}
               variant="outlined"
               placeholder="Search..."
               value={searchTerm}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value)}
-            // sx={{ m: 1 }}
+              sx={{ mb: 1 }}
             />
             <SimpleTreeView
               defaultCollapseIcon={<ExpandMoreIcon />}
               defaultExpandIcon={<ChevronRightIcon />}
-            // sx={{ p: 1, minWidth: 250 }}
             >
               {renderTree(filteredData)}
             </SimpleTreeView>
