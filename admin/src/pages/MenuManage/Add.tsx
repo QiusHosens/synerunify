@@ -4,7 +4,7 @@ import { forwardRef, ReactNode, useImperativeHandle, useState } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
 import { SelectChangeEvent } from '@mui/material/Select';
 import DictSelect from '@/components/DictSelect';
-import { createMenu, SystemMenuRequest } from '@/api';
+import { createMenu, listMenu, SystemMenuRequest } from '@/api';
 import QuestionBadge from '@/components/QuestionBadge';
 import SelectTree from '@/components/SelectTree';
 
@@ -41,7 +41,7 @@ interface FormErrors {
 }
 
 interface TreeNode {
-  id: string;
+  id: string | number;
   label: string;
   children?: TreeNode[];
 }
@@ -76,6 +76,7 @@ const MenuAdd = forwardRef(({ onSubmit }: MenuAddProps, ref) => {
   const [type, setType] = useState<number>(1);
   const [fullWidth, setFullWidth] = useState(true);
   const [maxWidth, setMaxWidth] = useState<DialogProps['maxWidth']>('sm');
+  const [menuTreeData, setMenuTreeData] = useState<TreeNode[]>([]);
   const [formValues, setFormValues] = useState<FormValues>({
     name: '',
     permission: '',
@@ -180,6 +181,11 @@ const MenuAdd = forwardRef(({ onSubmit }: MenuAddProps, ref) => {
     setErrors({});
   }
 
+  const initMenus = async () => {
+    const result = await listMenu();
+
+  }
+
   const handleSubmit = async () => {
     if (validateForm()) {
       await createMenu(formValues as SystemMenuRequest);
@@ -198,19 +204,13 @@ const MenuAdd = forwardRef(({ onSubmit }: MenuAddProps, ref) => {
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log('target', e.target);
+    // console.log('target', e.target);
     const { name, value, type } = e.target;
     if (type == 'number') {
       const numberValue = Number(value);
       setFormValues(prev => ({
         ...prev,
         [name]: numberValue
-      }));
-    } else if (type == 'checkbox') {
-      const boolValue = Boolean(value);
-      setFormValues(prev => ({
-        ...prev,
-        [name]: boolValue
       }));
     } else {
       setFormValues(prev => ({
@@ -219,7 +219,43 @@ const MenuAdd = forwardRef(({ onSubmit }: MenuAddProps, ref) => {
       }));
     }
 
-    console.log('formValues', formValues);
+    // console.log('formValues', formValues);
+
+    // Clear error when user starts typing
+    if (errors[name as keyof FormErrors]) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: undefined
+      }));
+    }
+  };
+
+  const handleSwitchChange = (e: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
+    // console.log('target', e.target, checked);
+    const { name } = e.target;
+
+    setFormValues(prev => ({
+      ...prev,
+      [name]: checked
+    }));
+
+    // Clear error when user starts typing
+    if (errors[name as keyof FormErrors]) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: undefined
+      }));
+    }
+  };
+
+  const handleStatusChange = (e: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
+    // console.log('target', e.target, checked);
+    const { name } = e.target;
+
+    setFormValues(prev => ({
+      ...prev,
+      [name]: checked ? 0 : 1
+    }));
 
     // Clear error when user starts typing
     if (errors[name as keyof FormErrors]) {
@@ -231,7 +267,8 @@ const MenuAdd = forwardRef(({ onSubmit }: MenuAddProps, ref) => {
   };
 
   const handleTypeChange = (event: SelectChangeEvent<number>, child: ReactNode) => {
-    setType(event.target.value as number);
+    const type = event.target.value as number;
+    setType(type);
   }
 
   const [selectedValue, setSelectedValue] = useState<string>('');
@@ -273,41 +310,42 @@ const MenuAdd = forwardRef(({ onSubmit }: MenuAddProps, ref) => {
             />
           </FormControl>
           <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' } }}>
-            <TextField size="small" name='name' label={t("page.menu.title.name")} />
-            <TextField size="small" label={t("page.menu.title.permission")} />
-            <TextField size="small" type="number" label={t("page.menu.title.sort")} />
-            <TextField size="small" label={t("page.menu.title.path")} />
-            <TextField size="small" label={t("page.menu.title.icon")} />
-            <TextField size="small" label={t("page.menu.title.component")} />
-            <TextField size="small" label={t("page.menu.title.component.name")} />
+            <TextField required size="small" name='name' label={t("page.menu.title.name")} onChange={handleInputChange} />
+            {type != 2 && <TextField size="small" label={t("page.menu.title.icon")} onChange={handleInputChange} />}
+            {type != 2 && <TextField required size="small" label={t("page.menu.title.path")} onChange={handleInputChange} />}
+
+            <TextField size="small" label={t("page.menu.title.permission")} onChange={handleInputChange} />
+            <TextField required size="small" type="number" label={t("page.menu.title.sort")} onChange={handleInputChange} />
+
+
+            <TextField size="small" label={t("page.menu.title.component")} onChange={handleInputChange} />
+            <TextField size="small" label={t("page.menu.title.component.name")} onChange={handleInputChange} />
           </FormControl>
-          <Stack direction="row" spacing={2} sx={{ mt: 2, alignItems: 'center' }}>
-            <QuestionBadge title="这是一个提示信息">
-              <Typography>{t("page.menu.title.status")}</Typography>
-            </QuestionBadge>
-            <Switch name='status' value={!!formValues.status} onChange={handleInputChange} />
+          <Box sx={{ mt: 2, display: 'flex', alignItems: 'center' }}>
+            <Typography sx={{ mr: 4 }}>{t("page.menu.title.status")}</Typography>
+            <Switch sx={{ mr: 2 }} defaultChecked name='status' value={!formValues.status} onChange={handleStatusChange} />
             <Typography>{formValues.status == 0 ? t('page.menu.switch.status.true') : t('page.menu.switch.status.false')}</Typography>
-          </Stack>
+          </Box>
           <Stack direction="row" spacing={2} sx={{ mt: 2, alignItems: 'center' }}>
             <QuestionBadge title={t("page.menu.tip.visible")}>
               <Typography>{t("page.menu.title.visible")}</Typography>
             </QuestionBadge>
-            <Switch name='visible' value={formValues.visible} onChange={handleInputChange} />
-            <Typography>{formValues.status == 0 ? t('page.menu.switch.visible.true') : t('page.menu.switch.visible.false')}</Typography>
+            <Switch name='visible' defaultChecked value={formValues.visible} onChange={handleSwitchChange} />
+            <Typography>{formValues.visible ? t('page.menu.switch.visible.true') : t('page.menu.switch.visible.false')}</Typography>
           </Stack>
           <Stack direction="row" spacing={2} sx={{ mt: 2, alignItems: 'center' }}>
             <QuestionBadge title={t("page.menu.tip.always.show")}>
               <Typography>{t("page.menu.title.always.show")}</Typography>
             </QuestionBadge>
-            <Switch name='always_show' value={formValues.always_show} onChange={handleInputChange} />
-            <Typography>{formValues.status == 0 ? t('page.menu.switch.always.true') : t('page.menu.switch.always.false')}</Typography>
+            <Switch name='always_show' defaultChecked value={formValues.always_show} onChange={handleSwitchChange} />
+            <Typography>{formValues.always_show ? t('page.menu.switch.always.true') : t('page.menu.switch.always.false')}</Typography>
           </Stack>
           <Stack direction="row" spacing={2} sx={{ mt: 2, alignItems: 'center' }}>
             <QuestionBadge title={t("page.menu.tip.keep.alive")}>
               <Typography>{t("page.menu.title.keep.alive")}</Typography>
             </QuestionBadge>
-            <Switch name='keep_alive' value={formValues.keep_alive} onChange={handleInputChange} />
-            <Typography>{formValues.status == 0 ? t('page.menu.switch.keep.true') : t('page.menu.switch.keep.false')}</Typography>
+            <Switch name='keep_alive' defaultChecked value={formValues.keep_alive} onChange={handleSwitchChange} />
+            <Typography>{formValues.keep_alive ? t('page.menu.switch.keep.true') : t('page.menu.switch.keep.false')}</Typography>
           </Stack>
         </Box>
       </DialogContent>

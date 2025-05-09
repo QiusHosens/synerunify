@@ -19,7 +19,7 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { OverridableStringUnion } from '@mui/types';
 
 interface TreeNode {
-  id: string;
+  id: string | number;
   label: string;
   children?: TreeNode[];
 }
