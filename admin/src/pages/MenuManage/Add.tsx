@@ -1,10 +1,10 @@
-import { Badge, Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormControlLabel, IconButton, InputLabel, MenuItem, Select, Stack, Switch, TextField, Tooltip, Typography } from '@mui/material';
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, Stack, Switch, TextField, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { forwardRef, ReactNode, useImperativeHandle, useState } from 'react';
+import { forwardRef, useImperativeHandle, useState } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
 import { SelectChangeEvent } from '@mui/material/Select';
 import DictSelect from '@/components/DictSelect';
-import { createMenu, listMenu, SystemMenuRequest } from '@/api';
+import { createMenu, listMenu, SystemMenuRequest, SystemMenuResponse } from '@/api';
 import QuestionBadge from '@/components/QuestionBadge';
 import SelectTree from '@/components/SelectTree';
 
@@ -42,28 +42,10 @@ interface FormErrors {
 
 interface TreeNode {
   id: string | number;
+  parent_id: number; // 父菜单ID
   label: string;
-  children?: TreeNode[];
+  children: TreeNode[];
 }
-
-const sampleTreeData: TreeNode[] = [
-  {
-    id: '1',
-    label: 'Root 1',
-    children: [
-      { id: '1-1', label: 'Child 1-1' },
-      { id: '1-2', label: 'Child 1-2' },
-    ],
-  },
-  {
-    id: '2',
-    label: 'Root 2',
-    children: [
-      { id: '2-1', label: 'Child 2-1' },
-      { id: '2-2', label: 'Child 2-2' },
-    ],
-  },
-];
 
 interface MenuAddProps {
   onSubmit: () => void;
@@ -96,6 +78,7 @@ const MenuAdd = forwardRef(({ onSubmit }: MenuAddProps, ref) => {
 
   useImperativeHandle(ref, () => ({
     show() {
+      initMenus();
       setOpen(true);
     },
     hide() {
@@ -183,7 +166,34 @@ const MenuAdd = forwardRef(({ onSubmit }: MenuAddProps, ref) => {
 
   const initMenus = async () => {
     const result = await listMenu();
+    const tree = buildMenuTree(result);
+    setMenuTreeData(tree);
+  }
 
+  const buildMenuTree = (list: SystemMenuResponse[]): TreeNode[] => {
+    const map: { [key: string]: TreeNode } = {};
+    const tree: TreeNode[] = [];
+
+    // Create a map for quick lookup
+    for (const item of list) {
+      map[item.id] = {
+        id: item.id,
+        parent_id: item.parent_id,
+        label: item.name,
+        children: [],
+      };
+    }
+
+    // Build the tree structure
+    for (const item of list) {
+      if (item.parent_id === 0) {
+        tree.push(map[item.id]);
+      } else if (map[item.parent_id]) {
+        map[item.parent_id].children.push(map[item.id]);
+      }
+    }
+
+    return tree;
   }
 
   const handleSubmit = async () => {
@@ -266,7 +276,7 @@ const MenuAdd = forwardRef(({ onSubmit }: MenuAddProps, ref) => {
     }
   };
 
-  const handleTypeChange = (event: SelectChangeEvent<number>, child: ReactNode) => {
+  const handleTypeChange = (event: SelectChangeEvent<number>) => {
     const type = event.target.value as number;
     setType(type);
   }
@@ -304,7 +314,7 @@ const MenuAdd = forwardRef(({ onSubmit }: MenuAddProps, ref) => {
             <SelectTree
               size="small"
               label={t('page.menu.title.parent')}
-              treeData={sampleTreeData}
+              treeData={menuTreeData}
               value={selectedValue}
               onChange={handleChange}
             />
