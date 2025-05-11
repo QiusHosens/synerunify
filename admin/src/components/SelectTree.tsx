@@ -25,11 +25,13 @@ interface TreeNode {
 }
 
 interface SelectTreeProps {
+  required?: boolean;
+  name: string;
   size?: 'small' | 'medium';
   label: string;
   treeData: TreeNode[];
-  onChange: (value: string) => void;
-  value: string;
+  onChange: (name: string, value: string | number) => void;
+  value: string | number;
   sx?: SxProps<Theme>;
 }
 
@@ -51,7 +53,7 @@ const StyledPopper = styled(Popper)(({ theme }: { theme: any }) => ({
   // borderRadius: theme.shape.borderRadius,
 }));
 
-const SelectTree = ({ size, label, treeData, onChange, value }: SelectTreeProps) => {
+const SelectTree = ({ required, name, size, label, treeData, onChange, value }: SelectTreeProps) => {
   const [open, setOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectWidth, setSelectWidth] = useState<number | null>(null);
@@ -77,8 +79,8 @@ const SelectTree = ({ size, label, treeData, onChange, value }: SelectTreeProps)
     setSearchTerm('');
   };
 
-  const handleSelect = (nodeId: string) => {
-    onChange(nodeId);
+  const handleSelect = (nodeId: string | number) => {
+    onChange(name, nodeId);
     setOpen(false);
     setSearchTerm('');
   };
@@ -103,8 +105,8 @@ const SelectTree = ({ size, label, treeData, onChange, value }: SelectTreeProps)
   const renderTree = (nodes: TreeNode[]) => {
     return nodes.map((node) => (
       <TreeItem
-        key={node.id}
-        itemId={node.id}
+        key={node.id.toString()}
+        itemId={node.id.toString()}
         // label={node.label}
         // onClick={(e: React.MouseEvent) => handleSelect(e, node.id)}
         label={
@@ -125,6 +127,7 @@ const SelectTree = ({ size, label, treeData, onChange, value }: SelectTreeProps)
     <StyledFormControl>
       <InputLabel size={size}>{label}</InputLabel>
       <Select
+        required={required}
         size={size}
         // labelId="custom-select-tree-label"
         ref={anchorRef}
@@ -175,9 +178,9 @@ const SelectTree = ({ size, label, treeData, onChange, value }: SelectTreeProps)
   );
 };
 
-const findNodeById = (nodes: TreeNode[], id: string): TreeNode | null => {
+const findNodeById = (nodes: TreeNode[], id: string | number): TreeNode | null => {
   for (const node of nodes) {
-    if (node.id === id) return node;
+    if (node.id == id) return node;
     if (node.children) {
       const found = findNodeById(node.children, id);
       if (found) return found;

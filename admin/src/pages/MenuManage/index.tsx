@@ -108,6 +108,10 @@ export default function MenuManage() {
     (addMenu.current as any).show();
   }
 
+  const refreshData = () => {
+    queryRecords();
+  };
+
   useEffect(() => {
     queryRecords();
   }, []);
@@ -126,7 +130,7 @@ export default function MenuManage() {
         getTreeDataPath={getTreeDataPath}
         hideFooter={true}
       />
-      <MenuAdd ref={addMenu} />
+      <MenuAdd ref={addMenu} onSubmit={refreshData} />
     </Box>
   );
 }

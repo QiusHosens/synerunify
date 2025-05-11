@@ -142,15 +142,6 @@ export default function DictManage() {
     }
   };
 
-  const handlePageSizeChange = (e: React.ChangeEvent<{ value: unknown }>) => {
-    const newSize = Number(e.target.value);
-    setCondition((prev) => ({ ...prev, size: newSize, page: 1 }));
-  };
-
-  const handlePageChange = (newPage: number) => {
-    setCondition((prev) => ({ ...prev, page: newPage + 1 }));
-  };
-
   const handleStatusChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     console.log('status change', e.target);
   };

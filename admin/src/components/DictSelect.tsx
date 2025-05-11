@@ -5,14 +5,16 @@ import { SxProps, Theme } from '@mui/material/styles';
 import { ReactNode, useEffect, useState } from 'react';
 
 interface DictSelectProps {
+    hasEmpty?: boolean;
     type: string;
-    value: number;
+    value: string;
     label: string;
-    onChange: (event: SelectChangeEvent<number>, child: ReactNode) => void;
+    onChange: (event: SelectChangeEvent<string>, child: ReactNode) => void;
     sx?: SxProps<Theme>;
 }
 
 const DictSelect: React.FC<DictSelectProps> = ({
+    hasEmpty,
     type,
     value,
     label,
@@ -40,7 +42,7 @@ const DictSelect: React.FC<DictSelectProps> = ({
                 onChange={onChange}
                 label={label}
             >
-                <MenuItem value="">请选择</MenuItem>
+                {hasEmpty && <MenuItem value="">请选择</MenuItem>}
                 {dicts.map(item => (
                     <MenuItem key={item.id} value={item.value}>{item.label}</MenuItem>
                 ))}

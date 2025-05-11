@@ -55,10 +55,18 @@ const MenuAdd = forwardRef(({ onSubmit }: MenuAddProps, ref) => {
   const { t } = useTranslation();
 
   const [open, setOpen] = useState(false);
-  const [type, setType] = useState<number>(1);
-  const [fullWidth, setFullWidth] = useState(true);
-  const [maxWidth, setMaxWidth] = useState<DialogProps['maxWidth']>('sm');
-  const [menuTreeData, setMenuTreeData] = useState<TreeNode[]>([]);
+  const [type, setType] = useState<string>('0');
+  const [fullWidth] = useState(true);
+  const [maxWidth] = useState<DialogProps['maxWidth']>('sm');
+  const [menuTreeData, setMenuTreeData] = useState<TreeNode[]>([
+    {
+      id: 0,
+      parent_id: -1,
+      label: '根节点',
+      children: [],
+    }
+  ]);
+  const [selectedMenuId, setSelectedMenuId] = useState<string | number>(0);
   const [formValues, setFormValues] = useState<FormValues>({
     name: '',
     permission: '',
@@ -88,12 +96,13 @@ const MenuAdd = forwardRef(({ onSubmit }: MenuAddProps, ref) => {
 
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
+    const type = formValues.type;
 
     if (!formValues.name.trim()) {
       newErrors.name = t('page.menu.error.name');
     }
 
-    if (!formValues.permission.trim()) {
+    if (type != 0 && !formValues.permission.trim()) {
       newErrors.permission = t('page.menu.error.permission');
     }
 
@@ -109,19 +118,19 @@ const MenuAdd = forwardRef(({ onSubmit }: MenuAddProps, ref) => {
       newErrors.parent_id = t('page.menu.error.parent');
     }
 
-    if (!formValues.path.trim()) {
+    if (type != 2 && !formValues.path.trim()) {
       newErrors.path = t('page.menu.error.path');
     }
 
-    if (!formValues.icon.trim()) {
+    if (type != 2 && !formValues.icon.trim()) {
       newErrors.icon = t('page.menu.error.icon');
     }
 
-    if (!formValues.component.trim()) {
+    if (type == 1 && !formValues.component.trim()) {
       newErrors.component = t('page.menu.error.component');
     }
 
-    if (!formValues.component_name.trim()) {
+    if (type == 1 && !formValues.component_name.trim()) {
       newErrors.component_name = t('page.menu.error.component.name');
     }
 
@@ -174,6 +183,13 @@ const MenuAdd = forwardRef(({ onSubmit }: MenuAddProps, ref) => {
     const map: { [key: string]: TreeNode } = {};
     const tree: TreeNode[] = [];
 
+    // 添加根节点
+    list.splice(0, 0, {
+      id: 0,
+      parent_id: -1,
+      name: '根节点',
+    } as SystemMenuResponse);
+
     // Create a map for quick lookup
     for (const item of list) {
       map[item.id] = {
@@ -186,7 +202,7 @@ const MenuAdd = forwardRef(({ onSubmit }: MenuAddProps, ref) => {
 
     // Build the tree structure
     for (const item of list) {
-      if (item.parent_id === 0) {
+      if (item.parent_id === -1) {
         tree.push(map[item.id]);
       } else if (map[item.parent_id]) {
         map[item.parent_id].children.push(map[item.id]);
@@ -207,9 +223,9 @@ const MenuAdd = forwardRef(({ onSubmit }: MenuAddProps, ref) => {
   const handleSubmitAndContinue = async () => {
     if (validateForm()) {
       console.log('formValues', formValues);
-      // await createMenu(formValues as SystemMenuRequest);
-      // reset();
-      // onSubmit();
+      await createMenu(formValues as SystemMenuRequest);
+      reset();
+      onSubmit();
     }
   };
 
@@ -276,16 +292,64 @@ const MenuAdd = forwardRef(({ onSubmit }: MenuAddProps, ref) => {
     }
   };
 
-  const handleTypeChange = (event: SelectChangeEvent<number>) => {
-    const type = event.target.value as number;
+  const handleTypeChange = (event: SelectChangeEvent<string>) => {
+    const type = event.target.value as string;
     setType(type);
+    // 重新设置值
+    const numberType = Number(type);
+    switch (numberType) {
+      case 0:
+        setFormValues(prev => ({
+          ...prev,
+          type: numberType,
+          permission: '',
+          component: '',
+          component_name: '',
+          keep_alive: false,
+        }));
+        setErrors({});
+        break;
+      case 1:
+        setFormValues(prev => ({
+          ...prev,
+          type: numberType,
+        }));
+        setErrors({});
+        break;
+      case 2:
+        setFormValues(prev => ({
+          ...prev,
+          type: numberType,
+          path: '',
+          icon: '',
+          component: '',
+          component_name: '',
+          visible: true,
+          always_show: true,
+          keep_alive: false,
+        }));
+        setErrors({});
+        break;
+    }
   }
 
-  const [selectedValue, setSelectedValue] = useState<string>('');
 
-  const handleChange = (value: string) => {
-    setSelectedValue(value);
-    console.log('Selected:', value);
+
+  const handleChange = (name: string, value: string | number) => {
+    setSelectedMenuId(value);
+    // console.log('Selected:', value);
+    setFormValues(prev => ({
+      ...prev,
+      [name]: value
+    }));
+
+    // Clear error when user starts typing
+    if (errors[name as keyof FormErrors]) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: undefined
+      }));
+    }
   };
 
   return (
@@ -312,51 +376,112 @@ const MenuAdd = forwardRef(({ onSubmit }: MenuAddProps, ref) => {
           </FormControl>
           <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiSelect-root': { width: '200px' } }}>
             <SelectTree
+              name='parent_id'
               size="small"
               label={t('page.menu.title.parent')}
               treeData={menuTreeData}
-              value={selectedValue}
+              value={selectedMenuId}
               onChange={handleChange}
             />
           </FormControl>
           <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' } }}>
-            <TextField required size="small" name='name' label={t("page.menu.title.name")} onChange={handleInputChange} />
-            {type != 2 && <TextField size="small" label={t("page.menu.title.icon")} onChange={handleInputChange} />}
-            {type != 2 && <TextField required size="small" label={t("page.menu.title.path")} onChange={handleInputChange} />}
+            <TextField
+              required
+              size="small"
+              label={t("page.menu.title.name")}
+              name='name'
+              value={formValues.name}
+              onChange={handleInputChange}
+              error={!!errors.name}
+              helperText={errors.name}
+            />
+            {type != '2' && <TextField
+              size="small"
+              label={t("page.menu.title.icon")}
+              name="icon"
+              value={formValues.icon}
+              onChange={handleInputChange}
+              error={!!errors.icon}
+              helperText={errors.icon}
+            />}
+            {type != '2' && <TextField
+              required
+              size="small"
+              label={t("page.menu.title.path")}
+              name="path"
+              value={formValues.path}
+              onChange={handleInputChange}
+              error={!!errors.path}
+              helperText={errors.path}
+            />}
 
-            <TextField size="small" label={t("page.menu.title.permission")} onChange={handleInputChange} />
-            <TextField required size="small" type="number" label={t("page.menu.title.sort")} onChange={handleInputChange} />
+            {type == '1' && <TextField
+              size="small"
+              label={t("page.menu.title.component")}
+              name="component"
+              value={formValues.component}
+              onChange={handleInputChange}
+              error={!!errors.component}
+              helperText={errors.component}
+            />}
+            {type == '1' && <TextField
+              size="small"
+              label={t("page.menu.title.component.name")}
+              name="component_name"
+              value={formValues.component_name}
+              onChange={handleInputChange}
+              error={!!errors.component_name}
+              helperText={errors.component_name}
+            />}
 
+            {type != '0' && <TextField
+              size="small"
+              label={t("page.menu.title.permission")}
+              name="permission"
+              value={formValues.permission}
+              onChange={handleInputChange}
+              error={!!errors.permission}
+              helperText={errors.permission}
+            />}
+            <TextField
+              required
+              size="small"
+              type="number"
+              label={t("page.menu.title.sort")}
+              name="sort"
+              value={formValues.sort}
+              onChange={handleInputChange}
+              error={!!errors.sort}
+              helperText={errors.sort}
+            />
 
-            <TextField size="small" label={t("page.menu.title.component")} onChange={handleInputChange} />
-            <TextField size="small" label={t("page.menu.title.component.name")} onChange={handleInputChange} />
           </FormControl>
           <Box sx={{ mt: 2, display: 'flex', alignItems: 'center' }}>
             <Typography sx={{ mr: 4 }}>{t("page.menu.title.status")}</Typography>
-            <Switch sx={{ mr: 2 }} defaultChecked name='status' value={!formValues.status} onChange={handleStatusChange} />
+            <Switch sx={{ mr: 2 }} name='status' checked={!formValues.status} onChange={handleStatusChange} />
             <Typography>{formValues.status == 0 ? t('page.menu.switch.status.true') : t('page.menu.switch.status.false')}</Typography>
           </Box>
-          <Stack direction="row" spacing={2} sx={{ mt: 2, alignItems: 'center' }}>
+          {type != '2' && <Stack direction="row" spacing={2} sx={{ mt: 2, alignItems: 'center' }}>
             <QuestionBadge title={t("page.menu.tip.visible")}>
               <Typography>{t("page.menu.title.visible")}</Typography>
             </QuestionBadge>
-            <Switch name='visible' defaultChecked value={formValues.visible} onChange={handleSwitchChange} />
+            <Switch name='visible' checked={formValues.visible} onChange={handleSwitchChange} />
             <Typography>{formValues.visible ? t('page.menu.switch.visible.true') : t('page.menu.switch.visible.false')}</Typography>
-          </Stack>
-          <Stack direction="row" spacing={2} sx={{ mt: 2, alignItems: 'center' }}>
+          </Stack>}
+          {type != '2' && <Stack direction="row" spacing={2} sx={{ mt: 2, alignItems: 'center' }}>
             <QuestionBadge title={t("page.menu.tip.always.show")}>
               <Typography>{t("page.menu.title.always.show")}</Typography>
             </QuestionBadge>
-            <Switch name='always_show' defaultChecked value={formValues.always_show} onChange={handleSwitchChange} />
+            <Switch name='always_show' checked={formValues.always_show} onChange={handleSwitchChange} />
             <Typography>{formValues.always_show ? t('page.menu.switch.always.true') : t('page.menu.switch.always.false')}</Typography>
-          </Stack>
-          <Stack direction="row" spacing={2} sx={{ mt: 2, alignItems: 'center' }}>
+          </Stack>}
+          {type == '1' && <Stack direction="row" spacing={2} sx={{ mt: 2, alignItems: 'center' }}>
             <QuestionBadge title={t("page.menu.tip.keep.alive")}>
               <Typography>{t("page.menu.title.keep.alive")}</Typography>
             </QuestionBadge>
-            <Switch name='keep_alive' defaultChecked value={formValues.keep_alive} onChange={handleSwitchChange} />
+            <Switch name='keep_alive' checked={formValues.keep_alive} onChange={handleSwitchChange} />
             <Typography>{formValues.keep_alive ? t('page.menu.switch.keep.true') : t('page.menu.switch.keep.false')}</Typography>
-          </Stack>
+          </Stack>}
         </Box>
       </DialogContent>
       <DialogActions>
