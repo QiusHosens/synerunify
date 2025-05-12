@@ -1,23 +1,20 @@
-import { Box, Button, InputAdornment, Paper, Popover, SvgIcon, TextField } from '@mui/material';
+import { Box, Button } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useEffect, useRef, useState } from 'react';
-import { listMenu, MenuQueryCondition, SystemMenuResponse } from '@/api';
-import { GridColDef, GridRenderCellParams, GridSortModel } from '@mui/x-data-grid';
+import { listMenu, SystemMenuResponse } from '@/api';
+import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import CustomizedDataGridPro from '@/components/CustomizedDataGridPro';
-import SearchIcon from '@/assets/image/svg/search.svg';
 import EditIcon from '@/assets/image/svg/edit.svg';
-import MoreIcon from '@/assets/image/svg/more.svg';
 import DeleteIcon from '@/assets/image/svg/delete.svg';
 import MenuAdd from './Add';
-import { SystemDictDataResponse } from '@/api/dict';
+import { getParentNodeLists, Node } from '@/utils/treeUtils';
 
 export default function MenuManage() {
   const { t } = useTranslation();
 
   const [records, setRecords] = useState<Array<SystemMenuResponse>>([]);
-  const [sortModel, setSortModel] = useState<GridSortModel>([]);
 
-  const addMenu = useRef();
+  const addMenu = useRef(null);
 
   const columns: GridColDef[] = [
     { field: 'name', headerName: t("page.menu.title.name"), flex: 1, width: 200 },
@@ -86,18 +83,22 @@ export default function MenuManage() {
   const queryRecords = async () => {
     const result = await listMenu();
     console.log('menu list', result);
+    const nodes: Node[] = [];
     result.forEach(menu => {
-      const path = menu.path;
-      const hierarchy = [];
-      if (path) {
-        const paths = path.split('/');
-        for (const p of paths) {
-          if (p) {
-            hierarchy.push(p);
-          }
-        }
+      nodes.push({
+        id: menu.id,
+        parent_id: menu.parent_id == 0 ? undefined : menu.parent_id
+      } as Node)
+    });
+    const parentNodeLists = getParentNodeLists(nodes);
+    console.log('parent node list', parentNodeLists);
+    result.forEach(menu => {
+      const parentNodes = parentNodeLists.get(menu.id);
+      menu.hierarchy = [];
+      if (parentNodes && parentNodes.length > 0) {
+        parentNodes.forEach(node => menu.hierarchy.push(node.id.toString()));
       }
-      menu.hierarchy = hierarchy;
+      menu.hierarchy.push(menu.id.toString());
     })
     setRecords(result);
   }

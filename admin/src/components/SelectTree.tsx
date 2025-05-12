@@ -166,8 +166,8 @@ const SelectTree = ({ required, name, size, label, treeData, onChange, value }: 
               sx={{ mb: 1 }}
             />
             <SimpleTreeView
-              defaultCollapseIcon={<ExpandMoreIcon />}
-              defaultExpandIcon={<ChevronRightIcon />}
+              // defaultCollapseIcon={<ExpandMoreIcon />}
+              // defaultExpandIcon={<ChevronRightIcon />}
             >
               {renderTree(filteredData)}
             </SimpleTreeView>
