@@ -4,25 +4,9 @@ import { forwardRef, useImperativeHandle, useState } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
 import { SelectChangeEvent } from '@mui/material/Select';
 import DictSelect from '@/components/DictSelect';
-import { createMenu, listMenu, SystemMenuRequest, SystemMenuResponse } from '@/api';
+import { listMenu, SystemMenuRequest, SystemMenuResponse, updateMenu } from '@/api';
 import QuestionBadge from '@/components/QuestionBadge';
 import SelectTree from '@/components/SelectTree';
-
-interface FormValues {
-  name: string; // 菜单名称
-  permission: string; // 权限标识
-  type: number; // 菜单类型
-  sort: number; // 显示顺序
-  parent_id: number; // 父菜单ID
-  path: string; // 路由地址
-  icon: string; // 菜单图标
-  component: string; // 组件路径
-  component_name: string; // 组件名
-  status: number; // 菜单状态
-  visible: boolean; // 是否可见
-  keep_alive: boolean; // 是否缓存
-  always_show: boolean; // 是否总是显示
-}
 
 interface FormErrors {
   name?: string; // 菜单名称
@@ -51,7 +35,7 @@ interface MenuAddProps {
   onSubmit: () => void;
 }
 
-const MenuAdd = forwardRef(({ onSubmit }: MenuAddProps, ref) => {
+const MenuEdit = forwardRef(({ onSubmit }: MenuAddProps, ref) => {
   const { t } = useTranslation();
 
   const [open, setOpen] = useState(false);
@@ -67,7 +51,8 @@ const MenuAdd = forwardRef(({ onSubmit }: MenuAddProps, ref) => {
     }
   ]);
   const [selectedMenuId, setSelectedMenuId] = useState<string | number>(0);
-  const [formValues, setFormValues] = useState<FormValues>({
+  const [menu, setMenu] = useState<SystemMenuRequest>({
+    id: 0,
     name: '',
     permission: '',
     type: 0,
@@ -85,8 +70,9 @@ const MenuAdd = forwardRef(({ onSubmit }: MenuAddProps, ref) => {
   const [errors, setErrors] = useState<FormErrors>({});
 
   useImperativeHandle(ref, () => ({
-    show() {
+    show(menu: SystemMenuResponse) {
       initMenus();
+      initForm(menu);
       setOpen(true);
     },
     hide() {
@@ -96,49 +82,49 @@ const MenuAdd = forwardRef(({ onSubmit }: MenuAddProps, ref) => {
 
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
-    const type = formValues.type;
+    const type = menu.type;
 
-    if (!formValues.name.trim()) {
+    if (!menu.name.trim()) {
       newErrors.name = t('page.menu.error.name');
     }
 
-    // if (type != 0 && !formValues.permission.trim()) {
+    // if (type != 0 && !menu.permission.trim()) {
     //   newErrors.permission = t('page.menu.error.permission');
     // }
 
-    if (!formValues.type && formValues.type != 0) {
+    if (!menu.type && menu.type != 0) {
       newErrors.type = t('page.menu.error.type');
     }
 
-    if (!formValues.sort && formValues.sort != 0) {
+    if (!menu.sort && menu.sort != 0) {
       newErrors.sort = t('page.menu.error.sort');
     }
 
-    if (!formValues.parent_id && formValues.parent_id != 0) {
+    if (!menu.parent_id && menu.parent_id != 0) {
       newErrors.parent_id = t('page.menu.error.parent');
     }
 
-    if (type != 3 && !formValues.path.trim()) {
+    if (type != 3 && !menu.path.trim()) {
       newErrors.path = t('page.menu.error.path');
     }
 
-    // if (type != 2 && !formValues.icon.trim()) {
+    // if (type != 2 && !menu.icon.trim()) {
     //   newErrors.icon = t('page.menu.error.icon');
     // }
 
-    // if (type == 1 && !formValues.component.trim()) {
+    // if (type == 1 && !menu.component.trim()) {
     //   newErrors.component = t('page.menu.error.component');
     // }
 
-    // if (type == 1 && !formValues.component_name.trim()) {
+    // if (type == 1 && !menu.component_name.trim()) {
     //   newErrors.component_name = t('page.menu.error.component.name');
     // }
 
-    if (!formValues.status && formValues.status != 0) {
+    if (!menu.status && menu.status != 0) {
       newErrors.status = t('page.menu.error.status');
     }
 
-    console.log('errors', newErrors);
+    // console.log('errors', newErrors);
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -146,30 +132,20 @@ const MenuAdd = forwardRef(({ onSubmit }: MenuAddProps, ref) => {
 
   const handleCancel = () => {
     setOpen(false);
-    reset();
+    // reset();
   };
 
   const handleClose = () => {
     setOpen(false);
-    reset();
+    // reset();
   };
 
-  const reset = () => {
-    setFormValues({
-      name: '',
-      permission: '',
-      type: 0,
-      sort: 0,
-      parent_id: 0,
-      path: '',
-      icon: '',
-      component: '',
-      component_name: '',
-      status: 0,
-      visible: true,
-      keep_alive: true,
-      always_show: true,
-    });
+  const initForm = (menu: SystemMenuResponse) => {
+    setType(menu.type.toString());
+    setSelectedMenuId(menu.parent_id);
+    setMenu({
+      ...menu,
+    })
     setErrors({});
   }
 
@@ -214,17 +190,8 @@ const MenuAdd = forwardRef(({ onSubmit }: MenuAddProps, ref) => {
 
   const handleSubmit = async () => {
     if (validateForm()) {
-      await createMenu(formValues as SystemMenuRequest);
+      await updateMenu(menu);
       handleClose();
-      onSubmit();
-    }
-  };
-
-  const handleSubmitAndContinue = async () => {
-    if (validateForm()) {
-      console.log('formValues', formValues);
-      await createMenu(formValues as SystemMenuRequest);
-      reset();
       onSubmit();
     }
   };
@@ -234,12 +201,12 @@ const MenuAdd = forwardRef(({ onSubmit }: MenuAddProps, ref) => {
     const { name, value, type } = e.target;
     if (type == 'number') {
       const numberValue = Number(value);
-      setFormValues(prev => ({
+      setMenu(prev => ({
         ...prev,
         [name]: numberValue
       }));
     } else {
-      setFormValues(prev => ({
+      setMenu(prev => ({
         ...prev,
         [name]: value
       }));
@@ -260,7 +227,7 @@ const MenuAdd = forwardRef(({ onSubmit }: MenuAddProps, ref) => {
     // console.log('target', e.target, checked);
     const { name } = e.target;
 
-    setFormValues(prev => ({
+    setMenu(prev => ({
       ...prev,
       [name]: checked
     }));
@@ -278,7 +245,7 @@ const MenuAdd = forwardRef(({ onSubmit }: MenuAddProps, ref) => {
     // console.log('target', e.target, checked);
     const { name } = e.target;
 
-    setFormValues(prev => ({
+    setMenu(prev => ({
       ...prev,
       [name]: checked ? 0 : 1
     }));
@@ -299,7 +266,7 @@ const MenuAdd = forwardRef(({ onSubmit }: MenuAddProps, ref) => {
     const numberType = Number(type);
     switch (numberType) {
       case 1:
-        setFormValues(prev => ({
+        setMenu(prev => ({
           ...prev,
           type: numberType,
           permission: '',
@@ -310,14 +277,14 @@ const MenuAdd = forwardRef(({ onSubmit }: MenuAddProps, ref) => {
         setErrors({});
         break;
       case 2:
-        setFormValues(prev => ({
+        setMenu(prev => ({
           ...prev,
           type: numberType,
         }));
         setErrors({});
         break;
       case 3:
-        setFormValues(prev => ({
+        setMenu(prev => ({
           ...prev,
           type: numberType,
           path: '',
@@ -338,7 +305,7 @@ const MenuAdd = forwardRef(({ onSubmit }: MenuAddProps, ref) => {
   const handleChange = (name: string, value: string | number) => {
     setSelectedMenuId(value);
     // console.log('Selected:', value);
-    setFormValues(prev => ({
+    setMenu(prev => ({
       ...prev,
       [name]: value
     }));
@@ -390,7 +357,7 @@ const MenuAdd = forwardRef(({ onSubmit }: MenuAddProps, ref) => {
               size="small"
               label={t("page.menu.title.name")}
               name='name'
-              value={formValues.name}
+              value={menu.name}
               onChange={handleInputChange}
               error={!!errors.name}
               helperText={errors.name}
@@ -399,7 +366,7 @@ const MenuAdd = forwardRef(({ onSubmit }: MenuAddProps, ref) => {
               size="small"
               label={t("page.menu.title.icon")}
               name="icon"
-              value={formValues.icon}
+              value={menu.icon}
               onChange={handleInputChange}
               // error={!!errors.icon}
               // helperText={errors.icon}
@@ -409,7 +376,7 @@ const MenuAdd = forwardRef(({ onSubmit }: MenuAddProps, ref) => {
               size="small"
               label={t("page.menu.title.path")}
               name="path"
-              value={formValues.path}
+              value={menu.path}
               onChange={handleInputChange}
               error={!!errors.path}
               helperText={errors.path}
@@ -419,7 +386,7 @@ const MenuAdd = forwardRef(({ onSubmit }: MenuAddProps, ref) => {
               size="small"
               label={t("page.menu.title.component")}
               name="component"
-              value={formValues.component}
+              value={menu.component}
               onChange={handleInputChange}
               // error={!!errors.component}
               // helperText={errors.component}
@@ -428,7 +395,7 @@ const MenuAdd = forwardRef(({ onSubmit }: MenuAddProps, ref) => {
               size="small"
               label={t("page.menu.title.component.name")}
               name="component_name"
-              value={formValues.component_name}
+              value={menu.component_name}
               onChange={handleInputChange}
               // error={!!errors.component_name}
               // helperText={errors.component_name}
@@ -438,7 +405,7 @@ const MenuAdd = forwardRef(({ onSubmit }: MenuAddProps, ref) => {
               size="small"
               label={t("page.menu.title.permission")}
               name="permission"
-              value={formValues.permission}
+              value={menu.permission}
               onChange={handleInputChange}
               // error={!!errors.permission}
               // helperText={errors.permission}
@@ -449,7 +416,7 @@ const MenuAdd = forwardRef(({ onSubmit }: MenuAddProps, ref) => {
               type="number"
               label={t("page.menu.title.sort")}
               name="sort"
-              value={formValues.sort}
+              value={menu.sort}
               onChange={handleInputChange}
               error={!!errors.sort}
               helperText={errors.sort}
@@ -458,39 +425,38 @@ const MenuAdd = forwardRef(({ onSubmit }: MenuAddProps, ref) => {
           </FormControl>
           <Box sx={{ mt: 2, display: 'flex', alignItems: 'center' }}>
             <Typography sx={{ mr: 4 }}>{t("page.menu.title.status")}</Typography>
-            <Switch sx={{ mr: 2 }} name='status' checked={!formValues.status} onChange={handleStatusChange} />
-            <Typography>{formValues.status == 0 ? t('page.menu.switch.status.true') : t('page.menu.switch.status.false')}</Typography>
+            <Switch sx={{ mr: 2 }} name='status' checked={!menu.status} onChange={handleStatusChange} />
+            <Typography>{menu.status == 0 ? t('page.menu.switch.status.true') : t('page.menu.switch.status.false')}</Typography>
           </Box>
           {type != '3' && <Stack direction="row" spacing={2} sx={{ mt: 2, alignItems: 'center' }}>
             <QuestionBadge title={t("page.menu.tip.visible")}>
               <Typography>{t("page.menu.title.visible")}</Typography>
             </QuestionBadge>
-            <Switch name='visible' checked={formValues.visible} onChange={handleSwitchChange} />
-            <Typography>{formValues.visible ? t('page.menu.switch.visible.true') : t('page.menu.switch.visible.false')}</Typography>
+            <Switch name='visible' checked={menu.visible} onChange={handleSwitchChange} />
+            <Typography>{menu.visible ? t('page.menu.switch.visible.true') : t('page.menu.switch.visible.false')}</Typography>
           </Stack>}
           {type != '3' && <Stack direction="row" spacing={2} sx={{ mt: 2, alignItems: 'center' }}>
             <QuestionBadge title={t("page.menu.tip.always.show")}>
               <Typography>{t("page.menu.title.always.show")}</Typography>
             </QuestionBadge>
-            <Switch name='always_show' checked={formValues.always_show} onChange={handleSwitchChange} />
-            <Typography>{formValues.always_show ? t('page.menu.switch.always.true') : t('page.menu.switch.always.false')}</Typography>
+            <Switch name='always_show' checked={menu.always_show} onChange={handleSwitchChange} />
+            <Typography>{menu.always_show ? t('page.menu.switch.always.true') : t('page.menu.switch.always.false')}</Typography>
           </Stack>}
           {type == '2' && <Stack direction="row" spacing={2} sx={{ mt: 2, alignItems: 'center' }}>
             <QuestionBadge title={t("page.menu.tip.keep.alive")}>
               <Typography>{t("page.menu.title.keep.alive")}</Typography>
             </QuestionBadge>
-            <Switch name='keep_alive' checked={formValues.keep_alive} onChange={handleSwitchChange} />
-            <Typography>{formValues.keep_alive ? t('page.menu.switch.keep.true') : t('page.menu.switch.keep.false')}</Typography>
+            <Switch name='keep_alive' checked={menu.keep_alive} onChange={handleSwitchChange} />
+            <Typography>{menu.keep_alive ? t('page.menu.switch.keep.true') : t('page.menu.switch.keep.false')}</Typography>
           </Stack>}
         </Box>
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleSubmitAndContinue}>{t('global.operate.confirm.continue')}</Button>
-        <Button onClick={handleSubmit}>{t('global.operate.confirm')}</Button>
+        <Button onClick={handleSubmit}>{t('global.operate.update')}</Button>
         <Button onClick={handleCancel}>{t('global.operate.cancel')}</Button>
       </DialogActions>
     </Dialog >
   )
 });
 
-export default MenuAdd;
+export default MenuEdit;

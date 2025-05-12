@@ -2,24 +2,24 @@ import { Button, Dialog, DialogActions, DialogContent, DialogContentText, Dialog
 import { useTranslation } from 'react-i18next';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
-import { deleteDict, SystemDictDataRequest, SystemDictDataResponse } from '@/api/dict';
+import { deleteMenu, SystemMenuResponse } from '@/api';
 
 interface DictAddProps {
   onSubmit: () => void;
 }
 
-const DictDelete = forwardRef(({ onSubmit }: DictAddProps, ref) => {
+const MenuDelete = forwardRef(({ onSubmit }: DictAddProps, ref) => {
   const { t } = useTranslation();
 
   const [open, setOpen] = useState(false);
   const [fullWidth, setFullWidth] = useState(true);
   const [maxWidth, setMaxWidth] = useState<DialogProps['maxWidth']>('sm');
 
-  const [dict, setDict] = useState<SystemDictDataResponse>();
+  const [menu, setMenu] = useState<SystemMenuResponse>();
 
   useImperativeHandle(ref, () => ({
-    show(dict: SystemDictDataResponse) {
-      setDict(dict);
+    show(menu: SystemMenuResponse) {
+      setMenu(menu);
       setOpen(true);
     },
     hide() {
@@ -36,7 +36,7 @@ const DictDelete = forwardRef(({ onSubmit }: DictAddProps, ref) => {
   };
 
   const handleSubmit = async () => {
-    dict && await deleteDict(dict.id);
+    menu && await deleteMenu(menu.id);
     handleClose();
     onSubmit();
   };
@@ -51,7 +51,7 @@ const DictDelete = forwardRef(({ onSubmit }: DictAddProps, ref) => {
       <DialogTitle>{t('global.operate.delete')}{t('global.page.dict')}</DialogTitle>
       <DialogContent>
         <DialogContentText>
-          {t('global.description.delete', { name: dict && dict.label })}
+          {t('global.description.delete', { name: menu && menu.name })}
         </DialogContentText>
       </DialogContent>
       <DialogActions>
@@ -62,4 +62,4 @@ const DictDelete = forwardRef(({ onSubmit }: DictAddProps, ref) => {
   )
 });
 
-export default DictDelete;
+export default MenuDelete;

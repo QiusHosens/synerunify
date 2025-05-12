@@ -8,6 +8,8 @@ import EditIcon from '@/assets/image/svg/edit.svg';
 import DeleteIcon from '@/assets/image/svg/delete.svg';
 import MenuAdd from './Add';
 import { getParentNodeLists, Node } from '@/utils/treeUtils';
+import MenuEdit from './Edit';
+import MenuDelete from './Delete';
 
 export default function MenuManage() {
   const { t } = useTranslation();
@@ -15,6 +17,8 @@ export default function MenuManage() {
   const [records, setRecords] = useState<Array<SystemMenuResponse>>([]);
 
   const addMenu = useRef(null);
+  const editMenu = useRef(null);
+  const deleteMenu = useRef(null);
 
   const columns: GridColDef[] = [
     { field: 'name', headerName: t("page.menu.title.name"), flex: 1, width: 200 },
@@ -45,7 +49,7 @@ export default function MenuManage() {
             variant='customOperate'
             title={t('page.dict.operate.edit')}
             startIcon={<EditIcon />}
-          // onClick={() => handleClickEditDict(params.row)}
+            onClick={() => handleClickOpenEdit(params.row)}
           />
           <Button
             sx={{ color: 'error.main' }}
@@ -53,32 +57,24 @@ export default function MenuManage() {
             variant='customOperate'
             title={t('page.dict.operate.delete')}
             startIcon={<DeleteIcon />}
-          // onClick={() => handleClickDeleteDict(params.row.id)}
+            onClick={() => handleClickOpenDelete(params.row)}
           />
         </Box>
       ),
     },
   ];
 
-  // const handleClickOpenDictType = () => {
-  //   (addDictType.current as any).show();
-  // };
+  const handleClickOpenAdd = () => {
+    (addMenu.current as any).show();
+  }
 
-  // const handleClickOpenDict = () => {
-  //   (addDict.current as any).show();
-  // };
+  const handleClickOpenEdit = (dict: SystemMenuResponse) => {
+    (editMenu.current as any).show(dict);
+  };
 
-  // const handleClickEditDictType = (typeId: number) => {
-  //   (editDictType.current as any).show(typeId);
-  // };
-
-  // const handleClickEditDict = (dict: SystemDictDataResponse) => {
-  //   (editDict.current as any).show(dict);
-  // };
-
-  // const handleClickDeleteDict = (id: number) => {
-  //   (deleteDict.current as any).show(id);
-  // };
+  const handleClickOpenDelete = (dict: SystemMenuResponse) => {
+    (deleteMenu.current as any).show(dict);
+  };
 
   const queryRecords = async () => {
     const result = await listMenu();
@@ -105,10 +101,6 @@ export default function MenuManage() {
 
   const getTreeDataPath = (row: any) => row.hierarchy;
 
-  const handleClickOpen = () => {
-    (addMenu.current as any).show();
-  }
-
   const refreshData = () => {
     queryRecords();
   };
@@ -121,7 +113,7 @@ export default function MenuManage() {
     <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
       <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between' }}>
         <Box></Box>
-        <Button variant="customContained" onClick={handleClickOpen}>
+        <Button variant="customContained" onClick={handleClickOpenAdd}>
           {t('global.operate.add')}
         </Button>
       </Box>
@@ -132,6 +124,8 @@ export default function MenuManage() {
         hideFooter={true}
       />
       <MenuAdd ref={addMenu} onSubmit={refreshData} />
+      <MenuEdit ref={editMenu} onSubmit={refreshData} />
+      <MenuDelete ref={deleteMenu} onSubmit={refreshData} />
     </Box>
   );
 }

@@ -93,14 +93,15 @@ const DictEdit = forwardRef(({ onSubmit }: DictEditProps, ref) => {
 
   const initForm = (dict: SystemDictDataResponse) => {
     setDict({
-      id: dict.id,
-      dict_type: dict.dict_type,
-      label: dict.label,
-      value: dict.value,
-      sort: dict.sort,
-      color_type: dict.color_type as string,
-      css_class: dict.css_class as string,
-      remark: dict.remark as string,
+      ...dict,
+      // id: dict.id,
+      // dict_type: dict.dict_type,
+      // label: dict.label,
+      // value: dict.value,
+      // sort: dict.sort,
+      // color_type: dict.color_type as string,
+      // css_class: dict.css_class as string,
+      // remark: dict.remark as string,
     });
     setErrors({});
   }
@@ -167,12 +168,13 @@ const DictEdit = forwardRef(({ onSubmit }: DictEditProps, ref) => {
               labelId="dict-type-select-label"
               name="dict_type"
               value={dict.dict_type}
-              onChange={handleInputChange}
+              // onChange={handleInputChange}
+              onChange={event => handleInputChange(event as any)}
               // value={type}
               // onChange={handleTypeChange}
               label={t("page.menu.title.type")}
-              error={!!errors.dict_type}
-              helperText={errors.dict_type}
+              // error={!!errors.dict_type}
+              // helperText={errors.dict_type}
             >
               {types.map(item => (<MenuItem key={item.type} value={item.type}>{item.name}</MenuItem>))}
             </Select>

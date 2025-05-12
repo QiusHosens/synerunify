@@ -26,11 +26,11 @@ export default function DictManage() {
   const [types, setTypes] = useState<SystemDictTypeResponse[]>([]);
   const [sortModel, setSortModel] = useState<GridSortModel>([]);
 
-  const addDict = useRef();
-  const addDictType = useRef();
-  const editDictType = useRef();
-  const editDict = useRef();
-  const deleteDict = useRef();
+  const addDict = useRef(null);
+  const addDictType = useRef(null);
+  const editDictType = useRef(null);
+  const editDict = useRef(null);
+  const deleteDict = useRef(null);
 
   const columns: GridColDef[] = [
     { field: 'label', headerName: t("page.dict.title.label"), flex: 1, minWidth: 150 },
@@ -84,7 +84,7 @@ export default function DictManage() {
                 variant='customOperate'
                 title={t('page.dict.operate.delete')}
                 startIcon={<DeleteIcon />}
-                onClick={() => handleClickDeleteDict(params.row.id)}
+                onClick={() => handleClickDeleteDict(params.row)}
               />
             </Box>
           </CustomizedMore>
@@ -115,8 +115,8 @@ export default function DictManage() {
     (editDict.current as any).show(dict);
   };
 
-  const handleClickDeleteDict = (id: number) => {
-    (deleteDict.current as any).show(id);
+  const handleClickDeleteDict = (dict: SystemDictDataResponse) => {
+    (deleteDict.current as any).show(dict);
   };
 
   useEffect(() => {
@@ -148,7 +148,7 @@ export default function DictManage() {
 
   const handleSortModelChange = (model: GridSortModel, details: GridCallbackDetails) => {
     setSortModel(model);
-    setCondition((prev) => ({ ...prev, ...model[0] }));
+    setCondition((prev) => ({ ...prev, ...model[0] } as DictQueryCondition));
   };
 
   const refreshData = () => {
@@ -170,7 +170,8 @@ export default function DictManage() {
               labelId="dict-type-select-label"
               name="dict_type"
               value={condition.dict_type || ''}
-              onChange={handleInputChange}
+              // onChange={handleInputChange}
+              onChange={event => handleInputChange(event as any)}
               label={t("page.dict.title.type")}
             >
               <MenuItem value="">请选择</MenuItem>
