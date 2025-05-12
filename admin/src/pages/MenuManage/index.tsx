@@ -10,6 +10,7 @@ import MenuAdd from './Add';
 import { getParentNodeLists, Node } from '@/utils/treeUtils';
 import MenuEdit from './Edit';
 import MenuDelete from './Delete';
+import CustomizedTag from '@/components/CustomizedTag';
 
 export default function MenuManage() {
   const { t } = useTranslation();
@@ -24,10 +25,17 @@ export default function MenuManage() {
     { field: 'name', headerName: t("page.menu.title.name"), flex: 1, width: 200 },
     { field: 'permission', headerName: t("page.menu.title.permission"), flex: 1, width: 200 },
     {
-      field: 'type',
+      field: 'types',
+      sortable: false,
+      resizable: false,
       headerName: t("page.menu.title.type"),
       flex: 1,
-      width: 200,
+      minWidth: 100,
+      renderCell: (params: GridRenderCellParams) => (
+        <>
+          <CustomizedTag label="React" color="primary" />
+        </>
+      )
     },
     {
       field: 'sort',
