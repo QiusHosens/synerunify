@@ -2,7 +2,7 @@ import React from 'react';
 import { Chip, styled } from '@mui/material';
 
 // 定义 props 类型
-interface TagProps {
+interface CustomizedTagProps {
   label: string;
   color?: 'primary' | 'secondary' | 'default';
   onDelete?: () => void;
@@ -49,7 +49,7 @@ const CustomTag = styled(Chip)<{ color?: 'primary' | 'secondary' | 'default' }>(
 );
 
 // Tag 组件
-const CustomizedTag: React.FC<TagProps> = ({ label, color = 'default', onDelete, ...props }) => {
+const CustomizedTag: React.FC<CustomizedTagProps> = ({ label, color = 'default', onDelete, ...props }) => {
   return (
     <CustomTag
       label={label}
