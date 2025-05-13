@@ -14,6 +14,7 @@ import {
 } from '@mui/material';
 import { SimpleTreeView } from '@mui/x-tree-view/SimpleTreeView';
 import { TreeItem } from '@mui/x-tree-view/TreeItem';
+import { useTranslation } from 'react-i18next';
 
 interface TreeNode {
   id: string | number;
@@ -53,6 +54,7 @@ const StyledPopper = styled(Popper)(({ theme }: { theme: any }) => ({
 }));
 
 const SelectTree = ({ required, name, size, label, treeData, expandToSelected, onChange, value, ...props }: SelectTreeProps) => {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectWidth, setSelectWidth] = useState<number | null>(null);
@@ -169,7 +171,7 @@ const SelectTree = ({ required, name, size, label, treeData, expandToSelected, o
             <TextField
               size={size}
               variant="outlined"
-              placeholder="Search..."
+              placeholder={t('global.condition.keyword')}
               value={searchTerm}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value)}
               sx={{ mb: 1 }}
