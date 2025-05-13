@@ -14,9 +14,6 @@ import {
 } from '@mui/material';
 import { SimpleTreeView } from '@mui/x-tree-view/SimpleTreeView';
 import { TreeItem } from '@mui/x-tree-view/TreeItem';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import { OverridableStringUnion } from '@mui/types';
 
 interface TreeNode {
   id: string | number;
@@ -30,9 +27,11 @@ interface SelectTreeProps {
   size?: 'small' | 'medium';
   label: string;
   treeData: TreeNode[];
+  expandToSelected: boolean;
   onChange: (name: string, value: string | number) => void;
   value: string | number;
   sx?: SxProps<Theme>;
+  [key: string]: any; // 允许其他 SimpleTreeView 组件支持的 props
 }
 
 const StyledFormControl = styled(FormControl)(({ theme }: { theme: any }) => ({
@@ -53,10 +52,11 @@ const StyledPopper = styled(Popper)(({ theme }: { theme: any }) => ({
   // borderRadius: theme.shape.borderRadius,
 }));
 
-const SelectTree = ({ required, name, size, label, treeData, onChange, value }: SelectTreeProps) => {
+const SelectTree = ({ required, name, size, label, treeData, expandToSelected, onChange, value, ...props }: SelectTreeProps) => {
   const [open, setOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectWidth, setSelectWidth] = useState<number | null>(null);
+  const [expandedItems, setExpandedItems] = useState<string[]>([]);
   const anchorRef = useRef<HTMLDivElement>(null);
 
   // Update selectWidth when the component mounts or size changes
@@ -65,7 +65,12 @@ const SelectTree = ({ required, name, size, label, treeData, onChange, value }: 
       const width = anchorRef.current.getBoundingClientRect().width;
       setSelectWidth(width);
     }
-  }, [size]);
+    if (expandToSelected) {
+      const ids = getParentIds(treeData, value as string);
+      ids.push(value.toString());
+      setExpandedItems(ids);
+    }
+  }, [size, expandToSelected]);
 
   const handleToggle = () => {
     setOpen((prev) => !prev);
@@ -84,6 +89,10 @@ const SelectTree = ({ required, name, size, label, treeData, onChange, value }: 
     setOpen(false);
     setSearchTerm('');
   };
+
+  const handleExpandedItemsChange = (event: React.SyntheticEvent, itemIds: string[]) => {
+    setExpandedItems(itemIds);
+  }
 
   const filterTree = (nodes: TreeNode[], term: string): TreeNode[] => {
     return nodes.reduce((acc: TreeNode[], node: TreeNode) => {
@@ -166,8 +175,11 @@ const SelectTree = ({ required, name, size, label, treeData, onChange, value }: 
               sx={{ mb: 1 }}
             />
             <SimpleTreeView
-              // defaultCollapseIcon={<ExpandMoreIcon />}
-              // defaultExpandIcon={<ChevronRightIcon />}
+              expandedItems={expandedItems}
+              onExpandedItemsChange={handleExpandedItemsChange}
+              {...props}
+            // defaultCollapseIcon={<ExpandMoreIcon />}
+            // defaultExpandIcon={<ChevronRightIcon />}
             >
               {renderTree(filteredData)}
             </SimpleTreeView>
@@ -188,5 +200,35 @@ const findNodeById = (nodes: TreeNode[], id: string | number): TreeNode | null =
   }
   return null;
 };
+
+const getParentIds = (tree: TreeNode[], targetId: string | number): string[] => {
+  // 存储结果的路径
+  const result: string[] = [];
+
+  // 递归查找函数
+  const findPath = (nodes: TreeNode[], id: string | number): boolean => {
+    for (const node of nodes) {
+      // 如果当前节点就是要找的节点
+      if (node.id === id) {
+        return true;
+      }
+
+      // 如果有子节点，继续递归查找
+      if (node.children) {
+        if (findPath(node.children, id)) {
+          // 找到目标节点后，将当前节点id添加到结果
+          result.unshift(node.id.toString());
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  // 开始查找
+  findPath(tree, targetId);
+
+  return result;
+}
 
 export default SelectTree;

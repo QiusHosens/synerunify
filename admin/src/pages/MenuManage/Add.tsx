@@ -376,6 +376,7 @@ const MenuAdd = forwardRef(({ onSubmit }: MenuAddProps, ref) => {
           </FormControl>
           <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiSelect-root': { width: '200px' } }}>
             <SelectTree
+              expandToSelected
               name='parent_id'
               size="small"
               label={t('page.menu.title.parent')}
@@ -401,8 +402,8 @@ const MenuAdd = forwardRef(({ onSubmit }: MenuAddProps, ref) => {
               name="icon"
               value={formValues.icon}
               onChange={handleInputChange}
-              // error={!!errors.icon}
-              // helperText={errors.icon}
+            // error={!!errors.icon}
+            // helperText={errors.icon}
             />}
             {type != '3' && <TextField
               required
@@ -421,8 +422,8 @@ const MenuAdd = forwardRef(({ onSubmit }: MenuAddProps, ref) => {
               name="component"
               value={formValues.component}
               onChange={handleInputChange}
-              // error={!!errors.component}
-              // helperText={errors.component}
+            // error={!!errors.component}
+            // helperText={errors.component}
             />}
             {type == '2' && <TextField
               size="small"
@@ -430,8 +431,8 @@ const MenuAdd = forwardRef(({ onSubmit }: MenuAddProps, ref) => {
               name="component_name"
               value={formValues.component_name}
               onChange={handleInputChange}
-              // error={!!errors.component_name}
-              // helperText={errors.component_name}
+            // error={!!errors.component_name}
+            // helperText={errors.component_name}
             />}
 
             {type != '1' && <TextField
@@ -440,8 +441,8 @@ const MenuAdd = forwardRef(({ onSubmit }: MenuAddProps, ref) => {
               name="permission"
               value={formValues.permission}
               onChange={handleInputChange}
-              // error={!!errors.permission}
-              // helperText={errors.permission}
+            // error={!!errors.permission}
+            // helperText={errors.permission}
             />}
             <TextField
               required
