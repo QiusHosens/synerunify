@@ -11,6 +11,7 @@ import { getParentNodeLists, Node } from '@/utils/treeUtils';
 import MenuEdit from './Edit';
 import MenuDelete from './Delete';
 import CustomizedTag from '@/components/CustomizedTag';
+import CustomizedDictTag from '@/components/CustomizedDictTag';
 
 export default function MenuManage() {
   const { t } = useTranslation();
@@ -33,7 +34,7 @@ export default function MenuManage() {
       minWidth: 100,
       renderCell: (params: GridRenderCellParams) => (
         <>
-          <CustomizedTag label="React" color="primary" />
+          <CustomizedDictTag type='menu_type' value={params.row.type} />
         </>
       )
     },

@@ -13,31 +13,31 @@ interface CustomizedTagProps {
 const CustomTag = styled(Chip)<{ color?: 'primary' | 'secondary' | 'default' }>(
   ({ theme, color }) => ({
     borderRadius: '4px',
-    fontSize: '0.875rem',
+    fontSize: '0.75rem',
     fontWeight: 500,
     height: '24px',
-    padding: '0 8px',
+    // padding: '0 8px',
     backgroundColor:
       color === 'primary'
         ? theme.palette.primary.light
         : color === 'secondary'
-        ? theme.palette.secondary.light
-        : theme.palette.grey[200],
+          ? theme.palette.secondary.light
+          : theme.palette.grey[200],
     color:
       color === 'primary'
         ? theme.palette.primary.main
         : color === 'secondary'
-        ? theme.palette.secondary.main
-        : theme.palette.text.primary,
-    '&:hover': {
-      backgroundColor:
-        color === 'primary'
-          ? theme.palette.primary.main
-          : color === 'secondary'
           ? theme.palette.secondary.main
-          : theme.palette.grey[300],
-      color: theme.palette.common.white,
-    },
+          : theme.palette.text.primary,
+    // '&:hover': {
+    //   backgroundColor:
+    //     color === 'primary'
+    //       ? theme.palette.primary.main
+    //       : color === 'secondary'
+    //         ? theme.palette.secondary.main
+    //         : theme.palette.grey[300],
+    //   color: theme.palette.common.white,
+    // },
     '& .MuiChip-deleteIcon': {
       fontSize: '16px',
       color: theme.palette.text.secondary,
