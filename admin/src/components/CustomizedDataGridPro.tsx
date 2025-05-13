@@ -47,6 +47,8 @@ const CustomizedDataGridPro: React.FC<CustomizedDataGridProProps> = ({
       });
     });
 
+    // console.log('tree', tree);
+
     // 生成平坦的行数据
     const newRows: any[] = [];
     const addGroupRows = (node: any, level = 0) => {
@@ -60,6 +62,8 @@ const CustomizedDataGridPro: React.FC<CustomizedDataGridProProps> = ({
         if (sort === 'asc') return aValue > bValue ? 1 : -1;
         return aValue < bValue ? 1 : -1;
       });
+
+      // console.log('sort keys', node, sortedKeys);
 
       sortedKeys.forEach((segment) => {
         const groupPath = node[segment].path;
@@ -79,6 +83,8 @@ const CustomizedDataGridPro: React.FC<CustomizedDataGridProProps> = ({
         };
         newRows.push(groupRow);
 
+        // console.log('new rows', newRows);
+
         // 如果组展开，添加子节点和行
         if (expandedGroups.has(groupPath)) {
           // 添加子组
@@ -94,11 +100,13 @@ const CustomizedDataGridPro: React.FC<CustomizedDataGridProProps> = ({
                 path: getTreeDataPath(row) || [],
               });
             });
+          // console.log('expanded new rows', newRows);
         }
       });
     };
 
     addGroupRows(tree);
+    console.log('new rows', newRows);
     return newRows;
   }, [initialRows, getTreeDataPath, expandedGroups, sortModel]);
 

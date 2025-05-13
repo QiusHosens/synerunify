@@ -10,7 +10,6 @@ import MenuAdd from './Add';
 import { getParentNodeLists, Node } from '@/utils/treeUtils';
 import MenuEdit from './Edit';
 import MenuDelete from './Delete';
-import CustomizedTag from '@/components/CustomizedTag';
 import CustomizedDictTag from '@/components/CustomizedDictTag';
 
 export default function MenuManage() {
@@ -87,7 +86,7 @@ export default function MenuManage() {
 
   const queryRecords = async () => {
     const result = await listMenu();
-    console.log('menu list', result);
+    // console.log('menu list', result);
     const nodes: Node[] = [];
     result.forEach(menu => {
       nodes.push({
@@ -96,7 +95,7 @@ export default function MenuManage() {
       } as Node)
     });
     const parentNodeLists = getParentNodeLists(nodes);
-    console.log('parent node list', parentNodeLists);
+    // console.log('parent node list', parentNodeLists);
     result.forEach(menu => {
       const parentNodes = parentNodeLists.get(menu.id);
       menu.hierarchy = [];

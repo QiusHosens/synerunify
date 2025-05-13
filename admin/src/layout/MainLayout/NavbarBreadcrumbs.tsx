@@ -49,7 +49,7 @@ export default function NavbarBreadcrumbs({ routeTree }: NavbarBreadcrumbsProps)
     // debugger
     findActiveRoute(routeTree);
     setActiveRoutes(routes)
-    console.log('active routes', routes);
+    // console.log('active routes', routes);
   }, [routeTree, location.pathname]);
 
   const handleClick = (path: string) => {
