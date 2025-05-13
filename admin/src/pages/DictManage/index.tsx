@@ -7,7 +7,7 @@ import EditIcon from '@/assets/image/svg/edit.svg';
 import DeleteIcon from '@/assets/image/svg/delete.svg';
 import DictTypeAdd from './AddDictType';
 import DictAdd from './AddDict';
-import { DictQueryCondition, listDictType, pageDict, SystemDictDataResponse, SystemDictTypeResponse } from '@/api/dict';
+import { DictQueryCondition, disableDict, enableDict, listDictType, pageDict, SystemDictDataResponse, SystemDictTypeResponse } from '@/api/dict';
 import DictEdit from './EditDict';
 import DictTypeEdit from './EditDictType';
 import DictDelete from './DeleteDict';
@@ -49,7 +49,7 @@ export default function DictManage() {
       minWidth: 150,
       renderCell: (params: GridRenderCellParams) => (
         <Box sx={{ height: '100%', display: 'flex', gap: 1, alignItems: 'center' }}>
-          <Switch checked={params.row.status} onChange={handleStatusChange} />
+          <Switch name="status" checked={!params.row.status} onChange={(event, checked) => handleStatusChange(event, checked, params.row)} />
         </Box>
       ),
     },
@@ -124,7 +124,7 @@ export default function DictManage() {
   }, []);
 
   useEffect(() => {
-    queryRecords(condition);
+    refreshData();
   }, [condition]);
 
   const listType = async () => {
@@ -142,8 +142,23 @@ export default function DictManage() {
     }
   };
 
-  const handleStatusChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log('status change', e.target);
+  const handleStatusChange = async (e: React.ChangeEvent<HTMLInputElement>, checked: boolean, data: SystemDictDataResponse) => {
+    console.log('status change', data, checked);
+
+    // 更新表格
+    setRecords((prev) =>
+      prev.map((r) =>
+        r.id === data.id ? { ...r, status: checked ? 0 : 1 } : r
+      )
+    );
+
+    if (checked) {
+      await enableDict(data.id);
+    } else {
+      await disableDict(data.id);
+    }
+
+    // refreshData();
   };
 
   const handleSortModelChange = (model: GridSortModel, details: GridCallbackDetails) => {

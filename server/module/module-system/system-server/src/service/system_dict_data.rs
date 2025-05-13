@@ -141,3 +141,25 @@ pub async fn list(db: &DatabaseConnection, login_user: LoginUserContext) -> Resu
         .all(db).await?;
     Ok(list.into_iter().map(model_to_response).collect())
 }
+
+pub async fn enable(db: &DatabaseConnection, login_user: LoginUserContext, id: i64) -> Result<()> {
+    let system_dict_data = SystemDictDataActiveModel {
+        id: Set(id),
+        updater: Set(Some(login_user.id)),
+        status: Set(0),
+        ..Default::default()
+    };
+    system_dict_data.update(db).await?;
+    Ok(())
+}
+
+pub async fn disable(db: &DatabaseConnection, login_user: LoginUserContext, id: i64) -> Result<()> {
+    let system_dict_data = SystemDictDataActiveModel {
+        id: Set(id),
+        updater: Set(Some(login_user.id)),
+        status: Set(1),
+        ..Default::default()
+    };
+    system_dict_data.update(db).await?;
+    Ok(())
+}

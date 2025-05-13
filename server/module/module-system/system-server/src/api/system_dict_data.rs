@@ -21,6 +21,8 @@ pub async fn system_dict_data_router(state: AppState) -> OpenApiRouter {
         .routes(routes!(get_by_id))
         .routes(routes!(list))
         .routes(routes!(page))
+        .routes(routes!(enable))
+        .routes(routes!(disable))
         .with_state(state)
 }
 
@@ -188,6 +190,60 @@ async fn list(
 ) -> CommonResult<Vec<SystemDictDataResponse>> {
     match service::system_dict_data::list(&state.db, login_user).await {
         Ok(data) => {CommonResult::with_data(data)}
+        Err(e) => {CommonResult::with_err(&e.to_string())}
+    }
+}
+
+#[utoipa::path(
+    post,
+    path = "/enable/{id}",
+    operation_id = "system_dict_data_enable",
+    params(
+        ("id" = i64, Path, description = "id")
+    ),
+    responses(
+        (status = 204, description = "delete")
+    ),
+    tag = "system_dict_data",
+    security(
+        ("bearerAuth" = [])
+    )
+)]
+#[require_authorize(operation_id = "system_dict_data_enable", authorize = "")]
+async fn enable(
+    State(state): State<AppState>,
+    Extension(login_user): Extension<LoginUserContext>,
+    Path(id): Path<i64>,
+) -> CommonResult<()> {
+    match service::system_dict_data::enable(&state.db, login_user, id).await {
+        Ok(_) => {CommonResult::with_none()}
+        Err(e) => {CommonResult::with_err(&e.to_string())}
+    }
+}
+
+#[utoipa::path(
+    post,
+    path = "/disable/{id}",
+    operation_id = "system_dict_data_disable",
+    params(
+        ("id" = i64, Path, description = "id")
+    ),
+    responses(
+        (status = 204, description = "delete")
+    ),
+    tag = "system_dict_data",
+    security(
+        ("bearerAuth" = [])
+    )
+)]
+#[require_authorize(operation_id = "system_dict_data_disable", authorize = "")]
+async fn disable(
+    State(state): State<AppState>,
+    Extension(login_user): Extension<LoginUserContext>,
+    Path(id): Path<i64>,
+) -> CommonResult<()> {
+    match service::system_dict_data::disable(&state.db, login_user, id).await {
+        Ok(_) => {CommonResult::with_none()}
         Err(e) => {CommonResult::with_err(&e.to_string())}
     }
 }

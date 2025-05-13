@@ -17,6 +17,8 @@ const dictApis = {
   get: '/system_dict_data/get', // 单条查询
   list: '/system_dict_data/list', // 列表查询
   page: '/system_dict_data/page', // 分页查询
+  enable: '/system_dict_data/enable', // 启用
+  disable: '/system_dict_data/disable', // 禁用
 }
 
 export interface SystemDictTypeRequest {
@@ -114,4 +116,12 @@ export const listDict = (): Promise<Array<SystemDictDataResponse>> => {
 
 export const pageDict = (condition: DictQueryCondition): Promise<PaginatedResponse<SystemDictDataResponse>> => {
   return api.get<PaginatedResponse<SystemDictDataResponse>>(dictApis.page, condition);
+}
+
+export const enableDict = (id: number): Promise<void> => {
+  return api.post<void>(`${dictApis.enable}/${id}`);
+}
+
+export const disableDict = (id: number): Promise<void> => {
+  return api.post<void>(`${dictApis.disable}/${id}`);
 }
