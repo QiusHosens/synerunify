@@ -35,7 +35,6 @@ pub async fn update(db: &DatabaseConnection, login_user: LoginUserContext, reque
 pub async fn delete(db: &DatabaseConnection, login_user: LoginUserContext, id: i64) -> Result<()> {
     let system_role = SystemRoleActiveModel {
         id: Set(id),
-        tenant_id: Set(login_user.tenant_id),
         updater: Set(Some(login_user.id)),
         deleted: Set(true),
         ..Default::default()
@@ -110,4 +109,26 @@ pub async fn list(db: &DatabaseConnection, login_user: LoginUserContext) -> Resu
     let condition = Condition::all().add(Column::TenantId.eq(login_user.tenant_id));let list = SystemRoleEntity::find_active_with_condition(condition)
         .all(db).await?;
     Ok(list.into_iter().map(model_to_response).collect())
+}
+
+pub async fn enable(db: &DatabaseConnection, login_user: LoginUserContext, id: i64) -> Result<()> {
+    let system_role = SystemRoleActiveModel {
+        id: Set(id),
+        updater: Set(Some(login_user.id)),
+        status: Set(0),
+        ..Default::default()
+    };
+    system_role.update(db).await?;
+    Ok(())
+}
+
+pub async fn disable(db: &DatabaseConnection, login_user: LoginUserContext, id: i64) -> Result<()> {
+    let system_role = SystemRoleActiveModel {
+        id: Set(id),
+        updater: Set(Some(login_user.id)),
+        status: Set(1),
+        ..Default::default()
+    };
+    system_role.update(db).await?;
+    Ok(())
 }
