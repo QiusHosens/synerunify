@@ -1,6 +1,6 @@
 import { Box, Button, FormControl, InputAdornment, InputLabel, MenuItem, Select, SvgIcon, Switch, TextField } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { DataGrid, GridCallbackDetails, GridColDef, GridRenderCellParams, GridSortModel } from '@mui/x-data-grid';
 import SearchIcon from '@/assets/image/svg/search.svg';
 import EditIcon from '@/assets/image/svg/edit.svg';
@@ -32,66 +32,91 @@ export default function DictManage() {
   const editDict = useRef(null);
   const deleteDict = useRef(null);
 
-  const columns: GridColDef[] = [
-    { field: 'label', headerName: t("page.dict.title.label"), flex: 1, minWidth: 150 },
-    { field: 'value', headerName: t("page.dict.title.value"), flex: 1, minWidth: 150 },
-    { field: 'remark', headerName: t("page.dict.title.remark"), flex: 1, minWidth: 150 },
-    { field: 'sort', headerName: t("page.dict.title.sort"), flex: 1, minWidth: 150 },
-    { field: 'dict_type', headerName: t("page.dict.title.type"), flex: 1, minWidth: 150 },
-    { field: 'type_name', sortable: false, headerName: t("page.dict.title.type.name"), flex: 1, minWidth: 150 },
-    { field: 'color_type', headerName: t("page.dict.title.color.type"), flex: 1, minWidth: 150 },
-    { field: 'css_class', headerName: t("page.dict.title.css.class"), flex: 1, minWidth: 150 },
-    {
-      field: 'status',
-      sortable: false,
-      headerName: t("page.dict.title.status"),
-      flex: 1,
-      minWidth: 150,
-      renderCell: (params: GridRenderCellParams) => (
-        <Box sx={{ height: '100%', display: 'flex', gap: 1, alignItems: 'center' }}>
-          <Switch name="status" checked={!params.row.status} onChange={(event, checked) => handleStatusChange(event, checked, params.row)} />
-        </Box>
-      ),
+  const handleStatusChange = useCallback(
+    async (e: React.ChangeEvent<HTMLInputElement>, checked: boolean, data: SystemDictDataResponse) => {
+      console.log('status change', data, checked);
+
+      // 更新表格
+      setRecords((prev) =>
+        prev.map((r) =>
+          r.id === data.id ? { ...r, status: checked ? 0 : 1 } : r
+        )
+      );
+
+      if (checked) {
+        await enableDict(data.id);
+      } else {
+        await disableDict(data.id);
+      }
+
+      // refreshData();
     },
-    {
-      field: 'actions',
-      sortable: false,
-      resizable: false,
-      headerName: t("global.operate.actions"),
-      flex: 1,
-      minWidth: 100,
-      renderCell: (params: GridRenderCellParams) => (
-        <Box sx={{ height: '100%', display: 'flex', gap: 1, alignItems: 'center' }}>
-          <Button
-            size="small"
-            variant='customOperate'
-            title={t('page.dict.operate.edit')}
-            startIcon={<EditIcon />}
-            onClick={() => handleClickEditDict(params.row)}
-          />
-          <CustomizedMore>
-            <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-              <Button
-                size="small"
-                variant='customOperate'
-                title={t('page.dict.operate.edit.type')}
-                startIcon={<EditIcon />}
-                onClick={() => handleClickEditDictType(params.row.type_id)}
-              />
-              <Button
-                sx={{ mt: 1, color: 'error.main' }}
-                size="small"
-                variant='customOperate'
-                title={t('page.dict.operate.delete')}
-                startIcon={<DeleteIcon />}
-                onClick={() => handleClickDeleteDict(params.row)}
-              />
-            </Box>
-          </CustomizedMore>
-        </Box>
-      ),
-    },
-  ];
+    []
+  );
+
+  const columns: GridColDef[] = useMemo(
+    () => [
+      { field: 'label', headerName: t("page.dict.title.label"), flex: 1, minWidth: 150 },
+      { field: 'value', headerName: t("page.dict.title.value"), flex: 1, minWidth: 150 },
+      { field: 'remark', headerName: t("page.dict.title.remark"), flex: 1, minWidth: 150 },
+      { field: 'sort', headerName: t("page.dict.title.sort"), flex: 1, minWidth: 150 },
+      { field: 'dict_type', headerName: t("page.dict.title.type"), flex: 1, minWidth: 150 },
+      { field: 'type_name', sortable: false, headerName: t("page.dict.title.type.name"), flex: 1, minWidth: 150 },
+      { field: 'color_type', headerName: t("page.dict.title.color.type"), flex: 1, minWidth: 150 },
+      { field: 'css_class', headerName: t("page.dict.title.css.class"), flex: 1, minWidth: 150 },
+      {
+        field: 'status',
+        sortable: false,
+        headerName: t("page.dict.title.status"),
+        flex: 1,
+        minWidth: 150,
+        renderCell: (params: GridRenderCellParams) => (
+          <Box sx={{ height: '100%', display: 'flex', gap: 1, alignItems: 'center' }}>
+            <Switch name="status" checked={!params.row.status} onChange={(event, checked) => handleStatusChange(event, checked, params.row)} />
+          </Box>
+        ),
+      },
+      {
+        field: 'actions',
+        sortable: false,
+        resizable: false,
+        headerName: t("global.operate.actions"),
+        flex: 1,
+        minWidth: 100,
+        renderCell: (params: GridRenderCellParams) => (
+          <Box sx={{ height: '100%', display: 'flex', gap: 1, alignItems: 'center' }}>
+            <Button
+              size="small"
+              variant='customOperate'
+              title={t('page.dict.operate.edit')}
+              startIcon={<EditIcon />}
+              onClick={() => handleClickEditDict(params.row)}
+            />
+            <CustomizedMore>
+              <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                <Button
+                  size="small"
+                  variant='customOperate'
+                  title={t('page.dict.operate.edit.type')}
+                  startIcon={<EditIcon />}
+                  onClick={() => handleClickEditDictType(params.row.type_id)}
+                />
+                <Button
+                  sx={{ mt: 1, color: 'error.main' }}
+                  size="small"
+                  variant='customOperate'
+                  title={t('page.dict.operate.delete')}
+                  startIcon={<DeleteIcon />}
+                  onClick={() => handleClickDeleteDict(params.row)}
+                />
+              </Box>
+            </CustomizedMore>
+          </Box>
+        ),
+      },
+    ],
+    [t, handleStatusChange]
+  );
 
   const queryRecords = async (condition: DictQueryCondition) => {
     const result = await pageDict(condition);
@@ -140,25 +165,6 @@ export default function DictManage() {
     } else {
       setCondition((prev) => ({ ...prev, [name]: value }));
     }
-  };
-
-  const handleStatusChange = async (e: React.ChangeEvent<HTMLInputElement>, checked: boolean, data: SystemDictDataResponse) => {
-    console.log('status change', data, checked);
-
-    // 更新表格
-    setRecords((prev) =>
-      prev.map((r) =>
-        r.id === data.id ? { ...r, status: checked ? 0 : 1 } : r
-      )
-    );
-
-    if (checked) {
-      await enableDict(data.id);
-    } else {
-      await disableDict(data.id);
-    }
-
-    // refreshData();
   };
 
   const handleSortModelChange = (model: GridSortModel, details: GridCallbackDetails) => {
