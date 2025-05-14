@@ -106,7 +106,7 @@ const CustomizedDataGridPro: React.FC<CustomizedDataGridProProps> = ({
     };
 
     addGroupRows(tree);
-    console.log('new rows', newRows);
+    // console.log('new rows', newRows);
     return newRows;
   }, [initialRows, getTreeDataPath, expandedGroups, sortModel]);
 

@@ -202,7 +202,7 @@ async fn list(
         ("id" = i64, Path, description = "id")
     ),
     responses(
-        (status = 204, description = "delete")
+        (status = 204, description = "enable")
     ),
     tag = "system_dict_data",
     security(
@@ -229,7 +229,7 @@ async fn enable(
         ("id" = i64, Path, description = "id")
     ),
     responses(
-        (status = 204, description = "delete")
+        (status = 204, description = "disable")
     ),
     tag = "system_dict_data",
     security(

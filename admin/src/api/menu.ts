@@ -8,6 +8,8 @@ const apis = {
   get: '/system_menu/get', // 单条查询
   list: '/system_menu/list', // 列表查询
   page: '/system_menu/page', // 分页查询
+  enable: '/system_menu/enable', // 启用
+  disable: '/system_menu/disable', // 禁用
 }
 
 export interface SystemMenuRequest {
@@ -72,4 +74,12 @@ export const listMenu = (): Promise<Array<SystemMenuResponse>> => {
 
 export const pageMenu = (condition: MenuQueryCondition): Promise<PaginatedResponse<SystemMenuResponse>> => {
   return api.get<PaginatedResponse<SystemMenuResponse>>(apis.page, condition);
+}
+
+export const enableMenu = (id: number): Promise<void> => {
+  return api.post<void>(`${apis.enable}/${id}`);
+}
+
+export const disableMenu = (id: number): Promise<void> => {
+  return api.post<void>(`${apis.disable}/${id}`);
 }

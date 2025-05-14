@@ -1,7 +1,7 @@
-import { Box, Button } from '@mui/material';
+import { Box, Button, Switch } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { useEffect, useRef, useState } from 'react';
-import { listMenu, SystemMenuResponse } from '@/api';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { disableMenu, enableMenu, listMenu, SystemMenuResponse } from '@/api';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import CustomizedDataGridPro from '@/components/CustomizedDataGridPro';
 import EditIcon from '@/assets/image/svg/edit.svg';
@@ -21,57 +21,95 @@ export default function MenuManage() {
   const editMenu = useRef(null);
   const deleteMenu = useRef(null);
 
-  const columns: GridColDef[] = [
-    { field: 'name', headerName: t("page.menu.title.name"), flex: 1, width: 200 },
-    { field: 'permission', headerName: t("page.menu.title.permission"), flex: 1, width: 200 },
-    {
-      field: 'types',
-      sortable: false,
-      resizable: false,
-      filterable: false,
-      headerName: t("page.menu.title.type"),
-      flex: 1,
-      minWidth: 100,
-      renderCell: (params: GridRenderCellParams) => (
-        <>
-          <CustomizedDictTag type='menu_type' value={params.row.type} />
-        </>
-      )
+  const handleStatusChange = useCallback(
+    async (e: React.ChangeEvent<HTMLInputElement>, checked: boolean, data: SystemMenuResponse) => {
+      // console.log('status change', data, checked);
+
+      // 更新表格
+      setRecords((prev) =>
+        prev.map((r) =>
+          r.id === data.id ? { ...r, status: checked ? 0 : 1 } : r
+        )
+      );
+
+      if (checked) {
+        await enableMenu(data.id);
+      } else {
+        await disableMenu(data.id);
+      }
+
+      // refreshData();
     },
-    {
-      field: 'sort',
-      headerName: t("page.menu.title.sort"),
-      flex: 1,
-      width: 200,
-    },
-    {
-      field: 'actions',
-      sortable: false,
-      resizable: false,
-      headerName: t("global.operate.actions"),
-      flex: 1,
-      minWidth: 100,
-      renderCell: (params: GridRenderCellParams) => (
-        <Box sx={{ height: '100%', display: 'flex', gap: 1, alignItems: 'center' }}>
-          <Button
-            size="small"
-            variant='customOperate'
-            title={t('page.dict.operate.edit')}
-            startIcon={<EditIcon />}
-            onClick={() => handleClickOpenEdit(params.row)}
-          />
-          <Button
-            sx={{ color: 'error.main' }}
-            size="small"
-            variant='customOperate'
-            title={t('page.dict.operate.delete')}
-            startIcon={<DeleteIcon />}
-            onClick={() => handleClickOpenDelete(params.row)}
-          />
-        </Box>
-      ),
-    },
-  ];
+    []
+  );
+
+  const columns: GridColDef[] = useMemo(
+    () => [
+      { field: 'name', headerName: t("page.menu.title.name"), flex: 1, minWidth: 200 },
+      {
+        field: 'types',
+        // sortable: false,
+        // resizable: false,
+        filterable: false,
+        headerName: t("page.menu.title.type"),
+        flex: 1,
+        minWidth: 80,
+        renderCell: (params: GridRenderCellParams) => (
+          <>
+            <CustomizedDictTag type='menu_type' value={params.row.type} />
+          </>
+        )
+      },
+      { field: 'permission', headerName: t("page.menu.title.permission"), flex: 1, minWidth: 120 },
+      { field: 'path', headerName: t("page.menu.title.path"), flex: 1, minWidth: 150 },
+      {
+        field: 'sort',
+        headerName: t("page.menu.title.sort"),
+        flex: 1,
+        minWidth: 60,
+      },
+      {
+        field: 'status',
+        sortable: false,
+        headerName: t("page.menu.title.status"),
+        flex: 1,
+        minWidth: 80,
+        renderCell: (params: GridRenderCellParams) => (
+          <Box sx={{ height: '100%', display: 'flex', gap: 1, alignItems: 'center' }}>
+            <Switch name="status" checked={!params.row.status} onChange={(event, checked) => handleStatusChange(event, checked, params.row)} />
+          </Box>
+        ),
+      },
+      {
+        field: 'actions',
+        sortable: false,
+        resizable: false,
+        headerName: t("global.operate.actions"),
+        flex: 1,
+        minWidth: 100,
+        renderCell: (params: GridRenderCellParams) => (
+          <Box sx={{ height: '100%', display: 'flex', gap: 1, alignItems: 'center' }}>
+            <Button
+              size="small"
+              variant='customOperate'
+              title={t('page.dict.operate.edit')}
+              startIcon={<EditIcon />}
+              onClick={() => handleClickOpenEdit(params.row)}
+            />
+            <Button
+              sx={{ color: 'error.main' }}
+              size="small"
+              variant='customOperate'
+              title={t('page.dict.operate.delete')}
+              startIcon={<DeleteIcon />}
+              onClick={() => handleClickOpenDelete(params.row)}
+            />
+          </Box>
+        ),
+      },
+    ],
+    [t, handleStatusChange]
+  );
 
   const handleClickOpenAdd = () => {
     (addMenu.current as any).show();
@@ -108,7 +146,7 @@ export default function MenuManage() {
     setRecords(result);
   }
 
-  const getTreeDataPath = (row: any) => row.hierarchy;
+  const getTreeDataPath = (row: any) => row && row.hierarchy;
 
   const refreshData = () => {
     queryRecords();
