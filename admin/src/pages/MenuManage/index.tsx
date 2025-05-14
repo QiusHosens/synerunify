@@ -28,6 +28,7 @@ export default function MenuManage() {
       field: 'types',
       sortable: false,
       resizable: false,
+      filterable: false,
       headerName: t("page.menu.title.type"),
       flex: 1,
       minWidth: 100,

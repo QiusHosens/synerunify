@@ -163,19 +163,16 @@ const CustomizedDataGridPro: React.FC<CustomizedDataGridProProps> = ({
   }));
 
   return (
-    // <div style={{ height: 400, width: '100%' }}>
     <DataGrid
       rows={rows}
       columns={updatedColumns}
       getRowClassName={getRowClassName}
-      // disableSelectionOnClick
       sortModel={sortModel}
       onSortModelChange={setSortModel}
+      sortingMode="server"
       filterModel={filterModel}
       onFilterModelChange={setFilterModel}
       hideFooter={hideFooter}
-      // treeData
-      // getTreeDataPath={(row) => row.path || []} // DataGrid 的树状结构支持
       sx={{
         '& .toggle-div:hover': {
           backgroundColor: 'rgba(0, 0, 0, 0.04)'
@@ -189,7 +186,6 @@ const CustomizedDataGridPro: React.FC<CustomizedDataGridProProps> = ({
     //   },
     // }}
     />
-    // </div>
   );
 };
 
