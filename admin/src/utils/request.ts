@@ -23,7 +23,7 @@ const logout = (message: string) => {
   // 通过事件总线触发错误消息
   messageEventBus.publish(message, 'error', 3000);
   setTimeout(() => {
-    // useAuthStore.getState().logout();
+    useAuthStore.getState().logout();
     // window.location.href = '/login';
   }, 3000)
 }
