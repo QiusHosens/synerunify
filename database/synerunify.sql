@@ -11,7 +11,7 @@
  Target Server Version : 80200 (8.2.0)
  File Encoding         : 65001
 
- Date: 14/05/2025 23:00:04
+ Date: 14/05/2025 23:31:40
 */
 
 SET NAMES utf8mb4;
@@ -249,13 +249,14 @@ CREATE TABLE `system_role`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '角色信息表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '角色信息表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of system_role
 -- ----------------------------
 INSERT INTO `system_role` VALUES (1, 0, '超级管理员', 'super_admin', 0, 1, 1, '', '超级管理员', 1, '2025-03-25 03:28:46', 1, '2025-05-14 14:05:11', b'0', 1);
 INSERT INTO `system_role` VALUES (2, 0, '租户管理员', 'tenant_admin', 0, 2, 1, '', '租户管理员', 1, '2025-05-14 14:57:37', 1, '2025-05-14 14:57:37', b'0', 1);
+INSERT INTO `system_role` VALUES (3, 1, '开发', 'dev', 0, 3, 1, '', '开发', 1, '2025-05-14 15:29:04', 1, '2025-05-14 15:29:04', b'0', 1);
 
 -- ----------------------------
 -- Table structure for system_role_menu
