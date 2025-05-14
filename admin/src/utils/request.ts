@@ -1,5 +1,6 @@
 import axios, { AxiosInstance, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 import { useAuthStore } from '@/store';
+import { messageEventBus } from '@/components/GlobalMessage';
 
 const baseURL = '/api';
 
@@ -18,9 +19,13 @@ let isRefreshing = false;
 // 存储等待中的请求
 let refreshSubscribers: ((token: string) => void)[] = [];
 
-const logout = () => {
-  useAuthStore.getState().logout();
-  window.location.href = '/login';
+const logout = (message: string) => {
+  // 通过事件总线触发错误消息
+  messageEventBus.publish(message, 'error', 3000);
+  setTimeout(() => {
+    // useAuthStore.getState().logout();
+    // window.location.href = '/login';
+  }, 3000)
 }
 
 // 刷新 token 的函数
@@ -37,8 +42,8 @@ const refreshToken = async () => {
 
     return `${token_type} ${access_token}`;
   } catch (error) {
-    console.log('refresh token error', error);
-    logout();
+    // console.log('refresh token error', error);
+    logout('刷新授权失败');
     throw error;
   }
 };
@@ -106,11 +111,11 @@ request.interceptors.response.use(
         });
       } else {
         // 如果是刷新 token 失败后的重试，则直接登出
-        logout();
+        logout('授权失败');
       }
     } else if (status === 403) {
       // 403直接退出登录
-      logout();
+      logout('拒绝访问');
     }
     return Promise.reject(error);
   }
@@ -125,7 +130,7 @@ export const api = {
     } as InternalAxiosRequestConfig;
     return request.get(url, requestConfig);
   },
-    
+
   post: <T>(url: string, data?: any, config?: InternalAxiosRequestConfig): Promise<T> =>
     request.post(url, data, config),
 };

@@ -10,7 +10,7 @@ use dashmap::DashMap;
 use once_cell::sync::Lazy;
 use regex::Regex;
 use std::str::FromStr;
-use tracing::info;
+use tracing::{error, info};
 use utoipa::openapi;
 use utoipa::openapi::path::Operation;
 
@@ -171,21 +171,25 @@ pub async fn authorize_handler(request: Request, next: Next) -> Result<Response,
     };
     let path = format!("/{}", original_uri_path.replacen(&(config.api_prefix.clone() + "/"), "", 1));
     // 获取目标路由的权限要求
-    let authorizes = get_authorizes(path.as_str());
+    let mut authorizes = get_authorizes(path.as_str());
     info!("path: {:?}, authorizes: {:?}", path, authorizes);
+    
     // 没有授权,则直接请求
     match authorizes {
         None => {
             Ok(next.run(request).await)
         }
-        Some(auth) => {
+        Some(mut auth) => {
             let login_user = request.extensions().get::<LoginUserContext>();
             match login_user {
                 None => Err(StatusCode::UNAUTHORIZED),
                 Some(user) => {
+                    // 移除空字符串
+                    auth.retain(|s| !s.is_empty());
                     // 校验授权
                     let user_permissions = user.clone().permissions.split(",").map(String::from).collect();
-                    let has_permission = verify_permission(user_permissions, auth);
+                    let has_permission = verify_permission(user_permissions, auth.clone());
+                    info!("has permission: {:?}, auth: {:?}", has_permission, auth);
                     if has_permission {
                         Ok(next.run(request).await)
                     } else {
