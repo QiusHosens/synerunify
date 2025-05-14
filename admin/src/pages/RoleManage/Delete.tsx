@@ -2,24 +2,24 @@ import { Button, Dialog, DialogActions, DialogContent, DialogContentText, Dialog
 import { useTranslation } from 'react-i18next';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
-import { deleteMenu, SystemMenuResponse } from '@/api';
+import { deleteSystemRole, SystemRoleResponse } from '@/api/role';
 
-interface MenuDeleteProps {
+interface RoleDeleteProps {
   onSubmit: () => void;
 }
 
-const MenuDelete = forwardRef(({ onSubmit }: MenuDeleteProps, ref) => {
+const RoleDelete = forwardRef(({ onSubmit }: RoleDeleteProps, ref) => {
   const { t } = useTranslation();
 
   const [open, setOpen] = useState(false);
-  const [fullWidth, setFullWidth] = useState(true);
-  const [maxWidth, setMaxWidth] = useState<DialogProps['maxWidth']>('sm');
+  const [fullWidth] = useState(true);
+  const [maxWidth] = useState<DialogProps['maxWidth']>('sm');
 
-  const [menu, setMenu] = useState<SystemMenuResponse>();
+  const [role, setRole] = useState<SystemRoleResponse>();
 
   useImperativeHandle(ref, () => ({
-    show(menu: SystemMenuResponse) {
-      setMenu(menu);
+    show(role: SystemRoleResponse) {
+      setRole(role);
       setOpen(true);
     },
     hide() {
@@ -36,7 +36,7 @@ const MenuDelete = forwardRef(({ onSubmit }: MenuDeleteProps, ref) => {
   };
 
   const handleSubmit = async () => {
-    menu && await deleteMenu(menu.id);
+    role && await deleteSystemRole(role.id);
     handleClose();
     onSubmit();
   };
@@ -48,10 +48,10 @@ const MenuDelete = forwardRef(({ onSubmit }: MenuDeleteProps, ref) => {
       open={open}
       onClose={handleClose}
     >
-      <DialogTitle>{t('global.operate.delete')}{t('global.page.dict')}</DialogTitle>
+      <DialogTitle>{t('global.operate.delete')}{t('global.page.role')}</DialogTitle>
       <DialogContent>
         <DialogContentText>
-          {t('global.description.delete', { name: menu && menu.name })}
+          {t('global.description.delete', { name: role && role.name })}
         </DialogContentText>
       </DialogContent>
       <DialogActions>
@@ -62,4 +62,4 @@ const MenuDelete = forwardRef(({ onSubmit }: MenuDeleteProps, ref) => {
   )
 });
 
-export default MenuDelete;
+export default RoleDelete;

@@ -5,6 +5,9 @@ import { DataGrid, GridCallbackDetails, GridColDef, GridRenderCellParams, GridSo
 import EditIcon from '@/assets/image/svg/edit.svg';
 import DeleteIcon from '@/assets/image/svg/delete.svg';
 import { disableSystemRole, enableSystemRole, pageSystemRole, SystemRoleQueryCondition, SystemRoleResponse } from '@/api/role';
+import RoleAdd from './Add';
+import RoleEdit from './Edit';
+import RoleDelete from './Delete';
 
 export default function RoleManage() {
   const { t } = useTranslation();
@@ -151,11 +154,9 @@ export default function RoleManage() {
           }));
         }}
       />
-      {/* <DictTypeAdd ref={addDictType} onSubmit={refreshType} />
-      <DictAdd ref={addDict} onSubmit={refreshData} />
-      <DictTypeEdit ref={editDictType} onSubmit={refreshType} />
-      <DictEdit ref={editDict} onSubmit={refreshData} />
-      <DictDelete ref={deleteDict} onSubmit={refreshData} /> */}
+      <RoleAdd ref={addRole} onSubmit={refreshData} />
+      <RoleEdit ref={editRole} onSubmit={refreshData} />
+      <RoleDelete ref={deleteRole} onSubmit={refreshData} />
     </Box>
   );
 }

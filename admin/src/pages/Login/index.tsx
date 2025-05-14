@@ -49,7 +49,7 @@ export default function Login() {
   const handleLogin = async () => {
     try {
       setError(null);
-      let password_md5 = Md5.hashStr(password);
+      const password_md5 = Md5.hashStr(password);
       const response = await login({ username, password: password_md5 });
       loginStore(
         response.token_type,

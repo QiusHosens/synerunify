@@ -16,9 +16,9 @@ pub struct CreateSystemRoleRequest {
     
     pub sort: i32, // 显示顺序
     
-    pub data_scope_rule_id: i64, // 数据权限规则id
+    pub data_scope_rule_id: Option<i64>, // 数据权限规则id
     
-    pub data_scope_department_ids: String, // 数据范围(指定部门数组)
+    pub data_scope_department_ids: Option<String>, // 数据范围(指定部门数组)
     
     pub remark: Option<String>, // 备注
     

@@ -1,17 +1,17 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : 192.168.0.99_synerunify
+ Source Server         : 192.168.1.18_ruoyi
  Source Server Type    : MySQL
- Source Server Version : 80100 (8.1.0)
- Source Host           : 192.168.0.99:30010
+ Source Server Version : 80200 (8.2.0)
+ Source Host           : 192.168.1.18:30010
  Source Schema         : synerunify
 
  Target Server Type    : MySQL
- Target Server Version : 80100 (8.1.0)
+ Target Server Version : 80200 (8.2.0)
  File Encoding         : 65001
 
- Date: 14/05/2025 17:31:02
+ Date: 14/05/2025 23:00:04
 */
 
 SET NAMES utf8mb4;
@@ -35,11 +35,16 @@ CREATE TABLE `system_data_scope_rule`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '数据权限规则表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '数据权限规则表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of system_data_scope_rule
 -- ----------------------------
+INSERT INTO `system_data_scope_rule` VALUES (1, 0, '全部数据权限', NULL, NULL, NULL, 1, '2025-05-14 14:03:34', 1, '2025-05-14 14:04:27', b'0', 1);
+INSERT INTO `system_data_scope_rule` VALUES (2, 0, '本部门数据权限', NULL, NULL, NULL, 1, '2025-05-14 14:06:26', 1, '2025-05-14 14:06:26', b'0', 1);
+INSERT INTO `system_data_scope_rule` VALUES (3, 0, '本部门及以下数据权限', NULL, NULL, NULL, 1, '2025-05-14 14:06:49', 1, '2025-05-14 14:06:49', b'0', 1);
+INSERT INTO `system_data_scope_rule` VALUES (4, 0, '仅本人数据权限', NULL, NULL, NULL, 1, '2025-05-14 14:07:06', 1, '2025-05-14 14:07:18', b'0', 1);
+INSERT INTO `system_data_scope_rule` VALUES (5, 0, '指定部门数据权限', NULL, NULL, NULL, 1, '2025-05-14 14:07:38', 1, '2025-05-14 14:07:38', b'0', 1);
 
 -- ----------------------------
 -- Table structure for system_department
@@ -103,8 +108,8 @@ INSERT INTO `system_dict_data` VALUES (7, 0, '正常', '0', 'status', 0, '', '',
 INSERT INTO `system_dict_data` VALUES (8, 1, '停用', '1', 'status', 0, '', '', '停用', 1, '2025-04-29 01:38:39', 1, '2025-04-29 01:38:39', b'0');
 INSERT INTO `system_dict_data` VALUES (9, 0, '未删除', '0', 'deleted', 0, '', '', '未删除', 1, '2025-04-30 07:04:27', 1, '2025-04-30 07:04:27', b'0');
 INSERT INTO `system_dict_data` VALUES (10, 1, '已删除', '1', 'deleted', 0, '', '', '已删除', 1, '2025-04-30 07:04:39', 1, '2025-04-30 07:04:39', b'0');
-INSERT INTO `system_dict_data` VALUES (11, 0, '系统角色', '1', 'role_type', 0, '', '', '系统角色', 1, '2025-05-14 09:30:31', 1, '2025-05-14 09:30:31', b'0');
-INSERT INTO `system_dict_data` VALUES (12, 0, '自定义角色', '2', 'role_type', 0, '', '', '自定义角色', 1, '2025-05-14 09:30:43', 1, '2025-05-14 09:30:43', b'0');
+INSERT INTO `system_dict_data` VALUES (11, 0, '内置', '0', 'role_type', 0, '', '', '内置', 1, '2025-05-14 09:30:31', 1, '2025-05-14 14:04:45', b'0');
+INSERT INTO `system_dict_data` VALUES (12, 0, '自定义', '1', 'role_type', 0, '', '', '自定义', 1, '2025-05-14 09:30:43', 1, '2025-05-14 14:04:52', b'0');
 
 -- ----------------------------
 -- Table structure for system_dict_type
@@ -169,12 +174,12 @@ INSERT INTO `system_menu` VALUES (3, '配置管理', '', 1, 200, 0, '/config', '
 INSERT INTO `system_menu` VALUES (4, '字典管理', 'dict', 2, 201, 3, '/config/dict', '#', 'pages/DictManage', 'DictManage', 0, b'1', b'1', b'1', 1, '2025-03-25 03:07:08', 1, '2025-05-12 06:55:55', b'0');
 INSERT INTO `system_menu` VALUES (5, '菜单管理', 'menu', 2, 202, 3, '/config/menu', '#', 'pages/MenuManage', 'MenuManage', 0, b'1', b'1', b'1', 1, '2025-03-25 03:07:08', 1, '2025-05-14 02:31:13', b'0');
 INSERT INTO `system_menu` VALUES (6, '支付管理', '', 1, 400, 0, '/pay', 'pay', '', '', 0, b'1', b'1', b'1', 1, '2025-05-12 00:53:57', 1, '2025-05-12 08:41:17', b'1');
-INSERT INTO `system_menu` VALUES (7, '用户管理', 'user', 2, 4, 2, '/system/user', 'user', 'pages/UserManage', 'UserManage', 0, b'1', b'1', b'1', 1, '2025-05-12 00:54:51', 1, '2025-05-14 06:42:59', b'0');
+INSERT INTO `system_menu` VALUES (7, '用户管理', 'user', 2, 104, 2, '/system/user', 'user', 'pages/UserManage', 'UserManage', 0, b'1', b'1', b'1', 1, '2025-05-12 00:54:51', 1, '2025-05-14 13:56:42', b'0');
 INSERT INTO `system_menu` VALUES (8, '新增', 'menu:add', 3, 0, 5, '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-13 03:32:06', 1, '2025-05-13 03:32:06', b'0');
 INSERT INTO `system_menu` VALUES (9, '编辑', 'menu:edit', 3, 1, 5, '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-13 03:32:52', 1, '2025-05-13 03:32:52', b'0');
-INSERT INTO `system_menu` VALUES (10, '部门管理', 'department', 2, 3, 2, '/system/department', 'department', 'pages/DepartmentManage', 'DepartmentManage', 0, b'1', b'1', b'1', 1, '2025-05-14 06:31:37', 1, '2025-05-14 06:42:52', b'0');
-INSERT INTO `system_menu` VALUES (11, '租户管理', 'tenant', 2, 0, 2, '/system/tenant', 'tenant', 'pages/TenantManage', 'TenantManage', 0, b'1', b'1', b'1', 1, '2025-05-14 06:41:40', 1, '2025-05-14 06:41:40', b'0');
-INSERT INTO `system_menu` VALUES (12, '角色管理', 'role', 2, 1, 2, '/system/role', 'role', 'pages/RoleManage', 'RoleManage', 0, b'1', b'1', b'1', 1, '2025-05-14 06:42:15', 1, '2025-05-14 06:42:33', b'0');
+INSERT INTO `system_menu` VALUES (10, '部门管理', 'department', 2, 103, 2, '/system/department', 'department', 'pages/DepartmentManage', 'DepartmentManage', 0, b'1', b'1', b'1', 1, '2025-05-14 06:31:37', 1, '2025-05-14 13:56:37', b'0');
+INSERT INTO `system_menu` VALUES (11, '租户管理', 'tenant', 2, 101, 2, '/system/tenant', 'tenant', 'pages/TenantManage', 'TenantManage', 0, b'1', b'1', b'1', 1, '2025-05-14 06:41:40', 1, '2025-05-14 13:56:21', b'0');
+INSERT INTO `system_menu` VALUES (12, '角色管理', 'role', 2, 102, 2, '/system/role', 'role', 'pages/RoleManage', 'RoleManage', 0, b'1', b'1', b'1', 1, '2025-05-14 06:42:15', 1, '2025-05-14 13:56:30', b'0');
 
 -- ----------------------------
 -- Table structure for system_notice
@@ -234,8 +239,8 @@ CREATE TABLE `system_role`  (
   `code` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '角色权限字符串',
   `status` tinyint NOT NULL COMMENT '角色状态（0正常 1停用）',
   `sort` int NOT NULL COMMENT '显示顺序',
-  `data_scope_rule_id` bigint NOT NULL DEFAULT 1 COMMENT '数据权限规则id',
-  `data_scope_department_ids` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '数据范围(指定部门数组)',
+  `data_scope_rule_id` bigint NULL DEFAULT 1 COMMENT '数据权限规则id',
+  `data_scope_department_ids` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '数据范围(指定部门数组)',
   `remark` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
   `creator` bigint NULL DEFAULT NULL COMMENT '创建者id',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
@@ -244,12 +249,13 @@ CREATE TABLE `system_role`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '角色信息表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '角色信息表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of system_role
 -- ----------------------------
-INSERT INTO `system_role` VALUES (1, 1, '超级管理员', 'super_admin', 0, 1, 1, '', '超级管理员', 1, '2025-03-25 03:28:46', 1, '2025-05-14 08:07:46', b'0', 1);
+INSERT INTO `system_role` VALUES (1, 0, '超级管理员', 'super_admin', 0, 1, 1, '', '超级管理员', 1, '2025-03-25 03:28:46', 1, '2025-05-14 14:05:11', b'0', 1);
+INSERT INTO `system_role` VALUES (2, 0, '租户管理员', 'tenant_admin', 0, 2, 1, '', '租户管理员', 1, '2025-05-14 14:57:37', 1, '2025-05-14 14:57:37', b'0', 1);
 
 -- ----------------------------
 -- Table structure for system_role_menu
@@ -382,7 +388,7 @@ CREATE TABLE `system_user`  (
 -- ----------------------------
 -- Records of system_user
 -- ----------------------------
-INSERT INTO `system_user` VALUES (1, 'admin', '$2b$06$Ohq86rDIvNuy/4ZvsTF4dOw.7I7QJj620LC25PwgYDmrKqKmKsJz6', '超级管理员', '超级管理员', NULL, '123@qq.com', '18888888888', 0, '', 0, '127.0.0.1', '2025-05-14 09:23:24', '0000', 1, 1, '2025-03-08 10:14:52', 1, '2025-05-14 09:23:23', b'0', 1);
+INSERT INTO `system_user` VALUES (1, 'admin', '$2b$06$Ohq86rDIvNuy/4ZvsTF4dOw.7I7QJj620LC25PwgYDmrKqKmKsJz6', '超级管理员', '超级管理员', NULL, '123@qq.com', '18888888888', 0, '', 0, '127.0.0.1', '2025-05-14 14:05:26', '0000', 1, 1, '2025-03-08 10:14:52', 1, '2025-05-14 14:05:25', b'0', 1);
 
 -- ----------------------------
 -- Table structure for system_user_post

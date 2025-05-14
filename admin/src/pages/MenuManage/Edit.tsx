@@ -31,11 +31,11 @@ interface TreeNode {
   children: TreeNode[];
 }
 
-interface MenuAddProps {
+interface MenuEditProps {
   onSubmit: () => void;
 }
 
-const MenuEdit = forwardRef(({ onSubmit }: MenuAddProps, ref) => {
+const MenuEdit = forwardRef(({ onSubmit }: MenuEditProps, ref) => {
   const { t } = useTranslation();
 
   const [open, setOpen] = useState(false);

@@ -19,8 +19,8 @@ export interface SystemRoleRequest {
   code: string; // 角色权限字符串
   status: number; // 角色状态（0正常 1停用）
   sort: number; // 显示顺序
-  data_scope_rule_id: number; // 数据权限规则id
-  data_scope_department_ids: string; // 数据范围(指定部门数组)
+  data_scope_rule_id?: number; // 数据权限规则id
+  data_scope_department_ids?: string; // 数据范围(指定部门数组)
   remark: string; // 备注
 }
 

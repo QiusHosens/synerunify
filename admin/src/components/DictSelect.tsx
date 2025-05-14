@@ -5,8 +5,10 @@ import { SxProps, Theme } from '@mui/material/styles';
 import { ReactNode, useEffect, useState } from 'react';
 
 interface DictSelectProps {
+    name?: string;
+    type?: string;
+    dict_type: string;
     hasEmpty?: boolean;
-    type: string;
     value: string;
     label: string;
     onChange: (event: SelectChangeEvent<string>, child: ReactNode) => void;
@@ -14,8 +16,10 @@ interface DictSelectProps {
 }
 
 const DictSelect: React.FC<DictSelectProps> = ({
-    hasEmpty,
+    name,
     type,
+    dict_type,
+    hasEmpty,
     value,
     label,
     onChange,
@@ -25,7 +29,7 @@ const DictSelect: React.FC<DictSelectProps> = ({
     const [dicts, setDicts] = useState<SystemDictDataResponse[]>([]);
 
     useEffect(() => {
-        const datas = dictOfType.get(type);
+        const datas = dictOfType.get(dict_type);
         if (datas) {
             setDicts(datas);
         }
@@ -37,7 +41,8 @@ const DictSelect: React.FC<DictSelectProps> = ({
             <Select
                 size="small"
                 labelId="custom-dict-select-label"
-                name="dict_type"
+                name={name}
+                type={type}
                 value={value}
                 onChange={onChange}
                 label={label}

@@ -10,8 +10,8 @@ pub fn create_request_to_model(request: &CreateSystemRoleRequest) -> SystemRoleA
         code: Set(request.code.clone()),
         status: Set(request.status.clone()),
         sort: Set(request.sort.clone()),
-        data_scope_rule_id: Set(request.data_scope_rule_id.clone()),
-        data_scope_department_ids: Set(request.data_scope_department_ids.clone()),
+        data_scope_rule_id: request.data_scope_rule_id.as_ref().map_or(NotSet, |data_scope_rule_id| Set(Some(data_scope_rule_id.clone()))),
+        data_scope_department_ids: request.data_scope_department_ids.as_ref().map_or(NotSet, |data_scope_department_ids| Set(Some(data_scope_department_ids.clone()))),
         remark: request.remark.as_ref().map_or(NotSet, |remark| Set(Some(remark.clone()))),
         ..Default::default()
     }
@@ -35,10 +35,10 @@ pub fn update_request_to_model(request: &UpdateSystemRoleRequest, existing: Syst
         active_model.sort = Set(sort.clone());
     }
     if let Some(data_scope_rule_id) = &request.data_scope_rule_id { 
-        active_model.data_scope_rule_id = Set(data_scope_rule_id.clone());
+        active_model.data_scope_rule_id = Set(Some(data_scope_rule_id.clone()));
     }
     if let Some(data_scope_department_ids) = &request.data_scope_department_ids { 
-        active_model.data_scope_department_ids = Set(data_scope_department_ids.clone());
+        active_model.data_scope_department_ids = Set(Some(data_scope_department_ids.clone()));
     }
     if let Some(remark) = &request.remark { 
         active_model.remark = Set(Some(remark.clone()));
