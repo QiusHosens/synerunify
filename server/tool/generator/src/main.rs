@@ -80,6 +80,33 @@ fn map_data_type(mysql_type: &str) -> &'static str {
     }
 }
 
+fn ts_map_data_type(mysql_type: &str) -> &'static str {
+    match mysql_type.to_lowercase().as_str() {
+        // 整数类型
+        "tinyint" | "smallint" | "mediumint" | "int" | "integer" | "bigint" | "float" | "double" | "real" | "decimal" | "numeric" => "number",         // 默认按有符号处理，布尔值另见注释
+
+        // 字符串类型
+        "char" | "varchar" | "tinytext" | "text" | "mediumtext" | "longtext" => "string",
+
+        // 二进制类型
+        "binary" | "varbinary" | "tinyblob" | "blob" | "mediumblob" | "longblob" => "buffer",
+
+        // 时间类型
+        "date" | "time" | "datetime" | "timestamp" => "string",
+
+        // 布尔类型
+        "boolean" | "bit" => "boolean",
+
+        // 其他类型
+        "json" => "object",
+        "enum" => "string", 
+        "set" => "string",
+
+        // 默认处理未知类型
+        _ => "String",
+    }
+}
+
 /**
  * 获取列名,关键字需转义
  */
@@ -132,6 +159,8 @@ fn main() {
     tera.add_template_file(format!("{}/templates/service.tera", template_base_path),  Some("service")).unwrap();
     tera.add_template_file(format!("{}/templates/route.tera", template_base_path),  Some("route")).unwrap();
 
+    tera.add_template_file(format!("{}/templates/front_api.tera", template_base_path),  Some("front_api")).unwrap();
+
     // 遍历表
     let mut mod_context = Context::new();
     let mut table_names: Vec<String> = Vec::with_capacity(tables.len());
@@ -170,6 +199,8 @@ fn main() {
             map.insert("column_name".to_string(), column_name.clone().into());
             let data_type = map_data_type(&c.data_type);
             map.insert("rust_type".to_string(), data_type.into());
+            let ts_data_type = ts_map_data_type(&c.data_type);
+            map.insert("ts_type".to_string(), ts_data_type.into());
             map.insert("is_date".to_string(), (data_type == "NaiveDateTime").into());
             map.insert("nullable".to_string(), (c.is_nullable == "YES").into());
             map.insert("column_comment".to_string(), c.column_comment.into());
@@ -237,6 +268,11 @@ fn main() {
         let service_code = tera.render("service",  &context).unwrap();
         let file_path = format!("{}/service/{}.rs", code_base_path, table);
         write_file(&file_path, &service_code).unwrap();
+
+        // front api
+        let front_api_code = tera.render("front_api",  &context).unwrap();
+        let file_path = format!("{}/front_api/{}.ts", code_base_path, table);
+        write_file(&file_path, &front_api_code).unwrap();
     }
     mod_context.insert("table_names", &table_names);
     mod_context.insert("table_info_list", &table_info_list);

@@ -1,3 +1,5 @@
+use std::str::FromStr;
+
 use sea_orm::{DatabaseConnection, EntityTrait, ColumnTrait, ActiveModelTrait, PaginatorTrait, QueryOrder, QueryFilter, Condition};
 use crate::model::system_role::{Model as SystemRoleModel, ActiveModel as SystemRoleActiveModel, Entity as SystemRoleEntity, Column};
 use system_model::request::system_role::{CreateSystemRoleRequest, UpdateSystemRoleRequest, PaginatedKeywordRequest};
@@ -53,8 +55,37 @@ pub async fn get_by_id(db: &DatabaseConnection, login_user: LoginUserContext, id
 }
 
 pub async fn get_paginated(db: &DatabaseConnection, login_user: LoginUserContext, params: PaginatedKeywordRequest) -> Result<PaginatedResponse<SystemRoleResponse>> {
-    let condition = Condition::all().add(Column::TenantId.eq(login_user.tenant_id));let paginator = SystemRoleEntity::find_active_with_condition(condition)
-        .order_by_desc(Column::UpdateTime)
+    let condition = Condition::all().add(Column::TenantId.eq(login_user.tenant_id));
+    let mut query = SystemRoleEntity::find_active_with_condition(condition);
+
+    // Apply sort if not empty
+    let mut is_default_sort = true;
+    if let Some(field) = &params.base.field {
+        if let Some(sort) = &params.base.sort {
+            let is_asc = sort.to_lowercase() == "asc";
+            // 动态应用排序，假设字段名与数据库列名一致
+            match field.as_str() {
+                // SystemDictDataEntity 的字段
+                f if Column::from_str(f).is_ok() => {
+                    let column = Column::from_str(f).unwrap();
+                    is_default_sort = false;
+                    query = if is_asc {
+                        query.order_by_asc(column)
+                    } else {
+                        query.order_by_desc(column)
+                    };
+                }
+                _ => {}
+            }
+        }
+    }
+
+    if is_default_sort {
+        query = query
+            .order_by_asc(Column::Sort);
+    }
+
+    let paginator = query
         .paginate(db, params.base.size);
 
     let total = paginator.num_items().await?;

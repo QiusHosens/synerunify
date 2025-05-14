@@ -47,7 +47,6 @@
   "page.dict.operate.edit.type": "编辑字典类型",
   "page.dict.operate.edit": "编辑字典",
   "page.dict.operate.delete": "删除字典",
-  "page.dict.description.delete": "确定删除记录?",
   
   "page.menu.title.parent": "上级节点",
   "page.menu.title.name": "名称",
@@ -82,5 +81,22 @@
   "page.menu.error.icon": "请选择图标",
   "page.menu.error.component": "请输入组件地址",
   "page.menu.error.component.name": "请输入组件名称",
-  "page.menu.error.status": "请选择状态"
+  "page.menu.error.status": "请选择状态",
+
+  "page.role.title.name": "名称",
+  "page.role.title.type": "类型",
+  "page.role.title.code": "权限编码",
+  "page.role.title.sort": "排序",
+  "page.role.title.data.scope.rule": "数据权限规则",
+  "page.role.title.data.scope.department": "数据范围",
+  "page.role.title.remark": "备注",
+  "page.role.title.status": "状态",
+  "page.role.error.name": "请输入名称",
+  "page.role.error.type": "请输入类型",
+  "page.role.error.dict.type": "请选择类型",
+  "page.role.error.label": "请输入标签",
+  "page.role.error.value": "请输入键值",
+  "page.role.error.sort": "请输入排序",
+  "page.role.operate.edit": "编辑角色",
+  "page.role.operate.delete": "删除角色"
 }

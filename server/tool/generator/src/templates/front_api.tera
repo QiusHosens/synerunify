@@ -1,0 +1,61 @@
+import { PaginatedRequest, PaginatedResponse } from '@/base/page';
+import { api } from '@/utils/request';
+
+const apis = {
+  create: '/{{ table_name }}/create', // 新增
+  update: '/{{ table_name }}/update', // 修改
+  delete: '/{{ table_name }}/delete', // 删除
+  get: '/{{ table_name }}/get', // 单条查询
+  list: '/{{ table_name }}/list', // 列表查询
+  page: '/{{ table_name }}/page', // 分页查询
+  enable: '/{{ table_name }}/enable', // 启用
+  disable: '/{{ table_name }}/disable', // 禁用
+}
+
+export interface {{ request_model_name }} {
+  {% for column in columns_request_update -%}
+  {{ column.column_name }}: {{ column.ts_type  }}; // {{ column.column_comment  }}
+  {% endfor -%}
+}
+
+export interface {{ response_model_name }} {
+  {% for column in columns_response -%}
+  {{ column.column_name }}: {{ column.ts_type  }}; // {{ column.column_comment  }}
+  {% endfor -%}
+}
+
+export interface {{ model_name }}QueryCondition extends PaginatedRequest {
+  
+}
+
+export const create{{ model_name }} = ({{ table_name }}: {{ request_model_name }}): Promise<number> => {
+  return api.post<number>(apis.create, {{ table_name }});
+}
+
+export const update{{ model_name }} = ({{ table_name }}: {{ request_model_name }}): Promise<void> => {
+  return api.post<void>(apis.update, {{ table_name }});
+}
+
+export const delete{{ model_name }} = (id: number): Promise<void> => {
+  return api.post<void>(`${apis.delete}/${id}`);
+}
+
+export const get{{ model_name }} = (id: number): Promise<{{ response_model_name }}> => {
+  return api.get<{{ response_model_name }}>(`${apis.get}/${id}`);
+}
+
+export const list{{ model_name }} = (): Promise<Array<{{ response_model_name }}>> => {
+  return api.get<Array<{{ response_model_name }}>>(apis.list);
+}
+
+export const page{{ model_name }} = (condition: {{ model_name }}QueryCondition): Promise<PaginatedResponse<{{ response_model_name }}>> => {
+  return api.get<PaginatedResponse<{{ response_model_name }}>>(apis.page, condition);
+}
+
+export const enable{{ model_name }} = (id: number): Promise<void> => {
+  return api.post<void>(`${apis.enable}/${id}`);
+}
+
+export const disable{{ model_name }} = (id: number): Promise<void> => {
+  return api.post<void>(`${apis.disable}/${id}`);
+}
