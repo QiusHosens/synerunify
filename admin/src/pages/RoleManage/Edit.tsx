@@ -1,4 +1,4 @@
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, Switch, TextField, Typography } from '@mui/material';
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, SelectChangeEvent, Switch, TextField, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
@@ -123,6 +123,26 @@ const RoleEdit = forwardRef(({ onSubmit }: RoleEditProps, ref) => {
     }
   };
 
+  const handleTypeChange = (e: SelectChangeEvent<string>) => {
+      console.log('target', e.target);
+      const { name, value } = e.target;
+      const numberValue = Number(value);
+      setRole(prev => ({
+        ...prev,
+        [name]: numberValue
+      }));
+  
+      // console.log('formValues', formValues);
+  
+      // Clear error when user starts typing
+      if (errors[name as keyof FormErrors]) {
+        setErrors(prev => ({
+          ...prev,
+          [name]: undefined
+        }));
+      }
+    };
+
   const handleStatusChange = (e: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
     // console.log('target', e.target, checked);
     const { name } = e.target;
@@ -161,7 +181,7 @@ const RoleEdit = forwardRef(({ onSubmit }: RoleEditProps, ref) => {
           }}
         >
           <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiSelect-root': { width: '200px' } }}>
-            <DictSelect name='type' type='number' dict_type='role_type' value={role.type.toString()} onChange={(event) => handleInputChange(event as any)} label={t("page.role.title.type")}></DictSelect>
+            <DictSelect name='type' dict_type='role_type' value={role.type.toString()} onChange={handleTypeChange} label={t("page.role.title.type")}></DictSelect>
           </FormControl>
           <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' } }}>
             <TextField

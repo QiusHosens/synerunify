@@ -6,7 +6,6 @@ import { ReactNode, useEffect, useState } from 'react';
 
 interface DictSelectProps {
     name?: string;
-    type?: string;
     dict_type: string;
     hasEmpty?: boolean;
     value: string;
@@ -17,7 +16,6 @@ interface DictSelectProps {
 
 const DictSelect: React.FC<DictSelectProps> = ({
     name,
-    type,
     dict_type,
     hasEmpty,
     value,
@@ -42,7 +40,6 @@ const DictSelect: React.FC<DictSelectProps> = ({
                 size="small"
                 labelId="custom-dict-select-label"
                 name={name}
-                type={type}
                 value={value}
                 onChange={onChange}
                 label={label}
