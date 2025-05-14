@@ -1,6 +1,7 @@
 import axios, { AxiosInstance, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 import { useAuthStore } from '@/store';
 import { messageEventBus } from '@/components/GlobalMessage';
+import { AlertColor } from '@mui/material';
 
 const baseURL = '/api';
 
@@ -19,9 +20,13 @@ let isRefreshing = false;
 // 存储等待中的请求
 let refreshSubscribers: ((token: string) => void)[] = [];
 
+const showMessage = (message: string, severity: AlertColor) => {
+  messageEventBus.publish(message, severity, 3000);
+}
+
 const logout = (message: string) => {
   // 通过事件总线触发错误消息
-  messageEventBus.publish(message, 'error', 3000);
+  showMessage(message, 'error');
   setTimeout(() => {
     useAuthStore.getState().logout();
     // window.location.href = '/login';
@@ -65,9 +70,11 @@ request.interceptors.response.use(
   (response: AxiosResponse) => {
     const { data } = response;
     if (data.code === 200) {
+      // showMessage('成功', 'success');
       return data.data;
     } else {
       const message = data.message || 'Request failed';
+      showMessage(message, 'error');
       return Promise.reject(new Error(message));
     }
   },
