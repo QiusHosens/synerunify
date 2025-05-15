@@ -12,6 +12,7 @@ import CustomizedDictTag from '@/components/CustomizedDictTag';
 import CustomizedMore from '@/components/CustomizedMore';
 import RoleMenuSetting from './MenuSetting';
 import RoleDataSetting from './DataSetting';
+import CustomizedTag from '@/components/CustomizedTag';
 
 export default function RoleManage() {
   const { t } = useTranslation();
@@ -65,7 +66,18 @@ export default function RoleManage() {
       },
       { field: 'code', headerName: t("page.role.title.code"), flex: 1, minWidth: 120 },
       { field: 'sort', headerName: t("page.role.title.sort"), flex: 1, minWidth: 60 },
-      { field: 'data_scope_rule_id', sortable: false, headerName: t("page.role.title.data.scope.rule"), flex: 1, minWidth: 100 },
+      {
+        field: 'data_scope_rule_name',
+        sortable: false,
+        headerName: t("page.role.title.data.scope.rule"),
+        flex: 1,
+        minWidth: 150,
+        renderCell: (params: GridRenderCellParams) => (
+          <>
+            <CustomizedTag label={params.row.data_scope_rule_name} />
+          </>
+        )
+      },
       { field: 'data_scope_department_ids', headerName: t("page.role.title.data.scope.department"), flex: 1, minWidth: 100 },
       { field: 'remark', headerName: t("page.role.title.remark"), flex: 1, minWidth: 100 },
       {

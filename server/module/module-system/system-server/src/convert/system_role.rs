@@ -1,7 +1,8 @@
 use sea_orm::{Set, NotSet};
 use crate::model::system_role::{self, Model as SystemRole, ActiveModel as SystemRoleActiveModel};
+use crate::model::system_data_scope_rule::{self, Model as SystemDataScopeRule, ActiveModel as SystemDataScopeRuleActiveModel};
 use system_model::request::system_role::{CreateSystemRoleRequest, UpdateSystemRoleRequest, UpdateSystemRoleRuleRequest};
-use system_model::response::system_role::SystemRoleResponse;
+use system_model::response::system_role::{SystemRoleResponse, SystemRoleRuleResponse};
 
 pub fn create_request_to_model(request: &CreateSystemRoleRequest) -> SystemRoleActiveModel {
     SystemRoleActiveModel {
@@ -72,5 +73,34 @@ pub fn model_to_response(model: SystemRole) -> SystemRoleResponse {
         create_time: model.create_time,
         updater: model.updater,
         update_time: model.update_time,
+    }
+}
+
+pub fn model_to_rule_response(model: SystemRole, rule_model: Option<SystemDataScopeRule>) -> SystemRoleRuleResponse {
+    let (data_scope_rule_name, data_scope_rule_type) = match rule_model {
+        Some(t) => (
+            Some(t.name.clone()),
+            Some(t.r#type.clone()),
+        ),
+        None => (None, None),
+    };
+
+    SystemRoleRuleResponse {
+        id: model.id,
+        r#type: model.r#type,
+        name: model.name,
+        code: model.code,
+        status: model.status,
+        sort: model.sort,
+        data_scope_rule_id: model.data_scope_rule_id,
+        data_scope_department_ids: model.data_scope_department_ids,
+        remark: model.remark,
+        creator: model.creator,
+        create_time: model.create_time,
+        updater: model.updater,
+        update_time: model.update_time,
+
+        data_scope_rule_name,
+        data_scope_rule_type,
     }
 }

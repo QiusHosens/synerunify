@@ -6,7 +6,7 @@ use ctor;
 use macros::require_authorize;
 use axum::{routing::{get, post}, Router, extract::{State, Path, Json, Query}, response::IntoResponse, Extension};
 use common::base::page::PaginatedResponse;
-use system_model::request::system_role::{CreateSystemRoleRequest, PaginatedKeywordRequest, UpdateSystemRoleRequest, UpdateSystemRoleRuleRequest};
+use system_model::{request::system_role::{CreateSystemRoleRequest, PaginatedKeywordRequest, UpdateSystemRoleRequest, UpdateSystemRoleRuleRequest}, response::system_role::SystemRoleRuleResponse};
 use system_model::response::system_role::SystemRoleResponse;
 use common::base::response::CommonResult;
 use common::context::context::LoginUserContext;
@@ -178,7 +178,7 @@ async fn get_by_id(
         ("keyword" = Option<String>, Query, description = "keyword")
     ),
     responses(
-        (status = 200, description = "get page", body = CommonResult<PaginatedResponse<SystemRoleResponse>>)
+        (status = 200, description = "get page", body = CommonResult<PaginatedResponse<SystemRoleRuleResponse>>)
     ),
     tag = "system_role",
     security(
@@ -190,7 +190,7 @@ async fn page(
     State(state): State<AppState>,
     Extension(login_user): Extension<LoginUserContext>,
     Query(params): Query<PaginatedKeywordRequest>,
-) -> CommonResult<PaginatedResponse<SystemRoleResponse>> {
+) -> CommonResult<PaginatedResponse<SystemRoleRuleResponse>> {
     match service::system_role::get_paginated(&state.db, login_user, params).await {
         Ok(data) => {CommonResult::with_data(data)}
         Err(e) => {CommonResult::with_err(&e.to_string())}

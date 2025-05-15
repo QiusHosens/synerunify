@@ -1,10 +1,11 @@
 use std::str::FromStr;
 
-use sea_orm::{DatabaseConnection, EntityTrait, ColumnTrait, ActiveModelTrait, PaginatorTrait, QueryOrder, QueryFilter, Condition};
-use crate::model::system_role::{Model as SystemRoleModel, ActiveModel as SystemRoleActiveModel, Entity as SystemRoleEntity, Column};
+use sea_orm::{ActiveModelTrait, ColumnTrait, Condition, DatabaseConnection, EntityTrait, JoinType, PaginatorTrait, QueryFilter, QueryOrder, QuerySelect, RelationTrait};
+use crate::model::system_role::{Model as SystemRoleModel, ActiveModel as SystemRoleActiveModel, Entity as SystemRoleEntity, Column, Relation};
+use crate::model::system_data_scope_rule::{Model as SystemDataScopeRuleModel, ActiveModel as SystemDataScopeRuleActiveModel, Entity as SystemDataScopeRuleEntity, Column as SystemDataScopeRuleColumn};
 use system_model::request::system_role::{CreateSystemRoleRequest, PaginatedKeywordRequest, UpdateSystemRoleRequest, UpdateSystemRoleRuleRequest};
-use system_model::response::system_role::SystemRoleResponse;
-use crate::convert::system_role::{create_request_to_model, model_to_response, update_request_to_model, update_rule_request_to_model};
+use system_model::response::system_role::{SystemRoleResponse, SystemRoleRuleResponse};
+use crate::convert::system_role::{create_request_to_model, model_to_response, model_to_rule_response, update_request_to_model, update_rule_request_to_model};
 use anyhow::{Result, anyhow};
 use sea_orm::ActiveValue::Set;
 use common::base::page::PaginatedResponse;
@@ -66,9 +67,11 @@ pub async fn get_by_id(db: &DatabaseConnection, login_user: LoginUserContext, id
     Ok(system_role.map(model_to_response))
 }
 
-pub async fn get_paginated(db: &DatabaseConnection, login_user: LoginUserContext, params: PaginatedKeywordRequest) -> Result<PaginatedResponse<SystemRoleResponse>> {
+pub async fn get_paginated(db: &DatabaseConnection, login_user: LoginUserContext, params: PaginatedKeywordRequest) -> Result<PaginatedResponse<SystemRoleRuleResponse>> {
     let condition = Condition::all().add(Column::TenantId.eq(login_user.tenant_id));
-    let mut query = SystemRoleEntity::find_active_with_condition(condition);
+    let mut query = SystemRoleEntity::find_active_with_condition(condition)
+        .select_also(SystemDataScopeRuleEntity)
+        .join(JoinType::LeftJoin, Relation::RuleType.def());
 
     // Apply sort if not empty
     let mut is_default_sort = true;
@@ -106,7 +109,7 @@ pub async fn get_paginated(db: &DatabaseConnection, login_user: LoginUserContext
         .fetch_page(params.base.page - 1) // SeaORM 页码从 0 开始，所以减 1
         .await?
         .into_iter()
-        .map(model_to_response)
+        .map(|(data, rule_data)|model_to_rule_response(data, rule_data))
         .collect();
 
     Ok(PaginatedResponse {
