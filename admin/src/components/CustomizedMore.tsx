@@ -38,6 +38,12 @@ const CustomizedMore = ({ children }: CustomizedMoreProps) => {
           vertical: 'bottom',
           horizontal: 'left',
         }}
+        sx={{
+          '& .MuiPopover-paper': {
+            p: 1,
+            ml: -1
+          }
+        }}
       >
         {children}
       </Popover>

@@ -99,5 +99,7 @@
   "page.role.error.code": "请输入标志",
   "page.role.error.sort": "请输入排序",
   "page.role.operate.edit": "编辑角色",
+  "page.role.operate.menu": "菜单权限",
+  "page.role.operate.data": "数据权限",
   "page.role.operate.delete": "删除角色"
 }

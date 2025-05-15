@@ -8,6 +8,8 @@ import { disableSystemRole, enableSystemRole, pageSystemRole, SystemRoleQueryCon
 import RoleAdd from './Add';
 import RoleEdit from './Edit';
 import RoleDelete from './Delete';
+import CustomizedDictTag from '@/components/CustomizedDictTag';
+import CustomizedMore from '@/components/CustomizedMore';
 
 export default function RoleManage() {
   const { t } = useTranslation();
@@ -45,10 +47,20 @@ export default function RoleManage() {
 
   const columns: GridColDef[] = useMemo(
     () => [
-      { field: 'name', headerName: t("page.role.title.name"), flex: 1, minWidth: 80 },
-      { field: 'type', headerName: t("page.role.title.type"), flex: 1, minWidth: 60 },
-      { field: 'code', headerName: t("page.role.title.code"), flex: 1, minWidth: 60 },
-      { field: 'sort', headerName: t("page.role.title.sort"), flex: 1, minWidth: 100 },
+      { field: 'name', headerName: t("page.role.title.name"), flex: 1, minWidth: 100 },
+      {
+        field: 'type',
+        headerName: t("page.role.title.type"),
+        flex: 1,
+        minWidth: 80,
+        renderCell: (params: GridRenderCellParams) => (
+          <>
+            <CustomizedDictTag type='role_type' value={params.row.type} />
+          </>
+        )
+      },
+      { field: 'code', headerName: t("page.role.title.code"), flex: 1, minWidth: 120 },
+      { field: 'sort', headerName: t("page.role.title.sort"), flex: 1, minWidth: 60 },
       { field: 'data_scope_rule_id', sortable: false, headerName: t("page.role.title.data.scope.rule"), flex: 1, minWidth: 100 },
       { field: 'data_scope_department_ids', headerName: t("page.role.title.data.scope.department"), flex: 1, minWidth: 100 },
       { field: 'remark', headerName: t("page.role.title.remark"), flex: 1, minWidth: 100 },
@@ -80,14 +92,33 @@ export default function RoleManage() {
               startIcon={<EditIcon />}
               onClick={() => handleClickOpenEdit(params.row)}
             />
-            <Button
-              sx={{ color: 'error.main' }}
-              size="small"
-              variant='customOperate'
-              title={t('page.role.operate.delete')}
-              startIcon={<DeleteIcon />}
-              onClick={() => handleClickOpenDelete(params.row)}
-            />
+            <CustomizedMore>
+              <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                <Button
+                  size="small"
+                  variant='customOperate'
+                  title={t('page.role.operate.menu')}
+                  startIcon={<EditIcon />}
+                  onClick={() => handleClickOpenMenu(params.row.type_id)}
+                />
+                <Button
+                  sx={{ mt: 1 }}
+                  size="small"
+                  variant='customOperate'
+                  title={t('page.role.operate.data')}
+                  startIcon={<EditIcon />}
+                  onClick={() => handleClickOpenData(params.row.type_id)}
+                />
+                {params.row.type == 1 && <Button
+                  sx={{ mt: 1, color: 'error.main' }}
+                  size="small"
+                  variant='customOperate'
+                  title={t('page.role.operate.delete')}
+                  startIcon={<DeleteIcon />}
+                  onClick={() => handleClickOpenDelete(params.row)}
+                />}
+              </Box>
+            </CustomizedMore>
           </Box>
         ),
       },
@@ -110,6 +141,14 @@ export default function RoleManage() {
   };
 
   const handleClickOpenDelete = (role: SystemRoleResponse) => {
+    (deleteRole.current as any).show(role);
+  };
+
+  const handleClickOpenMenu = (role: SystemRoleResponse) => {
+    (deleteRole.current as any).show(role);
+  };
+
+  const handleClickOpenData = (role: SystemRoleResponse) => {
     (deleteRole.current as any).show(role);
   };
 
