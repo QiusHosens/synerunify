@@ -1,11 +1,11 @@
-import { listMenu, SystemMenuResponse, SystemRoleResponse, updateRoleMenu } from "@/api";
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogProps, DialogTitle, FormControl } from "@mui/material";
-import { RichTreeView, SimpleTreeView, TreeItem } from "@mui/x-tree-view";
+import { getRoleMenu, listMenu, SystemMenuResponse, SystemRoleMenuRequest, SystemRoleResponse, updateRoleMenu } from "@/api";
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogProps, DialogTitle, FormControl, Stack } from "@mui/material";
+import { RichTreeView, TreeViewSelectionPropagation } from "@mui/x-tree-view";
 import { forwardRef, useImperativeHandle, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 interface TreeNode {
-  id: string | number;
+  id: string;
   parent_id: number; // 父菜单ID
   label: string;
   children: TreeNode[];
@@ -19,17 +19,20 @@ const RoleMenuSetting = forwardRef(({ }, ref) => {
   const [fullWidth] = useState(true);
   const [maxWidth] = useState<DialogProps['maxWidth']>('sm');
 
-  const [selectionPropagation, setSelectionPropagation] = useState<{ parents: boolean, descendants: boolean }>({
+  const [selectionPropagation] = useState<TreeViewSelectionPropagation>({
     parents: true,
     descendants: true,
   });
 
+  const [role, setRole] = useState<SystemRoleResponse>();
   const [menuTreeData, setMenuTreeData] = useState<TreeNode[]>([]);
+  const [selectedItems, setSelectedItems] = useState<string[]>([]);
 
   useImperativeHandle(ref, () => ({
     show(role: SystemRoleResponse) {
+      setRole(role);
       initMenus();
-
+      initRoleMenus(role);
       setOpen(true);
     },
     hide() {
@@ -52,14 +55,32 @@ const RoleMenuSetting = forwardRef(({ }, ref) => {
   }
 
   const handleSubmit = async () => {
-    // await updateRoleMenu();
+    if (!role) {
+      return;
+    }
+    const menuIds = selectedItems.map(item => Number(item));
+    const roleMenu: SystemRoleMenuRequest = {
+      role_id: role.id,
+      menu_id_list: menuIds
+    };
+    await updateRoleMenu(roleMenu);
     handleClose();
   };
+
+  const handleSelectedItemsChange = (event: React.SyntheticEvent | null, itemIds: string[]) => {
+    setSelectedItems(itemIds);
+  }
 
   const initMenus = async () => {
     const result = await listMenu();
     const tree = buildMenuTree(result);
     setMenuTreeData(tree);
+  }
+
+  const initRoleMenus = async (role: SystemRoleResponse) => {
+    const result = await getRoleMenu(role.id);
+    const items = result.map(m => m.toString());
+    setSelectedItems(items);
   }
 
   const buildMenuTree = (list: SystemMenuResponse[]): TreeNode[] => {
@@ -69,7 +90,7 @@ const RoleMenuSetting = forwardRef(({ }, ref) => {
     // Create a map for quick lookup
     for (const item of list) {
       map[item.id] = {
-        id: item.id,
+        id: item.id.toString(),
         parent_id: item.parent_id,
         label: item.name,
         children: [],
@@ -88,22 +109,6 @@ const RoleMenuSetting = forwardRef(({ }, ref) => {
     return tree;
   }
 
-  const renderTree = (nodes: TreeNode[]) => {
-    return nodes.map((node) => (
-      <TreeItem
-        key={node.id.toString()}
-        itemId={node.id.toString()}
-        label={
-          <div>
-            {node.label}
-          </div>
-        }
-      >
-        {node.children && renderTree(node.children)}
-      </TreeItem>
-    ));
-  };
-
   return (
     <Dialog
       fullWidth={fullWidth}
@@ -111,7 +116,7 @@ const RoleMenuSetting = forwardRef(({ }, ref) => {
       open={open}
       onClose={handleClose}
     >
-      <DialogTitle>{t('global.operate.add')}{t('global.page.role')}</DialogTitle>
+      <DialogTitle>{t('page.role.operate.menu')}</DialogTitle>
       <DialogContent>
         <Box
           noValidate
@@ -124,13 +129,31 @@ const RoleMenuSetting = forwardRef(({ }, ref) => {
           }}
         >
           <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiSelect-root': { width: '200px' } }}>
-            <RichTreeView
-              items={menuTreeData}
-              checkboxSelection
-              multiSelect
-              selectionPropagation={selectionPropagation}
-            // defaultExpandedItems={['8', '12']}
-            />
+            <Stack direction="row" spacing={2}>
+              <Box>{t('global.page.role')}{t('page.role.title.name')}</Box>
+              <Box>{role && role.name}</Box>
+            </Stack>
+            <Stack direction="row" spacing={2}>
+              <Box>{t('global.page.role')}{t('page.role.title.code')}</Box>
+              <Box>{role && role.code}</Box>
+            </Stack>
+          </FormControl>
+          <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiSelect-root': { width: '200px' } }}>
+            <Stack direction="row" spacing={2}>
+              <Box>{t('page.role.operate.menu')}</Box>
+              <Box
+                // sx={{ p: 2, border: '1px solid rgba(0, 0, 0, 0.08)' }}
+              >
+                <RichTreeView
+                  items={menuTreeData}
+                  selectedItems={selectedItems}
+                  checkboxSelection
+                  multiSelect
+                  selectionPropagation={selectionPropagation}
+                  onSelectedItemsChange={handleSelectedItemsChange}
+                />
+              </Box>
+            </Stack>
           </FormControl>
         </Box>
       </DialogContent>

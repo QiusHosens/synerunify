@@ -87,7 +87,7 @@ export const disableSystemRole = (id: number): Promise<void> => {
 }
 
 export const getRoleMenu = (id: number): Promise<number[]> => {
-  return api.post<number[]>(`${roleMenuApis.getRoleMenu}/${id}`);
+  return api.get<number[]>(`${roleMenuApis.getRoleMenu}/${id}`);
 }
 
 export const updateRoleMenu = (roleMenu: SystemRoleMenuRequest): Promise<void> => {
