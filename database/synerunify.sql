@@ -1,17 +1,17 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : 192.168.1.18_ruoyi
+ Source Server         : 192.168.0.99_synerunify
  Source Server Type    : MySQL
- Source Server Version : 80200 (8.2.0)
- Source Host           : 192.168.1.18:30010
+ Source Server Version : 80100 (8.1.0)
+ Source Host           : 192.168.0.99:30010
  Source Schema         : synerunify
 
  Target Server Type    : MySQL
- Target Server Version : 80200 (8.2.0)
+ Target Server Version : 80100 (8.1.0)
  File Encoding         : 65001
 
- Date: 14/05/2025 23:31:40
+ Date: 15/05/2025 17:29:52
 */
 
 SET NAMES utf8mb4;
@@ -239,7 +239,7 @@ CREATE TABLE `system_role`  (
   `code` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '角色权限字符串',
   `status` tinyint NOT NULL COMMENT '角色状态（0正常 1停用）',
   `sort` int NOT NULL COMMENT '显示顺序',
-  `data_scope_rule_id` bigint NULL DEFAULT 1 COMMENT '数据权限规则id',
+  `data_scope_rule_id` bigint NOT NULL DEFAULT 4 COMMENT '数据权限规则id',
   `data_scope_department_ids` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '数据范围(指定部门数组)',
   `remark` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
   `creator` bigint NULL DEFAULT NULL COMMENT '创建者id',
@@ -249,14 +249,15 @@ CREATE TABLE `system_role`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '角色信息表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '角色信息表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of system_role
 -- ----------------------------
 INSERT INTO `system_role` VALUES (1, 0, '超级管理员', 'super_admin', 0, 1, 1, '', '超级管理员', 1, '2025-03-25 03:28:46', 1, '2025-05-14 14:05:11', b'0', 1);
-INSERT INTO `system_role` VALUES (2, 0, '租户管理员', 'tenant_admin', 0, 2, 1, '', '租户管理员', 1, '2025-05-14 14:57:37', 1, '2025-05-14 14:57:37', b'0', 1);
-INSERT INTO `system_role` VALUES (3, 1, '开发', 'dev', 0, 3, 1, '', '开发', 1, '2025-05-14 15:29:04', 1, '2025-05-14 15:29:04', b'0', 1);
+INSERT INTO `system_role` VALUES (2, 0, '租户管理员', 'tenant_admin', 0, 2, 2, '', '租户管理员', 1, '2025-05-14 14:57:37', 1, '2025-05-15 08:32:30', b'0', 1);
+INSERT INTO `system_role` VALUES (3, 1, '开发', 'dev', 0, 3, 4, '', '开发', 1, '2025-05-14 15:29:04', 1, '2025-05-15 08:14:55', b'0', 1);
+INSERT INTO `system_role` VALUES (4, 1, '测试', 'test', 0, 4, 4, '', '测试', 1, '2025-05-15 09:29:04', 1, '2025-05-15 09:29:28', b'0', 1);
 
 -- ----------------------------
 -- Table structure for system_role_menu
@@ -273,17 +274,28 @@ CREATE TABLE `system_role_menu`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '角色和菜单关联表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 18 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '角色和菜单关联表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of system_role_menu
 -- ----------------------------
-INSERT INTO `system_role_menu` VALUES (1, 1, 1, 1, '2025-03-25 03:29:38', 1, '2025-03-25 03:29:38', b'0', 0);
-INSERT INTO `system_role_menu` VALUES (2, 1, 2, 1, '2025-03-25 03:29:55', 1, '2025-03-25 03:29:55', b'0', 0);
-INSERT INTO `system_role_menu` VALUES (3, 1, 3, 1, '2025-03-25 03:30:03', 1, '2025-03-25 03:30:03', b'0', 0);
-INSERT INTO `system_role_menu` VALUES (4, 1, 4, 1, '2025-03-25 03:30:10', 1, '2025-03-25 03:30:10', b'0', 0);
-INSERT INTO `system_role_menu` VALUES (5, 1, 5, 1, '2025-03-26 02:15:57', 1, '2025-03-26 02:15:57', b'0', 0);
-INSERT INTO `system_role_menu` VALUES (6, 1, 12, 1, '2025-03-26 02:15:57', 1, '2025-03-26 02:15:57', b'0', 0);
+INSERT INTO `system_role_menu` VALUES (1, 1, 1, 1, '2025-03-25 03:29:38', 1, '2025-05-15 07:19:18', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (2, 1, 2, 1, '2025-03-25 03:29:55', 1, '2025-05-15 07:19:19', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (3, 1, 3, 1, '2025-03-25 03:30:03', 1, '2025-05-15 07:19:20', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (4, 1, 4, 1, '2025-03-25 03:30:10', 1, '2025-05-15 07:19:22', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (5, 1, 5, 1, '2025-03-26 02:15:57', 1, '2025-05-15 07:19:23', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (6, 1, 12, 1, '2025-03-26 02:15:57', 1, '2025-05-15 07:19:26', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (7, 3, 1, 1, '2025-05-15 07:17:48', 1, '2025-05-15 07:17:48', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (8, 3, 7, 1, '2025-05-15 07:17:48', 1, '2025-05-15 07:17:48', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (9, 3, 12, 1, '2025-05-15 07:19:58', 1, '2025-05-15 07:19:58', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (10, 3, 10, 1, '2025-05-15 07:19:58', 1, '2025-05-15 07:19:58', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (11, 3, 11, 1, '2025-05-15 07:19:58', 1, '2025-05-15 07:19:58', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (12, 3, 2, 1, '2025-05-15 07:19:58', 1, '2025-05-15 07:19:58', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (13, 1, 11, 1, '2025-05-15 07:20:52', 1, '2025-05-15 07:20:52', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (14, 1, 8, 1, '2025-05-15 07:20:52', 1, '2025-05-15 07:20:52', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (15, 1, 7, 1, '2025-05-15 07:20:52', 1, '2025-05-15 07:20:52', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (16, 1, 10, 1, '2025-05-15 07:20:52', 1, '2025-05-15 07:20:52', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (17, 1, 9, 1, '2025-05-15 07:20:52', 1, '2025-05-15 07:20:52', b'0', 1);
 
 -- ----------------------------
 -- Table structure for system_role_menu_data_scope
