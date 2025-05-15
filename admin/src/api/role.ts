@@ -12,6 +12,11 @@ const apis = {
   disable: '/system_role/disable', // 禁用
 }
 
+const roleMenuApis = {
+  getRoleMenu: 'system_role_menu/get_role_menu', // 获取角色菜单列表
+  updateRoleMenu: 'system_role_menu/update', // 更新角色菜单列表
+}
+
 export interface SystemRoleRequest {
   id: number; // id
   type: number; // 角色类型
@@ -38,6 +43,11 @@ export interface SystemRoleResponse {
   create_time: string; // 创建时间
   updater: number; // 更新者id
   update_time: string; // 更新时间
+}
+
+export interface SystemRoleMenuRequest {
+  role_id: number; // 角色ID
+  menu_id_list: number[]; // 菜单ID列表
 }
 
 export interface SystemRoleQueryCondition extends PaginatedRequest {
@@ -74,4 +84,12 @@ export const enableSystemRole = (id: number): Promise<void> => {
 
 export const disableSystemRole = (id: number): Promise<void> => {
   return api.post<void>(`${apis.disable}/${id}`);
+}
+
+export const getRoleMenu = (id: number): Promise<number[]> => {
+  return api.post<number[]>(`${roleMenuApis.getRoleMenu}/${id}`);
+}
+
+export const updateRoleMenu = (roleMenu: SystemRoleMenuRequest): Promise<void> => {
+  return api.post<void>(roleMenuApis.updateRoleMenu, roleMenu);
 }

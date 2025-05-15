@@ -10,6 +10,7 @@ import RoleEdit from './Edit';
 import RoleDelete from './Delete';
 import CustomizedDictTag from '@/components/CustomizedDictTag';
 import CustomizedMore from '@/components/CustomizedMore';
+import RoleMenuSetting from './MenuSetting';
 
 export default function RoleManage() {
   const { t } = useTranslation();
@@ -26,6 +27,7 @@ export default function RoleManage() {
   const addRole = useRef(null);
   const editRole = useRef(null);
   const deleteRole = useRef(null);
+  const roleMenuSetting = useRef(null);
 
   const handleStatusChange = useCallback(
     async (e: React.ChangeEvent<HTMLInputElement>, checked: boolean, data: SystemRoleResponse) => {
@@ -99,7 +101,7 @@ export default function RoleManage() {
                   variant='customOperate'
                   title={t('page.role.operate.menu')}
                   startIcon={<EditIcon />}
-                  onClick={() => handleClickOpenMenu(params.row.type_id)}
+                  onClick={() => handleClickOpenMenu(params.row)}
                 />
                 <Button
                   sx={{ mt: 1 }}
@@ -107,7 +109,7 @@ export default function RoleManage() {
                   variant='customOperate'
                   title={t('page.role.operate.data')}
                   startIcon={<EditIcon />}
-                  onClick={() => handleClickOpenData(params.row.type_id)}
+                  onClick={() => handleClickOpenData(params.row)}
                 />
                 {params.row.type == 1 && <Button
                   sx={{ mt: 1, color: 'error.main' }}
@@ -145,7 +147,7 @@ export default function RoleManage() {
   };
 
   const handleClickOpenMenu = (role: SystemRoleResponse) => {
-    (deleteRole.current as any).show(role);
+    (roleMenuSetting.current as any).show(role);
   };
 
   const handleClickOpenData = (role: SystemRoleResponse) => {
@@ -196,6 +198,7 @@ export default function RoleManage() {
       <RoleAdd ref={addRole} onSubmit={refreshData} />
       <RoleEdit ref={editRole} onSubmit={refreshData} />
       <RoleDelete ref={deleteRole} onSubmit={refreshData} />
+      <RoleMenuSetting ref={roleMenuSetting} />
     </Box>
   );
 }
