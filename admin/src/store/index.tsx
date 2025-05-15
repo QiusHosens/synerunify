@@ -45,6 +45,7 @@ interface HomeState {
   setRoutes: (routes: HomeMenuResponse[]) => void;
   setRouteTree: (routeTree: HomeMenuResponse[]) => void;
   setOperates: (routeTree: HomeMenuResponse[]) => void;
+  hasOperatePermission: (operateCode: string) => boolean;
   fetchAndSetHome: (token: string | null) => Promise<void>;
 }
 
@@ -121,6 +122,10 @@ export const useHomeStore = create<HomeState>((set) => ({
   setRoutes: (routes) => set({ routes }),
   setRouteTree: (routeTree) => set({ routeTree }),
   setOperates: (operates) => set({ operates }),
+  hasOperatePermission: (operateCode): boolean => {
+    const { operates } = useHomeStore.getState();
+    return operates.map(item => item.permission).some(op => op.code === operateCode);
+  },
   fetchAndSetHome: async (token) => {
     const logout = () => {
       useAuthStore.getState().logout();
