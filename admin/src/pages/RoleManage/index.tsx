@@ -69,6 +69,7 @@ export default function RoleManage() {
       {
         field: 'data_scope_rule_name',
         sortable: false,
+        filterable: false,
         headerName: t("page.role.title.data.scope.rule"),
         flex: 1,
         minWidth: 150,
@@ -78,7 +79,14 @@ export default function RoleManage() {
           </>
         )
       },
-      { field: 'data_scope_department_ids', headerName: t("page.role.title.data.scope.department"), flex: 1, minWidth: 100 },
+      {
+        field: 'data_scope_department_ids', 
+        sortable: false,
+        filterable: false, 
+        headerName: t("page.role.title.data.scope.department"), 
+        flex: 1, 
+        minWidth: 100
+      },
       { field: 'remark', headerName: t("page.role.title.remark"), flex: 1, minWidth: 100 },
       {
         field: 'status',
