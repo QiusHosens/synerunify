@@ -1,17 +1,17 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : 192.168.0.99_synerunify
+ Source Server         : 192.168.1.18_ruoyi
  Source Server Type    : MySQL
- Source Server Version : 80100 (8.1.0)
- Source Host           : 192.168.0.99:30010
+ Source Server Version : 80200 (8.2.0)
+ Source Host           : 192.168.1.18:30010
  Source Schema         : synerunify
 
  Target Server Type    : MySQL
- Target Server Version : 80100 (8.1.0)
+ Target Server Version : 80200 (8.2.0)
  File Encoding         : 65001
 
- Date: 15/05/2025 17:29:52
+ Date: 15/05/2025 22:46:40
 */
 
 SET NAMES utf8mb4;
@@ -163,7 +163,7 @@ CREATE TABLE `system_menu`  (
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 13 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '菜单权限表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 15 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '菜单权限表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of system_menu
@@ -178,8 +178,10 @@ INSERT INTO `system_menu` VALUES (7, '用户管理', 'user', 2, 104, 2, '/system
 INSERT INTO `system_menu` VALUES (8, '新增', 'menu:add', 3, 0, 5, '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-13 03:32:06', 1, '2025-05-13 03:32:06', b'0');
 INSERT INTO `system_menu` VALUES (9, '编辑', 'menu:edit', 3, 1, 5, '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-13 03:32:52', 1, '2025-05-13 03:32:52', b'0');
 INSERT INTO `system_menu` VALUES (10, '部门管理', 'department', 2, 103, 2, '/system/department', 'department', 'pages/DepartmentManage', 'DepartmentManage', 0, b'1', b'1', b'1', 1, '2025-05-14 06:31:37', 1, '2025-05-14 13:56:37', b'0');
-INSERT INTO `system_menu` VALUES (11, '租户管理', 'tenant', 2, 101, 2, '/system/tenant', 'tenant', 'pages/TenantManage', 'TenantManage', 0, b'1', b'1', b'1', 1, '2025-05-14 06:41:40', 1, '2025-05-14 13:56:21', b'0');
+INSERT INTO `system_menu` VALUES (11, '租户管理', '', 1, 101, 2, '/system/tenant', 'tenant', '', '', 0, b'1', b'0', b'1', 1, '2025-05-14 06:41:40', 1, '2025-05-15 14:06:35', b'0');
 INSERT INTO `system_menu` VALUES (12, '角色管理', 'role', 2, 102, 2, '/system/role', 'role', 'pages/RoleManage', 'RoleManage', 0, b'1', b'1', b'1', 1, '2025-05-14 06:42:15', 1, '2025-05-14 13:56:30', b'0');
+INSERT INTO `system_menu` VALUES (13, '租户套餐', 'tenant:package', 2, 102, 11, '/system/tenant/package', 'tenant_package', 'pages/TenantPackageManage', 'TenantPackageManage', 0, b'1', b'1', b'1', 1, '2025-05-15 14:08:27', 1, '2025-05-15 14:08:27', b'0');
+INSERT INTO `system_menu` VALUES (14, '租户列表', 'tenant:list', 2, 103, 11, '/system/tenant/list', 'tenant_list', 'pages/TenantListManage', 'TenantListManage', 0, b'1', b'1', b'1', 1, '2025-05-15 14:09:52', 1, '2025-05-15 14:10:22', b'0');
 
 -- ----------------------------
 -- Table structure for system_notice
@@ -274,7 +276,7 @@ CREATE TABLE `system_role_menu`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 18 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '角色和菜单关联表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 20 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '角色和菜单关联表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of system_role_menu
@@ -296,6 +298,8 @@ INSERT INTO `system_role_menu` VALUES (14, 1, 8, 1, '2025-05-15 07:20:52', 1, '2
 INSERT INTO `system_role_menu` VALUES (15, 1, 7, 1, '2025-05-15 07:20:52', 1, '2025-05-15 07:20:52', b'0', 1);
 INSERT INTO `system_role_menu` VALUES (16, 1, 10, 1, '2025-05-15 07:20:52', 1, '2025-05-15 07:20:52', b'0', 1);
 INSERT INTO `system_role_menu` VALUES (17, 1, 9, 1, '2025-05-15 07:20:52', 1, '2025-05-15 07:20:52', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (18, 1, 13, 1, '2025-05-15 14:23:23', 1, '2025-05-15 14:23:23', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (19, 1, 14, 1, '2025-05-15 14:23:23', 1, '2025-05-15 14:23:23', b'0', 1);
 
 -- ----------------------------
 -- Table structure for system_role_menu_data_scope
