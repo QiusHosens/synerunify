@@ -92,7 +92,7 @@ export default function MenuManage() {
             <Button
               size="small"
               variant='customOperate'
-              title={t('page.dict.operate.edit')}
+              title={t('page.menu.operate.edit')}
               startIcon={<EditIcon />}
               onClick={() => handleClickOpenEdit(params.row)}
             />
@@ -100,7 +100,7 @@ export default function MenuManage() {
               sx={{ color: 'error.main' }}
               size="small"
               variant='customOperate'
-              title={t('page.dict.operate.delete')}
+              title={t('page.menu.operate.delete')}
               startIcon={<DeleteIcon />}
               onClick={() => handleClickOpenDelete(params.row)}
             />

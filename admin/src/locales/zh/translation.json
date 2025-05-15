@@ -83,6 +83,8 @@
   "page.menu.error.component": "请输入组件地址",
   "page.menu.error.component.name": "请输入组件名称",
   "page.menu.error.status": "请选择状态",
+  "page.menu.operate.edit": "编辑菜单",
+  "page.menu.operate.delete": "删除菜单",
 
   "page.role.title.name": "名称",
   "page.role.title.type": "类型",

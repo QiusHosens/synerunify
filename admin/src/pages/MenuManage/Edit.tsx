@@ -339,7 +339,7 @@ const MenuEdit = forwardRef(({ onSubmit }: MenuEditProps, ref) => {
           }}
         >
           <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiSelect-root': { width: '200px' } }}>
-            <DictSelect type='menu_type' value={type} onChange={handleTypeChange} label={t("page.menu.title.type")}></DictSelect>
+            <DictSelect dict_type='menu_type' value={type} onChange={handleTypeChange} label={t("page.menu.title.type")}></DictSelect>
           </FormControl>
           <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiSelect-root': { width: '200px' } }}>
             <SelectTree
