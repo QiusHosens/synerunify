@@ -2,9 +2,9 @@ use std::str::FromStr;
 
 use sea_orm::{DatabaseConnection, EntityTrait, ColumnTrait, ActiveModelTrait, PaginatorTrait, QueryOrder, QueryFilter, Condition};
 use crate::model::system_role::{Model as SystemRoleModel, ActiveModel as SystemRoleActiveModel, Entity as SystemRoleEntity, Column};
-use system_model::request::system_role::{CreateSystemRoleRequest, UpdateSystemRoleRequest, PaginatedKeywordRequest};
+use system_model::request::system_role::{CreateSystemRoleRequest, PaginatedKeywordRequest, UpdateSystemRoleRequest, UpdateSystemRoleRuleRequest};
 use system_model::response::system_role::SystemRoleResponse;
-use crate::convert::system_role::{create_request_to_model, update_request_to_model, model_to_response};
+use crate::convert::system_role::{create_request_to_model, model_to_response, update_request_to_model, update_rule_request_to_model};
 use anyhow::{Result, anyhow};
 use sea_orm::ActiveValue::Set;
 use common::base::page::PaginatedResponse;
@@ -29,6 +29,19 @@ pub async fn update(db: &DatabaseConnection, login_user: LoginUserContext, reque
     let mut system_role = update_request_to_model(&request, system_role);
     system_role.updater = Set(Some(login_user.id));
     system_role.update(db).await?;
+    Ok(())
+}
+
+pub async fn update_rule(db: &DatabaseConnection, login_user: LoginUserContext, request: UpdateSystemRoleRuleRequest) -> Result<()> {
+    let system_role = SystemRoleEntity::find_by_id(request.id)
+        .one(db)
+        .await?
+        .ok_or_else(|| anyhow!("记录未找到"))?;
+
+    let mut system_role = update_rule_request_to_model(&request, system_role);
+    system_role.updater = Set(Some(login_user.id));
+    system_role.update(db).await?;
+    // TODO 修改数据权限规则后需清除角色下用户token，使其重新登录
     Ok(())
 }
 

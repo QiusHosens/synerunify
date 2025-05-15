@@ -1,6 +1,6 @@
 use sea_orm::{Set, NotSet};
 use crate::model::system_role::{self, Model as SystemRole, ActiveModel as SystemRoleActiveModel};
-use system_model::request::system_role::{CreateSystemRoleRequest, UpdateSystemRoleRequest};
+use system_model::request::system_role::{CreateSystemRoleRequest, UpdateSystemRoleRequest, UpdateSystemRoleRuleRequest};
 use system_model::response::system_role::SystemRoleResponse;
 
 pub fn create_request_to_model(request: &CreateSystemRoleRequest) -> SystemRoleActiveModel {
@@ -42,6 +42,17 @@ pub fn update_request_to_model(request: &UpdateSystemRoleRequest, existing: Syst
     }
     if let Some(remark) = &request.remark { 
         active_model.remark = Set(Some(remark.clone()));
+    }
+    active_model
+}
+
+pub fn update_rule_request_to_model(request: &UpdateSystemRoleRuleRequest, existing: SystemRole) -> SystemRoleActiveModel {
+    let mut active_model: SystemRoleActiveModel = existing.into();
+    if let Some(data_scope_rule_id) = &request.data_scope_rule_id { 
+        active_model.data_scope_rule_id = Set(Some(data_scope_rule_id.clone()));
+    }
+    if let Some(data_scope_department_ids) = &request.data_scope_department_ids { 
+        active_model.data_scope_department_ids = Set(Some(data_scope_department_ids.clone()));
     }
     active_model
 }

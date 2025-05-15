@@ -128,7 +128,7 @@ const RoleMenuSetting = forwardRef(({ }, ref) => {
             width: 'fit-content',
           }}
         >
-          <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiSelect-root': { width: '200px' } }}>
+          <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiStack-root': { mt: 2, width: '200px' } }}>
             <Stack direction="row" spacing={2}>
               <Box>{t('global.page.role')}{t('page.role.title.name')}</Box>
               <Box>{role && role.name}</Box>
@@ -138,11 +138,11 @@ const RoleMenuSetting = forwardRef(({ }, ref) => {
               <Box>{role && role.code}</Box>
             </Stack>
           </FormControl>
-          <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiSelect-root': { width: '200px' } }}>
+          <FormControl sx={{ mt: 2, minWidth: 120 }}>
             <Stack direction="row" spacing={2}>
               <Box>{t('page.role.operate.menu')}</Box>
               <Box
-                // sx={{ p: 2, border: '1px solid rgba(0, 0, 0, 0.08)' }}
+              // sx={{ p: 2, border: '1px solid rgba(0, 0, 0, 0.08)' }}
               >
                 <RichTreeView
                   items={menuTreeData}

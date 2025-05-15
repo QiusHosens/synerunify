@@ -76,7 +76,10 @@ pub async fn get_paginated(db: &DatabaseConnection, login_user: LoginUserContext
 }
 
 pub async fn list(db: &DatabaseConnection, login_user: LoginUserContext) -> Result<Vec<SystemDataScopeRuleResponse>> {
-    let condition = Condition::all().add(Column::TenantId.eq(login_user.tenant_id));let list = SystemDataScopeRuleEntity::find_active_with_condition(condition)
+    let condition = Condition::any()
+        .add(Column::TenantId.eq(login_user.tenant_id))
+        .add(Column::Type.eq(0));
+    let list = SystemDataScopeRuleEntity::find_active_with_condition(condition)
         .all(db).await?;
     Ok(list.into_iter().map(model_to_response).collect())
 }

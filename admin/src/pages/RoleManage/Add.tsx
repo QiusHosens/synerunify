@@ -147,7 +147,7 @@ const RoleAdd = forwardRef(({ onSubmit }: RoleAddProps, ref) => {
   };
 
   const handleTypeChange = (e: SelectChangeEvent<string>) => {
-    console.log('target', e.target);
+    // console.log('target', e.target);
     const { name, value } = e.target;
     const numberValue = Number(value);
     setFormValues(prev => ({

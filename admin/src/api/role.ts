@@ -4,6 +4,7 @@ import { api } from '@/utils/request';
 const apis = {
   create: '/system_role/create', // 新增
   update: '/system_role/update', // 修改
+  update_rule: '/system_role/update_rule', // 修改数据权限规则
   delete: '/system_role/delete', // 删除
   get: '/system_role/get', // 单条查询
   list: '/system_role/list', // 列表查询
@@ -50,6 +51,12 @@ export interface SystemRoleMenuRequest {
   menu_id_list: number[]; // 菜单ID列表
 }
 
+export interface SystemRoleDataRuleRequest {
+  id: number; // id
+  data_scope_rule_id?: number; // 数据权限规则id
+  data_scope_department_ids?: string; // 数据范围(指定部门数组)
+}
+
 export interface SystemRoleQueryCondition extends PaginatedRequest {
 
 }
@@ -60,6 +67,10 @@ export const createSystemRole = (system_role: SystemRoleRequest): Promise<number
 
 export const updateSystemRole = (system_role: SystemRoleRequest): Promise<void> => {
   return api.post<void>(apis.update, system_role);
+}
+
+export const updateSystemRoleRule = (system_role: SystemRoleDataRuleRequest): Promise<void> => {
+  return api.post<void>(apis.update_rule, system_role);
 }
 
 export const deleteSystemRole = (id: number): Promise<void> => {

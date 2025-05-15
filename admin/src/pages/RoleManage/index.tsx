@@ -11,6 +11,7 @@ import RoleDelete from './Delete';
 import CustomizedDictTag from '@/components/CustomizedDictTag';
 import CustomizedMore from '@/components/CustomizedMore';
 import RoleMenuSetting from './MenuSetting';
+import RoleDataSetting from './DataSetting';
 
 export default function RoleManage() {
   const { t } = useTranslation();
@@ -28,6 +29,7 @@ export default function RoleManage() {
   const editRole = useRef(null);
   const deleteRole = useRef(null);
   const roleMenuSetting = useRef(null);
+  const roleDataSetting = useRef(null);
 
   const handleStatusChange = useCallback(
     async (e: React.ChangeEvent<HTMLInputElement>, checked: boolean, data: SystemRoleResponse) => {
@@ -151,7 +153,7 @@ export default function RoleManage() {
   };
 
   const handleClickOpenData = (role: SystemRoleResponse) => {
-    (deleteRole.current as any).show(role);
+    (roleDataSetting.current as any).show(role);
   };
 
   useEffect(() => {
@@ -199,6 +201,7 @@ export default function RoleManage() {
       <RoleEdit ref={editRole} onSubmit={refreshData} />
       <RoleDelete ref={deleteRole} onSubmit={refreshData} />
       <RoleMenuSetting ref={roleMenuSetting} />
+      <RoleDataSetting ref={roleDataSetting} onSubmit={refreshData} />
     </Box>
   );
 }

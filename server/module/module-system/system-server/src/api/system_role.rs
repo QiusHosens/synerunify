@@ -6,7 +6,7 @@ use ctor;
 use macros::require_authorize;
 use axum::{routing::{get, post}, Router, extract::{State, Path, Json, Query}, response::IntoResponse, Extension};
 use common::base::page::PaginatedResponse;
-use system_model::request::system_role::{CreateSystemRoleRequest, UpdateSystemRoleRequest, PaginatedKeywordRequest};
+use system_model::request::system_role::{CreateSystemRoleRequest, PaginatedKeywordRequest, UpdateSystemRoleRequest, UpdateSystemRoleRuleRequest};
 use system_model::response::system_role::SystemRoleResponse;
 use common::base::response::CommonResult;
 use common::context::context::LoginUserContext;
@@ -23,6 +23,7 @@ pub async fn system_role_router(state: AppState) -> OpenApiRouter {
         .routes(routes!(page))
         .routes(routes!(enable))
         .routes(routes!(disable))
+        .routes(routes!(update_rule))
         .with_state(state)
 }
 
@@ -82,6 +83,31 @@ async fn update(
     Json(payload): Json<UpdateSystemRoleRequest>,
 ) -> CommonResult<()> {
     match service::system_role::update(&state.db, login_user, payload).await {
+        Ok(_) => {CommonResult::with_none()}
+        Err(e) => {CommonResult::with_err(&e.to_string())}
+    }
+}
+
+#[utoipa::path(
+    post,
+    path = "/update_rule",
+    operation_id = "system_role_update_rule",
+    request_body(content = UpdateSystemRoleRequest, description = "update rule", content_type = "application/json"),
+    responses(
+        (status = 204, description = "update rule")
+    ),
+    tag = "system_role",
+    security(
+        ("bearerAuth" = [])
+    )
+)]
+#[require_authorize(operation_id = "system_role_update_rule", authorize = "")]
+async fn update_rule(
+    State(state): State<AppState>,
+    Extension(login_user): Extension<LoginUserContext>,
+    Json(payload): Json<UpdateSystemRoleRuleRequest>,
+) -> CommonResult<()> {
+    match service::system_role::update_rule(&state.db, login_user, payload).await {
         Ok(_) => {CommonResult::with_none()}
         Err(e) => {CommonResult::with_err(&e.to_string())}
     }

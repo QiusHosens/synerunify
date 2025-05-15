@@ -48,6 +48,17 @@ pub struct UpdateSystemRoleRequest {
 }
 
 #[derive(Serialize, Deserialize, Debug, ToSchema)]
+pub struct UpdateSystemRoleRuleRequest {
+    
+    pub id: i64, // id
+    
+    pub data_scope_rule_id: Option<i64>, // 数据权限规则id
+    
+    pub data_scope_department_ids: Option<String>, // 数据范围(指定部门数组)
+    
+}
+
+#[derive(Serialize, Deserialize, Debug, ToSchema)]
 pub struct PaginatedKeywordRequest {
     #[serde(flatten)]
     pub base: PaginatedRequest,
