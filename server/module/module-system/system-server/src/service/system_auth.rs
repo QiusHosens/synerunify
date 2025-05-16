@@ -47,8 +47,8 @@ pub async fn login(db: &DatabaseConnection, request_context: RequestContext, req
 
     // 比较密码
     let is_match = match verify_password(request.password, user.clone().password) {
-        Ok(isMatch) => {
-            isMatch
+        Ok(is_match) => {
+            is_match
         }
         Err(_) => {
             return Err(anyhow!("账号或密码不正确"));
