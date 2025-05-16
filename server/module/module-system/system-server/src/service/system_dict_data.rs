@@ -1,5 +1,6 @@
 use std::str::FromStr;
 
+use common::constants::enum_constants::{STATUS_DISABLE, STATUS_ENABLE};
 use sea_orm::{ActiveModelTrait, ColumnTrait, Condition, DatabaseConnection, EntityTrait, JoinType, PaginatorTrait, QueryFilter, QueryOrder, QuerySelect, RelationTrait};
 use system_model::response::system_dict_type::SystemDictTypeResponse;
 use crate::model::system_dict_data::{Model as SystemDictDataModel, ActiveModel as SystemDictDataActiveModel, Entity as SystemDictDataEntity, Column, Relation};
@@ -146,7 +147,7 @@ pub async fn enable(db: &DatabaseConnection, login_user: LoginUserContext, id: i
     let system_dict_data = SystemDictDataActiveModel {
         id: Set(id),
         updater: Set(Some(login_user.id)),
-        status: Set(0),
+        status: Set(STATUS_ENABLE),
         ..Default::default()
     };
     system_dict_data.update(db).await?;
@@ -157,7 +158,7 @@ pub async fn disable(db: &DatabaseConnection, login_user: LoginUserContext, id: 
     let system_dict_data = SystemDictDataActiveModel {
         id: Set(id),
         updater: Set(Some(login_user.id)),
-        status: Set(1),
+        status: Set(STATUS_DISABLE),
         ..Default::default()
     };
     system_dict_data.update(db).await?;

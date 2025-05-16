@@ -6,7 +6,6 @@ use system_model::response::system_tenant::SystemTenantResponse;
 pub fn create_request_to_model(request: &CreateSystemTenantRequest) -> SystemTenantActiveModel {
     SystemTenantActiveModel {
         name: Set(request.name.clone()),
-        contact_user_id: request.contact_user_id.as_ref().map_or(NotSet, |contact_user_id| Set(Some(contact_user_id.clone()))),
         contact_name: Set(request.contact_name.clone()),
         contact_mobile: request.contact_mobile.as_ref().map_or(NotSet, |contact_mobile| Set(Some(contact_mobile.clone()))),
         status: Set(request.status.clone()),
@@ -22,9 +21,6 @@ pub fn update_request_to_model(request: &UpdateSystemTenantRequest, existing: Sy
     let mut active_model: SystemTenantActiveModel = existing.into();
     if let Some(name) = &request.name { 
         active_model.name = Set(name.clone());
-    }
-    if let Some(contact_user_id) = &request.contact_user_id { 
-        active_model.contact_user_id = Set(Some(contact_user_id.clone()));
     }
     if let Some(contact_name) = &request.contact_name { 
         active_model.contact_name = Set(contact_name.clone());

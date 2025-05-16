@@ -8,8 +8,6 @@ pub struct CreateSystemTenantRequest {
     
     pub name: String, // 租户名
     
-    pub contact_user_id: Option<i64>, // 联系人的用户编号
-    
     pub contact_name: String, // 联系人
     
     pub contact_mobile: Option<String>, // 联系手机
@@ -35,8 +33,6 @@ pub struct UpdateSystemTenantRequest {
     pub id: i64, // id
     
     pub name: Option<String>, // 租户名
-    
-    pub contact_user_id: Option<i64>, // 联系人的用户编号
     
     pub contact_name: Option<String>, // 联系人
     

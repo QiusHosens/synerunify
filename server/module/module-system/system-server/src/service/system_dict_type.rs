@@ -1,4 +1,4 @@
-use common::constants::common_status::STATUS_ENABLE;
+use common::constants::enum_constants::STATUS_ENABLE;
 use sea_orm::{DatabaseConnection, EntityTrait, ColumnTrait, ActiveModelTrait, PaginatorTrait, QueryOrder, QueryFilter, Condition};
 use crate::model::system_dict_type::{Model as SystemDictTypeModel, ActiveModel as SystemDictTypeActiveModel, Entity as SystemDictTypeEntity, Column};
 use system_model::request::system_dict_type::{CreateSystemDictTypeRequest, UpdateSystemDictTypeRequest, PaginatedKeywordRequest};

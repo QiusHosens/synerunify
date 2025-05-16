@@ -1,5 +1,6 @@
 use std::str::FromStr;
 
+use common::constants::enum_constants::{STATUS_DISABLE, STATUS_ENABLE};
 use sea_orm::{DatabaseConnection, EntityTrait, ColumnTrait, ActiveModelTrait, PaginatorTrait, QueryOrder, QueryFilter, Condition};
 use crate::model::system_tenant_package::{Model as SystemTenantPackageModel, ActiveModel as SystemTenantPackageActiveModel, Entity as SystemTenantPackageEntity, Column};
 use system_model::request::system_tenant_package::{CreateSystemTenantPackageRequest, PaginatedKeywordRequest, UpdateSystemTenantPackageMenuRequest, UpdateSystemTenantPackageRequest};
@@ -125,7 +126,7 @@ pub async fn enable(db: &DatabaseConnection, login_user: LoginUserContext, id: i
     let system_tenant_package = SystemTenantPackageActiveModel {
         id: Set(id),
         updater: Set(Some(login_user.id)),
-        status: Set(0),
+        status: Set(STATUS_ENABLE),
         ..Default::default()
     };
     system_tenant_package.update(db).await?;
@@ -136,7 +137,7 @@ pub async fn disable(db: &DatabaseConnection, login_user: LoginUserContext, id: 
     let system_tenant_package = SystemTenantPackageActiveModel {
         id: Set(id),
         updater: Set(Some(login_user.id)),
-        status: Set(1),
+        status: Set(STATUS_DISABLE),
         ..Default::default()
     };
     system_tenant_package.update(db).await?;

@@ -1,3 +1,4 @@
+use common::constants::enum_constants::{STATUS_DISABLE, STATUS_ENABLE};
 use sea_orm::{DatabaseConnection, EntityTrait, ColumnTrait, ActiveModelTrait, PaginatorTrait, QueryOrder, QueryFilter, Condition, QuerySelect};
 use crate::model::system_menu::{Model as SystemMenuModel, ActiveModel as SystemMenuActiveModel, Entity as SystemMenuEntity, Column};
 use system_model::request::system_menu::{CreateSystemMenuRequest, UpdateSystemMenuRequest, PaginatedKeywordRequest};
@@ -84,7 +85,7 @@ pub async fn enable(db: &DatabaseConnection, login_user: LoginUserContext, id: i
     let system_menu = SystemMenuActiveModel {
         id: Set(id),
         updater: Set(Some(login_user.id)),
-        status: Set(0),
+        status: Set(STATUS_ENABLE),
         ..Default::default()
     };
     system_menu.update(db).await?;
@@ -95,7 +96,7 @@ pub async fn disable(db: &DatabaseConnection, login_user: LoginUserContext, id: 
     let system_menu = SystemMenuActiveModel {
         id: Set(id),
         updater: Set(Some(login_user.id)),
-        status: Set(1),
+        status: Set(STATUS_DISABLE),
         ..Default::default()
     };
     system_menu.update(db).await?;
