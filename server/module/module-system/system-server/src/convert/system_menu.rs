@@ -93,6 +93,7 @@ pub fn model_to_home_response(model: SystemMenu) -> HomeMenuResponse {
     HomeMenuResponse {
         id: model.id,
         name: model.name,
+        permission: model.permission,
         r#type: model.r#type,
         sort: model.sort,
         parent_id: model.parent_id,

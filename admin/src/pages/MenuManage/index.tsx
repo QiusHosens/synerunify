@@ -11,9 +11,11 @@ import { getParentNodeLists, Node } from '@/utils/treeUtils';
 import MenuEdit from './Edit';
 import MenuDelete from './Delete';
 import CustomizedDictTag from '@/components/CustomizedDictTag';
+import { useHomeStore } from '@/store';
 
 export default function MenuManage() {
   const { t } = useTranslation();
+  const { hasOperatePermission } = useHomeStore();
 
   const [records, setRecords] = useState<Array<SystemMenuResponse>>([]);
 
@@ -89,21 +91,21 @@ export default function MenuManage() {
         minWidth: 100,
         renderCell: (params: GridRenderCellParams) => (
           <Box sx={{ height: '100%', display: 'flex', gap: 1, alignItems: 'center' }}>
-            <Button
+            {hasOperatePermission('config:menu:edit') && <Button
               size="small"
               variant='customOperate'
               title={t('page.menu.operate.edit')}
               startIcon={<EditIcon />}
               onClick={() => handleClickOpenEdit(params.row)}
-            />
-            <Button
+            />}
+            {hasOperatePermission('config:menu:delete') && <Button
               sx={{ color: 'error.main' }}
               size="small"
               variant='customOperate'
               title={t('page.menu.operate.delete')}
               startIcon={<DeleteIcon />}
               onClick={() => handleClickOpenDelete(params.row)}
-            />
+            />}
           </Box>
         ),
       },
@@ -160,9 +162,9 @@ export default function MenuManage() {
     <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
       <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between' }}>
         <Box></Box>
-        <Button variant="customContained" onClick={handleClickOpenAdd}>
+        {hasOperatePermission('config:menu:add') && <Button variant="customContained" onClick={handleClickOpenAdd}>
           {t('global.operate.add')}
-        </Button>
+        </Button>}
       </Box>
       <CustomizedDataGridPro
         columns={columns}

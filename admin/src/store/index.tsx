@@ -124,7 +124,7 @@ export const useHomeStore = create<HomeState>((set) => ({
   setOperates: (operates) => set({ operates }),
   hasOperatePermission: (operateCode): boolean => {
     const { operates } = useHomeStore.getState();
-    return operates.map(item => item.permission).some(op => op.code === operateCode);
+    return operates.some(op => op.permission === operateCode);
   },
   fetchAndSetHome: async (token) => {
     const logout = () => {

@@ -58,6 +58,8 @@ pub struct HomeMenuResponse {
 
     pub name: String, // 菜单名称
 
+    pub permission: String, // 权限标识
+
     pub r#type: i8, // 菜单类型
 
     pub sort: i32, // 显示顺序

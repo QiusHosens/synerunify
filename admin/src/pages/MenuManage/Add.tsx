@@ -173,6 +173,24 @@ const MenuAdd = forwardRef(({ onSubmit }: MenuAddProps, ref) => {
     setErrors({});
   }
 
+  const resetInput = () => {
+    setFormValues(prev => ({
+      ...prev,
+      name: '',
+      permission: '',
+      sort: prev.sort + 1,
+      path: '',
+      icon: '',
+      component: '',
+      component_name: '',
+      status: 0,
+      visible: true,
+      keep_alive: true,
+      always_show: true,
+    }));
+    setErrors({});
+  }
+
   const initMenus = async () => {
     const result = await listMenu();
     const tree = buildMenuTree(result);
@@ -222,9 +240,9 @@ const MenuAdd = forwardRef(({ onSubmit }: MenuAddProps, ref) => {
 
   const handleSubmitAndContinue = async () => {
     if (validateForm()) {
-      console.log('formValues', formValues);
+      // console.log('formValues', formValues);
       await createMenu(formValues as SystemMenuRequest);
-      reset();
+      // resetInput();
       onSubmit();
     }
   };

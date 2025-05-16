@@ -123,7 +123,7 @@ const DictAdd = forwardRef(({ onSubmit }: DictAddProps, ref) => {
   const handleSubmitAndContinue = async () => {
     if (validateForm()) {
       await createDict(formValues as SystemDictDataRequest);
-      reset();
+      // reset();
       onSubmit();
     }
   };

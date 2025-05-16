@@ -28,6 +28,7 @@ export const login = (data: LoginRequest): Promise<TokenResponse> => {
 export interface HomeMenuResponse {
   id: number; // id
   name: string; // 菜单名称
+  permission: string; // 权限标识
   type: number; // 菜单类型,1:目录;2:菜单;3:操作
   sort: number; // 显示顺序
   parent_id: number; // 父菜单ID
