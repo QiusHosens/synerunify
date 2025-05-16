@@ -1,4 +1,5 @@
-use sea_orm::{DatabaseConnection, EntityTrait, ColumnTrait, ActiveModelTrait, PaginatorTrait, QueryOrder, QueryFilter, Condition};
+use common::constants::enum_constants::STATUS_ENABLE;
+use sea_orm::{ActiveModelTrait, ColumnTrait, Condition, DatabaseConnection, DatabaseTransaction, EntityTrait, PaginatorTrait, QueryFilter, QueryOrder};
 use crate::model::system_user::{Model as SystemUserModel, ActiveModel as SystemUserActiveModel, Entity as SystemUserEntity, Column};
 use system_model::request::system_user::{CreateSystemUserRequest, UpdateSystemUserRequest, PaginatedKeywordRequest};
 use system_model::response::system_user::SystemUserResponse;
@@ -16,6 +17,25 @@ pub async fn create(db: &DatabaseConnection, login_user: LoginUserContext, reque
     system_user.updater = Set(Some(login_user.id));
     system_user.tenant_id = Set(login_user.tenant_id);
     let system_user = system_user.insert(db).await?;
+    Ok(system_user.id)
+}
+
+// 创建租户管理员
+pub async fn create_tenant_admin(txn: &DatabaseTransaction, login_user: LoginUserContext, username: String, password: String, nickname: String, mobile: Option<String>, department_code: String, department_id: i64, tenant_id: i64) -> Result<i64> {
+    let system_user = SystemUserActiveModel {
+        username: Set(username),
+        password: Set(password),
+        nickname: Set(nickname),
+        mobile: Set(mobile),
+        status: Set(STATUS_ENABLE),
+        department_code: Set(department_code),
+        department_id: Set(department_id),
+        creator: Set(Some(login_user.id)),
+        updater: Set(Some(login_user.id)),
+        tenant_id: Set(tenant_id),
+        ..Default::default()
+    };
+    let system_user = system_user.insert(txn).await?;
     Ok(system_user.id)
 }
 

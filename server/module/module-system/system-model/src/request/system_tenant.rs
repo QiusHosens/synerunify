@@ -11,6 +11,12 @@ pub struct CreateSystemTenantRequest {
     pub contact_name: String, // 联系人
     
     pub contact_mobile: Option<String>, // 联系手机
+
+    pub username: String, // 租户管理员用户账号
+    
+    pub password: String, // 租户管理员密码
+    
+    pub nickname: String, // 租户管理员用户昵称
     
     pub status: i8, // 租户状态（0正常 1停用）
     

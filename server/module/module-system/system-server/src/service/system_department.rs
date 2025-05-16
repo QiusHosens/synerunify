@@ -1,4 +1,6 @@
-use sea_orm::{DatabaseConnection, EntityTrait, ColumnTrait, ActiveModelTrait, PaginatorTrait, QueryOrder, QueryFilter, Condition};
+use common::constants::enum_constants::{DEPARTMENT_ROOT_ID, DEPARTMENT_ROOT_CODE, STATUS_ENABLE};
+use common::utils::string_utils::get_next_code;
+use sea_orm::{ActiveModelTrait, ColumnTrait, Condition, DatabaseConnection, DatabaseTransaction, EntityTrait, PaginatorTrait, QueryFilter, QueryOrder, QuerySelect};
 use crate::model::system_department::{Model as SystemDepartmentModel, ActiveModel as SystemDepartmentActiveModel, Entity as SystemDepartmentEntity, Column};
 use system_model::request::system_department::{CreateSystemDepartmentRequest, UpdateSystemDepartmentRequest, PaginatedKeywordRequest};
 use system_model::response::system_department::SystemDepartmentResponse;
@@ -16,6 +18,34 @@ pub async fn create(db: &DatabaseConnection, login_user: LoginUserContext, reque
     system_department.tenant_id = Set(login_user.tenant_id);
     let system_department = system_department.insert(db).await?;
     Ok(system_department.id)
+}
+
+/// 创建租户根部门
+pub async fn create_tenant_root(db: &DatabaseConnection, txn: &DatabaseTransaction, login_user: LoginUserContext, name: String, tenant_id: i64) -> Result<SystemDepartmentModel> {
+    // 查询code
+    let max_code: Option<String> = SystemDepartmentEntity::find()
+        .select_only()
+        .column(Column::Code)
+        .filter(Column::ParentId.eq(DEPARTMENT_ROOT_ID))
+        .order_by_desc(Column::Id)
+        .limit(1)
+        .one(db)
+        .await?
+        .map(|x| x.code);
+    let code = get_next_code(DEPARTMENT_ROOT_CODE.to_string(), max_code);
+    let system_department = SystemDepartmentActiveModel {
+        code: Set(code),
+        name: Set(name),
+        parent_id: Set(DEPARTMENT_ROOT_ID),
+        sort: Set(0),
+        status: Set(STATUS_ENABLE),
+        creator: Set(Some(login_user.id)),
+        updater: Set(Some(login_user.id)),
+        tenant_id: Set(tenant_id),
+        ..Default::default()
+    };
+    let system_department = system_department.insert(txn).await?;
+    Ok(system_department)
 }
 
 pub async fn update(db: &DatabaseConnection, login_user: LoginUserContext, request: UpdateSystemDepartmentRequest) -> Result<()> {

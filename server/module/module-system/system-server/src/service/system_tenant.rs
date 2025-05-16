@@ -1,4 +1,6 @@
-use sea_orm::{DatabaseConnection, EntityTrait, ColumnTrait, ActiveModelTrait, PaginatorTrait, QueryOrder, QueryFilter, Condition};
+use common::constants::enum_constants::STATUS_ENABLE;
+use sea_orm::{ActiveModelTrait, ColumnTrait, Condition, DatabaseConnection, EntityTrait, PaginatorTrait, QueryFilter, QueryOrder, QuerySelect, TransactionTrait};
+use system_model::request::system_user::CreateSystemUserRequest;
 use crate::model::system_tenant::{Model as SystemTenantModel, ActiveModel as SystemTenantActiveModel, Entity as SystemTenantEntity, Column};
 use system_model::request::system_tenant::{CreateSystemTenantRequest, UpdateSystemTenantRequest, PaginatedKeywordRequest};
 use system_model::response::system_tenant::SystemTenantResponse;
@@ -9,12 +11,41 @@ use common::base::page::PaginatedResponse;
 use common::context::context::LoginUserContext;
 use common::interceptor::orm::active_filter::ActiveFilterEntityTrait;
 
+use super::system_department::create_tenant_root;
+use super::system_user::create_tenant_admin;
+
 pub async fn create(db: &DatabaseConnection, login_user: LoginUserContext, request: CreateSystemTenantRequest) -> Result<i64> {
+    // 获取租户id
+    let max_tenant_id: Option<i64> = SystemTenantEntity::find()
+        .select_only()
+        .column(Column::Id)
+        .order_by_desc(Column::Id)
+        .limit(1)
+        .one(db)
+        .await?
+        .map(|x| x.id);
+    
+    let new_tenant_id = max_tenant_id.unwrap_or(0) + 1;
+
+    // 开启事务
+    let txn = db.begin().await?;
+    // 创建租户根部门
+    let department = create_tenant_root(&db, &txn, login_user.clone(), request.name.clone(), new_tenant_id).await?;
+    // 创建租户管理员用户
+    let user_id = create_tenant_admin(&txn, login_user.clone(), request.username.clone(), request.password.clone(), 
+        request.nickname.clone(), request.contact_mobile.clone(), department.code.clone(), department.id.clone(), new_tenant_id).await?;
+    // 创建租户
     let mut system_tenant = create_request_to_model(&request);
+    system_tenant.id = Set(new_tenant_id);
+    system_tenant.contact_user_id = Set(Some(user_id));
     system_tenant.creator = Set(Some(login_user.id));
     system_tenant.updater = Set(Some(login_user.id));
     
-    let system_tenant = system_tenant.insert(db).await?;
+    let system_tenant = system_tenant.insert(&txn).await?;
+
+    // 提交事务
+    txn.commit().await?;
+    
     Ok(system_tenant.id)
 }
 
