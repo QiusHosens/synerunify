@@ -1,17 +1,17 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : 192.168.1.18_ruoyi
+ Source Server         : 192.168.0.99_synerunify
  Source Server Type    : MySQL
- Source Server Version : 80200 (8.2.0)
- Source Host           : 192.168.1.18:30010
+ Source Server Version : 80100 (8.1.0)
+ Source Host           : 192.168.0.99:30010
  Source Schema         : synerunify
 
  Target Server Type    : MySQL
- Target Server Version : 80200 (8.2.0)
+ Target Server Version : 80100 (8.1.0)
  File Encoding         : 65001
 
- Date: 15/05/2025 22:46:40
+ Date: 16/05/2025 10:52:04
 */
 
 SET NAMES utf8mb4;
@@ -163,7 +163,7 @@ CREATE TABLE `system_menu`  (
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 15 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '菜单权限表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 21 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '菜单权限表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of system_menu
@@ -171,17 +171,23 @@ CREATE TABLE `system_menu`  (
 INSERT INTO `system_menu` VALUES (1, 'Dashboard', '', 2, 50, 0, '/dashboard', '#', 'pages/Dashboard', 'Dashboard', 0, b'1', b'1', b'1', 1, '2025-03-25 03:07:08', 1, '2025-05-12 06:46:02', b'0');
 INSERT INTO `system_menu` VALUES (2, '系统管理', '', 1, 100, 0, '/system', '#', NULL, NULL, 0, b'1', b'1', b'1', 1, '2025-03-25 03:07:08', 1, '2025-05-14 02:59:07', b'0');
 INSERT INTO `system_menu` VALUES (3, '配置管理', '', 1, 200, 0, '/config', '#', NULL, NULL, 0, b'1', b'1', b'1', 1, '2025-03-25 03:07:08', 1, '2025-05-12 06:46:11', b'0');
-INSERT INTO `system_menu` VALUES (4, '字典管理', 'dict', 2, 201, 3, '/config/dict', '#', 'pages/DictManage', 'DictManage', 0, b'1', b'1', b'1', 1, '2025-03-25 03:07:08', 1, '2025-05-12 06:55:55', b'0');
-INSERT INTO `system_menu` VALUES (5, '菜单管理', 'menu', 2, 202, 3, '/config/menu', '#', 'pages/MenuManage', 'MenuManage', 0, b'1', b'1', b'1', 1, '2025-03-25 03:07:08', 1, '2025-05-14 02:31:13', b'0');
+INSERT INTO `system_menu` VALUES (4, '字典管理', 'dict', 2, 201, 3, '/config/dict', '#', 'pages/config/DictManage', 'DictManage', 0, b'1', b'1', b'1', 1, '2025-03-25 03:07:08', 1, '2025-05-16 02:49:15', b'0');
+INSERT INTO `system_menu` VALUES (5, '菜单管理', 'menu', 2, 202, 3, '/config/menu', '#', 'pages/config/MenuManage', 'MenuManage', 0, b'1', b'1', b'1', 1, '2025-03-25 03:07:08', 1, '2025-05-16 02:49:22', b'0');
 INSERT INTO `system_menu` VALUES (6, '支付管理', '', 1, 400, 0, '/pay', 'pay', '', '', 0, b'1', b'1', b'1', 1, '2025-05-12 00:53:57', 1, '2025-05-12 08:41:17', b'1');
-INSERT INTO `system_menu` VALUES (7, '用户管理', 'user', 2, 104, 2, '/system/user', 'user', 'pages/UserManage', 'UserManage', 0, b'1', b'1', b'1', 1, '2025-05-12 00:54:51', 1, '2025-05-14 13:56:42', b'0');
-INSERT INTO `system_menu` VALUES (8, '新增', 'menu:add', 3, 0, 5, '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-13 03:32:06', 1, '2025-05-13 03:32:06', b'0');
-INSERT INTO `system_menu` VALUES (9, '编辑', 'menu:edit', 3, 1, 5, '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-13 03:32:52', 1, '2025-05-13 03:32:52', b'0');
-INSERT INTO `system_menu` VALUES (10, '部门管理', 'department', 2, 103, 2, '/system/department', 'department', 'pages/DepartmentManage', 'DepartmentManage', 0, b'1', b'1', b'1', 1, '2025-05-14 06:31:37', 1, '2025-05-14 13:56:37', b'0');
+INSERT INTO `system_menu` VALUES (7, '用户管理', 'user', 2, 104, 2, '/system/user', 'user', 'pages/system/UserManage', 'UserManage', 0, b'1', b'1', b'1', 1, '2025-05-12 00:54:51', 1, '2025-05-16 02:49:56', b'0');
+INSERT INTO `system_menu` VALUES (8, '新增', 'config:menu:add', 3, 0, 5, '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-13 03:32:06', 1, '2025-05-16 01:03:37', b'0');
+INSERT INTO `system_menu` VALUES (9, '编辑', 'config:menu:edit', 3, 1, 5, '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-13 03:32:52', 1, '2025-05-16 01:03:41', b'0');
+INSERT INTO `system_menu` VALUES (10, '部门管理', 'department', 2, 103, 2, '/system/department', 'department', 'pages/system/DepartmentManage', 'DepartmentManage', 0, b'1', b'1', b'1', 1, '2025-05-14 06:31:37', 1, '2025-05-16 02:49:42', b'0');
 INSERT INTO `system_menu` VALUES (11, '租户管理', '', 1, 101, 2, '/system/tenant', 'tenant', '', '', 0, b'1', b'0', b'1', 1, '2025-05-14 06:41:40', 1, '2025-05-15 14:06:35', b'0');
-INSERT INTO `system_menu` VALUES (12, '角色管理', 'role', 2, 102, 2, '/system/role', 'role', 'pages/RoleManage', 'RoleManage', 0, b'1', b'1', b'1', 1, '2025-05-14 06:42:15', 1, '2025-05-14 13:56:30', b'0');
-INSERT INTO `system_menu` VALUES (13, '租户套餐', 'tenant:package', 2, 102, 11, '/system/tenant/package', 'tenant_package', 'pages/TenantPackageManage', 'TenantPackageManage', 0, b'1', b'1', b'1', 1, '2025-05-15 14:08:27', 1, '2025-05-15 14:08:27', b'0');
-INSERT INTO `system_menu` VALUES (14, '租户列表', 'tenant:list', 2, 103, 11, '/system/tenant/list', 'tenant_list', 'pages/TenantListManage', 'TenantListManage', 0, b'1', b'1', b'1', 1, '2025-05-15 14:09:52', 1, '2025-05-15 14:10:22', b'0');
+INSERT INTO `system_menu` VALUES (12, '角色管理', 'role', 2, 102, 2, '/system/role', 'role', 'pages/system/RoleManage', 'RoleManage', 0, b'1', b'1', b'1', 1, '2025-05-14 06:42:15', 1, '2025-05-16 02:49:50', b'0');
+INSERT INTO `system_menu` VALUES (13, '租户套餐', 'tenant:package', 2, 102, 11, '/system/tenant/package', 'tenant_package', 'pages/system/tenant/TenantPackageManage', 'TenantPackageManage', 0, b'1', b'1', b'1', 1, '2025-05-15 14:08:27', 1, '2025-05-16 02:50:18', b'0');
+INSERT INTO `system_menu` VALUES (14, '租户列表', 'tenant:list', 2, 103, 11, '/system/tenant/list', 'tenant_list', 'pages/system/tenant/TenantListManage', 'TenantListManage', 0, b'1', b'1', b'1', 1, '2025-05-15 14:09:52', 1, '2025-05-16 02:50:24', b'0');
+INSERT INTO `system_menu` VALUES (15, '删除', 'config:menu:delete', 3, 2, 5, '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-16 01:04:50', 1, '2025-05-16 01:04:50', b'0');
+INSERT INTO `system_menu` VALUES (16, '新增字典类型', 'config:dict:type:add', 3, 0, 4, '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-16 01:20:14', 1, '2025-05-16 01:25:34', b'0');
+INSERT INTO `system_menu` VALUES (17, '新增字典', 'config:dict:add', 3, 1, 4, '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-16 01:24:22', 1, '2025-05-16 01:24:22', b'0');
+INSERT INTO `system_menu` VALUES (18, '修改字典类型', 'config:dict:type:edit', 3, 2, 4, '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-16 01:26:12', 1, '2025-05-16 01:26:12', b'0');
+INSERT INTO `system_menu` VALUES (19, '修改字典', 'config:dict:edit', 3, 2, 4, '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-16 01:26:23', 1, '2025-05-16 01:26:23', b'0');
+INSERT INTO `system_menu` VALUES (20, '删除字典', 'config:dict:delete', 3, 3, 4, '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-16 01:26:42', 1, '2025-05-16 01:26:42', b'0');
 
 -- ----------------------------
 -- Table structure for system_notice
@@ -276,7 +282,7 @@ CREATE TABLE `system_role_menu`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 20 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '角色和菜单关联表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 26 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '角色和菜单关联表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of system_role_menu
@@ -300,6 +306,12 @@ INSERT INTO `system_role_menu` VALUES (16, 1, 10, 1, '2025-05-15 07:20:52', 1, '
 INSERT INTO `system_role_menu` VALUES (17, 1, 9, 1, '2025-05-15 07:20:52', 1, '2025-05-15 07:20:52', b'0', 1);
 INSERT INTO `system_role_menu` VALUES (18, 1, 13, 1, '2025-05-15 14:23:23', 1, '2025-05-15 14:23:23', b'0', 1);
 INSERT INTO `system_role_menu` VALUES (19, 1, 14, 1, '2025-05-15 14:23:23', 1, '2025-05-15 14:23:23', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (20, 1, 20, 1, '2025-05-16 01:28:04', 1, '2025-05-16 01:28:04', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (21, 1, 16, 1, '2025-05-16 01:28:04', 1, '2025-05-16 01:28:04', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (22, 1, 17, 1, '2025-05-16 01:28:04', 1, '2025-05-16 01:28:04', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (23, 1, 19, 1, '2025-05-16 01:28:04', 1, '2025-05-16 01:28:04', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (24, 1, 15, 1, '2025-05-16 01:28:04', 1, '2025-05-16 01:28:04', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (25, 1, 18, 1, '2025-05-16 01:28:04', 1, '2025-05-16 01:28:04', b'0', 1);
 
 -- ----------------------------
 -- Table structure for system_role_menu_data_scope

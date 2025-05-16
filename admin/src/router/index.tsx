@@ -11,11 +11,12 @@ import LoginLayout from '@/layout/LoginLayout';
 // 动态组件映射
 const componentMap: { [key: string]: React.LazyExoticComponent<React.ComponentType<Element>> } = {
   'pages/Dashboard': lazy(() => import('@/pages/Dashboard')),
-  'pages/MenuManage': lazy(() => import('@/pages/config/MenuManage')),
-  'pages/DictManage': lazy(() => import('@/pages/config/DictManage')),
-  'pages/DepartmentManage': lazy(() => import('@/pages/system/DepartmentManage')),
-  'pages/TenantManage': lazy(() => import('@/pages/system/TenantManage')),
-  'pages/RoleManage': lazy(() => import('@/pages/system/RoleManage')),
+  'pages/config/MenuManage': lazy(() => import('@/pages/config/MenuManage')),
+  'pages/config/DictManage': lazy(() => import('@/pages/config/DictManage')),
+  'pages/system/DepartmentManage': lazy(() => import('@/pages/system/DepartmentManage')),
+  'pages/system/tenant/TenantPackageManage': lazy(() => import('@/pages/system/tenant/TenantPackageManage')),
+  'pages/system/tenant/TenantListManage': lazy(() => import('@/pages/system/tenant/TenantListManage')),
+  'pages/system/RoleManage': lazy(() => import('@/pages/system/RoleManage')),
 };
 
 export default function Router() {

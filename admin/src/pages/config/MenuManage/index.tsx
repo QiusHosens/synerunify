@@ -63,7 +63,19 @@ export default function MenuManage() {
         )
       },
       { field: 'permission', headerName: t("page.menu.title.permission"), flex: 1, minWidth: 120 },
-      { field: 'path', headerName: t("page.menu.title.path"), flex: 1, minWidth: 150 },
+      {
+        field: 'path',
+        headerName: t("page.menu.title.path"),
+        flex: 1,
+        minWidth: 150,
+        renderCell: (params: GridRenderCellParams) => (
+          <>
+            {params.row.path}
+          </>
+        )
+      },
+      { field: 'component', headerName: t("page.menu.title.component"), flex: 1, minWidth: 200 },
+      { field: 'component_name', headerName: t("page.menu.title.component.name"), flex: 1, minWidth: 150 },
       {
         field: 'sort',
         headerName: t("page.menu.title.sort"),
