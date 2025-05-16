@@ -182,12 +182,10 @@ const DictAdd = forwardRef(({ onSubmit }: DictAddProps, ref) => {
               labelId="dict-type-select-label"
               name="dict_type"
               value={formValues.dict_type}
-              onChange={handleInputChange}
+              onChange={(e) => handleInputChange(e as any)}
               // value={type}
               // onChange={handleTypeChange}
               label={t("page.menu.title.type")}
-              error={!!errors.dict_type}
-              helperText={errors.dict_type}
             >
               {types.map(item => (<MenuItem key={item.type} value={item.type}>{item.name}</MenuItem>))}
             </Select>
