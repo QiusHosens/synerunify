@@ -4,32 +4,31 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { DataGrid, GridCallbackDetails, GridColDef, GridRenderCellParams, GridSortModel } from '@mui/x-data-grid';
 import EditIcon from '@/assets/image/svg/edit.svg';
 import DeleteIcon from '@/assets/image/svg/delete.svg';
-import { disableSystemRole, enableSystemRole, pageSystemRole, SystemRoleQueryCondition, SystemRoleResponse } from '@/api/role';
-import RoleAdd from './Add';
-import RoleEdit from './Edit';
-import RoleDelete from './Delete';
+import { disableSystemTenant, enableSystemTenant, pageSystemTenant, SystemTenantQueryCondition, SystemTenantResponse } from '@/api';
+import TenantAdd from './Add';
+import TenantEdit from './Edit';
+import TenantDelete from './Delete';
 import CustomizedDictTag from '@/components/CustomizedDictTag';
-import CustomizedMore from '@/components/CustomizedMore';
 import CustomizedTag from '@/components/CustomizedTag';
 
-export default function RoleManage() {
+export default function TenantManage() {
   const { t } = useTranslation();
 
   const [total, setTotal] = useState<number>(0);
-  const [condition, setCondition] = useState<SystemRoleQueryCondition>({
+  const [condition, setCondition] = useState<SystemTenantQueryCondition>({
     page: 1,
     size: 20,
   });
 
-  const [records, setRecords] = useState<Array<SystemRoleResponse>>([]);
+  const [records, setRecords] = useState<Array<SystemTenantResponse>>([]);
   const [sortModel, setSortModel] = useState<GridSortModel>([]);
 
-  const addRole = useRef(null);
-  const editRole = useRef(null);
-  const deleteRole = useRef(null);
+  const addTenant = useRef(null);
+  const editTenant = useRef(null);
+  const deleteTenant = useRef(null);
 
   const handleStatusChange = useCallback(
-    async (e: React.ChangeEvent<HTMLInputElement>, checked: boolean, data: SystemRoleResponse) => {
+    async (e: React.ChangeEvent<HTMLInputElement>, checked: boolean, data: SystemTenantResponse) => {
       // 更新表格
       setRecords((prev) =>
         prev.map((r) =>
@@ -38,9 +37,9 @@ export default function RoleManage() {
       );
 
       if (checked) {
-        await enableSystemRole(data.id);
+        await enableSystemTenant(data.id);
       } else {
-        await disableSystemRole(data.id);
+        await disableSystemTenant(data.id);
       }
     },
     []
@@ -48,46 +47,27 @@ export default function RoleManage() {
 
   const columns: GridColDef[] = useMemo(
     () => [
-      { field: 'name', headerName: t("page.role.title.name"), flex: 1, minWidth: 100 },
+      { field: 'name', headerName: t("page.tenant.title.name"), flex: 1, minWidth: 100 },
       {
-        field: 'type',
-        headerName: t("page.role.title.type"),
+        field: 'package_name',
+        headerName: t("page.tenant.title.package"),
         flex: 1,
         minWidth: 80,
         renderCell: (params: GridRenderCellParams) => (
           <>
-            <CustomizedDictTag type='role_type' value={params.row.type} />
+            <CustomizedTag label={params.row.package_name} />
           </>
         )
       },
-      { field: 'code', headerName: t("page.role.title.code"), flex: 1, minWidth: 120 },
-      { field: 'sort', headerName: t("page.role.title.sort"), flex: 1, minWidth: 60 },
-      {
-        field: 'data_scope_rule_name',
-        sortable: false,
-        filterable: false,
-        headerName: t("page.role.title.data.scope.rule"),
-        flex: 1,
-        minWidth: 150,
-        renderCell: (params: GridRenderCellParams) => (
-          <>
-            <CustomizedTag label={params.row.data_scope_rule_name} />
-          </>
-        )
-      },
-      {
-        field: 'data_scope_department_ids',
-        sortable: false,
-        filterable: false,
-        headerName: t("page.role.title.data.scope.department"),
-        flex: 1,
-        minWidth: 100
-      },
-      { field: 'remark', headerName: t("page.role.title.remark"), flex: 1, minWidth: 100 },
+      { field: 'contact_name', headerName: t("page.tenant.title.contact.name"), flex: 1, minWidth: 120 },
+      { field: 'contact_mobile', headerName: t("page.tenant.title.contact.mobile"), flex: 1, minWidth: 60 },
+      { field: 'website', headerName: t("page.tenant.title.website"), flex: 1, minWidth: 60 },
+      { field: 'expire_time', headerName: t("page.tenant.title.expire.time"), flex: 1, minWidth: 100 },
+      { field: 'account_count', headerName: t("page.tenant.title.account.count"), flex: 1, minWidth: 100 },
       {
         field: 'status',
         sortable: false,
-        headerName: t("page.role.title.status"),
+        headerName: t("page.tenant.title.status"),
         flex: 1,
         minWidth: 80,
         renderCell: (params: GridRenderCellParams) => (
@@ -108,7 +88,7 @@ export default function RoleManage() {
             <Button
               size="small"
               variant='customOperate'
-              title={t('page.role.operate.edit')}
+              title={t('page.tenant.operate.edit')}
               startIcon={<EditIcon />}
               onClick={() => handleClickOpenEdit(params.row)}
             />
@@ -116,7 +96,7 @@ export default function RoleManage() {
               sx={{ mt: 1, color: 'error.main' }}
               size="small"
               variant='customOperate'
-              title={t('page.role.operate.delete')}
+              title={t('page.tenant.operate.delete')}
               startIcon={<DeleteIcon />}
               onClick={() => handleClickOpenDelete(params.row)}
             />
@@ -127,22 +107,22 @@ export default function RoleManage() {
     [t, handleStatusChange]
   );
 
-  const queryRecords = async (condition: SystemRoleQueryCondition) => {
-    const result = await pageSystemRole(condition);
+  const queryRecords = async (condition: SystemTenantQueryCondition) => {
+    const result = await pageSystemTenant(condition);
     setRecords(result.list);
     setTotal(result.total);
   };
 
   const handleClickOpenAdd = () => {
-    (addRole.current as any).show();
+    (addTenant.current as any).show();
   }
 
-  const handleClickOpenEdit = (role: SystemRoleResponse) => {
-    (editRole.current as any).show(role);
+  const handleClickOpenEdit = (tenant: SystemTenantResponse) => {
+    (editTenant.current as any).show(tenant);
   };
 
-  const handleClickOpenDelete = (role: SystemRoleResponse) => {
-    (deleteRole.current as any).show(role);
+  const handleClickOpenDelete = (tenant: SystemTenantResponse) => {
+    (deleteTenant.current as any).show(tenant);
   };
 
   useEffect(() => {
@@ -151,7 +131,7 @@ export default function RoleManage() {
 
   const handleSortModelChange = (model: GridSortModel, details: GridCallbackDetails) => {
     setSortModel(model);
-    setCondition((prev) => ({ ...prev, ...model[0] } as SystemRoleQueryCondition));
+    setCondition((prev) => ({ ...prev, ...model[0] } as SystemTenantQueryCondition));
   };
 
   const refreshData = () => {
@@ -186,9 +166,9 @@ export default function RoleManage() {
           }));
         }}
       />
-      <RoleAdd ref={addRole} onSubmit={refreshData} />
-      <RoleEdit ref={editRole} onSubmit={refreshData} />
-      <RoleDelete ref={deleteRole} onSubmit={refreshData} />
+      <TenantAdd ref={addTenant} onSubmit={refreshData} />
+      <TenantEdit ref={editTenant} onSubmit={refreshData} />
+      <TenantDelete ref={deleteTenant} onSubmit={refreshData} />
     </Box>
   );
 }

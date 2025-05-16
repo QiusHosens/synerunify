@@ -1,10 +1,13 @@
+use std::str::FromStr;
+
 use common::constants::enum_constants::STATUS_ENABLE;
-use sea_orm::{ActiveModelTrait, ColumnTrait, Condition, DatabaseConnection, EntityTrait, PaginatorTrait, QueryFilter, QueryOrder, QuerySelect, TransactionTrait};
+use sea_orm::{ActiveModelTrait, ColumnTrait, Condition, DatabaseConnection, EntityTrait, JoinType, PaginatorTrait, QueryFilter, QueryOrder, QuerySelect, RelationTrait, TransactionTrait};
 use system_model::request::system_user::CreateSystemUserRequest;
-use crate::model::system_tenant::{Model as SystemTenantModel, ActiveModel as SystemTenantActiveModel, Entity as SystemTenantEntity, Column};
+use crate::model::system_tenant::{Model as SystemTenantModel, ActiveModel as SystemTenantActiveModel, Entity as SystemTenantEntity, Column, Relation};
+use crate::model::system_tenant_package::{Model as SystemTenantPackageModel, ActiveModel as SystemTenantPackageActiveModel, Entity as SystemTenantPackageEntity, Column as SystemTenantPackageColumn};
 use system_model::request::system_tenant::{CreateSystemTenantRequest, UpdateSystemTenantRequest, PaginatedKeywordRequest};
-use system_model::response::system_tenant::SystemTenantResponse;
-use crate::convert::system_tenant::{create_request_to_model, update_request_to_model, model_to_response};
+use system_model::response::system_tenant::{SystemTenantPageResponse, SystemTenantResponse};
+use crate::convert::system_tenant::{create_request_to_model, model_page_to_response, model_to_response, update_request_to_model};
 use anyhow::{Result, anyhow};
 use sea_orm::ActiveValue::Set;
 use common::base::page::PaginatedResponse;
@@ -80,9 +83,39 @@ pub async fn get_by_id(db: &DatabaseConnection, login_user: LoginUserContext, id
     Ok(system_tenant.map(model_to_response))
 }
 
-pub async fn get_paginated(db: &DatabaseConnection, login_user: LoginUserContext, params: PaginatedKeywordRequest) -> Result<PaginatedResponse<SystemTenantResponse>> {
-    let paginator = SystemTenantEntity::find_active()
-        .order_by_desc(Column::UpdateTime)
+pub async fn get_paginated(db: &DatabaseConnection, login_user: LoginUserContext, params: PaginatedKeywordRequest) -> Result<PaginatedResponse<SystemTenantPageResponse>> {
+    let mut query = SystemTenantEntity::find_active()
+        .select_also(SystemTenantPackageEntity)
+        .join(JoinType::LeftJoin, Relation::PackageType.def());
+
+    // Apply sort if not empty
+    let mut is_default_sort = true;
+    if let Some(field) = &params.base.field {
+        if let Some(sort) = &params.base.sort {
+            let is_asc = sort.to_lowercase() == "asc";
+            // 动态应用排序，假设字段名与数据库列名一致
+            match field.as_str() {
+                // SystemDictDataEntity 的字段
+                f if Column::from_str(f).is_ok() => {
+                    let column = Column::from_str(f).unwrap();
+                    is_default_sort = false;
+                    query = if is_asc {
+                        query.order_by_asc(column)
+                    } else {
+                        query.order_by_desc(column)
+                    };
+                }
+                _ => {}
+            }
+        }
+    }
+
+    if is_default_sort {
+        query = query
+            .order_by_asc(Column::Id);
+    }
+
+    let paginator = query
         .paginate(db, params.base.size);
 
     let total = paginator.num_items().await?;
@@ -91,7 +124,7 @@ pub async fn get_paginated(db: &DatabaseConnection, login_user: LoginUserContext
         .fetch_page(params.base.page - 1) // SeaORM 页码从 0 开始，所以减 1
         .await?
         .into_iter()
-        .map(model_to_response)
+        .map(|(data, package_data)|model_page_to_response(data, package_data))
         .collect();
 
     Ok(PaginatedResponse {

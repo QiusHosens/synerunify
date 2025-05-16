@@ -18,6 +18,9 @@ export interface SystemTenantRequest {
   contact_user_id: number; // 联系人的用户编号
   contact_name: string; // 联系人
   contact_mobile: string; // 联系手机
+  username: string; // 租户管理员用户账号
+  password: string; // 租户管理员密码
+  nickname: string; // 租户管理员用户昵称
   status: number; // 租户状态（0正常 1停用）
   website: string; // 绑定域名
   package_id: number; // 租户套餐编号
@@ -40,6 +43,8 @@ export interface SystemTenantResponse {
   create_time: string; // 创建时间
   updater: number; // 更新者id
   update_time: string; // 更新时间
+
+  package_name: number; // 租户套餐名
 }
 
 export interface SystemTenantQueryCondition extends PaginatedRequest {

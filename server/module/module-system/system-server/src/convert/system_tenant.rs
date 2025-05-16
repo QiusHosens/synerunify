@@ -1,7 +1,8 @@
 use sea_orm::{Set, NotSet};
 use crate::model::system_tenant::{self, Model as SystemTenant, ActiveModel as SystemTenantActiveModel};
+use crate::model::system_tenant_package::{self, Model as SystemTenantPackage, ActiveModel as SystemTenantPackageActiveModel};
 use system_model::request::system_tenant::{CreateSystemTenantRequest, UpdateSystemTenantRequest};
-use system_model::response::system_tenant::SystemTenantResponse;
+use system_model::response::system_tenant::{SystemTenantPageResponse, SystemTenantResponse};
 
 pub fn create_request_to_model(request: &CreateSystemTenantRequest) -> SystemTenantActiveModel {
     SystemTenantActiveModel {
@@ -62,5 +63,34 @@ pub fn model_to_response(model: SystemTenant) -> SystemTenantResponse {
         create_time: model.create_time,
         updater: model.updater,
         update_time: model.update_time,
+    }
+}
+
+pub fn model_page_to_response(model: SystemTenant, package_model: Option<SystemTenantPackage>) -> SystemTenantPageResponse {
+    let (package_name, package_status) = match package_model {
+        Some(t) => (
+            t.name.clone(),
+            Some(t.name.clone()),
+        ),
+        None => ("".to_string(), None),
+    };
+    
+    SystemTenantPageResponse { 
+        id: model.id,
+        name: model.name,
+        contact_user_id: model.contact_user_id,
+        contact_name: model.contact_name,
+        contact_mobile: model.contact_mobile,
+        status: model.status,
+        website: model.website,
+        package_id: model.package_id,
+        expire_time: model.expire_time,
+        account_count: model.account_count,
+        creator: model.creator,
+        create_time: model.create_time,
+        updater: model.updater,
+        update_time: model.update_time,
+
+        package_name
     }
 }
