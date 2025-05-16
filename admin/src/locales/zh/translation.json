@@ -26,6 +26,9 @@
   "global.page.dict": "字典",
   "global.page.dict.type": "字典类型",
   "global.page.role": "角色",
+  "global.page.tenant.package": "租户套餐",
+  "global.page.tenant": "租户",
+  "global.page.department": "部门",
 
   "page.dict.title.name": "名称",
   "page.dict.title.type": "类型",
@@ -103,5 +106,15 @@
   "page.role.operate.edit": "编辑角色",
   "page.role.operate.menu": "菜单权限",
   "page.role.operate.data": "数据权限",
-  "page.role.operate.delete": "删除角色"
+  "page.role.operate.delete": "删除角色",
+
+  "page.tenant.package.title.name": "名称",
+  "page.tenant.package.title.remark": "备注",
+  "page.tenant.package.title.status": "状态",
+  "page.tenant.package.switch.status.true": "开启",
+  "page.tenant.package.switch.status.false": "关闭",
+  "page.tenant.package.error.name": "请输入名称",
+  "page.tenant.package.operate.edit": "编辑套餐",
+  "page.tenant.package.operate.menu": "菜单权限",
+  "page.tenant.package.operate.delete": "删除套餐"
 }

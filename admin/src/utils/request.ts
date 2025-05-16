@@ -88,42 +88,52 @@ request.interceptors.response.use(
     const { status } = error.response;
     const originalRequest = error.config;
 
-    if (status === 401) {
-      if (!originalRequest._retry) {
-        originalRequest._retry = true;
+    switch (status) {
+      case 401:
+        if (!originalRequest._retry) {
+          originalRequest._retry = true;
 
-        if (!isRefreshing) {
-          isRefreshing = true;
-          try {
-            const newToken = await refreshToken();
-            // 通知所有等待中的请求
-            refreshSubscribers.forEach(callback => callback(newToken));
-            refreshSubscribers = [];
-            // 重试原始请求
-            originalRequest.headers['Authorization'] = newToken;
-            return request(originalRequest);
-          } catch (refreshError) {
-            return Promise.reject(refreshError);
-          } finally {
-            isRefreshing = false;
+          if (!isRefreshing) {
+            isRefreshing = true;
+            try {
+              const newToken = await refreshToken();
+              // 通知所有等待中的请求
+              refreshSubscribers.forEach(callback => callback(newToken));
+              refreshSubscribers = [];
+              // 重试原始请求
+              originalRequest.headers['Authorization'] = newToken;
+              return request(originalRequest);
+            } catch (refreshError) {
+              return Promise.reject(refreshError);
+            } finally {
+              isRefreshing = false;
+            }
           }
-        }
 
-        // 如果已经在刷新 token，则将请求加入等待队列
-        return new Promise((resolve) => {
-          refreshSubscribers.push((token: string) => {
-            originalRequest.headers['Authorization'] = token;
-            resolve(request(originalRequest));
+          // 如果已经在刷新 token，则将请求加入等待队列
+          return new Promise((resolve) => {
+            refreshSubscribers.push((token: string) => {
+              originalRequest.headers['Authorization'] = token;
+              resolve(request(originalRequest));
+            });
           });
-        });
-      } else {
-        // 如果是刷新 token 失败后的重试，则直接登出
-        logout('授权失败');
-      }
-    } else if (status === 403) {
-      // 403直接退出登录
-      logout('拒绝访问');
+        } else {
+          // 如果是刷新 token 失败后的重试，则直接登出
+          logout('授权失败');
+        }
+        break;
+      case 403:
+        // 403直接退出登录
+        logout('拒绝访问');
+        break;
+      case 422:
+        showMessage('参数有误', 'error');
+        break;
+      default:
+        showMessage('请求异常', 'error');
+        break;
     }
+
     return Promise.reject(error);
   }
 );

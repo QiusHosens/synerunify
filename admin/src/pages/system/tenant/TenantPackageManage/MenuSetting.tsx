@@ -1,4 +1,5 @@
-import { getRoleMenu, listMenu, SystemMenuResponse, SystemRoleMenuRequest, SystemRoleResponse, updateRoleMenu } from "@/api";
+import { listMenu, SystemMenuResponse, SystemTenantPackageMenuRequest, SystemTenantPackageResponse, updateSystemTenantPackageMenu } from "@/api";
+import CustomizedTag from "@/components/CustomizedTag";
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogProps, DialogTitle, FormControl, Stack } from "@mui/material";
 import { RichTreeView, TreeViewSelectionPropagation } from "@mui/x-tree-view";
 import { forwardRef, useImperativeHandle, useState } from "react";
@@ -11,11 +12,11 @@ interface TreeNode {
   children: TreeNode[];
 }
 
-interface RoleMenuSettingProps {
+interface TenantPackageMenuSettingProps {
   onSubmit: () => void;
 }
 
-const RoleMenuSetting = forwardRef(({ onSubmit }: RoleMenuSettingProps, ref) => {
+const TenantPackageMenuSetting = forwardRef(({ onSubmit }: TenantPackageMenuSettingProps, ref) => {
 
   const { t } = useTranslation();
 
@@ -28,15 +29,15 @@ const RoleMenuSetting = forwardRef(({ onSubmit }: RoleMenuSettingProps, ref) => 
     descendants: true,
   });
 
-  const [role, setRole] = useState<SystemRoleResponse>();
+  const [tenantPackage, setTenantPackage] = useState<SystemTenantPackageResponse>();
   const [menuTreeData, setMenuTreeData] = useState<TreeNode[]>([]);
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
 
   useImperativeHandle(ref, () => ({
-    show(role: SystemRoleResponse) {
-      setRole(role);
+    show(tenantPackage: SystemTenantPackageResponse) {
+      setTenantPackage(tenantPackage);
       initMenus();
-      initRoleMenus(role);
+      initTenantPackageMenus(tenantPackage);
       setOpen(true);
     },
     hide() {
@@ -59,15 +60,15 @@ const RoleMenuSetting = forwardRef(({ onSubmit }: RoleMenuSettingProps, ref) => 
   }
 
   const handleSubmit = async () => {
-    if (!role) {
+    if (!tenantPackage) {
       return;
     }
-    const menuIds = selectedItems.map(item => Number(item));
-    const roleMenu: SystemRoleMenuRequest = {
-      role_id: role.id,
-      menu_id_list: menuIds
+    const menuIds = '[' + selectedItems.join(',') + ']';
+    const tenantPackageMenu: SystemTenantPackageMenuRequest = {
+      id: tenantPackage.id,
+      menu_ids: menuIds
     };
-    await updateRoleMenu(roleMenu);
+    await updateSystemTenantPackageMenu(tenantPackageMenu);
     handleClose();
     onSubmit();
   };
@@ -82,9 +83,10 @@ const RoleMenuSetting = forwardRef(({ onSubmit }: RoleMenuSettingProps, ref) => 
     setMenuTreeData(tree);
   }
 
-  const initRoleMenus = async (role: SystemRoleResponse) => {
-    const result = await getRoleMenu(role.id);
+  const initTenantPackageMenus = (tenantPackage: SystemTenantPackageResponse) => {
+    const result: number[] = JSON.parse(tenantPackage.menu_ids);
     const items = result.map(m => String(m));
+    // console.log('items', items);
     setSelectedItems(items);
   }
 
@@ -121,7 +123,7 @@ const RoleMenuSetting = forwardRef(({ onSubmit }: RoleMenuSettingProps, ref) => 
       open={open}
       onClose={handleClose}
     >
-      <DialogTitle>{t('page.role.operate.menu')}</DialogTitle>
+      <DialogTitle>{t('page.tenant.package.operate.menu')}</DialogTitle>
       <DialogContent>
         <Box
           noValidate
@@ -135,17 +137,13 @@ const RoleMenuSetting = forwardRef(({ onSubmit }: RoleMenuSettingProps, ref) => 
         >
           <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiStack-root': { mt: 2, width: '200px' } }}>
             <Stack direction="row" spacing={2}>
-              <Box>{t('global.page.role')}{t('page.role.title.name')}</Box>
-              <Box>{role && role.name}</Box>
-            </Stack>
-            <Stack direction="row" spacing={2}>
-              <Box>{t('global.page.role')}{t('page.role.title.code')}</Box>
-              <Box>{role && role.code}</Box>
+              <Box>{t('global.page.tenant.package')}{t('page.tenant.package.title.name')}</Box>
+              <Box>{tenantPackage && <CustomizedTag label={tenantPackage.name} />}</Box>
             </Stack>
           </FormControl>
           <FormControl sx={{ mt: 2, minWidth: 120 }}>
             <Stack direction="row" spacing={2}>
-              <Box>{t('page.role.operate.menu')}</Box>
+              <Box>{t('page.tenant.package.operate.menu')}</Box>
               <Box
               // sx={{ p: 2, border: '1px solid rgba(0, 0, 0, 0.08)' }}
               >
@@ -170,4 +168,4 @@ const RoleMenuSetting = forwardRef(({ onSubmit }: RoleMenuSettingProps, ref) => 
   )
 });
 
-export default RoleMenuSetting;
+export default TenantPackageMenuSetting;

@@ -32,6 +32,15 @@ pub struct UpdateSystemTenantPackageRequest {
 }
 
 #[derive(Serialize, Deserialize, Debug, ToSchema)]
+pub struct UpdateSystemTenantPackageMenuRequest {
+    
+    pub id: i64, // id
+    
+    pub menu_ids: Option<String>, // 关联的菜单编号
+    
+}
+
+#[derive(Serialize, Deserialize, Debug, ToSchema)]
 pub struct PaginatedKeywordRequest {
     #[serde(flatten)]
     pub base: PaginatedRequest,

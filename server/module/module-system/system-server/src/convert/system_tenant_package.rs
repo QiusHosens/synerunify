@@ -1,6 +1,6 @@
 use sea_orm::{Set, NotSet};
 use crate::model::system_tenant_package::{self, Model as SystemTenantPackage, ActiveModel as SystemTenantPackageActiveModel};
-use system_model::request::system_tenant_package::{CreateSystemTenantPackageRequest, UpdateSystemTenantPackageRequest};
+use system_model::request::system_tenant_package::{CreateSystemTenantPackageRequest, UpdateSystemTenantPackageMenuRequest, UpdateSystemTenantPackageRequest};
 use system_model::response::system_tenant_package::SystemTenantPackageResponse;
 
 pub fn create_request_to_model(request: &CreateSystemTenantPackageRequest) -> SystemTenantPackageActiveModel {
@@ -24,6 +24,14 @@ pub fn update_request_to_model(request: &UpdateSystemTenantPackageRequest, exist
     if let Some(remark) = &request.remark { 
         active_model.remark = Set(Some(remark.clone()));
     }
+    if let Some(menu_ids) = &request.menu_ids { 
+        active_model.menu_ids = Set(menu_ids.clone());
+    }
+    active_model
+}
+
+pub fn update_menu_request_to_model(request: &UpdateSystemTenantPackageMenuRequest, existing: SystemTenantPackage) -> SystemTenantPackageActiveModel {
+    let mut active_model: SystemTenantPackageActiveModel = existing.into();
     if let Some(menu_ids) = &request.menu_ids { 
         active_model.menu_ids = Set(menu_ids.clone());
     }

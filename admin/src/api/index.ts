@@ -3,3 +3,5 @@ export * from './menu';
 export * from './dict';
 export * from './role';
 export * from './system_data_scope_rule';
+export * from './system_tenant';
+export * from './system_tenant_package';

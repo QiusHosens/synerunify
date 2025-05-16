@@ -220,7 +220,7 @@ export default function RoleManage() {
       <RoleAdd ref={addRole} onSubmit={refreshData} />
       <RoleEdit ref={editRole} onSubmit={refreshData} />
       <RoleDelete ref={deleteRole} onSubmit={refreshData} />
-      <RoleMenuSetting ref={roleMenuSetting} />
+      <RoleMenuSetting ref={roleMenuSetting} onSubmit={refreshData} />
       <RoleDataSetting ref={roleDataSetting} onSubmit={refreshData} />
     </Box>
   );
