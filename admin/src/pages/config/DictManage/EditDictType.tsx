@@ -2,14 +2,7 @@ import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormCon
 import { useTranslation } from 'react-i18next';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
-import { getDictType, SystemDictTypeRequest, SystemDictTypeResponse, updateDictType } from '@/api/dict';
-
-interface FormValues {
-  id: number;
-  name: string;
-  type: string;
-  remark: string;
-}
+import { getDictType, SystemDictTypeRequest, updateDictType } from '@/api/dict';
 
 interface FormErrors {
   name?: string;

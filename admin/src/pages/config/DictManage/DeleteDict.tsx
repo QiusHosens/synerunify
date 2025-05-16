@@ -2,7 +2,7 @@ import { Button, Dialog, DialogActions, DialogContent, DialogContentText, Dialog
 import { useTranslation } from 'react-i18next';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
-import { deleteDict, SystemDictDataRequest, SystemDictDataResponse } from '@/api/dict';
+import { deleteDict, SystemDictDataResponse } from '@/api/dict';
 
 interface DictAddProps {
   onSubmit: () => void;

@@ -1,8 +1,8 @@
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, TextField } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
+import { forwardRef, useImperativeHandle, useState } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
-import { createDict, createDictType, listDictType, SystemDictDataRequest, SystemDictTypeRequest, SystemDictTypeResponse } from '@/api/dict';
+import { createDict, listDictType, SystemDictDataRequest, SystemDictTypeResponse } from '@/api/dict';
 
 interface FormValues {
   dict_type: string;
