@@ -1,7 +1,8 @@
 use sea_orm::{Set, NotSet};
 use crate::model::system_department::{self, Model as SystemDepartment, ActiveModel as SystemDepartmentActiveModel};
+use crate::model::system_user::{self, Model as SystemUser, ActiveModel as SystemUserActiveModel};
 use system_model::request::system_department::{CreateSystemDepartmentRequest, UpdateSystemDepartmentRequest};
-use system_model::response::system_department::SystemDepartmentResponse;
+use system_model::response::system_department::{SystemDepartmentPageResponse, SystemDepartmentResponse};
 
 pub fn create_request_to_model(request: &CreateSystemDepartmentRequest) -> SystemDepartmentActiveModel {
     SystemDepartmentActiveModel {
@@ -61,5 +62,27 @@ pub fn model_to_response(model: SystemDepartment) -> SystemDepartmentResponse {
         create_time: model.create_time,
         updater: model.updater,
         update_time: model.update_time,
+    }
+}
+
+pub fn model_to_page_response(model: SystemDepartment, user_model: Option<SystemUser>) -> SystemDepartmentPageResponse {
+    let leader_user_name = user_model.map(|user| user.nickname.clone());
+
+    SystemDepartmentPageResponse { 
+        id: model.id,
+        code: model.code,
+        name: model.name,
+        parent_id: model.parent_id,
+        sort: model.sort,
+        leader_user_id: model.leader_user_id,
+        phone: model.phone,
+        email: model.email,
+        status: model.status,
+        creator: model.creator,
+        create_time: model.create_time,
+        updater: model.updater,
+        update_time: model.update_time,
+
+        leader_user_name,
     }
 }

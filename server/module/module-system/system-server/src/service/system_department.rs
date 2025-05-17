@@ -1,10 +1,11 @@
 use common::constants::enum_constants::{DEPARTMENT_ROOT_ID, DEPARTMENT_ROOT_CODE, STATUS_ENABLE};
 use common::utils::string_utils::get_next_code;
-use sea_orm::{ActiveModelTrait, ColumnTrait, Condition, DatabaseConnection, DatabaseTransaction, EntityTrait, PaginatorTrait, QueryFilter, QueryOrder, QuerySelect};
-use crate::model::system_department::{Model as SystemDepartmentModel, ActiveModel as SystemDepartmentActiveModel, Entity as SystemDepartmentEntity, Column};
+use sea_orm::{ActiveModelTrait, ColumnTrait, Condition, DatabaseConnection, DatabaseTransaction, EntityTrait, JoinType, PaginatorTrait, QueryFilter, QueryOrder, QuerySelect, RelationTrait};
+use crate::model::system_department::{Model as SystemDepartmentModel, ActiveModel as SystemDepartmentActiveModel, Entity as SystemDepartmentEntity, Column, Relation};
+use crate::model::system_user::{Model as SystemUserModel, ActiveModel as SystemUserActiveModel, Entity as SystemUserEntity, Column as SystemUserColumn};
 use system_model::request::system_department::{CreateSystemDepartmentRequest, UpdateSystemDepartmentRequest, PaginatedKeywordRequest};
-use system_model::response::system_department::SystemDepartmentResponse;
-use crate::convert::system_department::{create_request_to_model, update_request_to_model, model_to_response};
+use system_model::response::system_department::{SystemDepartmentPageResponse, SystemDepartmentResponse};
+use crate::convert::system_department::{create_request_to_model, model_to_page_response, model_to_response, update_request_to_model};
 use anyhow::{anyhow, Context, Result};
 use sea_orm::ActiveValue::Set;
 use common::base::page::PaginatedResponse;
@@ -30,15 +31,7 @@ pub async fn create_tenant_root(db: &DatabaseConnection, txn: &DatabaseTransacti
         .one(db)
         .await?;
     let max_code = max_department.map(|dept| dept.code);
-    // let max_code: Option<String> = SystemDepartmentEntity::find()
-    //     .select_only()
-    //     .column(Column::Code)
-    //     .filter(Column::ParentId.eq(DEPARTMENT_ROOT_ID))
-    //     .order_by_desc(Column::Id)
-    //     .limit(1)
-    //     .one(db)
-    //     .await?
-    //     .map(|x| x.code);
+
     let code = get_next_code(DEPARTMENT_ROOT_CODE.to_string(), max_code);
     let system_department = SystemDepartmentActiveModel {
         code: Set(code),
@@ -112,10 +105,16 @@ pub async fn get_paginated(db: &DatabaseConnection, login_user: LoginUserContext
     })
 }
 
-pub async fn list(db: &DatabaseConnection, login_user: LoginUserContext) -> Result<Vec<SystemDepartmentResponse>> {
-    let condition = Condition::all().add(Column::TenantId.eq(login_user.tenant_id));let list = SystemDepartmentEntity::find_active_with_condition(condition)
+pub async fn list(db: &DatabaseConnection, login_user: LoginUserContext) -> Result<Vec<SystemDepartmentPageResponse>> {
+    let condition = Condition::all().add(Column::TenantId.eq(login_user.tenant_id));
+    let mut query = SystemDepartmentEntity::find_active_with_condition(condition)
+        .select_also(SystemUserEntity)
+        .join(JoinType::LeftJoin, Relation::LeaderUser.def());
+
+    let list = query
+        .order_by_asc(Column::Sort)
         .all(db).await?;
-    Ok(list.into_iter().map(model_to_response).collect())
+    Ok(list.into_iter().map(|(data, user_data)|model_to_page_response(data, user_data)).collect())
 }
 
 pub async fn find_by_id(db: &DatabaseConnection, id: i64) -> Result<Option<SystemDepartmentModel>> {

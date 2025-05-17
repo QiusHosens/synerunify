@@ -67,15 +67,9 @@ pub fn model_to_response(model: SystemTenant) -> SystemTenantResponse {
 }
 
 pub fn model_page_to_response(model: SystemTenant, package_model: Option<SystemTenantPackage>) -> SystemTenantPageResponse {
-    let (package_name, package_status) = match package_model {
-        Some(t) => (
-            t.name.clone(),
-            Some(t.name.clone()),
-        ),
-        None => ("".to_string(), None),
-    };
+    let package_name = package_model.map(|package| package.name.clone()).unwrap_or_default();
     
-    SystemTenantPageResponse { 
+    SystemTenantPageResponse {
         id: model.id,
         name: model.name,
         contact_user_id: model.contact_user_id,
