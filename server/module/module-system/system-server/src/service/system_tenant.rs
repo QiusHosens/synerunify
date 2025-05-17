@@ -8,46 +8,49 @@ use crate::model::system_tenant_package::{Model as SystemTenantPackageModel, Act
 use system_model::request::system_tenant::{CreateSystemTenantRequest, UpdateSystemTenantRequest, PaginatedKeywordRequest};
 use system_model::response::system_tenant::{SystemTenantPageResponse, SystemTenantResponse};
 use crate::convert::system_tenant::{create_request_to_model, model_page_to_response, model_to_response, update_request_to_model};
-use anyhow::{Result, anyhow};
+use anyhow::{anyhow, Context, Result};
 use sea_orm::ActiveValue::Set;
 use common::base::page::PaginatedResponse;
 use common::context::context::LoginUserContext;
 use common::interceptor::orm::active_filter::ActiveFilterEntityTrait;
+use tracing::{error, info};
 
 use super::system_department::create_tenant_root;
 use super::system_user::create_tenant_admin;
 
 pub async fn create(db: &DatabaseConnection, login_user: LoginUserContext, request: CreateSystemTenantRequest) -> Result<i64> {
+    // error!("{:?}", request);
     // 获取租户id
-    let max_tenant_id: Option<i64> = SystemTenantEntity::find()
-        .select_only()
-        .column(Column::Id)
+    let max_tenant = SystemTenantEntity::find()
         .order_by_desc(Column::Id)
         .limit(1)
         .one(db)
-        .await?
-        .map(|x| x.id);
-    
-    let new_tenant_id = max_tenant_id.unwrap_or(0) + 1;
+        .await?;
+    // error!("max tenant, {:?}", max_tenant);
+    let max_tenant_id = max_tenant.map_or(0, |tenant| tenant.id);
+    let new_tenant_id = max_tenant_id + 1;
 
     // 开启事务
     let txn = db.begin().await?;
     // 创建租户根部门
+    error!("create department");
     let department = create_tenant_root(&db, &txn, login_user.clone(), request.name.clone(), new_tenant_id).await?;
     // 创建租户管理员用户
+    error!("create user");
     let user_id = create_tenant_admin(&txn, login_user.clone(), request.username.clone(), request.password.clone(), 
         request.nickname.clone(), request.contact_mobile.clone(), department.code.clone(), department.id.clone(), new_tenant_id).await?;
     // 创建租户
+    error!("create tenant");
     let mut system_tenant = create_request_to_model(&request);
     system_tenant.id = Set(new_tenant_id);
     system_tenant.contact_user_id = Set(Some(user_id));
     system_tenant.creator = Set(Some(login_user.id));
     system_tenant.updater = Set(Some(login_user.id));
     
-    let system_tenant = system_tenant.insert(&txn).await?;
+    let system_tenant = system_tenant.insert(&txn).await.with_context(|| "Failed to insert tenant")?;
 
     // 提交事务
-    txn.commit().await?;
+    txn.commit().await.with_context(|| "Failed to commit transaction")?;
     
     Ok(system_tenant.id)
 }

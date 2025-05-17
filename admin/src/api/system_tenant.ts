@@ -15,7 +15,6 @@ const apis = {
 export interface SystemTenantRequest {
   id: number; // id
   name: string; // 租户名
-  contact_user_id: number; // 联系人的用户编号
   contact_name: string; // 联系人
   contact_mobile: string; // 联系手机
   username: string; // 租户管理员用户账号

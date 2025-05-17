@@ -1,10 +1,11 @@
 use common::constants::enum_constants::STATUS_ENABLE;
+use common::utils::crypt_utils::encrypt_password;
 use sea_orm::{ActiveModelTrait, ColumnTrait, Condition, DatabaseConnection, DatabaseTransaction, EntityTrait, PaginatorTrait, QueryFilter, QueryOrder};
 use crate::model::system_user::{Model as SystemUserModel, ActiveModel as SystemUserActiveModel, Entity as SystemUserEntity, Column};
 use system_model::request::system_user::{CreateSystemUserRequest, UpdateSystemUserRequest, PaginatedKeywordRequest};
 use system_model::response::system_user::SystemUserResponse;
 use crate::convert::system_user::{create_request_to_model, update_request_to_model, model_to_response};
-use anyhow::{Result, anyhow};
+use anyhow::{anyhow, Context, Result};
 use chrono::Utc;
 use sea_orm::ActiveValue::Set;
 use common::base::page::PaginatedResponse;
@@ -22,9 +23,11 @@ pub async fn create(db: &DatabaseConnection, login_user: LoginUserContext, reque
 
 // 创建租户管理员
 pub async fn create_tenant_admin(txn: &DatabaseTransaction, login_user: LoginUserContext, username: String, password: String, nickname: String, mobile: Option<String>, department_code: String, department_id: i64, tenant_id: i64) -> Result<i64> {
+    // 检查账号是否存在 TODO
+    let crypt_password = encrypt_password(password).with_context(|| "Failed to encrypt password")?;
     let system_user = SystemUserActiveModel {
         username: Set(username),
-        password: Set(password),
+        password: Set(crypt_password),
         nickname: Set(nickname),
         mobile: Set(mobile),
         status: Set(STATUS_ENABLE),
@@ -35,7 +38,7 @@ pub async fn create_tenant_admin(txn: &DatabaseTransaction, login_user: LoginUse
         tenant_id: Set(tenant_id),
         ..Default::default()
     };
-    let system_user = system_user.insert(txn).await?;
+    let system_user = system_user.insert(txn).await.with_context(|| "Failed to insert user")?;
     Ok(system_user.id)
 }
 

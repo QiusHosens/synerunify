@@ -26,11 +26,11 @@ if not os.path.exists(DOWNLOAD_DIR):
 service = Service(DRIVER_PATH)
 driver = webdriver.Chrome(service=service)
 
-def login():
-    """模拟登录网站"""
+def enter_login():
     driver.get(URL)
     time.sleep(5)
 
+def login():
     try:
         # 输入用户名和密码
         # username_field = WebDriverWait(driver, 10).until(
@@ -273,6 +273,9 @@ def download_file(file_url, save_dir, headers, downloaded_urls, sub_dir=None):
 
 def main():
     try:
+        enter_login()
+        download_images('login')
+
         login()
         download_images('dashboard')
 

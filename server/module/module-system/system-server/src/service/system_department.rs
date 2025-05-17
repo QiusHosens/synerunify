@@ -5,7 +5,7 @@ use crate::model::system_department::{Model as SystemDepartmentModel, ActiveMode
 use system_model::request::system_department::{CreateSystemDepartmentRequest, UpdateSystemDepartmentRequest, PaginatedKeywordRequest};
 use system_model::response::system_department::SystemDepartmentResponse;
 use crate::convert::system_department::{create_request_to_model, update_request_to_model, model_to_response};
-use anyhow::{Result, anyhow};
+use anyhow::{anyhow, Context, Result};
 use sea_orm::ActiveValue::Set;
 use common::base::page::PaginatedResponse;
 use common::context::context::LoginUserContext;
@@ -23,15 +23,22 @@ pub async fn create(db: &DatabaseConnection, login_user: LoginUserContext, reque
 /// 创建租户根部门
 pub async fn create_tenant_root(db: &DatabaseConnection, txn: &DatabaseTransaction, login_user: LoginUserContext, name: String, tenant_id: i64) -> Result<SystemDepartmentModel> {
     // 查询code
-    let max_code: Option<String> = SystemDepartmentEntity::find()
-        .select_only()
-        .column(Column::Code)
+    let max_department = SystemDepartmentEntity::find()
         .filter(Column::ParentId.eq(DEPARTMENT_ROOT_ID))
         .order_by_desc(Column::Id)
         .limit(1)
         .one(db)
-        .await?
-        .map(|x| x.code);
+        .await?;
+    let max_code = max_department.map(|dept| dept.code);
+    // let max_code: Option<String> = SystemDepartmentEntity::find()
+    //     .select_only()
+    //     .column(Column::Code)
+    //     .filter(Column::ParentId.eq(DEPARTMENT_ROOT_ID))
+    //     .order_by_desc(Column::Id)
+    //     .limit(1)
+    //     .one(db)
+    //     .await?
+    //     .map(|x| x.code);
     let code = get_next_code(DEPARTMENT_ROOT_CODE.to_string(), max_code);
     let system_department = SystemDepartmentActiveModel {
         code: Set(code),
@@ -44,7 +51,7 @@ pub async fn create_tenant_root(db: &DatabaseConnection, txn: &DatabaseTransacti
         tenant_id: Set(tenant_id),
         ..Default::default()
     };
-    let system_department = system_department.insert(txn).await?;
+    let system_department = system_department.insert(txn).await.with_context(|| "Failed to insert department")?;
     Ok(system_department)
 }
 

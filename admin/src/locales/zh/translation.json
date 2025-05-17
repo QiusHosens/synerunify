@@ -22,6 +22,9 @@
   
   "global.description.delete": "确定删除记录 {{name}}?",
 
+  "global.helper.password.show": "显示密码",
+  "global.helper.password.hide": "隐藏密码",
+
   "global.page.menu": "菜单",
   "global.page.dict": "字典",
   "global.page.dict.type": "字典类型",
