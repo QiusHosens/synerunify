@@ -1,6 +1,6 @@
 use std::str::FromStr;
 
-use common::constants::enum_constants::STATUS_ENABLE;
+use common::constants::enum_constants::{STATUS_DISABLE, STATUS_ENABLE};
 use sea_orm::{ActiveModelTrait, ColumnTrait, Condition, DatabaseConnection, EntityTrait, JoinType, PaginatorTrait, QueryFilter, QueryOrder, QuerySelect, RelationTrait, TransactionTrait};
 use system_model::request::system_user::CreateSystemUserRequest;
 use crate::model::system_tenant::{Model as SystemTenantModel, ActiveModel as SystemTenantActiveModel, Entity as SystemTenantEntity, Column, Relation};
@@ -140,6 +140,28 @@ pub async fn list(db: &DatabaseConnection, login_user: LoginUserContext) -> Resu
     let list = SystemTenantEntity::find_active()
         .all(db).await?;
     Ok(list.into_iter().map(model_to_response).collect())
+}
+
+pub async fn enable(db: &DatabaseConnection, login_user: LoginUserContext, id: i64) -> Result<()> {
+    let system_tenant = SystemTenantActiveModel {
+        id: Set(id),
+        updater: Set(Some(login_user.id)),
+        status: Set(STATUS_ENABLE),
+        ..Default::default()
+    };
+    system_tenant.update(db).await?;
+    Ok(())
+}
+
+pub async fn disable(db: &DatabaseConnection, login_user: LoginUserContext, id: i64) -> Result<()> {
+    let system_tenant = SystemTenantActiveModel {
+        id: Set(id),
+        updater: Set(Some(login_user.id)),
+        status: Set(STATUS_DISABLE),
+        ..Default::default()
+    };
+    system_tenant.update(db).await?;
+    Ok(())
 }
 
 pub async fn list_all(db: &DatabaseConnection) -> Result<Vec<SystemTenantModel>> {
