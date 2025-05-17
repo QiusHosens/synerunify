@@ -1,4 +1,4 @@
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormHelperText, IconButton, InputAdornment, InputLabel, MenuItem, OutlinedInput, Select, styled, SvgIcon, Switch, TextField, Typography } from '@mui/material';
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormHelperText, IconButton, InputAdornment, InputLabel, MenuItem, OutlinedInput, Select, SelectChangeEvent, styled, SvgIcon, Switch, TextField, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
@@ -221,6 +221,22 @@ const TenantAdd = forwardRef(({ onSubmit }: TenantAddProps, ref) => {
     }
   };
 
+  const handleSelectChange = (e: SelectChangeEvent<number>) => {
+      const { name, value } = e.target;
+      setFormValues(prev => ({
+        ...prev,
+        [name]: value
+      }));
+  
+      // Clear error when user starts typing
+      if (errors[name as keyof FormErrors]) {
+        setErrors(prev => ({
+          ...prev,
+          [name]: undefined
+        }));
+      }
+    };
+
   const handleStatusChange = (e: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
     // console.log('target', e.target, checked);
     const { name } = e.target;
@@ -300,7 +316,7 @@ const TenantAdd = forwardRef(({ onSubmit }: TenantAddProps, ref) => {
               labelId="package-select-label"
               name="package_id"
               value={formValues.package_id}
-              onChange={(e) => handleInputChange(e as any)}
+              onChange={(e) => handleSelectChange(e)}
               label={t("page.tenant.title.package")}
             >
               {packages.map(item => (<MenuItem key={item.id} value={item.id}>{item.name}</MenuItem>))}

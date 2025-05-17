@@ -134,6 +134,22 @@ const TenantEdit = forwardRef(({ onSubmit }: TenantEditProps, ref) => {
     }
   };
 
+  const handleSelectChange = (e: SelectChangeEvent<number>) => {
+    const { name, value } = e.target;
+    setTenant(prev => ({
+      ...prev,
+      [name]: value
+    }));
+
+    // Clear error when user starts typing
+    if (errors[name as keyof FormErrors]) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: undefined
+      }));
+    }
+  };
+
   const handleStatusChange = (e: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
     // console.log('target', e.target, checked);
     const { name } = e.target;
@@ -213,7 +229,7 @@ const TenantEdit = forwardRef(({ onSubmit }: TenantEditProps, ref) => {
               labelId="package-select-label"
               name="package_id"
               value={tenant.package_id}
-              onChange={(e) => handleInputChange(e as any)}
+              onChange={(e) => handleSelectChange(e)}
               label={t("page.tenant.title.package")}
             >
               {packages.map(item => (<MenuItem key={item.id} value={item.id}>{item.name}</MenuItem>))}
