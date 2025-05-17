@@ -6,7 +6,7 @@ use ctor;
 use macros::require_authorize;
 use axum::{routing::{get, post}, Router, extract::{State, Path, Json, Query}, response::IntoResponse, Extension};
 use common::base::page::PaginatedResponse;
-use system_model::request::system_department::{CreateSystemDepartmentRequest, UpdateSystemDepartmentRequest, PaginatedKeywordRequest};
+use system_model::{request::system_department::{CreateSystemDepartmentRequest, PaginatedKeywordRequest, UpdateSystemDepartmentRequest}, response::system_department::SystemDepartmentPageResponse};
 use system_model::response::system_department::SystemDepartmentResponse;
 use common::base::response::CommonResult;
 use common::context::context::LoginUserContext;
@@ -174,7 +174,7 @@ async fn page(
     path = "/list",
     operation_id = "system_department_list",
     responses(
-        (status = 200, description = "list all", body = CommonResult<Vec<SystemDepartmentResponse>>)
+        (status = 200, description = "list all", body = CommonResult<Vec<SystemDepartmentPageResponse>>)
     ),
     tag = "system_department",
     security(
@@ -185,7 +185,7 @@ async fn page(
 async fn list(
     State(state): State<AppState>,
     Extension(login_user): Extension<LoginUserContext>,
-) -> CommonResult<Vec<SystemDepartmentResponse>> {
+) -> CommonResult<Vec<SystemDepartmentPageResponse>> {
     match service::system_department::list(&state.db, login_user).await {
         Ok(data) => {CommonResult::with_data(data)}
         Err(e) => {CommonResult::with_err(&e.to_string())}
