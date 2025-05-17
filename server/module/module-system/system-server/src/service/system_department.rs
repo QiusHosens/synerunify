@@ -1,4 +1,4 @@
-use common::constants::enum_constants::{DEPARTMENT_ROOT_ID, DEPARTMENT_ROOT_CODE, STATUS_ENABLE};
+use common::constants::enum_constants::{DEPARTMENT_ROOT_CODE, DEPARTMENT_ROOT_ID, STATUS_DISABLE, STATUS_ENABLE};
 use common::utils::string_utils::get_next_code;
 use sea_orm::{ActiveModelTrait, ColumnTrait, Condition, DatabaseConnection, DatabaseTransaction, EntityTrait, JoinType, PaginatorTrait, QueryFilter, QueryOrder, QuerySelect, RelationTrait};
 use crate::model::system_department::{Model as SystemDepartmentModel, ActiveModel as SystemDepartmentActiveModel, Entity as SystemDepartmentEntity, Column, Relation};
@@ -63,7 +63,6 @@ pub async fn update(db: &DatabaseConnection, login_user: LoginUserContext, reque
 pub async fn delete(db: &DatabaseConnection, login_user: LoginUserContext, id: i64) -> Result<()> {
     let system_department = SystemDepartmentActiveModel {
         id: Set(id),
-        tenant_id: Set(login_user.tenant_id),
         updater: Set(Some(login_user.id)),
         deleted: Set(true),
         ..Default::default()
@@ -115,6 +114,28 @@ pub async fn list(db: &DatabaseConnection, login_user: LoginUserContext) -> Resu
         .order_by_asc(Column::Sort)
         .all(db).await?;
     Ok(list.into_iter().map(|(data, user_data)|model_to_page_response(data, user_data)).collect())
+}
+
+pub async fn enable(db: &DatabaseConnection, login_user: LoginUserContext, id: i64) -> Result<()> {
+    let system_department = SystemDepartmentActiveModel {
+        id: Set(id),
+        updater: Set(Some(login_user.id)),
+        status: Set(STATUS_ENABLE),
+        ..Default::default()
+    };
+    system_department.update(db).await?;
+    Ok(())
+}
+
+pub async fn disable(db: &DatabaseConnection, login_user: LoginUserContext, id: i64) -> Result<()> {
+    let system_department = SystemDepartmentActiveModel {
+        id: Set(id),
+        updater: Set(Some(login_user.id)),
+        status: Set(STATUS_DISABLE),
+        ..Default::default()
+    };
+    system_department.update(db).await?;
+    Ok(())
 }
 
 pub async fn find_by_id(db: &DatabaseConnection, id: i64) -> Result<Option<SystemDepartmentModel>> {
