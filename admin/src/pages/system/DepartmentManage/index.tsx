@@ -5,7 +5,7 @@ import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import CustomizedDataGridPro from '@/components/CustomizedDataGridPro';
 import EditIcon from '@/assets/image/svg/edit.svg';
 import DeleteIcon from '@/assets/image/svg/delete.svg';
-import MenuAdd from './Add';
+import DepartmentAdd from './Add';
 import { getParentNodeLists, Node } from '@/utils/treeUtils';
 import MenuEdit from './Edit';
 import MenuDelete from './Delete';
@@ -19,7 +19,7 @@ export default function DepartmentManage() {
 
   const [records, setRecords] = useState<Array<SystemDepartmentResponse>>([]);
 
-  const addMenu = useRef(null);
+  const addDepartment = useRef(null);
   const editMenu = useRef(null);
   const deleteMenu = useRef(null);
 
@@ -101,15 +101,15 @@ export default function DepartmentManage() {
   );
 
   const handleClickOpenAdd = () => {
-    (addMenu.current as any).show();
+    (addDepartment.current as any).show();
   }
 
-  const handleClickOpenEdit = (dict: SystemDepartmentResponse) => {
-    (editMenu.current as any).show(dict);
+  const handleClickOpenEdit = (department: SystemDepartmentResponse) => {
+    (editMenu.current as any).show(department);
   };
 
-  const handleClickOpenDelete = (dict: SystemDepartmentResponse) => {
-    (deleteMenu.current as any).show(dict);
+  const handleClickOpenDelete = (department: SystemDepartmentResponse) => {
+    (deleteMenu.current as any).show(department);
   };
 
   const queryRecords = async () => {
@@ -158,7 +158,7 @@ export default function DepartmentManage() {
         getTreeDataPath={getTreeDataPath}
         hideFooter={true}
       />
-      <MenuAdd ref={addMenu} onSubmit={refreshData} />
+      <DepartmentAdd ref={addDepartment} onSubmit={refreshData} />
       <MenuEdit ref={editMenu} onSubmit={refreshData} />
       <MenuDelete ref={deleteMenu} onSubmit={refreshData} />
     </Box>

@@ -13,7 +13,24 @@ use common::context::context::LoginUserContext;
 use common::interceptor::orm::active_filter::ActiveFilterEntityTrait;
 
 pub async fn create(db: &DatabaseConnection, login_user: LoginUserContext, request: CreateSystemDepartmentRequest) -> Result<i64> {
+    // 查询父级编码
+    let parent_department = SystemDepartmentEntity::find_by_id(request.parent_id.clone())
+        .one(db)
+        .await?
+        .ok_or_else(|| anyhow!("父级部门未找到"))?;
+    // 查询code
+    let max_department = SystemDepartmentEntity::find()
+        .filter(Column::ParentId.eq(request.parent_id.clone()))
+        .order_by_desc(Column::Id)
+        .limit(1)
+        .one(db)
+        .await?;
+    let max_code = max_department.map(|dept| dept.code);
+
+    let code = get_next_code(parent_department.code, max_code);
+
     let mut system_department = create_request_to_model(&request);
+    system_department.code = Set(code);
     system_department.creator = Set(Some(login_user.id));
     system_department.updater = Set(Some(login_user.id));
     system_department.tenant_id = Set(login_user.tenant_id);

@@ -14,15 +14,24 @@ const apis = {
 
 export interface SystemDepartmentRequest {
   id: number; // id
-  code: string; // 部门编码
   name: string; // 部门名称
   parent_id: number; // 父部门id
   sort: number; // 显示顺序
-  leader_user_id: number; // 负责人
+  leader_user_id?: number; // 负责人
   phone: string; // 联系电话
   email: string; // 邮箱
   status: number; // 部门状态（0正常 1停用）
-  }
+}
+
+export interface SystemDepartmentEditRequest {
+  id: number; // id
+  name: string; // 部门名称
+  sort: number; // 显示顺序
+  leader_user_id?: number; // 负责人
+  phone: string; // 联系电话
+  email: string; // 邮箱
+  status: number; // 部门状态（0正常 1停用）
+}
 
 export interface SystemDepartmentResponse {
   id: number; // id
@@ -51,7 +60,7 @@ export const createSystemDepartment = (system_department: SystemDepartmentReques
   return api.post<number>(apis.create, system_department);
 }
 
-export const updateSystemDepartment = (system_department: SystemDepartmentRequest): Promise<void> => {
+export const updateSystemDepartment = (system_department: SystemDepartmentEditRequest): Promise<void> => {
   return api.post<void>(apis.update, system_department);
 }
 

@@ -5,9 +5,7 @@ use common::base::page::PaginatedRequest;
 
 #[derive(Serialize, Deserialize, Debug, ToSchema)]
 pub struct CreateSystemDepartmentRequest {
-    
-    pub code: String, // 部门编码
-    
+
     pub name: String, // 部门名称
     
     pub parent_id: i64, // 父部门id
@@ -29,11 +27,7 @@ pub struct UpdateSystemDepartmentRequest {
     
     pub id: i64, // id
     
-    pub code: Option<String>, // 部门编码
-    
     pub name: Option<String>, // 部门名称
-    
-    pub parent_id: Option<i64>, // 父部门id
     
     pub sort: Option<i32>, // 显示顺序
     

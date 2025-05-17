@@ -222,20 +222,20 @@ const TenantAdd = forwardRef(({ onSubmit }: TenantAddProps, ref) => {
   };
 
   const handleSelectChange = (e: SelectChangeEvent<number>) => {
-      const { name, value } = e.target;
-      setFormValues(prev => ({
+    const { name, value } = e.target;
+    setFormValues(prev => ({
+      ...prev,
+      [name]: value
+    }));
+
+    // Clear error when user starts typing
+    if (errors[name as keyof FormErrors]) {
+      setErrors(prev => ({
         ...prev,
-        [name]: value
+        [name]: undefined
       }));
-  
-      // Clear error when user starts typing
-      if (errors[name as keyof FormErrors]) {
-        setErrors(prev => ({
-          ...prev,
-          [name]: undefined
-        }));
-      }
-    };
+    }
+  };
 
   const handleStatusChange = (e: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
     // console.log('target', e.target, checked);

@@ -2,7 +2,7 @@ import { Button, Dialog, DialogActions, DialogContent, DialogContentText, Dialog
 import { useTranslation } from 'react-i18next';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
-import { deleteMenu, SystemMenuResponse } from '@/api';
+import { deleteSystemDepartment, SystemDepartmentResponse } from '@/api';
 
 interface MenuDeleteProps {
   onSubmit: () => void;
@@ -15,11 +15,11 @@ const MenuDelete = forwardRef(({ onSubmit }: MenuDeleteProps, ref) => {
   const [fullWidth] = useState(true);
   const [maxWidth] = useState<DialogProps['maxWidth']>('sm');
 
-  const [menu, setMenu] = useState<SystemMenuResponse>();
+  const [department, setDepartment] = useState<SystemDepartmentResponse>();
 
   useImperativeHandle(ref, () => ({
-    show(menu: SystemMenuResponse) {
-      setMenu(menu);
+    show(department: SystemDepartmentResponse) {
+      setDepartment(department);
       setOpen(true);
     },
     hide() {
@@ -36,8 +36,8 @@ const MenuDelete = forwardRef(({ onSubmit }: MenuDeleteProps, ref) => {
   };
 
   const handleSubmit = async () => {
-    if (menu) {
-      await deleteMenu(menu.id);
+    if (department) {
+      await deleteSystemDepartment(department.id);
     }
     handleClose();
     onSubmit();
@@ -50,10 +50,10 @@ const MenuDelete = forwardRef(({ onSubmit }: MenuDeleteProps, ref) => {
       open={open}
       onClose={handleClose}
     >
-      <DialogTitle>{t('global.operate.delete')}{t('global.page.menu')}</DialogTitle>
+      <DialogTitle>{t('global.operate.delete')}{t('global.page.department')}</DialogTitle>
       <DialogContent>
         <DialogContentText>
-          {t('global.description.delete', { name: menu && menu.name })}
+          {t('global.description.delete', { name: department && department.name })}
         </DialogContentText>
       </DialogContent>
       <DialogActions>

@@ -147,6 +147,7 @@
 
   "page.department.title.name": "名称",
   "page.department.title.leader.user.name": "负责人",
+  "page.department.title.parent": "父级部门",
   "page.department.title.phone": "联系电话",
   "page.department.title.email": "邮箱",
   "page.department.title.sort": "排序",
@@ -154,7 +155,7 @@
   "page.department.switch.status.true": "开启",
   "page.department.switch.status.false": "关闭",
   "page.department.error.name": "请输入名称",
-  "page.department.error.leader.user.name": "请选择负责人",
+  "page.department.error.parent": "请选择上级部门",
   "page.department.error.sort": "请输入排序",
   "page.department.operate.edit": "编辑部门",
   "page.department.operate.delete": "删除部门"

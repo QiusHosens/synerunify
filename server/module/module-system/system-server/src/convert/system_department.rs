@@ -6,7 +6,6 @@ use system_model::response::system_department::{SystemDepartmentPageResponse, Sy
 
 pub fn create_request_to_model(request: &CreateSystemDepartmentRequest) -> SystemDepartmentActiveModel {
     SystemDepartmentActiveModel {
-        code: Set(request.code.clone()),
         name: Set(request.name.clone()),
         parent_id: Set(request.parent_id.clone()),
         sort: Set(request.sort.clone()),
@@ -20,14 +19,8 @@ pub fn create_request_to_model(request: &CreateSystemDepartmentRequest) -> Syste
 
 pub fn update_request_to_model(request: &UpdateSystemDepartmentRequest, existing: SystemDepartment) -> SystemDepartmentActiveModel {
     let mut active_model: SystemDepartmentActiveModel = existing.into();
-    if let Some(code) = &request.code { 
-        active_model.code = Set(code.clone());
-    }
     if let Some(name) = &request.name { 
         active_model.name = Set(name.clone());
-    }
-    if let Some(parent_id) = &request.parent_id { 
-        active_model.parent_id = Set(parent_id.clone());
     }
     if let Some(sort) = &request.sort { 
         active_model.sort = Set(sort.clone());
