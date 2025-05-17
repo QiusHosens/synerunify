@@ -2,24 +2,24 @@ import { Button, Dialog, DialogActions, DialogContent, DialogContentText, Dialog
 import { useTranslation } from 'react-i18next';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
-import { deleteSystemRole, SystemRoleResponse } from '@/api/role';
+import { deleteSystemTenant, SystemTenantResponse } from '@/api';
 
-interface RoleDeleteProps {
+interface TenantDeleteProps {
   onSubmit: () => void;
 }
 
-const RoleDelete = forwardRef(({ onSubmit }: RoleDeleteProps, ref) => {
+const TenantDelete = forwardRef(({ onSubmit }: TenantDeleteProps, ref) => {
   const { t } = useTranslation();
 
   const [open, setOpen] = useState(false);
   const [fullWidth] = useState(true);
   const [maxWidth] = useState<DialogProps['maxWidth']>('sm');
 
-  const [role, setRole] = useState<SystemRoleResponse>();
+  const [tenant, setTenant] = useState<SystemTenantResponse>();
 
   useImperativeHandle(ref, () => ({
-    show(role: SystemRoleResponse) {
-      setRole(role);
+    show(tenant: SystemTenantResponse) {
+      setTenant(tenant);
       setOpen(true);
     },
     hide() {
@@ -36,7 +36,9 @@ const RoleDelete = forwardRef(({ onSubmit }: RoleDeleteProps, ref) => {
   };
 
   const handleSubmit = async () => {
-    role && await deleteSystemRole(role.id);
+    if (tenant) {
+      await deleteSystemTenant(tenant.id);
+    }
     handleClose();
     onSubmit();
   };
@@ -48,10 +50,10 @@ const RoleDelete = forwardRef(({ onSubmit }: RoleDeleteProps, ref) => {
       open={open}
       onClose={handleClose}
     >
-      <DialogTitle>{t('global.operate.delete')}{t('global.page.role')}</DialogTitle>
+      <DialogTitle>{t('global.operate.delete')}{t('global.page.tenant')}</DialogTitle>
       <DialogContent>
         <DialogContentText>
-          {t('global.description.delete', { name: role && role.name })}
+          {t('global.description.delete', { name: tenant && tenant.name })}
         </DialogContentText>
       </DialogContent>
       <DialogActions>
@@ -62,4 +64,4 @@ const RoleDelete = forwardRef(({ onSubmit }: RoleDeleteProps, ref) => {
   )
 });
 
-export default RoleDelete;
+export default TenantDelete;

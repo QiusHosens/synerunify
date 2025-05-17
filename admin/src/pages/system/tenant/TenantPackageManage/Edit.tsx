@@ -124,7 +124,7 @@ const TenantPackageEdit = forwardRef(({ onSubmit }: TenantPackageEditProps, ref)
       open={open}
       onClose={handleClose}
     >
-      <DialogTitle>{t('global.operate.add')}{t('global.page.tenant.package')}</DialogTitle>
+      <DialogTitle>{t('global.operate.edit')}{t('global.page.tenant.package')}</DialogTitle>
       <DialogContent>
         <Box
           noValidate

@@ -2,6 +2,7 @@ use chrono::NaiveDateTime;
 use serde::{Serialize, Deserialize};
 use utoipa::ToSchema;
 use serde_with::{serde_as, DisplayFromStr};
+use common::formatter::string_date_time::StringDateTime;
 
 // #[serde_as]
 #[derive(Deserialize, Serialize, Debug, Clone, ToSchema)]
@@ -46,6 +47,7 @@ pub struct SystemTenantResponse {
     
 }
 
+#[serde_with::serde_as]
 #[derive(Deserialize, Serialize, Debug, Clone, ToSchema)]
 pub struct SystemTenantPageResponse {
     
@@ -69,6 +71,7 @@ pub struct SystemTenantPageResponse {
     
     // #[serde_as(as = "DisplayFromStr")]
     // #[serde(with = "serde_with::chrono::naive_datetime")]
+    #[serde_as(as = "StringDateTime")]
     #[schema(value_type = String, format = Date)]
     pub expire_time: NaiveDateTime, // 过期时间
     
@@ -78,6 +81,7 @@ pub struct SystemTenantPageResponse {
     
     // #[serde_as(as = "DisplayFromStr")]
     // #[serde(with = "serde_with::chrono::naive_datetime")]
+    #[serde_as(as = "StringDateTime")]
     #[schema(value_type = String, format = Date)]
     pub create_time: NaiveDateTime, // 创建时间
     
@@ -85,6 +89,7 @@ pub struct SystemTenantPageResponse {
     
     // #[serde_as(as = "DisplayFromStr")]
     // #[serde(with = "serde_with::chrono::naive_datetime")]
+    #[serde_as(as = "StringDateTime")]
     #[schema(value_type = String, format = Date)]
     pub update_time: NaiveDateTime, // 更新时间
     

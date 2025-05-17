@@ -12,8 +12,8 @@ const DictDelete = forwardRef(({ onSubmit }: DictAddProps, ref) => {
   const { t } = useTranslation();
 
   const [open, setOpen] = useState(false);
-  const [fullWidth, setFullWidth] = useState(true);
-  const [maxWidth, setMaxWidth] = useState<DialogProps['maxWidth']>('sm');
+  const [fullWidth] = useState(true);
+  const [maxWidth] = useState<DialogProps['maxWidth']>('sm');
 
   const [dict, setDict] = useState<SystemDictDataResponse>();
 
@@ -36,7 +36,9 @@ const DictDelete = forwardRef(({ onSubmit }: DictAddProps, ref) => {
   };
 
   const handleSubmit = async () => {
-    dict && await deleteDict(dict.id);
+    if (dict) {
+      await deleteDict(dict.id);
+    }
     handleClose();
     onSubmit();
   };

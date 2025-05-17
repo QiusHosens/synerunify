@@ -326,7 +326,7 @@ const MenuEdit = forwardRef(({ onSubmit }: MenuEditProps, ref) => {
       open={open}
       onClose={handleClose}
     >
-      <DialogTitle>{t('global.operate.add')}{t('global.page.menu')}</DialogTitle>
+      <DialogTitle>{t('global.operate.edit')}{t('global.page.menu')}</DialogTitle>
       <DialogContent>
         <Box
           noValidate

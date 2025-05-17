@@ -1,4 +1,4 @@
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormHelperText, IconButton, InputAdornment, InputLabel, MenuItem, OutlinedInput, Select, SelectChangeEvent, styled, SvgIcon, Switch, TextField, Typography } from '@mui/material';
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormHelperText, IconButton, InputAdornment, InputLabel, MenuItem, OutlinedInput, Select, styled, SvgIcon, Switch, TextField, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
@@ -37,11 +37,11 @@ interface FormErrors {
   account_count?: string; // 账号数量
 }
 
-interface RoleAddProps {
+interface TenantAddProps {
   onSubmit: () => void;
 }
 
-const RoleAdd = forwardRef(({ onSubmit }: RoleAddProps, ref) => {
+const TenantAdd = forwardRef(({ onSubmit }: TenantAddProps, ref) => {
   const { t } = useTranslation();
 
   const [open, setOpen] = useState(false);
@@ -189,7 +189,7 @@ const RoleAdd = forwardRef(({ onSubmit }: RoleAddProps, ref) => {
       const tenant = formValues as SystemTenantRequest;
       tenant.password = Md5.hashStr(tenant.password);
       await createSystemTenant(tenant);
-      reset();
+      // reset();
       onSubmit();
     }
   };
@@ -387,16 +387,6 @@ const RoleAdd = forwardRef(({ onSubmit }: RoleAddProps, ref) => {
               value={formValues.website}
               onChange={handleInputChange}
             />
-            {/* <TextField
-              required
-              size="small"
-              label={t("page.tenant.title.expire.time")}
-              name="expire_time"
-              value={formValues.expire_time}
-              onChange={handleInputChange}
-              error={!!errors.expire_time}
-              helperText={errors.expire_time}
-            /> */}
           </FormControl>
           <FormControl sx={{ minWidth: 120, '& .MuiPickersTextField-root': { mt: 2, width: '240px' } }}>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -453,4 +443,4 @@ const RoleAdd = forwardRef(({ onSubmit }: RoleAddProps, ref) => {
   )
 });
 
-export default RoleAdd;
+export default TenantAdd;

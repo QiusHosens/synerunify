@@ -12,8 +12,8 @@ const MenuDelete = forwardRef(({ onSubmit }: MenuDeleteProps, ref) => {
   const { t } = useTranslation();
 
   const [open, setOpen] = useState(false);
-  const [fullWidth, setFullWidth] = useState(true);
-  const [maxWidth, setMaxWidth] = useState<DialogProps['maxWidth']>('sm');
+  const [fullWidth] = useState(true);
+  const [maxWidth] = useState<DialogProps['maxWidth']>('sm');
 
   const [menu, setMenu] = useState<SystemMenuResponse>();
 
@@ -36,7 +36,9 @@ const MenuDelete = forwardRef(({ onSubmit }: MenuDeleteProps, ref) => {
   };
 
   const handleSubmit = async () => {
-    menu && await deleteMenu(menu.id);
+    if (menu) {
+      await deleteMenu(menu.id);
+    }
     handleClose();
     onSubmit();
   };
@@ -48,7 +50,7 @@ const MenuDelete = forwardRef(({ onSubmit }: MenuDeleteProps, ref) => {
       open={open}
       onClose={handleClose}
     >
-      <DialogTitle>{t('global.operate.delete')}{t('global.page.dict')}</DialogTitle>
+      <DialogTitle>{t('global.operate.delete')}{t('global.page.menu')}</DialogTitle>
       <DialogContent>
         <DialogContentText>
           {t('global.description.delete', { name: menu && menu.name })}

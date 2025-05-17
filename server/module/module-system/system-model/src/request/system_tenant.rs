@@ -1,10 +1,11 @@
 use chrono::NaiveDateTime;
 use serde::{Serialize, Deserialize};
+use serde_with::serde_as;
 use utoipa::ToSchema;
 use common::base::page::PaginatedRequest;
 use common::formatter::string_date_time::StringDateTime;
 
-#[serde_with::serde_as]
+#[serde_as]
 #[derive(Serialize, Deserialize, Debug, ToSchema)]
 pub struct CreateSystemTenantRequest {
     
@@ -36,6 +37,7 @@ pub struct CreateSystemTenantRequest {
     
 }
 
+#[serde_as]
 #[derive(Serialize, Deserialize, Debug, ToSchema)]
 pub struct UpdateSystemTenantRequest {
     
@@ -55,6 +57,8 @@ pub struct UpdateSystemTenantRequest {
     
     // #[serde_as(as = "DisplayFromStr")]
     // #[serde(with = "serde_with::chrono::naive_datetime")]
+    // #[serde_as(as = "StringDateTime")]
+    #[serde_as(as = "Option<StringDateTime>")]
     #[schema(value_type = String, format = Date)]
     pub expire_time: Option<NaiveDateTime>, // 过期时间
     

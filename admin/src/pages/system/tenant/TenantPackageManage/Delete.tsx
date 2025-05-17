@@ -36,7 +36,9 @@ const TenantPackageDelete = forwardRef(({ onSubmit }: TenantPackageDeleteProps, 
   };
 
   const handleSubmit = async () => {
-    tenantPackage && await deleteSystemTenantPackage(tenantPackage.id);
+    if (tenantPackage) {
+      await deleteSystemTenantPackage(tenantPackage.id);
+    }
     handleClose();
     onSubmit();
   };

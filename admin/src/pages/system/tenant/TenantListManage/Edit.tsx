@@ -1,42 +1,50 @@
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, SelectChangeEvent, Switch, TextField, Typography } from '@mui/material';
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Switch, TextField, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
-import DictSelect from '@/components/DictSelect';
-import { SystemRoleRequest, SystemRoleResponse, updateSystemRole } from '@/api';
+import { listSystemTenantPackage, SystemTenantEditRequest, SystemTenantPackageResponse, SystemTenantResponse, updateSystemTenant } from '@/api';
+import { PickerValue } from '@mui/x-date-pickers/internals';
+import dayjs, { Dayjs } from 'dayjs';
+import { DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
 interface FormErrors {
-  type?: string; // 角色类型
-  name?: string; // 角色名称
-  code?: string; // 角色权限字符串
-  status?: string; // 角色状态（0正常 1停用）
-  sort?: string; // 显示顺序
+  name?: string; // 租户名
+  contact_name?: string; // 联系人
+  status?: string; // 租户状态（0正常 1停用）
+  expire_time?: string; // 过期时间
+  account_count?: string; // 账号数量
 }
 
-interface RoleEditProps {
+interface TenantEditProps {
   onSubmit: () => void;
 }
 
-const RoleEdit = forwardRef(({ onSubmit }: RoleEditProps, ref) => {
+const TenantEdit = forwardRef(({ onSubmit }: TenantEditProps, ref) => {
   const { t } = useTranslation();
 
   const [open, setOpen] = useState(false);
   const [fullWidth] = useState(true);
   const [maxWidth] = useState<DialogProps['maxWidth']>('sm');
-  const [role, setRole] = useState<SystemRoleRequest>({
+  const [packages, setPackages] = useState<SystemTenantPackageResponse[]>([]);
+  const [expireTime, setExpireTime] = useState<Dayjs | null>();
+  const [tenant, setTenant] = useState<SystemTenantEditRequest>({
     id: 0,
-    type: 0,
     name: '',
-    code: '',
+    contact_name: '',
+    contact_mobile: '',
     status: 0,
-    sort: 0,
-    remark: '',
+    website: '',
+    package_id: 1,
+    expire_time: '',
+    account_count: 1,
   });
   const [errors, setErrors] = useState<FormErrors>({});
 
   useImperativeHandle(ref, () => ({
-    show(role: SystemRoleResponse) {
-      initForm(role);
+    show(tenant: SystemTenantResponse) {
+      initForm(tenant);
+      listPackage();
       setOpen(true);
     },
     hide() {
@@ -44,27 +52,28 @@ const RoleEdit = forwardRef(({ onSubmit }: RoleEditProps, ref) => {
     },
   }));
 
+  const listPackage = async () => {
+    const packages = await listSystemTenantPackage();
+    setPackages(packages);
+  }
+
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
 
-    if (!role.type && role.type != 0) {
-      newErrors.type = t('page.role.error.type');
+    if (!tenant.name.trim()) {
+      newErrors.name = t('page.tenant.error.name');
     }
 
-    if (!role.name.trim()) {
-      newErrors.name = t('page.role.error.name');
+    if (!tenant.contact_name.trim()) {
+      newErrors.contact_name = t('page.tenant.error.contact.name');
     }
 
-    if (!role.code.trim()) {
-      newErrors.code = t('page.role.error.code');
+    if (!tenant.expire_time.trim()) {
+      newErrors.expire_time = t('page.tenant.error.expire.time');
     }
 
-    if (!role.sort && role.sort != 0) {
-      newErrors.sort = t('page.role.error.sort');
-    }
-
-    if (!role.status && role.status != 0) {
-      newErrors.status = t('page.role.error.status');
+    if (!tenant.account_count) {
+      newErrors.account_count = t('page.tenant.error.account.count');
     }
 
     setErrors(newErrors);
@@ -81,16 +90,18 @@ const RoleEdit = forwardRef(({ onSubmit }: RoleEditProps, ref) => {
     // reset();
   };
 
-  const initForm = (role: SystemRoleResponse) => {
-    setRole({
-      ...role,
-    })
+  const initForm = (tenant: SystemTenantResponse) => {
+    const date = dayjs(tenant.expire_time, 'YYYY-MM-DD HH:mm:ss', true);
+    setExpireTime(date)
+    setTenant({
+      ...tenant,
+    });
     setErrors({});
   }
 
   const handleSubmit = async () => {
     if (validateForm()) {
-      await updateSystemRole(role);
+      await updateSystemTenant(tenant);
       handleClose();
       onSubmit();
     }
@@ -101,12 +112,12 @@ const RoleEdit = forwardRef(({ onSubmit }: RoleEditProps, ref) => {
     const { name, value, type } = e.target;
     if (type == 'number') {
       const numberValue = Number(value);
-      setRole(prev => ({
+      setTenant(prev => ({
         ...prev,
         [name]: numberValue
       }));
     } else {
-      setRole(prev => ({
+      setTenant(prev => ({
         ...prev,
         [name]: value
       }));
@@ -123,33 +134,34 @@ const RoleEdit = forwardRef(({ onSubmit }: RoleEditProps, ref) => {
     }
   };
 
-  const handleTypeChange = (e: SelectChangeEvent<string>) => {
-      console.log('target', e.target);
-      const { name, value } = e.target;
-      const numberValue = Number(value);
-      setRole(prev => ({
-        ...prev,
-        [name]: numberValue
-      }));
-  
-      // console.log('formValues', formValues);
-  
-      // Clear error when user starts typing
-      if (errors[name as keyof FormErrors]) {
-        setErrors(prev => ({
-          ...prev,
-          [name]: undefined
-        }));
-      }
-    };
-
   const handleStatusChange = (e: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
     // console.log('target', e.target, checked);
     const { name } = e.target;
 
-    setRole(prev => ({
+    setTenant(prev => ({
       ...prev,
       [name]: checked ? 0 : 1
+    }));
+
+    // Clear error when user starts typing
+    if (errors[name as keyof FormErrors]) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: undefined
+      }));
+    }
+  };
+
+  const handleDateTimeChange = (value: PickerValue) => {
+    setExpireTime(value);
+    if (!value) {
+      return;
+    }
+    const name = 'expire_time';
+    const time = value.format('YYYY-MM-DD HH:mm:ss');
+    setTenant(prev => ({
+      ...prev,
+      [name]: time
     }));
 
     // Clear error when user starts typing
@@ -168,7 +180,7 @@ const RoleEdit = forwardRef(({ onSubmit }: RoleEditProps, ref) => {
       open={open}
       onClose={handleClose}
     >
-      <DialogTitle>{t('global.operate.add')}{t('global.page.menu')}</DialogTitle>
+      <DialogTitle>{t('global.operate.add')}{t('global.page.tenant')}</DialogTitle>
       <DialogContent>
         <Box
           noValidate
@@ -180,53 +192,104 @@ const RoleEdit = forwardRef(({ onSubmit }: RoleEditProps, ref) => {
             width: 'fit-content',
           }}
         >
-          <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiSelect-root': { width: '200px' } }}>
-            <DictSelect name='type' dict_type='role_type' value={role.type.toString()} onChange={handleTypeChange} label={t("page.role.title.type")}></DictSelect>
-          </FormControl>
-          <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' } }}>
+          <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '240px' } }}>
             <TextField
               required
               size="small"
-              label={t("page.role.title.name")}
+              label={t("page.tenant.title.name")}
               name='name'
-              value={role.name}
+              value={tenant.name}
               onChange={handleInputChange}
               error={!!errors.name}
               helperText={errors.name}
             />
+          </FormControl>
+          <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiSelect-root': { width: '240px' } }}>
+            <InputLabel required size="small" id="package-select-label">{t("page.tenant.title.package")}</InputLabel>
+            <Select
+              required
+              size="small"
+              classes={{ select: 'CustomSelectSelect' }}
+              labelId="package-select-label"
+              name="package_id"
+              value={tenant.package_id}
+              onChange={(e) => handleInputChange(e as any)}
+              label={t("page.tenant.title.package")}
+            >
+              {packages.map(item => (<MenuItem key={item.id} value={item.id}>{item.name}</MenuItem>))}
+            </Select>
+          </FormControl>
+          <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '240px' } }}>
+            <TextField
+              required
+              size="small"
+              label={t("page.tenant.title.contact.name")}
+              name='contact_name'
+              value={tenant.contact_name}
+              onChange={handleInputChange}
+              error={!!errors.contact_name}
+              helperText={errors.contact_name}
+            />
             <TextField
               size="small"
-              label={t("page.role.title.code")}
-              name="code"
-              value={role.code}
+              label={t("page.tenant.title.contact.mobile")}
+              name="contact_mobile"
+              value={tenant.contact_mobile}
               onChange={handleInputChange}
-              error={!!errors.code}
-              helperText={errors.code}
             />
-
+          </FormControl>
+          <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '240px' } }}>
+            <TextField
+              size="small"
+              label={t("page.tenant.title.website")}
+              name="website"
+              value={tenant.website}
+              onChange={handleInputChange}
+            />
+          </FormControl>
+          <FormControl sx={{ minWidth: 120, '& .MuiPickersTextField-root': { mt: 2, width: '240px' } }}>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DateTimePicker
+                name='expire_time'
+                label={t("page.tenant.title.expire.time")}
+                value={expireTime}
+                onChange={(value) => handleDateTimeChange(value)}
+                slotProps={{
+                  textField: {
+                    size: 'small',
+                    required: true,
+                    error: !!errors.expire_time,
+                    helperText: errors.expire_time,
+                  },
+                  openPickerButton: {
+                    sx: {
+                      mr: -1,
+                      '& .MuiSvgIcon-root': {
+                        fontSize: '1rem',
+                      }
+                    }
+                  },
+                }}
+              />
+            </LocalizationProvider>
+          </FormControl>
+          <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '240px' } }}>
             <TextField
               required
               size="small"
               type="number"
-              label={t("page.role.title.sort")}
-              name="sort"
-              value={role.sort}
+              label={t("page.tenant.title.account.count")}
+              name="account_count"
+              value={tenant.account_count}
               onChange={handleInputChange}
-              error={!!errors.sort}
-              helperText={errors.sort}
-            />
-            <TextField
-              size="small"
-              label={t("page.role.title.remark")}
-              name="remark"
-              value={role.remark}
-              onChange={handleInputChange}
+              error={!!errors.account_count}
+              helperText={errors.account_count}
             />
           </FormControl>
           <Box sx={{ mt: 2, display: 'flex', alignItems: 'center' }}>
-            <Typography sx={{ mr: 4 }}>{t("page.role.title.status")}</Typography>
-            <Switch sx={{ mr: 2 }} name='status' checked={!role.status} onChange={handleStatusChange} />
-            <Typography>{role.status == 0 ? t('page.role.switch.status.true') : t('page.role.switch.status.false')}</Typography>
+            <Typography sx={{ mr: 4 }}>{t("page.tenant.title.status")}</Typography>
+            <Switch sx={{ mr: 2 }} name='status' checked={!tenant.status} onChange={handleStatusChange} />
+            <Typography>{tenant.status == 0 ? t('page.tenant.switch.status.true') : t('page.tenant.switch.status.false')}</Typography>
           </Box>
         </Box>
       </DialogContent>
@@ -238,4 +301,4 @@ const RoleEdit = forwardRef(({ onSubmit }: RoleEditProps, ref) => {
   )
 });
 
-export default RoleEdit;
+export default TenantEdit;

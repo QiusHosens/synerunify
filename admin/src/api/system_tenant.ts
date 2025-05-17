@@ -27,6 +27,18 @@ export interface SystemTenantRequest {
   account_count: number; // 账号数量
 }
 
+export interface SystemTenantEditRequest {
+  id: number; // id
+  name: string; // 租户名
+  contact_name: string; // 联系人
+  contact_mobile: string; // 联系手机
+  status: number; // 租户状态（0正常 1停用）
+  website: string; // 绑定域名
+  package_id: number; // 租户套餐编号
+  expire_time: string; // 过期时间
+  account_count: number; // 账号数量
+}
+
 export interface SystemTenantResponse {
   id: number; // id
   name: string; // 租户名
@@ -54,7 +66,7 @@ export const createSystemTenant = (system_tenant: SystemTenantRequest): Promise<
   return api.post<number>(apis.create, system_tenant);
 }
 
-export const updateSystemTenant = (system_tenant: SystemTenantRequest): Promise<void> => {
+export const updateSystemTenant = (system_tenant: SystemTenantEditRequest): Promise<void> => {
   return api.post<void>(apis.update, system_tenant);
 }
 

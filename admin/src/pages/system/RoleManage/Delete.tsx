@@ -36,7 +36,9 @@ const RoleDelete = forwardRef(({ onSubmit }: RoleDeleteProps, ref) => {
   };
 
   const handleSubmit = async () => {
-    role && await deleteSystemRole(role.id);
+    if (role) {
+      await deleteSystemRole(role.id);
+    }
     handleClose();
     onSubmit();
   };
