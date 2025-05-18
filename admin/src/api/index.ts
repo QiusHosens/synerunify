@@ -7,3 +7,4 @@ export * from './system_tenant';
 export * from './system_tenant_package';
 export * from './system_department';
 export * from './system_user';
+export * from './system_post';

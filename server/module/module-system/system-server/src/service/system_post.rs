@@ -1,3 +1,6 @@
+use std::str::FromStr;
+
+use common::constants::enum_constants::{STATUS_DISABLE, STATUS_ENABLE};
 use sea_orm::{DatabaseConnection, EntityTrait, ColumnTrait, ActiveModelTrait, PaginatorTrait, QueryOrder, QueryFilter, Condition};
 use crate::model::system_post::{Model as SystemPostModel, ActiveModel as SystemPostActiveModel, Entity as SystemPostEntity, Column};
 use system_model::request::system_post::{CreateSystemPostRequest, UpdateSystemPostRequest, PaginatedKeywordRequest};
@@ -33,7 +36,6 @@ pub async fn update(db: &DatabaseConnection, login_user: LoginUserContext, reque
 pub async fn delete(db: &DatabaseConnection, login_user: LoginUserContext, id: i64) -> Result<()> {
     let system_post = SystemPostActiveModel {
         id: Set(id),
-        tenant_id: Set(login_user.tenant_id),
         updater: Set(Some(login_user.id)),
         deleted: Set(true),
         ..Default::default()
@@ -53,8 +55,37 @@ pub async fn get_by_id(db: &DatabaseConnection, login_user: LoginUserContext, id
 }
 
 pub async fn get_paginated(db: &DatabaseConnection, login_user: LoginUserContext, params: PaginatedKeywordRequest) -> Result<PaginatedResponse<SystemPostResponse>> {
-    let condition = Condition::all().add(Column::TenantId.eq(login_user.tenant_id));let paginator = SystemPostEntity::find_active_with_condition(condition)
-        .order_by_desc(Column::UpdateTime)
+    let condition = Condition::all().add(Column::TenantId.eq(login_user.tenant_id));
+    let mut query = SystemPostEntity::find_active_with_condition(condition);
+
+    // Apply sort if not empty
+    let mut is_default_sort = true;
+    if let Some(field) = &params.base.field {
+        if let Some(sort) = &params.base.sort {
+            let is_asc = sort.to_lowercase() == "asc";
+            // 动态应用排序，假设字段名与数据库列名一致
+            match field.as_str() {
+                // SystemDictDataEntity 的字段
+                f if Column::from_str(f).is_ok() => {
+                    let column = Column::from_str(f).unwrap();
+                    is_default_sort = false;
+                    query = if is_asc {
+                        query.order_by_asc(column)
+                    } else {
+                        query.order_by_desc(column)
+                    };
+                }
+                _ => {}
+            }
+        }
+    }
+
+    if is_default_sort {
+        query = query
+            .order_by_asc(Column::Id);
+    }
+
+    let paginator = query
         .paginate(db, params.base.size);
 
     let total = paginator.num_items().await?;
@@ -79,4 +110,26 @@ pub async fn list(db: &DatabaseConnection, login_user: LoginUserContext) -> Resu
     let condition = Condition::all().add(Column::TenantId.eq(login_user.tenant_id));let list = SystemPostEntity::find_active_with_condition(condition)
         .all(db).await?;
     Ok(list.into_iter().map(model_to_response).collect())
+}
+
+pub async fn enable(db: &DatabaseConnection, login_user: LoginUserContext, id: i64) -> Result<()> {
+    let system_post = SystemPostActiveModel {
+        id: Set(id),
+        updater: Set(Some(login_user.id)),
+        status: Set(STATUS_ENABLE),
+        ..Default::default()
+    };
+    system_post.update(db).await?;
+    Ok(())
+}
+
+pub async fn disable(db: &DatabaseConnection, login_user: LoginUserContext, id: i64) -> Result<()> {
+    let system_post = SystemPostActiveModel {
+        id: Set(id),
+        updater: Set(Some(login_user.id)),
+        status: Set(STATUS_DISABLE),
+        ..Default::default()
+    };
+    system_post.update(db).await?;
+    Ok(())
 }

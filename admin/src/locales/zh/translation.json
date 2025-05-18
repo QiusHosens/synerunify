@@ -32,6 +32,7 @@
   "global.page.tenant.package": "租户套餐",
   "global.page.tenant": "租户",
   "global.page.department": "部门",
+  "global.page.post": "岗位",
   "global.page.user": "用户",
 
   "page.dict.title.name": "名称",
@@ -115,6 +116,7 @@
   "page.tenant.package.title.name": "名称",
   "page.tenant.package.title.remark": "备注",
   "page.tenant.package.title.status": "状态",
+  "page.tenant.package.title.create.time": "创建时间",
   "page.tenant.package.switch.status.true": "开启",
   "page.tenant.package.switch.status.false": "关闭",
   "page.tenant.package.error.name": "请输入名称",
@@ -158,5 +160,18 @@
   "page.department.error.parent": "请选择上级部门",
   "page.department.error.sort": "请输入排序",
   "page.department.operate.edit": "编辑部门",
-  "page.department.operate.delete": "删除部门"
+  "page.department.operate.delete": "删除部门",
+
+  "page.post.title.name": "名称",
+  "page.post.title.code": "编码",
+  "page.post.title.sort": "排序",
+  "page.post.title.status": "状态",
+  "page.post.title.remark": "备注",
+  "page.post.title.create.time": "创建时间",
+  "page.post.switch.status.true": "开启",
+  "page.post.switch.status.false": "关闭",
+  "page.post.error.name": "请输入名称",
+  "page.post.error.sort": "请输入排序",
+  "page.post.operate.edit": "编辑岗位",
+  "page.post.operate.delete": "删除岗位"
 }

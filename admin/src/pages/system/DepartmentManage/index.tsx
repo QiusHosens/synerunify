@@ -49,7 +49,7 @@ export default function DepartmentManage() {
     () => [
       { field: 'name', headerName: t("page.department.title.name"), flex: 1, minWidth: 200 },
       { field: 'leader_user_name', headerName: t("page.department.title.leader.user.name"), flex: 1, minWidth: 120 },
-      { field: 'phone', headerName: t("page.department.title.phone"), flex: 1, minWidth: 200 },
+      { field: 'phone', headerName: t("page.department.title.phone"), flex: 1, minWidth: 150 },
       { field: 'email', headerName: t("page.department.title.email"), flex: 1, minWidth: 150 },
       {
         field: 'sort',

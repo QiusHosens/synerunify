@@ -47,7 +47,7 @@ pub struct SystemTenantResponse {
     
 }
 
-#[serde_with::serde_as]
+#[serde_as]
 #[derive(Deserialize, Serialize, Debug, Clone, ToSchema)]
 pub struct SystemTenantPageResponse {
     

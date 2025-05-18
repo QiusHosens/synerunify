@@ -62,6 +62,7 @@ export default function TenantPackageManage() {
           </Box>
         ),
       },
+      { field: 'create_time', headerName: t("page.tenant.package.title.create.time"), flex: 1, minWidth: 180 },
       {
         field: 'actions',
         sortable: false,

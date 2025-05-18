@@ -4,31 +4,30 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { DataGrid, GridCallbackDetails, GridColDef, GridRenderCellParams, GridSortModel } from '@mui/x-data-grid';
 import EditIcon from '@/assets/image/svg/edit.svg';
 import DeleteIcon from '@/assets/image/svg/delete.svg';
-import { disableSystemTenant, enableSystemTenant, pageSystemTenant, SystemTenantQueryCondition, SystemTenantResponse } from '@/api';
-import TenantAdd from './Add';
-import TenantEdit from './Edit';
-import TenantDelete from './Delete';
-import CustomizedDictTag from '@/components/CustomizedDictTag';
-import CustomizedTag from '@/components/CustomizedTag';
+import { disableSystemPost, enableSystemPost, pageSystemPost, SystemPostQueryCondition, SystemPostResponse } from '@/api';
+import PostAdd from './Add';
+import PostEdit from './Edit';
+import PostDelete from './Delete';
+import CustomizedMore from '@/components/CustomizedMore';
 
-export default function TenantManage() {
+export default function PostManage() {
   const { t } = useTranslation();
 
   const [total, setTotal] = useState<number>(0);
-  const [condition, setCondition] = useState<SystemTenantQueryCondition>({
+  const [condition, setCondition] = useState<SystemPostQueryCondition>({
     page: 1,
     size: 20,
   });
 
-  const [records, setRecords] = useState<Array<SystemTenantResponse>>([]);
+  const [records, setRecords] = useState<Array<SystemPostResponse>>([]);
   const [sortModel, setSortModel] = useState<GridSortModel>([]);
 
-  const addTenant = useRef(null);
-  const editTenant = useRef(null);
-  const deleteTenant = useRef(null);
+  const addPost = useRef(null);
+  const editPost = useRef(null);
+  const deletePost = useRef(null);
 
   const handleStatusChange = useCallback(
-    async (e: React.ChangeEvent<HTMLInputElement>, checked: boolean, data: SystemTenantResponse) => {
+    async (e: React.ChangeEvent<HTMLInputElement>, checked: boolean, data: SystemPostResponse) => {
       // 更新表格
       setRecords((prev) =>
         prev.map((r) =>
@@ -37,9 +36,9 @@ export default function TenantManage() {
       );
 
       if (checked) {
-        await enableSystemTenant(data.id);
+        await enableSystemPost(data.id);
       } else {
-        await disableSystemTenant(data.id);
+        await disableSystemPost(data.id);
       }
     },
     []
@@ -47,27 +46,14 @@ export default function TenantManage() {
 
   const columns: GridColDef[] = useMemo(
     () => [
-      { field: 'name', headerName: t("page.tenant.title.name"), flex: 1, minWidth: 100 },
-      {
-        field: 'package_name',
-        headerName: t("page.tenant.title.package"),
-        flex: 1,
-        minWidth: 120,
-        renderCell: (params: GridRenderCellParams) => (
-          <>
-            <CustomizedTag label={params.row.package_name} />
-          </>
-        )
-      },
-      { field: 'contact_name', headerName: t("page.tenant.title.contact.name"), flex: 1, minWidth: 120 },
-      { field: 'contact_mobile', headerName: t("page.tenant.title.contact.mobile"), flex: 1, minWidth: 150 },
-      { field: 'website', headerName: t("page.tenant.title.website"), flex: 1, minWidth: 180 },
-      { field: 'expire_time', headerName: t("page.tenant.title.expire.time"), flex: 1, minWidth: 180 },
-      { field: 'account_count', headerName: t("page.tenant.title.account.count"), flex: 1, minWidth: 100 },
+      { field: 'name', headerName: t("page.post.title.name"), flex: 1, minWidth: 100 },
+      { field: 'code', headerName: t("page.post.title.code"), flex: 1, minWidth: 100 },
+      { field: 'sort', headerName: t("page.post.title.sort"), flex: 1, minWidth: 60 },
+      { field: 'remark', headerName: t("page.post.title.remark"), flex: 1, minWidth: 100 },
       {
         field: 'status',
         sortable: false,
-        headerName: t("page.tenant.title.status"),
+        headerName: t("page.post.title.status"),
         flex: 1,
         minWidth: 80,
         renderCell: (params: GridRenderCellParams) => (
@@ -76,6 +62,7 @@ export default function TenantManage() {
           </Box>
         ),
       },
+      { field: 'create_time', headerName: t("page.post.title.create.time"), flex: 1, minWidth: 180 },
       {
         field: 'actions',
         sortable: false,
@@ -88,15 +75,15 @@ export default function TenantManage() {
             <Button
               size="small"
               variant='customOperate'
-              title={t('page.tenant.operate.edit')}
+              title={t('page.post.operate.edit')}
               startIcon={<EditIcon />}
               onClick={() => handleClickOpenEdit(params.row)}
             />
             <Button
-              sx={{ mt: 1, color: 'error.main' }}
+              sx={{ color: 'error.main' }}
               size="small"
               variant='customOperate'
-              title={t('page.tenant.operate.delete')}
+              title={t('page.post.operate.delete')}
               startIcon={<DeleteIcon />}
               onClick={() => handleClickOpenDelete(params.row)}
             />
@@ -107,22 +94,22 @@ export default function TenantManage() {
     [t, handleStatusChange]
   );
 
-  const queryRecords = async (condition: SystemTenantQueryCondition) => {
-    const result = await pageSystemTenant(condition);
+  const queryRecords = async (condition: SystemPostQueryCondition) => {
+    const result = await pageSystemPost(condition);
     setRecords(result.list);
     setTotal(result.total);
   };
 
   const handleClickOpenAdd = () => {
-    (addTenant.current as any).show();
+    (addPost.current as any).show();
   }
 
-  const handleClickOpenEdit = (tenant: SystemTenantResponse) => {
-    (editTenant.current as any).show(tenant);
+  const handleClickOpenEdit = (tenantPackage: SystemPostResponse) => {
+    (editPost.current as any).show(tenantPackage);
   };
 
-  const handleClickOpenDelete = (tenant: SystemTenantResponse) => {
-    (deleteTenant.current as any).show(tenant);
+  const handleClickOpenDelete = (tenantPackage: SystemPostResponse) => {
+    (deletePost.current as any).show(tenantPackage);
   };
 
   useEffect(() => {
@@ -131,7 +118,7 @@ export default function TenantManage() {
 
   const handleSortModelChange = (model: GridSortModel, details: GridCallbackDetails) => {
     setSortModel(model);
-    setCondition((prev) => ({ ...prev, ...model[0] } as SystemTenantQueryCondition));
+    setCondition((prev) => ({ ...prev, ...model[0] } as SystemPostQueryCondition));
   };
 
   const refreshData = () => {
@@ -166,9 +153,9 @@ export default function TenantManage() {
           }));
         }}
       />
-      <TenantAdd ref={addTenant} onSubmit={refreshData} />
-      <TenantEdit ref={editTenant} onSubmit={refreshData} />
-      <TenantDelete ref={deleteTenant} onSubmit={refreshData} />
+      <PostAdd ref={addPost} onSubmit={refreshData} />
+      <PostEdit ref={editPost} onSubmit={refreshData} />
+      <PostDelete ref={deletePost} onSubmit={refreshData} />
     </Box>
   );
 }
