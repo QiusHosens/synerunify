@@ -1,17 +1,17 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : 192.168.0.99_synerunify
+ Source Server         : 192.168.1.18_ruoyi
  Source Server Type    : MySQL
- Source Server Version : 80100 (8.1.0)
- Source Host           : 192.168.0.99:30010
+ Source Server Version : 80200 (8.2.0)
+ Source Host           : 192.168.1.18:30010
  Source Schema         : synerunify
 
  Target Server Type    : MySQL
- Target Server Version : 80100 (8.1.0)
+ Target Server Version : 80200 (8.2.0)
  File Encoding         : 65001
 
- Date: 16/05/2025 10:52:04
+ Date: 18/05/2025 22:00:44
 */
 
 SET NAMES utf8mb4;
@@ -67,12 +67,16 @@ CREATE TABLE `system_department`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '部门表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '部门表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of system_department
 -- ----------------------------
-INSERT INTO `system_department` VALUES (1, '0000', '总部', 0, 1, 1, '18888888888', '123@qq.com', 0, 1, '2025-03-08 10:04:46', 1, '2025-03-08 10:04:46', b'0', 1);
+INSERT INTO `system_department` VALUES (1, '0000', '总部', 0, 1, 1, '18888888888', '123@qq.com', 0, 1, '2025-03-08 10:04:46', 1, '2025-05-17 12:35:29', b'0', 1);
+INSERT INTO `system_department` VALUES (2, '0000-0000', '测试租户', 1, 0, NULL, NULL, NULL, 0, 1, '2025-05-17 08:13:42', 1, '2025-05-17 08:13:42', b'0', 2);
+INSERT INTO `system_department` VALUES (3, '0000-0001', '测试租户1', 1, 0, NULL, NULL, NULL, 0, 1, '2025-05-17 08:35:05', 1, '2025-05-17 08:35:05', b'0', 3);
+INSERT INTO `system_department` VALUES (4, '0000-0002', '研发部', 1, 2, NULL, '13434353423', 'ffsdp@outlook.com', 0, 1, '2025-05-17 14:47:05', 1, '2025-05-18 02:27:35', b'0', 1);
+INSERT INTO `system_department` VALUES (5, '0000-0003', '测试部', 1, 3, NULL, '13434353423', '123@q.com', 0, 1, '2025-05-17 14:51:54', 1, '2025-05-17 14:51:54', b'0', 1);
 
 -- ----------------------------
 -- Table structure for system_dict_data
@@ -163,7 +167,7 @@ CREATE TABLE `system_menu`  (
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 21 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '菜单权限表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 23 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '菜单权限表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of system_menu
@@ -188,6 +192,7 @@ INSERT INTO `system_menu` VALUES (17, '新增字典', 'config:dict:add', 3, 1, 4
 INSERT INTO `system_menu` VALUES (18, '修改字典类型', 'config:dict:type:edit', 3, 2, 4, '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-16 01:26:12', 1, '2025-05-16 01:26:12', b'0');
 INSERT INTO `system_menu` VALUES (19, '修改字典', 'config:dict:edit', 3, 2, 4, '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-16 01:26:23', 1, '2025-05-16 01:26:23', b'0');
 INSERT INTO `system_menu` VALUES (20, '删除字典', 'config:dict:delete', 3, 3, 4, '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-16 01:26:42', 1, '2025-05-16 01:26:42', b'0');
+INSERT INTO `system_menu` VALUES (21, '岗位管理', 'post', 2, 107, 2, '/system/post', 'post', 'pages/system/PostManage', 'PostManage', 0, b'1', b'1', b'1', 1, '2025-05-18 07:22:36', 1, '2025-05-18 07:22:36', b'0');
 
 -- ----------------------------
 -- Table structure for system_notice
@@ -230,11 +235,13 @@ CREATE TABLE `system_post`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '职位信息表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '职位信息表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of system_post
 -- ----------------------------
+INSERT INTO `system_post` VALUES (1, '', '董事长', 0, 0, '董事长', 1, '2025-05-18 13:37:14', 1, '2025-05-18 13:37:14', b'0', 1);
+INSERT INTO `system_post` VALUES (2, 'h', '总裁', 1, 0, '总裁', 1, '2025-05-18 13:37:27', 1, '2025-05-18 13:41:44', b'0', 1);
 
 -- ----------------------------
 -- Table structure for system_role
@@ -264,7 +271,7 @@ CREATE TABLE `system_role`  (
 -- ----------------------------
 INSERT INTO `system_role` VALUES (1, 0, '超级管理员', 'super_admin', 0, 1, 1, '', '超级管理员', 1, '2025-03-25 03:28:46', 1, '2025-05-14 14:05:11', b'0', 1);
 INSERT INTO `system_role` VALUES (2, 0, '租户管理员', 'tenant_admin', 0, 2, 2, '', '租户管理员', 1, '2025-05-14 14:57:37', 1, '2025-05-15 08:32:30', b'0', 1);
-INSERT INTO `system_role` VALUES (3, 1, '开发', 'dev', 0, 3, 4, '', '开发', 1, '2025-05-14 15:29:04', 1, '2025-05-15 08:14:55', b'0', 1);
+INSERT INTO `system_role` VALUES (3, 1, '开发', 'dev', 0, 3, 4, '', '开发1', 1, '2025-05-14 15:29:04', 1, '2025-05-18 02:27:00', b'0', 1);
 INSERT INTO `system_role` VALUES (4, 1, '测试', 'test', 0, 4, 4, '', '测试', 1, '2025-05-15 09:29:04', 1, '2025-05-15 09:29:28', b'0', 1);
 
 -- ----------------------------
@@ -282,7 +289,7 @@ CREATE TABLE `system_role_menu`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 26 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '角色和菜单关联表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 27 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '角色和菜单关联表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of system_role_menu
@@ -312,6 +319,7 @@ INSERT INTO `system_role_menu` VALUES (22, 1, 17, 1, '2025-05-16 01:28:04', 1, '
 INSERT INTO `system_role_menu` VALUES (23, 1, 19, 1, '2025-05-16 01:28:04', 1, '2025-05-16 01:28:04', b'0', 1);
 INSERT INTO `system_role_menu` VALUES (24, 1, 15, 1, '2025-05-16 01:28:04', 1, '2025-05-16 01:28:04', b'0', 1);
 INSERT INTO `system_role_menu` VALUES (25, 1, 18, 1, '2025-05-16 01:28:04', 1, '2025-05-16 01:28:04', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (26, 1, 21, 1, '2025-05-18 07:35:15', 1, '2025-05-18 07:35:15', b'0', 1);
 
 -- ----------------------------
 -- Table structure for system_role_menu_data_scope
@@ -355,12 +363,14 @@ CREATE TABLE `system_tenant`  (
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '租户表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '租户表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of system_tenant
 -- ----------------------------
-INSERT INTO `system_tenant` VALUES (1, '管理租户', 1, '管理员', '18888888888', 0, '', 1, '2039-12-31 18:15:40', 1, 1, '2025-03-08 10:16:18', 1, '2025-03-08 10:17:34', b'0');
+INSERT INTO `system_tenant` VALUES (1, '管理租户', 1, '管理员', '18888888888', 0, '', 1, '2039-12-31 18:15:40', 1, 1, '2025-03-08 10:16:18', 1, '2025-05-17 01:11:29', b'0');
+INSERT INTO `system_tenant` VALUES (2, '测试租户', 3, '测试', '13333', 0, 'www.test.com', 2, '2025-06-18 14:39:29', 5, 1, '2025-05-17 08:13:42', 1, '2025-05-17 09:33:22', b'0');
+INSERT INTO `system_tenant` VALUES (3, '测试租户1', 4, '测试1', '15555555', 0, 'www.test.com', 1, '2025-06-17 16:25:46', 5, 1, '2025-05-17 08:35:05', 1, '2025-05-17 08:35:05', b'0');
 
 -- ----------------------------
 -- Table structure for system_tenant_package
@@ -378,12 +388,13 @@ CREATE TABLE `system_tenant_package`  (
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '租户套餐表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '租户套餐表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of system_tenant_package
 -- ----------------------------
 INSERT INTO `system_tenant_package` VALUES (1, '超级套餐', 0, '', '[1]', 1, '2025-03-08 10:17:29', 1, '2025-03-08 10:17:29', b'0');
+INSERT INTO `system_tenant_package` VALUES (2, '测试套餐', 0, '测试套餐', '[1,2,7,10,11,12,13,14]', 1, '2025-05-17 05:34:45', 1, '2025-05-17 05:35:03', b'0');
 
 -- ----------------------------
 -- Table structure for system_user
@@ -412,12 +423,14 @@ CREATE TABLE `system_user`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '用户信息表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '用户信息表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of system_user
 -- ----------------------------
-INSERT INTO `system_user` VALUES (1, 'admin', '$2b$06$Ohq86rDIvNuy/4ZvsTF4dOw.7I7QJj620LC25PwgYDmrKqKmKsJz6', '超级管理员', '超级管理员', NULL, '123@qq.com', '18888888888', 0, '', 0, '127.0.0.1', '2025-05-14 14:05:26', '0000', 1, 1, '2025-03-08 10:14:52', 1, '2025-05-14 14:05:25', b'0', 1);
+INSERT INTO `system_user` VALUES (1, 'admin', '$2b$06$Ohq86rDIvNuy/4ZvsTF4dOw.7I7QJj620LC25PwgYDmrKqKmKsJz6', '超级管理员', '超级管理员', NULL, '123@qq.com', '18888888888', 0, '', 0, '127.0.0.1', '2025-05-18 07:09:23', '0000', 1, 1, '2025-03-08 10:14:52', 1, '2025-05-18 07:09:22', b'0', 1);
+INSERT INTO `system_user` VALUES (3, 'test', '$2b$06$LiMzvNQ7OgwEndSAwZR9LeLnLMt.bAUJ4yr/dsvB8X2Ue2Ecgy2ja', '测试', NULL, NULL, '', '13333', 0, '', 0, '', NULL, '0000-0000', 2, 1, '2025-05-17 08:13:42', 1, '2025-05-17 08:35:56', b'0', 2);
+INSERT INTO `system_user` VALUES (4, 'test1', '$2b$06$LiMzvNQ7OgwEndSAwZR9LeLnLMt.bAUJ4yr/dsvB8X2Ue2Ecgy2ja', '测试1', NULL, NULL, '', '15555555', 0, '', 0, '', NULL, '0000-0001', 3, 1, '2025-05-17 08:35:05', 1, '2025-05-17 08:35:05', b'0', 3);
 
 -- ----------------------------
 -- Table structure for system_user_post
