@@ -21,11 +21,12 @@ RUN adduser \
     "${USER}"
 
 
-WORKDIR /myip
+WORKDIR /synerunify
 
 COPY ./ .
 
-RUN cargo build --target x86_64-unknown-linux-musl --release
+#RUN cargo build --target x86_64-unknown-linux-musl --release
+RUN cargo build --release
 
 ####################################################################################################
 ## Final image
@@ -39,9 +40,10 @@ COPY --from=builder /etc/group /etc/group
 WORKDIR /synerunify
 
 # Copy our build
-COPY --from=builder /synerunify/target/x86_64-unknown-linux-musl/release/synerunify ./
+#COPY --from=builder /synerunify/target/x86_64-unknown-linux-musl/release/synerunify ./
+COPY --from=builder /synerunify/target/release/system-server ./
 
 # Use an unprivileged user.
 USER synerunify:synerunify
 
-CMD ["/synerunify/synerunify"]
+CMD ["/synerunify/system-server"]
