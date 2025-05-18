@@ -9,17 +9,17 @@ unused_imports = "allow"
 warnings = "allow"
 
 [dependencies]
-serde = { version = "1.0.218", default-features = false, features = ["derive"] }
+serde = { version = "1.0.219", default-features = false, features = ["derive"] }
 serde_with = { version = "3.12.0" }
-sea-orm = { version = "1.1.6", features = ["sqlx-mysql", "runtime-tokio-native-tls", "macros"] }
+sea-orm = { version = "1.1.11", features = ["sqlx-mysql", "runtime-tokio-native-tls", "macros"] }
 jsonwebtoken = { version = "9.3.1" }  # 添加 JWT 依赖
-chrono = { version = "0.4.39" }       # 用于处理时间
-anyhow = "1.0.96" # 返回
+chrono = { version = "0.4.41" }       # 用于处理时间
+anyhow = "1.0.98" # 返回
 dotenvy = "0.15.7" # 读取配置文件
 # axum
-axum = { version = "0.8.1" }
-tokio = { version = "1.43.0", features = ["full"] }
-axum-extra = { version = "0.10.0", features = ["typed-header"] }
+axum = { version = "0.8.4" }
+tokio = { version = "1.45.0", features = ["full"] }
+axum-extra = { version = "0.10.1", features = ["typed-header"] }
 
 lazy_static = "1.5.0"
 
@@ -30,25 +30,25 @@ utoipa = { version = "5.3.1" }
 tracing = { version = "0.1.41" }
 tracing-appender = { version = "0.2.3" }
 tracing-subscriber = { version = "0.3.19" }
-serde_json = "1.0.139"
+serde_json = "1.0.140"
 hyper = "1.6.0"
 
 # redis
-redis = "0.29.1"
-once_cell = "1.20.3"
-async-trait = "0.1.87"
+redis = "0.29.5"
+once_cell = "1.21.3"
+async-trait = "0.1.88"
 headers = "0.4.0"
 tower = "0.5.2"
 
 md5 = "0.7.0"
 bcrypt = "0.17.0"
 mime = "0.3.17"
-ctor = "0.4.0"
+ctor = "0.4.2"
 dashmap = "6.1.0"
 regex = "1.11.1"
 uaparser = "0.6.4"
 
 # mongo
-mongodb = "3.2.1"
+mongodb = "3.2.3"
 
 macros = { path = "../macros" }
