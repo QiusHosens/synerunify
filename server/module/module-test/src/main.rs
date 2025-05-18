@@ -45,7 +45,7 @@ struct AppState {}
     )
 )]
 // #[require_permissions("user:read")]
-#[require_authorize(operation_id = "operation_id", authorize = "user:read,user:get")]
+// #[require_authorize(operation_id = "operation_id", authorize = "user:read,user:get")]
 async fn update(
     State(_state): State<AppState>,
     Json(payload): Json<UpdateSystemDataScopeRuleRequest>,
@@ -72,7 +72,7 @@ async fn update(
     )
 )]
 // #[require_permissions("user:read,user:get")]
-#[require_authorize(operation_id = "operation_id", authorize = "user:read,user:get")]
+// #[require_authorize(operation_id = "operation_id", authorize = "user:read,user:get")]
 async fn user() -> String {
     "User data".to_string()
 }
