@@ -6,7 +6,7 @@ use ctor;
 use macros::require_authorize;
 use axum::{routing::{get, post}, Router, extract::{State, Path, Json, Query}, response::IntoResponse, Extension};
 use common::base::page::PaginatedResponse;
-use system_model::request::system_user::{CreateSystemUserRequest, UpdateSystemUserRequest, PaginatedKeywordRequest};
+use system_model::{request::system_user::{CreateSystemUserRequest, PaginatedKeywordRequest, UpdateSystemUserRequest}, response::system_user::SystemUserPageResponse};
 use system_model::response::system_user::SystemUserResponse;
 use common::base::response::CommonResult;
 use common::context::context::LoginUserContext;
@@ -21,6 +21,8 @@ pub async fn system_user_router(state: AppState) -> OpenApiRouter {
         .routes(routes!(get_by_id))
         .routes(routes!(list))
         .routes(routes!(page))
+        .routes(routes!(enable))
+        .routes(routes!(disable))
         .with_state(state)
 }
 
@@ -150,7 +152,7 @@ async fn get_by_id(
         ("keyword" = Option<String>, Query, description = "keyword")
     ),
     responses(
-        (status = 200, description = "get page", body = CommonResult<PaginatedResponse<SystemUserResponse>>)
+        (status = 200, description = "get page", body = CommonResult<PaginatedResponse<SystemUserPageResponse>>)
     ),
     tag = "system_user",
     security(
@@ -162,7 +164,7 @@ async fn page(
     State(state): State<AppState>,
     Extension(login_user): Extension<LoginUserContext>,
     Query(params): Query<PaginatedKeywordRequest>,
-) -> CommonResult<PaginatedResponse<SystemUserResponse>> {
+) -> CommonResult<PaginatedResponse<SystemUserPageResponse>> {
     match service::system_user::get_paginated(&state.db, login_user, params).await {
         Ok(data) => {CommonResult::with_data(data)}
         Err(e) => {CommonResult::with_err(&e.to_string())}
@@ -188,6 +190,60 @@ async fn list(
 ) -> CommonResult<Vec<SystemUserResponse>> {
     match service::system_user::list(&state.db, login_user).await {
         Ok(data) => {CommonResult::with_data(data)}
+        Err(e) => {CommonResult::with_err(&e.to_string())}
+    }
+}
+
+#[utoipa::path(
+    post,
+    path = "/enable/{id}",
+    operation_id = "system_user_enable",
+    params(
+        ("id" = i64, Path, description = "id")
+    ),
+    responses(
+        (status = 204, description = "enable")
+    ),
+    tag = "system_user",
+    security(
+        ("bearerAuth" = [])
+    )
+)]
+#[require_authorize(operation_id = "system_user_enable", authorize = "")]
+async fn enable(
+    State(state): State<AppState>,
+    Extension(login_user): Extension<LoginUserContext>,
+    Path(id): Path<i64>,
+) -> CommonResult<()> {
+    match service::system_user::enable(&state.db, login_user, id).await {
+        Ok(_) => {CommonResult::with_none()}
+        Err(e) => {CommonResult::with_err(&e.to_string())}
+    }
+}
+
+#[utoipa::path(
+    post,
+    path = "/disable/{id}",
+    operation_id = "system_user_disable",
+    params(
+        ("id" = i64, Path, description = "id")
+    ),
+    responses(
+        (status = 204, description = "disable")
+    ),
+    tag = "system_user",
+    security(
+        ("bearerAuth" = [])
+    )
+)]
+#[require_authorize(operation_id = "system_user_disable", authorize = "")]
+async fn disable(
+    State(state): State<AppState>,
+    Extension(login_user): Extension<LoginUserContext>,
+    Path(id): Path<i64>,
+) -> CommonResult<()> {
+    match service::system_user::disable(&state.db, login_user, id).await {
+        Ok(_) => {CommonResult::with_none()}
         Err(e) => {CommonResult::with_err(&e.to_string())}
     }
 }

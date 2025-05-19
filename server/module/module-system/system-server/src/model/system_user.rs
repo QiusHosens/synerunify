@@ -2,6 +2,7 @@ use chrono::NaiveDateTime;
 use sea_orm::{Condition};
 use sea_orm::entity::prelude::*;
 use common::interceptor::orm::active_filter::ActiveFilterEntityTrait;
+use crate::model::{system_user_role, system_department};
 
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel)]
 #[sea_orm(table_name = "system_user")]
@@ -51,7 +52,23 @@ pub struct Model {
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
-pub enum Relation {}
+pub enum Relation {
+
+    // #[sea_orm(has_many = "super::system_user_role::Entity")]
+    #[sea_orm(
+        belongs_to = "super::system_user_role::Entity",
+        from = "Column::Id",
+        to = "system_user_role::Column::UserId"
+    )]
+    UserRole,
+
+    #[sea_orm(
+        belongs_to = "super::system_department::Entity",
+        from = "Column::DepartmentId",
+        to = "system_department::Column::Id"
+    )]
+    UserDepartment,
+}
 
 impl Related<Entity> for Entity {
     fn to() -> RelationDef {

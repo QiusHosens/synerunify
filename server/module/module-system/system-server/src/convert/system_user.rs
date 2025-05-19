@@ -1,7 +1,9 @@
 use sea_orm::{Set, NotSet};
 use crate::model::system_user::{self, Model as SystemUser, ActiveModel as SystemUserActiveModel};
+use crate::model::system_role::{self, Model as SystemRole, ActiveModel as SystemRoleActiveModel};
+use crate::model::system_department::{self, Model as SystemDepartment, ActiveModel as SystemDepartmentActiveModel};
 use system_model::request::system_user::{CreateSystemUserRequest, UpdateSystemUserRequest};
-use system_model::response::system_user::SystemUserResponse;
+use system_model::response::system_user::{SystemUserPageResponse, SystemUserResponse};
 
 pub fn create_request_to_model(request: &CreateSystemUserRequest) -> SystemUserActiveModel {
     SystemUserActiveModel {
@@ -86,5 +88,42 @@ pub fn model_to_response(model: SystemUser) -> SystemUserResponse {
         create_time: model.create_time,
         updater: model.updater,
         update_time: model.update_time,
+    }
+}
+
+pub fn model_to_page_response(model: SystemUser, model_role: Option<SystemRole>, model_department: Option<SystemDepartment>) -> SystemUserPageResponse {
+    let (role_type, role_name) = match model_role {
+        Some(t) => (
+            Some(t.r#type.clone()),
+            Some(t.name.clone()),
+        ),
+        None => (None, None),
+    };
+
+    let department_name = model_department.map(|department| department.name.clone());
+
+    SystemUserPageResponse { 
+        id: model.id,
+        username: model.username,
+        password: model.password,
+        nickname: model.nickname,
+        remark: model.remark,
+        email: model.email,
+        mobile: model.mobile,
+        sex: model.sex,
+        avatar: model.avatar,
+        status: model.status,
+        login_ip: model.login_ip,
+        login_date: model.login_date,
+        department_code: model.department_code,
+        department_id: model.department_id,
+        creator: model.creator,
+        create_time: model.create_time,
+        updater: model.updater,
+        update_time: model.update_time,
+
+        role_type,
+        role_name,
+        department_name
     }
 }

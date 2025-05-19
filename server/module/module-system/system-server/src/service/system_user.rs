@@ -1,10 +1,16 @@
-use common::constants::enum_constants::STATUS_ENABLE;
+use std::str::FromStr;
+
+use common::constants::enum_constants::{STATUS_DISABLE, STATUS_ENABLE};
 use common::utils::crypt_utils::encrypt_password;
-use sea_orm::{ActiveModelTrait, ColumnTrait, Condition, DatabaseConnection, DatabaseTransaction, EntityTrait, PaginatorTrait, QueryFilter, QueryOrder};
-use crate::model::system_user::{Model as SystemUserModel, ActiveModel as SystemUserActiveModel, Entity as SystemUserEntity, Column};
+use sea_orm::{ActiveModelTrait, ColumnTrait, Condition, DatabaseConnection, DatabaseTransaction, EntityTrait, JoinType, PaginatorTrait, QueryFilter, QueryOrder, QuerySelect, RelationTrait};
+use tokio::io::join;
+use crate::model::system_user::{Model as SystemUserModel, ActiveModel as SystemUserActiveModel, Entity as SystemUserEntity, Column, Relation};
+use crate::model::system_user_role::{Model as SystemUserRoleModel, ActiveModel as SystemUserRoleActiveModel, Entity as SystemUserRoleEntity, Column as SystemUserRoleColumn, Relation as SystemUserRoleRelation};
+use crate::model::system_department::{Model as SystemDepartmentModel, ActiveModel as SystemDepartmentActiveModel, Entity as SystemDepartmentEntity};
+use crate::model::system_role::{Model as SystemRoleModel, ActiveModel as SystemRoleActiveModel, Entity as SystemRoleEntity};
 use system_model::request::system_user::{CreateSystemUserRequest, UpdateSystemUserRequest, PaginatedKeywordRequest};
-use system_model::response::system_user::SystemUserResponse;
-use crate::convert::system_user::{create_request_to_model, update_request_to_model, model_to_response};
+use system_model::response::system_user::{SystemUserPageResponse, SystemUserResponse};
+use crate::convert::system_user::{create_request_to_model, update_request_to_model, model_to_response, model_to_page_response};
 use anyhow::{anyhow, Context, Result};
 use chrono::Utc;
 use sea_orm::ActiveValue::Set;
@@ -57,7 +63,6 @@ pub async fn update(db: &DatabaseConnection, login_user: LoginUserContext, reque
 pub async fn delete(db: &DatabaseConnection, login_user: LoginUserContext, id: i64) -> Result<()> {
     let system_user = SystemUserActiveModel {
         id: Set(id),
-        tenant_id: Set(login_user.tenant_id),
         updater: Set(Some(login_user.id)),
         deleted: Set(true),
         ..Default::default()
@@ -76,9 +81,44 @@ pub async fn get_by_id(db: &DatabaseConnection, login_user: LoginUserContext, id
     Ok(system_user.map(model_to_response))
 }
 
-pub async fn get_paginated(db: &DatabaseConnection, login_user: LoginUserContext, params: PaginatedKeywordRequest) -> Result<PaginatedResponse<SystemUserResponse>> {
-    let condition = Condition::all().add(Column::TenantId.eq(login_user.tenant_id));let paginator = SystemUserEntity::find_active_with_condition(condition)
-        .order_by_desc(Column::UpdateTime)
+pub async fn get_paginated(db: &DatabaseConnection, login_user: LoginUserContext, params: PaginatedKeywordRequest) -> Result<PaginatedResponse<SystemUserPageResponse>> {
+    let condition = Condition::all().add(Column::TenantId.eq(login_user.tenant_id));
+
+    let mut query = SystemUserEntity::find_active_with_condition(condition)
+        .select_also(SystemRoleEntity)
+        .select_also(SystemDepartmentEntity)
+        .join(JoinType::LeftJoin, Relation::UserRole.def())
+        .join(JoinType::LeftJoin, SystemUserRoleRelation::Role.def())
+        .join(JoinType::LeftJoin, Relation::UserDepartment.def());
+
+    // Apply sort if not empty
+    let mut is_default_sort = true;
+    if let Some(field) = &params.base.field {
+        if let Some(sort) = &params.base.sort {
+            let is_asc = sort.to_lowercase() == "asc";
+            // 动态应用排序，假设字段名与数据库列名一致
+            match field.as_str() {
+                // SystemDictDataEntity 的字段
+                f if Column::from_str(f).is_ok() => {
+                    let column = Column::from_str(f).unwrap();
+                    is_default_sort = false;
+                    query = if is_asc {
+                        query.order_by_asc(column)
+                    } else {
+                        query.order_by_desc(column)
+                    };
+                }
+                _ => {}
+            }
+        }
+    }
+
+    if is_default_sort {
+        query = query
+            .order_by_asc(Column::Id);
+    }
+
+    let paginator = query
         .paginate(db, params.base.size);
 
     let total = paginator.num_items().await?;
@@ -87,7 +127,7 @@ pub async fn get_paginated(db: &DatabaseConnection, login_user: LoginUserContext
         .fetch_page(params.base.page - 1) // SeaORM 页码从 0 开始，所以减 1
         .await?
         .into_iter()
-        .map(model_to_response)
+        .map(|(data, role_data, department_data)|model_to_page_response(data, role_data, department_data))
         .collect();
 
     Ok(PaginatedResponse {
@@ -103,6 +143,28 @@ pub async fn list(db: &DatabaseConnection, login_user: LoginUserContext) -> Resu
     let condition = Condition::all().add(Column::TenantId.eq(login_user.tenant_id));let list = SystemUserEntity::find_active_with_condition(condition)
         .all(db).await?;
     Ok(list.into_iter().map(model_to_response).collect())
+}
+
+pub async fn enable(db: &DatabaseConnection, login_user: LoginUserContext, id: i64) -> Result<()> {
+    let system_user = SystemUserActiveModel {
+        id: Set(id),
+        updater: Set(Some(login_user.id)),
+        status: Set(STATUS_ENABLE),
+        ..Default::default()
+    };
+    system_user.update(db).await?;
+    Ok(())
+}
+
+pub async fn disable(db: &DatabaseConnection, login_user: LoginUserContext, id: i64) -> Result<()> {
+    let system_user = SystemUserActiveModel {
+        id: Set(id),
+        updater: Set(Some(login_user.id)),
+        status: Set(STATUS_DISABLE),
+        ..Default::default()
+    };
+    system_user.update(db).await?;
+    Ok(())
 }
 
 pub async fn get_by_username(db: &DatabaseConnection, username: String) -> Result<Option<SystemUserModel>> {

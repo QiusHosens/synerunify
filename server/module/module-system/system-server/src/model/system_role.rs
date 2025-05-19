@@ -3,6 +3,7 @@ use sea_orm::Condition;
 use sea_orm::entity::prelude::*;
 use common::interceptor::orm::active_filter::ActiveFilterEntityTrait;
 use crate::model::system_data_scope_rule;
+use crate::model::system_user_role;
 
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel)]
 #[sea_orm(table_name = "system_role")]
@@ -50,6 +51,14 @@ pub enum Relation {
         to = "system_data_scope_rule::Column::Id"
     )]
     RuleType,
+
+    // #[sea_orm(has_many = "super::system_user_role::Entity")]
+    #[sea_orm(
+        belongs_to = "super::system_user_role::Entity",
+        from = "Column::Id",
+        to = "system_user_role::Column::RoleId"
+    )]
+    UserRole,
 }
 
 impl Related<Entity> for Entity {
