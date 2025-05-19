@@ -14,8 +14,6 @@ pub struct CreateSystemUserRequest {
     
     pub remark: Option<String>, // 备注
     
-    pub post_ids: Option<String>, // 职位编号数组
-    
     pub email: Option<String>, // 用户邮箱
     
     pub mobile: Option<String>, // 手机号码
@@ -51,8 +49,6 @@ pub struct UpdateSystemUserRequest {
     pub nickname: Option<String>, // 用户昵称
     
     pub remark: Option<String>, // 备注
-    
-    pub post_ids: Option<String>, // 职位编号数组
     
     pub email: Option<String>, // 用户邮箱
     

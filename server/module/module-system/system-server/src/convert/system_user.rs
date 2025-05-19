@@ -9,7 +9,6 @@ pub fn create_request_to_model(request: &CreateSystemUserRequest) -> SystemUserA
         password: Set(request.password.clone()),
         nickname: Set(request.nickname.clone()),
         remark: request.remark.as_ref().map_or(NotSet, |remark| Set(Some(remark.clone()))),
-        post_ids: request.post_ids.as_ref().map_or(NotSet, |post_ids| Set(Some(post_ids.clone()))),
         email: request.email.as_ref().map_or(NotSet, |email| Set(Some(email.clone()))),
         mobile: request.mobile.as_ref().map_or(NotSet, |mobile| Set(Some(mobile.clone()))),
         sex: request.sex.as_ref().map_or(NotSet, |sex| Set(Some(sex.clone()))),
@@ -36,9 +35,6 @@ pub fn update_request_to_model(request: &UpdateSystemUserRequest, existing: Syst
     }
     if let Some(remark) = &request.remark { 
         active_model.remark = Set(Some(remark.clone()));
-    }
-    if let Some(post_ids) = &request.post_ids { 
-        active_model.post_ids = Set(Some(post_ids.clone()));
     }
     if let Some(email) = &request.email { 
         active_model.email = Set(Some(email.clone()));
@@ -77,7 +73,6 @@ pub fn model_to_response(model: SystemUser) -> SystemUserResponse {
         password: model.password,
         nickname: model.nickname,
         remark: model.remark,
-        post_ids: model.post_ids,
         email: model.email,
         mobile: model.mobile,
         sex: model.sex,

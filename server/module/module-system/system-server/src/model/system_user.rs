@@ -18,8 +18,6 @@ pub struct Model {
     
     pub remark: Option<String>, // 备注
     
-    pub post_ids: Option<String>, // 职位编号数组
-    
     pub email: Option<String>, // 用户邮箱
     
     pub mobile: Option<String>, // 手机号码
