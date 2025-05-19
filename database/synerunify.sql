@@ -11,7 +11,7 @@
  Target Server Version : 80100 (8.1.0)
  File Encoding         : 65001
 
- Date: 19/05/2025 16:19:50
+ Date: 19/05/2025 16:23:32
 */
 
 SET NAMES utf8mb4;
@@ -406,7 +406,6 @@ CREATE TABLE `system_user`  (
   `password` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '密码',
   `nickname` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '用户昵称',
   `remark` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
-  `post_ids` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '职位编号数组',
   `email` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '用户邮箱',
   `mobile` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '手机号码',
   `sex` tinyint NULL DEFAULT 0 COMMENT '用户性别',
@@ -428,9 +427,9 @@ CREATE TABLE `system_user`  (
 -- ----------------------------
 -- Records of system_user
 -- ----------------------------
-INSERT INTO `system_user` VALUES (1, 'admin', '$2b$06$Ohq86rDIvNuy/4ZvsTF4dOw.7I7QJj620LC25PwgYDmrKqKmKsJz6', '超级管理员', '超级管理员', NULL, '123@qq.com', '18888888888', 0, '', 0, '127.0.0.1', '2025-05-18 07:09:23', '0000', 1, 1, '2025-03-08 10:14:52', 1, '2025-05-18 07:09:22', b'0', 1);
-INSERT INTO `system_user` VALUES (3, 'test', '$2b$06$LiMzvNQ7OgwEndSAwZR9LeLnLMt.bAUJ4yr/dsvB8X2Ue2Ecgy2ja', '测试', NULL, NULL, '', '13333', 0, '', 0, '', NULL, '0000-0000', 2, 1, '2025-05-17 08:13:42', 1, '2025-05-17 08:35:56', b'0', 2);
-INSERT INTO `system_user` VALUES (4, 'test1', '$2b$06$LiMzvNQ7OgwEndSAwZR9LeLnLMt.bAUJ4yr/dsvB8X2Ue2Ecgy2ja', '测试1', NULL, NULL, '', '15555555', 0, '', 0, '', NULL, '0000-0001', 3, 1, '2025-05-17 08:35:05', 1, '2025-05-17 08:35:05', b'0', 3);
+INSERT INTO `system_user` VALUES (1, 'admin', '$2b$06$Ohq86rDIvNuy/4ZvsTF4dOw.7I7QJj620LC25PwgYDmrKqKmKsJz6', '超级管理员', '超级管理员', '123@qq.com', '18888888888', 0, '', 0, '127.0.0.1', '2025-05-18 07:09:23', '0000', 1, 1, '2025-03-08 10:14:52', 1, '2025-05-18 07:09:22', b'0', 1);
+INSERT INTO `system_user` VALUES (3, 'test', '$2b$06$LiMzvNQ7OgwEndSAwZR9LeLnLMt.bAUJ4yr/dsvB8X2Ue2Ecgy2ja', '测试', NULL, '', '13333', 0, '', 0, '', NULL, '0000-0000', 2, 1, '2025-05-17 08:13:42', 1, '2025-05-17 08:35:56', b'0', 2);
+INSERT INTO `system_user` VALUES (4, 'test1', '$2b$06$LiMzvNQ7OgwEndSAwZR9LeLnLMt.bAUJ4yr/dsvB8X2Ue2Ecgy2ja', '测试1', NULL, '', '15555555', 0, '', 0, '', NULL, '0000-0001', 3, 1, '2025-05-17 08:35:05', 1, '2025-05-17 08:35:05', b'0', 3);
 
 -- ----------------------------
 -- Table structure for system_user_post
