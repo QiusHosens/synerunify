@@ -177,7 +177,9 @@ const TenantAdd = forwardRef(({ onSubmit }: TenantAddProps, ref) => {
 
   const handleSubmit = async () => {
     if (validateForm()) {
-      await createSystemTenant(formValues as SystemTenantRequest);
+      const tenant = formValues as SystemTenantRequest;
+      tenant.password = Md5.hashStr(tenant.password);
+      await createSystemTenant(tenant);
       handleClose();
       onSubmit();
     }

@@ -2,11 +2,13 @@ import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormCon
 import { useTranslation } from 'react-i18next';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
-import { createSystemUser, listSystemDepartment, listSystemRole, SystemDepartmentResponse, SystemRoleResponse, SystemUserRequest } from '@/api';
+import { createSystemUser, listSystemDepartment, listSystemPost, listSystemRole, SystemDepartmentResponse, SystemPostResponse, SystemRoleResponse, SystemUserRequest } from '@/api';
 import SelectTree from '@/components/SelectTree';
 import PasswordShowIcon from '@/assets/image/svg/password_show.svg';
 import PasswordHideIcon from '@/assets/image/svg/password_hide.svg';
 import DictSelect from '@/components/DictSelect';
+import CustomizedMultipleSelect, { Item } from '@/components/CustomizedMultipleSelect';
+import { Md5 } from 'ts-md5';
 
 interface FormValues {
   username: string; // 用户账号
@@ -19,6 +21,7 @@ interface FormValues {
   status: number; // 帐号状态（0正常 1停用）
   department_id: number; // 部门ID
   role_id: number; // 角色ID
+  post_ids: number[]; // 岗位ID列表
 }
 
 interface FormErrors {
@@ -48,6 +51,7 @@ const UserAdd = forwardRef(({ onSubmit }: UserAddProps, ref) => {
   const [maxWidth] = useState<DialogProps['maxWidth']>('sm');
   const [showPassword, setShowPassword] = useState(false);
   const [roles, setRoles] = useState<SystemRoleResponse[]>([]);
+  const [postItems, setPostItems] = useState<Item[]>([]);
   const [treeData, setTreeData] = useState<TreeNode[]>([]);
   const [selectedDepartmentId, setSelectedDepartmentId] = useState<string | number>(0);
   const [formValues, setFormValues] = useState<FormValues>({
@@ -61,6 +65,7 @@ const UserAdd = forwardRef(({ onSubmit }: UserAddProps, ref) => {
     status: 0,
     department_id: 0,
     role_id: 0,
+    post_ids: [],
   });
   const [errors, setErrors] = useState<FormErrors>({});
 
@@ -71,6 +76,7 @@ const UserAdd = forwardRef(({ onSubmit }: UserAddProps, ref) => {
   useImperativeHandle(ref, () => ({
     show() {
       listRoles();
+      initPosts();
       initDepartments();
       setOpen(true);
     },
@@ -130,6 +136,7 @@ const UserAdd = forwardRef(({ onSubmit }: UserAddProps, ref) => {
       status: 0,
       department_id: 0,
       role_id: 0,
+      post_ids: [],
     });
     setErrors({});
   }
@@ -143,6 +150,18 @@ const UserAdd = forwardRef(({ onSubmit }: UserAddProps, ref) => {
       }));
     }
     setRoles(result);
+  }
+
+  const initPosts = async () => {
+    const result = await listSystemPost();
+    const items = result.map(item => {
+      return {
+        value: item.id,
+        label: item.name,
+        status: item.status
+      } as Item;
+    });
+    setPostItems(items);
   }
 
   const initDepartments = async () => {
@@ -198,7 +217,9 @@ const UserAdd = forwardRef(({ onSubmit }: UserAddProps, ref) => {
 
   const handleSubmit = async () => {
     if (validateForm()) {
-      await createSystemUser(formValues as SystemUserRequest);
+      const user = formValues as SystemUserRequest;
+      user.password = Md5.hashStr(user.password);
+      await createSystemUser(user);
       handleClose();
       onSubmit();
     }
@@ -206,8 +227,10 @@ const UserAdd = forwardRef(({ onSubmit }: UserAddProps, ref) => {
 
   const handleSubmitAndContinue = async () => {
     if (validateForm()) {
-      // console.log('formValues', formValues);
-      await createSystemUser(formValues as SystemUserRequest);
+      console.log('formValues', formValues);
+      const user = formValues as SystemUserRequest;
+      user.password = Md5.hashStr(user.password);
+      await createSystemUser(user);
       // reset();
       onSubmit();
     }
@@ -241,24 +264,24 @@ const UserAdd = forwardRef(({ onSubmit }: UserAddProps, ref) => {
   };
 
   const handleTypeChange = (e: SelectChangeEvent<string>) => {
-      // console.log('target', e.target);
-      const { name, value } = e.target;
-      const numberValue = Number(value);
-      setFormValues(prev => ({
+    // console.log('target', e.target);
+    const { name, value } = e.target;
+    const numberValue = Number(value);
+    setFormValues(prev => ({
+      ...prev,
+      [name]: numberValue
+    }));
+
+    // console.log('formValues', formValues);
+
+    // Clear error when user starts typing
+    if (errors[name as keyof FormErrors]) {
+      setErrors(prev => ({
         ...prev,
-        [name]: numberValue
+        [name]: undefined
       }));
-  
-      // console.log('formValues', formValues);
-  
-      // Clear error when user starts typing
-      if (errors[name as keyof FormErrors]) {
-        setErrors(prev => ({
-          ...prev,
-          [name]: undefined
-        }));
-      }
-    };
+    }
+  };
 
   const handleStatusChange = (e: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
     // console.log('target', e.target, checked);
@@ -267,6 +290,22 @@ const UserAdd = forwardRef(({ onSubmit }: UserAddProps, ref) => {
     setFormValues(prev => ({
       ...prev,
       [name]: checked ? 0 : 1
+    }));
+
+    // Clear error when user starts typing
+    if (errors[name as keyof FormErrors]) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: undefined
+      }));
+    }
+  };
+
+  const handleSelectChange = (e: SelectChangeEvent<string | number[]>) => {
+    const { name, value } = e.target;
+    setFormValues(prev => ({
+      ...prev,
+      [name]: value
     }));
 
     // Clear error when user starts typing
@@ -391,7 +430,7 @@ const UserAdd = forwardRef(({ onSubmit }: UserAddProps, ref) => {
             <FormHelperText id="user-password">{errors.password}</FormHelperText>
           </FormControl>
           <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiSelect-root': { width: '200px' } }}>
-            <DictSelect name='sex' dict_type='sex' value={formValues.sex.toString()} onChange={handleTypeChange} label={t("page.user.title.sex")}></DictSelect>
+            <DictSelect name='sex' dict_type='sex' value={formValues.sex.toString()} onChange={handleTypeChange} label={t("page.user.title.sex")} />
           </FormControl>
           <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiSelect-root': { width: '200px' } }}>
             <InputLabel required size="small" id="role-select-label">{t("page.user.title.role.name")}</InputLabel>
@@ -406,6 +445,9 @@ const UserAdd = forwardRef(({ onSubmit }: UserAddProps, ref) => {
             >
               {roles.map(item => (<MenuItem key={item.id} value={item.id}>{item.name}</MenuItem>))}
             </Select>
+          </FormControl>
+          <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiSelect-root': { width: '200px' } }}>
+            <CustomizedMultipleSelect name='post_ids' value={formValues.post_ids} label={t("page.user.title.post")} items={postItems} onChange={handleSelectChange} />
           </FormControl>
           <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' } }}>
             <TextField

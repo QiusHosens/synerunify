@@ -1,6 +1,6 @@
 import { SystemDictDataResponse } from '@/api/dict';
 import { useDictStore } from '@/store';
-import { FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } from '@mui/material';
+import { InputLabel, MenuItem, Select, SelectChangeEvent } from '@mui/material';
 import { SxProps, Theme } from '@mui/material/styles';
 import { ReactNode, useEffect, useState } from 'react';
 

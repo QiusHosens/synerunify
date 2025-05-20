@@ -30,6 +30,7 @@ export interface SystemUserRequest {
   department_id: number; // 部门ID
 
   role_id: number; // 角色ID
+  post_ids: number[]; // 岗位ID列表
 }
 
 export interface SystemUserResponse {

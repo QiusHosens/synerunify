@@ -185,6 +185,7 @@
   "page.user.title.password": "密码",
   "page.user.title.email": "邮箱",
   "page.user.title.sex": "性别",
+  "page.user.title.post": "岗位",
   "page.user.title.create.time": "创建时间",
   "page.user.switch.status.true": "开启",
   "page.user.switch.status.false": "关闭",
