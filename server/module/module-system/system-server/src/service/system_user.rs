@@ -91,6 +91,16 @@ pub async fn get_paginated(db: &DatabaseConnection, login_user: LoginUserContext
         .join(JoinType::LeftJoin, SystemUserRoleRelation::Role.def())
         .join(JoinType::LeftJoin, Relation::UserDepartment.def());
 
+    // Apply department code filter if not empty
+    if let Some(department_code) = &params.department_code {
+        if !department_code.is_empty() {
+            query = query.filter(
+                Condition::any()
+                    .add(Column::DepartmentCode.like(format!("%{}", department_code))),
+            );
+        }
+    }
+
     // Apply sort if not empty
     let mut is_default_sort = true;
     if let Some(field) = &params.base.field {

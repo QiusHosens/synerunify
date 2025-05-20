@@ -353,12 +353,12 @@ const MenuAdd = forwardRef(({ onSubmit }: MenuAddProps, ref) => {
 
 
 
-  const handleChange = (name: string, value: string | number) => {
-    setSelectedMenuId(value);
+  const handleChange = (name: string, node: TreeNode) => {
+    setSelectedMenuId(node.id);
     // console.log('Selected:', value);
     setFormValues(prev => ({
       ...prev,
-      [name]: value
+      [name]: node.id
     }));
 
     // Clear error when user starts typing
@@ -400,7 +400,7 @@ const MenuAdd = forwardRef(({ onSubmit }: MenuAddProps, ref) => {
               label={t('page.menu.title.parent')}
               treeData={menuTreeData}
               value={selectedMenuId}
-              onChange={handleChange}
+              onChange={(name, node) => handleChange(name, node as TreeNode)}
             />
           </FormControl>
           <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' } }}>

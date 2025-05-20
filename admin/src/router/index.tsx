@@ -18,6 +18,7 @@ const componentMap: { [key: string]: React.LazyExoticComponent<React.ComponentTy
   'pages/system/tenant/TenantListManage': lazy(() => import('@/pages/system/tenant/TenantListManage')),
   'pages/system/RoleManage': lazy(() => import('@/pages/system/RoleManage')),
   'pages/system/PostManage': lazy(() => import('@/pages/system/PostManage')),
+  'pages/system/UserManage': lazy(() => import('@/pages/system/UserManage')),
 };
 
 export default function Router() {

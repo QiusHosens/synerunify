@@ -77,5 +77,5 @@ pub struct UpdateSystemUserRequest {
 pub struct PaginatedKeywordRequest {
     #[serde(flatten)]
     pub base: PaginatedRequest,
-    pub keyword: Option<String>,
+    pub department_code: Option<String>,
 }

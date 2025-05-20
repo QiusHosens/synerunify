@@ -19,7 +19,6 @@ export interface SystemUserRequest {
   password: string; // 密码
   nickname: string; // 用户昵称
   remark: string; // 备注
-  post_ids: string; // 职位编号数组
   email: string; // 用户邮箱
   mobile: string; // 手机号码
   sex: number; // 用户性别
@@ -37,7 +36,6 @@ export interface SystemUserResponse {
   password: string; // 密码
   nickname: string; // 用户昵称
   remark: string; // 备注
-  post_ids: string; // 职位编号数组
   email: string; // 用户邮箱
   mobile: string; // 手机号码
   sex: number; // 用户性别
@@ -51,6 +49,10 @@ export interface SystemUserResponse {
   create_time: string; // 创建时间
   updater: number; // 更新者id
   update_time: string; // 更新时间
+
+  role_type?: number; // 角色类型
+  role_name?: string; // 角色名称
+  department_name?: number; // 部门名称
 }
 
 export interface SystemUserBaseResponse {
@@ -59,7 +61,7 @@ export interface SystemUserBaseResponse {
 }
 
 export interface SystemUserQueryCondition extends PaginatedRequest {
-  
+  department_code?: string; // 部门编码
 }
 
 export const createSystemUser = (system_user: SystemUserRequest): Promise<number> => {

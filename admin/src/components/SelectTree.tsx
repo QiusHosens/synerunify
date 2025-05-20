@@ -29,7 +29,7 @@ interface SelectTreeProps {
   label: string;
   treeData: TreeNode[];
   expandToSelected: boolean;
-  onChange: (name: string, value: string | number) => void;
+  onChange: (name: string, node: TreeNode) => void;
   value: string | number;
   sx?: SxProps<Theme>;
   [key: string]: any; // 允许其他 SimpleTreeView 组件支持的 props
@@ -86,8 +86,8 @@ const SelectTree = ({ required, name, size, label, treeData, expandToSelected, o
     setSearchTerm('');
   };
 
-  const handleSelect = (nodeId: string | number) => {
-    onChange(name, nodeId);
+  const handleSelect = (node: TreeNode) => {
+    onChange(name, node);
     setOpen(false);
     setSearchTerm('');
   };
@@ -123,7 +123,7 @@ const SelectTree = ({ required, name, size, label, treeData, expandToSelected, o
         label={
           <div
             style={{ cursor: 'pointer' }}
-            onClick={() => handleSelect(node.id)}
+            onClick={() => handleSelect(node)}
           >
             {node.label}
           </div>

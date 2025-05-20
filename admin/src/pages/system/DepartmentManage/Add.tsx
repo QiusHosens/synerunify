@@ -240,11 +240,11 @@ const DepartmentAdd = forwardRef(({ onSubmit }: DepartmentAddProps, ref) => {
     }
   };
 
-  const handleChange = (name: string, value: string | number) => {
-    setSelectedDepartmentId(value);
+  const handleChange = (name: string, node: TreeNode) => {
+    setSelectedDepartmentId(node.id);
     setFormValues(prev => ({
       ...prev,
-      [name]: value
+      [name]: node.id
     }));
 
     // Clear error when user starts typing
@@ -283,7 +283,7 @@ const DepartmentAdd = forwardRef(({ onSubmit }: DepartmentAddProps, ref) => {
               label={t('page.department.title.parent')}
               treeData={treeData}
               value={selectedDepartmentId}
-              onChange={handleChange}
+              onChange={(name, node) => handleChange(name, node as TreeNode)}
             />
           </FormControl>
           <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' } }}>

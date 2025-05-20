@@ -173,5 +173,25 @@
   "page.post.error.name": "请输入名称",
   "page.post.error.sort": "请输入排序",
   "page.post.operate.edit": "编辑岗位",
-  "page.post.operate.delete": "删除岗位"
+  "page.post.operate.delete": "删除岗位",
+
+  "page.user.title.nickname": "昵称",
+  "page.user.title.username": "账号",
+  "page.user.title.department.name": "部门",
+  "page.user.title.role.name": "角色",
+  "page.user.title.mobile": "手机号码",
+  "page.user.title.status": "状态",
+  "page.user.title.remark": "备注",
+  "page.user.title.password": "密码",
+  "page.user.title.email": "邮箱",
+  "page.user.title.sex": "性别",
+  "page.user.title.create.time": "创建时间",
+  "page.user.switch.status.true": "开启",
+  "page.user.switch.status.false": "关闭",
+  "page.user.error.nickname": "请输入昵称",
+  "page.user.error.username": "请输入账号",
+  "page.user.error.password": "请输入密码",
+  "page.user.error.sort": "请输入排序",
+  "page.user.operate.edit": "编辑用户",
+  "page.user.operate.delete": "删除用户"
 }

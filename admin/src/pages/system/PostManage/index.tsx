@@ -8,7 +8,6 @@ import { disableSystemPost, enableSystemPost, pageSystemPost, SystemPostQueryCon
 import PostAdd from './Add';
 import PostEdit from './Edit';
 import PostDelete from './Delete';
-import CustomizedMore from '@/components/CustomizedMore';
 
 export default function PostManage() {
   const { t } = useTranslation();
