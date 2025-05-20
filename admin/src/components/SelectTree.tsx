@@ -92,7 +92,7 @@ const SelectTree = ({ required, name, size, label, treeData, expandToSelected, o
     setSearchTerm('');
   };
 
-  const handleExpandedItemsChange = (event: React.SyntheticEvent, itemIds: string[]) => {
+  const handleExpandedItemsChange = (itemIds: string[]) => {
     setExpandedItems(itemIds);
   }
 
@@ -178,7 +178,7 @@ const SelectTree = ({ required, name, size, label, treeData, expandToSelected, o
             />
             <SimpleTreeView
               expandedItems={expandedItems}
-              onExpandedItemsChange={handleExpandedItemsChange}
+              onExpandedItemsChange={(e, items) => handleExpandedItemsChange(items)}
               {...props}
             // defaultCollapseIcon={<ExpandMoreIcon />}
             // defaultExpandIcon={<ChevronRightIcon />}

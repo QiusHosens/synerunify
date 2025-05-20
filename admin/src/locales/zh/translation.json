@@ -191,7 +191,8 @@
   "page.user.error.nickname": "请输入昵称",
   "page.user.error.username": "请输入账号",
   "page.user.error.password": "请输入密码",
-  "page.user.error.sort": "请输入排序",
+  "page.user.error.department": "请选择部门",
+  "page.user.error.role": "请选择角色",
   "page.user.operate.edit": "编辑用户",
   "page.user.operate.delete": "删除用户"
 }

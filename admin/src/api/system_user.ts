@@ -28,6 +28,8 @@ export interface SystemUserRequest {
   login_date: string; // 最后登录时间
   department_code: string; // 部门编码
   department_id: number; // 部门ID
+
+  role_id: number; // 角色ID
 }
 
 export interface SystemUserResponse {
