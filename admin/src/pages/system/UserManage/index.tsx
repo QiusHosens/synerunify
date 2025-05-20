@@ -118,12 +118,12 @@ export default function UserManage() {
     (addUser.current as any).show();
   }
 
-  const handleClickOpenEdit = (tenantPackage: SystemUserResponse) => {
-    (editUser.current as any).show(tenantPackage);
+  const handleClickOpenEdit = (user: SystemUserResponse) => {
+    (editUser.current as any).show(user);
   };
 
-  const handleClickOpenDelete = (tenantPackage: SystemUserResponse) => {
-    (deleteUser.current as any).show(tenantPackage);
+  const handleClickOpenDelete = (user: SystemUserResponse) => {
+    (deleteUser.current as any).show(user);
   };
 
   useEffect(() => {

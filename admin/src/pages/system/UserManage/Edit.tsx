@@ -2,36 +2,52 @@ import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormCon
 import { useTranslation } from 'react-i18next';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
-import { SystemPostRequest, SystemPostResponse, updateSystemPost } from '@/api';
+import { SystemUserRequest, SystemUserResponse, updateSystemUser } from '@/api';
 
 interface FormErrors {
-  name?: string; // 职位名称
-  sort?: string; // 显示顺序
+  username?: string; // 用户账号
+  password?: string; // 密码
+  nickname?: string; // 用户昵称
+  department_id?: string; // 部门ID
+  role_id?: string; // 角色ID
 }
 
-interface PostEditProps {
+interface TreeNode {
+  id: string | number;
+  parent_id: number; // 父菜单ID
+  label: string;
+  children: TreeNode[];
+}
+
+interface UserEditProps {
   onSubmit: () => void;
 }
 
-const PostEdit = forwardRef(({ onSubmit }: PostEditProps, ref) => {
+const UserEdit = forwardRef(({ onSubmit }: UserEditProps, ref) => {
   const { t } = useTranslation();
 
   const [open, setOpen] = useState(false);
   const [fullWidth] = useState(true);
   const [maxWidth] = useState<DialogProps['maxWidth']>('sm');
-  const [post, setPost] = useState<SystemPostRequest>({
+  const [user, setUser] = useState<SystemUserResponse>({
     id: 0,
-    name: '',
-    code: '',
-    sort: 0,
-    status: 0,
+    username: '',
+    password: '',
+    nickname: '',
     remark: '',
+    email: '',
+    mobile: '',
+    sex: 0,
+    status: 0,
+    department_id: 0,
+    role_id: 0,
+    user_ids: [],
   });
   const [errors, setErrors] = useState<FormErrors>({});
 
   useImperativeHandle(ref, () => ({
-    show(post: SystemPostResponse) {
-      initForm(post);
+    show(user: SystemUserResponse) {
+      initForm(user);
       setOpen(true);
     },
     hide() {
@@ -42,12 +58,12 @@ const PostEdit = forwardRef(({ onSubmit }: PostEditProps, ref) => {
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
 
-    if (!post.name.trim()) {
-      newErrors.name = t('page.post.error.name');
+    if (!user.name.trim()) {
+      newErrors.name = t('page.user.error.name');
     }
 
-    if (!post.sort && post.sort != 0) {
-      newErrors.sort = t('page.post.error.sort');
+    if (!user.sort && user.sort != 0) {
+      newErrors.sort = t('page.user.error.sort');
     }
 
     setErrors(newErrors);
@@ -64,16 +80,16 @@ const PostEdit = forwardRef(({ onSubmit }: PostEditProps, ref) => {
     // reset();
   };
 
-  const initForm = (post: SystemPostResponse) => {
-    setPost({
-      ...post,
+  const initForm = (user: SystemUserResponse) => {
+    setUser({
+      ...user,
     })
     setErrors({});
   }
 
   const handleSubmit = async () => {
     if (validateForm()) {
-      await updateSystemPost(post);
+      await updateSystemUser(user);
       handleClose();
       onSubmit();
     }
@@ -84,12 +100,12 @@ const PostEdit = forwardRef(({ onSubmit }: PostEditProps, ref) => {
     const { name, value, type } = e.target;
     if (type == 'number') {
       const numberValue = Number(value);
-      setPost(prev => ({
+      setUser(prev => ({
         ...prev,
         [name]: numberValue
       }));
     } else {
-      setPost(prev => ({
+      setUser(prev => ({
         ...prev,
         [name]: value
       }));
@@ -110,7 +126,7 @@ const PostEdit = forwardRef(({ onSubmit }: PostEditProps, ref) => {
     // console.log('target', e.target, checked);
     const { name } = e.target;
 
-    setPost(prev => ({
+    setUser(prev => ({
       ...prev,
       [name]: checked ? 0 : 1
     }));
@@ -131,7 +147,7 @@ const PostEdit = forwardRef(({ onSubmit }: PostEditProps, ref) => {
       open={open}
       onClose={handleClose}
     >
-      <DialogTitle>{t('global.operate.edit')}{t('global.page.post')}</DialogTitle>
+      <DialogTitle>{t('global.operate.edit')}{t('global.page.user')}</DialogTitle>
       <DialogContent>
         <Box
           noValidate
@@ -147,43 +163,43 @@ const PostEdit = forwardRef(({ onSubmit }: PostEditProps, ref) => {
             <TextField
               required
               size="small"
-              label={t("page.post.title.name")}
+              label={t("page.user.title.name")}
               name='name'
-              value={post.name}
+              value={user.name}
               onChange={handleInputChange}
               error={!!errors.name}
               helperText={errors.name}
             />
             <TextField
               size="small"
-              label={t("page.post.title.code")}
+              label={t("page.user.title.code")}
               name='code'
-              value={post.code}
+              value={user.code}
               onChange={handleInputChange}
             />
             <TextField
               required
               size="small"
               type="number"
-              label={t("page.post.title.sort")}
+              label={t("page.user.title.sort")}
               name="sort"
-              value={post.sort}
+              value={user.sort}
               onChange={handleInputChange}
               error={!!errors.sort}
               helperText={errors.sort}
             />
             <TextField
               size="small"
-              label={t("page.post.title.remark")}
+              label={t("page.user.title.remark")}
               name="remark"
-              value={post.remark}
+              value={user.remark}
               onChange={handleInputChange}
             />
           </FormControl>
           <Box sx={{ mt: 2, display: 'flex', alignItems: 'center' }}>
-            <Typography sx={{ mr: 4 }}>{t("page.post.title.status")}</Typography>
-            <Switch sx={{ mr: 2 }} name='status' checked={!post.status} onChange={handleStatusChange} />
-            <Typography>{post.status == 0 ? t('page.post.switch.status.true') : t('page.post.switch.status.false')}</Typography>
+            <Typography sx={{ mr: 4 }}>{t("page.user.title.status")}</Typography>
+            <Switch sx={{ mr: 2 }} name='status' checked={!user.status} onChange={handleStatusChange} />
+            <Typography>{user.status == 0 ? t('page.user.switch.status.true') : t('page.user.switch.status.false')}</Typography>
           </Box>
         </Box>
       </DialogContent>
@@ -195,4 +211,4 @@ const PostEdit = forwardRef(({ onSubmit }: PostEditProps, ref) => {
   )
 });
 
-export default PostEdit;
+export default UserEdit;

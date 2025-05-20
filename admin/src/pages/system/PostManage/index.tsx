@@ -103,12 +103,12 @@ export default function PostManage() {
     (addPost.current as any).show();
   }
 
-  const handleClickOpenEdit = (tenantPackage: SystemPostResponse) => {
-    (editPost.current as any).show(tenantPackage);
+  const handleClickOpenEdit = (post: SystemPostResponse) => {
+    (editPost.current as any).show(post);
   };
 
-  const handleClickOpenDelete = (tenantPackage: SystemPostResponse) => {
-    (deletePost.current as any).show(tenantPackage);
+  const handleClickOpenDelete = (post: SystemPostResponse) => {
+    (deletePost.current as any).show(post);
   };
 
   useEffect(() => {

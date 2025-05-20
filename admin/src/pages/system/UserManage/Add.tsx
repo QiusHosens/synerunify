@@ -393,6 +393,7 @@ const UserAdd = forwardRef(({ onSubmit }: UserAddProps, ref) => {
               onChange={handleInputChange}
               error={!!errors.username}
               helperText={errors.username}
+              autoComplete="off"
             />
           </FormControl>
           <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiOutlinedInput-root': { width: '200px' } }} variant="outlined" error={!!errors.password}>
@@ -407,6 +408,7 @@ const UserAdd = forwardRef(({ onSubmit }: UserAddProps, ref) => {
               value={formValues.password}
               onChange={handleInputChange}
               error={!!errors.password}
+              autoComplete="new-password"
               endAdornment={
                 <InputAdornment position="end">
                   <IconButton
