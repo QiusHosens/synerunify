@@ -22,10 +22,7 @@ export interface SystemUserRequest {
   email: string; // 用户邮箱
   mobile: string; // 手机号码
   sex: number; // 用户性别
-  avatar: string; // 头像地址
   status: number; // 帐号状态（0正常 1停用）
-  login_ip: string; // 最后登录IP
-  login_date: string; // 最后登录时间
   department_code: string; // 部门编码
   department_id: number; // 部门ID
 

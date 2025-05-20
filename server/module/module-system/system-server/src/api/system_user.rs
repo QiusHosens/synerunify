@@ -58,7 +58,10 @@ async fn create(
 ) -> CommonResult<i64> {
     match service::system_user::create(&state.db, login_user, payload).await {
         Ok(id) => {CommonResult::with_data(id)}
-        Err(e) => {CommonResult::with_err(&e.to_string())}
+        Err(e) => {
+            eprintln!("Error: {:#?}", e);
+            CommonResult::with_err(&e.to_string())
+        }
     }
 }
 

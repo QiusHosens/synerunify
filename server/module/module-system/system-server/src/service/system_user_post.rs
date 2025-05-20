@@ -1,4 +1,7 @@
-use sea_orm::{DatabaseConnection, EntityTrait, ColumnTrait, ActiveModelTrait, PaginatorTrait, QueryOrder, QueryFilter, Condition};
+use std::collections::HashSet;
+
+use sea_orm::prelude::Expr;
+use sea_orm::{ActiveModelTrait, ColumnTrait, Condition, DatabaseConnection, DatabaseTransaction, EntityTrait, PaginatorTrait, QueryFilter, QueryOrder};
 use crate::model::system_user_post::{Model as SystemUserPostModel, ActiveModel as SystemUserPostActiveModel, Entity as SystemUserPostEntity, Column};
 use system_model::request::system_user_post::{CreateSystemUserPostRequest, UpdateSystemUserPostRequest, PaginatedKeywordRequest};
 use system_model::response::system_user_post::SystemUserPostResponse;
@@ -27,6 +30,77 @@ pub async fn update(db: &DatabaseConnection, login_user: LoginUserContext, reque
     let mut system_user_post = update_request_to_model(&request, system_user_post);
     system_user_post.updater = Set(Some(login_user.id));
     system_user_post.update(db).await?;
+    Ok(())
+}
+
+pub async fn save(db: &DatabaseConnection, txn: &DatabaseTransaction, login_user: LoginUserContext, user_id: i64, post_ids: Vec<i64>) -> Result<()> {
+    // 先查询用户岗位列表,比较与
+    // Query existing user-post relationships
+    let existing_posts = SystemUserPostEntity::find()
+        .filter(Column::UserId.eq(user_id))
+        .all(db)
+        .await?;
+
+    // Convert existing posts to HashSet for efficient lookup
+    let existing_post_ids: HashSet<i64> = existing_posts.iter().map(|m| m.post_id).collect();
+    let request_post_ids: HashSet<i64> = post_ids.into_iter().collect();
+
+    // Find posts to add (in request but not in database)
+    let to_add: Vec<i64> = request_post_ids
+        .difference(&existing_post_ids)
+        .copied()
+        .collect();
+
+    // Find posts to mark as deleted (in database but not in request)
+    let to_mark_deleted: Vec<i64> = existing_post_ids
+        .difference(&request_post_ids)
+        .copied()
+        .collect();
+
+    // Find posts to restore/update (in both database and request)
+    let to_update: Vec<i64> = request_post_ids
+        .intersection(&existing_post_ids)
+        .copied()
+        .collect();
+
+    // Batch insert new role-post relationships (deleted = 0 for active)
+    if !to_add.is_empty() {
+        let new_role_posts: Vec<_> = to_add.into_iter().map(|post_id| {
+            SystemUserPostActiveModel {
+                user_id: Set(user_id),
+                post_id: Set(post_id),
+                creator: Set(Some(login_user.id)),
+                updater: Set(Some(login_user.id)),
+                tenant_id: Set(login_user.tenant_id),
+                ..Default::default()
+            }
+        }).collect();
+        
+        SystemUserPostEntity::insert_many(new_role_posts).exec(txn).await?;
+    }
+
+    // Batch mark removed role-post relationships as deleted (set deleted = 1)
+    if !to_mark_deleted.is_empty() {
+        SystemUserPostEntity::update_many()
+            .col_expr(Column::Deleted, Expr::value(1)) // Mark as deleted
+            .col_expr(Column::Updater, Expr::value(Some(login_user.id)))
+            .filter(Column::UserId.eq(user_id))
+            .filter(Column::PostId.is_in(to_mark_deleted))
+            .exec(txn)
+            .await?;
+    }
+
+    // Batch restore/update existing relationships (set deleted = 0 for active)
+    if !to_update.is_empty() {
+        SystemUserPostEntity::update_many()
+            .col_expr(Column::Deleted, Expr::value(0)) // Ensure active
+            .col_expr(Column::Updater, Expr::value(Some(login_user.id)))
+            .filter(Column::UserId.eq(user_id))
+            .filter(Column::PostId.is_in(to_update))
+            .exec(txn)
+            .await?;
+    }
+
     Ok(())
 }
 

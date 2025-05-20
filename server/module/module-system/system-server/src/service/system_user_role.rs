@@ -1,4 +1,4 @@
-use sea_orm::{DatabaseConnection, EntityTrait, ColumnTrait, ActiveModelTrait, PaginatorTrait, QueryOrder, QueryFilter, Condition};
+use sea_orm::{ActiveModelTrait, ColumnTrait, Condition, DatabaseConnection, DatabaseTransaction, EntityTrait, PaginatorTrait, QueryFilter, QueryOrder};
 use crate::model::system_user_role::{Model as SystemUserRoleModel, ActiveModel as SystemUserRoleActiveModel, Entity as SystemUserRoleEntity, Column};
 use system_model::request::system_user_role::{CreateSystemUserRoleRequest, UpdateSystemUserRoleRequest, PaginatedKeywordRequest};
 use system_model::response::system_user_role::SystemUserRoleResponse;
@@ -28,6 +28,44 @@ pub async fn update(db: &DatabaseConnection, login_user: LoginUserContext, reque
     system_user_role.updater = Set(Some(login_user.id));
     system_user_role.update(db).await?;
     Ok(())
+}
+
+pub async fn save(db: &DatabaseConnection, txn: &DatabaseTransaction, login_user: LoginUserContext, user_id: i64, role_id: i64) -> Result<i64> {
+    // 先查询用户角色,不存在则新增,存在且角色id不一致则修改
+    let system_user_role = SystemUserRoleEntity::find()
+        .filter(Column::UserId.eq(user_id))
+        .one(db)
+        .await?;
+
+    match system_user_role {
+        None => {
+            // No existing record, create a new one
+            let mut system_user_role = SystemUserRoleActiveModel {
+                user_id: Set(user_id),
+                role_id: Set(role_id),
+                creator: Set(Some(login_user.id)),
+                updater: Set(Some(login_user.id)),
+                tenant_id: Set(login_user.tenant_id),
+                ..Default::default()
+            };
+            let inserted = system_user_role.insert(txn).await?;
+            Ok(inserted.id)
+        }
+        Some(existing) => {
+            // Record exists, check if role_id differs
+            if existing.role_id != role_id {
+                // Update the role_id if it has changed
+                let mut system_user_role: SystemUserRoleActiveModel = existing.into();
+                system_user_role.role_id = Set(role_id);
+                system_user_role.updater = Set(Some(login_user.id));
+                let updated = system_user_role.update(txn).await?;
+                Ok(updated.id)
+            } else {
+                // No change needed, return existing ID
+                Ok(existing.id)
+            }
+        }
+    }
 }
 
 pub async fn delete(db: &DatabaseConnection, login_user: LoginUserContext, id: i64) -> Result<()> {

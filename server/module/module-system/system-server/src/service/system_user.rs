@@ -2,7 +2,7 @@ use std::str::FromStr;
 
 use common::constants::enum_constants::{STATUS_DISABLE, STATUS_ENABLE};
 use common::utils::crypt_utils::encrypt_password;
-use sea_orm::{ActiveModelTrait, ColumnTrait, Condition, DatabaseConnection, DatabaseTransaction, EntityTrait, JoinType, PaginatorTrait, QueryFilter, QueryOrder, QuerySelect, RelationTrait};
+use sea_orm::{ActiveModelTrait, ColumnTrait, Condition, DatabaseConnection, DatabaseTransaction, EntityTrait, JoinType, PaginatorTrait, QueryFilter, QueryOrder, QuerySelect, RelationTrait, TransactionTrait};
 use tokio::io::join;
 use crate::model::system_user::{Model as SystemUserModel, ActiveModel as SystemUserActiveModel, Entity as SystemUserEntity, Column, Relation};
 use crate::model::system_user_role::{Model as SystemUserRoleModel, ActiveModel as SystemUserRoleActiveModel, Entity as SystemUserRoleEntity, Column as SystemUserRoleColumn, Relation as SystemUserRoleRelation};
@@ -18,12 +18,26 @@ use common::base::page::PaginatedResponse;
 use common::context::context::LoginUserContext;
 use common::interceptor::orm::active_filter::ActiveFilterEntityTrait;
 
+use super::{system_department, system_user_post, system_user_role};
+
 pub async fn create(db: &DatabaseConnection, login_user: LoginUserContext, request: CreateSystemUserRequest) -> Result<i64> {
+    // 查询部门编码
+    let department = system_department::find_by_id(&db, request.department_id).await?.ok_or_else(|| anyhow!("部门未找到"))?;
+    // 开启事务
+    let txn = db.begin().await?;
+    // 保存用户
     let mut system_user = create_request_to_model(&request);
+    system_user.department_code = Set(department.code);
     system_user.creator = Set(Some(login_user.id));
     system_user.updater = Set(Some(login_user.id));
     system_user.tenant_id = Set(login_user.tenant_id);
     let system_user = system_user.insert(db).await?;
+    // 保存用户角色对应关系
+    system_user_role::save(&db, &txn, login_user.clone(), system_user.id, request.role_id);
+    // 保存用户岗位对应关系
+    system_user_post::save(db, &txn, login_user, system_user.id, request.post_ids);
+    // 提交事务
+    txn.commit().await.with_context(|| "Failed to commit transaction")?;
     Ok(system_user.id)
 }
 
