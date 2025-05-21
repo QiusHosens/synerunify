@@ -1,16 +1,16 @@
 use std::str::FromStr;
 
 use common::constants::enum_constants::{STATUS_DISABLE, STATUS_ENABLE};
-use common::utils::crypt_utils::encrypt_password;
+use common::utils::crypt_utils::{encrypt_password, verify_password};
 use sea_orm::{ActiveModelTrait, ColumnTrait, Condition, DatabaseConnection, DatabaseTransaction, EntityTrait, JoinType, PaginatorTrait, QueryFilter, QueryOrder, QuerySelect, RelationTrait, TransactionTrait};
 use tokio::io::join;
 use crate::model::system_user::{Model as SystemUserModel, ActiveModel as SystemUserActiveModel, Entity as SystemUserEntity, Column, Relation};
 use crate::model::system_user_role::{Model as SystemUserRoleModel, ActiveModel as SystemUserRoleActiveModel, Entity as SystemUserRoleEntity, Column as SystemUserRoleColumn, Relation as SystemUserRoleRelation};
 use crate::model::system_department::{Model as SystemDepartmentModel, ActiveModel as SystemDepartmentActiveModel, Entity as SystemDepartmentEntity};
 use crate::model::system_role::{Model as SystemRoleModel, ActiveModel as SystemRoleActiveModel, Entity as SystemRoleEntity};
-use system_model::request::system_user::{CreateSystemUserRequest, UpdateSystemUserRequest, PaginatedKeywordRequest};
-use system_model::response::system_user::{SystemUserPageResponse, SystemUserResponse};
-use crate::convert::system_user::{create_request_to_model, update_request_to_model, model_to_response, model_to_page_response};
+use system_model::request::system_user::{CreateSystemUserRequest, EditPasswordSystemUserRequest, PaginatedKeywordRequest, ResetPasswordSystemUserRequest, UpdateSystemUserRequest};
+use system_model::response::system_user::{SystemUserBaseResponse, SystemUserPageResponse, SystemUserResponse};
+use crate::convert::system_user::{create_request_to_model, model_to_base_response, model_to_page_response, model_to_response, update_request_to_model};
 use anyhow::{anyhow, Context, Result};
 use chrono::Utc;
 use sea_orm::ActiveValue::Set;
@@ -27,12 +27,14 @@ pub async fn create(db: &DatabaseConnection, login_user: LoginUserContext, reque
     if exists {
         return Err(anyhow!("账号已存在"));
     }
+    let crypt_password = encrypt_password(request.password.clone()).with_context(|| "加密失败")?;
     // 查询部门编码
     let department = system_department::find_by_id(&db, request.department_id).await?.ok_or_else(|| anyhow!("部门未找到"))?;
     // 开启事务
     let txn = db.begin().await?;
     // 保存用户
     let mut system_user = create_request_to_model(&request);
+    system_user.password = Set(crypt_password);
     system_user.department_code = Set(department.code);
     system_user.creator = Set(Some(login_user.id));
     system_user.updater = Set(Some(login_user.id));
@@ -225,6 +227,46 @@ pub async fn disable(db: &DatabaseConnection, login_user: LoginUserContext, id: 
     Ok(())
 }
 
+pub async fn reset_password(db: &DatabaseConnection, login_user: LoginUserContext, request: ResetPasswordSystemUserRequest) -> Result<()> {
+    let crypt_password = encrypt_password(request.password).with_context(|| "加密失败")?;
+    let system_user = SystemUserActiveModel {
+        id: Set(request.id),
+        updater: Set(Some(login_user.id)),
+        password: Set(crypt_password),
+        ..Default::default()
+    };
+    system_user.update(db).await?;
+    Ok(())
+}
+
+pub async fn edit_password(db: &DatabaseConnection, login_user: LoginUserContext, request: EditPasswordSystemUserRequest) -> Result<()> {
+    let system_user = SystemUserEntity::find_by_id(request.id)
+        .one(db)
+        .await?
+        .ok_or_else(|| anyhow!("记录未找到"))?;
+    // 比较旧密码
+    let is_match = match verify_password(request.old_password, system_user.password) {
+        Ok(is_match) => {
+            is_match
+        }
+        Err(_) => {
+            return Err(anyhow!("旧密码错误"));
+        }
+    };
+    if !is_match {
+        return Err(anyhow!("旧密码错误"));
+    }
+    let crypt_password = encrypt_password(request.new_password).with_context(|| "加密失败")?;
+    let system_user = SystemUserActiveModel {
+        id: Set(request.id),
+        updater: Set(Some(login_user.id)),
+        password: Set(crypt_password),
+        ..Default::default()
+    };
+    system_user.update(db).await?;
+    Ok(())
+}
+
 pub async fn get_by_username(db: &DatabaseConnection, username: String) -> Result<Option<SystemUserModel>> {
     let system_user = SystemUserEntity::find_active()
         .filter(Column::Username.eq(username))
@@ -249,7 +291,14 @@ pub async fn find_by_id(db: &DatabaseConnection, id: i64) -> Result<Option<Syste
     Ok(system_user.map(model_to_response))
 }
 
-pub async fn exist_username(db: &DatabaseConnection, username: String) -> bool {
+pub async fn list_department_user(db: &DatabaseConnection, login_user: LoginUserContext) -> Result<Vec<SystemUserBaseResponse>> {
+    let condition = Condition::all().add(Column::TenantId.eq(login_user.tenant_id));
+    let list = SystemUserEntity::find_active_with_condition(condition)
+        .all(db).await?;
+    Ok(list.into_iter().map(model_to_base_response).collect())
+}
+
+async fn exist_username(db: &DatabaseConnection, username: String) -> bool {
     SystemUserEntity::find()
         .filter(Column::Username.eq(username))
         .one(db)

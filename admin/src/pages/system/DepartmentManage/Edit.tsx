@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
-import { SystemDepartmentEditRequest, SystemDepartmentResponse, SystemUserBaseResponse, updateSystemDepartment } from '@/api';
+import { listDepartmentSystemUser, SystemDepartmentEditRequest, SystemDepartmentResponse, SystemUserBaseResponse, updateSystemDepartment } from '@/api';
 
 interface FormErrors {
   name?: string; // 部门名称
@@ -68,8 +68,8 @@ const DepartmentEdit = forwardRef(({ onSubmit }: DepartmentEditProps, ref) => {
   };
 
   const initUsers = async () => {
-    // const result = await listDepartmentSystemUser();
-    // setUsers(result);
+    const result = await listDepartmentSystemUser();
+    setUsers(result);
   }
 
   const initForm = (department: SystemDepartmentResponse) => {
@@ -184,7 +184,7 @@ const DepartmentEdit = forwardRef(({ onSubmit }: DepartmentEditProps, ref) => {
             <Select
               size="small"
               labelId="leader-select-label"
-              name="package_id"
+              name="leader_user_id"
               value={department.leader_user_id}
               onChange={(e) => handleSelectChange(e)}
               label={t("page.department.title.leader.user.name")}

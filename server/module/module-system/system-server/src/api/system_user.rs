@@ -6,7 +6,7 @@ use ctor;
 use macros::require_authorize;
 use axum::{routing::{get, post}, Router, extract::{State, Path, Json, Query}, response::IntoResponse, Extension};
 use common::base::page::PaginatedResponse;
-use system_model::{request::system_user::{CreateSystemUserRequest, PaginatedKeywordRequest, UpdateSystemUserRequest}, response::system_user::SystemUserPageResponse};
+use system_model::{request::system_user::{CreateSystemUserRequest, EditPasswordSystemUserRequest, PaginatedKeywordRequest, ResetPasswordSystemUserRequest, UpdateSystemUserRequest}, response::system_user::{SystemUserBaseResponse, SystemUserPageResponse}};
 use system_model::response::system_user::SystemUserResponse;
 use common::base::response::CommonResult;
 use common::context::context::LoginUserContext;
@@ -23,6 +23,9 @@ pub async fn system_user_router(state: AppState) -> OpenApiRouter {
         .routes(routes!(page))
         .routes(routes!(enable))
         .routes(routes!(disable))
+        .routes(routes!(list_department_user))
+        .routes(routes!(reset_password))
+        .routes(routes!(edit_password))
         .with_state(state)
 }
 
@@ -246,6 +249,82 @@ async fn disable(
     Path(id): Path<i64>,
 ) -> CommonResult<()> {
     match service::system_user::disable(&state.db, login_user, id).await {
+        Ok(_) => {CommonResult::with_none()}
+        Err(e) => {CommonResult::with_err(&e.to_string())}
+    }
+}
+
+#[utoipa::path(
+    get,
+    path = "/list_department_user",
+    operation_id = "system_user_list_department_user",
+    params(
+        ("id" = i64, Path, description = "id")
+    ),
+    responses(
+        (status = 200, description = "list department user", body = CommonResult<Vec<SystemUserBaseResponse>>)
+    ),
+    tag = "system_user",
+    security(
+        ("bearerAuth" = [])
+    )
+)]
+#[require_authorize(operation_id = "system_user_list_department_user", authorize = "")]
+async fn list_department_user(
+    State(state): State<AppState>,
+    Extension(login_user): Extension<LoginUserContext>,
+) -> CommonResult<Vec<SystemUserBaseResponse>> {
+    match service::system_user::list_department_user(&state.db, login_user).await {
+        Ok(data) => {CommonResult::with_data(data)}
+        Err(e) => {CommonResult::with_err(&e.to_string())}
+    }
+}
+
+#[utoipa::path(
+    post,
+    path = "/reset_password",
+    operation_id = "system_user_reset_password",
+    request_body(content = ResetPasswordSystemUserRequest, description = "reset password", content_type = "application/json"),
+    responses(
+        (status = 204, description = "update")
+    ),
+    tag = "system_user",
+    security(
+        ("bearerAuth" = [])
+    )
+)]
+#[require_authorize(operation_id = "system_user_reset_password", authorize = "")]
+async fn reset_password(
+    State(state): State<AppState>,
+    Extension(login_user): Extension<LoginUserContext>,
+    Json(payload): Json<ResetPasswordSystemUserRequest>,
+) -> CommonResult<()> {
+    match service::system_user::reset_password(&state.db, login_user, payload).await {
+        Ok(_) => {CommonResult::with_none()}
+        Err(e) => {CommonResult::with_err(&e.to_string())}
+    }
+}
+
+#[utoipa::path(
+    post,
+    path = "/edit_password",
+    operation_id = "system_user_edit_password",
+    request_body(content = EditPasswordSystemUserRequest, description = "edit password", content_type = "application/json"),
+    responses(
+        (status = 204, description = "edit password")
+    ),
+    tag = "system_user",
+    security(
+        ("bearerAuth" = [])
+    )
+)]
+#[require_authorize(operation_id = "system_user_edit_password", authorize = "")]
+async fn edit_password(
+    State(state): State<AppState>,
+    Extension(login_user): Extension<LoginUserContext>,
+    Json(payload): Json<EditPasswordSystemUserRequest>,
+) -> CommonResult<()> {
+    match service::system_user::edit_password(&state.db, login_user, payload).await {
         Ok(_) => {CommonResult::with_none()}
         Err(e) => {CommonResult::with_err(&e.to_string())}
     }

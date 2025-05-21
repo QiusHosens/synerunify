@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
-import { createSystemDepartment, listSystemDepartment, SystemDepartmentRequest, SystemDepartmentResponse, SystemUserBaseResponse } from '@/api';
+import { createSystemDepartment, listDepartmentSystemUser, listSystemDepartment, SystemDepartmentRequest, SystemDepartmentResponse, SystemUserBaseResponse } from '@/api';
 import SelectTree from '@/components/SelectTree';
 
 interface FormValues {
@@ -105,8 +105,8 @@ const DepartmentAdd = forwardRef(({ onSubmit }: DepartmentAddProps, ref) => {
   }
 
   const initUsers = async () => {
-    // const result = await listDepartmentSystemUser();
-    // setUsers(result);
+    const result = await listDepartmentSystemUser();
+    setUsers(result);
   }
 
   const refreshDepartments = async () => {

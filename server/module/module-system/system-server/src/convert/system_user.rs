@@ -3,12 +3,11 @@ use crate::model::system_user::{self, Model as SystemUser, ActiveModel as System
 use crate::model::system_role::{self, Model as SystemRole, ActiveModel as SystemRoleActiveModel};
 use crate::model::system_department::{self, Model as SystemDepartment, ActiveModel as SystemDepartmentActiveModel};
 use system_model::request::system_user::{CreateSystemUserRequest, UpdateSystemUserRequest};
-use system_model::response::system_user::{SystemUserPageResponse, SystemUserResponse};
+use system_model::response::system_user::{SystemUserBaseResponse, SystemUserPageResponse, SystemUserResponse};
 
 pub fn create_request_to_model(request: &CreateSystemUserRequest) -> SystemUserActiveModel {
     SystemUserActiveModel {
         username: Set(request.username.clone()),
-        password: Set(request.password.clone()),
         nickname: Set(request.nickname.clone()),
         remark: request.remark.as_ref().map_or(NotSet, |remark| Set(Some(remark.clone()))),
         email: request.email.as_ref().map_or(NotSet, |email| Set(Some(email.clone()))),
@@ -66,6 +65,13 @@ pub fn model_to_response(model: SystemUser) -> SystemUserResponse {
         create_time: model.create_time,
         updater: model.updater,
         update_time: model.update_time,
+    }
+}
+
+pub fn model_to_base_response(model: SystemUser) -> SystemUserBaseResponse {
+    SystemUserBaseResponse { 
+        id: model.id,
+        nickname: model.nickname,
     }
 }
 

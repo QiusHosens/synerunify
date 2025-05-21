@@ -10,7 +10,36 @@ const apis = {
   page: '/system_user/page', // 分页查询
   enable: '/system_user/enable', // 启用
   disable: '/system_user/disable', // 禁用
-  listDepartment: '/system_user/list_department', // 列表查询部门用户
+  list_department_user: '/system_user/list_department_user', // 列表查询部门用户
+  reset_password: '/system_user/reset_password', // 重置密码
+  edit_password: '/system_user/edit_password', // 修改密码
+}
+
+export interface SystemUserRequest {
+  id: number; // id
+  username?: string; // 用户账号
+  password?: string; // 密码
+  nickname: string; // 用户昵称
+  remark: string; // 备注
+  email: string; // 用户邮箱
+  mobile: string; // 手机号码
+  sex: number; // 用户性别
+  status: number; // 帐号状态（0正常 1停用）
+  department_id: number; // 部门ID
+
+  role_id: number; // 角色ID
+  post_ids: number[]; // 岗位ID列表
+}
+
+export interface ResetPasswordSystemUserRequest {
+  id: number; // id
+  password: string; // 密码
+}
+
+export interface EditPasswordSystemUserRequest {
+  id: number; // id
+  old_password: string; // 旧密码
+  new_password: string; // 新密码
 }
 
 export interface SystemUserRequest {
@@ -97,5 +126,13 @@ export const disableSystemUser = (id: number): Promise<void> => {
 }
 
 export const listDepartmentSystemUser = (): Promise<Array<SystemUserBaseResponse>> => {
-  return api.get<Array<SystemUserBaseResponse>>(apis.listDepartment);
+  return api.get<Array<SystemUserBaseResponse>>(apis.list_department_user);
+}
+
+export const resetPasswordSystemUser = (system_user: ResetPasswordSystemUserRequest): Promise<void> => {
+  return api.post<void>(apis.reset_password, system_user);
+}
+
+export const editPasswordSystemUser = (system_user: EditPasswordSystemUserRequest): Promise<void> => {
+  return api.post<void>(apis.edit_password, system_user);
 }

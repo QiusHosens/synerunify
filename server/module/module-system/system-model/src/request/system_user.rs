@@ -56,6 +56,26 @@ pub struct UpdateSystemUserRequest {
 }
 
 #[derive(Serialize, Deserialize, Debug, ToSchema)]
+pub struct ResetPasswordSystemUserRequest {
+    
+    pub id: i64, // id
+    
+    pub password: String, // 密码
+    
+}
+
+#[derive(Serialize, Deserialize, Debug, ToSchema)]
+pub struct EditPasswordSystemUserRequest {
+    
+    pub id: i64, // id
+    
+    pub old_password: String, // 旧密码
+
+    pub new_password: String, // 新密码
+    
+}
+
+#[derive(Serialize, Deserialize, Debug, ToSchema)]
 pub struct PaginatedKeywordRequest {
     #[serde(flatten)]
     pub base: PaginatedRequest,

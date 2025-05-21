@@ -117,3 +117,12 @@ pub struct SystemUserPageResponse {
     pub department_name: Option<String>, // 部门名称
     
 }
+
+#[derive(Deserialize, Serialize, Debug, Clone, ToSchema)]
+pub struct SystemUserBaseResponse {
+    
+    pub id: i64, // id
+    
+    pub nickname: String, // 用户昵称
+    
+}
