@@ -1,2 +1,6 @@
 rust切换版本
-rustup default 1.85.0
+rustup default 1.87.0
+更新到最新版本
+rustup update
+查看已安装版本
+rustup target list --installed
