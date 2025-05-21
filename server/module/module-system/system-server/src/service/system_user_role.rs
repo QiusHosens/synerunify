@@ -32,7 +32,7 @@ pub async fn update(db: &DatabaseConnection, login_user: LoginUserContext, reque
 
 pub async fn save(db: &DatabaseConnection, txn: &DatabaseTransaction, login_user: LoginUserContext, user_id: i64, role_id: i64) -> Result<i64> {
     // 先查询用户角色,不存在则新增,存在且角色id不一致则修改
-    let system_user_role = SystemUserRoleEntity::find()
+    let system_user_role = SystemUserRoleEntity::find_active()
         .filter(Column::UserId.eq(user_id))
         .one(db)
         .await?;
