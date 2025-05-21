@@ -15,15 +15,14 @@ const apis = {
 
 export interface SystemUserRequest {
   id: number; // id
-  username: string; // 用户账号
-  password: string; // 密码
+  username?: string; // 用户账号
+  password?: string; // 密码
   nickname: string; // 用户昵称
   remark: string; // 备注
   email: string; // 用户邮箱
   mobile: string; // 手机号码
   sex: number; // 用户性别
   status: number; // 帐号状态（0正常 1停用）
-  department_code: string; // 部门编码
   department_id: number; // 部门ID
 
   role_id: number; // 角色ID
@@ -50,6 +49,7 @@ export interface SystemUserResponse {
   updater: number; // 更新者id
   update_time: string; // 更新时间
 
+  role_id: number; // 角色ID
   role_type?: number; // 角色类型
   role_name?: string; // 角色名称
   department_name?: number; // 部门名称

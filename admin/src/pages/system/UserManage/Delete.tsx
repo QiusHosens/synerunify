@@ -2,24 +2,24 @@ import { Button, Dialog, DialogActions, DialogContent, DialogContentText, Dialog
 import { useTranslation } from 'react-i18next';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
-import { deleteSystemPost, SystemPostResponse } from '@/api';
+import { deleteSystemUser, SystemUserResponse } from '@/api';
 
-interface PostDeleteProps {
+interface UserDeleteProps {
   onSubmit: () => void;
 }
 
-const PostDelete = forwardRef(({ onSubmit }: PostDeleteProps, ref) => {
+const UserDelete = forwardRef(({ onSubmit }: UserDeleteProps, ref) => {
   const { t } = useTranslation();
 
   const [open, setOpen] = useState(false);
   const [fullWidth] = useState(true);
   const [maxWidth] = useState<DialogProps['maxWidth']>('sm');
 
-  const [post, setPost] = useState<SystemPostResponse>();
+  const [user, setUser] = useState<SystemUserResponse>();
 
   useImperativeHandle(ref, () => ({
-    show(post: SystemPostResponse) {
-      setPost(post);
+    show(user: SystemUserResponse) {
+      setUser(user);
       setOpen(true);
     },
     hide() {
@@ -36,8 +36,8 @@ const PostDelete = forwardRef(({ onSubmit }: PostDeleteProps, ref) => {
   };
 
   const handleSubmit = async () => {
-    if (post) {
-      await deleteSystemPost(post.id);
+    if (user) {
+      await deleteSystemUser(user.id);
     }
     handleClose();
     onSubmit();
@@ -50,10 +50,10 @@ const PostDelete = forwardRef(({ onSubmit }: PostDeleteProps, ref) => {
       open={open}
       onClose={handleClose}
     >
-      <DialogTitle>{t('global.operate.delete')}{t('global.page.post')}</DialogTitle>
+      <DialogTitle>{t('global.operate.delete')}{t('global.page.user')}</DialogTitle>
       <DialogContent>
         <DialogContentText>
-          {t('global.description.delete', { name: post && post.name })}
+          {t('global.description.delete', { name: user && user.nickname })}
         </DialogContentText>
       </DialogContent>
       <DialogActions>
@@ -64,4 +64,4 @@ const PostDelete = forwardRef(({ onSubmit }: PostDeleteProps, ref) => {
   )
 });
 
-export default PostDelete;
+export default UserDelete;

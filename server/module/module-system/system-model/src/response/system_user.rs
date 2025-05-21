@@ -108,6 +108,8 @@ pub struct SystemUserPageResponse {
 
     /****************** 角色信息 ******************/
 
+    pub role_id: Option<i64>, // 角色ID
+
     pub role_type: Option<i8>, // 角色类型
     
     pub role_name: Option<String>, // 角色名称

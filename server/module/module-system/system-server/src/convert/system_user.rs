@@ -22,12 +22,6 @@ pub fn create_request_to_model(request: &CreateSystemUserRequest) -> SystemUserA
 
 pub fn update_request_to_model(request: &UpdateSystemUserRequest, existing: SystemUser) -> SystemUserActiveModel {
     let mut active_model: SystemUserActiveModel = existing.into();
-    if let Some(username) = &request.username { 
-        active_model.username = Set(username.clone());
-    }
-    if let Some(password) = &request.password { 
-        active_model.password = Set(password.clone());
-    }
     if let Some(nickname) = &request.nickname { 
         active_model.nickname = Set(nickname.clone());
     }
@@ -43,20 +37,8 @@ pub fn update_request_to_model(request: &UpdateSystemUserRequest, existing: Syst
     if let Some(sex) = &request.sex { 
         active_model.sex = Set(Some(sex.clone()));
     }
-    if let Some(avatar) = &request.avatar { 
-        active_model.avatar = Set(Some(avatar.clone()));
-    }
     if let Some(status) = &request.status { 
         active_model.status = Set(status.clone());
-    }
-    if let Some(login_ip) = &request.login_ip { 
-        active_model.login_ip = Set(Some(login_ip.clone()));
-    }
-    if let Some(login_date) = &request.login_date { 
-        active_model.login_date = Set(Some(login_date.clone()));
-    }
-    if let Some(department_code) = &request.department_code { 
-        active_model.department_code = Set(department_code.clone());
     }
     if let Some(department_id) = &request.department_id { 
         active_model.department_id = Set(department_id.clone());
@@ -88,12 +70,13 @@ pub fn model_to_response(model: SystemUser) -> SystemUserResponse {
 }
 
 pub fn model_to_page_response(model: SystemUser, model_role: Option<SystemRole>, model_department: Option<SystemDepartment>) -> SystemUserPageResponse {
-    let (role_type, role_name) = match model_role {
+    let (role_id, role_type, role_name) = match model_role {
         Some(t) => (
+            Some(t.id.clone()),
             Some(t.r#type.clone()),
             Some(t.name.clone()),
         ),
-        None => (None, None),
+        None => (None, None, None),
     };
 
     let department_name = model_department.map(|department| department.name.clone());
@@ -118,6 +101,7 @@ pub fn model_to_page_response(model: SystemUser, model_role: Option<SystemRole>,
         updater: model.updater,
         update_time: model.update_time,
 
+        role_id,
         role_type,
         role_name,
         department_name

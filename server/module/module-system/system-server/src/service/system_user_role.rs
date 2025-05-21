@@ -59,6 +59,7 @@ pub async fn save(db: &DatabaseConnection, txn: &DatabaseTransaction, login_user
                 system_user_role.role_id = Set(role_id);
                 system_user_role.updater = Set(Some(login_user.id));
                 let updated = system_user_role.update(txn).await?;
+                // TODO 修改角色需退出账号,使用户重新登录
                 Ok(updated.id)
             } else {
                 // No change needed, return existing ID

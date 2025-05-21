@@ -21,6 +21,7 @@ pub async fn system_user_post_router(state: AppState) -> OpenApiRouter {
         .routes(routes!(get_by_id))
         .routes(routes!(list))
         .routes(routes!(page))
+        .routes(routes!(get_by_user_id))
         .with_state(state)
 }
 
@@ -187,6 +188,33 @@ async fn list(
     Extension(login_user): Extension<LoginUserContext>,
 ) -> CommonResult<Vec<SystemUserPostResponse>> {
     match service::system_user_post::list(&state.db, login_user).await {
+        Ok(data) => {CommonResult::with_data(data)}
+        Err(e) => {CommonResult::with_err(&e.to_string())}
+    }
+}
+
+#[utoipa::path(
+    get,
+    path = "/get_user/{id}",
+    operation_id = "system_user_post_get_by_user_id",
+    params(
+        ("id" = i64, Path, description = "id")
+    ),
+    responses(
+        (status = 200, description = "get by user id", body = CommonResult<Vec<i64>>)
+    ),
+    tag = "system_user_post",
+    security(
+        ("bearerAuth" = [])
+    )
+)]
+#[require_authorize(operation_id = "system_user_post_get_by_user_id", authorize = "")]
+async fn get_by_user_id(
+    State(state): State<AppState>,
+    Extension(login_user): Extension<LoginUserContext>,
+    Path(id): Path<i64>,
+) -> CommonResult<Vec<i64>> {
+    match service::system_user_post::get_by_user_id(&state.db, login_user, id).await {
         Ok(data) => {CommonResult::with_data(data)}
         Err(e) => {CommonResult::with_err(&e.to_string())}
     }

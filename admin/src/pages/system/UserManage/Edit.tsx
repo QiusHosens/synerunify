@@ -1,8 +1,11 @@
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, Switch, TextField, Typography } from '@mui/material';
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Switch, TextField, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
-import { SystemUserRequest, SystemUserResponse, updateSystemUser } from '@/api';
+import { getSystemUserPostByUser, listSystemDepartment, listSystemPost, listSystemRole, SystemDepartmentResponse, SystemRoleResponse, SystemUserRequest, SystemUserResponse, updateSystemUser } from '@/api';
+import CustomizedMultipleSelect, { Item } from '@/components/CustomizedMultipleSelect';
+import DictSelect from '@/components/DictSelect';
+import SelectTree from '@/components/SelectTree';
 
 interface FormErrors {
   username?: string; // 用户账号
@@ -29,10 +32,12 @@ const UserEdit = forwardRef(({ onSubmit }: UserEditProps, ref) => {
   const [open, setOpen] = useState(false);
   const [fullWidth] = useState(true);
   const [maxWidth] = useState<DialogProps['maxWidth']>('sm');
-  const [user, setUser] = useState<SystemUserResponse>({
+  const [roles, setRoles] = useState<SystemRoleResponse[]>([]);
+  const [postItems, setPostItems] = useState<Item[]>([]);
+  const [treeData, setTreeData] = useState<TreeNode[]>([]);
+  const [selectedDepartmentId, setSelectedDepartmentId] = useState<string | number>(0);
+  const [user, setUser] = useState<SystemUserRequest>({
     id: 0,
-    username: '',
-    password: '',
     nickname: '',
     remark: '',
     email: '',
@@ -41,13 +46,17 @@ const UserEdit = forwardRef(({ onSubmit }: UserEditProps, ref) => {
     status: 0,
     department_id: 0,
     role_id: 0,
-    user_ids: [],
+    post_ids: [],
   });
   const [errors, setErrors] = useState<FormErrors>({});
 
   useImperativeHandle(ref, () => ({
     show(user: SystemUserResponse) {
       initForm(user);
+      initUserPosts(user)
+      listRoles();
+      initPosts();
+      initDepartments();
       setOpen(true);
     },
     hide() {
@@ -58,12 +67,16 @@ const UserEdit = forwardRef(({ onSubmit }: UserEditProps, ref) => {
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
 
-    if (!user.name.trim()) {
-      newErrors.name = t('page.user.error.name');
+    if (!user.nickname.trim()) {
+      newErrors.nickname = t('page.user.error.nickname');
     }
 
-    if (!user.sort && user.sort != 0) {
-      newErrors.sort = t('page.user.error.sort');
+    if (!user.department_id) {
+      newErrors.department_id = t('page.user.error.department');
+    }
+
+    if (!user.role_id) {
+      newErrors.role_id = t('page.user.error.role');
     }
 
     setErrors(newErrors);
@@ -81,10 +94,83 @@ const UserEdit = forwardRef(({ onSubmit }: UserEditProps, ref) => {
   };
 
   const initForm = (user: SystemUserResponse) => {
-    setUser({
+    setUser(prev => ({
+      ...prev,
       ...user,
-    })
+    }))
     setErrors({});
+  }
+
+  const initUserPosts = async (user: SystemUserResponse) => {
+    const result = await getSystemUserPostByUser(user.id);
+    setUser(prev => ({
+      ...prev,
+      post_ids: result
+    }))
+  }
+
+  const listRoles = async () => {
+    const result = await listSystemRole();
+    setRoles(result);
+  }
+
+  const initPosts = async () => {
+    const result = await listSystemPost();
+    const items = result.map(item => {
+      return {
+        value: item.id,
+        label: item.name,
+        status: item.status
+      } as Item;
+    });
+    setPostItems(items);
+  }
+
+  const initDepartments = async () => {
+    const result = await listSystemDepartment();
+    const root = findRoot(result);
+    if (root) {
+      setSelectedDepartmentId(root.id);
+    }
+    const tree = buildTree(result, root?.parent_id);
+    setTreeData(tree);
+  }
+
+  const findRoot = (list: SystemDepartmentResponse[]): SystemDepartmentResponse | undefined => {
+    const ids = list.map(item => item.id);
+    const parentIds = list.map(item => item.parent_id);
+    const rootIds = parentIds.filter(id => ids.indexOf(id) < 0);
+    if (rootIds.length > 0) {
+      const rootId = rootIds[0];
+      return list.filter(item => rootId === item.parent_id)[0];
+    }
+    return undefined;
+  }
+
+  const buildTree = (list: SystemDepartmentResponse[], rootParentId: number | undefined): TreeNode[] => {
+    const map: { [key: string]: TreeNode } = {};
+    const tree: TreeNode[] = [];
+
+    // Create a map for quick lookup
+    for (const item of list) {
+      map[item.id] = {
+        id: item.id,
+        parent_id: item.parent_id,
+        label: item.name,
+        children: [],
+      };
+    }
+
+    // Build the tree structure
+    for (const item of list) {
+      if (item.parent_id === rootParentId) {
+        tree.push(map[item.id]);
+      } else if (map[item.parent_id]) {
+        map[item.parent_id].children.push(map[item.id]);
+      }
+    }
+
+    return tree;
   }
 
   const handleSubmit = async () => {
@@ -122,6 +208,26 @@ const UserEdit = forwardRef(({ onSubmit }: UserEditProps, ref) => {
     }
   };
 
+  const handleTypeChange = (e: SelectChangeEvent<string>) => {
+    // console.log('target', e.target);
+    const { name, value } = e.target;
+    const numberValue = Number(value);
+    setUser(prev => ({
+      ...prev,
+      [name]: numberValue
+    }));
+
+    // console.log('formValues', formValues);
+
+    // Clear error when user starts typing
+    if (errors[name as keyof FormErrors]) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: undefined
+      }));
+    }
+  };
+
   const handleStatusChange = (e: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
     // console.log('target', e.target, checked);
     const { name } = e.target;
@@ -129,6 +235,38 @@ const UserEdit = forwardRef(({ onSubmit }: UserEditProps, ref) => {
     setUser(prev => ({
       ...prev,
       [name]: checked ? 0 : 1
+    }));
+
+    // Clear error when user starts typing
+    if (errors[name as keyof FormErrors]) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: undefined
+      }));
+    }
+  };
+
+  const handleSelectChange = (e: SelectChangeEvent<string | number[]>) => {
+    const { name, value } = e.target;
+    setUser(prev => ({
+      ...prev,
+      [name]: value
+    }));
+
+    // Clear error when user starts typing
+    if (errors[name as keyof FormErrors]) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: undefined
+      }));
+    }
+  };
+
+  const handleChange = (name: string, node: TreeNode) => {
+    setSelectedDepartmentId(node.id);
+    setUser(prev => ({
+      ...prev,
+      [name]: node.id
     }));
 
     // Clear error when user starts typing
@@ -159,34 +297,63 @@ const UserEdit = forwardRef(({ onSubmit }: UserEditProps, ref) => {
             width: 'fit-content',
           }}
         >
+          <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiSelect-root': { width: '200px' } }}>
+            <SelectTree
+              expandToSelected
+              name='department_id'
+              size="small"
+              label={t('page.user.title.department.name')}
+              treeData={treeData}
+              value={selectedDepartmentId}
+              onChange={(name, node) => handleChange(name, node as TreeNode)}
+            />
+          </FormControl>
           <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' } }}>
             <TextField
               required
               size="small"
-              label={t("page.user.title.name")}
-              name='name'
-              value={user.name}
+              label={t("page.user.title.nickname")}
+              name='nickname'
+              value={user.nickname}
               onChange={handleInputChange}
-              error={!!errors.name}
-              helperText={errors.name}
+              error={!!errors.nickname}
+              helperText={errors.nickname}
             />
-            <TextField
-              size="small"
-              label={t("page.user.title.code")}
-              name='code'
-              value={user.code}
-              onChange={handleInputChange}
-            />
-            <TextField
+          </FormControl>
+          <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiSelect-root': { width: '200px' } }}>
+            <DictSelect name='sex' dict_type='sex' value={user.sex.toString()} onChange={handleTypeChange} label={t("page.user.title.sex")} />
+          </FormControl>
+          <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiSelect-root': { width: '200px' } }}>
+            <InputLabel required size="small" id="role-select-label">{t("page.user.title.role.name")}</InputLabel>
+            <Select
               required
               size="small"
-              type="number"
-              label={t("page.user.title.sort")}
-              name="sort"
-              value={user.sort}
+              labelId="role-select-label"
+              name="role_id"
+              value={user.role_id}
+              onChange={(e) => handleInputChange(e as any)}
+              label={t("page.user.title.role.name")}
+            >
+              {roles.map(item => (<MenuItem key={item.id} value={item.id}>{item.name}</MenuItem>))}
+            </Select>
+          </FormControl>
+          <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiSelect-root': { width: '200px' } }}>
+            <CustomizedMultipleSelect name='post_ids' value={user.post_ids} label={t("page.user.title.post")} items={postItems} onChange={handleSelectChange} />
+          </FormControl>
+          <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' } }}>
+            <TextField
+              size="small"
+              label={t("page.user.title.mobile")}
+              name="mobile"
+              value={user.mobile}
               onChange={handleInputChange}
-              error={!!errors.sort}
-              helperText={errors.sort}
+            />
+            <TextField
+              size="small"
+              label={t("page.user.title.email")}
+              name="email"
+              value={user.email}
+              onChange={handleInputChange}
             />
             <TextField
               size="small"

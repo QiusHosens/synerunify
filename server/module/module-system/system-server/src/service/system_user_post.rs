@@ -154,3 +154,13 @@ pub async fn list(db: &DatabaseConnection, login_user: LoginUserContext) -> Resu
         .all(db).await?;
     Ok(list.into_iter().map(model_to_response).collect())
 }
+
+pub async fn get_by_user_id(db: &DatabaseConnection, login_user: LoginUserContext, user_id: i64) -> Result<Vec<i64>> {
+    let condition = Condition::all()
+            .add(Column::UserId.eq(user_id))
+            .add(Column::TenantId.eq(login_user.tenant_id));
+            
+    let system_user_post = SystemUserPostEntity::find_active_with_condition(condition)
+        .all(db).await?;
+    Ok(system_user_post.into_iter().map(|post| post.post_id).collect())
+}
