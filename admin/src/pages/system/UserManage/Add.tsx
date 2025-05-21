@@ -218,7 +218,9 @@ const UserAdd = forwardRef(({ onSubmit }: UserAddProps, ref) => {
   const handleSubmit = async () => {
     if (validateForm()) {
       const user = formValues as SystemUserRequest;
-      user.password = Md5.hashStr(user.password);
+      if (user.password) {
+        user.password = Md5.hashStr(user.password);
+      }
       await createSystemUser(user);
       handleClose();
       onSubmit();
@@ -229,7 +231,9 @@ const UserAdd = forwardRef(({ onSubmit }: UserAddProps, ref) => {
     if (validateForm()) {
       console.log('formValues', formValues);
       const user = formValues as SystemUserRequest;
-      user.password = Md5.hashStr(user.password);
+      if (user.password) {
+        user.password = Md5.hashStr(user.password);
+      }
       await createSystemUser(user);
       // reset();
       onSubmit();
