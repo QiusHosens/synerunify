@@ -2,7 +2,9 @@ use std::future::Future;
 use std::net::SocketAddr;
 use crate::convert::system_data_scope_rule::create_request_to_model;
 use anyhow::{anyhow, Result};
+use common::constants::enums::DeviceType;
 use sea_orm::{ActiveModelTrait, ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter, QuerySelect};
+use strum::IntoEnumIterator;
 use std::sync::Arc;
 use std::time::{Duration, Instant};
 use axum::Json;
@@ -108,6 +110,16 @@ pub async fn home(db: &DatabaseConnection, login_user: LoginUserContext) -> Resu
         menus
     };
     Ok(response)
+}
+
+pub async fn offline_user(_db: &DatabaseConnection, user_id: i64) -> Result<()> {
+    // 删除用户所有端缓存
+    for device in DeviceType::iter() {
+        // 获取字符串形式
+        let device_str: &'static str = device.into();
+        RedisManager::delete::<_>(format!("{}{}:{}", REDIS_KEY_LOGIN_USER_PREFIX, device_str, user_id))?;
+    }
+    Ok(())
 }
 
 fn invoke_after_login(db: &DatabaseConnection, user: SystemUserModel, request_context: RequestContext, auth: &AuthBody) {

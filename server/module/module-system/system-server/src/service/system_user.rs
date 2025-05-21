@@ -22,11 +22,9 @@ use super::{system_department, system_user_post, system_user_role};
 
 pub async fn create(db: &DatabaseConnection, login_user: LoginUserContext, request: CreateSystemUserRequest) -> Result<i64> {
     // 查询账号是否存在
-    let exists = SystemUserEntity::find()
-        .filter(Column::Username.eq(request.username.clone()))
-        .one(db)
-        .await?;
-    if exists.is_some() {
+    let exists = exist_username(&db, request.username.clone())
+        .await;
+    if exists {
         return Err(anyhow!("账号已存在"));
     }
     // 查询部门编码
@@ -50,8 +48,14 @@ pub async fn create(db: &DatabaseConnection, login_user: LoginUserContext, reque
 }
 
 // 创建租户管理员
-pub async fn create_tenant_admin(txn: &DatabaseTransaction, login_user: LoginUserContext, username: String, password: String, nickname: String, mobile: Option<String>, department_code: String, department_id: i64, tenant_id: i64) -> Result<i64> {
-    // 检查账号是否存在 TODO
+pub async fn create_tenant_admin(db: &DatabaseConnection, txn: &DatabaseTransaction, login_user: LoginUserContext, username: String, password: String, nickname: String, mobile: Option<String>, department_code: String, department_id: i64, tenant_id: i64) -> Result<i64> {
+    // 检查账号是否存在
+    let exists = exist_username(&db, username.clone())
+        .await;
+    if exists {
+        return Err(anyhow!("账号已存在"));
+    }
+
     let crypt_password = encrypt_password(password).with_context(|| "Failed to encrypt password")?;
     let system_user = SystemUserActiveModel {
         username: Set(username),
@@ -243,4 +247,13 @@ pub async fn find_by_id(db: &DatabaseConnection, id: i64) -> Result<Option<Syste
     let system_user = SystemUserEntity::find_active_by_id(id)
         .one(db).await?;
     Ok(system_user.map(model_to_response))
+}
+
+pub async fn exist_username(db: &DatabaseConnection, username: String) -> bool {
+    SystemUserEntity::find()
+        .filter(Column::Username.eq(username))
+        .one(db)
+        .await
+        .map(|result| result.is_some())
+        .unwrap_or(false)
 }

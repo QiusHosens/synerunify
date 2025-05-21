@@ -124,7 +124,7 @@ request.interceptors.response.use(
         break;
       case 403:
         // 403直接退出登录
-        logout('拒绝访问');
+        logout('登录已失效,请重新登录');
         break;
       case 422:
         showMessage('参数有误', 'error');

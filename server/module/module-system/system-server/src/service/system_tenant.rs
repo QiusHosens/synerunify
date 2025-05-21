@@ -37,7 +37,7 @@ pub async fn create(db: &DatabaseConnection, login_user: LoginUserContext, reque
     let department = create_tenant_root(&db, &txn, login_user.clone(), request.name.clone(), new_tenant_id).await?;
     // 创建租户管理员用户
     error!("create user");
-    let user_id = create_tenant_admin(&txn, login_user.clone(), request.username.clone(), request.password.clone(), 
+    let user_id = create_tenant_admin(&db, &txn, login_user.clone(), request.username.clone(), request.password.clone(), 
         request.nickname.clone(), request.contact_mobile.clone(), department.code.clone(), department.id.clone(), new_tenant_id).await?;
     // 创建租户
     error!("create tenant");

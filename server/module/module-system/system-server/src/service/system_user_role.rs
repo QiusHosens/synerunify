@@ -9,6 +9,8 @@ use common::base::page::PaginatedResponse;
 use common::context::context::LoginUserContext;
 use common::interceptor::orm::active_filter::ActiveFilterEntityTrait;
 
+use super::system_auth;
+
 pub async fn create(db: &DatabaseConnection, login_user: LoginUserContext, request: CreateSystemUserRoleRequest) -> Result<i64> {
     let mut system_user_role = create_request_to_model(&request);
     system_user_role.creator = Set(Some(login_user.id));
@@ -59,7 +61,8 @@ pub async fn save(db: &DatabaseConnection, txn: &DatabaseTransaction, login_user
                 system_user_role.role_id = Set(role_id);
                 system_user_role.updater = Set(Some(login_user.id));
                 let updated = system_user_role.update(txn).await?;
-                // TODO 修改角色需退出账号,使用户重新登录
+                // 修改角色需退出账号,使用户重新登录
+                system_auth::offline_user(&db, user_id).await?;
                 Ok(updated.id)
             } else {
                 // No change needed, return existing ID

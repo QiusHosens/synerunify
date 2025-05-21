@@ -14,7 +14,7 @@ use axum_extra::TypedHeader;
 use headers::UserAgent;
 use tracing::info;
 use uaparser::{Parser, UserAgentParser};
-use crate::config::config::Config;
+use crate::{config::config::Config, constants::enums::DeviceType};
 use crate::context::context::RequestContext;
 use crate::state::app_state::AppState;
 
@@ -56,13 +56,14 @@ pub async fn request_context_handler(State(state): State<AppState>, user_agent: 
         || ua.contains("iPhone")
         || ua.contains("iPad")
     {
-        "mobile"
+        DeviceType::Mobile
     } else if ua == "Unknown" {
-        "web"
+        DeviceType::Web
     } else {
-        "web"
+        DeviceType::Web
     };
     info!("device type: {:?}", device_type);
+    let device_str: &'static str = device_type.into(); 
     // 精确解析,110ms耗时太长
     // let ua_parser = &state.ua_parser.clone();
     // let parsed = ua_parser.parse_device(&ua);
@@ -85,7 +86,7 @@ pub async fn request_context_handler(State(state): State<AppState>, user_agent: 
         data: body_data.clone(),
         ip,
         user_agent: user_agent_header.to_string(),
-        device_type: device_type.to_string()
+        device_type: device_str.to_string(),
     };
     info!("request context: {:?}", request_context);
     let mut request = Request::from_parts(parts, Body::from(bytes));
