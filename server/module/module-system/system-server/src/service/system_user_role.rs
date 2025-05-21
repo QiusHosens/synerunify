@@ -118,7 +118,8 @@ pub async fn get_paginated(db: &DatabaseConnection, login_user: LoginUserContext
 }
 
 pub async fn list(db: &DatabaseConnection, login_user: LoginUserContext) -> Result<Vec<SystemUserRoleResponse>> {
-    let condition = Condition::all().add(Column::TenantId.eq(login_user.tenant_id));let list = SystemUserRoleEntity::find_active_with_condition(condition)
+    let condition = Condition::all().add(Column::TenantId.eq(login_user.tenant_id));
+    let list = SystemUserRoleEntity::find_active_with_condition(condition)
         .all(db).await?;
     Ok(list.into_iter().map(model_to_response).collect())
 }
@@ -128,4 +129,26 @@ pub async fn get_role_id_by_user_id(db: &DatabaseConnection, user_id: i64) -> Re
         .filter(Column::UserId.eq(user_id))
         .one(db).await?;
     Ok(system_user_role.map_or_else(|| 0, | user_role | user_role.role_id))
+}
+
+pub async fn offline_role_user(db: &DatabaseConnection, role_id: i64) -> Result<()> {
+    let system_user_role = SystemUserRoleEntity::find_active()
+        .filter(Column::RoleId.eq(role_id))
+        .all(db).await?;
+    for user_role in system_user_role {
+        system_auth::offline_user(&db, user_role.user_id);
+    }
+    
+    Ok(())
+}
+
+pub async fn offline_roles_user(db: &DatabaseConnection, role_ids: Vec<i64>) -> Result<()> {
+    let system_user_role = SystemUserRoleEntity::find_active()
+        .filter(Column::RoleId.is_in(role_ids))
+        .all(db).await?;
+    for user_role in system_user_role {
+        system_auth::offline_user(&db, user_role.user_id);
+    }
+    
+    Ok(())
 }

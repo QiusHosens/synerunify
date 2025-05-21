@@ -14,6 +14,8 @@ use common::context::context::LoginUserContext;
 use common::interceptor::orm::active_filter::ActiveFilterEntityTrait;
 use crate::service;
 
+use super::system_user_role;
+
 pub async fn update(
     db: &DatabaseConnection,
     login_user: LoginUserContext,
@@ -47,52 +49,51 @@ pub async fn update(
         .copied()
         .collect();
 
-    // Start a transaction
-    db.transaction::<_, _, sea_orm::DbErr>(|txn| {
-        Box::pin(async move {
-            // Batch insert new role-menu relationships (deleted = 0 for active)
-            if !to_add.is_empty() {
-                let new_role_menus: Vec<_> = to_add.into_iter().map(|menu_id| {
-                    SystemRoleMenuActiveModel {
-                        role_id: Set(request.role_id),
-                        menu_id: Set(menu_id),
-                        creator: Set(Some(login_user.id)),
-                        updater: Set(Some(login_user.id)),
-                        tenant_id: Set(login_user.tenant_id),
-                        ..Default::default()
-                    }
-                }).collect();
-                
-                SystemRoleMenuEntity::insert_many(new_role_menus).exec(txn).await?;
+    // 开启事务
+    let txn = db.begin().await?;
+
+    // Batch insert new role-menu relationships (deleted = 0 for active)
+    if !to_add.is_empty() {
+        let new_role_menus: Vec<_> = to_add.into_iter().map(|menu_id| {
+            SystemRoleMenuActiveModel {
+                role_id: Set(request.role_id),
+                menu_id: Set(menu_id),
+                creator: Set(Some(login_user.id)),
+                updater: Set(Some(login_user.id)),
+                tenant_id: Set(login_user.tenant_id),
+                ..Default::default()
             }
+        }).collect();
+        
+        SystemRoleMenuEntity::insert_many(new_role_menus).exec(&txn).await?;
+    }
 
-            // Batch mark removed role-menu relationships as deleted (set deleted = 1)
-            if !to_mark_deleted.is_empty() {
-                SystemRoleMenuEntity::update_many()
-                    .col_expr(Column::Deleted, Expr::value(1)) // Mark as deleted
-                    .col_expr(Column::Updater, Expr::value(Some(login_user.id)))
-                    .filter(Column::RoleId.eq(request.role_id))
-                    .filter(Column::MenuId.is_in(to_mark_deleted))
-                    .exec(txn)
-                    .await?;
-            }
+    // Batch mark removed role-menu relationships as deleted (set deleted = 1)
+    if !to_mark_deleted.is_empty() {
+        SystemRoleMenuEntity::update_many()
+            .col_expr(Column::Deleted, Expr::value(1)) // Mark as deleted
+            .col_expr(Column::Updater, Expr::value(Some(login_user.id)))
+            .filter(Column::RoleId.eq(request.role_id))
+            .filter(Column::MenuId.is_in(to_mark_deleted))
+            .exec(&txn)
+            .await?;
+    }
 
-            // Batch restore/update existing relationships (set deleted = 0 for active)
-            if !to_update.is_empty() {
-                SystemRoleMenuEntity::update_many()
-                    .col_expr(Column::Deleted, Expr::value(0)) // Ensure active
-                    .col_expr(Column::Updater, Expr::value(Some(login_user.id)))
-                    .filter(Column::RoleId.eq(request.role_id))
-                    .filter(Column::MenuId.is_in(to_update))
-                    .exec(txn)
-                    .await?;
-            }
+    // Batch restore/update existing relationships (set deleted = 0 for active)
+    if !to_update.is_empty() {
+        SystemRoleMenuEntity::update_many()
+            .col_expr(Column::Deleted, Expr::value(0)) // Ensure active
+            .col_expr(Column::Updater, Expr::value(Some(login_user.id)))
+            .filter(Column::RoleId.eq(request.role_id))
+            .filter(Column::MenuId.is_in(to_update))
+            .exec(&txn)
+            .await?;
+    }
+    // 提交事务
+    txn.commit().await?;
 
-            // TODO 移除相关角色用户token,使用户重新登录
-
-            Ok(())
-        })
-    }).await?;
+    // 退出相关角色所有用户,使用户重新登录
+    system_user_role::offline_role_user(&db, request.role_id).await?;
 
     Ok(())
 }

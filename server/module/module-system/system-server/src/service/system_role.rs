@@ -13,6 +13,8 @@ use common::base::page::PaginatedResponse;
 use common::context::context::LoginUserContext;
 use common::interceptor::orm::active_filter::ActiveFilterEntityTrait;
 
+use super::system_user_role;
+
 pub async fn create(db: &DatabaseConnection, login_user: LoginUserContext, request: CreateSystemRoleRequest) -> Result<i64> {
     let mut system_role = create_request_to_model(&request);
     system_role.creator = Set(Some(login_user.id));
@@ -43,7 +45,8 @@ pub async fn update_rule(db: &DatabaseConnection, login_user: LoginUserContext, 
     let mut system_role = update_rule_request_to_model(&request, system_role);
     system_role.updater = Set(Some(login_user.id));
     system_role.update(db).await?;
-    // TODO 修改数据权限规则后需清除角色下用户token，使其重新登录
+    // 修改数据权限规则后需退出角色下所有用户，使其重新登录
+    system_user_role::offline_role_user(&db, request.id).await?;
     Ok(())
 }
 
