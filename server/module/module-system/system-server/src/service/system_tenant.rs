@@ -16,7 +16,7 @@ use common::interceptor::orm::active_filter::ActiveFilterEntityTrait;
 use tracing::{error, info};
 
 use super::system_department::create_tenant_root;
-use super::system_user::create_tenant_admin;
+use super::system_user::{self, create_tenant_admin};
 
 pub async fn create(db: &DatabaseConnection, login_user: LoginUserContext, request: CreateSystemTenantRequest) -> Result<i64> {
     // error!("{:?}", request);
@@ -169,4 +169,13 @@ pub async fn disable(db: &DatabaseConnection, login_user: LoginUserContext, id: 
 
 pub async fn list_all(db: &DatabaseConnection) -> Result<Vec<SystemTenantModel>> {
     Ok(SystemTenantEntity::find_active().all(db).await?)
+}
+
+pub async fn offline_tenant_package_user(db: &DatabaseConnection, tenant_package_id: i64) -> Result<()> {
+    let list = SystemTenantEntity::find_active()
+        .filter(Column::PackageId.eq(tenant_package_id))
+        .all(db).await?;
+    let tenant_ids = list.iter().map(|tenant| tenant.id).collect();
+    system_user::offline_tenants_user(&db, tenant_ids);
+    Ok(())
 }

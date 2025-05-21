@@ -12,6 +12,8 @@ use common::base::page::PaginatedResponse;
 use common::context::context::LoginUserContext;
 use common::interceptor::orm::active_filter::ActiveFilterEntityTrait;
 
+use super::system_tenant;
+
 pub async fn create(db: &DatabaseConnection, login_user: LoginUserContext, request: CreateSystemTenantPackageRequest) -> Result<i64> {
     let mut system_tenant_package = create_request_to_model(&request);
     system_tenant_package.creator = Set(Some(login_user.id));
@@ -42,7 +44,8 @@ pub async fn update_menu(db: &DatabaseConnection, login_user: LoginUserContext, 
     let mut system_tenant_package = update_menu_request_to_model(&request, system_tenant_package);
     system_tenant_package.updater = Set(Some(login_user.id));
     system_tenant_package.update(db).await?;
-    // TODO 修改套餐菜单后后需清除套餐下用户token，使其重新登录
+    // 修改套餐菜单后后需清除套餐下用户缓存，使其重新登录
+    offline_tenant_package_user(&db, request.id);
     Ok(())
 }
 
@@ -141,5 +144,10 @@ pub async fn disable(db: &DatabaseConnection, login_user: LoginUserContext, id: 
         ..Default::default()
     };
     system_tenant_package.update(db).await?;
+    Ok(())
+}
+
+pub async fn offline_tenant_package_user(db: &DatabaseConnection, id: i64) -> Result<()> {
+    system_tenant::offline_tenant_package_user(&db, id);
     Ok(())
 }

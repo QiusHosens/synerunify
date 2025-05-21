@@ -18,7 +18,7 @@ use common::base::page::PaginatedResponse;
 use common::context::context::LoginUserContext;
 use common::interceptor::orm::active_filter::ActiveFilterEntityTrait;
 
-use super::{system_department, system_user_post, system_user_role};
+use super::{system_auth, system_department, system_user_post, system_user_role};
 
 pub async fn create(db: &DatabaseConnection, login_user: LoginUserContext, request: CreateSystemUserRequest) -> Result<i64> {
     // 查询账号是否存在
@@ -296,6 +296,29 @@ pub async fn list_department_user(db: &DatabaseConnection, login_user: LoginUser
     let list = SystemUserEntity::find_active_with_condition(condition)
         .all(db).await?;
     Ok(list.into_iter().map(model_to_base_response).collect())
+}
+
+pub async fn offline_tenant_user(db: &DatabaseConnection, tenant_id: i64) -> Result<()> {
+    let condition = Condition::all().add(Column::TenantId.eq(tenant_id));
+    let list = SystemUserEntity::find_active_with_condition(condition)
+        .all(db).await?;
+    for user in list {
+        system_auth::offline_user(&db, user.id);
+    }
+    Ok(())
+}
+
+pub async fn offline_tenants_user(db: &DatabaseConnection, tenant_ids: Vec<i64>) -> Result<()> {
+    if tenant_ids.is_empty() {
+        return Ok(());
+    }
+    let condition = Condition::all().add(Column::TenantId.is_in(tenant_ids));
+    let list = SystemUserEntity::find_active_with_condition(condition)
+        .all(db).await?;
+    for user in list {
+        system_auth::offline_user(&db, user.id);
+    }
+    Ok(())
 }
 
 async fn exist_username(db: &DatabaseConnection, username: String) -> bool {
