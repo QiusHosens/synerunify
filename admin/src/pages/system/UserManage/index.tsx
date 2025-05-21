@@ -10,6 +10,7 @@ import UserEdit from './Edit';
 import UserDelete from './Delete';
 import CustomizedMore from '@/components/CustomizedMore';
 import SelectTree from '@/components/SelectTree';
+import UserResetPassword from './ResetPassword';
 
 interface TreeNode {
   id: string | number;
@@ -38,6 +39,7 @@ export default function UserManage() {
   const addUser = useRef(null);
   const editUser = useRef(null);
   const deleteUser = useRef(null);
+  const resetPasswordUser = useRef(null);
 
   const handleStatusChange = useCallback(
     async (e: React.ChangeEvent<HTMLInputElement>, checked: boolean, data: SystemUserResponse) => {
@@ -93,14 +95,25 @@ export default function UserManage() {
               startIcon={<EditIcon />}
               onClick={() => handleClickOpenEdit(params.row)}
             />
-            <Button
-              sx={{ color: 'error.main' }}
-              size="small"
-              variant='customOperate'
-              title={t('page.user.operate.delete')}
-              startIcon={<DeleteIcon />}
-              onClick={() => handleClickOpenDelete(params.row)}
-            />
+            <CustomizedMore>
+              <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                <Button
+                  size="small"
+                  variant='customOperate'
+                  title={t('page.user.operate.reset')}
+                  startIcon={<EditIcon />}
+                  onClick={() => handleClickOpenReset(params.row)}
+                />
+                <Button
+                  sx={{ mt: 1, color: 'error.main' }}
+                  size="small"
+                  variant='customOperate'
+                  title={t('page.user.operate.delete')}
+                  startIcon={<DeleteIcon />}
+                  onClick={() => handleClickOpenDelete(params.row)}
+                />
+              </Box>
+            </CustomizedMore>
           </Box>
         ),
       },
@@ -124,6 +137,10 @@ export default function UserManage() {
 
   const handleClickOpenDelete = (user: SystemUserResponse) => {
     (deleteUser.current as any).show(user);
+  };
+
+  const handleClickOpenReset = (user: SystemUserResponse) => {
+    (resetPasswordUser.current as any).show(user);
   };
 
   useEffect(() => {
@@ -239,6 +256,7 @@ export default function UserManage() {
       <UserAdd ref={addUser} onSubmit={refreshData} />
       <UserEdit ref={editUser} onSubmit={refreshData} />
       <UserDelete ref={deleteUser} onSubmit={refreshData} />
+      <UserResetPassword ref={resetPasswordUser} onSubmit={refreshData} />
     </Box>
   );
 }

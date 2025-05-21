@@ -1,8 +1,12 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, FormHelperText, IconButton, InputAdornment, InputLabel, OutlinedInput, styled, SvgIcon } from '@mui/material';
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormHelperText, IconButton, InputAdornment, InputLabel, OutlinedInput, Stack, styled, SvgIcon } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
-import { deleteSystemUser, ResetPasswordSystemUserRequest, SystemUserResponse } from '@/api';
+import { resetPasswordSystemUser, ResetPasswordSystemUserRequest, SystemUserResponse } from '@/api';
+import { Md5 } from 'ts-md5';
+import PasswordShowIcon from '@/assets/image/svg/password_show.svg';
+import PasswordHideIcon from '@/assets/image/svg/password_hide.svg';
+import CustomizedTag from '@/components/CustomizedTag';
 
 interface FormErrors {
   password?: string; // 密码
@@ -20,6 +24,7 @@ const UserResetPassword = forwardRef(({ onSubmit }: UserResetPasswordProps, ref)
   const [maxWidth] = useState<DialogProps['maxWidth']>('sm');
 
   const [showPassword, setShowPassword] = useState(false);
+  const [originUser, setOriginUser] = useState<SystemUserResponse>();
   const [user, setUser] = useState<ResetPasswordSystemUserRequest>({
     id: 0,
     password: '',
@@ -33,6 +38,7 @@ const UserResetPassword = forwardRef(({ onSubmit }: UserResetPasswordProps, ref)
 
   useImperativeHandle(ref, () => ({
     show(user: SystemUserResponse) {
+      setOriginUser(user);
       initUser(user);
       setOpen(true);
     },
@@ -68,11 +74,39 @@ const UserResetPassword = forwardRef(({ onSubmit }: UserResetPasswordProps, ref)
   };
 
   const handleSubmit = async () => {
-    if (user) {
-      await deleteSystemUser(user.id);
+    if (validateForm()) {
+      user.password = Md5.hashStr(user.password);
+      await resetPasswordSystemUser(user);
+      handleClose();
+      onSubmit();
     }
-    handleClose();
-    onSubmit();
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // console.log('target', e.target);
+    const { name, value, type } = e.target;
+    if (type == 'number') {
+      const numberValue = Number(value);
+      setUser(prev => ({
+        ...prev,
+        [name]: numberValue
+      }));
+    } else {
+      setUser(prev => ({
+        ...prev,
+        [name]: value
+      }));
+    }
+
+    // console.log('formValues', formValues);
+
+    // Clear error when user starts typing
+    if (errors[name as keyof FormErrors]) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: undefined
+      }));
+    }
   };
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
@@ -92,7 +126,7 @@ const UserResetPassword = forwardRef(({ onSubmit }: UserResetPasswordProps, ref)
       open={open}
       onClose={handleClose}
     >
-      <DialogTitle>{t('global.operate.delete')}{t('global.page.user')}</DialogTitle>
+      <DialogTitle>{t('page.user.operate.reset')}</DialogTitle>
       <DialogContent>
         <Box
           noValidate
@@ -104,6 +138,12 @@ const UserResetPassword = forwardRef(({ onSubmit }: UserResetPasswordProps, ref)
             width: 'fit-content',
           }}
         >
+          <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiStack-root': { mt: 2, width: '200px' } }}>
+            <Stack direction="row" spacing={2}>
+              <Box>{t('page.user.title.username')}</Box>
+              <Box>{originUser && <CustomizedTag label={originUser.username} />}</Box>
+            </Stack>
+          </FormControl>
           <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiOutlinedInput-root': { width: '200px' } }} variant="outlined" error={!!errors.password}>
             <InputLabel required size="small" htmlFor="user-password">{t("page.user.title.password")}</InputLabel>
             <OutlinedInput
@@ -113,7 +153,7 @@ const UserResetPassword = forwardRef(({ onSubmit }: UserResetPasswordProps, ref)
               type={showPassword ? 'text' : 'password'}
               label={t("page.user.title.password")}
               name="password"
-              value={formValues.password}
+              value={user.password}
               onChange={handleInputChange}
               error={!!errors.password}
               autoComplete="new-password"

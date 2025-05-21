@@ -2,7 +2,7 @@ import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormCon
 import { useTranslation } from 'react-i18next';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
-import { createSystemUser, listSystemDepartment, listSystemPost, listSystemRole, SystemDepartmentResponse, SystemPostResponse, SystemRoleResponse, SystemUserRequest } from '@/api';
+import { createSystemUser, listSystemDepartment, listSystemPost, listSystemRole, SystemDepartmentResponse, SystemRoleResponse, SystemUserRequest } from '@/api';
 import SelectTree from '@/components/SelectTree';
 import PasswordShowIcon from '@/assets/image/svg/password_show.svg';
 import PasswordHideIcon from '@/assets/image/svg/password_hide.svg';

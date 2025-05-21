@@ -195,5 +195,6 @@
   "page.user.error.department": "请选择部门",
   "page.user.error.role": "请选择角色",
   "page.user.operate.edit": "编辑用户",
-  "page.user.operate.delete": "删除用户"
+  "page.user.operate.delete": "删除用户",
+  "page.user.operate.reset": "重置密码"
 }
