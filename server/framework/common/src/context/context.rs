@@ -6,6 +6,16 @@ pub struct UserTenantContext {
     pub(crate) tenant_id: i64, // 租户id
 }
 
+/// 数据权限
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct DataPermission {
+    pub(crate) id: i64,  // 数据权限id
+    pub(crate) name: String, // 规则名称
+    pub(crate) field: Option<String>, // 规则字段
+    pub(crate) condition: Option<String>, // 规则条件
+    pub(crate) value: Option<String>, // 规则值
+}
+
 /// 登录用户信息,修改了该信息中的关联内容,都需要清空该缓存,使用户重新登录,以此保证信息的正确性
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct LoginUserContext {
@@ -17,6 +27,7 @@ pub struct LoginUserContext {
     pub department_code: String, // 部门编码
     pub role_id: i64, // 角色id
     pub permissions: String, // 权限标识列表
+    pub data_permission: Option<DataPermission>, // 数据权限
 }
 
 #[derive(Clone, Debug, Default)]

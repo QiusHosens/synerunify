@@ -158,7 +158,8 @@ async fn cache_login_user(db: &DatabaseConnection, request_context: RequestConte
         department_id: user.department_id,
         department_code: user.department_code,
         role_id,
-        permissions: permissions.join(",")
+        permissions: permissions.join(","),
+        data_permission: None,
     };
     info!("login user {:?}", login_user);
     RedisManager::set::<_, String>(format!("{}{}:{}", REDIS_KEY_LOGIN_USER_PREFIX, request_context.device_type, user.id), serde_json::to_string(&login_user)?)?;
