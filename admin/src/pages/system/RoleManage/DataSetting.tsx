@@ -131,7 +131,7 @@ const RoleDataSetting = forwardRef(({ onSubmit }: RoleDataSettingProps, ref) => 
     onSubmit();
   };
 
-  const handleRuleChange = (e: SelectChangeEvent<number>, child: ReactNode) => {
+  const handleRuleChange = (e: SelectChangeEvent<number>, _child: ReactNode) => {
     const { name, value } = e.target;
     setRole(prev => ({
       ...prev,
@@ -148,7 +148,7 @@ const RoleDataSetting = forwardRef(({ onSubmit }: RoleDataSettingProps, ref) => 
     }
   }
 
-  const handleSelectedItemsChange = (event: React.SyntheticEvent | null, itemIds: string[]) => {
+  const handleSelectedItemsChange = (_event: React.SyntheticEvent | null, itemIds: string[]) => {
     setSelectedItems(itemIds);
   }
 

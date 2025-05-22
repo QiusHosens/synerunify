@@ -20,8 +20,8 @@ const DictEdit = forwardRef(({ onSubmit }: DictEditProps, ref) => {
 
   const [open, setOpen] = useState(false);
   const [types, setTypes] = useState<SystemDictTypeResponse[]>([]);
-  const [fullWidth, setFullWidth] = useState(true);
-  const [maxWidth, setMaxWidth] = useState<DialogProps['maxWidth']>('sm');
+  const [fullWidth] = useState(true);
+  const [maxWidth] = useState<DialogProps['maxWidth']>('sm');
   const [dict, setDict] = useState<SystemDictDataRequest>({
     id: 0,
     dict_type: '',

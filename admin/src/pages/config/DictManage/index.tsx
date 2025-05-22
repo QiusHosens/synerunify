@@ -167,7 +167,7 @@ export default function DictManage() {
     }
   };
 
-  const handleSortModelChange = (model: GridSortModel, details: GridCallbackDetails) => {
+  const handleSortModelChange = (model: GridSortModel, _details: GridCallbackDetails) => {
     setSortModel(model);
     setCondition((prev) => ({ ...prev, ...model[0] } as DictQueryCondition));
   };

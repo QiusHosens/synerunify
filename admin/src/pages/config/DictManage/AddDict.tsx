@@ -30,8 +30,8 @@ const DictAdd = forwardRef(({ onSubmit }: DictAddProps, ref) => {
 
   const [open, setOpen] = useState(false);
   const [types, setTypes] = useState<SystemDictTypeResponse[]>([]);
-  const [fullWidth, setFullWidth] = useState(true);
-  const [maxWidth, setMaxWidth] = useState<DialogProps['maxWidth']>('sm');
+  const [fullWidth] = useState(true);
+  const [maxWidth] = useState<DialogProps['maxWidth']>('sm');
   const [formValues, setFormValues] = useState<FormValues>({
     dict_type: '',
     label: '',

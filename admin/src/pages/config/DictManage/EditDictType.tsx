@@ -17,8 +17,8 @@ const DictTypeEdit = forwardRef(({ onSubmit }: DictTypeEditProps, ref) => {
   const { t } = useTranslation();
 
   const [open, setOpen] = useState(false);
-  const [fullWidth, setFullWidth] = useState(true);
-  const [maxWidth, setMaxWidth] = useState<DialogProps['maxWidth']>('sm');
+  const [fullWidth] = useState(true);
+  const [maxWidth] = useState<DialogProps['maxWidth']>('sm');
   const [dictType, setDictType] = useState<SystemDictTypeRequest>({
     id: 0,
     name: '',
