@@ -14,6 +14,7 @@ pub struct DataPermission {
     pub(crate) field: Option<String>, // 规则字段
     pub(crate) condition: Option<String>, // 规则条件
     pub(crate) value: Option<String>, // 规则值
+    pub(crate) data_scope_department_ids: Option<String>, // 数据范围(指定部门数组)
 }
 
 /// 登录用户信息,修改了该信息中的关联内容,都需要清空该缓存,使用户重新登录,以此保证信息的正确性

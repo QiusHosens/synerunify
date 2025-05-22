@@ -1,6 +1,6 @@
 use crate::context::context::LoginUserContext;
 use sea_orm::entity::prelude::*;
-use sea_orm::sea_query::IntoValueTuple;
+use sea_orm::sea_query::{ExprTrait, IntoValueTuple};
 use sea_orm::strum::IntoEnumIterator;
 use sea_orm::{
     ColumnTrait, Condition, EntityTrait, IdenStatic, Iterable, PrimaryKeyToColumn, PrimaryKeyTrait,
@@ -62,6 +62,7 @@ where
             .filter(extra_condition)
     }
 
+    // 支持数据权限
     fn find_active_with_data_permission(login_user: LoginUserContext) -> Select<Self>
     where
         Self: Sized,
@@ -70,35 +71,44 @@ where
 
         let data_permission = login_user.data_permission;
         if data_permission.is_none() {
-            return query;
+            return query.filter(Condition::all().add(sea_orm::sea_query::Expr::val(1).eq(0)));
         }
         let data_permission = data_permission.unwrap(); // 安全解包，因为已检查非 None
 
-        let mut column = None;
-        if data_permission.field.is_none() {
+        let mut column_department_id = None;
+        let mut column_department_code = None;
+        let mut column_field = None;
+
+        if let Some(field) = data_permission.field.as_ref() {
+            // 查询指定字段列
+            column_field =
+                Self::Column::iter().find(|col| col.to_string().eq_ignore_ascii_case(field));
+
+            // 如果没有匹配的字段，返回空结果
+            if column_field.is_none() {
+                return query.filter(Condition::all().add(sea_orm::sea_query::Expr::val(1).eq(0)));
+            }
+        } else {
             // 数据权限2/3/5涉及部门权限,需要表格中包含部门id/部门code字段
             if data_permission.id == 2 || data_permission.id == 3 || data_permission.id == 5 {
                 // 查找 department_id 列
-                let column_department_id = Self::Column::iter().find(|col| {
+                column_department_id = Self::Column::iter().find(|col| {
                     col.to_string()
                         .eq_ignore_ascii_case(DATA_PERMISSION_DEFAULT_FIELD_DEPARTMENT_ID)
                 });
 
                 // 查找 department_code 列
-                let column_department_code = Self::Column::iter().find(|col| {
+                column_department_code = Self::Column::iter().find(|col| {
                     col.to_string()
                         .eq_ignore_ascii_case(DATA_PERMISSION_DEFAULT_FIELD_DEPARTMENT_CODE)
                 });
 
-                // 如果没有 department_id 列，返回空结果
+                // 如果没有 department_id/department_code 列，返回空结果
                 if column_department_id.is_none() || column_department_code.is_none() {
                     return query
                         .filter(Condition::all().add(sea_orm::sea_query::Expr::val(1).eq(0)));
                 }
-                column = column.unwrap();
             }
-        } else {
-            
         }
 
         // 根据权限类型应用不同的过滤条件
@@ -107,32 +117,44 @@ where
             1 => (),
             // 本部门数据权限
             2 => {
-                query = query.filter(column.eq(login_user.department_id));
+                if column_department_id.is_some() {
+                    query =
+                        query.filter(column_department_id.unwrap().eq(login_user.department_id));
+                }
             }
             // 本部门及以下数据权限
             3 => {
-                query = query.filter(
-                    Condition::any()
-                        .add(column.eq(data_permission.department_id))
-                        .add(column.in_subquery(
-                            // 假设有一个获取子部门的查询
-                            Self::find_sub_departments(data_permission.department_id),
-                        )),
-                );
+                if column_department_id.is_some() {
+                    query = query.filter(
+                        column_department_code
+                            .unwrap()
+                            .like(format!("%{}", login_user.department_code)),
+                    );
+                }
             }
             // 仅本人数据权限
             4 => {
-                query = query.filter(Self::Column::UserId.eq(login_user.user_id));
+                // TODO
             }
             // 指定部门数据权限
             5 => {
-                if let Some(specified_dept_ids) = data_permission.specified_department_ids {
-                    query = query.filter(column.in_(specified_dept_ids));
+                if column_department_id.is_some() {
+                    let department_ids: Vec<i64> = data_permission
+                        .data_scope_department_ids
+                        .unwrap_or_default()
+                        .split(',')
+                        .filter(|s| !s.is_empty())
+                        .map(|s| s.trim().parse::<i64>())
+                        .filter_map(Result::ok)
+                        .collect();
+                    query = query.filter(column_department_id.unwrap().is_in(department_ids));
                 }
             }
             _ => {
-                // 处理未知权限类型，返回空结果
-                query = query.filter(Condition::all().add(sea_orm::sea_query::Expr::val(1).eq(0)));
+                if column_field.is_some() {
+                    // 处理自定义情况 FIXME 按条件分类
+                    query = query.filter(column_field.unwrap().eq(data_permission.value));
+                }
             }
         }
 

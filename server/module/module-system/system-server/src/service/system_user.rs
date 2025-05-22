@@ -132,9 +132,8 @@ pub async fn get_by_id(db: &DatabaseConnection, login_user: LoginUserContext, id
 }
 
 pub async fn get_paginated(db: &DatabaseConnection, login_user: LoginUserContext, params: PaginatedKeywordRequest) -> Result<PaginatedResponse<SystemUserPageResponse>> {
-    let condition = Condition::all().add(Column::TenantId.eq(login_user.tenant_id));
-
-    let mut query = SystemUserEntity::find_active_with_condition(condition)
+    let mut query = SystemUserEntity::find_active_with_data_permission(login_user.clone())
+        .filter(Column::TenantId.eq(login_user.tenant_id))
         .select_also(SystemRoleEntity)
         .select_also(SystemDepartmentEntity)
         .join(JoinType::LeftJoin, Relation::UserRole.def())
