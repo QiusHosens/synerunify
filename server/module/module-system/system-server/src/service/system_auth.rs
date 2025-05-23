@@ -16,7 +16,7 @@ use tracing::{error, info};
 use tracing_subscriber::filter::filter_fn;
 use common::base::logger::{LoginLogger, OperationLogger};
 use common::constants::common_status::is_enable;
-use common::context::context::{LoginUserContext, RequestContext};
+use common::context::context::{DataPermission, LoginUserContext, RequestContext};
 use common::database::redis::RedisManager;
 use common::database::redis_constants::{REDIS_KEY_LOGGER_LOGIN_PREFIX, REDIS_KEY_LOGGER_OPERATION_PREFIX, REDIS_KEY_LOGIN_USER_PREFIX};
 use common::utils::crypt_utils::verify_password;
@@ -75,8 +75,8 @@ pub async fn login(db: &DatabaseConnection, request_context: RequestContext, req
     // service::system_user::update_by_login(db, user.clone().id, request_context.clone().ip).await?;
     // // 记录登录日志
     // add_login_logger_redis(request_context.clone(), user.clone(), &auth).await?;
-    // // 保存登录用户信息缓存
-    // cache_login_user(db, user.clone()).await?;
+    // 保存登录用户信息缓存
+    cache_login_user(db, request_context.clone(), user.clone()).await?;
     invoke_after_login(db, user.clone(), request_context.clone(), &auth);
     let duration_after = start.elapsed();
     println!("duration, select: {:?}, match: {:?}, auth: {:?}, after: {:?}", duration_select, duration_match, duration_auth, duration_after);
@@ -127,9 +127,9 @@ fn invoke_after_login(db: &DatabaseConnection, user: SystemUserModel, request_co
     let auth_clone = auth.clone();
     tokio::spawn(async move {
         // 保存登录用户信息缓存
-        if let Err(e) = cache_login_user(&db_clone, request_context.clone(), user.clone()).await {
-            error!("cache login user error: {}", e.to_string());
-        }
+        // if let Err(e) = cache_login_user(&db_clone, request_context.clone(), user.clone()).await {
+        //     error!("cache login user error: {}", e.to_string());
+        // }
         // 更新登录用户最近登录IP和时间
         info!("request context: {:?}", request_context);
         if let Err(e) = service::system_user::update_by_login(&db_clone, user.clone().id, request_context.clone().ip).await {
@@ -144,12 +144,30 @@ fn invoke_after_login(db: &DatabaseConnection, user: SystemUserModel, request_co
 
 async fn cache_login_user(db: &DatabaseConnection, request_context: RequestContext, user: SystemUserModel) -> Result<()> {
     // 查询部门信息
-    let _department_result = service::system_department::find_by_id(db, user.department_id).await?;
-    let role_id = service::system_user_role::get_role_id_by_user_id(db, user.id).await?;
+    let _department_result = service::system_department::find_by_id(&db, user.department_id).await?;
+    let role_id = service::system_user_role::get_role_id_by_user_id(&db, user.id).await?;
     info!("role id {:?}", role_id);
-    // 权限码
-    let permissions = service::system_menu::get_role_menus_permissions(db, role_id).await?;
+    // 菜单权限
+    let permissions = service::system_menu::get_role_menus_permissions(&db, role_id).await?;
     info!("permissions {:?}", permissions);
+    // 数据权限
+    let role = service::system_role::find_by_id(&db, role_id).await?;
+    let mut data_permission: Option<DataPermission> = None;
+    if let Some(role) = role {
+        if let Some(rule_id) = role.data_scope_rule_id {
+            let rule = service::system_data_scope_rule::find_by_id(&db, rule_id).await?;
+            if let Some(rule) = rule {
+                data_permission = Some(DataPermission {
+                    id: rule.id,
+                    name: rule.name,
+                    field: rule.field,
+                    condition: rule.condition,
+                    value: rule.value,
+                    data_scope_department_ids: role.data_scope_department_ids
+                });
+            }
+        }
+    }
     let login_user = LoginUserContext {
         device_type: request_context.clone().device_type,
         id: user.id,
@@ -158,8 +176,8 @@ async fn cache_login_user(db: &DatabaseConnection, request_context: RequestConte
         department_id: user.department_id,
         department_code: user.department_code,
         role_id,
-        permissions: permissions.join(","),
-        data_permission: None,
+        permissions,
+        data_permission,
     };
     info!("login user {:?}", login_user);
     RedisManager::set::<_, String>(format!("{}{}:{}", REDIS_KEY_LOGIN_USER_PREFIX, request_context.device_type, user.id), serde_json::to_string(&login_user)?)?;

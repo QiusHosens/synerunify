@@ -153,3 +153,12 @@ pub async fn disable(db: &DatabaseConnection, login_user: LoginUserContext, id: 
     system_role.update(db).await?;
     Ok(())
 }
+
+pub async fn find_by_id(db: &DatabaseConnection, id: i64) -> Result<Option<SystemRoleModel>> {
+    let condition = Condition::all()
+            .add(Column::Id.eq(id));
+            
+    let system_role = SystemRoleEntity::find_active_with_condition(condition)
+        .one(db).await?;
+    Ok(system_role)
+}

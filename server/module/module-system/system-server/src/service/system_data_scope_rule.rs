@@ -83,3 +83,12 @@ pub async fn list(db: &DatabaseConnection, login_user: LoginUserContext) -> Resu
         .all(db).await?;
     Ok(list.into_iter().map(model_to_response).collect())
 }
+
+pub async fn find_by_id(db: &DatabaseConnection, id: i64) -> Result<Option<SystemDataScopeRuleModel>> {
+    let condition = Condition::all()
+            .add(Column::Id.eq(id));
+            
+    let system_data_scope_rule = SystemDataScopeRuleEntity::find_active_with_condition(condition)
+        .one(db).await?;
+    Ok(system_data_scope_rule)
+}

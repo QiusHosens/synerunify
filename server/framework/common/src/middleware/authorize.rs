@@ -181,13 +181,15 @@ pub async fn authorize_handler(request: Request, next: Next) -> Result<Response,
         }
         Some(mut auth) => {
             let login_user = request.extensions().get::<LoginUserContext>();
+            info!("login user: {:?}", login_user);
             match login_user {
                 None => Err(StatusCode::UNAUTHORIZED),
                 Some(user) => {
                     // 移除空字符串
                     auth.retain(|s| !s.is_empty());
                     // 校验授权
-                    let user_permissions = user.clone().permissions.split(",").map(String::from).collect();
+                    // let user_permissions = user.clone().permissions.split(",").map(String::from).collect();
+                    let user_permissions = user.clone().permissions;
                     let has_permission = verify_permission(user_permissions, auth.clone());
                     info!("has permission: {:?}, auth: {:?}", has_permission, auth);
                     if has_permission {
