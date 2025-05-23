@@ -1,5 +1,6 @@
 import { listMenu, SystemMenuResponse, SystemTenantPackageMenuRequest, SystemTenantPackageResponse, updateSystemTenantPackageMenu } from "@/api";
 import CustomizedTag from "@/components/CustomizedTag";
+import { getSelectedIds } from "@/utils/treeUtils";
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogProps, DialogTitle, FormControl, Stack } from "@mui/material";
 import { RichTreeView, TreeViewSelectionPropagation } from "@mui/x-tree-view";
 import { forwardRef, useImperativeHandle, useState } from "react";
@@ -63,7 +64,8 @@ const TenantPackageMenuSetting = forwardRef(({ onSubmit }: TenantPackageMenuSett
     if (!tenantPackage) {
       return;
     }
-    const menuIds = '[' + selectedItems.join(',') + ']';
+    const menuIdList = getSelectedIds(selectedItems, menuTreeData);
+    const menuIds = '[' + menuIdList.join(',') + ']';
     const tenantPackageMenu: SystemTenantPackageMenuRequest = {
       id: tenantPackage.id,
       menu_ids: menuIds
@@ -73,7 +75,7 @@ const TenantPackageMenuSetting = forwardRef(({ onSubmit }: TenantPackageMenuSett
     onSubmit();
   };
 
-  const handleSelectedItemsChange = (event: React.SyntheticEvent | null, itemIds: string[]) => {
+  const handleSelectedItemsChange = (_event: React.SyntheticEvent | null, itemIds: string[]) => {
     setSelectedItems(itemIds);
   }
 

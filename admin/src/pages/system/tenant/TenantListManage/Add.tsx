@@ -351,6 +351,7 @@ const TenantAdd = forwardRef(({ onSubmit }: TenantAddProps, ref) => {
               onChange={handleInputChange}
               error={!!errors.username}
               helperText={errors.username}
+              autoComplete="off"
             />
           </FormControl>
           <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiOutlinedInput-root': { width: '240px' } }} variant="outlined" error={!!errors.password}>
@@ -365,6 +366,7 @@ const TenantAdd = forwardRef(({ onSubmit }: TenantAddProps, ref) => {
               value={formValues.password}
               onChange={handleInputChange}
               error={!!errors.password}
+              autoComplete="new-password"
               endAdornment={
                 <InputAdornment position="end">
                   <IconButton
