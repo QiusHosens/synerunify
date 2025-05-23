@@ -13,6 +13,7 @@ import DictTypeEdit from './EditDictType';
 import DictDelete from './DeleteDict';
 import CustomizedMore from '@/components/CustomizedMore';
 import { useHomeStore } from '@/store';
+import CustomizedAutoMore from '@/components/CustomizedAutoMore';
 
 export default function DictManage() {
   const { t } = useTranslation();
@@ -82,7 +83,35 @@ export default function DictManage() {
         flex: 1,
         minWidth: 100,
         renderCell: (params: GridRenderCellParams) => (
-          <Box sx={{ height: '100%', display: 'flex', gap: 1, alignItems: 'center' }}>
+          // <Box sx={{ height: '100%', display: 'flex', gap: 1, alignItems: 'center' }}>
+          //   <Button
+          //     size="small"
+          //     variant='customOperate'
+          //     title={t('page.dict.operate.edit')}
+          //     startIcon={<EditIcon />}
+          //     onClick={() => handleClickEditDict(params.row)}
+          //   />
+          //   <CustomizedMore>
+          //     <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+          //       <Button
+          //         size="small"
+          //         variant='customOperate'
+          //         title={t('page.dict.operate.edit.type')}
+          //         startIcon={<EditIcon />}
+          //         onClick={() => handleClickEditDictType(params.row.type_id)}
+          //       />
+          //       <Button
+          //         sx={{ mt: 1, color: 'error.main' }}
+          //         size="small"
+          //         variant='customOperate'
+          //         title={t('page.dict.operate.delete')}
+          //         startIcon={<DeleteIcon />}
+          //         onClick={() => handleClickDeleteDict(params.row)}
+          //       />
+          //     </Box>
+          //   </CustomizedMore>
+          // </Box>
+          <CustomizedAutoMore>
             <Button
               size="small"
               variant='customOperate'
@@ -90,26 +119,22 @@ export default function DictManage() {
               startIcon={<EditIcon />}
               onClick={() => handleClickEditDict(params.row)}
             />
-            <CustomizedMore>
-              <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-                <Button
-                  size="small"
-                  variant='customOperate'
-                  title={t('page.dict.operate.edit.type')}
-                  startIcon={<EditIcon />}
-                  onClick={() => handleClickEditDictType(params.row.type_id)}
-                />
-                <Button
-                  sx={{ mt: 1, color: 'error.main' }}
-                  size="small"
-                  variant='customOperate'
-                  title={t('page.dict.operate.delete')}
-                  startIcon={<DeleteIcon />}
-                  onClick={() => handleClickDeleteDict(params.row)}
-                />
-              </Box>
-            </CustomizedMore>
-          </Box>
+            <Button
+              size="small"
+              variant='customOperate'
+              title={t('page.dict.operate.edit.type')}
+              startIcon={<EditIcon />}
+              onClick={() => handleClickEditDictType(params.row.type_id)}
+            />
+            <Button
+              sx={{ color: 'error.main' }}
+              size="small"
+              variant='customOperate'
+              title={t('page.dict.operate.delete')}
+              startIcon={<DeleteIcon />}
+              onClick={() => handleClickDeleteDict(params.row)}
+            />
+          </CustomizedAutoMore>
         ),
       },
     ],
