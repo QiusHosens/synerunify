@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { DataGrid, GridColDef, GridFilterModel, GridSortModel } from '@mui/x-data-grid';
+import { DataGrid, GridCallbackDetails, GridColDef, GridFilterModel, GridSortModel } from '@mui/x-data-grid';
 import { SxProps, Theme } from '@mui/material/styles';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
@@ -9,6 +9,7 @@ interface CustomizedDataGridProProps {
   columns: GridColDef[];
   initialRows: any[];
   getTreeDataPath: (row: any) => string[];
+  customSortModel?: GridSortModel;
   hideFooter?: boolean;
   sx?: SxProps<Theme>;
 }
@@ -17,12 +18,13 @@ const CustomizedDataGridPro: React.FC<CustomizedDataGridProProps> = ({
   columns,
   initialRows,
   getTreeDataPath,
+  customSortModel,
   hideFooter,
   sx,
 }) => {
   // 状态管理
   const [expandedGroups, setExpandedGroups] = useState(new Set<string>());
-  const [sortModel, setSortModel] = useState<GridSortModel>([]);
+  const [sortModel, setSortModel] = useState<GridSortModel>(customSortModel ?? []);
   const [filterModel, setFilterModel] = useState<GridFilterModel>({ items: [] });
 
   // 分组数据处理

@@ -2,7 +2,7 @@ import { Box, Button, Switch } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { disableMenu, enableMenu, listMenu, SystemMenuResponse } from '@/api';
-import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
+import { GridColDef, GridRenderCellParams, GridSortModel } from '@mui/x-data-grid';
 import CustomizedDataGridPro from '@/components/CustomizedDataGridPro';
 import EditIcon from '@/assets/image/svg/edit.svg';
 import DeleteIcon from '@/assets/image/svg/delete.svg';
@@ -18,6 +18,10 @@ export default function MenuManage() {
   const { hasOperatePermission } = useHomeStore();
 
   const [records, setRecords] = useState<Array<SystemMenuResponse>>([]);
+  const [sortModel, setSortModel] = useState<GridSortModel>([{
+    field: 'sort',
+    sort: 'asc'
+  }]);
 
   const addMenu = useRef(null);
   const editMenu = useRef(null);
@@ -183,6 +187,7 @@ export default function MenuManage() {
         initialRows={records}
         getTreeDataPath={getTreeDataPath}
         hideFooter={true}
+        customSortModel={sortModel}
       />
       <MenuAdd ref={addMenu} onSubmit={refreshData} />
       <MenuEdit ref={editMenu} onSubmit={refreshData} />

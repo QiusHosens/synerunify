@@ -181,6 +181,7 @@ export default function RoleManage() {
   }, [condition]);
 
   const handleSortModelChange = (model: GridSortModel, details: GridCallbackDetails) => {
+    // console.log('sort model', model);
     setSortModel(model);
     setCondition((prev) => ({ ...prev, ...model[0] } as SystemRoleQueryCondition));
   };
