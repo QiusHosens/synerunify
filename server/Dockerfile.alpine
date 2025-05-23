@@ -21,7 +21,7 @@ RUN adduser \
     "${USER}"
 
 
-WORKDIR /synerunify
+WORKDIR /app
 
 COPY ./ .
 
@@ -41,7 +41,10 @@ WORKDIR /synerunify
 
 # Copy our build
 #COPY --from=builder /synerunify/target/x86_64-unknown-linux-musl/release/synerunify ./
-COPY --from=builder /synerunify/target/release/system-server ./
+COPY --from=builder /app/target/release/system-server ./system-server
+COPY --from=builder /app/target/release/logger-server ./logger-server
+COPY --from=builder /app/.env ./.env
+COPY --from=builder /app/regexes.yaml ./regexes.yaml
 
 # Use an unprivileged user.
 USER synerunify:synerunify

@@ -1,10 +1,10 @@
-import { ThemeProvider, createTheme, PaletteColor, PaletteColorOptions, SimplePaletteColorOptions } from '@mui/material/styles';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { useThemeStore } from '@/store';
 import { GlobalStyles } from '@mui/material';
 import { colorSchemes, typography } from './themePrimitives';
 import {
   buttonsCustomizations,
-  popoversCustomizations,
+  // popoversCustomizations,
   dataGridsCustomizations,
   switchsCustomizations,
   badgesCustomizations,
@@ -50,7 +50,7 @@ export default function AppThemeProvider({ children }: { children: React.ReactNo
     },
     components: {
       ...buttonsCustomizations,
-      ...popoversCustomizations,
+      // ...popoversCustomizations,
       ...dataGridsCustomizations,
       ...switchsCustomizations,
       ...badgesCustomizations,

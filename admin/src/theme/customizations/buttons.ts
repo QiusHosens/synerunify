@@ -22,7 +22,7 @@ export const buttonsCustomizations: Components<Theme> = {
     styleOverrides: {
       root: ({ theme }) => ({
         boxShadow: 'none',
-        borderRadius: (theme.vars || theme).shape.borderRadius,
+        borderRadius: theme.shape.borderRadius,
         textTransform: 'none',
         variants: [
           // {
@@ -102,7 +102,7 @@ export const buttonsCustomizations: Components<Theme> = {
               variant: 'customOperate',
             },
             style: {
-              color: (theme.vars || theme).palette.primary.main,
+              color: theme.palette.primary.main,
               minWidth: 'auto',
               padding: '8px',
               borderRadius: '50%',

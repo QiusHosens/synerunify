@@ -1,9 +1,9 @@
-import { alpha, Theme, Components } from "@mui/material/styles";
+import { Theme, Components } from "@mui/material/styles";
 
 export const dataGridsCustomizations: Components<Theme> = {
   MuiDataGrid: {
     styleOverrides: {
-      cell: ({ theme }) => ({
+      cell: () => ({
         ':focus': {
             outline: 'none',
         },

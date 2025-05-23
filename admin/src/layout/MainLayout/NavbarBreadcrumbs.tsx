@@ -13,7 +13,7 @@ interface NavbarBreadcrumbsProps {
 const StyledBreadcrumbs = styled(Breadcrumbs)(({ theme }) => ({
   margin: theme.spacing(1, 0),
   [`& .${breadcrumbsClasses.separator}`]: {
-    color: (theme.vars || theme).palette.action.disabled,
+    color: theme.palette.action.disabled,
     margin: 1,
   },
   [`& .${breadcrumbsClasses.ol}`]: {
@@ -38,8 +38,11 @@ export default function NavbarBreadcrumbs({ routeTree }: NavbarBreadcrumbsProps)
 
   useEffect(() => {
     const routes: HomeMenuResponse[] = [];
-    const findActiveRoute = (items: HomeMenuResponse[]) => {
-      items && items.forEach((item) => {
+    const findActiveRoute = (items: HomeMenuResponse[] | undefined) => {
+      if (!items) {
+        return;
+      }
+      items.forEach((item) => {
         if (isRouteActive(item.path, location.pathname, item.children)) {
           routes.push(item);
         }
