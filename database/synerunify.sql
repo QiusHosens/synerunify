@@ -11,7 +11,7 @@
  Target Server Version : 80100 (8.1.0)
  File Encoding         : 65001
 
- Date: 23/05/2025 11:18:46
+ Date: 23/05/2025 16:20:17
 */
 
 SET NAMES utf8mb4;
@@ -67,16 +67,13 @@ CREATE TABLE `system_department`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '部门表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '部门表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of system_department
 -- ----------------------------
 INSERT INTO `system_department` VALUES (1, '0000', '总部', 0, 1, 1, '18888888888', '123@qq.com', 0, 1, '2025-03-08 10:04:46', 1, '2025-05-17 12:35:29', b'0', 1);
-INSERT INTO `system_department` VALUES (2, '0000-0000', '测试租户', 1, 0, NULL, NULL, NULL, 0, 1, '2025-05-17 08:13:42', 1, '2025-05-17 08:13:42', b'0', 2);
-INSERT INTO `system_department` VALUES (3, '0000-0001', '测试租户1', 1, 0, NULL, NULL, NULL, 0, 1, '2025-05-17 08:35:05', 1, '2025-05-17 08:35:05', b'0', 3);
-INSERT INTO `system_department` VALUES (4, '0000-0002', '研发部', 1, 2, 9, '13434353423', 'ffsdp@outlook.com', 0, 1, '2025-05-17 14:47:05', 1, '2025-05-21 09:17:12', b'0', 1);
-INSERT INTO `system_department` VALUES (5, '0000-0003', '测试部', 1, 3, NULL, '13434353423', '123@q.com', 0, 1, '2025-05-17 14:51:54', 1, '2025-05-17 14:51:54', b'0', 1);
+INSERT INTO `system_department` VALUES (7, '0000-0000', '测试租户', 1, 0, NULL, NULL, NULL, 0, 1, '2025-05-23 08:16:00', 1, '2025-05-23 08:16:00', b'0', 2);
 
 -- ----------------------------
 -- Table structure for system_dict_data
@@ -103,7 +100,7 @@ CREATE TABLE `system_dict_data`  (
 -- ----------------------------
 -- Records of system_dict_data
 -- ----------------------------
-INSERT INTO `system_dict_data` VALUES (2, 0, '男', '0', 'sex', 0, '', '', '男', 1, '2025-04-28 09:26:26', 1, '2025-04-28 09:26:26', b'0');
+INSERT INTO `system_dict_data` VALUES (2, 0, '男', '0', 'sex', 0, '', '', '男', 1, '2025-04-28 09:26:26', 1, '2025-05-23 06:49:20', b'0');
 INSERT INTO `system_dict_data` VALUES (3, 1, '女', '1', 'sex', 0, '', '', '女', 1, '2025-04-29 01:30:04', 1, '2025-04-29 01:30:04', b'0');
 INSERT INTO `system_dict_data` VALUES (4, 0, '目录', '1', 'menu_type', 0, '', '', '目录', 1, '2025-04-29 01:31:29', 1, '2025-05-12 06:46:44', b'0');
 INSERT INTO `system_dict_data` VALUES (5, 1, '菜单', '2', 'menu_type', 0, '', '', '菜单', 1, '2025-04-29 01:31:41', 1, '2025-05-12 06:46:45', b'0');
@@ -335,91 +332,114 @@ CREATE TABLE `system_role_menu`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 81 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '角色和菜单关联表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 184 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '角色和菜单关联表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of system_role_menu
 -- ----------------------------
-INSERT INTO `system_role_menu` VALUES (1, 1, 1, 1, '2025-03-25 03:29:38', 1, '2025-05-15 07:19:18', b'0', 1);
-INSERT INTO `system_role_menu` VALUES (2, 1, 2, 1, '2025-03-25 03:29:55', 1, '2025-05-15 07:19:19', b'0', 1);
-INSERT INTO `system_role_menu` VALUES (3, 1, 3, 1, '2025-03-25 03:30:03', 1, '2025-05-15 07:19:20', b'0', 1);
-INSERT INTO `system_role_menu` VALUES (4, 1, 4, 1, '2025-03-25 03:30:10', 1, '2025-05-15 07:19:22', b'0', 1);
-INSERT INTO `system_role_menu` VALUES (5, 1, 5, 1, '2025-03-26 02:15:57', 1, '2025-05-15 07:19:23', b'0', 1);
-INSERT INTO `system_role_menu` VALUES (6, 1, 12, 1, '2025-03-26 02:15:57', 1, '2025-05-15 07:19:26', b'0', 1);
-INSERT INTO `system_role_menu` VALUES (7, 3, 1, 1, '2025-05-15 07:17:48', 1, '2025-05-15 07:17:48', b'0', 1);
-INSERT INTO `system_role_menu` VALUES (8, 3, 7, 1, '2025-05-15 07:17:48', 1, '2025-05-15 07:17:48', b'0', 1);
-INSERT INTO `system_role_menu` VALUES (9, 3, 12, 1, '2025-05-15 07:19:58', 1, '2025-05-15 07:19:58', b'0', 1);
-INSERT INTO `system_role_menu` VALUES (10, 3, 10, 1, '2025-05-15 07:19:58', 1, '2025-05-15 07:19:58', b'0', 1);
-INSERT INTO `system_role_menu` VALUES (11, 3, 11, 1, '2025-05-15 07:19:58', 1, '2025-05-15 07:19:58', b'0', 1);
-INSERT INTO `system_role_menu` VALUES (12, 3, 2, 1, '2025-05-15 07:19:58', 1, '2025-05-15 07:19:58', b'0', 1);
-INSERT INTO `system_role_menu` VALUES (13, 1, 11, 1, '2025-05-15 07:20:52', 1, '2025-05-15 07:20:52', b'0', 1);
-INSERT INTO `system_role_menu` VALUES (14, 1, 8, 1, '2025-05-15 07:20:52', 1, '2025-05-15 07:20:52', b'0', 1);
-INSERT INTO `system_role_menu` VALUES (15, 1, 7, 1, '2025-05-15 07:20:52', 1, '2025-05-15 07:20:52', b'0', 1);
-INSERT INTO `system_role_menu` VALUES (16, 1, 10, 1, '2025-05-15 07:20:52', 1, '2025-05-15 07:20:52', b'0', 1);
-INSERT INTO `system_role_menu` VALUES (17, 1, 9, 1, '2025-05-15 07:20:52', 1, '2025-05-15 07:20:52', b'0', 1);
-INSERT INTO `system_role_menu` VALUES (18, 1, 13, 1, '2025-05-15 14:23:23', 1, '2025-05-15 14:23:23', b'0', 1);
-INSERT INTO `system_role_menu` VALUES (19, 1, 14, 1, '2025-05-15 14:23:23', 1, '2025-05-15 14:23:23', b'0', 1);
-INSERT INTO `system_role_menu` VALUES (20, 1, 20, 1, '2025-05-16 01:28:04', 1, '2025-05-16 01:28:04', b'0', 1);
-INSERT INTO `system_role_menu` VALUES (21, 1, 16, 1, '2025-05-16 01:28:04', 1, '2025-05-16 01:28:04', b'0', 1);
-INSERT INTO `system_role_menu` VALUES (22, 1, 17, 1, '2025-05-16 01:28:04', 1, '2025-05-16 01:28:04', b'0', 1);
-INSERT INTO `system_role_menu` VALUES (23, 1, 19, 1, '2025-05-16 01:28:04', 1, '2025-05-16 01:28:04', b'0', 1);
-INSERT INTO `system_role_menu` VALUES (24, 1, 15, 1, '2025-05-16 01:28:04', 1, '2025-05-16 01:28:04', b'0', 1);
-INSERT INTO `system_role_menu` VALUES (25, 1, 18, 1, '2025-05-16 01:28:04', 1, '2025-05-16 01:28:04', b'0', 1);
-INSERT INTO `system_role_menu` VALUES (26, 1, 21, 1, '2025-05-18 07:35:15', 1, '2025-05-18 07:35:15', b'0', 1);
-INSERT INTO `system_role_menu` VALUES (27, 1, 50, 1, '2025-05-23 02:48:33', 1, '2025-05-23 02:48:33', b'0', 1);
-INSERT INTO `system_role_menu` VALUES (28, 1, 35, 1, '2025-05-23 02:48:33', 1, '2025-05-23 02:48:33', b'0', 1);
-INSERT INTO `system_role_menu` VALUES (29, 1, 39, 1, '2025-05-23 02:48:33', 1, '2025-05-23 02:48:33', b'0', 1);
-INSERT INTO `system_role_menu` VALUES (30, 1, 41, 1, '2025-05-23 02:48:33', 1, '2025-05-23 02:48:33', b'0', 1);
-INSERT INTO `system_role_menu` VALUES (31, 1, 46, 1, '2025-05-23 02:48:33', 1, '2025-05-23 02:48:33', b'0', 1);
-INSERT INTO `system_role_menu` VALUES (32, 1, 51, 1, '2025-05-23 02:48:33', 1, '2025-05-23 02:48:33', b'0', 1);
-INSERT INTO `system_role_menu` VALUES (33, 1, 55, 1, '2025-05-23 02:48:33', 1, '2025-05-23 02:48:33', b'0', 1);
-INSERT INTO `system_role_menu` VALUES (34, 1, 54, 1, '2025-05-23 02:48:33', 1, '2025-05-23 02:48:33', b'0', 1);
-INSERT INTO `system_role_menu` VALUES (35, 1, 25, 1, '2025-05-23 02:48:33', 1, '2025-05-23 02:48:33', b'0', 1);
-INSERT INTO `system_role_menu` VALUES (36, 1, 59, 1, '2025-05-23 02:48:33', 1, '2025-05-23 02:48:33', b'0', 1);
-INSERT INTO `system_role_menu` VALUES (37, 1, 37, 1, '2025-05-23 02:48:33', 1, '2025-05-23 02:48:33', b'0', 1);
-INSERT INTO `system_role_menu` VALUES (38, 1, 45, 1, '2025-05-23 02:48:33', 1, '2025-05-23 02:48:33', b'0', 1);
-INSERT INTO `system_role_menu` VALUES (39, 1, 56, 1, '2025-05-23 02:48:33', 1, '2025-05-23 02:48:33', b'0', 1);
-INSERT INTO `system_role_menu` VALUES (40, 1, 30, 1, '2025-05-23 02:48:33', 1, '2025-05-23 02:48:33', b'0', 1);
-INSERT INTO `system_role_menu` VALUES (41, 1, 42, 1, '2025-05-23 02:48:33', 1, '2025-05-23 02:48:33', b'0', 1);
-INSERT INTO `system_role_menu` VALUES (42, 1, 28, 1, '2025-05-23 02:48:33', 1, '2025-05-23 02:48:33', b'0', 1);
-INSERT INTO `system_role_menu` VALUES (43, 1, 48, 1, '2025-05-23 02:48:33', 1, '2025-05-23 02:48:33', b'0', 1);
-INSERT INTO `system_role_menu` VALUES (44, 1, 53, 1, '2025-05-23 02:48:33', 1, '2025-05-23 02:48:33', b'0', 1);
-INSERT INTO `system_role_menu` VALUES (45, 1, 34, 1, '2025-05-23 02:48:33', 1, '2025-05-23 02:48:33', b'0', 1);
-INSERT INTO `system_role_menu` VALUES (46, 1, 33, 1, '2025-05-23 02:48:33', 1, '2025-05-23 02:48:33', b'0', 1);
-INSERT INTO `system_role_menu` VALUES (47, 1, 36, 1, '2025-05-23 02:48:33', 1, '2025-05-23 02:48:33', b'0', 1);
-INSERT INTO `system_role_menu` VALUES (48, 1, 40, 1, '2025-05-23 02:48:33', 1, '2025-05-23 02:48:33', b'0', 1);
-INSERT INTO `system_role_menu` VALUES (49, 1, 57, 1, '2025-05-23 02:48:33', 1, '2025-05-23 02:48:33', b'0', 1);
-INSERT INTO `system_role_menu` VALUES (50, 1, 29, 1, '2025-05-23 02:48:33', 1, '2025-05-23 02:48:33', b'0', 1);
-INSERT INTO `system_role_menu` VALUES (51, 1, 47, 1, '2025-05-23 02:48:33', 1, '2025-05-23 02:48:33', b'0', 1);
-INSERT INTO `system_role_menu` VALUES (52, 1, 58, 1, '2025-05-23 02:48:33', 1, '2025-05-23 02:48:33', b'0', 1);
-INSERT INTO `system_role_menu` VALUES (53, 1, 52, 1, '2025-05-23 02:48:33', 1, '2025-05-23 02:48:33', b'0', 1);
-INSERT INTO `system_role_menu` VALUES (54, 1, 31, 1, '2025-05-23 02:48:33', 1, '2025-05-23 02:48:33', b'0', 1);
-INSERT INTO `system_role_menu` VALUES (55, 1, 38, 1, '2025-05-23 02:48:33', 1, '2025-05-23 02:48:33', b'0', 1);
-INSERT INTO `system_role_menu` VALUES (56, 1, 43, 1, '2025-05-23 02:48:33', 1, '2025-05-23 02:48:33', b'0', 1);
-INSERT INTO `system_role_menu` VALUES (57, 1, 27, 1, '2025-05-23 02:48:33', 1, '2025-05-23 02:48:33', b'0', 1);
-INSERT INTO `system_role_menu` VALUES (58, 1, 32, 1, '2025-05-23 02:48:33', 1, '2025-05-23 02:48:33', b'0', 1);
-INSERT INTO `system_role_menu` VALUES (59, 1, 26, 1, '2025-05-23 02:48:33', 1, '2025-05-23 02:48:33', b'0', 1);
-INSERT INTO `system_role_menu` VALUES (60, 1, 44, 1, '2025-05-23 02:48:33', 1, '2025-05-23 02:48:33', b'0', 1);
-INSERT INTO `system_role_menu` VALUES (61, 1, 66, 1, '2025-05-23 03:18:28', 1, '2025-05-23 03:18:28', b'0', 1);
-INSERT INTO `system_role_menu` VALUES (62, 1, 75, 1, '2025-05-23 03:18:28', 1, '2025-05-23 03:18:28', b'0', 1);
-INSERT INTO `system_role_menu` VALUES (63, 1, 64, 1, '2025-05-23 03:18:28', 1, '2025-05-23 03:18:28', b'0', 1);
-INSERT INTO `system_role_menu` VALUES (64, 1, 60, 1, '2025-05-23 03:18:28', 1, '2025-05-23 03:18:28', b'0', 1);
-INSERT INTO `system_role_menu` VALUES (65, 1, 61, 1, '2025-05-23 03:18:28', 1, '2025-05-23 03:18:28', b'0', 1);
-INSERT INTO `system_role_menu` VALUES (66, 1, 65, 1, '2025-05-23 03:18:28', 1, '2025-05-23 03:18:28', b'0', 1);
-INSERT INTO `system_role_menu` VALUES (67, 1, 76, 1, '2025-05-23 03:18:28', 1, '2025-05-23 03:18:28', b'0', 1);
-INSERT INTO `system_role_menu` VALUES (68, 1, 80, 1, '2025-05-23 03:18:28', 1, '2025-05-23 03:18:28', b'0', 1);
-INSERT INTO `system_role_menu` VALUES (69, 1, 63, 1, '2025-05-23 03:18:28', 1, '2025-05-23 03:18:28', b'0', 1);
-INSERT INTO `system_role_menu` VALUES (70, 1, 72, 1, '2025-05-23 03:18:28', 1, '2025-05-23 03:18:28', b'0', 1);
-INSERT INTO `system_role_menu` VALUES (71, 1, 74, 1, '2025-05-23 03:18:28', 1, '2025-05-23 03:18:28', b'0', 1);
-INSERT INTO `system_role_menu` VALUES (72, 1, 77, 1, '2025-05-23 03:18:28', 1, '2025-05-23 03:18:28', b'0', 1);
-INSERT INTO `system_role_menu` VALUES (73, 1, 67, 1, '2025-05-23 03:18:28', 1, '2025-05-23 03:18:28', b'0', 1);
-INSERT INTO `system_role_menu` VALUES (74, 1, 73, 1, '2025-05-23 03:18:28', 1, '2025-05-23 03:18:28', b'0', 1);
-INSERT INTO `system_role_menu` VALUES (75, 1, 69, 1, '2025-05-23 03:18:28', 1, '2025-05-23 03:18:28', b'0', 1);
-INSERT INTO `system_role_menu` VALUES (76, 1, 68, 1, '2025-05-23 03:18:28', 1, '2025-05-23 03:18:28', b'0', 1);
-INSERT INTO `system_role_menu` VALUES (77, 1, 79, 1, '2025-05-23 03:18:28', 1, '2025-05-23 03:18:28', b'0', 1);
-INSERT INTO `system_role_menu` VALUES (78, 1, 70, 1, '2025-05-23 03:18:28', 1, '2025-05-23 03:18:28', b'0', 1);
-INSERT INTO `system_role_menu` VALUES (79, 1, 71, 1, '2025-05-23 03:18:28', 1, '2025-05-23 03:18:28', b'0', 1);
-INSERT INTO `system_role_menu` VALUES (80, 1, 62, 1, '2025-05-23 03:18:28', 1, '2025-05-23 03:18:28', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (81, 1, 7, 1, '2025-05-23 06:33:58', 1, '2025-05-23 06:33:58', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (82, 1, 14, 1, '2025-05-23 06:33:58', 1, '2025-05-23 06:33:58', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (83, 1, 3, 1, '2025-05-23 06:33:58', 1, '2025-05-23 06:33:58', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (84, 1, 50, 1, '2025-05-23 06:33:58', 1, '2025-05-23 06:33:58', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (85, 1, 39, 1, '2025-05-23 06:33:58', 1, '2025-05-23 06:33:58', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (86, 1, 40, 1, '2025-05-23 06:33:58', 1, '2025-05-23 06:33:58', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (87, 1, 35, 1, '2025-05-23 06:33:58', 1, '2025-05-23 06:33:58', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (88, 1, 77, 1, '2025-05-23 06:33:58', 1, '2025-05-23 06:33:58', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (89, 1, 19, 1, '2025-05-23 06:33:58', 1, '2025-05-23 06:33:58', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (90, 1, 47, 1, '2025-05-23 06:33:58', 1, '2025-05-23 06:33:58', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (91, 1, 56, 1, '2025-05-23 06:33:58', 1, '2025-05-23 06:33:58', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (92, 1, 34, 1, '2025-05-23 06:33:58', 1, '2025-05-23 06:33:58', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (93, 1, 79, 1, '2025-05-23 06:33:58', 1, '2025-05-23 06:49:15', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (94, 1, 38, 1, '2025-05-23 06:33:58', 1, '2025-05-23 06:33:58', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (95, 1, 36, 1, '2025-05-23 06:33:58', 1, '2025-05-23 06:33:58', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (96, 1, 44, 1, '2025-05-23 06:33:58', 1, '2025-05-23 06:33:58', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (97, 1, 48, 1, '2025-05-23 06:33:58', 1, '2025-05-23 06:33:58', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (98, 1, 55, 1, '2025-05-23 06:33:58', 1, '2025-05-23 06:33:58', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (99, 1, 37, 1, '2025-05-23 06:33:58', 1, '2025-05-23 06:33:58', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (100, 1, 57, 1, '2025-05-23 06:33:58', 1, '2025-05-23 06:33:58', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (101, 1, 60, 1, '2025-05-23 06:33:58', 1, '2025-05-23 06:33:58', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (102, 1, 74, 1, '2025-05-23 06:33:58', 1, '2025-05-23 06:33:58', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (103, 1, 59, 1, '2025-05-23 06:33:58', 1, '2025-05-23 06:33:58', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (104, 1, 42, 1, '2025-05-23 06:33:58', 1, '2025-05-23 06:33:58', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (105, 1, 43, 1, '2025-05-23 06:33:58', 1, '2025-05-23 06:33:58', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (106, 1, 33, 1, '2025-05-23 06:33:58', 1, '2025-05-23 06:33:58', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (107, 1, 18, 1, '2025-05-23 06:33:58', 1, '2025-05-23 06:33:58', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (108, 1, 67, 1, '2025-05-23 06:33:58', 1, '2025-05-23 06:33:58', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (109, 1, 30, 1, '2025-05-23 06:33:58', 1, '2025-05-23 06:33:58', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (110, 1, 80, 1, '2025-05-23 06:33:58', 1, '2025-05-23 06:49:15', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (111, 1, 28, 1, '2025-05-23 06:33:58', 1, '2025-05-23 06:33:58', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (112, 1, 72, 1, '2025-05-23 06:33:58', 1, '2025-05-23 06:33:58', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (113, 1, 51, 1, '2025-05-23 06:33:58', 1, '2025-05-23 06:33:58', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (114, 1, 12, 1, '2025-05-23 06:33:58', 1, '2025-05-23 06:33:58', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (115, 1, 27, 1, '2025-05-23 06:33:58', 1, '2025-05-23 06:33:58', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (116, 1, 1, 1, '2025-05-23 06:33:58', 1, '2025-05-23 06:33:58', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (117, 1, 32, 1, '2025-05-23 06:33:58', 1, '2025-05-23 06:33:58', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (118, 1, 61, 1, '2025-05-23 06:33:58', 1, '2025-05-23 06:33:58', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (119, 1, 52, 1, '2025-05-23 06:33:58', 1, '2025-05-23 06:33:58', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (120, 1, 53, 1, '2025-05-23 06:33:58', 1, '2025-05-23 06:33:58', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (121, 1, 68, 1, '2025-05-23 06:33:58', 1, '2025-05-23 06:33:58', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (122, 1, 11, 1, '2025-05-23 06:33:58', 1, '2025-05-23 06:33:58', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (123, 1, 69, 1, '2025-05-23 06:33:58', 1, '2025-05-23 06:33:58', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (124, 1, 64, 1, '2025-05-23 06:33:58', 1, '2025-05-23 06:33:58', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (125, 1, 73, 1, '2025-05-23 06:33:58', 1, '2025-05-23 06:33:58', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (126, 1, 31, 1, '2025-05-23 06:33:58', 1, '2025-05-23 06:33:58', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (127, 1, 58, 1, '2025-05-23 06:33:58', 1, '2025-05-23 06:33:58', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (128, 1, 21, 1, '2025-05-23 06:33:58', 1, '2025-05-23 06:33:58', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (129, 1, 54, 1, '2025-05-23 06:33:58', 1, '2025-05-23 06:33:58', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (130, 1, 29, 1, '2025-05-23 06:33:58', 1, '2025-05-23 06:33:58', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (131, 1, 45, 1, '2025-05-23 06:33:58', 1, '2025-05-23 06:33:58', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (132, 1, 46, 1, '2025-05-23 06:33:58', 1, '2025-05-23 06:33:58', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (133, 1, 70, 1, '2025-05-23 06:33:58', 1, '2025-05-23 06:33:58', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (134, 1, 75, 1, '2025-05-23 06:33:58', 1, '2025-05-23 06:33:58', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (135, 1, 62, 1, '2025-05-23 06:33:58', 1, '2025-05-23 06:33:58', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (136, 1, 10, 1, '2025-05-23 06:33:58', 1, '2025-05-23 06:33:58', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (137, 1, 66, 1, '2025-05-23 06:33:58', 1, '2025-05-23 06:33:58', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (138, 1, 71, 1, '2025-05-23 06:33:58', 1, '2025-05-23 06:33:58', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (139, 1, 63, 1, '2025-05-23 06:33:58', 1, '2025-05-23 06:33:58', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (140, 1, 2, 1, '2025-05-23 06:33:58', 1, '2025-05-23 06:33:58', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (141, 1, 41, 1, '2025-05-23 06:33:58', 1, '2025-05-23 06:33:58', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (142, 1, 65, 1, '2025-05-23 06:33:58', 1, '2025-05-23 06:33:58', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (143, 1, 26, 1, '2025-05-23 06:33:58', 1, '2025-05-23 06:33:58', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (144, 1, 76, 1, '2025-05-23 06:33:58', 1, '2025-05-23 06:33:58', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (145, 1, 25, 1, '2025-05-23 06:33:58', 1, '2025-05-23 06:33:58', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (146, 1, 13, 1, '2025-05-23 06:33:58', 1, '2025-05-23 06:33:58', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (147, 2, 18, 1, '2025-05-23 06:44:33', 1, '2025-05-23 07:34:48', b'1', 1);
+INSERT INTO `system_role_menu` VALUES (148, 2, 51, 1, '2025-05-23 06:44:33', 1, '2025-05-23 07:34:48', b'1', 1);
+INSERT INTO `system_role_menu` VALUES (149, 2, 3, 1, '2025-05-23 06:44:33', 1, '2025-05-23 07:34:48', b'1', 1);
+INSERT INTO `system_role_menu` VALUES (150, 2, 50, 1, '2025-05-23 06:44:33', 1, '2025-05-23 07:34:48', b'1', 1);
+INSERT INTO `system_role_menu` VALUES (151, 2, 69, 1, '2025-05-23 07:34:48', 1, '2025-05-23 07:34:48', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (152, 2, 38, 1, '2025-05-23 07:34:48', 1, '2025-05-23 07:34:48', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (153, 2, 27, 1, '2025-05-23 07:34:48', 1, '2025-05-23 07:34:48', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (154, 2, 29, 1, '2025-05-23 07:34:48', 1, '2025-05-23 07:34:48', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (155, 2, 21, 1, '2025-05-23 07:34:48', 1, '2025-05-23 07:34:48', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (156, 2, 70, 1, '2025-05-23 07:34:48', 1, '2025-05-23 07:34:48', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (157, 2, 40, 1, '2025-05-23 07:34:48', 1, '2025-05-23 07:34:48', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (158, 2, 31, 1, '2025-05-23 07:34:48', 1, '2025-05-23 07:34:48', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (159, 2, 75, 1, '2025-05-23 07:34:48', 1, '2025-05-23 07:34:48', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (160, 2, 74, 1, '2025-05-23 07:34:48', 1, '2025-05-23 07:34:48', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (161, 2, 37, 1, '2025-05-23 07:34:48', 1, '2025-05-23 07:34:48', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (162, 2, 12, 1, '2025-05-23 07:34:48', 1, '2025-05-23 07:34:48', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (163, 2, 32, 1, '2025-05-23 07:34:48', 1, '2025-05-23 07:34:48', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (164, 2, 68, 1, '2025-05-23 07:34:48', 1, '2025-05-23 07:34:48', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (165, 2, 60, 1, '2025-05-23 07:34:48', 1, '2025-05-23 07:34:48', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (166, 2, 61, 1, '2025-05-23 07:34:48', 1, '2025-05-23 07:34:48', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (167, 2, 34, 1, '2025-05-23 07:34:48', 1, '2025-05-23 07:34:48', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (168, 2, 73, 1, '2025-05-23 07:34:48', 1, '2025-05-23 07:34:48', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (169, 2, 10, 1, '2025-05-23 07:34:48', 1, '2025-05-23 07:34:48', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (170, 2, 36, 1, '2025-05-23 07:34:48', 1, '2025-05-23 07:34:48', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (171, 2, 33, 1, '2025-05-23 07:34:48', 1, '2025-05-23 07:34:48', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (172, 2, 72, 1, '2025-05-23 07:34:48', 1, '2025-05-23 07:34:48', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (173, 2, 26, 1, '2025-05-23 07:34:48', 1, '2025-05-23 07:34:48', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (174, 2, 1, 1, '2025-05-23 07:34:48', 1, '2025-05-23 07:34:48', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (175, 2, 62, 1, '2025-05-23 07:34:48', 1, '2025-05-23 07:34:48', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (176, 2, 7, 1, '2025-05-23 07:34:48', 1, '2025-05-23 07:34:48', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (177, 2, 30, 1, '2025-05-23 07:34:48', 1, '2025-05-23 07:34:48', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (178, 2, 25, 1, '2025-05-23 07:34:48', 1, '2025-05-23 07:34:48', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (179, 2, 28, 1, '2025-05-23 07:34:48', 1, '2025-05-23 07:34:48', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (180, 2, 35, 1, '2025-05-23 07:34:48', 1, '2025-05-23 07:34:48', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (181, 2, 71, 1, '2025-05-23 07:34:48', 1, '2025-05-23 07:34:48', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (182, 2, 2, 1, '2025-05-23 07:34:48', 1, '2025-05-23 07:34:48', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (183, 2, 39, 1, '2025-05-23 07:34:48', 1, '2025-05-23 07:34:48', b'0', 1);
 
 -- ----------------------------
 -- Table structure for system_role_menu_data_scope
@@ -469,8 +489,7 @@ CREATE TABLE `system_tenant`  (
 -- Records of system_tenant
 -- ----------------------------
 INSERT INTO `system_tenant` VALUES (1, '管理租户', 1, '管理员', '18888888888', 0, '', 1, '2039-12-31 18:15:40', 1, 1, '2025-03-08 10:16:18', 1, '2025-05-17 01:11:29', b'0');
-INSERT INTO `system_tenant` VALUES (2, '测试租户', 3, '测试', '13333', 0, 'www.test.com', 2, '2025-06-18 14:39:29', 5, 1, '2025-05-17 08:13:42', 1, '2025-05-17 09:33:22', b'0');
-INSERT INTO `system_tenant` VALUES (3, '测试租户1', 4, '测试1', '15555555', 0, 'www.test.com', 1, '2025-06-17 16:25:46', 5, 1, '2025-05-17 08:35:05', 1, '2025-05-17 08:35:05', b'0');
+INSERT INTO `system_tenant` VALUES (2, '测试租户', 11, '测试管理员', '15555555555', 0, 'www.test.com', 1, '2025-06-23 16:15:34', 5, 1, '2025-05-23 08:16:00', 1, '2025-05-23 08:16:00', b'0');
 
 -- ----------------------------
 -- Table structure for system_tenant_package
@@ -493,7 +512,7 @@ CREATE TABLE `system_tenant_package`  (
 -- ----------------------------
 -- Records of system_tenant_package
 -- ----------------------------
-INSERT INTO `system_tenant_package` VALUES (1, '超级套餐', 0, '', '[1]', 1, '2025-03-08 10:17:29', 1, '2025-03-08 10:17:29', b'0');
+INSERT INTO `system_tenant_package` VALUES (1, '超级套餐', 0, '', '[1,2,7,25,26,27,28,60,61,62,10,29,30,31,32,68,69,11,13,41,42,43,44,63,64,65,14,45,46,47,48,66,67,12,33,34,35,36,70,71,72,73,21,37,38,39,40,74,75,3,18,50,51,52,53,76,77,19,54,55,56,57,58,59,79,80]', 1, '2025-03-08 10:17:29', 1, '2025-05-23 08:06:37', b'0');
 INSERT INTO `system_tenant_package` VALUES (2, '测试套餐', 0, '测试套餐', '[1,2,7,10,11,12,13,14]', 1, '2025-05-17 05:34:45', 1, '2025-05-17 05:35:03', b'0');
 
 -- ----------------------------
@@ -522,16 +541,13 @@ CREATE TABLE `system_user`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 10 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '用户信息表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 12 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '用户信息表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of system_user
 -- ----------------------------
-INSERT INTO `system_user` VALUES (1, 'admin', '$2b$06$Ohq86rDIvNuy/4ZvsTF4dOw.7I7QJj620LC25PwgYDmrKqKmKsJz6', '超级管理员', '超级管理员', '123@qq.com', '18888888888', 0, '', 0, '127.0.0.1', '2025-05-23 03:13:30', '0000', 1, 1, '2025-03-08 10:14:52', 1, '2025-05-23 03:13:27', b'0', 1);
-INSERT INTO `system_user` VALUES (3, 'test', '$2b$06$LiMzvNQ7OgwEndSAwZR9LeLnLMt.bAUJ4yr/dsvB8X2Ue2Ecgy2ja', '测试', NULL, '', '13333', 0, '', 0, '', NULL, '0000-0000', 2, 1, '2025-05-17 08:13:42', 1, '2025-05-17 08:35:56', b'0', 2);
-INSERT INTO `system_user` VALUES (4, 'test1', '$2b$06$LiMzvNQ7OgwEndSAwZR9LeLnLMt.bAUJ4yr/dsvB8X2Ue2Ecgy2ja', '测试1', NULL, '', '15555555', 0, '', 0, '', NULL, '0000-0001', 3, 1, '2025-05-17 08:35:05', 1, '2025-05-17 08:35:05', b'0', 3);
-INSERT INTO `system_user` VALUES (8, 'dev', 'e10adc3949ba59abbe56e057f20f883e', '开发', '开发', '123@qq.com', '12345', 0, '', 0, '', NULL, '0000-0002', 4, 1, '2025-05-21 02:14:52', 1, '2025-05-21 02:43:10', b'1', 1);
-INSERT INTO `system_user` VALUES (9, 'dev1', 'e10adc3949ba59abbe56e057f20f883e', '开发1', '开发1', '123@qq.com', '12345', 0, '', 0, '', NULL, '0000-0002', 4, 1, '2025-05-21 02:18:40', 1, '2025-05-21 02:18:40', b'0', 1);
+INSERT INTO `system_user` VALUES (1, 'admin', '$2b$06$Ohq86rDIvNuy/4ZvsTF4dOw.7I7QJj620LC25PwgYDmrKqKmKsJz6', '超级管理员', '超级管理员', '123@qq.com', '18888888888', 0, '', 0, '127.0.0.1', '2025-05-23 08:15:25', '0000', 1, 1, '2025-03-08 10:14:52', 1, '2025-05-23 08:15:22', b'0', 1);
+INSERT INTO `system_user` VALUES (11, 'test', '$2b$06$S2yMOy4Mp5gImLOEl8X3K.T8XAWrfXVwGXK/vOBL.30PGNnnGIDzy', '测试管理员', NULL, '', '15555555555', 0, '', 0, '127.0.0.1', '2025-05-23 08:16:27', '0000-0000', 7, 1, '2025-05-23 08:16:00', 1, '2025-05-23 08:16:25', b'0', 2);
 
 -- ----------------------------
 -- Table structure for system_user_post
@@ -571,12 +587,12 @@ CREATE TABLE `system_user_role`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '用户和角色关联表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '用户和角色关联表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of system_user_role
 -- ----------------------------
 INSERT INTO `system_user_role` VALUES (1, 1, 1, 1, '2025-03-25 03:32:08', 1, '2025-03-25 03:32:08', b'0', 0);
-INSERT INTO `system_user_role` VALUES (2, 9, 3, 1, '2025-05-21 02:18:40', 1, '2025-05-21 02:18:40', b'0', 1);
+INSERT INTO `system_user_role` VALUES (3, 11, 2, 1, '2025-05-23 08:16:00', 1, '2025-05-23 08:16:00', b'0', 1);
 
 SET FOREIGN_KEY_CHECKS = 1;
