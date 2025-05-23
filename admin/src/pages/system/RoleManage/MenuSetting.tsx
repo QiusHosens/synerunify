@@ -1,4 +1,5 @@
 import { getRoleMenu, listMenu, SystemMenuResponse, SystemRoleMenuRequest, SystemRoleResponse, updateRoleMenu } from "@/api";
+import { getSelectedIds } from "@/utils/treeUtils";
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogProps, DialogTitle, FormControl, Stack } from "@mui/material";
 import { RichTreeView, TreeViewSelectionPropagation } from "@mui/x-tree-view";
 import { forwardRef, useImperativeHandle, useState } from "react";
@@ -62,7 +63,7 @@ const RoleMenuSetting = forwardRef(({ onSubmit }: RoleMenuSettingProps, ref) => 
     if (!role) {
       return;
     }
-    const menuIds = selectedItems.map(item => Number(item));
+    const menuIds = getSelectedIds(selectedItems, menuTreeData).map(item => Number(item));
     const roleMenu: SystemRoleMenuRequest = {
       role_id: role.id,
       menu_id_list: menuIds
@@ -72,7 +73,8 @@ const RoleMenuSetting = forwardRef(({ onSubmit }: RoleMenuSettingProps, ref) => 
     onSubmit();
   };
 
-  const handleSelectedItemsChange = (event: React.SyntheticEvent | null, itemIds: string[]) => {
+  const handleSelectedItemsChange = (_event: React.SyntheticEvent | null, itemIds: string[]) => {
+    // console.log('selected item change', itemIds, getSelectedIds(itemIds, menuTreeData).map(item => Number(item)));
     setSelectedItems(itemIds);
   }
 

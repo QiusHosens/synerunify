@@ -11,7 +11,6 @@ import { DictQueryCondition, disableDict, enableDict, listDictType, pageDict, Sy
 import DictEdit from './EditDict';
 import DictTypeEdit from './EditDictType';
 import DictDelete from './DeleteDict';
-import CustomizedMore from '@/components/CustomizedMore';
 import { useHomeStore } from '@/store';
 import CustomizedAutoMore from '@/components/CustomizedAutoMore';
 
@@ -36,7 +35,7 @@ export default function DictManage() {
   const deleteDict = useRef(null);
 
   const handleStatusChange = useCallback(
-    async (e: React.ChangeEvent<HTMLInputElement>, checked: boolean, data: SystemDictDataResponse) => {
+    async (_e: React.ChangeEvent<HTMLInputElement>, checked: boolean, data: SystemDictDataResponse) => {
       if (checked) {
         await enableDict(data.id);
       } else {
@@ -52,6 +51,10 @@ export default function DictManage() {
     },
     []
   );
+
+  const statusDisabled = (status: number): boolean => {
+    return (status && !hasOperatePermission('config:dict:enable')) || (!status && !hasOperatePermission('config:dict:disable'));
+  }
 
   const columns: GridColDef[] = useMemo(
     () => [
@@ -71,7 +74,7 @@ export default function DictManage() {
         minWidth: 80,
         renderCell: (params: GridRenderCellParams) => (
           <Box sx={{ height: '100%', display: 'flex', gap: 1, alignItems: 'center' }}>
-            <Switch name="status" checked={!params.row.status} onChange={(event, checked) => handleStatusChange(event, checked, params.row)} />
+            <Switch name="status" checked={!params.row.status} disabled={statusDisabled(params.row.status)} onChange={(event, checked) => handleStatusChange(event, checked, params.row)} />
           </Box>
         ),
       },
@@ -83,57 +86,29 @@ export default function DictManage() {
         flex: 1,
         minWidth: 100,
         renderCell: (params: GridRenderCellParams) => (
-          // <Box sx={{ height: '100%', display: 'flex', gap: 1, alignItems: 'center' }}>
-          //   <Button
-          //     size="small"
-          //     variant='customOperate'
-          //     title={t('page.dict.operate.edit')}
-          //     startIcon={<EditIcon />}
-          //     onClick={() => handleClickEditDict(params.row)}
-          //   />
-          //   <CustomizedMore>
-          //     <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-          //       <Button
-          //         size="small"
-          //         variant='customOperate'
-          //         title={t('page.dict.operate.edit.type')}
-          //         startIcon={<EditIcon />}
-          //         onClick={() => handleClickEditDictType(params.row.type_id)}
-          //       />
-          //       <Button
-          //         sx={{ mt: 1, color: 'error.main' }}
-          //         size="small"
-          //         variant='customOperate'
-          //         title={t('page.dict.operate.delete')}
-          //         startIcon={<DeleteIcon />}
-          //         onClick={() => handleClickDeleteDict(params.row)}
-          //       />
-          //     </Box>
-          //   </CustomizedMore>
-          // </Box>
           <CustomizedAutoMore>
-            <Button
+            {hasOperatePermission('config:dict:edit') && <Button
               size="small"
               variant='customOperate'
               title={t('page.dict.operate.edit')}
               startIcon={<EditIcon />}
               onClick={() => handleClickEditDict(params.row)}
-            />
-            <Button
+            />}
+            {hasOperatePermission('config:dict:type:edit') && <Button
               size="small"
               variant='customOperate'
               title={t('page.dict.operate.edit.type')}
               startIcon={<EditIcon />}
               onClick={() => handleClickEditDictType(params.row.type_id)}
-            />
-            <Button
+            />}
+            {hasOperatePermission('config:dict:delete') && <Button
               sx={{ color: 'error.main' }}
               size="small"
               variant='customOperate'
               title={t('page.dict.operate.delete')}
               startIcon={<DeleteIcon />}
               onClick={() => handleClickDeleteDict(params.row)}
-            />
+            />}
           </CustomizedAutoMore>
         ),
       },
@@ -245,12 +220,12 @@ export default function DictManage() {
           </FormControl>
         </Box>
         <Box>
-          <Button variant="customContained" onClick={handleClickOpenDictType}>
+          {hasOperatePermission('config:dict:type:add') && <Button variant="customContained" onClick={handleClickOpenDictType}>
             {t('global.operate.add')}{t('global.page.dict.type')}
-          </Button>
-          <Button variant="customContained" onClick={handleClickOpenDict} sx={{ ml: 2 }}>
+          </Button>}
+          {hasOperatePermission('config:dict:add') && <Button variant="customContained" onClick={handleClickOpenDict} sx={{ ml: 2 }}>
             {t('global.operate.add')}{t('global.page.dict')}
-          </Button>
+          </Button>}
         </Box>
       </Box>
       <DataGrid

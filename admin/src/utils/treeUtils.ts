@@ -59,3 +59,87 @@ export const getParentNodeLists = (nodes: Node[]): Map<number, Node[]> => {
 
   return parentLists;
 }
+
+interface TreeNode {
+  id: string;
+  children: TreeNode[];
+}
+
+/**
+ * 获取选中或半选中节点id列表
+ * @example
+ * const tree: TreeNode[] = [
+ *   {
+ *     id: '1',
+ *     label: 'Root 1',
+ *     children: [
+ *       {
+ *         id: '2',
+ *         label: 'Child 1',
+ *         children: [{ id: '4', label: 'Grandchild 1', children: [] }],
+ *       },
+ *     ],
+ *   },
+ *   {
+ *     id: '3',
+ *     label: 'Root 2',
+ *     children: [],
+ *   },
+ * ];
+ * 
+ * console.log(getSelectedIds(['2', '4'], tree)); // ['1', '2', '4']
+ * console.log(getSelectedIds(['3'], tree)); // ['3']
+ * console.log(getSelectedIds([], tree)); // []
+ * 
+ * @param selectedId 选中节点
+ * @param tree 树
+ * @returns 
+ */
+export const getSelectedIds = (selectedId: string[], tree: TreeNode[]): string[] => {
+  const result: string[] = [];
+
+  // 辅助函数：递归检查节点状态
+  const checkNode = (node: TreeNode): 'selected' | 'half-selected' | 'unselected' => {
+    const isNodeSelected = selectedId.includes(node.id);
+    
+    if (!node.children || node.children.length === 0) {
+      return isNodeSelected ? 'selected' : 'unselected';
+    }
+
+    let allSelected = true;
+    let anySelected = false;
+
+    for (const child of node.children) {
+      const childStatus = checkNode(child);
+      if (childStatus === 'selected') {
+        anySelected = true;
+      } else if (childStatus === 'half-selected') {
+        anySelected = true;
+        allSelected = false;
+      } else {
+        allSelected = false;
+      }
+    }
+
+    if (isNodeSelected) {
+      return allSelected ? 'selected' : 'half-selected';
+    }
+    return anySelected ? 'half-selected' : 'unselected';
+  };
+
+  // 遍历树，收集选中或半选的节点ID
+  const collectSelectedIds = (nodes: TreeNode[]) => {
+    for (const node of nodes) {
+      const status = checkNode(node);
+      if (status === 'selected' || status === 'half-selected') {
+        result.push(node.id);
+      }
+      if (node.children && node.children.length > 0) {
+        collectSelectedIds(node.children);
+      }
+    }
+  };
+
+  collectSelectedIds(tree);
+  return result;
+};
