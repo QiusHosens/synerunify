@@ -1,6 +1,6 @@
 use std::str::FromStr;
 
-use common::constants::enum_constants::{STATUS_DISABLE, STATUS_ENABLE};
+use common::constants::enum_constants::{ROLE_ID_TENANT_ADMIN, STATUS_DISABLE, STATUS_ENABLE};
 use common::utils::crypt_utils::{encrypt_password, verify_password};
 use sea_orm::{ActiveModelTrait, ColumnTrait, Condition, DatabaseConnection, DatabaseTransaction, EntityTrait, JoinType, PaginatorTrait, QueryFilter, QueryOrder, QuerySelect, RelationTrait, TransactionTrait};
 use tokio::io::join;
@@ -58,6 +58,7 @@ pub async fn create_tenant_admin(db: &DatabaseConnection, txn: &DatabaseTransact
         return Err(anyhow!("账号已存在"));
     }
 
+    // 保存用户
     let crypt_password = encrypt_password(password).with_context(|| "Failed to encrypt password")?;
     let system_user = SystemUserActiveModel {
         username: Set(username),
@@ -73,6 +74,8 @@ pub async fn create_tenant_admin(db: &DatabaseConnection, txn: &DatabaseTransact
         ..Default::default()
     };
     let system_user = system_user.insert(txn).await.with_context(|| "Failed to insert user")?;
+    // 保存用户角色对应关系
+    system_user_role::save(&db, &txn, login_user.clone(), system_user.id, ROLE_ID_TENANT_ADMIN).await?;
     Ok(system_user.id)
 }
 

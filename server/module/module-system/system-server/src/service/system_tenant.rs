@@ -33,14 +33,14 @@ pub async fn create(db: &DatabaseConnection, login_user: LoginUserContext, reque
     // 开启事务
     let txn = db.begin().await?;
     // 创建租户根部门
-    error!("create department");
+    info!("create department");
     let department = create_tenant_root(&db, &txn, login_user.clone(), request.name.clone(), new_tenant_id).await?;
     // 创建租户管理员用户
-    error!("create user");
+    info!("create user");
     let user_id = create_tenant_admin(&db, &txn, login_user.clone(), request.username.clone(), request.password.clone(), 
         request.nickname.clone(), request.contact_mobile.clone(), department.code.clone(), department.id.clone(), new_tenant_id).await?;
     // 创建租户
-    error!("create tenant");
+    info!("create tenant");
     let mut system_tenant = create_request_to_model(&request);
     system_tenant.id = Set(new_tenant_id);
     system_tenant.contact_user_id = Set(Some(user_id));
