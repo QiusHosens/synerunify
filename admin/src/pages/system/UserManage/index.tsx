@@ -43,18 +43,18 @@ export default function UserManage() {
 
   const handleStatusChange = useCallback(
     async (e: React.ChangeEvent<HTMLInputElement>, checked: boolean, data: SystemUserResponse) => {
+      if (checked) {
+        await enableSystemUser(data.id);
+      } else {
+        await disableSystemUser(data.id);
+      }
+
       // 更新表格
       setRecords((prev) =>
         prev.map((r) =>
           r.id === data.id ? { ...r, status: checked ? 0 : 1 } : r
         )
       );
-
-      if (checked) {
-        await enableSystemUser(data.id);
-      } else {
-        await disableSystemUser(data.id);
-      }
     },
     []
   );

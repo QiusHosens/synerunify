@@ -48,7 +48,7 @@ pub async fn system_dict_type_route(state: AppState) -> Router {
         ("bearerAuth" = [])
     )
 )]
-#[require_authorize(operation_id = "system_dict_type_create", authorize = "")]
+#[require_authorize(operation_id = "system_dict_type_create", authorize = "config:dict:type:add")]
 async fn create(
     State(state): State<AppState>,
     Extension(login_user): Extension<LoginUserContext>,
@@ -73,7 +73,7 @@ async fn create(
         ("bearerAuth" = [])
     )
 )]
-#[require_authorize(operation_id = "system_dict_type_update", authorize = "")]
+#[require_authorize(operation_id = "system_dict_type_update", authorize = "config:dict:type:edit")]
 async fn update(
     State(state): State<AppState>,
     Extension(login_user): Extension<LoginUserContext>,

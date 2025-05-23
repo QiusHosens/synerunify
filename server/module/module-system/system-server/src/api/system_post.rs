@@ -50,7 +50,7 @@ pub async fn system_post_route(state: AppState) -> Router {
         ("bearerAuth" = [])
     )
 )]
-#[require_authorize(operation_id = "system_post_create", authorize = "")]
+#[require_authorize(operation_id = "system_post_create", authorize = "system:post:add")]
 async fn create(
     State(state): State<AppState>,
     Extension(login_user): Extension<LoginUserContext>,
@@ -75,7 +75,7 @@ async fn create(
         ("bearerAuth" = [])
     )
 )]
-#[require_authorize(operation_id = "system_post_update", authorize = "")]
+#[require_authorize(operation_id = "system_post_update", authorize = "system:post:edit")]
 async fn update(
     State(state): State<AppState>,
     Extension(login_user): Extension<LoginUserContext>,
@@ -102,7 +102,7 @@ async fn update(
         ("bearerAuth" = [])
     )
 )]
-#[require_authorize(operation_id = "system_post_delete", authorize = "")]
+#[require_authorize(operation_id = "system_post_delete", authorize = "system:post:delete")]
 async fn delete(
     State(state): State<AppState>,
     Extension(login_user): Extension<LoginUserContext>,
@@ -129,7 +129,7 @@ async fn delete(
         ("bearerAuth" = [])
     )
 )]
-#[require_authorize(operation_id = "system_post_get_by_id", authorize = "")]
+#[require_authorize(operation_id = "system_post_get_by_id", authorize = "system:post:get")]
 async fn get_by_id(
     State(state): State<AppState>,
     Extension(login_user): Extension<LoginUserContext>,
@@ -159,7 +159,7 @@ async fn get_by_id(
         ("bearerAuth" = [])
     )
 )]
-#[require_authorize(operation_id = "system_post_page", authorize = "")]
+#[require_authorize(operation_id = "system_post_page", authorize = "system:post:get")]
 async fn page(
     State(state): State<AppState>,
     Extension(login_user): Extension<LoginUserContext>,
@@ -183,7 +183,7 @@ async fn page(
         ("bearerAuth" = [])
     )
 )]
-#[require_authorize(operation_id = "system_post_list", authorize = "")]
+#[require_authorize(operation_id = "system_post_list", authorize = "system:post:get")]
 async fn list(
     State(state): State<AppState>,
     Extension(login_user): Extension<LoginUserContext>,
@@ -209,7 +209,7 @@ async fn list(
         ("bearerAuth" = [])
     )
 )]
-#[require_authorize(operation_id = "system_post_enable", authorize = "")]
+#[require_authorize(operation_id = "system_post_enable", authorize = "system:post:enable")]
 async fn enable(
     State(state): State<AppState>,
     Extension(login_user): Extension<LoginUserContext>,
@@ -236,7 +236,7 @@ async fn enable(
         ("bearerAuth" = [])
     )
 )]
-#[require_authorize(operation_id = "system_post_disable", authorize = "")]
+#[require_authorize(operation_id = "system_post_disable", authorize = "system:post:disable")]
 async fn disable(
     State(state): State<AppState>,
     Extension(login_user): Extension<LoginUserContext>,

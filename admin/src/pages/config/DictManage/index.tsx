@@ -12,9 +12,11 @@ import DictEdit from './EditDict';
 import DictTypeEdit from './EditDictType';
 import DictDelete from './DeleteDict';
 import CustomizedMore from '@/components/CustomizedMore';
+import { useHomeStore } from '@/store';
 
 export default function DictManage() {
   const { t } = useTranslation();
+  const { hasOperatePermission } = useHomeStore();
 
   const [total, setTotal] = useState<number>(0);
   const [condition, setCondition] = useState<DictQueryCondition>({
@@ -34,7 +36,11 @@ export default function DictManage() {
 
   const handleStatusChange = useCallback(
     async (e: React.ChangeEvent<HTMLInputElement>, checked: boolean, data: SystemDictDataResponse) => {
-      // console.log('status change', data, checked);
+      if (checked) {
+        await enableDict(data.id);
+      } else {
+        await disableDict(data.id);
+      }
 
       // 更新表格
       setRecords((prev) =>
@@ -42,14 +48,6 @@ export default function DictManage() {
           r.id === data.id ? { ...r, status: checked ? 0 : 1 } : r
         )
       );
-
-      if (checked) {
-        await enableDict(data.id);
-      } else {
-        await disableDict(data.id);
-      }
-
-      // refreshData();
     },
     []
   );

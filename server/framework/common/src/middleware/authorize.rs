@@ -195,7 +195,7 @@ pub async fn authorize_handler(request: Request, next: Next) -> Result<Response,
                     if has_permission {
                         Ok(next.run(request).await)
                     } else {
-                        Err(StatusCode::UNAUTHORIZED)
+                        Err(StatusCode::FORBIDDEN)
                     }
 
                 }

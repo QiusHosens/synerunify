@@ -9,7 +9,7 @@ interface CustomizedDataGridProProps {
   columns: GridColDef[];
   initialRows: any[];
   getTreeDataPath: (row: any) => string[];
-  customSortModel?: GridSortModel;
+  initSortModel?: GridSortModel;
   hideFooter?: boolean;
   sx?: SxProps<Theme>;
 }
@@ -18,13 +18,13 @@ const CustomizedDataGridPro: React.FC<CustomizedDataGridProProps> = ({
   columns,
   initialRows,
   getTreeDataPath,
-  customSortModel,
+  initSortModel,
   hideFooter,
   sx,
 }) => {
   // 状态管理
   const [expandedGroups, setExpandedGroups] = useState(new Set<string>());
-  const [sortModel, setSortModel] = useState<GridSortModel>(customSortModel ?? []);
+  const [sortModel, setSortModel] = useState<GridSortModel>(initSortModel ?? []);
   const [filterModel, setFilterModel] = useState<GridFilterModel>({ items: [] });
 
   // 分组数据处理

@@ -80,11 +80,11 @@ impl IntoResponse for AuthError {
             AuthError::WrongCredentials => (StatusCode::UNAUTHORIZED, "Wrong credentials"),
             AuthError::InvalidTenant => (StatusCode::UNAUTHORIZED, "Invalid tenant"),
             AuthError::InvalidUser => (StatusCode::UNAUTHORIZED, "Invalid user"),
-            AuthError::MissingCredentials => (StatusCode::BAD_REQUEST, "Missing credentials"),
+            AuthError::MissingCredentials => (StatusCode::UNAUTHORIZED, "Missing credentials"),
             AuthError::TokenCreation => (StatusCode::INTERNAL_SERVER_ERROR, "Token creation error"),
-            AuthError::InvalidToken => (StatusCode::BAD_REQUEST, "Invalid token"),
+            AuthError::InvalidToken => (StatusCode::UNAUTHORIZED, "Invalid token"),
             AuthError::TokenExpired => (StatusCode::UNAUTHORIZED, "Expired token"),
-            AuthError::UserExpired => (StatusCode::FORBIDDEN, "Expired user"),
+            AuthError::UserExpired => (StatusCode::UNAUTHORIZED, "Expired user"),
             AuthError::CheckOutToken => (StatusCode::UNAUTHORIZED, "该账户已经退出"),
         };
         let body = Json(json!({

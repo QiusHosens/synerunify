@@ -27,20 +27,18 @@ export default function DepartmentManage() {
     async (e: React.ChangeEvent<HTMLInputElement>, checked: boolean, data: SystemDepartmentResponse) => {
       // console.log('status change', data, checked);
 
-      // 更新表格
-      setRecords((prev) =>
-        prev.map((r) =>
-          r.id === data.id ? { ...r, status: checked ? 0 : 1 } : r
-        )
-      );
-
       if (checked) {
         await enableSystemDepartment(data.id);
       } else {
         await disableSystemDepartment(data.id);
       }
 
-      // refreshData();
+      // 更新表格
+      setRecords((prev) =>
+        prev.map((r) =>
+          r.id === data.id ? { ...r, status: checked ? 0 : 1 } : r
+        )
+      );
     },
     []
   );

@@ -41,7 +41,7 @@ pub async fn system_role_menu_route(state: AppState) -> Router {
         ("bearerAuth" = [])
     )
 )]
-#[require_authorize(operation_id = "system_role_menu_update", authorize = "")]
+#[require_authorize(operation_id = "system_role_menu_update", authorize = "system:role:menu")]
 async fn update(
     State(state): State<AppState>,
     Extension(login_user): Extension<LoginUserContext>,
@@ -88,7 +88,7 @@ async fn list(
         ("bearerAuth" = [])
     )
 )]
-#[require_authorize(operation_id = "system_role_menu_get_role_menu", authorize = "")]
+#[require_authorize(operation_id = "system_role_menu_get_role_menu", authorize = "system:role:menu")]
 async fn get_role_menu(
     State(state): State<AppState>,
     Extension(login_user): Extension<LoginUserContext>,

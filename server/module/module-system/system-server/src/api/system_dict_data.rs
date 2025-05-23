@@ -50,7 +50,7 @@ pub async fn system_dict_data_route(state: AppState) -> Router {
         ("bearerAuth" = [])
     )
 )]
-#[require_authorize(operation_id = "system_dict_data_create", authorize = "")]
+#[require_authorize(operation_id = "system_dict_data_create", authorize = "config:dict:add")]
 async fn create(
     State(state): State<AppState>,
     Extension(login_user): Extension<LoginUserContext>,
@@ -75,7 +75,7 @@ async fn create(
         ("bearerAuth" = [])
     )
 )]
-#[require_authorize(operation_id = "system_dict_data_update", authorize = "")]
+#[require_authorize(operation_id = "system_dict_data_update", authorize = "config:dict:edit")]
 async fn update(
     State(state): State<AppState>,
     Extension(login_user): Extension<LoginUserContext>,
@@ -102,7 +102,7 @@ async fn update(
         ("bearerAuth" = [])
     )
 )]
-#[require_authorize(operation_id = "system_dict_data_delete", authorize = "")]
+#[require_authorize(operation_id = "system_dict_data_delete", authorize = "config:dict:delete")]
 async fn delete(
     State(state): State<AppState>,
     Extension(login_user): Extension<LoginUserContext>,
@@ -129,7 +129,7 @@ async fn delete(
         ("bearerAuth" = [])
     )
 )]
-#[require_authorize(operation_id = "system_dict_data_get_by_id", authorize = "")]
+#[require_authorize(operation_id = "system_dict_data_get_by_id", authorize = "config:dict:get")]
 async fn get_by_id(
     State(state): State<AppState>,
     Extension(login_user): Extension<LoginUserContext>,
@@ -159,7 +159,7 @@ async fn get_by_id(
         ("bearerAuth" = [])
     )
 )]
-#[require_authorize(operation_id = "system_dict_data_page", authorize = "")]
+#[require_authorize(operation_id = "system_dict_data_page", authorize = "config:dict:get")]
 async fn page(
     State(state): State<AppState>,
     Extension(login_user): Extension<LoginUserContext>,
@@ -183,7 +183,7 @@ async fn page(
         ("bearerAuth" = [])
     )
 )]
-#[require_authorize(operation_id = "system_dict_data_list", authorize = "")]
+#[require_authorize(operation_id = "system_dict_data_list", authorize = "config:dict:get")]
 async fn list(
     State(state): State<AppState>,
     Extension(login_user): Extension<LoginUserContext>,
@@ -209,7 +209,7 @@ async fn list(
         ("bearerAuth" = [])
     )
 )]
-#[require_authorize(operation_id = "system_dict_data_enable", authorize = "")]
+#[require_authorize(operation_id = "system_dict_data_enable", authorize = "config:dict:enable")]
 async fn enable(
     State(state): State<AppState>,
     Extension(login_user): Extension<LoginUserContext>,
@@ -236,7 +236,7 @@ async fn enable(
         ("bearerAuth" = [])
     )
 )]
-#[require_authorize(operation_id = "system_dict_data_disable", authorize = "")]
+#[require_authorize(operation_id = "system_dict_data_disable", authorize = "config:dict:disable")]
 async fn disable(
     State(state): State<AppState>,
     Extension(login_user): Extension<LoginUserContext>,

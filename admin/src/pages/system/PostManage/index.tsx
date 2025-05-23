@@ -27,18 +27,18 @@ export default function PostManage() {
 
   const handleStatusChange = useCallback(
     async (e: React.ChangeEvent<HTMLInputElement>, checked: boolean, data: SystemPostResponse) => {
+      if (checked) {
+        await enableSystemPost(data.id);
+      } else {
+        await disableSystemPost(data.id);
+      }
+
       // 更新表格
       setRecords((prev) =>
         prev.map((r) =>
           r.id === data.id ? { ...r, status: checked ? 0 : 1 } : r
         )
       );
-
-      if (checked) {
-        await enableSystemPost(data.id);
-      } else {
-        await disableSystemPost(data.id);
-      }
     },
     []
   );

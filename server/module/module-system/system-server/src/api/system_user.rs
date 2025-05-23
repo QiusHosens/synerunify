@@ -53,7 +53,7 @@ pub async fn system_user_route(state: AppState) -> Router {
         ("bearerAuth" = [])
     )
 )]
-#[require_authorize(operation_id = "system_user_create", authorize = "")]
+#[require_authorize(operation_id = "system_user_create", authorize = "system:user:add")]
 async fn create(
     State(state): State<AppState>,
     Extension(login_user): Extension<LoginUserContext>,
@@ -81,7 +81,7 @@ async fn create(
         ("bearerAuth" = [])
     )
 )]
-#[require_authorize(operation_id = "system_user_update", authorize = "")]
+#[require_authorize(operation_id = "system_user_update", authorize = "system:user:edit")]
 async fn update(
     State(state): State<AppState>,
     Extension(login_user): Extension<LoginUserContext>,
@@ -108,7 +108,7 @@ async fn update(
         ("bearerAuth" = [])
     )
 )]
-#[require_authorize(operation_id = "system_user_delete", authorize = "")]
+#[require_authorize(operation_id = "system_user_delete", authorize = "system:user:delete")]
 async fn delete(
     State(state): State<AppState>,
     Extension(login_user): Extension<LoginUserContext>,
@@ -135,7 +135,7 @@ async fn delete(
         ("bearerAuth" = [])
     )
 )]
-#[require_authorize(operation_id = "system_user_get_by_id", authorize = "")]
+#[require_authorize(operation_id = "system_user_get_by_id", authorize = "system:user:get")]
 async fn get_by_id(
     State(state): State<AppState>,
     Extension(login_user): Extension<LoginUserContext>,
@@ -165,7 +165,7 @@ async fn get_by_id(
         ("bearerAuth" = [])
     )
 )]
-#[require_authorize(operation_id = "system_user_page", authorize = "")]
+#[require_authorize(operation_id = "system_user_page", authorize = "system:user:get")]
 async fn page(
     State(state): State<AppState>,
     Extension(login_user): Extension<LoginUserContext>,
@@ -189,7 +189,7 @@ async fn page(
         ("bearerAuth" = [])
     )
 )]
-#[require_authorize(operation_id = "system_user_list", authorize = "")]
+#[require_authorize(operation_id = "system_user_list", authorize = "system:user:get")]
 async fn list(
     State(state): State<AppState>,
     Extension(login_user): Extension<LoginUserContext>,
@@ -215,7 +215,7 @@ async fn list(
         ("bearerAuth" = [])
     )
 )]
-#[require_authorize(operation_id = "system_user_enable", authorize = "")]
+#[require_authorize(operation_id = "system_user_enable", authorize = "system:user:enable")]
 async fn enable(
     State(state): State<AppState>,
     Extension(login_user): Extension<LoginUserContext>,
@@ -242,7 +242,7 @@ async fn enable(
         ("bearerAuth" = [])
     )
 )]
-#[require_authorize(operation_id = "system_user_disable", authorize = "")]
+#[require_authorize(operation_id = "system_user_disable", authorize = "system:user:disable")]
 async fn disable(
     State(state): State<AppState>,
     Extension(login_user): Extension<LoginUserContext>,

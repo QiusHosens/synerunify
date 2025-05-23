@@ -50,7 +50,7 @@ pub async fn system_menu_route(state: AppState) -> Router {
         ("bearerAuth" = [])
     )
 )]
-#[require_authorize(operation_id = "system_menu_create", authorize = "")]
+#[require_authorize(operation_id = "system_menu_create", authorize = "config:menu:add")]
 async fn create(
     State(state): State<AppState>,
     Extension(login_user): Extension<LoginUserContext>,
@@ -75,7 +75,7 @@ async fn create(
         ("bearerAuth" = [])
     )
 )]
-#[require_authorize(operation_id = "system_menu_update", authorize = "")]
+#[require_authorize(operation_id = "system_menu_update", authorize = "config:menu:edit")]
 async fn update(
     State(state): State<AppState>,
     Extension(login_user): Extension<LoginUserContext>,
@@ -102,7 +102,7 @@ async fn update(
         ("bearerAuth" = [])
     )
 )]
-#[require_authorize(operation_id = "system_menu_delete", authorize = "")]
+#[require_authorize(operation_id = "system_menu_delete", authorize = "config:menu:delete")]
 async fn delete(
     State(state): State<AppState>,
     Extension(login_user): Extension<LoginUserContext>,
@@ -129,7 +129,7 @@ async fn delete(
         ("bearerAuth" = [])
     )
 )]
-#[require_authorize(operation_id = "system_menu_get_by_id", authorize = "")]
+#[require_authorize(operation_id = "system_menu_get_by_id", authorize = "config:menu:get")]
 async fn get_by_id(
     State(state): State<AppState>,
     Extension(login_user): Extension<LoginUserContext>,
@@ -159,7 +159,7 @@ async fn get_by_id(
         ("bearerAuth" = [])
     )
 )]
-#[require_authorize(operation_id = "system_menu_page", authorize = "")]
+#[require_authorize(operation_id = "system_menu_page", authorize = "config:menu:get")]
 async fn page(
     State(state): State<AppState>,
     Extension(login_user): Extension<LoginUserContext>,
@@ -183,7 +183,7 @@ async fn page(
         ("bearerAuth" = [])
     )
 )]
-#[require_authorize(operation_id = "system_menu_list", authorize = "")]
+#[require_authorize(operation_id = "system_menu_list", authorize = "config:menu:get")]
 async fn list(
     State(state): State<AppState>,
     Extension(login_user): Extension<LoginUserContext>,
@@ -209,7 +209,7 @@ async fn list(
         ("bearerAuth" = [])
     )
 )]
-#[require_authorize(operation_id = "system_menu_enable", authorize = "")]
+#[require_authorize(operation_id = "system_menu_enable", authorize = "config:menu:enable")]
 async fn enable(
     State(state): State<AppState>,
     Extension(login_user): Extension<LoginUserContext>,
@@ -236,7 +236,7 @@ async fn enable(
         ("bearerAuth" = [])
     )
 )]
-#[require_authorize(operation_id = "system_menu_disable", authorize = "")]
+#[require_authorize(operation_id = "system_menu_disable", authorize = "config:menu:disable")]
 async fn disable(
     State(state): State<AppState>,
     Extension(login_user): Extension<LoginUserContext>,

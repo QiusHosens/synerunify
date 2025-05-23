@@ -29,18 +29,18 @@ export default function TenantManage() {
 
   const handleStatusChange = useCallback(
     async (e: React.ChangeEvent<HTMLInputElement>, checked: boolean, data: SystemTenantResponse) => {
+      if (checked) {
+        await enableSystemTenant(data.id);
+      } else {
+        await disableSystemTenant(data.id);
+      }
+
       // 更新表格
       setRecords((prev) =>
         prev.map((r) =>
           r.id === data.id ? { ...r, status: checked ? 0 : 1 } : r
         )
       );
-
-      if (checked) {
-        await enableSystemTenant(data.id);
-      } else {
-        await disableSystemTenant(data.id);
-      }
     },
     []
   );

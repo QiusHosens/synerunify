@@ -30,18 +30,18 @@ export default function TenantPackageManage() {
 
   const handleStatusChange = useCallback(
     async (e: React.ChangeEvent<HTMLInputElement>, checked: boolean, data: SystemTenantPackageResponse) => {
+      if (checked) {
+        await enableSystemTenantPackage(data.id);
+      } else {
+        await disableSystemTenantPackage(data.id);
+      }
+
       // 更新表格
       setRecords((prev) =>
         prev.map((r) =>
           r.id === data.id ? { ...r, status: checked ? 0 : 1 } : r
         )
       );
-
-      if (checked) {
-        await enableSystemTenantPackage(data.id);
-      } else {
-        await disableSystemTenantPackage(data.id);
-      }
     },
     []
   );

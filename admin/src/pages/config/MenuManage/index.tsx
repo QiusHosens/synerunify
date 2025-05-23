@@ -18,7 +18,7 @@ export default function MenuManage() {
   const { hasOperatePermission } = useHomeStore();
 
   const [records, setRecords] = useState<Array<SystemMenuResponse>>([]);
-  const [sortModel, setSortModel] = useState<GridSortModel>([{
+  const [initSortModel] = useState<GridSortModel>([{
     field: 'sort',
     sort: 'asc'
   }]);
@@ -31,20 +31,18 @@ export default function MenuManage() {
     async (e: React.ChangeEvent<HTMLInputElement>, checked: boolean, data: SystemMenuResponse) => {
       // console.log('status change', data, checked);
 
-      // 更新表格
-      setRecords((prev) =>
-        prev.map((r) =>
-          r.id === data.id ? { ...r, status: checked ? 0 : 1 } : r
-        )
-      );
-
       if (checked) {
         await enableMenu(data.id);
       } else {
         await disableMenu(data.id);
       }
 
-      // refreshData();
+      // 更新表格
+      setRecords((prev) =>
+        prev.map((r) =>
+          r.id === data.id ? { ...r, status: checked ? 0 : 1 } : r
+        )
+      );
     },
     []
   );
@@ -187,7 +185,7 @@ export default function MenuManage() {
         initialRows={records}
         getTreeDataPath={getTreeDataPath}
         hideFooter={true}
-        customSortModel={sortModel}
+        initSortModel={initSortModel}
       />
       <MenuAdd ref={addMenu} onSubmit={refreshData} />
       <MenuEdit ref={editMenu} onSubmit={refreshData} />

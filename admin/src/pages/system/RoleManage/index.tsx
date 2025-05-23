@@ -34,18 +34,18 @@ export default function RoleManage() {
 
   const handleStatusChange = useCallback(
     async (e: React.ChangeEvent<HTMLInputElement>, checked: boolean, data: SystemRoleResponse) => {
+      if (checked) {
+        await enableSystemRole(data.id);
+      } else {
+        await disableSystemRole(data.id);
+      }
+
       // 更新表格
       setRecords((prev) =>
         prev.map((r) =>
           r.id === data.id ? { ...r, status: checked ? 0 : 1 } : r
         )
       );
-
-      if (checked) {
-        await enableSystemRole(data.id);
-      } else {
-        await disableSystemRole(data.id);
-      }
     },
     []
   );
