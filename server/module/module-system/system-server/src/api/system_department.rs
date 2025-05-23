@@ -183,7 +183,7 @@ async fn page(
         ("bearerAuth" = [])
     )
 )]
-#[require_authorize(operation_id = "system_department_list", authorize = "system:department:get")]
+#[require_authorize(operation_id = "system_department_list", authorize = "")]
 async fn list(
     State(state): State<AppState>,
     Extension(login_user): Extension<LoginUserContext>,

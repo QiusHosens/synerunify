@@ -8,9 +8,11 @@ import { disableSystemPost, enableSystemPost, pageSystemPost, SystemPostQueryCon
 import PostAdd from './Add';
 import PostEdit from './Edit';
 import PostDelete from './Delete';
+import { useHomeStore } from '@/store';
 
 export default function PostManage() {
   const { t } = useTranslation();
+  const { hasOperatePermission } = useHomeStore();
 
   const [total, setTotal] = useState<number>(0);
   const [condition, setCondition] = useState<SystemPostQueryCondition>({
@@ -43,6 +45,10 @@ export default function PostManage() {
     []
   );
 
+  const statusDisabled = (status: number): boolean => {
+    return (status && !hasOperatePermission('system:post:enable')) || (!status && !hasOperatePermission('system:post:disable'));
+  }
+
   const columns: GridColDef[] = useMemo(
     () => [
       { field: 'name', headerName: t("page.post.title.name"), flex: 1, minWidth: 100 },
@@ -57,7 +63,7 @@ export default function PostManage() {
         minWidth: 80,
         renderCell: (params: GridRenderCellParams) => (
           <Box sx={{ height: '100%', display: 'flex', gap: 1, alignItems: 'center' }}>
-            <Switch name="status" checked={!params.row.status} onChange={(event, checked) => handleStatusChange(event, checked, params.row)} />
+            <Switch name="status" checked={!params.row.status} disabled={statusDisabled(params.row.status)} onChange={(event, checked) => handleStatusChange(event, checked, params.row)} />
           </Box>
         ),
       },
@@ -71,21 +77,21 @@ export default function PostManage() {
         minWidth: 100,
         renderCell: (params: GridRenderCellParams) => (
           <Box sx={{ height: '100%', display: 'flex', gap: 1, alignItems: 'center' }}>
-            <Button
+            {hasOperatePermission('system:post:edit') && <Button
               size="small"
               variant='customOperate'
               title={t('page.post.operate.edit')}
               startIcon={<EditIcon />}
               onClick={() => handleClickOpenEdit(params.row)}
-            />
-            <Button
+            />}
+            {hasOperatePermission('system:post:delete') && <Button
               sx={{ color: 'error.main' }}
               size="small"
               variant='customOperate'
               title={t('page.post.operate.delete')}
               startIcon={<DeleteIcon />}
               onClick={() => handleClickOpenDelete(params.row)}
-            />
+            />}
           </Box>
         ),
       },
@@ -128,9 +134,9 @@ export default function PostManage() {
     <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
       <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between' }}>
         <Box></Box>
-        <Button variant="customContained" onClick={handleClickOpenAdd}>
+        {hasOperatePermission('system:post:add') && <Button variant="customContained" onClick={handleClickOpenAdd}>
           {t('global.operate.add')}
-        </Button>
+        </Button>}
       </Box>
       <DataGrid
         rowCount={total}

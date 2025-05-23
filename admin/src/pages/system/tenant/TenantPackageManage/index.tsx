@@ -10,9 +10,12 @@ import TenantPackageEdit from './Edit';
 import TenantPackageDelete from './Delete';
 import TenantPackageMenuSetting from './MenuSetting';
 import CustomizedMore from '@/components/CustomizedMore';
+import { useHomeStore } from '@/store';
+import CustomizedAutoMore from '@/components/CustomizedAutoMore';
 
 export default function TenantPackageManage() {
   const { t } = useTranslation();
+  const { hasOperatePermission } = useHomeStore();
 
   const [total, setTotal] = useState<number>(0);
   const [condition, setCondition] = useState<SystemTenantPackageQueryCondition>({
@@ -46,6 +49,10 @@ export default function TenantPackageManage() {
     []
   );
 
+  const statusDisabled = (status: number): boolean => {
+    return (status && !hasOperatePermission('system:tenant:package:enable')) || (!status && !hasOperatePermission('system:tenant:package:disable'));
+  }
+
   const columns: GridColDef[] = useMemo(
     () => [
       { field: 'name', headerName: t("page.tenant.package.title.name"), flex: 1, minWidth: 100 },
@@ -58,7 +65,7 @@ export default function TenantPackageManage() {
         minWidth: 80,
         renderCell: (params: GridRenderCellParams) => (
           <Box sx={{ height: '100%', display: 'flex', gap: 1, alignItems: 'center' }}>
-            <Switch name="status" checked={!params.row.status} onChange={(event, checked) => handleStatusChange(event, checked, params.row)} />
+            <Switch name="status" checked={!params.row.status} disabled={statusDisabled(params.row.status)} onChange={(event, checked) => handleStatusChange(event, checked, params.row)} />
           </Box>
         ),
       },
@@ -71,34 +78,30 @@ export default function TenantPackageManage() {
         flex: 1,
         minWidth: 100,
         renderCell: (params: GridRenderCellParams) => (
-          <Box sx={{ height: '100%', display: 'flex', gap: 1, alignItems: 'center' }}>
-            <Button
+          <CustomizedAutoMore>
+            {hasOperatePermission('system:tenant:package:edit') && <Button
               size="small"
               variant='customOperate'
               title={t('page.tenant.package.operate.edit')}
               startIcon={<EditIcon />}
               onClick={() => handleClickOpenEdit(params.row)}
-            />
-            <CustomizedMore>
-              <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-                <Button
-                  size="small"
-                  variant='customOperate'
-                  title={t('page.tenant.package.operate.menu')}
-                  startIcon={<EditIcon />}
-                  onClick={() => handleClickOpenData(params.row)}
-                />
-                <Button
-                  sx={{ mt: 1, color: 'error.main' }}
-                  size="small"
-                  variant='customOperate'
-                  title={t('page.tenant.package.operate.delete')}
-                  startIcon={<DeleteIcon />}
-                  onClick={() => handleClickOpenDelete(params.row)}
-                />
-              </Box>
-            </CustomizedMore>
-          </Box>
+            />}
+            {hasOperatePermission('system:tenant:package:menu') && <Button
+              size="small"
+              variant='customOperate'
+              title={t('page.tenant.package.operate.menu')}
+              startIcon={<EditIcon />}
+              onClick={() => handleClickOpenData(params.row)}
+            />}
+            {hasOperatePermission('system:tenant:package:delete') && <Button
+              sx={{ color: 'error.main' }}
+              size="small"
+              variant='customOperate'
+              title={t('page.tenant.package.operate.delete')}
+              startIcon={<DeleteIcon />}
+              onClick={() => handleClickOpenDelete(params.row)}
+            />}
+          </CustomizedAutoMore>
         ),
       },
     ],
@@ -144,9 +147,9 @@ export default function TenantPackageManage() {
     <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
       <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between' }}>
         <Box></Box>
-        <Button variant="customContained" onClick={handleClickOpenAdd}>
+        {hasOperatePermission('system:tenant:package:add') && <Button variant="customContained" onClick={handleClickOpenAdd}>
           {t('global.operate.add')}
-        </Button>
+        </Button>}
       </Box>
       <DataGrid
         rowCount={total}

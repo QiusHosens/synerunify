@@ -11,6 +11,8 @@ import UserDelete from './Delete';
 import CustomizedMore from '@/components/CustomizedMore';
 import SelectTree from '@/components/SelectTree';
 import UserResetPassword from './ResetPassword';
+import { useHomeStore } from '@/store';
+import CustomizedAutoMore from '@/components/CustomizedAutoMore';
 
 interface TreeNode {
   id: string | number;
@@ -22,6 +24,7 @@ interface TreeNode {
 
 export default function UserManage() {
   const { t } = useTranslation();
+  const { hasOperatePermission } = useHomeStore();
 
   const [total, setTotal] = useState<number>(0);
   const [condition, setCondition] = useState<SystemUserQueryCondition>({
@@ -59,6 +62,10 @@ export default function UserManage() {
     []
   );
 
+  const statusDisabled = (status: number): boolean => {
+    return (status && !hasOperatePermission('system:user:enable')) || (!status && !hasOperatePermission('system:user:disable'));
+  }
+
   const columns: GridColDef[] = useMemo(
     () => [
       { field: 'nickname', headerName: t("page.user.title.nickname"), flex: 1, minWidth: 100 },
@@ -74,7 +81,7 @@ export default function UserManage() {
         minWidth: 80,
         renderCell: (params: GridRenderCellParams) => (
           <Box sx={{ height: '100%', display: 'flex', gap: 1, alignItems: 'center' }}>
-            <Switch name="status" checked={!params.row.status} onChange={(event, checked) => handleStatusChange(event, checked, params.row)} />
+            <Switch name="status" checked={!params.row.status} disabled={statusDisabled(params.row.status)} onChange={(event, checked) => handleStatusChange(event, checked, params.row)} />
           </Box>
         ),
       },
@@ -87,34 +94,30 @@ export default function UserManage() {
         flex: 1,
         minWidth: 100,
         renderCell: (params: GridRenderCellParams) => (
-          <Box sx={{ height: '100%', display: 'flex', gap: 1, alignItems: 'center' }}>
-            <Button
+          <CustomizedAutoMore>
+            {hasOperatePermission('system:user:edit') && <Button
               size="small"
               variant='customOperate'
               title={t('page.user.operate.edit')}
               startIcon={<EditIcon />}
               onClick={() => handleClickOpenEdit(params.row)}
-            />
-            <CustomizedMore>
-              <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-                <Button
-                  size="small"
-                  variant='customOperate'
-                  title={t('page.user.operate.reset')}
-                  startIcon={<EditIcon />}
-                  onClick={() => handleClickOpenReset(params.row)}
-                />
-                <Button
-                  sx={{ mt: 1, color: 'error.main' }}
-                  size="small"
-                  variant='customOperate'
-                  title={t('page.user.operate.delete')}
-                  startIcon={<DeleteIcon />}
-                  onClick={() => handleClickOpenDelete(params.row)}
-                />
-              </Box>
-            </CustomizedMore>
-          </Box>
+            />}
+            {hasOperatePermission('system:user:reset') && <Button
+              size="small"
+              variant='customOperate'
+              title={t('page.user.operate.reset')}
+              startIcon={<EditIcon />}
+              onClick={() => handleClickOpenReset(params.row)}
+            />}
+            {hasOperatePermission('system:user:delete') && <Button
+              sx={{ color: 'error.main' }}
+              size="small"
+              variant='customOperate'
+              title={t('page.user.operate.delete')}
+              startIcon={<DeleteIcon />}
+              onClick={() => handleClickOpenDelete(params.row)}
+            />}
+          </CustomizedAutoMore>
         ),
       },
     ],
@@ -229,9 +232,9 @@ export default function UserManage() {
             />
           </FormControl>
         </Box>
-        <Button variant="customContained" onClick={handleClickOpenAdd}>
+        {hasOperatePermission('system:user:add') && <Button variant="customContained" onClick={handleClickOpenAdd}>
           {t('global.operate.add')}
-        </Button>
+        </Button>}
       </Box>
       <DataGrid
         rowCount={total}

@@ -47,6 +47,10 @@ export default function MenuManage() {
     []
   );
 
+  const statusDisabled = (status: number): boolean => {
+    return (status && !hasOperatePermission('config:menu:enable')) || (!status && !hasOperatePermission('config:menu:disable'));
+  }
+
   const columns: GridColDef[] = useMemo(
     () => [
       { field: 'name', headerName: t("page.menu.title.name"), flex: 1, minWidth: 200 },
@@ -92,7 +96,7 @@ export default function MenuManage() {
         minWidth: 80,
         renderCell: (params: GridRenderCellParams) => (
           <Box sx={{ height: '100%', display: 'flex', gap: 1, alignItems: 'center' }}>
-            <Switch name="status" checked={!params.row.status} onChange={(event, checked) => handleStatusChange(event, checked, params.row)} />
+            <Switch name="status" checked={!params.row.status} disabled={statusDisabled(params.row.status)} onChange={(event, checked) => handleStatusChange(event, checked, params.row)} />
           </Box>
         ),
       },

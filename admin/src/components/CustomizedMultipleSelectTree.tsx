@@ -119,7 +119,7 @@ const CustomizedMultipleSelectTree = ({ required, name, size, label, treeData, e
         input={<OutlinedInput label={label} />}
         renderValue={(selected) => {
           const selectedNodes = findNodeByIds(treeData, selected);
-          console.log('selected nodes', selected, treeData, selectedNodes);
+          // console.log('selected nodes', selected, treeData, selectedNodes);
           return (<Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
             {selectedNodes.map((node) => (
               <CustomizedTag label={node.label} />

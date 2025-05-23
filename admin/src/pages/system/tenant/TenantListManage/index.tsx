@@ -8,11 +8,12 @@ import { disableSystemTenant, enableSystemTenant, pageSystemTenant, SystemTenant
 import TenantAdd from './Add';
 import TenantEdit from './Edit';
 import TenantDelete from './Delete';
-import CustomizedDictTag from '@/components/CustomizedDictTag';
 import CustomizedTag from '@/components/CustomizedTag';
+import { useHomeStore } from '@/store';
 
 export default function TenantManage() {
   const { t } = useTranslation();
+  const { hasOperatePermission } = useHomeStore();
 
   const [total, setTotal] = useState<number>(0);
   const [condition, setCondition] = useState<SystemTenantQueryCondition>({
@@ -45,6 +46,10 @@ export default function TenantManage() {
     []
   );
 
+  const statusDisabled = (status: number): boolean => {
+    return (status && !hasOperatePermission('system:tenant:list:enable')) || (!status && !hasOperatePermission('system:tenant:list:disable'));
+  }
+
   const columns: GridColDef[] = useMemo(
     () => [
       { field: 'name', headerName: t("page.tenant.title.name"), flex: 1, minWidth: 100 },
@@ -72,7 +77,7 @@ export default function TenantManage() {
         minWidth: 80,
         renderCell: (params: GridRenderCellParams) => (
           <Box sx={{ height: '100%', display: 'flex', gap: 1, alignItems: 'center' }}>
-            <Switch name="status" checked={!params.row.status} onChange={(event, checked) => handleStatusChange(event, checked, params.row)} />
+            <Switch name="status" checked={!params.row.status} disabled={statusDisabled(params.row.status)} onChange={(event, checked) => handleStatusChange(event, checked, params.row)} />
           </Box>
         ),
       },
@@ -85,21 +90,21 @@ export default function TenantManage() {
         minWidth: 100,
         renderCell: (params: GridRenderCellParams) => (
           <Box sx={{ height: '100%', display: 'flex', gap: 1, alignItems: 'center' }}>
-            <Button
+            {hasOperatePermission('system:tenant:list:edit') && <Button
               size="small"
               variant='customOperate'
               title={t('page.tenant.operate.edit')}
               startIcon={<EditIcon />}
               onClick={() => handleClickOpenEdit(params.row)}
-            />
-            <Button
+            />}
+            {hasOperatePermission('system:tenant:list:delete') && <Button
               sx={{ mt: 1, color: 'error.main' }}
               size="small"
               variant='customOperate'
               title={t('page.tenant.operate.delete')}
               startIcon={<DeleteIcon />}
               onClick={() => handleClickOpenDelete(params.row)}
-            />
+            />}
           </Box>
         ),
       },
@@ -142,9 +147,9 @@ export default function TenantManage() {
     <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
       <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between' }}>
         <Box></Box>
-        <Button variant="customContained" onClick={handleClickOpenAdd}>
+        {hasOperatePermission('system:tenant:list:add') && <Button variant="customContained" onClick={handleClickOpenAdd}>
           {t('global.operate.add')}
-        </Button>
+        </Button>}
       </Box>
       <DataGrid
         rowCount={total}

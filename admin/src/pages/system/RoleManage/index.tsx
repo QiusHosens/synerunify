@@ -9,13 +9,15 @@ import RoleAdd from './Add';
 import RoleEdit from './Edit';
 import RoleDelete from './Delete';
 import CustomizedDictTag from '@/components/CustomizedDictTag';
-import CustomizedMore from '@/components/CustomizedMore';
 import RoleMenuSetting from './MenuSetting';
 import RoleDataSetting from './DataSetting';
 import CustomizedTag from '@/components/CustomizedTag';
+import { useHomeStore } from '@/store';
+import CustomizedAutoMore from '@/components/CustomizedAutoMore';
 
 export default function RoleManage() {
   const { t } = useTranslation();
+  const { hasOperatePermission } = useHomeStore();
 
   const [total, setTotal] = useState<number>(0);
   const [condition, setCondition] = useState<SystemRoleQueryCondition>({
@@ -50,6 +52,10 @@ export default function RoleManage() {
     []
   );
 
+  const statusDisabled = (status: number): boolean => {
+    return (status && !hasOperatePermission('system:role:enable')) || (!status && !hasOperatePermission('system:role:disable'));
+  }
+
   const columns: GridColDef[] = useMemo(
     () => [
       { field: 'name', headerName: t("page.role.title.name"), flex: 1, minWidth: 100 },
@@ -80,11 +86,11 @@ export default function RoleManage() {
         )
       },
       {
-        field: 'data_scope_department_ids', 
+        field: 'data_scope_department_ids',
         sortable: false,
-        filterable: false, 
-        headerName: t("page.role.title.data.scope.department"), 
-        flex: 1, 
+        filterable: false,
+        headerName: t("page.role.title.data.scope.department"),
+        flex: 1,
         minWidth: 100
       },
       { field: 'remark', headerName: t("page.role.title.remark"), flex: 1, minWidth: 100 },
@@ -96,7 +102,7 @@ export default function RoleManage() {
         minWidth: 80,
         renderCell: (params: GridRenderCellParams) => (
           <Box sx={{ height: '100%', display: 'flex', gap: 1, alignItems: 'center' }}>
-            <Switch name="status" checked={!params.row.status} onChange={(event, checked) => handleStatusChange(event, checked, params.row)} />
+            <Switch name="status" checked={!params.row.status} disabled={statusDisabled(params.row.status)} onChange={(event, checked) => handleStatusChange(event, checked, params.row)} />
           </Box>
         ),
       },
@@ -108,42 +114,37 @@ export default function RoleManage() {
         flex: 1,
         minWidth: 100,
         renderCell: (params: GridRenderCellParams) => (
-          <Box sx={{ height: '100%', display: 'flex', gap: 1, alignItems: 'center' }}>
-            <Button
+          <CustomizedAutoMore>
+            {hasOperatePermission('system:role:edit') && <Button
               size="small"
               variant='customOperate'
               title={t('page.role.operate.edit')}
               startIcon={<EditIcon />}
               onClick={() => handleClickOpenEdit(params.row)}
-            />
-            <CustomizedMore>
-              <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-                <Button
-                  size="small"
-                  variant='customOperate'
-                  title={t('page.role.operate.menu')}
-                  startIcon={<EditIcon />}
-                  onClick={() => handleClickOpenMenu(params.row)}
-                />
-                <Button
-                  sx={{ mt: 1 }}
-                  size="small"
-                  variant='customOperate'
-                  title={t('page.role.operate.data')}
-                  startIcon={<EditIcon />}
-                  onClick={() => handleClickOpenData(params.row)}
-                />
-                {params.row.type == 1 && <Button
-                  sx={{ mt: 1, color: 'error.main' }}
-                  size="small"
-                  variant='customOperate'
-                  title={t('page.role.operate.delete')}
-                  startIcon={<DeleteIcon />}
-                  onClick={() => handleClickOpenDelete(params.row)}
-                />}
-              </Box>
-            </CustomizedMore>
-          </Box>
+            />}
+            {hasOperatePermission('system:role:menu') && <Button
+              size="small"
+              variant='customOperate'
+              title={t('page.role.operate.menu')}
+              startIcon={<EditIcon />}
+              onClick={() => handleClickOpenMenu(params.row)}
+            />}
+            {hasOperatePermission('system:role:data') && <Button
+              size="small"
+              variant='customOperate'
+              title={t('page.role.operate.data')}
+              startIcon={<EditIcon />}
+              onClick={() => handleClickOpenData(params.row)}
+            />}
+            {hasOperatePermission('system:role:delete') && params.row.type == 1 && <Button
+              sx={{ color: 'error.main' }}
+              size="small"
+              variant='customOperate'
+              title={t('page.role.operate.delete')}
+              startIcon={<DeleteIcon />}
+              onClick={() => handleClickOpenDelete(params.row)}
+            />}
+          </CustomizedAutoMore>
         ),
       },
     ],
@@ -194,9 +195,9 @@ export default function RoleManage() {
     <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
       <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between' }}>
         <Box></Box>
-        <Button variant="customContained" onClick={handleClickOpenAdd}>
+        {hasOperatePermission('system:role:add') && <Button variant="customContained" onClick={handleClickOpenAdd}>
           {t('global.operate.add')}
-        </Button>
+        </Button>}
       </Box>
       <DataGrid
         rowCount={total}

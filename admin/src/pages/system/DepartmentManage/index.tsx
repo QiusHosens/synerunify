@@ -43,6 +43,10 @@ export default function DepartmentManage() {
     []
   );
 
+  const statusDisabled = (status: number): boolean => {
+    return (status && !hasOperatePermission('system:department:enable')) || (!status && !hasOperatePermission('system:department:disable'));
+  }
+
   const columns: GridColDef[] = useMemo(
     () => [
       { field: 'name', headerName: t("page.department.title.name"), flex: 1, minWidth: 200 },
@@ -63,7 +67,7 @@ export default function DepartmentManage() {
         minWidth: 80,
         renderCell: (params: GridRenderCellParams) => (
           <Box sx={{ height: '100%', display: 'flex', gap: 1, alignItems: 'center' }}>
-            <Switch name="status" checked={!params.row.status} onChange={(event, checked) => handleStatusChange(event, checked, params.row)} />
+            <Switch name="status" checked={!params.row.status} disabled={statusDisabled(params.row.status)} onChange={(event, checked) => handleStatusChange(event, checked, params.row)} />
           </Box>
         ),
       },
@@ -76,21 +80,21 @@ export default function DepartmentManage() {
         minWidth: 100,
         renderCell: (params: GridRenderCellParams) => (
           <Box sx={{ height: '100%', display: 'flex', gap: 1, alignItems: 'center' }}>
-            <Button
+            {hasOperatePermission('system:department:edit') && <Button
               size="small"
               variant='customOperate'
               title={t('page.department.operate.edit')}
               startIcon={<EditIcon />}
               onClick={() => handleClickOpenEdit(params.row)}
-            />
-            <Button
+            />}
+            {hasOperatePermission('system:department:delete') && <Button
               sx={{ color: 'error.main' }}
               size="small"
               variant='customOperate'
               title={t('page.department.operate.delete')}
               startIcon={<DeleteIcon />}
               onClick={() => handleClickOpenDelete(params.row)}
-            />
+            />}
           </Box>
         ),
       },
@@ -146,9 +150,9 @@ export default function DepartmentManage() {
     <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
       <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between' }}>
         <Box></Box>
-        <Button variant="customContained" onClick={handleClickOpenAdd}>
+        {hasOperatePermission('system:department:add') && <Button variant="customContained" onClick={handleClickOpenAdd}>
           {t('global.operate.add')}
-        </Button>
+        </Button>}
       </Box>
       <CustomizedDataGridPro
         columns={columns}
