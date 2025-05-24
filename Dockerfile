@@ -7,20 +7,20 @@ RUN update-ca-certificates
 
 WORKDIR /app
 
-COPY ./server .
+COPY ./server ./server
 
-RUN cd server \
+RUN cd server && \
     cargo build --release
 
 # build admin
 FROM node AS build-admin
 WORKDIR /app
 
-COPY ./admin .
+COPY ./admin ./admin
 
-RUN cd admin \
-    npm install yarn -g --registry https://registry.npmmirror.com \
-    yarn install --registry https://registry.npmmirror.com \
+RUN cd admin && \
+#    npm install yarn -g --registry https://registry.npmmirror.com && \
+    yarn install --registry https://registry.npmmirror.com && \
     yarn build
 
 # build final
