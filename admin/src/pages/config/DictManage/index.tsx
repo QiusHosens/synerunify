@@ -182,6 +182,7 @@ export default function DictManage() {
     <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
       <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between' }}>
         <Box>
+          {/* <SvgIcon component={ReactIcon} /> */}
           <FormControl sx={{ minWidth: 120, '& .MuiSelect-root': { width: '200px' } }}>
             <InputLabel size="small" id="dict-type-select-label">{t("page.dict.title.type")}</InputLabel>
             <Select
@@ -211,7 +212,10 @@ export default function DictManage() {
                 input: {
                   startAdornment: (
                     <InputAdornment position="start">
-                      <SvgIcon component={SearchIcon} />
+                      {/* <SvgIcon component={SearchIcon} /> */}
+                      <SvgIcon fontSize="small">
+                        <SearchIcon />
+                      </SvgIcon>
                     </InputAdornment>
                   ),
                 },

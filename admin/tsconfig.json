@@ -20,6 +20,7 @@
     "paths": {
       "@/*": ["src/*"]            // Configure @ to point to src directory
     },
+    "types": ["vite-plugin-svgr/client"] // svgr
   },
   "include": ["src"],
   "references": [{ "path": "./tsconfig.node.json" }]

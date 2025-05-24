@@ -428,7 +428,10 @@ const UserAdd = forwardRef(({ onSubmit }: UserAddProps, ref) => {
                       mr: -1,
                     }}
                   >
-                    <CustomSvgIcon fontSize="small" component={showPassword ? PasswordShowIcon : PasswordHideIcon} />
+                    {/* <CustomSvgIcon fontSize="small" component={showPassword ? PasswordShowIcon : PasswordHideIcon} /> */}
+                    <SvgIcon fontSize="small">
+                      {showPassword ? <PasswordShowIcon /> : <PasswordHideIcon />}
+                    </SvgIcon>
                   </IconButton>
                 </InputAdornment>
               }
