@@ -125,7 +125,7 @@ export default function SettingsButton({ sx }: SettingsButtonProps) {
           </Box>
           <Box>
             <SvgIcon inheritViewBox sx={{ color: 'primary.main' }}>
-              <LigntIcon color='primary.main' />
+              <LigntIcon />
             </SvgIcon>
           </Box>
         </Stack>

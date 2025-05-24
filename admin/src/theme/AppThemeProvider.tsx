@@ -4,20 +4,9 @@ import { GlobalStyles } from '@mui/material';
 import { colorSchemes, typography } from './themePrimitives';
 import {
   buttonsCustomizations,
-  // popoversCustomizations,
   dataGridsCustomizations,
   switchsCustomizations,
   badgesCustomizations,
-
-  // inputsCustomizations,
-  // dataDisplayCustomizations,
-  // feedbackCustomizations,
-  // navigationCustomizations,
-  // surfacesCustomizations,
-  // chartsCustomizations,
-  // dataGridCustomizations,
-  // datePickersCustomizations,
-  // treeViewCustomizations,
 } from './customizations';
 
 export default function AppThemeProvider({ children }: { children: React.ReactNode }) {
@@ -50,19 +39,9 @@ export default function AppThemeProvider({ children }: { children: React.ReactNo
     },
     components: {
       ...buttonsCustomizations,
-      // ...popoversCustomizations,
       ...dataGridsCustomizations,
       ...switchsCustomizations,
       ...badgesCustomizations,
-      // ...inputsCustomizations,
-      // ...dataDisplayCustomizations,
-      // ...feedbackCustomizations,
-      // ...navigationCustomizations,
-      // ...surfacesCustomizations,
-      // ...chartsCustomizations,
-      // ...dataGridCustomizations,
-      // ...datePickersCustomizations,
-      // ...treeViewCustomizations,
     },
   });
 
