@@ -1,0 +1,123 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-config
+  namespace: synerunify-base
+  labels:
+    app: mysql
+data:
+  my.cnf: |-
+    [client]
+    default-character-set=utf8mb4
+    [mysql]
+    default-character-set=utf8mb4
+    [mysqld] 
+    skip-name-resolve
+    max_connections = 2000
+    secure_file_priv=/var/lib/mysql
+    sql_mode=STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION
+...
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: mysql
+  namespace: synerunify-base
+  labels:
+    app: mysql
+  annotations:
+    deployment.kubernetes.io/revision: '1'
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      volumes:
+        - name: host-time
+          hostPath:
+            path: /etc/localtime
+            type: ''
+        - name: mysql-volume
+          hostPath:
+            path: /data/volume/mysql
+            type: ''
+        - name: volume-oac5aw
+          configMap:
+            name: mysql-config
+            defaultMode: 420
+      containers:
+        - name: mysql
+          image: 'mysql:8.1.0'
+          ports:
+            - name: tcp-3306
+              containerPort: 3306
+              protocol: TCP
+            - name: tcp-33060
+              containerPort: 33060
+              protocol: TCP
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: synerunify
+          resources: {}
+          volumeMounts:
+            - name: host-time
+              readOnly: true
+              mountPath: /etc/localtime
+            - name: mysql-volume
+              mountPath: /var/lib/mysql
+            - name: volume-oac5aw
+              readOnly: true
+              mountPath: /etc/mysql/conf.d/my.cnf
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          imagePullPolicy: IfNotPresent
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      serviceAccountName: default
+      securityContext: {}
+      schedulerName: default-scheduler
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 25%
+      maxSurge: 25%
+  revisionHistoryLimit: 10
+  progressDeadlineSeconds: 600
+...
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: mysql
+  namespace: synerunify-base
+  labels:
+    app: mysql
+spec:
+  ports:
+    - name: tcp-3306
+      protocol: TCP
+      port: 3306
+      targetPort: 3306
+      nodePort: 3306
+    - name: tcp-33060
+      protocol: TCP
+      port: 33060
+      targetPort: 33060
+      nodePort: 33060
+  selector:
+    app: mysql
+  type: NodePort
+  sessionAffinity: None
+  externalTrafficPolicy: Cluster
+  ipFamilies:
+    - IPv4
+  ipFamilyPolicy: SingleStack
+  internalTrafficPolicy: Cluster
+...

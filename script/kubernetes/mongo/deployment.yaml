@@ -1,0 +1,96 @@
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: mongo
+  namespace: synerunify
+  labels:
+    app: mongo
+  annotations:
+    deployment.kubernetes.io/revision: '2'
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongo
+  template:
+    metadata:
+      labels:
+        app: mongo
+    spec:
+      volumes:
+        - name: host-time
+          hostPath:
+            path: /etc/localtime
+            type: ''
+        - name: db
+          hostPath:
+            path: /data/volume/mongo/db
+            type: ''
+        - name: configdb
+          hostPath:
+            path: /data/volume/mongo/configdb
+            type: ''
+      containers:
+        - name: mongo
+          image: 'mongo:7.0.1'
+          ports:
+            - name: tcp-27017
+              containerPort: 27017
+              protocol: TCP
+          env:
+            - name: MONGO_INITDB_ROOT_USERNAME
+              value: synerunify
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              value: synerunify
+          resources: {}
+          volumeMounts:
+            - name: host-time
+              readOnly: true
+              mountPath: /etc/localtime
+            - name: db
+              mountPath: /data/db
+            - name: configdb
+              mountPath: /data/configdb
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          imagePullPolicy: IfNotPresent
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      serviceAccountName: default
+      securityContext: {}
+      schedulerName: default-scheduler
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 25%
+      maxSurge: 25%
+  revisionHistoryLimit: 10
+  progressDeadlineSeconds: 600
+...
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: mongo
+  namespace: synerunify
+  labels:
+    app: mongo
+spec:
+  ports:
+    - name: tcp-27017
+      protocol: TCP
+      port: 27017
+      targetPort: 27017
+      nodePort: 27017
+  selector:
+    app: mongo
+  type: NodePort
+  sessionAffinity: None
+  externalTrafficPolicy: Cluster
+  ipFamilies:
+    - IPv4
+  ipFamilyPolicy: SingleStack
+  internalTrafficPolicy: Cluster
+...

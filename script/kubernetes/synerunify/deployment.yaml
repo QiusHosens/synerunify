@@ -1,0 +1,114 @@
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: synerunify
+  namespace: synerunify
+  labels:
+    app: synerunify
+  annotations:
+    deployment.kubernetes.io/revision: '2'
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: synerunify
+  template:
+    metadata:
+      labels:
+        app: synerunify
+    spec:
+      volumes:
+        - name: host-time
+          hostPath:
+            path: /etc/localtime
+            type: ''
+        - name: log
+          hostPath:
+            path: /data/volume/synerunify/logs
+            type: ''
+      containers:
+        - name: synerunify
+          image: 'synerunify/synerunify'
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: synerunify-config
+                  key: DATABASE_URL
+            - name: REDIS_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: synerunify-config
+                  key: REDIS_URL
+            - name: MONGO_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: synerunify-config
+                  key: MONGO_URL
+            - name: SYSTEM_SERVER_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: synerunify-config
+                  key: SYSTEM_SERVER_PORT
+            - name: LOGGER_SERVER_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: synerunify-config
+                  key: LOGGER_SERVER_PORT
+            - name: LOG_LEVEL
+              valueFrom:
+                configMapKeyRef:
+                  name: synerunify-config
+                  key: LOG_LEVEL
+          resources: {}
+          volumeMounts:
+            - name: host-time
+              readOnly: true
+              mountPath: /etc/localtime
+            - name: log
+              mountPath: /logs
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          imagePullPolicy: IfNotPresent
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      serviceAccountName: default
+      securityContext: {}
+      schedulerName: default-scheduler
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 25%
+      maxSurge: 25%
+  revisionHistoryLimit: 10
+  progressDeadlineSeconds: 600
+...
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: synerunify
+  namespace: synerunify
+  labels:
+    app: synerunify
+spec:
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 80
+      nodePort: 80
+  selector:
+    app: synerunify
+  type: NodePort
+  sessionAffinity: None
+  ipFamilies:
+    - IPv4
+  ipFamilyPolicy: SingleStack
+...
