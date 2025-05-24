@@ -1,4 +1,5 @@
 import { Theme, Components } from "@mui/material/styles";
+import type {} from '@mui/x-data-grid/themeAugmentation';
 
 export const dataGridsCustomizations: Components<Theme> = {
   MuiDataGrid: {

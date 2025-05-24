@@ -1,8 +1,4 @@
-import AppTheme from "@/theme/AppTheme";
-import { alpha } from "@mui/material/styles";
-import CssBaseline from "@mui/material/CssBaseline";
 import Box from "@mui/material/Box";
-import Stack from "@mui/material/Stack";
 import SideMenu from "./SideMenu";
 import { useAuthStore, useDictStore, useHomeStore, useThemeStore } from "@/store";
 import { useEffect } from "react";
@@ -10,8 +6,6 @@ import Header from "./Header";
 import TopMenu from "./TopMenu";
 import BottomMenu from "./BottomMenu";
 import MainGrid from "./MainGrid";
-
-const xThemeComponents = {};
 
 interface LayoutProps {
   children?: React.ReactNode; // 添加 children 属性
@@ -26,10 +20,9 @@ export default function Layout({ children }: LayoutProps) {
   const sideMenuWidth = 288; // 左侧导航栏宽度
 
   const { access_token } = useAuthStore();
-  const { nickname, routes, routeTree, fetchAndSetHome } = useHomeStore();
+  const { routeTree, fetchAndSetHome } = useHomeStore();
   const { fetchAndSetDict } = useDictStore();
 
-  const isVertical = navPosition === 'top' || navPosition === 'bottom';
   const layoutStyles = {
     position: 'relative',
     display: 'flex',

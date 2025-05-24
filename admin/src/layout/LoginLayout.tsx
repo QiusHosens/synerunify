@@ -1,8 +1,6 @@
-import { Box, CssBaseline, Stack } from "@mui/material";
+import { Stack } from "@mui/material";
 import SettingsButton from "@/components/SettingsButton";
-import AppTheme from "@/theme/AppTheme";
 import { styled } from '@mui/material/styles';
-import ColorModeIconDropdown from "./BaseLayout/ColorModeIconDropdown";
 
 const SignInContainer = styled(Stack)(({ theme }) => ({
   height: 'calc((1 - var(--template-frame-height, 0)) * 100dvh)',
