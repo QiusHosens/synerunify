@@ -8,5 +8,5 @@
    ```
 2. **Install quickly via docker**
    ```bash
-   sudo docker run --name synerunify -p 80:80 -d synerunify/synerunify
+   docker run --name synerunify -p 80:80 -d synerunify/synerunify
    ```
