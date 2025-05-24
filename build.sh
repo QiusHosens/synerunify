@@ -1,1 +1,1 @@
-docker build -t synerunify/synerunify:1.0.0 .
+docker build -t synerunify/synerunify .
