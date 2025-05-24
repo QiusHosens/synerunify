@@ -9,6 +9,8 @@
   "switch_theme": "切换到{{mode}}主题",
   "nav_position": "导航位置：{{position}}",
 
+  "global.layout.setting": "设置",
+
   "global.condition.keyword": "请输入关键字",
   "global.operate.add": "新增",
   "global.operate.confirm.continue": "保存并继续",
