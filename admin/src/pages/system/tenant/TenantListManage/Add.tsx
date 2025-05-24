@@ -378,7 +378,7 @@ const TenantAdd = forwardRef(({ onSubmit }: TenantAddProps, ref) => {
                     onMouseUp={handleMouseUpPassword}
                     edge="end"
                     sx={{
-                      p: 1,
+                      p: 0.5,
                       mr: -1,
                     }}
                   >

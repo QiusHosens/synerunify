@@ -168,7 +168,7 @@ const UserResetPassword = forwardRef(({ onSubmit }: UserResetPasswordProps, ref)
                     onMouseUp={handleMouseUpPassword}
                     edge="end"
                     sx={{
-                      p: 1,
+                      p: 0.5,
                       mr: -1,
                     }}
                   >
