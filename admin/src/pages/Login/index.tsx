@@ -3,7 +3,6 @@ import {
   TextField,
   Box,
   Typography,
-  useTheme,
   Alert,
   FormControl,
   FormLabel,
@@ -37,7 +36,6 @@ const Card = styled(MuiCard)(({ theme }) => ({
 }));
 
 export default function Login() {
-  const theme = useTheme();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -56,7 +54,7 @@ export default function Login() {
         response.access_token,
         response.refresh_token
       );
-
+      console.log('login success');
       // 登录成功后获取动态路由
       await fetchAndSetHome(response.access_token);
 

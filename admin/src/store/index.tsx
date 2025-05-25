@@ -127,6 +127,7 @@ export const useHomeStore = create<HomeState>((set) => ({
     return operates.some(op => op.permission === operateCode);
   },
   fetchAndSetHome: async (token) => {
+    console.log('invoke fetch and set home');
     const logout = () => {
       useAuthStore.getState().logout();
       window.location.href = '/login';

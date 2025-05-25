@@ -6,12 +6,14 @@ import Header from "./Header";
 import TopMenu from "./TopMenu";
 import BottomMenu from "./BottomMenu";
 import MainGrid from "./MainGrid";
+import { HomeMenuResponse } from "@/api";
 
 interface LayoutProps {
+  routeTree: HomeMenuResponse[]; // 路由树
   children?: React.ReactNode; // 添加 children 属性
 }
 
-export default function Layout({ children }: LayoutProps) {
+export default function Layout({ routeTree, children }: LayoutProps) {
 
   const { navPosition } = useThemeStore();
   const headerHeight = 72; // 固定顶部导航栏高度
@@ -19,8 +21,8 @@ export default function Layout({ children }: LayoutProps) {
   const bottomMenuHeight = 72; // 底部导航栏高度
   const sideMenuWidth = 288; // 左侧导航栏宽度
 
-  const { access_token } = useAuthStore();
-  const { routeTree, fetchAndSetHome } = useHomeStore();
+  // const { access_token } = useAuthStore();
+  // const { routeTree, fetchAndSetHome } = useHomeStore();
   const { fetchAndSetDict } = useDictStore();
 
   const layoutStyles = {
@@ -31,10 +33,15 @@ export default function Layout({ children }: LayoutProps) {
     width: '100%',
   };
 
+  // useEffect(() => {
+  //   fetchAndSetHome(access_token);
+  //   fetchAndSetDict();
+  // }, [access_token, fetchAndSetHome]);
+
   useEffect(() => {
-    fetchAndSetHome(access_token);
+    // fetchAndSetHome(access_token);
     fetchAndSetDict();
-  }, [access_token, fetchAndSetHome]);
+  }, []);
 
   return (
     <>

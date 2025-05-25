@@ -24,7 +24,7 @@ const componentMap: { [key: string]: React.LazyExoticComponent<React.ComponentTy
 export default function Router() {
   const { access_token } = useAuthStore();
   const navigate = useNavigate();
-  const { routes, fetchAndSetHome } = useHomeStore();
+  const { routes, routeTree, fetchAndSetHome } = useHomeStore();
 
   // 获取动态路由
   useEffect(() => {
@@ -54,7 +54,7 @@ export default function Router() {
             key={route.path}
             path={route.path}
             element={
-              <Layout>
+              <Layout routeTree={routeTree}>
                 {componentMap[route.component] ? (
                   React.createElement(componentMap[route.component])
                 ) : (
