@@ -37,7 +37,7 @@ export default function Search() {
           input: {
             startAdornment: (
               <InputAdornment position="start">
-                <SvgIcon component={SearchIcon} />
+                <SvgIcon fontSize='small' component={SearchIcon} />
               </InputAdornment>
             ),
           },

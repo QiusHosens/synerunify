@@ -213,9 +213,7 @@ export default function DictManage() {
                   startAdornment: (
                     <InputAdornment position="start">
                       {/* <SvgIcon component={SearchIcon} /> */}
-                      <SvgIcon fontSize="small">
-                        <SearchIcon />
-                      </SvgIcon>
+                      <SvgIcon fontSize="small" component={SearchIcon} />
                     </InputAdornment>
                   ),
                 },

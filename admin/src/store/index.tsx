@@ -7,7 +7,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
 // 定义字体类型
-type FontFamily = 'Roboto' | 'Poppins' | 'Inter';
+type FontFamily = 'Public Sans' | 'Inter' | 'DM Sans' | 'Nunito Sans';
 
 // 主题状态
 interface ThemeState {
@@ -70,7 +70,7 @@ export const useThemeStore = create<ThemeState>()(
         function isColorSchemeName(key: string): key is ColorSchemeName {
           return validColorSchemes.includes(key as ColorSchemeName);
         }
-        console.log('update primary', primary)
+        // console.log('update primary', primary)
         if (isColorSchemeName(primary)) {
           set({ primary: systemColorSchemes[primary] })
           return;

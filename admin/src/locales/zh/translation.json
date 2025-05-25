@@ -10,6 +10,11 @@
   "nav_position": "导航位置：{{position}}",
 
   "global.layout.setting": "设置",
+  "global.layout.title.theme": "主题",
+  "global.layout.title.nav": "布局",
+  "global.layout.title.theme.system": "系统主题",
+  "global.layout.title.font": "字体",
+  "global.layout.title.font.size": "字体大小",
 
   "global.condition.keyword": "请输入关键字",
   "global.operate.add": "新增",

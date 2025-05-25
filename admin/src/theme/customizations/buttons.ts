@@ -1,5 +1,6 @@
-import { alpha, Theme, Components } from '@mui/material/styles';
-import { gray } from '../themePrimitives';
+import { alpha, Theme, Components } from "@mui/material/styles";
+import { gray } from "../themePrimitives";
+import { unstable_useEnhancedEffect } from "@mui/material";
 
 export const buttonsCustomizations: Components<Theme> = {
   MuiButtonBase: {
@@ -9,11 +10,11 @@ export const buttonsCustomizations: Components<Theme> = {
     },
     styleOverrides: {
       root: ({ theme }) => ({
-        boxSizing: 'border-box',
-        transition: 'all 100ms ease-in',
-        '&:focus-visible': {
+        boxSizing: "border-box",
+        transition: "all 100ms ease-in",
+        "&:focus-visible": {
           outline: `3px solid ${alpha(theme.palette.primary.main, 0.5)}`,
-          outlineOffset: '2px',
+          outlineOffset: "2px",
         },
       }),
     },
@@ -21,9 +22,9 @@ export const buttonsCustomizations: Components<Theme> = {
   MuiButton: {
     styleOverrides: {
       root: ({ theme }) => ({
-        boxShadow: 'none',
+        boxShadow: "none",
         borderRadius: theme.shape.borderRadius,
-        textTransform: 'none',
+        textTransform: "none",
         variants: [
           // {
           //   props: {
@@ -44,31 +45,37 @@ export const buttonsCustomizations: Components<Theme> = {
           // },
           {
             props: {
-              color: 'primary',
-              variant: 'customContained',
+              color: "primary",
+              variant: "customContained",
             },
             style: {
-              color: 'white',
+              color: "white",
               // backgroundColor: gray[900],
               // backgroundImage: `linear-gradient(to bottom, ${gray[700]}, ${gray[800]})`,
               // boxShadow: `inset 0 1px 0 ${gray[600]}, inset 0 -1px 0 1px hsl(220, 0%, 0%)`,
               // border: `1px solid ${gray[700]}`,
               backgroundColor: alpha(theme.palette.primary.main, 0.9),
-              backgroundImage: `linear-gradient(to bottom, ${alpha(theme.palette.primary.main, 0.7)}, ${alpha(theme.palette.primary.main, 0.8)})`,
-              boxShadow: `inset 0 1px 0 ${alpha(theme.palette.primary.main, 0.6)}, inset 0 -1px 0 1px ${alpha(theme.palette.primary.main, 0.6)}`,
+              backgroundImage: `linear-gradient(to bottom, ${alpha(
+                theme.palette.primary.main,
+                0.7
+              )}, ${alpha(theme.palette.primary.main, 0.8)})`,
+              boxShadow: `inset 0 1px 0 ${alpha(
+                theme.palette.primary.main,
+                0.6
+              )}, inset 0 -1px 0 1px ${alpha(theme.palette.primary.main, 0.6)}`,
               border: `1px solid ${alpha(theme.palette.primary.main, 0.7)}`,
-              '&:hover': {
-                backgroundImage: 'none',
+              "&:hover": {
+                backgroundImage: "none",
                 // backgroundColor: gray[700],
                 backgroundColor: alpha(theme.palette.primary.main, 0.7),
-                boxShadow: 'none',
+                boxShadow: "none",
               },
-              '&:active': {
+              "&:active": {
                 // backgroundColor: gray[800],
                 backgroundColor: alpha(theme.palette.primary.main, 0.8),
               },
-              ...theme.applyStyles('dark', {
-                color: 'black', // 暂时与white一样
+              ...theme.applyStyles("dark", {
+                color: "black", // 暂时与white一样
                 // backgroundColor: gray[50],
                 // backgroundImage: `linear-gradient(to bottom, ${gray[100]}, ${gray[50]})`,
                 // boxShadow: 'inset 0 -1px 0  hsl(220, 30%, 80%)',
@@ -82,15 +89,24 @@ export const buttonsCustomizations: Components<Theme> = {
                 //   backgroundColor: gray[400],
                 // },
                 backgroundColor: alpha(theme.palette.primary.main, 0.9),
-                backgroundImage: `linear-gradient(to bottom, ${alpha(theme.palette.primary.main, 0.7)}, ${alpha(theme.palette.primary.main, 0.8)})`,
-                boxShadow: `inset 0 1px 0 ${alpha(theme.palette.primary.main, 0.6)}, inset 0 -1px 0 1px ${alpha(theme.palette.primary.main, 0.6)}`,
+                backgroundImage: `linear-gradient(to bottom, ${alpha(
+                  theme.palette.primary.main,
+                  0.7
+                )}, ${alpha(theme.palette.primary.main, 0.8)})`,
+                boxShadow: `inset 0 1px 0 ${alpha(
+                  theme.palette.primary.main,
+                  0.6
+                )}, inset 0 -1px 0 1px ${alpha(
+                  theme.palette.primary.main,
+                  0.6
+                )}`,
                 border: `1px solid ${alpha(theme.palette.primary.main, 0.7)}`,
-                '&:hover': {
-                  backgroundImage: 'none',
+                "&:hover": {
+                  backgroundImage: "none",
                   backgroundColor: alpha(theme.palette.primary.main, 0.7),
-                  boxShadow: 'none',
+                  boxShadow: "none",
                 },
-                '&:active': {
+                "&:active": {
                   backgroundColor: alpha(theme.palette.primary.main, 0.8),
                 },
               }),
@@ -98,32 +114,32 @@ export const buttonsCustomizations: Components<Theme> = {
           },
           {
             props: {
-              color: 'primary',
-              variant: 'customOperate',
+              color: "primary",
+              variant: "customOperate",
             },
             style: {
               color: theme.palette.primary.main,
-              minWidth: 'auto',
-              padding: '8px',
-              borderRadius: '50%',
-              '&:hover': {
+              minWidth: "auto",
+              padding: "8px",
+              borderRadius: "50%",
+              "&:hover": {
                 // backgroundColor: gray[100],
                 // backgroundColor: `${alpha((theme.vars || theme).palette.primary.main, 0.2)}`
-                backgroundColor: alpha(theme.palette.primary.main, 0.2)
+                backgroundColor: alpha(theme.palette.primary.main, 0.2),
               },
-              '&:active': {
+              "&:active": {
                 // backgroundColor: gray[200],
-                backgroundColor: alpha(theme.palette.primary.main, 0.2)
+                backgroundColor: alpha(theme.palette.primary.main, 0.2),
               },
-              '& > span': {
+              "& > span": {
                 margin: 0,
               },
-              ...theme.applyStyles('dark', {
+              ...theme.applyStyles("dark", {
                 color: gray[50],
-                '&:hover': {
+                "&:hover": {
                   backgroundColor: gray[700],
                 },
-                '&:active': {
+                "&:active": {
                   backgroundColor: alpha(gray[700], 0.7),
                 },
               }),
@@ -216,4 +232,4 @@ export const buttonsCustomizations: Components<Theme> = {
       }),
     },
   },
-}
+};

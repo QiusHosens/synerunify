@@ -45,8 +45,8 @@ export default function Header({ sx, height, routeTree }: HeaderProps) {
         <NavbarBreadcrumbs routeTree={routeTree} />
         <Stack direction="row" sx={{ gap: 1 }}>
           <Search />
-          <MenuButton showBadge aria-label="Open notifications">
-            <NotificationsRoundedIcon />
+          <MenuButton size="medium" showBadge aria-label="Open notifications">
+            <NotificationsRoundedIcon fontSize="medium" />
           </MenuButton>
           {/* <ColorModeIconDropdown /> */}
           <SettingsButton />
