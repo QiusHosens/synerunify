@@ -57,7 +57,7 @@ export const useThemeStore = create<ThemeState>()(
       navPosition: 'left',
       primaryKey: '',
       primary: null,
-      fontFamily: 'Roboto',
+      fontFamily: 'Public Sans',
       fontSize: 16,
       setThemeMode: (mode) => {
         set({ mode })
