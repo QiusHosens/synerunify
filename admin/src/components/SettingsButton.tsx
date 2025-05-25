@@ -1,6 +1,6 @@
-import { IconButton, Menu, MenuItem, Divider, useTheme, Box, SvgIcon, Stack, Typography, Button, ButtonBase, Slider } from '@mui/material';
+import { IconButton, Menu, useTheme, Box, SvgIcon, Stack, Typography, Slider } from '@mui/material';
 import { alpha, styled, SxProps, Theme, useColorScheme } from "@mui/material/styles";
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useThemeStore } from '@/store';
 import { useTranslation } from 'react-i18next';
 import SettingIcon from '@/assets/image/svg/setting.svg';
@@ -33,7 +33,7 @@ export default function SettingsButton({ sx }: SettingsButtonProps) {
     setFontFamily,
     setFontSize,
   } = useThemeStore();
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const { setMode } = useColorScheme();
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -45,10 +45,6 @@ export default function SettingsButton({ sx }: SettingsButtonProps) {
     //   padding: theme.spacing(1.5),
     // },
   }));
-
-  // useEffect(() => {
-  //     handleSettingsClick();
-  //   }, []);
 
   const handleSettingsClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -74,11 +70,6 @@ export default function SettingsButton({ sx }: SettingsButtonProps) {
 
   const handleNavPosition = (position: 'left' | 'top' | 'bottom') => {
     setNavPosition(position);
-    // handleClose();
-  };
-
-  const handleLanguageChange = (lng: string) => {
-    i18n.changeLanguage(lng);
     // handleClose();
   };
 
@@ -241,22 +232,9 @@ export default function SettingsButton({ sx }: SettingsButtonProps) {
             marks
             min={12}
             max={20}
-            onChange={(event, value) => handleFontSizeChange(value as number)}
+            onChange={(_event, value) => handleFontSizeChange(value as number)}
           />
         </Stack >
-
-        <Divider />
-
-        {/* 语言 */}
-        <MenuItem onClick={() => handleLanguageChange('en')}>
-          English {i18n.language === 'en' && '(Selected)'}
-        </MenuItem>
-        <MenuItem onClick={() => handleLanguageChange('fr')}>
-          Français {i18n.language === 'fr' && '(Selected)'}
-        </MenuItem>
-        <MenuItem onClick={() => handleLanguageChange('zh')}>
-          中文 {i18n.language === 'zh' && '(Selected)'}
-        </MenuItem>
       </Menu >
     </>
   );

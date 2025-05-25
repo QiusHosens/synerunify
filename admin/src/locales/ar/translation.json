@@ -1,0 +1,11 @@
+{
+  "app_title": "My App",
+  "login": "Login",
+  "username": "Username",
+  "password": "Password",
+  "dashboard": "Dashboard",
+  "welcome": "Welcome to the dashboard!",
+  "settings": "Settings",
+  "switch_theme": "Switch to {{mode}} Theme",
+  "nav_position": "Nav Position: {{position}}"
+}

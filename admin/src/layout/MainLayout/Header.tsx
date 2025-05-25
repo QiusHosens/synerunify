@@ -7,6 +7,7 @@ import MenuButton from './MenuButton';
 import Search from './Search';
 import SettingsButton from '@/components/SettingsButton';
 import { HomeMenuResponse } from '@/api';
+import Language from "./Language";
 
 interface HeaderProps {
   sx?: SxProps<Theme>;
@@ -45,6 +46,7 @@ export default function Header({ sx, height, routeTree }: HeaderProps) {
         <NavbarBreadcrumbs routeTree={routeTree} />
         <Stack direction="row" sx={{ gap: 1 }}>
           <Search />
+          <Language />
           <MenuButton size="medium" showBadge aria-label="Open notifications">
             <NotificationsRoundedIcon fontSize="medium" />
           </MenuButton>
