@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { alpha, Box, IconButton, Menu, Stack, SvgIcon, useTheme } from '@mui/material';
 import CountryCNIcon from '@/assets/image/svg/CN.svg';
 import CountryGBIcon from '@/assets/image/svg/GB.svg';
@@ -12,6 +12,10 @@ const Language = () => {
 
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
+
+    useEffect(() => {
+        // console.log('language', i18n.language);
+    }, [i18n]);
 
     const handleLanguageClick = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
@@ -33,7 +37,7 @@ const Language = () => {
                 onClick={handleLanguageClick}
             >
                 {/* <SettingsIcon /> */}
-                <SvgIcon sx={{ borderRadius: '6px', height: 'auto' }} width={513} height={342} fontSize='medium' inheritViewBox component={i18n.language === 'zh' ? CountryCNIcon : i18n.language === 'en' ? CountryGBIcon : i18n.language === 'fr' ? CountryFRIcon : CountrySAIcon} />
+                <SvgIcon sx={{ borderRadius: '6px', height: 'auto' }} width={513} height={342} fontSize='medium' inheritViewBox component={(i18n.language === 'zh' || i18n.language === 'zh-CN') ? CountryCNIcon : i18n.language === 'en' ? CountryGBIcon : i18n.language === 'fr' ? CountryFRIcon : CountrySAIcon} />
             </IconButton>
 
             <Menu

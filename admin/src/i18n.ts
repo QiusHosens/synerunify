@@ -6,6 +6,7 @@ import LanguageDetector from 'i18next-browser-languagedetector';
 import enTranslation from './locales/en/translation.json';
 import frTranslation from './locales/fr/translation.json';
 import zhTranslation from './locales/zh/translation.json';
+import arTranslation from './locales/ar/translation.json';
 
 i18n
   .use(LanguageDetector) // 自动检测浏览器语言
@@ -15,8 +16,9 @@ i18n
       en: { translation: enTranslation },
       fr: { translation: frTranslation },
       zh: { translation: zhTranslation },
+      ar: { translation: arTranslation },
     },
-    fallbackLng: 'en', // 默认语言
+    fallbackLng: 'zh', // 默认语言
     interpolation: {
       escapeValue: false, // React 已经处理了 XSS
     },
