@@ -225,8 +225,10 @@ export default function SettingsButton({ sx }: SettingsButtonProps) {
           </Typography>
           <CustomSlider
             defaultValue={fontSize}
-            getAriaValueText={value => `${value}px`}
-            valueLabelDisplay="auto"
+            aria-valuetext={'px'}
+            // getAriaValueText={value => `${value}px`}
+            valueLabelDisplay="on"
+            valueLabelFormat={value => `${value}px`}
             shiftStep={1}
             step={1}
             marks
