@@ -45,6 +45,14 @@ const CustomTag = styled(Chip)<{ color?: 'primary' | 'secondary' | 'default' }>(
         color: theme.palette.text.primary,
       },
     },
+    ...theme.applyStyles("dark", {
+      backgroundColor:
+        color === 'primary'
+          ? theme.palette.primary.light
+          : color === 'secondary'
+            ? theme.palette.secondary.light
+            : theme.palette.grey[700],
+    })
   })
 );
 
