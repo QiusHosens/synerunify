@@ -26,7 +26,7 @@ const Language = () => {
     };
 
     const handleLanguageChange = (language: string) => {
-        console.log('language change', language);
+        // console.log('language change', language);
         i18n.changeLanguage(language);
         handleClose();
     };

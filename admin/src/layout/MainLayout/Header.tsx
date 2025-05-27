@@ -47,10 +47,6 @@ export default function Header({ sx, height, routeTree }: HeaderProps) {
           <Search />
           <Language />
           <Notification />
-          {/* <MenuButton size="medium" showBadge aria-label="Open notifications">
-            <NotificationsRoundedIcon fontSize="medium" />
-          </MenuButton> */}
-          {/* <ColorModeIconDropdown /> */}
           <SettingsButton />
         </Stack>
       </Stack>
