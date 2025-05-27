@@ -74,7 +74,7 @@ export default function RenderMenuItems({ routes, depth = 0 }: { routes: HomeMen
                 <Typography component="span" sx={{ flexShrink: 0, mr: 1.5, display: 'flex', alignItems: 'center' }}>
                   {iconMap[item.icon] && <SvgIcon fontSize='small' inheritViewBox component={iconMap[item.icon]} />}
                 </Typography>
-                <Typography component="span" sx={{ flex: '1 1 auto' }}>
+                <Typography component="span" sx={{ flex: '1 1 auto', fontSize: '0.875rem', fontWeight: 600 }}>
                   {item.name}
                 </Typography>
                 {item.children && item.children.length > 0 && (open[item.id] ? <ExpandLess sx={{ flexShrink: 0 }} /> : <ExpandMore />)}
