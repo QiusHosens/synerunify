@@ -25,9 +25,10 @@ const Language = () => {
         setAnchorEl(null);
     };
 
-    const handleLanguageChange = (lng: string) => {
-        i18n.changeLanguage(lng);
-        // handleClose();
+    const handleLanguageChange = (language: string) => {
+        console.log('language change', language);
+        i18n.changeLanguage(language);
+        handleClose();
     };
 
     return (
@@ -36,8 +37,9 @@ const Language = () => {
                 color="inherit"
                 onClick={handleLanguageClick}
             >
-                {/* <SettingsIcon /> */}
-                <SvgIcon sx={{ borderRadius: '6px', height: 'auto' }} width={513} height={342} fontSize='medium' inheritViewBox component={(i18n.language === 'zh' || i18n.language === 'zh-CN') ? CountryCNIcon : i18n.language === 'en' ? CountryGBIcon : i18n.language === 'fr' ? CountryFRIcon : CountrySAIcon} />
+                <Box sx={{ width: '24px', height: '20px', borderRadius: '5px', overflow: 'hidden', display: 'flex', justifyContent: ((i18n.language === 'zh' || i18n.language === 'zh-CN') ? 'start' : 'center'), alignItems: 'center' }}>
+                    <SvgIcon sx={{ width: 'auto' }} width={513} height={342} fontSize='small' inheritViewBox component={(i18n.language === 'zh' || i18n.language === 'zh-CN') ? CountryCNIcon : i18n.language === 'en' ? CountryGBIcon : i18n.language === 'fr' ? CountryFRIcon : CountrySAIcon} />
+                </Box>
             </IconButton>
 
             <Menu
@@ -74,15 +76,6 @@ const Language = () => {
                         </Box>
                     </Stack>
                 </Stack>
-                {/* <MenuItem onClick={() => handleLanguageChange('en')}>
-                    English {i18n.language === 'en' && '(Selected)'}
-                </MenuItem>
-                <MenuItem onClick={() => handleLanguageChange('fr')}>
-                    Français {i18n.language === 'fr' && '(Selected)'}
-                </MenuItem>
-                <MenuItem onClick={() => handleLanguageChange('zh')}>
-                    中文 {i18n.language === 'zh' && '(Selected)'}
-                </MenuItem> */}
             </Menu>
         </>
     )

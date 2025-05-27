@@ -114,7 +114,7 @@ export default function SettingsButton({ sx }: SettingsButtonProps) {
         onClick={handleSettingsClick}
       >
         {/* <SettingsIcon /> */}
-        <SvgIcon fontSize='medium' inheritViewBox component={SettingIcon} />
+        <SvgIcon fontSize='small' inheritViewBox component={SettingIcon} />
       </IconButton>
 
       <Menu

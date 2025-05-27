@@ -1,13 +1,12 @@
 import { SxProps, Theme } from "@mui/material/styles";
 import Stack from '@mui/material/Stack';
-import NotificationsRoundedIcon from '@mui/icons-material/NotificationsRounded';
 import NavbarBreadcrumbs from './NavbarBreadcrumbs';
-import MenuButton from './MenuButton';
 
 import Search from './Search';
 import SettingsButton from '@/components/SettingsButton';
 import { HomeMenuResponse } from '@/api';
 import Language from "./Language";
+import Notification from "./Notification";
 
 interface HeaderProps {
   sx?: SxProps<Theme>;
@@ -47,9 +46,10 @@ export default function Header({ sx, height, routeTree }: HeaderProps) {
         <Stack direction="row" sx={{ gap: 1 }}>
           <Search />
           <Language />
-          <MenuButton size="medium" showBadge aria-label="Open notifications">
+          <Notification />
+          {/* <MenuButton size="medium" showBadge aria-label="Open notifications">
             <NotificationsRoundedIcon fontSize="medium" />
-          </MenuButton>
+          </MenuButton> */}
           {/* <ColorModeIconDropdown /> */}
           <SettingsButton />
         </Stack>
