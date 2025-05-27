@@ -18,7 +18,7 @@ i18n
       zh: { translation: zhTranslation },
       ar: { translation: arTranslation },
     },
-    fallbackLng: 'zh', // 默认语言
+    fallbackLng: 'en', // 默认语言
     interpolation: {
       escapeValue: false, // React 已经处理了 XSS
     },
