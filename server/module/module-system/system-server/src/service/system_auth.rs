@@ -15,7 +15,7 @@ use tokio::sync::OnceCell;
 use tracing::{error, info};
 use tracing_subscriber::filter::filter_fn;
 use common::base::logger::{LoginLogger, OperationLogger};
-use common::constants::common_status::is_enable;
+use common::constants::common_status::{is_disable, is_enable};
 use common::context::context::{DataPermission, LoginUserContext, RequestContext};
 use common::database::redis::RedisManager;
 use common::database::redis_constants::{REDIS_KEY_LOGGER_LOGIN_PREFIX, REDIS_KEY_LOGGER_OPERATION_PREFIX, REDIS_KEY_LOGIN_USER_PREFIX};
@@ -24,12 +24,14 @@ use common::utils::jwt_utils::{generate_token_pair, is_valid_tenant, AuthBody, A
 use system_model::response::system_auth::HomeResponse;
 use system_model::response::system_department::SystemDepartmentResponse;
 use crate::model::system_user::{Model as SystemUserModel};
-use crate::service;
+use crate::service::{self, system_data_scope_rule, system_department, system_role, system_tenant, system_tenant_package, system_user_role};
+
+use super::{system_menu, system_user};
 
 pub async fn login(db: &DatabaseConnection, request_context: RequestContext, request: LoginRequest) -> Result<AuthBody> {
     let start = Instant::now();
     info!("into login: {:?}", request);
-    // 验证验证码
+    // 验证验证码 TODO
 
     // 查询用户
     let user_result = service::system_user::get_by_username(db, request.username).await?;
@@ -46,6 +48,55 @@ pub async fn login(db: &DatabaseConnection, request_context: RequestContext, req
         }
     };
     let duration_select = start.elapsed();
+    // 校验用户角色状态
+    let role = system_user_role::get_user_role(&db, user.id).await?;
+    match role {
+        Some(role) => {
+            if is_disable(role.status) {
+                return Err(anyhow!("用户已被禁用"));
+            }
+        }
+        None => {
+            return Err(anyhow!("用户已被禁用"));
+        }
+    }
+    // 校验用户部门状态
+    let department = system_department::find_by_id(&db, user.department_id).await?;
+    match department {
+        Some(department) => {
+            if is_disable(department.status) {
+                return Err(anyhow!("用户已被禁用"));
+            }
+        }
+        None => {
+            return Err(anyhow!("用户已被禁用"));
+        }
+    }
+    // 校验用户租户状态
+    let tenant = system_tenant::find_by_id(&db, user.tenant_id).await?;
+    match tenant {
+        Some(tenant) => {
+            if is_disable(tenant.status) {
+                return Err(anyhow!("用户已被禁用"));
+            } else {
+                // 校验用户租户套餐状态
+                let tenant_package = system_tenant_package::find_by_id(&db, user.department_id).await?;
+                match tenant_package {
+                    Some(tenant_package) => {
+                        if is_disable(tenant_package.status) {
+                            return Err(anyhow!("用户已被禁用"));
+                        }
+                    }
+                    None => {
+                        return Err(anyhow!("用户已被禁用"));
+                    }
+                }
+            }
+        }
+        None => {
+            return Err(anyhow!("用户已被禁用"));
+        }
+    }
 
     // 比较密码
     let is_match = match verify_password(request.password, user.clone().password) {
@@ -100,10 +151,10 @@ pub async fn logout(_db: &DatabaseConnection, login_user: LoginUserContext) -> R
 }
 
 pub async fn home(db: &DatabaseConnection, login_user: LoginUserContext) -> Result<HomeResponse> {
-    let system_user = service::system_user::find_by_id(db, login_user.id).await?;
+    let system_user = system_user::find_by_id(db, login_user.id).await?;
     let nickname = system_user.map(|u| u.nickname).unwrap_or("".to_string());
     // 查询角色菜单
-    let menus = service::system_menu::get_home_by_role_id(db, login_user.role_id).await?;
+    let menus = system_menu::get_home_by_role_id(db, login_user.role_id).await?;
 
     let response = HomeResponse {
         nickname,
@@ -132,7 +183,7 @@ fn invoke_after_login(db: &DatabaseConnection, user: SystemUserModel, request_co
         // }
         // 更新登录用户最近登录IP和时间
         info!("request context: {:?}", request_context);
-        if let Err(e) = service::system_user::update_by_login(&db_clone, user.clone().id, request_context.clone().ip).await {
+        if let Err(e) = system_user::update_by_login(&db_clone, user.clone().id, request_context.clone().ip).await {
             error!("update login error: {}", e.to_string());
         }
         // 记录登录日志
@@ -144,18 +195,18 @@ fn invoke_after_login(db: &DatabaseConnection, user: SystemUserModel, request_co
 
 async fn cache_login_user(db: &DatabaseConnection, request_context: RequestContext, user: SystemUserModel) -> Result<()> {
     // 查询部门信息
-    let _department_result = service::system_department::find_by_id(&db, user.department_id).await?;
-    let role_id = service::system_user_role::get_role_id_by_user_id(&db, user.id).await?;
+    let _department_result = system_department::find_by_id(&db, user.department_id).await?;
+    let role_id = system_user_role::get_role_id_by_user_id(&db, user.id).await?;
     info!("role id {:?}", role_id);
     // 菜单权限
-    let permissions = service::system_menu::get_role_menus_permissions(&db, role_id).await?;
+    let permissions = system_menu::get_role_menus_permissions(&db, role_id).await?;
     info!("permissions {:?}", permissions);
     // 数据权限
-    let role = service::system_role::find_by_id(&db, role_id).await?;
+    let role = system_role::find_by_id(&db, role_id).await?;
     let mut data_permission: Option<DataPermission> = None;
     if let Some(role) = role {
         if let Some(rule_id) = role.data_scope_rule_id {
-            let rule = service::system_data_scope_rule::find_by_id(&db, rule_id).await?;
+            let rule = system_data_scope_rule::find_by_id(&db, rule_id).await?;
             if let Some(rule) = rule {
                 data_permission = Some(DataPermission {
                     id: rule.id,

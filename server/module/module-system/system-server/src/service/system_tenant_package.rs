@@ -153,3 +153,9 @@ pub async fn offline_tenant_package_user(db: &DatabaseConnection, id: i64) -> Re
     system_tenant::offline_tenant_package_user(&db, id);
     Ok(())
 }
+
+pub async fn find_by_id(db: &DatabaseConnection, id: i64) -> Result<Option<SystemTenantPackageModel>> {       
+    let system_tenant_package = SystemTenantPackageEntity::find_active_by_id(id)
+        .one(db).await?;
+    Ok(system_tenant_package)
+}

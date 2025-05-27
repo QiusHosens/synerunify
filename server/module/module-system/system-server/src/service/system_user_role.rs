@@ -1,15 +1,16 @@
 use sea_orm::{ActiveModelTrait, ColumnTrait, Condition, DatabaseConnection, DatabaseTransaction, EntityTrait, PaginatorTrait, QueryFilter, QueryOrder};
 use crate::model::system_user_role::{Model as SystemUserRoleModel, ActiveModel as SystemUserRoleActiveModel, Entity as SystemUserRoleEntity, Column};
+use crate::model::system_role::{Model as SystemRoleModel};
 use system_model::request::system_user_role::{CreateSystemUserRoleRequest, UpdateSystemUserRoleRequest, PaginatedKeywordRequest};
 use system_model::response::system_user_role::SystemUserRoleResponse;
 use crate::convert::system_user_role::{create_request_to_model, update_request_to_model, model_to_response};
-use anyhow::{Result, anyhow};
+use anyhow::{anyhow, Ok, Result};
 use sea_orm::ActiveValue::Set;
 use common::base::page::PaginatedResponse;
 use common::context::context::LoginUserContext;
 use common::interceptor::orm::active_filter::ActiveFilterEntityTrait;
 
-use super::system_auth;
+use super::{system_auth, system_role};
 
 pub async fn create(db: &DatabaseConnection, login_user: LoginUserContext, request: CreateSystemUserRoleRequest) -> Result<i64> {
     let mut system_user_role = create_request_to_model(&request);
@@ -151,4 +152,17 @@ pub async fn offline_roles_user(db: &DatabaseConnection, role_ids: Vec<i64>) -> 
     }
     
     Ok(())
+}
+
+pub async fn get_user_role(db: &DatabaseConnection, user_id: i64) -> Result<Option<SystemRoleModel>> {
+    let system_user_role = SystemUserRoleEntity::find_active()
+        .filter(Column::UserId.eq(user_id))
+        .one(db).await?;
+    match system_user_role {
+        Some(user_role) => {
+            let role = system_role::find_by_id(&db, user_role.role_id).await?;
+            Ok(role)
+        }
+        None => Ok(None)
+    }
 }
