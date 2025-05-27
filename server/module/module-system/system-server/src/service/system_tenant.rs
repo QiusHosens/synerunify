@@ -164,6 +164,8 @@ pub async fn disable(db: &DatabaseConnection, login_user: LoginUserContext, id: 
         ..Default::default()
     };
     system_tenant.update(db).await?;
+    // 下线租户用户
+    system_user::offline_tenant_user(&db, id).await?;
     Ok(())
 }
 
@@ -176,6 +178,6 @@ pub async fn offline_tenant_package_user(db: &DatabaseConnection, tenant_package
         .filter(Column::PackageId.eq(tenant_package_id))
         .all(db).await?;
     let tenant_ids = list.iter().map(|tenant| tenant.id).collect();
-    system_user::offline_tenants_user(&db, tenant_ids);
+    system_user::offline_tenants_user(&db, tenant_ids).await?;
     Ok(())
 }

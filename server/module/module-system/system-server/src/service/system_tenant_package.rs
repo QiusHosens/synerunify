@@ -144,6 +144,8 @@ pub async fn disable(db: &DatabaseConnection, login_user: LoginUserContext, id: 
         ..Default::default()
     };
     system_tenant_package.update(db).await?;
+    // 下线套餐用户
+    offline_tenant_package_user(&db, id).await?;
     Ok(())
 }
 

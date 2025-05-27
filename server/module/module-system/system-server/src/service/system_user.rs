@@ -226,6 +226,8 @@ pub async fn disable(db: &DatabaseConnection, login_user: LoginUserContext, id: 
         ..Default::default()
     };
     system_user.update(db).await?;
+    // 下线用户
+    system_auth::offline_user(&db, id);
     Ok(())
 }
 
@@ -238,6 +240,8 @@ pub async fn reset_password(db: &DatabaseConnection, login_user: LoginUserContex
         ..Default::default()
     };
     system_user.update(db).await?;
+    // 下线用户
+    system_auth::offline_user(&db, request.id);
     Ok(())
 }
 
@@ -300,12 +304,22 @@ pub async fn list_department_user(db: &DatabaseConnection, login_user: LoginUser
     Ok(list.into_iter().map(model_to_base_response).collect())
 }
 
+pub async fn offline_department_user(db: &DatabaseConnection, department_id: i64) -> Result<()> {
+    let condition = Condition::all().add(Column::DepartmentId.eq(department_id));
+    let list = SystemUserEntity::find_active_with_condition(condition)
+        .all(db).await?;
+    for user in list {
+        system_auth::offline_user(&db, user.id).await?;
+    }
+    Ok(())
+}
+
 pub async fn offline_tenant_user(db: &DatabaseConnection, tenant_id: i64) -> Result<()> {
     let condition = Condition::all().add(Column::TenantId.eq(tenant_id));
     let list = SystemUserEntity::find_active_with_condition(condition)
         .all(db).await?;
     for user in list {
-        system_auth::offline_user(&db, user.id);
+        system_auth::offline_user(&db, user.id).await?;
     }
     Ok(())
 }
@@ -318,7 +332,7 @@ pub async fn offline_tenants_user(db: &DatabaseConnection, tenant_ids: Vec<i64>)
     let list = SystemUserEntity::find_active_with_condition(condition)
         .all(db).await?;
     for user in list {
-        system_auth::offline_user(&db, user.id);
+        system_auth::offline_user(&db, user.id).await?;
     }
     Ok(())
 }

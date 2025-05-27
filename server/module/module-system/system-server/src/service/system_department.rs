@@ -12,6 +12,8 @@ use common::base::page::PaginatedResponse;
 use common::context::context::LoginUserContext;
 use common::interceptor::orm::active_filter::ActiveFilterEntityTrait;
 
+use super::system_user;
+
 pub async fn create(db: &DatabaseConnection, login_user: LoginUserContext, request: CreateSystemDepartmentRequest) -> Result<i64> {
     // 查询父级编码
     let parent_department = SystemDepartmentEntity::find_by_id(request.parent_id.clone())
@@ -152,6 +154,8 @@ pub async fn disable(db: &DatabaseConnection, login_user: LoginUserContext, id: 
         ..Default::default()
     };
     system_department.update(db).await?;
+    // 下线部门用户
+    system_user::offline_department_user(&db, id).await?;
     Ok(())
 }
 

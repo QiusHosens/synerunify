@@ -151,6 +151,8 @@ pub async fn disable(db: &DatabaseConnection, login_user: LoginUserContext, id: 
         ..Default::default()
     };
     system_role.update(db).await?;
+    // 下线角色用户
+    system_user_role::offline_role_user(&db, id).await?;
     Ok(())
 }
 
