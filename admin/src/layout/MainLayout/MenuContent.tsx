@@ -9,16 +9,8 @@ interface MenuContentProps {
 
 export default function MenuContent({routeTree}: MenuContentProps) {
   return (
-    <Stack sx={{ flexGrow: 1, p: 1, justifyContent: 'space-between' }}>
+    <Stack sx={{ flexGrow: 1, pl: 2, pr: 2, justifyContent: 'space-between' }}>
       <List dense>
-        {/* {mainListItems.map((item, index) => (
-          <ListItem key={index} disablePadding sx={{ display: 'block' }}>
-            <ListItemButton selected={index === 0}>
-              <ListItemIcon>{item.icon}</ListItemIcon>
-              <ListItemText primary={item.text} />
-            </ListItemButton>
-          </ListItem>
-        ))} */}
         <RenderMenuItems routes={routeTree} />
       </List>
     </Stack>

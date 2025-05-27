@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import { List, ListItem, ListItemButton, ListItemText, ListItemIcon, Collapse } from '@mui/material';
+import { List, ListItem, ListItemButton, ListItemText, ListItemIcon, Collapse, SvgIcon, Typography, Stack, useTheme } from '@mui/material';
 import { useLocation, useNavigate } from 'react-router-dom';
-import DashboardIcon from '@mui/icons-material/Dashboard';
+// import DashboardIcon from '@mui/icons-material/Dashboard';
 import PersonIcon from '@mui/icons-material/Person';
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import SettingsIcon from '@mui/icons-material/Settings';
@@ -9,13 +9,14 @@ import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import { HomeMenuResponse } from '@/api';
 import React from 'react';
+import DashboardIcon from '@/assets/image/svg/dashboard.svg';
 
 // 图标映射
 const iconMap: { [key: string]: React.ElementType } = {
-  DashboardIcon,
-  PersonIcon,
-  PersonOutlineIcon,
-  SettingsIcon,
+  "dashboard": DashboardIcon,
+  "user": PersonIcon,
+  // PersonOutlineIcon,
+  // SettingsIcon,
 };
 
 // 检查路由是否匹配或包含在子路由中
@@ -29,6 +30,7 @@ const isRouteActive = (routePath: string, currentPath: string, children?: HomeMe
 
 // 递归渲染菜单项
 export default function RenderMenuItems({ routes, depth = 0 }: { routes: HomeMenuResponse[]; depth?: number }) {
+  const theme = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
   const [open, setOpen] = useState<{ [key: number]: boolean }>({});
@@ -55,11 +57,11 @@ export default function RenderMenuItems({ routes, depth = 0 }: { routes: HomeMen
   };
 
   return (
-    <>
+    <Stack sx={{ gap: 0.5 }}>
       {routes.map((item) => {
         const isActive = isRouteActive(item.path, location.pathname, item.children);
         return (
-          <div key={item.path}>
+          <Stack key={item.path} sx={{ gap: 0.5 }}>
             <ListItem disablePadding sx={{ pl: depth * 2 }}>
               <ListItemButton
                 selected={isActive}
@@ -70,18 +72,18 @@ export default function RenderMenuItems({ routes, depth = 0 }: { routes: HomeMen
                     navigate(item.path);
                   }
                 }}
-                // sx={{
-                //   '&.Mui-selected': {
-                //     backgroundColor: (theme) => theme.palette.action.selected,
-                //     '&:hover': {
-                //       backgroundColor: (theme) => theme.palette.action.hover,
-                //     },
-                //   },
-                // }}
+                sx={{ borderRadius: 2, display: 'flex', height: '2.75rem', color: (isActive ? theme.palette.primary.main : theme.palette.text.secondary) }}
               >
-                <ListItemIcon>{iconMap[item.icon] && React.createElement(iconMap[item.icon])}</ListItemIcon>
-                <ListItemText primary={item.name} />
-                {item.children && item.children.length > 0 && (open[item.id] ? <ExpandLess /> : <ExpandMore />)}
+                {/* <ListItemIcon>{iconMap[item.icon] && React.createElement(iconMap[item.icon])}</ListItemIcon> */}
+                <Typography component="span" sx={{ flexShrink: 0, mr: 1.5, display: 'flex', alignItems: 'center' }}>
+                  {iconMap[item.icon] && <SvgIcon fontSize='small' inheritViewBox component={iconMap[item.icon]} />}
+                </Typography>
+                <Typography component="span" sx={{ flex: '1 1 auto' }}>
+                  {item.name}
+                </Typography>
+                {/* <ListItemIcon>{iconMap[item.icon] && <SvgIcon fontSize='small' inheritViewBox component={iconMap[item.icon]} />}</ListItemIcon>
+                <ListItemText primary={item.name} /> */}
+                {item.children && item.children.length > 0 && (open[item.id] ? <ExpandLess sx={{ flexShrink: 0 }} /> : <ExpandMore />)}
               </ListItemButton>
             </ListItem>
             {item.children && item.children.length > 0 && (
@@ -91,9 +93,9 @@ export default function RenderMenuItems({ routes, depth = 0 }: { routes: HomeMen
                 </List>
               </Collapse>
             )}
-          </div>
+          </Stack>
         );
       })}
-    </>
+    </Stack>
   );
 };
