@@ -55,8 +55,18 @@ export default function NavbarBreadcrumbs({ routeTree }: NavbarBreadcrumbsProps)
     // console.log('active routes', routes);
   }, [routeTree, location.pathname]);
 
-  const handleClick = (path: string) => {
+  const handleClickPath = (path: string) => {
     navigate(path)
+  };
+
+  const handleClick = (item: HomeMenuResponse) => {
+    if (canClick(item)) {
+      navigate(item.path)
+    }
+  };
+
+  const canClick = (item: HomeMenuResponse) => {
+    return item.type == 2;
   };
 
   return (
@@ -64,11 +74,11 @@ export default function NavbarBreadcrumbs({ routeTree }: NavbarBreadcrumbsProps)
       aria-label="breadcrumb"
       separator={<NavigateNextRoundedIcon fontSize="small" />}
     >
-      <Typography variant="body1" sx={{ cursor: 'pointer' }} onClick={() => handleClick('/')}>Home</Typography>
+      <Typography variant="body1" sx={{ cursor: 'pointer' }} onClick={() => handleClickPath('/')}>Home</Typography>
       {
         activeRoutes.map((item) => {
           return (
-            <Typography variant="body1" key={item.path} sx={{ color: 'text.primary', cursor: 'pointer', fontWeight: 400 }} onClick={() => handleClick(item.path)} >
+            <Typography variant="body1" key={item.path} sx={{ color: 'text.primary', cursor: (canClick(item) ? 'pointer' : 'default'), fontWeight: 400 }} onClick={() => handleClick(item)} >
               {item.name}
             </Typography>
           )

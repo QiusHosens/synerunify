@@ -44,7 +44,7 @@ export default function Header({ sx, height, routeTree }: HeaderProps) {
       >
         <NavbarBreadcrumbs routeTree={routeTree} />
         <Stack direction="row" sx={{ gap: 1 }}>
-          <Search />
+          {/* <Search /> */}
           <Language />
           <Notification />
           <SettingsButton />

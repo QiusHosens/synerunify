@@ -40,10 +40,7 @@ export default function SettingsButton({ sx }: SettingsButtonProps) {
   const open = Boolean(anchorEl);
 
   const CustomSlider = styled(Slider)(({ theme }: { theme: any }) => ({
-    // minWidth: 200,
-    // '& .MuiSelect-select': {
-    //   padding: theme.spacing(1.5),
-    // },
+    
   }));
 
   const handleSettingsClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -52,13 +49,6 @@ export default function SettingsButton({ sx }: SettingsButtonProps) {
 
   const handleClose = () => {
     setAnchorEl(null);
-  };
-
-  const handleThemeToggle = () => {
-    // 直接设置模式
-    setMode(mode === 'light' ? 'dark' : 'light');
-    setThemeMode(mode === 'light' ? 'dark' : 'light');
-    // handleClose();
   };
 
   const handleTheme = (mode: 'light' | 'dark') => {

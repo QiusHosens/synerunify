@@ -1,10 +1,7 @@
 import { useEffect, useState } from 'react';
-import { List, ListItem, ListItemButton, ListItemText, ListItemIcon, Collapse, SvgIcon, Typography, Stack, useTheme } from '@mui/material';
+import { List, ListItem, ListItemButton, Collapse, SvgIcon, Typography, Stack, useTheme } from '@mui/material';
 import { useLocation, useNavigate } from 'react-router-dom';
-// import DashboardIcon from '@mui/icons-material/Dashboard';
 import PersonIcon from '@mui/icons-material/Person';
-import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
-import SettingsIcon from '@mui/icons-material/Settings';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import { HomeMenuResponse } from '@/api';
@@ -74,15 +71,12 @@ export default function RenderMenuItems({ routes, depth = 0 }: { routes: HomeMen
                 }}
                 sx={{ borderRadius: 2, display: 'flex', height: '2.75rem', color: (isActive ? theme.palette.primary.main : theme.palette.text.secondary) }}
               >
-                {/* <ListItemIcon>{iconMap[item.icon] && React.createElement(iconMap[item.icon])}</ListItemIcon> */}
                 <Typography component="span" sx={{ flexShrink: 0, mr: 1.5, display: 'flex', alignItems: 'center' }}>
                   {iconMap[item.icon] && <SvgIcon fontSize='small' inheritViewBox component={iconMap[item.icon]} />}
                 </Typography>
                 <Typography component="span" sx={{ flex: '1 1 auto' }}>
                   {item.name}
                 </Typography>
-                {/* <ListItemIcon>{iconMap[item.icon] && <SvgIcon fontSize='small' inheritViewBox component={iconMap[item.icon]} />}</ListItemIcon>
-                <ListItemText primary={item.name} /> */}
                 {item.children && item.children.length > 0 && (open[item.id] ? <ExpandLess sx={{ flexShrink: 0 }} /> : <ExpandMore />)}
               </ListItemButton>
             </ListItem>
