@@ -43,7 +43,7 @@ impl Task for LoginLoggerTask {
     }
 
     fn on_error(&self, error: Box<dyn Error + Send + Sync>) -> ErrorAction {
-        println!("execute login logger task error: {}", error);
+        tracing::error!("execute task {} error: {}", self.name, error);
         ErrorAction::Continue
     }
 }

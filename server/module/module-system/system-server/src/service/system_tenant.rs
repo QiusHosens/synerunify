@@ -1,7 +1,9 @@
 use std::str::FromStr;
 
+use chrono::Utc;
 use common::constants::enum_constants::{STATUS_DISABLE, STATUS_ENABLE};
-use sea_orm::{ActiveModelTrait, ColumnTrait, Condition, DatabaseConnection, EntityTrait, JoinType, PaginatorTrait, QueryFilter, QueryOrder, QuerySelect, RelationTrait, TransactionTrait};
+use sea_orm::prelude::Expr;
+use sea_orm::{ActiveModelTrait, ColumnTrait, Condition, DatabaseConnection, DbErr, EntityTrait, JoinType, PaginatorTrait, QueryFilter, QueryOrder, QuerySelect, RelationTrait, TransactionTrait};
 use system_model::request::system_user::CreateSystemUserRequest;
 use crate::model::system_tenant::{Model as SystemTenantModel, ActiveModel as SystemTenantActiveModel, Entity as SystemTenantEntity, Column, Relation};
 use crate::model::system_tenant_package::{Model as SystemTenantPackageModel, ActiveModel as SystemTenantPackageActiveModel, Entity as SystemTenantPackageEntity, Column as SystemTenantPackageColumn};
@@ -186,4 +188,33 @@ pub async fn find_by_id(db: &DatabaseConnection, id: i64) -> Result<Option<Syste
     let system_tenant = SystemTenantEntity::find_active_by_id(id)
         .one(db).await?;
     Ok(system_tenant)
+}
+
+/// 检查过期租户并处理
+pub async fn check_expire_tenant(db: &DatabaseConnection) -> Result<Vec<i64>> {
+    // 获取当前时间
+    let now = Utc::now().naive_utc();
+
+    // 更新 expire_time 小于当前时间且未删除的租户，设置 status 为 禁用
+    let update_result = SystemTenantEntity::update_many()
+        .col_expr(Column::Status, Expr::value(STATUS_DISABLE))
+        .filter(Column::ExpireTime.lt(now))
+        .filter(Column::Deleted.eq(false))
+        .exec(db)
+        .await?;
+
+    // 查询过期租户 ID
+    let affected_ids = SystemTenantEntity::find()
+        .select_only()
+        .column(Column::Id)
+        .filter(Column::ExpireTime.lt(now))
+        .filter(Column::Deleted.eq(false))
+        .into_tuple::<i64>()
+        .all(db)
+        .await?;
+
+    // 下线租户用户
+    system_user::offline_tenants_user(&db, affected_ids.clone()).await?;
+
+    Ok(affected_ids)
 }

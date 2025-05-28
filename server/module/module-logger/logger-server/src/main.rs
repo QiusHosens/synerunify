@@ -72,46 +72,5 @@ async fn main() -> Result<(), anyhow::Error> {
 
     task_manager.shutdown();
 
-    // 组合任务管理器和web服务
-    // tokio::select! {
-    //     _ = task_manager.start() => {
-    //         println!("Task manager unexpected exit");
-    //     },
-    //     _ = axum::serve(listener, app.into_make_service_with_connect_info::<std::net::SocketAddr>()) => {
-    //         println!("Web server unexpected exit");
-    //     },
-    //     _ = tokio::signal::ctrl_c() => {
-    //         println!("\nThe program is closed when the exit signal is received");
-    //         task_manager.shutdown();
-    //         return Ok(());
-    //     }
-    // }
-
-    // // 启动任务管理器
-    // let task_manager_clone = Arc::clone(&task_manager);
-    // let task_manager_handle = tokio::spawn(async move {
-    //     let mut task_manager = task_manager_clone.lock().await;
-    //     task_manager.start().await;
-    // });
-    //
-    // // 启动 web 服务
-    // let server_handle = tokio::spawn(async move {
-    //     if let Err(e) = axum::serve(listener, app.into_make_service_with_connect_info::<std::net::SocketAddr>()).await {
-    //         eprintln!("Web server unexpected exit: {}", e);
-    //     }
-    // });
-    //
-    // // 等待 Ctrl+C 信号
-    // tokio::signal::ctrl_c().await?;
-    // println!("\nThe program is closed when the exit signal is received");
-    //
-    // // 关闭服务
-    // {
-    //     let task_manager = task_manager.lock().await;
-    //     task_manager.shutdown();
-    // }
-    // task_manager_handle.abort();
-    // server_handle.abort();
-
     Ok(())
 }
