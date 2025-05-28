@@ -54,5 +54,7 @@ mongodb = "3.2.3"
 # strum
 strum = "0.27"
 strum_macros = "0.27"
+# cron
+cron = "0.15.0"
 
 macros = { path = "../macros" }

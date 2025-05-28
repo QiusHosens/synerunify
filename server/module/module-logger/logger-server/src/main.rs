@@ -32,8 +32,8 @@ async fn main() -> Result<(), anyhow::Error> {
 
     // 初始化任务管理器
     let mut task_manager = TaskManager::new();
-    task_manager.add_task(LoginLoggerTask::new(), 10).await;
-    task_manager.add_task(OperationLoggerTask::new(), 10).await;
+    task_manager.add_task(LoginLoggerTask::new(), "*/10 * * * * *").await;
+    task_manager.add_task(OperationLoggerTask::new(), "*/10 * * * * *").await;
 
     let cors = CorsLayer::new()
         .allow_origin(Any)
