@@ -20,14 +20,18 @@ static CONFIG_INSTANCE: OnceLock<Config> = OnceLock::new();
 
 impl Config {
     pub fn load() -> Config {
-        dotenv().ok();
         CONFIG_INSTANCE.get_or_init(|| {
+            // 尝试加载 .env 文件，如果不存在则继续
+            let _ = dotenv();
+
             let system_server_port = env::var("SYSTEM_SERVER_PORT")
                 .unwrap_or_else(|_| "3000".to_string())
-                .parse::<u16>().unwrap_or_else(|_| 3000);
+                .parse::<u16>()
+                .unwrap_or(3000);
             let logger_server_port = env::var("LOGGER_SERVER_PORT")
                 .unwrap_or_else(|_| "3000".to_string())
-                .parse::<u16>().unwrap_or_else(|_| 3000);
+                .parse::<u16>()
+                .unwrap_or(3000);
             let database_url = env::var("DATABASE_URL")
                 .unwrap_or_else(|_| "mysql://synerunify:synerunify@127.0.0.1:3306/synerunify".to_string());
             let api_prefix = env::var("API_PREFIX")
@@ -46,7 +50,7 @@ impl Config {
                 api_prefix,
                 log_level,
                 redis_url,
-                mongo_url
+                mongo_url,
             }
         }).clone()
     }
