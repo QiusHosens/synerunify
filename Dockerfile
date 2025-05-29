@@ -29,7 +29,6 @@ WORKDIR /app
 
 COPY --from=build-server /app/server/target/release/system-server ./system-server
 COPY --from=build-server /app/server/target/release/logger-server ./logger-server
-COPY --from=build-server /app/server/.env ./.env
 COPY --from=build-server /app/server/regexes.yaml ./regexes.yaml
 
 COPY --from=build-admin /app/admin/dist /usr/share/nginx/html/
