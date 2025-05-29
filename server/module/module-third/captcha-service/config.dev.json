@@ -1,0 +1,23 @@
+{
+  "config_version": 5,
+  "service_name": "captcha-service",
+  "http_port": "8181",
+  "grpc_port": "50058",
+
+  "cache_type": "memory",
+  "cache_ttl": 1800,
+  "cache_key_prefix": "CAPTCHA_DATA:",
+  "cache_addrs": "localhost:6379",
+  "cache_username": "",
+  "cache_password": "",
+
+  "enable_dynamic_config": false,
+
+  "enable_service_discovery": false,
+
+  "rate_limit_qps": 1000,
+  "rate_limit_burst": 1000,
+  "enable_cors": true,
+  "log_level": "info",
+  "api_keys": ["my-secret-key-123", "another-key-456", "another-key-789"]
+}

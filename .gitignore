@@ -55,3 +55,6 @@ tsconfig.tsbuildinfo
 
 # tools
 tools/parser_result
+
+# go
+__*
