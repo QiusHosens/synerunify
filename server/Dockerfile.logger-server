@@ -7,9 +7,9 @@ RUN update-ca-certificates
 
 WORKDIR /app
 
-COPY ./server ./server
+COPY ./ ./
 
-RUN cd server && \
+RUN cd . && \
     cargo build --release --lib logger-server \
 
 # build final
@@ -17,8 +17,8 @@ FROM scratch
 
 WORKDIR /app
 
-COPY --from=builder /app/server/target/release/logger-server ./logger-server
-COPY --from=builder /app/server/regexes.yaml ./regexes.yaml
+COPY --from=builder /app/target/release/logger-server ./logger-server
+COPY --from=builder /app/regexes.yaml ./regexes.yaml
 
 EXPOSE 9010
 

@@ -2,9 +2,9 @@
 FROM node AS builder
 WORKDIR /app
 
-COPY ./admin ./admin
+COPY ./ ./
 
-RUN cd admin && \
+RUN cd . && \
 #    npm install yarn -g --registry https://registry.npmmirror.com && \
     yarn install --registry https://registry.npmmirror.com && \
     yarn build
