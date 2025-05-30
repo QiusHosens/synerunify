@@ -1,0 +1,12 @@
+# 命名空间启用 Ambient 模式
+kubectl label namespace synerunify istio.io/dataplane-mode=ambient
+# 部署 Waypoint 代理
+istioctl waypoint apply --name synerunify-waypoint --namespace synerunify
+# 部署 Istio Gateway
+istioctl install \
+  --set components.ingressGateways[0].name=istio-ingressgateway \
+  --set components.ingressGateways[0].namespace=istio-ingress \
+  --set components.ingressGateways[0].enabled=true \
+  --set components.ingressGateways[0].k8s.service.type=NodePort \
+  --set profile=ambient \
+  -y
