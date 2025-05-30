@@ -277,17 +277,17 @@ func (a *App) startHTTPServer(svcCtx *common.SvcContext, cfg *config.Config) err
 	http.Handle("/status/health", mwChain.Then(handlers.HealthStatusHandler))
 	http.Handle("/rate-limit", mwChain.Then(middleware.RateLimitHandler(a.limiter, a.logger)))
 
-	http.Handle("/api/v1/public/get-data", mwChain.Then(handlers.GetDataHandler))
-	http.Handle("/api/v1/public/check-data", mwChain.Then(handlers.CheckDataHandler))
-	http.Handle("/api/v1/public/check-status", mwChain.Then(handlers.CheckStatusHandler))
+	http.Handle("/captcha/public/get-data", mwChain.Then(handlers.GetDataHandler))
+	http.Handle("/captcha/public/check-data", mwChain.Then(handlers.CheckDataHandler))
+	http.Handle("/captcha/public/check-status", mwChain.Then(handlers.CheckStatusHandler))
 
-	http.Handle("/api/v1/manage/get-status-info", mwChain.Then(handlers.GetStatusInfoHandler))
-	http.Handle("/api/v1/manage/del-status-info", mwChain.Then(handlers.DelStatusInfoHandler))
-	http.Handle("/api/v1/manage/upload-resource", mwChain.Then(handlers.UploadResourceHandler))
-	http.Handle("/api/v1/manage/delete-resource", mwChain.Then(handlers.DeleteResourceHandler))
-	http.Handle("/api/v1/manage/get-resource-list", mwChain.Then(handlers.GetResourceListHandler))
-	http.Handle("/api/v1/manage/get-config", mwChain.Then(handlers.GetGoCaptchaConfigHandler))
-	http.Handle("/api/v1/manage/update-hot-config", mwChain.Then(handlers.UpdateHotGoCaptchaConfigHandler))
+	http.Handle("/captcha/manage/get-status-info", mwChain.Then(handlers.GetStatusInfoHandler))
+	http.Handle("/captcha/manage/del-status-info", mwChain.Then(handlers.DelStatusInfoHandler))
+	http.Handle("/captcha/manage/upload-resource", mwChain.Then(handlers.UploadResourceHandler))
+	http.Handle("/captcha/manage/delete-resource", mwChain.Then(handlers.DeleteResourceHandler))
+	http.Handle("/captcha/manage/get-resource-list", mwChain.Then(handlers.GetResourceListHandler))
+	http.Handle("/captcha/manage/get-config", mwChain.Then(handlers.GetGoCaptchaConfigHandler))
+	http.Handle("/captcha/manage/update-hot-config", mwChain.Then(handlers.UpdateHotGoCaptchaConfigHandler))
 
 	a.httpServer = &http.Server{
 		Addr: ":" + cfg.HTTPPort,
