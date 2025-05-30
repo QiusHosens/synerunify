@@ -1,0 +1,25 @@
+# builder
+FROM rust AS builder
+
+RUN rustup target add x86_64-unknown-linux-musl
+RUN apt update && apt install -y musl-tools musl-dev
+RUN update-ca-certificates
+
+WORKDIR /app
+
+COPY ./server ./server
+
+RUN cd server && \
+    cargo build --release --lib system-server \
+
+# build final
+FROM scratch
+
+WORKDIR /app
+
+COPY --from=builder /app/server/target/release/system-server ./system-server
+COPY --from=builder /app/server/regexes.yaml ./regexes.yaml
+
+EXPOSE 9000
+
+CMD ["/app/system-server"]
