@@ -30,7 +30,7 @@ spec:
             prefix: /system
       route:
         - destination:
-            host: synerunify.synerunify.svc.cluster.local
+            host: system-server.synerunify.svc.cluster.local
             port:
               number: 9000
     - match:
