@@ -33,7 +33,7 @@ spec:
             type: ''
       containers:
         - name: redis
-          image: 'redis:7.2.0-alpine'
+          image: 'redis:7.4.2-alpine'
           ports:
             - name: tcp-6379
               containerPort: 6379
