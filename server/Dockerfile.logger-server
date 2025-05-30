@@ -1,5 +1,5 @@
-# builder
-FROM rust AS builder
+# build logger
+FROM rust AS build-logger
 
 RUN rustup target add x86_64-unknown-linux-musl
 RUN apt update && apt install -y musl-tools musl-dev
@@ -17,8 +17,8 @@ FROM scratch
 
 WORKDIR /app
 
-COPY --from=builder /app/target/release/logger-server ./logger-server
-COPY --from=builder /app/regexes.yaml ./regexes.yaml
+COPY --from=build-logger /app/target/release/logger-server ./logger-server
+COPY --from=build-logger /app/regexes.yaml ./regexes.yaml
 
 EXPOSE 9010
 
