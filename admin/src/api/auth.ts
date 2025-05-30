@@ -1,9 +1,9 @@
 import { api } from '@/utils/request';
 
 const apis = {
-  login: '/system_auth/login', // 登录
-  refreshToken: '/system_auth/refresh_token', // 刷新token
-  home: '/system_auth/home', // 主页信息
+  login: '/system/system_auth/login', // 登录
+  refreshToken: '/system/system_auth/refresh_token', // 刷新token
+  home: '/system/system_auth/home', // 主页信息
 }
 
 // 定义请求和响应的类型

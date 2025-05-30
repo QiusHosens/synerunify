@@ -2,14 +2,14 @@ import { PaginatedRequest, PaginatedResponse } from '@/base/page';
 import { api } from '@/utils/request';
 
 const apis = {
-  create: '/system_menu/create', // 新增
-  update: '/system_menu/update', // 修改
-  delete: '/system_menu/delete', // 删除
-  get: '/system_menu/get', // 单条查询
-  list: '/system_menu/list', // 列表查询
-  page: '/system_menu/page', // 分页查询
-  enable: '/system_menu/enable', // 启用
-  disable: '/system_menu/disable', // 禁用
+  create: '/system/system_menu/create', // 新增
+  update: '/system/system_menu/update', // 修改
+  delete: '/system/system_menu/delete', // 删除
+  get: '/system/system_menu/get', // 单条查询
+  list: '/system/system_menu/list', // 列表查询
+  page: '/system/system_menu/page', // 分页查询
+  enable: '/system/system_menu/enable', // 启用
+  disable: '/system/system_menu/disable', // 禁用
 }
 
 export interface SystemMenuRequest {

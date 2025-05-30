@@ -60,8 +60,10 @@ pub async fn api(state: AppState) -> Router {
     //     .merge(utoipa_swagger_ui::SwaggerUi::new("/swagger-ui").url("/api-docs/openapi.json", ApiDocument::openapi()))
 
     let (router, api) = OpenApiRouter::with_openapi(ApiDocument::openapi())
-        .merge(no_auth_router(state.clone()).await)
-        .merge(auth_router(state.clone()).await)
+        .nest("/system", no_auth_router(state.clone()).await)
+        .nest("/system", auth_router(state.clone()).await)
+        // .merge(no_auth_router(state.clone()).await)
+        // .merge(auth_router(state.clone()).await)
         .split_for_parts();
 
     // 注册路由权限

@@ -46,9 +46,6 @@ async fn main() -> Result<(), anyhow::Error> {
     // 每天00:05执行
     task_manager.add_task(TenantExpireTask::new(state.clone()), "0 5 0 * * *").await;
 
-    // let app = Router::new()
-    //     .fallback_service(config.api_prefix.as_ref(), route::api(database).await)
-    //     .layer(cors);
     let app = route::api(state).await
         .layer(cors)
         .layer(axum::middleware::from_fn(logger::panic_handler)) // 添加异常处理中间件

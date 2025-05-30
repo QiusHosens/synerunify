@@ -2,17 +2,17 @@ import { PaginatedRequest, PaginatedResponse } from '@/base/page';
 import { api } from '@/utils/request';
 
 const apis = {
-  create: '/system_user/create', // 新增
-  update: '/system_user/update', // 修改
-  delete: '/system_user/delete', // 删除
-  get: '/system_user/get', // 单条查询
-  list: '/system_user/list', // 列表查询
-  page: '/system_user/page', // 分页查询
-  enable: '/system_user/enable', // 启用
-  disable: '/system_user/disable', // 禁用
-  list_department_user: '/system_user/list_department_user', // 列表查询部门用户
-  reset_password: '/system_user/reset_password', // 重置密码
-  edit_password: '/system_user/edit_password', // 修改密码
+  create: '/system/system_user/create', // 新增
+  update: '/system/system_user/update', // 修改
+  delete: '/system/system_user/delete', // 删除
+  get: '/system/system_user/get', // 单条查询
+  list: '/system/system_user/list', // 列表查询
+  page: '/system/system_user/page', // 分页查询
+  enable: '/system/system_user/enable', // 启用
+  disable: '/system/system_user/disable', // 禁用
+  list_department_user: '/system/system_user/list_department_user', // 列表查询部门用户
+  reset_password: '/system/system_user/reset_password', // 重置密码
+  edit_password: '/system/system_user/edit_password', // 修改密码
 }
 
 export interface SystemUserRequest {

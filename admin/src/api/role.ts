@@ -2,20 +2,20 @@ import { PaginatedRequest, PaginatedResponse } from '@/base/page';
 import { api } from '@/utils/request';
 
 const apis = {
-  create: '/system_role/create', // 新增
-  update: '/system_role/update', // 修改
-  update_rule: '/system_role/update_rule', // 修改数据权限规则
-  delete: '/system_role/delete', // 删除
-  get: '/system_role/get', // 单条查询
-  list: '/system_role/list', // 列表查询
-  page: '/system_role/page', // 分页查询
-  enable: '/system_role/enable', // 启用
-  disable: '/system_role/disable', // 禁用
+  create: '/system/system_role/create', // 新增
+  update: '/system/system_role/update', // 修改
+  update_rule: '/system/system_role/update_rule', // 修改数据权限规则
+  delete: '/system/system_role/delete', // 删除
+  get: '/system/system_role/get', // 单条查询
+  list: '/system/system_role/list', // 列表查询
+  page: '/system/system_role/page', // 分页查询
+  enable: '/system/system_role/enable', // 启用
+  disable: '/system/system_role/disable', // 禁用
 }
 
 const roleMenuApis = {
-  getRoleMenu: 'system_role_menu/get_role_menu', // 获取角色菜单列表
-  updateRoleMenu: 'system_role_menu/update', // 更新角色菜单列表
+  getRoleMenu: '/system/system_role_menu/get_role_menu', // 获取角色菜单列表
+  updateRoleMenu: '/system/system_role_menu/update', // 更新角色菜单列表
 }
 
 export interface SystemRoleRequest {

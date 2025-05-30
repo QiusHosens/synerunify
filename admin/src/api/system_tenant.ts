@@ -2,14 +2,14 @@ import { PaginatedRequest, PaginatedResponse } from '@/base/page';
 import { api } from '@/utils/request';
 
 const apis = {
-  create: '/system_tenant/create', // 新增
-  update: '/system_tenant/update', // 修改
-  delete: '/system_tenant/delete', // 删除
-  get: '/system_tenant/get', // 单条查询
-  list: '/system_tenant/list', // 列表查询
-  page: '/system_tenant/page', // 分页查询
-  enable: '/system_tenant/enable', // 启用
-  disable: '/system_tenant/disable', // 禁用
+  create: '/system/system_tenant/create', // 新增
+  update: '/system/system_tenant/update', // 修改
+  delete: '/system/system_tenant/delete', // 删除
+  get: '/system/system_tenant/get', // 单条查询
+  list: '/system/system_tenant/list', // 列表查询
+  page: '/system/system_tenant/page', // 分页查询
+  enable: '/system/system_tenant/enable', // 启用
+  disable: '/system/system_tenant/disable', // 禁用
 }
 
 export interface SystemTenantRequest {

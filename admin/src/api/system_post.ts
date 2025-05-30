@@ -2,14 +2,14 @@ import { PaginatedRequest, PaginatedResponse } from '@/base/page';
 import { api } from '@/utils/request';
 
 const apis = {
-  create: '/system_post/create', // 新增
-  update: '/system_post/update', // 修改
-  delete: '/system_post/delete', // 删除
-  get: '/system_post/get', // 单条查询
-  list: '/system_post/list', // 列表查询
-  page: '/system_post/page', // 分页查询
-  enable: '/system_post/enable', // 启用
-  disable: '/system_post/disable', // 禁用
+  create: '/system/system_post/create', // 新增
+  update: '/system/system_post/update', // 修改
+  delete: '/system/system_post/delete', // 删除
+  get: '/system/system_post/get', // 单条查询
+  list: '/system/system_post/list', // 列表查询
+  page: '/system/system_post/page', // 分页查询
+  enable: '/system/system_post/enable', // 启用
+  disable: '/system/system_post/disable', // 禁用
 }
 
 export interface SystemPostRequest {

@@ -2,14 +2,14 @@ import { PaginatedRequest, PaginatedResponse } from '@/base/page';
 import { api } from '@/utils/request';
 
 const apis = {
-  create: '/system_department/create', // 新增
-  update: '/system_department/update', // 修改
-  delete: '/system_department/delete', // 删除
-  get: '/system_department/get', // 单条查询
-  list: '/system_department/list', // 列表查询
-  page: '/system_department/page', // 分页查询
-  enable: '/system_department/enable', // 启用
-  disable: '/system_department/disable', // 禁用
+  create: '/system/system_department/create', // 新增
+  update: '/system/system_department/update', // 修改
+  delete: '/system/system_department/delete', // 删除
+  get: '/system/system_department/get', // 单条查询
+  list: '/system/system_department/list', // 列表查询
+  page: '/system/system_department/page', // 分页查询
+  enable: '/system/system_department/enable', // 启用
+  disable: '/system/system_department/disable', // 禁用
 }
 
 export interface SystemDepartmentRequest {

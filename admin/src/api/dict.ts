@@ -2,23 +2,23 @@ import { PaginatedRequest, PaginatedResponse } from '@/base/page';
 import { api } from '@/utils/request';
 
 const dictTypeApis = {
-  create: '/system_dict_type/create', // 新增
-  update: '/system_dict_type/update', // 修改
-  delete: '/system_dict_type/delete', // 删除
-  get: '/system_dict_type/get', // 单条查询
-  list: '/system_dict_type/list', // 列表查询
-  page: '/system_dict_type/page', // 分页查询
+  create: '/system/system_dict_type/create', // 新增
+  update: '/system/system_dict_type/update', // 修改
+  delete: '/system/system_dict_type/delete', // 删除
+  get: '/system/system_dict_type/get', // 单条查询
+  list: '/system/system_dict_type/list', // 列表查询
+  page: '/system/system_dict_type/page', // 分页查询
 }
 
 const dictApis = {
-  create: '/system_dict_data/create', // 新增
-  update: '/system_dict_data/update', // 修改
-  delete: '/system_dict_data/delete', // 删除
-  get: '/system_dict_data/get', // 单条查询
-  list: '/system_dict_data/list', // 列表查询
-  page: '/system_dict_data/page', // 分页查询
-  enable: '/system_dict_data/enable', // 启用
-  disable: '/system_dict_data/disable', // 禁用
+  create: '/system/system_dict_data/create', // 新增
+  update: '/system/system_dict_data/update', // 修改
+  delete: '/system/system_dict_data/delete', // 删除
+  get: '/system/system_dict_data/get', // 单条查询
+  list: '/system/system_dict_data/list', // 列表查询
+  page: '/system/system_dict_data/page', // 分页查询
+  enable: '/system/system_dict_data/enable', // 启用
+  disable: '/system/system_dict_data/disable', // 禁用
 }
 
 export interface SystemDictTypeRequest {

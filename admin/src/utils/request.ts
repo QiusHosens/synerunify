@@ -6,7 +6,7 @@ import { AlertColor } from '@mui/material';
 const baseURL = '/api';
 
 const apis = {
-  refreshToken: baseURL + '/system_auth/refresh_token', // 刷新token
+  refreshToken: baseURL + '/system/system_auth/refresh_token', // 刷新token
 }
 
 // 创建 axios 实例

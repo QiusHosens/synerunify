@@ -2,15 +2,15 @@ import { PaginatedRequest, PaginatedResponse } from '@/base/page';
 import { api } from '@/utils/request';
 
 const apis = {
-  create: '/system_tenant_package/create', // 新增
-  update: '/system_tenant_package/update', // 修改
-  delete: '/system_tenant_package/delete', // 删除
-  get: '/system_tenant_package/get', // 单条查询
-  list: '/system_tenant_package/list', // 列表查询
-  page: '/system_tenant_package/page', // 分页查询
-  enable: '/system_tenant_package/enable', // 启用
-  disable: '/system_tenant_package/disable', // 禁用
-  update_menu: '/system_tenant_package/update_menu', // 修改菜单
+  create: '/system/system_tenant_package/create', // 新增
+  update: '/system/system_tenant_package/update', // 修改
+  delete: '/system/system_tenant_package/delete', // 删除
+  get: '/system/system_tenant_package/get', // 单条查询
+  list: '/system/system_tenant_package/list', // 列表查询
+  page: '/system/system_tenant_package/page', // 分页查询
+  enable: '/system/system_tenant_package/enable', // 启用
+  disable: '/system/system_tenant_package/disable', // 禁用
+  update_menu: '/system/system_tenant_package/update_menu', // 修改菜单
 }
 
 export interface SystemTenantPackageRequest {
