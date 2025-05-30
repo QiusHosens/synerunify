@@ -1,1 +1,0 @@
-docker build -t synerunify/system-server:1.0.0 .

@@ -10,7 +10,7 @@ WORKDIR /app
 COPY ./ ./
 
 RUN cd . && \
-    cargo build --release --lib system-server
+    cargo build --release --bin system-server
 
 # build final
 FROM scratch
