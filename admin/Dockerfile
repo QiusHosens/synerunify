@@ -13,7 +13,7 @@ RUN cd . && \
 FROM nginx
 WORKDIR /app
 
-COPY --from=builder /app/admin/dist /usr/share/nginx/html/
+COPY --from=builder /app/dist /usr/share/nginx/html/
 
 COPY nginx.conf /etc/nginx/nginx.conf
 
