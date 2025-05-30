@@ -1,5 +1,5 @@
 # build system
-FROM rust AS builder-system
+FROM rust AS builder
 
 RUN rustup target add x86_64-unknown-linux-musl
 RUN apt update && apt install -y musl-tools musl-dev
@@ -10,15 +10,15 @@ WORKDIR /app
 COPY ./ ./
 
 RUN cd . && \
-    cargo build --release --lib system-server \
+    cargo build --release --lib system-server
 
 # build final
 FROM scratch
 
 WORKDIR /app
 
-COPY --from=builder-system /app/target/release/system-server ./system-server
-COPY --from=builder-system /app/regexes.yaml ./regexes.yaml
+COPY --from=builder /app/target/release/system-server ./system-server
+COPY --from=builder /app/regexes.yaml ./regexes.yaml
 
 EXPOSE 9000
 
