@@ -4,7 +4,8 @@ FROM golang:1.24 AS builder
 WORKDIR /app
 
 COPY go.mod go.sum ./
-RUN go mod download
+RUN go env -w GOPROXY=https://goproxy.cn && \
+    go mod download
 
 COPY . .
 
