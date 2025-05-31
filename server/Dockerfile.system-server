@@ -10,14 +10,14 @@ WORKDIR /app
 COPY ./ ./
 
 RUN cd . && \
-    cargo build --release --bin system-server
+    cargo build --release --bin system-server --target=x86_64-unknown-linux-musl
 
 # build final
 FROM scratch
 
 WORKDIR /app
 
-COPY --from=builder /app/target/release/system-server ./system-server
+COPY --from=builder /app/target/x86_64-unknown-linux-musl/release/system-server ./system-server
 COPY --from=builder /app/regexes.yaml ./regexes.yaml
 
 EXPOSE 9000
