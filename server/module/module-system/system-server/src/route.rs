@@ -69,7 +69,7 @@ pub async fn api(state: AppState) -> Router {
     // 注册路由权限
     init_route_authorizes(&api);
     router
-        .merge(utoipa_swagger_ui::SwaggerUi::new("/system/swagger-ui").url("/api-docs/openapi.json", api.clone()))
+        .merge(utoipa_swagger_ui::SwaggerUi::new("/system/swagger-ui").url("/system/api-docs/openapi.json", api.clone()))
 }
 
 pub async fn no_auth_router(state: AppState) -> OpenApiRouter {
