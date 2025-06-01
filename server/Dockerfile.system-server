@@ -1,8 +1,7 @@
 # build system
 FROM rust AS builder
 
-RUN rustup target add x86_64-unknown-linux-musl
-RUN apt update && apt install -y musl-tools musl-dev pkg-config libssl-dev
+RUN apt update && apt install -y musl-tools musl-dev
 RUN update-ca-certificates
 
 WORKDIR /app
@@ -10,14 +9,16 @@ WORKDIR /app
 COPY ./ ./
 
 RUN cd . && \
-    cargo build --release --bin system-server --target=x86_64-unknown-linux-musl --features openssl/vendored
+    cargo build --release --bin system-server
 
 # build final
-FROM scratch
+FROM debian:bookworm-slim
 
 WORKDIR /app
 
-COPY --from=builder /app/target/x86_64-unknown-linux-musl/release/system-server ./system-server
+RUN apt-get update && apt-get install -y libssl3
+
+COPY --from=builder /app/target/release/system-server ./system-server
 COPY --from=builder /app/regexes.yaml ./regexes.yaml
 
 EXPOSE 9000
