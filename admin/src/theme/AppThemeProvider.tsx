@@ -8,6 +8,9 @@ import {
   switchsCustomizations,
   badgesCustomizations,
 } from './customizations';
+import { zhCN } from '@mui/x-data-grid/locales';
+import { zhCN as coreZhCN } from '@mui/material/locale';
+import { zhCN as pickersZhCN } from '@mui/x-date-pickers/locales';
 
 export default function AppThemeProvider({ children }: { children: React.ReactNode }) {
   const { mode, primary, fontFamily, fontSize } = useThemeStore();
@@ -43,7 +46,7 @@ export default function AppThemeProvider({ children }: { children: React.ReactNo
       ...switchsCustomizations,
       ...badgesCustomizations,
     },
-  });
+  }, zhCN, coreZhCN, pickersZhCN);
 
   const globalStyles = {
     // body: {

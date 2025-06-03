@@ -1,7 +1,7 @@
 import { Box, Button, FormControl, Switch } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { DataGrid, GridCallbackDetails, GridColDef, GridRenderCellParams, GridSortModel } from '@mui/x-data-grid';
+import { DataGrid, GridCallbackDetails, GridColDef, GridFilterModel, GridRenderCellParams, GridSortModel } from '@mui/x-data-grid';
 import EditIcon from '@/assets/image/svg/edit.svg';
 import DeleteIcon from '@/assets/image/svg/delete.svg';
 import { disableSystemUser, enableSystemUser, listSystemDepartment, pageSystemUser, SystemDepartmentResponse, SystemUserQueryCondition, SystemUserResponse } from '@/api';
@@ -34,6 +34,7 @@ export default function UserManage() {
 
   const [records, setRecords] = useState<Array<SystemUserResponse>>([]);
   const [sortModel, setSortModel] = useState<GridSortModel>([]);
+  const [filterModel, setFilterModel] = useState<GridFilterModel>();
 
   const [treeData, setTreeData] = useState<TreeNode[]>([]);
   const [selectedDepartmentId, setSelectedDepartmentId] = useState<string | number>(0);
@@ -154,10 +155,15 @@ export default function UserManage() {
     refreshData();
   }, [condition]);
 
-  const handleSortModelChange = (model: GridSortModel, details: GridCallbackDetails) => {
+  const handleSortModelChange = (model: GridSortModel, _details: GridCallbackDetails) => {
     setSortModel(model);
     setCondition((prev) => ({ ...prev, ...model[0] } as SystemUserQueryCondition));
   };
+
+  const handleFilterModelChange = (model: GridFilterModel, _details: GridCallbackDetails) => {
+    console.log('filter model', model);
+    setFilterModel(model);
+  }
 
   const refreshData = () => {
     queryRecords(condition);
@@ -246,6 +252,7 @@ export default function UserManage() {
         sortingMode="server"
         sortModel={sortModel}
         onSortModelChange={handleSortModelChange}
+        onFilterModelChange={handleFilterModelChange}
         pageSizeOptions={[10, 20, 50, 100]}
         paginationModel={{ page: condition.page - 1, pageSize: condition.size }}
         onPaginationModelChange={(model) => {
