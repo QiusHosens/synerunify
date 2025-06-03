@@ -8,11 +8,13 @@ import {
   switchsCustomizations,
   badgesCustomizations,
 } from './customizations';
-import { zhCN } from '@mui/x-data-grid/locales';
-import { zhCN as coreZhCN } from '@mui/material/locale';
-import { zhCN as pickersZhCN } from '@mui/x-date-pickers/locales';
+import { zhCN as coreZhCN, enUS as coreEnus, frFR as coreFrFR, arSD as coreArSD } from '@mui/material/locale';
+import { zhCN as dataGridZhCN, enUS as dataGridEnus, frFR as dataGridFrFR, arSD as dataGridArSD } from '@mui/x-data-grid/locales';
+import { zhCN as pickersZhCN, enUS as pickersEnus, frFR as pickersFrFR } from '@mui/x-date-pickers/locales';
+import { useTranslation } from 'react-i18next';
 
 export default function AppThemeProvider({ children }: { children: React.ReactNode }) {
+  const { t, i18n } = useTranslation();
   const { mode, primary, fontFamily, fontSize } = useThemeStore();
 
   const theme = createTheme({
@@ -46,7 +48,11 @@ export default function AppThemeProvider({ children }: { children: React.ReactNo
       ...switchsCustomizations,
       ...badgesCustomizations,
     },
-  }, zhCN, coreZhCN, pickersZhCN);
+  },
+    i18n.language === 'en' ? coreEnus : i18n.language === 'fr' ? coreFrFR : i18n.language === 'ar' ? coreArSD : coreZhCN,
+    i18n.language === 'en' ? dataGridEnus : i18n.language === 'fr' ? dataGridFrFR : i18n.language === 'ar' ? dataGridArSD : dataGridZhCN,
+    i18n.language === 'en' ? pickersEnus : i18n.language === 'fr' ? pickersFrFR : pickersZhCN,
+  );
 
   const globalStyles = {
     // body: {
