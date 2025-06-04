@@ -15,11 +15,11 @@ export const switchsCustomizations: Components<Theme> = {
             transform: "translateX(16px)",
             color: "#fff",
             "& + .MuiSwitch-track": {
-              backgroundColor: "#65C466",
+              // backgroundColor: "#65C466",
               opacity: 1,
               border: 0,
               ...theme.applyStyles("dark", {
-                backgroundColor: "#2ECA45",
+                // backgroundColor: "#2ECA45",
               }),
             },
             "&.Mui-disabled + .MuiSwitch-track": {
