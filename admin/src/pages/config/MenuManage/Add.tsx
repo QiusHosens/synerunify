@@ -327,6 +327,7 @@ const MenuAdd = forwardRef(({ onSubmit }: MenuAddProps, ref) => {
           icon: '',
           component: '',
           component_name: '',
+          i18n: '',
           visible: true,
           always_show: true,
           keep_alive: false,
