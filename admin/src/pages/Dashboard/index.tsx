@@ -20,8 +20,8 @@ export default function Dashboard() {
 
   return (
     <div>
-      <Typography variant="h4">{t('dashboard')}</Typography>
-      <Typography>{t('welcome')}</Typography>
+      <Typography variant="h4">{t('gloabl.page.dashboard')}</Typography>
+      <Typography>{t('page.dashboard.title.welcome')}</Typography>
     </div>
   );
 }

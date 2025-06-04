@@ -14,6 +14,7 @@ pub fn create_request_to_model(request: &CreateSystemMenuRequest) -> SystemMenuA
         icon: request.icon.as_ref().map_or(NotSet, |icon| Set(Some(icon.clone()))),
         component: request.component.as_ref().map_or(NotSet, |component| Set(Some(component.clone()))),
         component_name: request.component_name.as_ref().map_or(NotSet, |component_name| Set(Some(component_name.clone()))),
+        i18n: request.i18n.as_ref().map_or(NotSet, |i18n| Set(Some(i18n.clone()))),
         status: Set(request.status.clone()),
         visible: Set(request.visible.clone()),
         keep_alive: Set(request.keep_alive.clone()),
@@ -51,6 +52,9 @@ pub fn update_request_to_model(request: &UpdateSystemMenuRequest, existing: Syst
     if let Some(component_name) = &request.component_name { 
         active_model.component_name = Set(Some(component_name.clone()));
     }
+    if let Some(i18n) = &request.i18n { 
+        active_model.i18n = Set(Some(i18n.clone()));
+    }
     if let Some(status) = &request.status { 
         active_model.status = Set(status.clone());
     }
@@ -78,6 +82,7 @@ pub fn model_to_response(model: SystemMenu) -> SystemMenuResponse {
         icon: model.icon,
         component: model.component,
         component_name: model.component_name,
+        i18n: model.i18n,
         status: model.status,
         visible: model.visible,
         keep_alive: model.keep_alive,
@@ -101,6 +106,7 @@ pub fn model_to_home_response(model: SystemMenu) -> HomeMenuResponse {
         icon: model.icon,
         component: model.component,
         component_name: model.component_name,
+        i18n: model.i18n,
         status: model.status,
         visible: model.visible,
         keep_alive: model.keep_alive,

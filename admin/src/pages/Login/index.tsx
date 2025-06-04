@@ -75,7 +75,7 @@ export default function Login() {
         variant="h4"
         sx={{ width: "100%", fontSize: "clamp(2rem, 10vw, 2.15rem)" }}
       >
-        {t("login")}
+        {t("gloabl.page.login")}
       </Typography>
       <Box
         sx={{
@@ -86,7 +86,7 @@ export default function Login() {
         }}
       >
         <FormControl>
-          <FormLabel htmlFor="email">{t("username")}</FormLabel>
+          <FormLabel htmlFor="email">{t("page.login.title.username")}</FormLabel>
           <TextField
             size="small"
             fullWidth
@@ -96,7 +96,7 @@ export default function Login() {
           />
         </FormControl>
         <FormControl>
-          <FormLabel htmlFor="password">{t("password")}</FormLabel>
+          <FormLabel htmlFor="password">{t("page.login.title.password")}</FormLabel>
           <TextField
             size="small"
             type="password"

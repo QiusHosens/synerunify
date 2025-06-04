@@ -36,6 +36,7 @@ export interface HomeMenuResponse {
   icon: string; // 菜单图标
   component: string; // 组件路径
   component_name: string; // 组件名
+  i18n: string; // 国际化
   status: number; // 菜单状态
   visible: boolean; // 是否可见
   keep_alive: boolean; // 是否缓存

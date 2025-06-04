@@ -7,6 +7,7 @@ import ExpandMore from '@mui/icons-material/ExpandMore';
 import { HomeMenuResponse } from '@/api';
 import React from 'react';
 import DashboardIcon from '@/assets/image/svg/dashboard.svg';
+import { useTranslation } from 'react-i18next';
 
 // 图标映射
 const iconMap: { [key: string]: React.ElementType } = {
@@ -27,6 +28,7 @@ const isRouteActive = (routePath: string, currentPath: string, children?: HomeMe
 
 // 递归渲染菜单项
 export default function RenderMenuItems({ routes, depth = 0 }: { routes: HomeMenuResponse[]; depth?: number }) {
+  const { t } = useTranslation();
   const theme = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
@@ -75,7 +77,8 @@ export default function RenderMenuItems({ routes, depth = 0 }: { routes: HomeMen
                   {iconMap[item.icon] && <SvgIcon fontSize='small' inheritViewBox component={iconMap[item.icon]} />}
                 </Typography>
                 <Typography component="span" sx={{ flex: '1 1 auto', fontSize: '0.875rem', fontWeight: 600 }}>
-                  {item.name}
+                  {/* {item.name} */}
+                  {t(item.i18n)}
                 </Typography>
                 {item.children && item.children.length > 0 && (open[item.id] ? <ExpandLess sx={{ flexShrink: 0 }} /> : <ExpandMore />)}
               </ListItemButton>

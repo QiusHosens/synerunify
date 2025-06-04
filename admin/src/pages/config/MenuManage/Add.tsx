@@ -18,6 +18,7 @@ interface FormValues {
   icon: string; // 菜单图标
   component: string; // 组件路径
   component_name: string; // 组件名
+  i18n: string; // 国际化
   status: number; // 菜单状态
   visible: boolean; // 是否可见
   keep_alive: boolean; // 是否缓存
@@ -165,6 +166,7 @@ const MenuAdd = forwardRef(({ onSubmit }: MenuAddProps, ref) => {
       icon: '',
       component: '',
       component_name: '',
+      i18n: '',
       status: 0,
       visible: true,
       keep_alive: true,
@@ -402,8 +404,6 @@ const MenuAdd = forwardRef(({ onSubmit }: MenuAddProps, ref) => {
               name="icon"
               value={formValues.icon}
               onChange={handleInputChange}
-            // error={!!errors.icon}
-            // helperText={errors.icon}
             />}
             {type != '3' && <TextField
               required
@@ -422,8 +422,6 @@ const MenuAdd = forwardRef(({ onSubmit }: MenuAddProps, ref) => {
               name="component"
               value={formValues.component}
               onChange={handleInputChange}
-            // error={!!errors.component}
-            // helperText={errors.component}
             />}
             {type == '2' && <TextField
               size="small"
@@ -431,8 +429,14 @@ const MenuAdd = forwardRef(({ onSubmit }: MenuAddProps, ref) => {
               name="component_name"
               value={formValues.component_name}
               onChange={handleInputChange}
-            // error={!!errors.component_name}
-            // helperText={errors.component_name}
+            />}
+
+            {type != '3' && <TextField
+              size="small"
+              label={t("page.menu.title.i18n")}
+              name="i18n"
+              value={formValues.i18n}
+              onChange={handleInputChange}
             />}
 
             {type != '1' && <TextField
@@ -441,8 +445,6 @@ const MenuAdd = forwardRef(({ onSubmit }: MenuAddProps, ref) => {
               name="permission"
               value={formValues.permission}
               onChange={handleInputChange}
-            // error={!!errors.permission}
-            // helperText={errors.permission}
             />}
             <TextField
               required

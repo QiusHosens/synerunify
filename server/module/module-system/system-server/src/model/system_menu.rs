@@ -27,6 +27,8 @@ pub struct Model {
     pub component: Option<String>, // 组件路径
     
     pub component_name: Option<String>, // 组件名
+
+    pub i18n: Option<String>, // 国际化
     
     pub status: i8, // 菜单状态
     

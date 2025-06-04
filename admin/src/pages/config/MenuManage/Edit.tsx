@@ -62,6 +62,7 @@ const MenuEdit = forwardRef(({ onSubmit }: MenuEditProps, ref) => {
     icon: '',
     component: '',
     component_name: '',
+    i18n: '',
     status: 0,
     visible: true,
     keep_alive: true,
@@ -400,6 +401,14 @@ const MenuEdit = forwardRef(({ onSubmit }: MenuEditProps, ref) => {
               onChange={handleInputChange}
             // error={!!errors.component_name}
             // helperText={errors.component_name}
+            />}
+
+            {type != '3' && <TextField
+              size="small"
+              label={t("page.menu.title.i18n")}
+              name="i18n"
+              value={menu.i18n}
+              onChange={handleInputChange}
             />}
 
             {type != '1' && <TextField
