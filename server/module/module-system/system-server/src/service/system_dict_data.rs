@@ -83,7 +83,7 @@ pub async fn get_paginated(db: &DatabaseConnection, login_user: LoginUserContext
     }
 
     let paginator = query
-        .support_order(params.base.field, params.base.sort, 
+        .support_order(params.base.sort_field, params.base.sort, 
             Some(vec![(Column::DictType, Order::Asc), (Column::Sort, Order::Asc)]))
         .paginate(db, params.base.size);
 

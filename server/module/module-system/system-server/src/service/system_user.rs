@@ -1,8 +1,9 @@
 use std::str::FromStr;
 
 use common::constants::enum_constants::{ROLE_ID_TENANT_ADMIN, STATUS_DISABLE, STATUS_ENABLE};
+use common::interceptor::orm::support_order::SupportOrder;
 use common::utils::crypt_utils::{encrypt_password, verify_password};
-use sea_orm::{ActiveModelTrait, ColumnTrait, Condition, DatabaseConnection, DatabaseTransaction, EntityTrait, JoinType, PaginatorTrait, QueryFilter, QueryOrder, QuerySelect, RelationTrait, TransactionTrait};
+use sea_orm::{ActiveModelTrait, ColumnTrait, Condition, DatabaseConnection, DatabaseTransaction, EntityTrait, JoinType, Order, PaginatorTrait, QueryFilter, QueryOrder, QuerySelect, RelationTrait, TransactionTrait};
 use tokio::io::join;
 use crate::model::system_user::{Model as SystemUserModel, ActiveModel as SystemUserActiveModel, Entity as SystemUserEntity, Column, Relation};
 use crate::model::system_user_role::{Model as SystemUserRoleModel, ActiveModel as SystemUserRoleActiveModel, Entity as SystemUserRoleEntity, Column as SystemUserRoleColumn, Relation as SystemUserRoleRelation};
@@ -153,34 +154,8 @@ pub async fn get_paginated(db: &DatabaseConnection, login_user: LoginUserContext
         }
     }
 
-    // Apply sort if not empty
-    let mut is_default_sort = true;
-    if let Some(field) = &params.base.field {
-        if let Some(sort) = &params.base.sort {
-            let is_asc = sort.to_lowercase() == "asc";
-            // 动态应用排序，假设字段名与数据库列名一致
-            match field.as_str() {
-                // SystemDictDataEntity 的字段
-                f if Column::from_str(f).is_ok() => {
-                    let column = Column::from_str(f).unwrap();
-                    is_default_sort = false;
-                    query = if is_asc {
-                        query.order_by_asc(column)
-                    } else {
-                        query.order_by_desc(column)
-                    };
-                }
-                _ => {}
-            }
-        }
-    }
-
-    if is_default_sort {
-        query = query
-            .order_by_asc(Column::Id);
-    }
-
     let paginator = query
+        .support_order(params.base.sort_field, params.base.sort, Some(vec![(Column::Id, Order::Asc)]))
         .paginate(db, params.base.size);
 
     let total = paginator.num_items().await?;

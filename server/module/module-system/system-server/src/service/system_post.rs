@@ -1,7 +1,8 @@
 use std::str::FromStr;
 
 use common::constants::enum_constants::{STATUS_DISABLE, STATUS_ENABLE};
-use sea_orm::{DatabaseConnection, EntityTrait, ColumnTrait, ActiveModelTrait, PaginatorTrait, QueryOrder, QueryFilter, Condition};
+use common::interceptor::orm::support_order::SupportOrder;
+use sea_orm::{ActiveModelTrait, ColumnTrait, Condition, DatabaseConnection, EntityTrait, Order, PaginatorTrait, QueryFilter, QueryOrder};
 use crate::model::system_post::{Model as SystemPostModel, ActiveModel as SystemPostActiveModel, Entity as SystemPostEntity, Column};
 use system_model::request::system_post::{CreateSystemPostRequest, UpdateSystemPostRequest, PaginatedKeywordRequest};
 use system_model::response::system_post::SystemPostResponse;
@@ -58,34 +59,8 @@ pub async fn get_paginated(db: &DatabaseConnection, login_user: LoginUserContext
     let condition = Condition::all().add(Column::TenantId.eq(login_user.tenant_id));
     let mut query = SystemPostEntity::find_active_with_condition(condition);
 
-    // Apply sort if not empty
-    let mut is_default_sort = true;
-    if let Some(field) = &params.base.field {
-        if let Some(sort) = &params.base.sort {
-            let is_asc = sort.to_lowercase() == "asc";
-            // 动态应用排序，假设字段名与数据库列名一致
-            match field.as_str() {
-                // SystemDictDataEntity 的字段
-                f if Column::from_str(f).is_ok() => {
-                    let column = Column::from_str(f).unwrap();
-                    is_default_sort = false;
-                    query = if is_asc {
-                        query.order_by_asc(column)
-                    } else {
-                        query.order_by_desc(column)
-                    };
-                }
-                _ => {}
-            }
-        }
-    }
-
-    if is_default_sort {
-        query = query
-            .order_by_asc(Column::Id);
-    }
-
     let paginator = query
+        .support_order(params.base.sort_field, params.base.sort, Some(vec![(Column::Id, Order::Asc)]))
         .paginate(db, params.base.size);
 
     let total = paginator.num_items().await?;

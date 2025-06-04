@@ -17,11 +17,11 @@ pub struct PaginatedRequest {
     #[serde(deserialize_with="from_str")]
     pub size: u64,
     pub keyword: Option<String>,
-    pub field: Option<String>,
-    pub sort: Option<String>,
-    pub filter_field: Option<String>,
-    pub filter_operator: Option<String>,
-    pub filter_value: Option<String>,
+    pub sort_field: Option<String>, // 排序字段
+    pub sort: Option<String>, // 排序,asc or desc
+    pub filter_field: Option<String>, // 过滤字段
+    pub filter_operator: Option<String>, // 过滤操作,contain/
+    pub filter_value: Option<String>, // 过滤值
 }
 
 #[derive(Serialize, Deserialize, Debug, ToSchema)]

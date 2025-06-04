@@ -136,7 +136,9 @@ export default function TenantPackageManage() {
 
   const handleSortModelChange = (model: GridSortModel, details: GridCallbackDetails) => {
     setSortModel(model);
-    setCondition((prev) => ({ ...prev, ...model[0] } as SystemTenantPackageQueryCondition));
+    if (model.length > 0) {
+      setCondition((prev) => ({ ...prev, ...{ sort_field: model[0].field, sort: model[0].sort } } as SystemTenantPackageQueryCondition));
+    }
   };
 
   const refreshData = () => {

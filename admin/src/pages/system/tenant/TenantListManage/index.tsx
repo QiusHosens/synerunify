@@ -136,7 +136,9 @@ export default function TenantManage() {
 
   const handleSortModelChange = (model: GridSortModel, details: GridCallbackDetails) => {
     setSortModel(model);
-    setCondition((prev) => ({ ...prev, ...model[0] } as SystemTenantQueryCondition));
+    if (model.length > 0) {
+      setCondition((prev) => ({ ...prev, ...{ sort_field: model[0].field, sort: model[0].sort } } as SystemTenantQueryCondition));
+    }
   };
 
   const refreshData = () => {

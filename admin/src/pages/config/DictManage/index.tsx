@@ -167,7 +167,9 @@ export default function DictManage() {
 
   const handleSortModelChange = (model: GridSortModel, _details: GridCallbackDetails) => {
     setSortModel(model);
-    setCondition((prev) => ({ ...prev, ...model[0] } as DictQueryCondition));
+    if (model.length > 0) {
+      setCondition((prev) => ({ ...prev, ...{ sort_field: model[0].field, sort: model[0].sort } } as DictQueryCondition));
+    }
   };
 
   const refreshData = () => {
