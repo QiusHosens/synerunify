@@ -252,6 +252,7 @@ export default function UserManage() {
         sortingMode="server"
         sortModel={sortModel}
         onSortModelChange={handleSortModelChange}
+        filterModel={filterModel}
         onFilterModelChange={handleFilterModelChange}
         pageSizeOptions={[10, 20, 50, 100]}
         paginationModel={{ page: condition.page - 1, pageSize: condition.size }}

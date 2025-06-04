@@ -19,6 +19,9 @@ pub struct PaginatedRequest {
     pub keyword: Option<String>,
     pub field: Option<String>,
     pub sort: Option<String>,
+    pub filter_field: Option<String>,
+    pub filter_operator: Option<String>,
+    pub filter_value: Option<String>,
 }
 
 #[derive(Serialize, Deserialize, Debug, ToSchema)]

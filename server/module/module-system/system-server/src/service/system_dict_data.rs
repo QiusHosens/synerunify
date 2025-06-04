@@ -1,7 +1,7 @@
 use std::str::FromStr;
 
 use common::constants::enum_constants::{STATUS_DISABLE, STATUS_ENABLE};
-use sea_orm::{ActiveModelTrait, ColumnTrait, Condition, DatabaseConnection, EntityTrait, JoinType, PaginatorTrait, QueryFilter, QueryOrder, QuerySelect, RelationTrait};
+use sea_orm::{ActiveModelTrait, ColumnTrait, Condition, DatabaseConnection, EntityTrait, JoinType, Order, PaginatorTrait, QueryFilter, QueryOrder, QuerySelect, RelationTrait};
 use system_model::response::system_dict_type::SystemDictTypeResponse;
 use crate::model::system_dict_data::{Model as SystemDictDataModel, ActiveModel as SystemDictDataActiveModel, Entity as SystemDictDataEntity, Column, Relation};
 use crate::model::system_dict_type::{Entity as SystemDictTypeEntity, Column as SystemDictTypeColumn};
@@ -13,6 +13,7 @@ use sea_orm::ActiveValue::Set;
 use common::base::page::PaginatedResponse;
 use common::context::context::LoginUserContext;
 use common::interceptor::orm::active_filter::ActiveFilterEntityTrait;
+use common::interceptor::orm::support_order::SupportOrder;
 
 pub async fn create(db: &DatabaseConnection, login_user: LoginUserContext, request: CreateSystemDictDataRequest) -> Result<i64> {
     let mut system_dict_data = create_request_to_model(&request);
@@ -56,6 +57,7 @@ pub async fn get_by_id(db: &DatabaseConnection, login_user: LoginUserContext, id
 
 pub async fn get_paginated(db: &DatabaseConnection, login_user: LoginUserContext, params: PaginatedKeywordRequest) -> Result<PaginatedResponse<SystemDictDataDetailResponse>> {
     let mut query = SystemDictDataEntity::find_active()
+        // .support_order(params.base.field, params.base.sort)
         .select_also(SystemDictTypeEntity)
         .join(JoinType::LeftJoin, Relation::DictType.def());
 
@@ -80,37 +82,9 @@ pub async fn get_paginated(db: &DatabaseConnection, login_user: LoginUserContext
         }
     }
 
-    // Apply sort if not empty
-    let mut is_default_sort = true;
-    if let Some(field) = &params.base.field {
-        if let Some(sort) = &params.base.sort {
-            let is_asc = sort.to_lowercase() == "asc";
-            // 动态应用排序，假设字段名与数据库列名一致
-            match field.as_str() {
-                // SystemDictDataEntity 的字段
-                f if Column::from_str(f).is_ok() => {
-                    let column = Column::from_str(f).unwrap();
-                    is_default_sort = false;
-                    query = if is_asc {
-                        query.order_by_asc(column)
-                    } else {
-                        query.order_by_desc(column)
-                    };
-                }
-                _ => {}
-            }
-        }
-    }
-
-    if is_default_sort {
-        query = query
-            .order_by_asc(SystemDictTypeColumn::Id)
-            .order_by_asc(Column::Sort);
-    }
-
     let paginator = query
-        // .order_by_desc(Column::UpdateTime)
-        // .into_model::<(SystemDictDataResponse, Option<SystemDictTypeResponse>)>()
+        .support_order(params.base.field, params.base.sort, 
+            Some(vec![(Column::DictType, Order::Asc), (Column::Sort, Order::Asc)]))
         .paginate(db, params.base.size);
 
     let total = paginator.num_items().await?;
