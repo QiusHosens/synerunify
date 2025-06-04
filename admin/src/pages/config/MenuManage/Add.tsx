@@ -7,6 +7,7 @@ import DictSelect from '@/components/DictSelect';
 import { createMenu, listMenu, SystemMenuRequest, SystemMenuResponse } from '@/api';
 import QuestionBadge from '@/components/QuestionBadge';
 import SelectTree from '@/components/SelectTree';
+import CustomizedDialog from '@/components/CustomizedDialog';
 
 interface FormValues {
   name: string; // 菜单名称
@@ -357,144 +358,281 @@ const MenuAdd = forwardRef(({ onSubmit }: MenuAddProps, ref) => {
   };
 
   return (
-    <Dialog
-      fullWidth={fullWidth}
-      maxWidth={maxWidth}
+    // <Dialog
+    //   fullWidth={fullWidth}
+    //   maxWidth={maxWidth}
+    //   open={open}
+    //   onClose={handleClose}
+    // >
+    //   <DialogTitle>{t('global.operate.add')}{t('global.page.menu')}</DialogTitle>
+    //   <DialogContent>
+    //     <Box
+    //       noValidate
+    //       component="form"
+    //       sx={{
+    //         display: 'flex',
+    //         flexDirection: 'column',
+    //         m: 'auto',
+    //         width: 'fit-content',
+    //       }}
+    //     >
+    //       <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiSelect-root': { width: '200px' } }}>
+    //         <DictSelect dict_type='menu_type' value={type} onChange={handleTypeChange} label={t("page.menu.title.type")}></DictSelect>
+    //       </FormControl>
+    //       <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiSelect-root': { width: '200px' } }}>
+    //         <SelectTree
+    //           expandToSelected
+    //           name='parent_id'
+    //           size="small"
+    //           label={t('page.menu.title.parent')}
+    //           treeData={menuTreeData}
+    //           value={selectedMenuId}
+    //           onChange={(name, node) => handleChange(name, node as TreeNode)}
+    //         />
+    //       </FormControl>
+    //       <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' } }}>
+    //         <TextField
+    //           required
+    //           size="small"
+    //           label={t("page.menu.title.name")}
+    //           name='name'
+    //           value={formValues.name}
+    //           onChange={handleInputChange}
+    //           error={!!errors.name}
+    //           helperText={errors.name}
+    //         />
+    //         {type != '3' && <TextField
+    //           size="small"
+    //           label={t("page.menu.title.icon")}
+    //           name="icon"
+    //           value={formValues.icon}
+    //           onChange={handleInputChange}
+    //         />}
+    //         {type != '3' && <TextField
+    //           required
+    //           size="small"
+    //           label={t("page.menu.title.path")}
+    //           name="path"
+    //           value={formValues.path}
+    //           onChange={handleInputChange}
+    //           error={!!errors.path}
+    //           helperText={errors.path}
+    //         />}
+
+    //         {type == '2' && <TextField
+    //           size="small"
+    //           label={t("page.menu.title.component")}
+    //           name="component"
+    //           value={formValues.component}
+    //           onChange={handleInputChange}
+    //         />}
+    //         {type == '2' && <TextField
+    //           size="small"
+    //           label={t("page.menu.title.component.name")}
+    //           name="component_name"
+    //           value={formValues.component_name}
+    //           onChange={handleInputChange}
+    //         />}
+
+    //         {type != '3' && <TextField
+    //           size="small"
+    //           label={t("page.menu.title.i18n")}
+    //           name="i18n"
+    //           value={formValues.i18n}
+    //           onChange={handleInputChange}
+    //         />}
+
+    //         {type != '1' && <TextField
+    //           size="small"
+    //           label={t("page.menu.title.permission")}
+    //           name="permission"
+    //           value={formValues.permission}
+    //           onChange={handleInputChange}
+    //         />}
+    //         <TextField
+    //           required
+    //           size="small"
+    //           type="number"
+    //           label={t("page.menu.title.sort")}
+    //           name="sort"
+    //           value={formValues.sort}
+    //           onChange={handleInputChange}
+    //           error={!!errors.sort}
+    //           helperText={errors.sort}
+    //         />
+
+    //       </FormControl>
+    //       <Box sx={{ mt: 2, display: 'flex', alignItems: 'center' }}>
+    //         <Typography sx={{ mr: 4 }}>{t("page.menu.title.status")}</Typography>
+    //         <Switch sx={{ mr: 2 }} name='status' checked={!formValues.status} onChange={handleStatusChange} />
+    //         <Typography>{formValues.status == 0 ? t('page.menu.switch.status.true') : t('page.menu.switch.status.false')}</Typography>
+    //       </Box>
+    //       {type != '3' && <Stack direction="row" spacing={2} sx={{ mt: 2, alignItems: 'center' }}>
+    //         <QuestionBadge title={t("page.menu.tip.visible")}>
+    //           <Typography>{t("page.menu.title.visible")}</Typography>
+    //         </QuestionBadge>
+    //         <Switch name='visible' checked={formValues.visible} onChange={handleSwitchChange} />
+    //         <Typography>{formValues.visible ? t('page.menu.switch.visible.true') : t('page.menu.switch.visible.false')}</Typography>
+    //       </Stack>}
+    //       {type != '3' && <Stack direction="row" spacing={2} sx={{ mt: 2, alignItems: 'center' }}>
+    //         <QuestionBadge title={t("page.menu.tip.always.show")}>
+    //           <Typography>{t("page.menu.title.always.show")}</Typography>
+    //         </QuestionBadge>
+    //         <Switch name='always_show' checked={formValues.always_show} onChange={handleSwitchChange} />
+    //         <Typography>{formValues.always_show ? t('page.menu.switch.always.true') : t('page.menu.switch.always.false')}</Typography>
+    //       </Stack>}
+    //       {type == '2' && <Stack direction="row" spacing={2} sx={{ mt: 2, alignItems: 'center' }}>
+    //         <QuestionBadge title={t("page.menu.tip.keep.alive")}>
+    //           <Typography>{t("page.menu.title.keep.alive")}</Typography>
+    //         </QuestionBadge>
+    //         <Switch name='keep_alive' checked={formValues.keep_alive} onChange={handleSwitchChange} />
+    //         <Typography>{formValues.keep_alive ? t('page.menu.switch.keep.true') : t('page.menu.switch.keep.false')}</Typography>
+    //       </Stack>}
+    //     </Box>
+    //   </DialogContent>
+    //   <DialogActions>
+    //     <Button onClick={handleSubmitAndContinue}>{t('global.operate.confirm.continue')}</Button>
+    //     <Button onClick={handleSubmit}>{t('global.operate.confirm')}</Button>
+    //     <Button onClick={handleCancel}>{t('global.operate.cancel')}</Button>
+    //   </DialogActions>
+    // </Dialog >
+    <CustomizedDialog
       open={open}
       onClose={handleClose}
+      title={t('global.operate.add') + t('global.page.menu')}
+      maxWidth={maxWidth}
+      actions={
+        <>
+          <Button onClick={handleSubmitAndContinue}>{t('global.operate.confirm.continue')}</Button>
+          <Button onClick={handleSubmit}>{t('global.operate.confirm')}</Button>
+          <Button onClick={handleCancel}>{t('global.operate.cancel')}</Button>
+        </>
+      }
     >
-      <DialogTitle>{t('global.operate.add')}{t('global.page.menu')}</DialogTitle>
-      <DialogContent>
-        <Box
-          noValidate
-          component="form"
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            m: 'auto',
-            width: 'fit-content',
-          }}
-        >
-          <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiSelect-root': { width: '200px' } }}>
-            <DictSelect dict_type='menu_type' value={type} onChange={handleTypeChange} label={t("page.menu.title.type")}></DictSelect>
-          </FormControl>
-          <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiSelect-root': { width: '200px' } }}>
-            <SelectTree
-              expandToSelected
-              name='parent_id'
-              size="small"
-              label={t('page.menu.title.parent')}
-              treeData={menuTreeData}
-              value={selectedMenuId}
-              onChange={(name, node) => handleChange(name, node as TreeNode)}
-            />
-          </FormControl>
-          <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' } }}>
-            <TextField
-              required
-              size="small"
-              label={t("page.menu.title.name")}
-              name='name'
-              value={formValues.name}
-              onChange={handleInputChange}
-              error={!!errors.name}
-              helperText={errors.name}
-            />
-            {type != '3' && <TextField
-              size="small"
-              label={t("page.menu.title.icon")}
-              name="icon"
-              value={formValues.icon}
-              onChange={handleInputChange}
-            />}
-            {type != '3' && <TextField
-              required
-              size="small"
-              label={t("page.menu.title.path")}
-              name="path"
-              value={formValues.path}
-              onChange={handleInputChange}
-              error={!!errors.path}
-              helperText={errors.path}
-            />}
+      <Box
+        noValidate
+        component="form"
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          m: 'auto',
+          width: 'fit-content',
+        }}
+      >
+        <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiSelect-root': { width: '200px' } }}>
+          <DictSelect dict_type='menu_type' value={type} onChange={handleTypeChange} label={t("page.menu.title.type")}></DictSelect>
+        </FormControl>
+        <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiSelect-root': { width: '200px' } }}>
+          <SelectTree
+            expandToSelected
+            name='parent_id'
+            size="small"
+            label={t('page.menu.title.parent')}
+            treeData={menuTreeData}
+            value={selectedMenuId}
+            onChange={(name, node) => handleChange(name, node as TreeNode)}
+          />
+        </FormControl>
+        <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' } }}>
+          <TextField
+            required
+            size="small"
+            label={t("page.menu.title.name")}
+            name='name'
+            value={formValues.name}
+            onChange={handleInputChange}
+            error={!!errors.name}
+            helperText={errors.name}
+          />
+          {type != '3' && <TextField
+            size="small"
+            label={t("page.menu.title.icon")}
+            name="icon"
+            value={formValues.icon}
+            onChange={handleInputChange}
+          />}
+          {type != '3' && <TextField
+            required
+            size="small"
+            label={t("page.menu.title.path")}
+            name="path"
+            value={formValues.path}
+            onChange={handleInputChange}
+            error={!!errors.path}
+            helperText={errors.path}
+          />}
 
-            {type == '2' && <TextField
-              size="small"
-              label={t("page.menu.title.component")}
-              name="component"
-              value={formValues.component}
-              onChange={handleInputChange}
-            />}
-            {type == '2' && <TextField
-              size="small"
-              label={t("page.menu.title.component.name")}
-              name="component_name"
-              value={formValues.component_name}
-              onChange={handleInputChange}
-            />}
+          {type == '2' && <TextField
+            size="small"
+            label={t("page.menu.title.component")}
+            name="component"
+            value={formValues.component}
+            onChange={handleInputChange}
+          />}
+          {type == '2' && <TextField
+            size="small"
+            label={t("page.menu.title.component.name")}
+            name="component_name"
+            value={formValues.component_name}
+            onChange={handleInputChange}
+          />}
 
-            {type != '3' && <TextField
-              size="small"
-              label={t("page.menu.title.i18n")}
-              name="i18n"
-              value={formValues.i18n}
-              onChange={handleInputChange}
-            />}
+          {type != '3' && <TextField
+            size="small"
+            label={t("page.menu.title.i18n")}
+            name="i18n"
+            value={formValues.i18n}
+            onChange={handleInputChange}
+          />}
 
-            {type != '1' && <TextField
-              size="small"
-              label={t("page.menu.title.permission")}
-              name="permission"
-              value={formValues.permission}
-              onChange={handleInputChange}
-            />}
-            <TextField
-              required
-              size="small"
-              type="number"
-              label={t("page.menu.title.sort")}
-              name="sort"
-              value={formValues.sort}
-              onChange={handleInputChange}
-              error={!!errors.sort}
-              helperText={errors.sort}
-            />
+          {type != '1' && <TextField
+            size="small"
+            label={t("page.menu.title.permission")}
+            name="permission"
+            value={formValues.permission}
+            onChange={handleInputChange}
+          />}
+          <TextField
+            required
+            size="small"
+            type="number"
+            label={t("page.menu.title.sort")}
+            name="sort"
+            value={formValues.sort}
+            onChange={handleInputChange}
+            error={!!errors.sort}
+            helperText={errors.sort}
+          />
 
-          </FormControl>
-          <Box sx={{ mt: 2, display: 'flex', alignItems: 'center' }}>
-            <Typography sx={{ mr: 4 }}>{t("page.menu.title.status")}</Typography>
-            <Switch sx={{ mr: 2 }} name='status' checked={!formValues.status} onChange={handleStatusChange} />
-            <Typography>{formValues.status == 0 ? t('page.menu.switch.status.true') : t('page.menu.switch.status.false')}</Typography>
-          </Box>
-          {type != '3' && <Stack direction="row" spacing={2} sx={{ mt: 2, alignItems: 'center' }}>
-            <QuestionBadge title={t("page.menu.tip.visible")}>
-              <Typography>{t("page.menu.title.visible")}</Typography>
-            </QuestionBadge>
-            <Switch name='visible' checked={formValues.visible} onChange={handleSwitchChange} />
-            <Typography>{formValues.visible ? t('page.menu.switch.visible.true') : t('page.menu.switch.visible.false')}</Typography>
-          </Stack>}
-          {type != '3' && <Stack direction="row" spacing={2} sx={{ mt: 2, alignItems: 'center' }}>
-            <QuestionBadge title={t("page.menu.tip.always.show")}>
-              <Typography>{t("page.menu.title.always.show")}</Typography>
-            </QuestionBadge>
-            <Switch name='always_show' checked={formValues.always_show} onChange={handleSwitchChange} />
-            <Typography>{formValues.always_show ? t('page.menu.switch.always.true') : t('page.menu.switch.always.false')}</Typography>
-          </Stack>}
-          {type == '2' && <Stack direction="row" spacing={2} sx={{ mt: 2, alignItems: 'center' }}>
-            <QuestionBadge title={t("page.menu.tip.keep.alive")}>
-              <Typography>{t("page.menu.title.keep.alive")}</Typography>
-            </QuestionBadge>
-            <Switch name='keep_alive' checked={formValues.keep_alive} onChange={handleSwitchChange} />
-            <Typography>{formValues.keep_alive ? t('page.menu.switch.keep.true') : t('page.menu.switch.keep.false')}</Typography>
-          </Stack>}
+        </FormControl>
+        <Box sx={{ mt: 2, display: 'flex', alignItems: 'center' }}>
+          <Typography sx={{ mr: 4 }}>{t("page.menu.title.status")}</Typography>
+          <Switch sx={{ mr: 2 }} name='status' checked={!formValues.status} onChange={handleStatusChange} />
+          <Typography>{formValues.status == 0 ? t('page.menu.switch.status.true') : t('page.menu.switch.status.false')}</Typography>
         </Box>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={handleSubmitAndContinue}>{t('global.operate.confirm.continue')}</Button>
-        <Button onClick={handleSubmit}>{t('global.operate.confirm')}</Button>
-        <Button onClick={handleCancel}>{t('global.operate.cancel')}</Button>
-      </DialogActions>
-    </Dialog >
+        {type != '3' && <Stack direction="row" spacing={2} sx={{ mt: 2, alignItems: 'center' }}>
+          <QuestionBadge title={t("page.menu.tip.visible")}>
+            <Typography>{t("page.menu.title.visible")}</Typography>
+          </QuestionBadge>
+          <Switch name='visible' checked={formValues.visible} onChange={handleSwitchChange} />
+          <Typography>{formValues.visible ? t('page.menu.switch.visible.true') : t('page.menu.switch.visible.false')}</Typography>
+        </Stack>}
+        {type != '3' && <Stack direction="row" spacing={2} sx={{ mt: 2, alignItems: 'center' }}>
+          <QuestionBadge title={t("page.menu.tip.always.show")}>
+            <Typography>{t("page.menu.title.always.show")}</Typography>
+          </QuestionBadge>
+          <Switch name='always_show' checked={formValues.always_show} onChange={handleSwitchChange} />
+          <Typography>{formValues.always_show ? t('page.menu.switch.always.true') : t('page.menu.switch.always.false')}</Typography>
+        </Stack>}
+        {type == '2' && <Stack direction="row" spacing={2} sx={{ mt: 2, alignItems: 'center' }}>
+          <QuestionBadge title={t("page.menu.tip.keep.alive")}>
+            <Typography>{t("page.menu.title.keep.alive")}</Typography>
+          </QuestionBadge>
+          <Switch name='keep_alive' checked={formValues.keep_alive} onChange={handleSwitchChange} />
+          <Typography>{formValues.keep_alive ? t('page.menu.switch.keep.true') : t('page.menu.switch.keep.false')}</Typography>
+        </Stack>}
+      </Box>
+    </CustomizedDialog>
   )
 });
 
