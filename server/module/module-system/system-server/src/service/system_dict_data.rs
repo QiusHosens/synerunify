@@ -1,6 +1,7 @@
 use std::str::FromStr;
 
 use common::constants::enum_constants::{STATUS_DISABLE, STATUS_ENABLE};
+use common::interceptor::orm::simple_support::SimpleSupport;
 use sea_orm::{ActiveModelTrait, ColumnTrait, Condition, DatabaseConnection, EntityTrait, JoinType, Order, PaginatorTrait, QueryFilter, QueryOrder, QuerySelect, RelationTrait};
 use system_model::response::system_dict_type::SystemDictTypeResponse;
 use crate::model::system_dict_data::{Model as SystemDictDataModel, ActiveModel as SystemDictDataActiveModel, Entity as SystemDictDataEntity, Column, Relation};
@@ -13,7 +14,6 @@ use sea_orm::ActiveValue::Set;
 use common::base::page::PaginatedResponse;
 use common::context::context::LoginUserContext;
 use common::interceptor::orm::active_filter::ActiveFilterEntityTrait;
-use common::interceptor::orm::support_order::SupportOrder;
 
 pub async fn create(db: &DatabaseConnection, login_user: LoginUserContext, request: CreateSystemDictDataRequest) -> Result<i64> {
     let mut system_dict_data = create_request_to_model(&request);
@@ -83,6 +83,7 @@ pub async fn get_paginated(db: &DatabaseConnection, login_user: LoginUserContext
     }
 
     let paginator = query
+        .support_filter(params.base.filter_field, params.base.filter_operator, params.base.filter_value)
         .support_order(params.base.sort_field, params.base.sort, 
             Some(vec![(Column::DictType, Order::Asc), (Column::Sort, Order::Asc)]))
         .paginate(db, params.base.size);

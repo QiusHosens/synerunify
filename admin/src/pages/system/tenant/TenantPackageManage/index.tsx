@@ -1,7 +1,7 @@
 import { Box, Button, Switch } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { DataGrid, GridCallbackDetails, GridColDef, GridRenderCellParams, GridSortModel } from '@mui/x-data-grid';
+import { DataGrid, GridCallbackDetails, GridColDef, GridFilterModel, GridRenderCellParams, GridSortModel } from '@mui/x-data-grid';
 import EditIcon from '@/assets/image/svg/edit.svg';
 import DeleteIcon from '@/assets/image/svg/delete.svg';
 import { disableSystemTenantPackage, enableSystemTenantPackage, pageSystemTenantPackage, SystemTenantPackageQueryCondition, SystemTenantPackageResponse } from '@/api';
@@ -25,6 +25,7 @@ export default function TenantPackageManage() {
 
   const [records, setRecords] = useState<Array<SystemTenantPackageResponse>>([]);
   const [sortModel, setSortModel] = useState<GridSortModel>([]);
+  const [filterModel, setFilterModel] = useState<GridFilterModel>();
 
   const addTenantPackage = useRef(null);
   const editTenantPackage = useRef(null);
@@ -141,6 +142,13 @@ export default function TenantPackageManage() {
     }
   };
 
+  const handleFilterModelChange = (model: GridFilterModel, _details: GridCallbackDetails) => {
+    setFilterModel(model);
+    if (model.items.length > 0) {
+      setCondition((prev) => ({ ...prev, ...{ filter_field: model.items[0].field, filter_operator: model.items[0].operator, filter_value: model.items[0].value } } as SystemTenantPackageQueryCondition));
+    }
+  }
+
   const refreshData = () => {
     queryRecords(condition);
   };
@@ -163,6 +171,8 @@ export default function TenantPackageManage() {
         sortingMode="server"
         sortModel={sortModel}
         onSortModelChange={handleSortModelChange}
+        filterModel={filterModel}
+        onFilterModelChange={handleFilterModelChange}
         pageSizeOptions={[10, 20, 50, 100]}
         paginationModel={{ page: condition.page - 1, pageSize: condition.size }}
         onPaginationModelChange={(model) => {

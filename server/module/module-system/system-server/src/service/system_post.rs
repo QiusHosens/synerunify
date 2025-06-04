@@ -1,7 +1,7 @@
 use std::str::FromStr;
 
 use common::constants::enum_constants::{STATUS_DISABLE, STATUS_ENABLE};
-use common::interceptor::orm::support_order::SupportOrder;
+use common::interceptor::orm::simple_support::SimpleSupport;
 use sea_orm::{ActiveModelTrait, ColumnTrait, Condition, DatabaseConnection, EntityTrait, Order, PaginatorTrait, QueryFilter, QueryOrder};
 use crate::model::system_post::{Model as SystemPostModel, ActiveModel as SystemPostActiveModel, Entity as SystemPostEntity, Column};
 use system_model::request::system_post::{CreateSystemPostRequest, UpdateSystemPostRequest, PaginatedKeywordRequest};
@@ -60,6 +60,7 @@ pub async fn get_paginated(db: &DatabaseConnection, login_user: LoginUserContext
     let mut query = SystemPostEntity::find_active_with_condition(condition);
 
     let paginator = query
+        .support_filter(params.base.filter_field, params.base.filter_operator, params.base.filter_value)
         .support_order(params.base.sort_field, params.base.sort, Some(vec![(Column::Id, Order::Asc)]))
         .paginate(db, params.base.size);
 

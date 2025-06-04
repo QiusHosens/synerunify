@@ -1,7 +1,7 @@
 import { Box, Button, Switch } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { DataGrid, GridCallbackDetails, GridColDef, GridRenderCellParams, GridSortModel } from '@mui/x-data-grid';
+import { DataGrid, GridCallbackDetails, GridColDef, GridFilterModel, GridRenderCellParams, GridSortModel } from '@mui/x-data-grid';
 import EditIcon from '@/assets/image/svg/edit.svg';
 import DeleteIcon from '@/assets/image/svg/delete.svg';
 import { disableSystemPost, enableSystemPost, pageSystemPost, SystemPostQueryCondition, SystemPostResponse } from '@/api';
@@ -22,6 +22,7 @@ export default function PostManage() {
 
   const [records, setRecords] = useState<Array<SystemPostResponse>>([]);
   const [sortModel, setSortModel] = useState<GridSortModel>([]);
+  const [filterModel, setFilterModel] = useState<GridFilterModel>();
 
   const addPost = useRef(null);
   const editPost = useRef(null);
@@ -128,6 +129,13 @@ export default function PostManage() {
     }
   };
 
+  const handleFilterModelChange = (model: GridFilterModel, _details: GridCallbackDetails) => {
+    setFilterModel(model);
+    if (model.items.length > 0) {
+      setCondition((prev) => ({ ...prev, ...{ filter_field: model.items[0].field, filter_operator: model.items[0].operator, filter_value: model.items[0].value } } as SystemPostQueryCondition));
+    }
+  }
+
   const refreshData = () => {
     queryRecords(condition);
   };
@@ -150,6 +158,8 @@ export default function PostManage() {
         sortingMode="server"
         sortModel={sortModel}
         onSortModelChange={handleSortModelChange}
+        filterModel={filterModel}
+        onFilterModelChange={handleFilterModelChange}
         pageSizeOptions={[10, 20, 50, 100]}
         paginationModel={{ page: condition.page - 1, pageSize: condition.size }}
         onPaginationModelChange={(model) => {

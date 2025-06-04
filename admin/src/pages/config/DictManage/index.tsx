@@ -1,7 +1,7 @@
 import { Box, Button, FormControl, InputAdornment, InputLabel, MenuItem, Select, SvgIcon, Switch, TextField } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { DataGrid, GridCallbackDetails, GridColDef, GridRenderCellParams, GridSortModel } from '@mui/x-data-grid';
+import { DataGrid, GridCallbackDetails, GridColDef, GridFilterModel, GridRenderCellParams, GridSortModel } from '@mui/x-data-grid';
 import SearchIcon from '@/assets/image/svg/search.svg';
 import EditIcon from '@/assets/image/svg/edit.svg';
 import DeleteIcon from '@/assets/image/svg/delete.svg';
@@ -27,6 +27,7 @@ export default function DictManage() {
   const [records, setRecords] = useState<Array<SystemDictDataResponse>>([]);
   const [types, setTypes] = useState<SystemDictTypeResponse[]>([]);
   const [sortModel, setSortModel] = useState<GridSortModel>([]);
+  const [filterModel, setFilterModel] = useState<GridFilterModel>();
 
   const addDict = useRef(null);
   const addDictType = useRef(null);
@@ -172,6 +173,13 @@ export default function DictManage() {
     }
   };
 
+  const handleFilterModelChange = (model: GridFilterModel, _details: GridCallbackDetails) => {
+    setFilterModel(model);
+    if (model.items.length > 0) {
+      setCondition((prev) => ({ ...prev, ...{ filter_field: model.items[0].field, filter_operator: model.items[0].operator, filter_value: model.items[0].value } } as DictQueryCondition));
+    }
+  }
+
   const refreshData = () => {
     queryRecords(condition);
   };
@@ -242,6 +250,8 @@ export default function DictManage() {
         sortingMode="server"
         sortModel={sortModel}
         onSortModelChange={handleSortModelChange}
+        filterModel={filterModel}
+        onFilterModelChange={handleFilterModelChange}
         pageSizeOptions={[10, 20, 50, 100]}
         paginationModel={{ page: condition.page - 1, pageSize: condition.size }}
         onPaginationModelChange={(model) => {

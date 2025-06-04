@@ -1,7 +1,7 @@
 import { Box, Button, Switch } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { DataGrid, GridCallbackDetails, GridColDef, GridRenderCellParams, GridSortModel } from '@mui/x-data-grid';
+import { DataGrid, GridCallbackDetails, GridColDef, GridFilterModel, GridRenderCellParams, GridSortModel } from '@mui/x-data-grid';
 import EditIcon from '@/assets/image/svg/edit.svg';
 import DeleteIcon from '@/assets/image/svg/delete.svg';
 import { disableSystemRole, enableSystemRole, pageSystemRole, SystemRoleQueryCondition, SystemRoleResponse } from '@/api/role';
@@ -27,6 +27,7 @@ export default function RoleManage() {
 
   const [records, setRecords] = useState<Array<SystemRoleResponse>>([]);
   const [sortModel, setSortModel] = useState<GridSortModel>([]);
+  const [filterModel, setFilterModel] = useState<GridFilterModel>();
 
   const addRole = useRef(null);
   const editRole = useRef(null);
@@ -189,6 +190,13 @@ export default function RoleManage() {
     }
   };
 
+  const handleFilterModelChange = (model: GridFilterModel, _details: GridCallbackDetails) => {
+      setFilterModel(model);
+      if (model.items.length > 0) {
+        setCondition((prev) => ({ ...prev, ...{ filter_field: model.items[0].field, filter_operator: model.items[0].operator, filter_value: model.items[0].value } } as SystemRoleQueryCondition));
+      }
+    }
+
   const refreshData = () => {
     queryRecords(condition);
   };
@@ -211,6 +219,8 @@ export default function RoleManage() {
         sortingMode="server"
         sortModel={sortModel}
         onSortModelChange={handleSortModelChange}
+        filterModel={filterModel}
+        onFilterModelChange={handleFilterModelChange}
         pageSizeOptions={[10, 20, 50, 100]}
         paginationModel={{ page: condition.page - 1, pageSize: condition.size }}
         onPaginationModelChange={(model) => {

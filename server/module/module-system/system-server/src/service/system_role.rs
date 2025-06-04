@@ -1,7 +1,7 @@
 use std::str::FromStr;
 
 use common::constants::enum_constants::{STATUS_DISABLE, STATUS_ENABLE};
-use common::interceptor::orm::support_order::SupportOrder;
+use common::interceptor::orm::simple_support::SimpleSupport;
 use sea_orm::{ActiveModelTrait, ColumnTrait, Condition, DatabaseConnection, EntityTrait, JoinType, Order, PaginatorTrait, QueryFilter, QueryOrder, QuerySelect, RelationTrait};
 use crate::model::system_role::{Model as SystemRoleModel, ActiveModel as SystemRoleActiveModel, Entity as SystemRoleEntity, Column, Relation};
 use crate::model::system_data_scope_rule::{Model as SystemDataScopeRuleModel, ActiveModel as SystemDataScopeRuleActiveModel, Entity as SystemDataScopeRuleEntity, Column as SystemDataScopeRuleColumn};
@@ -79,6 +79,7 @@ pub async fn get_paginated(db: &DatabaseConnection, login_user: LoginUserContext
         .join(JoinType::LeftJoin, Relation::RuleType.def());
 
     let paginator = query
+        .support_filter(params.base.filter_field, params.base.filter_operator, params.base.filter_value)
         .support_order(params.base.sort_field, params.base.sort,  Some(vec![(Column::Sort, Order::Asc)]))
         .paginate(db, params.base.size);
 

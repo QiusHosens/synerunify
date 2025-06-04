@@ -1,7 +1,7 @@
 use std::str::FromStr;
 
 use common::constants::enum_constants::{ROLE_ID_TENANT_ADMIN, STATUS_DISABLE, STATUS_ENABLE};
-use common::interceptor::orm::support_order::SupportOrder;
+use common::interceptor::orm::simple_support::SimpleSupport;
 use common::utils::crypt_utils::{encrypt_password, verify_password};
 use sea_orm::{ActiveModelTrait, ColumnTrait, Condition, DatabaseConnection, DatabaseTransaction, EntityTrait, JoinType, Order, PaginatorTrait, QueryFilter, QueryOrder, QuerySelect, RelationTrait, TransactionTrait};
 use tokio::io::join;
@@ -155,6 +155,7 @@ pub async fn get_paginated(db: &DatabaseConnection, login_user: LoginUserContext
     }
 
     let paginator = query
+        .support_filter(params.base.filter_field, params.base.filter_operator, params.base.filter_value)
         .support_order(params.base.sort_field, params.base.sort, Some(vec![(Column::Id, Order::Asc)]))
         .paginate(db, params.base.size);
 

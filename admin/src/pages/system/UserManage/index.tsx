@@ -8,7 +8,6 @@ import { disableSystemUser, enableSystemUser, listSystemDepartment, pageSystemUs
 import UserAdd from './Add';
 import UserEdit from './Edit';
 import UserDelete from './Delete';
-import CustomizedMore from '@/components/CustomizedMore';
 import SelectTree from '@/components/SelectTree';
 import UserResetPassword from './ResetPassword';
 import { useHomeStore } from '@/store';
@@ -163,8 +162,10 @@ export default function UserManage() {
   };
 
   const handleFilterModelChange = (model: GridFilterModel, _details: GridCallbackDetails) => {
-    console.log('filter model', model);
     setFilterModel(model);
+    if (model.items.length > 0) {
+      setCondition((prev) => ({ ...prev, ...{ filter_field: model.items[0].field, filter_operator: model.items[0].operator, filter_value: model.items[0].value } } as SystemUserQueryCondition));
+    }
   }
 
   const refreshData = () => {

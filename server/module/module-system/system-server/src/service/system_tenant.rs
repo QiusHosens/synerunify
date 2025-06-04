@@ -2,7 +2,7 @@ use std::str::FromStr;
 
 use chrono::Utc;
 use common::constants::enum_constants::{STATUS_DISABLE, STATUS_ENABLE};
-use common::interceptor::orm::support_order::SupportOrder;
+use common::interceptor::orm::simple_support::SimpleSupport;
 use sea_orm::prelude::Expr;
 use sea_orm::{ActiveModelTrait, ColumnTrait, Condition, DatabaseConnection, DbErr, EntityTrait, JoinType, Order, PaginatorTrait, QueryFilter, QueryOrder, QuerySelect, RelationTrait, TransactionTrait};
 use system_model::request::system_user::CreateSystemUserRequest;
@@ -95,6 +95,7 @@ pub async fn get_paginated(db: &DatabaseConnection, login_user: LoginUserContext
         .join(JoinType::LeftJoin, Relation::PackageType.def());
 
     let paginator = query
+        .support_filter(params.base.filter_field, params.base.filter_operator, params.base.filter_value)
         .support_order(params.base.sort_field, params.base.sort, Some(vec![(Column::Id, Order::Asc)]))
         .paginate(db, params.base.size);
 
