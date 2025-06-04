@@ -11,7 +11,7 @@
  Target Server Version : 80100 (8.1.0)
  File Encoding         : 65001
 
- Date: 23/05/2025 16:20:17
+ Date: 04/06/2025 09:44:51
 */
 
 SET NAMES utf8mb4;
@@ -154,6 +154,7 @@ CREATE TABLE `system_menu`  (
   `icon` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '#' COMMENT '菜单图标',
   `component` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '组件路径',
   `component_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '组件名',
+  `i18n` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '国际化',
   `status` tinyint NOT NULL DEFAULT 0 COMMENT '菜单状态',
   `visible` bit(1) NOT NULL DEFAULT b'1' COMMENT '是否可见',
   `keep_alive` bit(1) NOT NULL DEFAULT b'1' COMMENT '是否缓存',
@@ -169,73 +170,73 @@ CREATE TABLE `system_menu`  (
 -- ----------------------------
 -- Records of system_menu
 -- ----------------------------
-INSERT INTO `system_menu` VALUES (1, 'Dashboard', '', 2, 50, 0, '/dashboard', '#', 'pages/Dashboard', 'Dashboard', 0, b'1', b'1', b'1', 1, '2025-03-25 03:07:08', 1, '2025-05-12 06:46:02', b'0');
-INSERT INTO `system_menu` VALUES (2, '系统管理', '', 1, 100, 0, '/system', '#', NULL, NULL, 0, b'1', b'1', b'1', 1, '2025-03-25 03:07:08', 1, '2025-05-14 02:59:07', b'0');
-INSERT INTO `system_menu` VALUES (3, '配置管理', '', 1, 200, 0, '/config', '#', NULL, NULL, 0, b'1', b'1', b'1', 1, '2025-03-25 03:07:08', 1, '2025-05-12 06:46:11', b'0');
-INSERT INTO `system_menu` VALUES (6, '支付管理', '', 1, 400, 0, '/pay', 'pay', '', '', 0, b'1', b'1', b'1', 1, '2025-05-12 00:53:57', 1, '2025-05-12 08:41:17', b'1');
-INSERT INTO `system_menu` VALUES (7, '用户管理', 'user', 2, 102, 2, '/system/user', 'user', 'pages/system/UserManage', 'UserManage', 0, b'1', b'1', b'1', 1, '2025-05-12 00:54:51', 1, '2025-05-23 02:10:22', b'0');
-INSERT INTO `system_menu` VALUES (10, '部门管理', 'department', 2, 103, 2, '/system/department', 'department', 'pages/system/DepartmentManage', 'DepartmentManage', 0, b'1', b'1', b'1', 1, '2025-05-14 06:31:37', 1, '2025-05-16 02:49:42', b'0');
-INSERT INTO `system_menu` VALUES (11, '租户管理', '', 1, 101, 2, '/system/tenant', 'tenant', '', '', 0, b'1', b'0', b'1', 1, '2025-05-14 06:41:40', 1, '2025-05-15 14:06:35', b'0');
-INSERT INTO `system_menu` VALUES (12, '角色管理', 'role', 2, 104, 2, '/system/role', 'role', 'pages/system/RoleManage', 'RoleManage', 0, b'1', b'1', b'1', 1, '2025-05-14 06:42:15', 1, '2025-05-23 02:10:32', b'0');
-INSERT INTO `system_menu` VALUES (13, '租户套餐', 'tenant:package', 2, 102, 11, '/system/tenant/package', 'tenant_package', 'pages/system/tenant/TenantPackageManage', 'TenantPackageManage', 0, b'1', b'1', b'1', 1, '2025-05-15 14:08:27', 1, '2025-05-16 02:50:18', b'0');
-INSERT INTO `system_menu` VALUES (14, '租户列表', 'tenant:list', 2, 103, 11, '/system/tenant/list', 'tenant_list', 'pages/system/tenant/TenantListManage', 'TenantListManage', 0, b'1', b'1', b'1', 1, '2025-05-15 14:09:52', 1, '2025-05-16 02:50:24', b'0');
-INSERT INTO `system_menu` VALUES (18, '菜单管理', 'menu', 2, 201, 3, '/config/menu', '#', 'pages/config/MenuManage', 'MenuManage', 0, b'1', b'1', b'1', 1, '2025-03-25 03:07:08', 1, '2025-05-23 02:05:54', b'0');
-INSERT INTO `system_menu` VALUES (19, '字典管理', 'dict', 2, 202, 3, '/config/dict', '#', 'pages/config/DictManage', 'DictManage', 0, b'1', b'1', b'1', 1, '2025-03-25 03:07:08', 1, '2025-05-23 02:05:58', b'0');
-INSERT INTO `system_menu` VALUES (21, '岗位管理', 'post', 2, 105, 2, '/system/post', 'post', 'pages/system/PostManage', 'PostManage', 0, b'1', b'1', b'1', 1, '2025-05-18 07:22:36', 1, '2025-05-23 02:10:43', b'0');
-INSERT INTO `system_menu` VALUES (25, '查看', 'system:user:get', 3, 0, 7, '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 01:52:33', 1, '2025-05-23 01:52:33', b'0');
-INSERT INTO `system_menu` VALUES (26, '新增', 'system:user:add', 3, 1, 7, '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 01:52:46', 1, '2025-05-23 01:52:46', b'0');
-INSERT INTO `system_menu` VALUES (27, '修改', 'system:user:edit', 3, 2, 7, '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 01:53:01', 1, '2025-05-23 01:53:01', b'0');
-INSERT INTO `system_menu` VALUES (28, '删除', 'system:user:delete', 3, 3, 7, '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 01:53:13', 1, '2025-05-23 01:53:13', b'0');
-INSERT INTO `system_menu` VALUES (29, '查看', 'system:department:get', 3, 0, 10, '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 01:53:41', 1, '2025-05-23 01:54:35', b'0');
-INSERT INTO `system_menu` VALUES (30, '新增', 'system:department:add', 3, 1, 10, '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 01:54:01', 1, '2025-05-23 01:54:01', b'0');
-INSERT INTO `system_menu` VALUES (31, '修改', 'system:department:edit', 3, 2, 10, '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 01:54:11', 1, '2025-05-23 01:54:11', b'0');
-INSERT INTO `system_menu` VALUES (32, '删除', 'system:department:delete', 3, 3, 10, '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 01:54:23', 1, '2025-05-23 01:54:23', b'0');
-INSERT INTO `system_menu` VALUES (33, '查看', 'system:role:get', 3, 0, 12, '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 01:56:15', 1, '2025-05-23 01:56:15', b'0');
-INSERT INTO `system_menu` VALUES (34, '新增', 'system:role:add', 3, 1, 12, '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 01:56:23', 1, '2025-05-23 01:56:23', b'0');
-INSERT INTO `system_menu` VALUES (35, '修改', 'system:role:edit', 3, 2, 12, '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 01:56:34', 1, '2025-05-23 01:56:34', b'0');
-INSERT INTO `system_menu` VALUES (36, '删除', 'system:role:delete', 3, 3, 12, '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 01:56:44', 1, '2025-05-23 01:56:44', b'0');
-INSERT INTO `system_menu` VALUES (37, '查看', 'system:post:get', 3, 0, 21, '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 01:57:10', 1, '2025-05-23 01:57:10', b'0');
-INSERT INTO `system_menu` VALUES (38, '新增', 'system:post:add', 3, 1, 21, '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 01:57:20', 1, '2025-05-23 01:57:20', b'0');
-INSERT INTO `system_menu` VALUES (39, '修改', 'system:post:edit', 3, 2, 21, '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 01:57:32', 1, '2025-05-23 01:57:32', b'0');
-INSERT INTO `system_menu` VALUES (40, '删除', 'system:post:delete', 3, 3, 21, '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 01:57:42', 1, '2025-05-23 01:57:42', b'0');
-INSERT INTO `system_menu` VALUES (41, '查看', 'system:tenant:package:get', 3, 0, 13, '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 01:58:07', 1, '2025-05-23 01:58:07', b'0');
-INSERT INTO `system_menu` VALUES (42, '新增', 'system:tenant:package:add', 3, 1, 13, '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 01:58:16', 1, '2025-05-23 01:58:16', b'0');
-INSERT INTO `system_menu` VALUES (43, '修改', 'system:tenant:package:edit', 3, 2, 13, '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 01:58:27', 1, '2025-05-23 01:58:27', b'0');
-INSERT INTO `system_menu` VALUES (44, '删除', 'system:tenant:package:delete', 3, 3, 13, '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 01:58:38', 1, '2025-05-23 01:58:38', b'0');
-INSERT INTO `system_menu` VALUES (45, '查看', 'system:tenant:list:get', 3, 0, 14, '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 01:58:52', 1, '2025-05-23 02:54:53', b'0');
-INSERT INTO `system_menu` VALUES (46, '新增', 'system:tenant:list:add', 3, 1, 14, '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 01:59:01', 1, '2025-05-23 02:55:00', b'0');
-INSERT INTO `system_menu` VALUES (47, '修改', 'system:tenant:list:edit', 3, 2, 14, '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 01:59:12', 1, '2025-05-23 02:55:06', b'0');
-INSERT INTO `system_menu` VALUES (48, '删除', 'system:tenant:list:delete', 3, 3, 14, '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 01:59:22', 1, '2025-05-23 02:56:07', b'0');
-INSERT INTO `system_menu` VALUES (50, '查看', 'config:menu:get', 3, 0, 18, '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 01:51:30', 1, '2025-05-23 02:07:36', b'0');
-INSERT INTO `system_menu` VALUES (51, '新增', 'config:menu:add', 3, 1, 18, '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-13 03:32:06', 1, '2025-05-23 03:04:37', b'0');
-INSERT INTO `system_menu` VALUES (52, '编辑', 'config:menu:edit', 3, 2, 18, '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-13 03:32:52', 1, '2025-05-23 03:04:39', b'0');
-INSERT INTO `system_menu` VALUES (53, '删除', 'config:menu:delete', 3, 3, 18, '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-16 01:04:50', 1, '2025-05-23 03:04:42', b'0');
-INSERT INTO `system_menu` VALUES (54, '查看', 'config:dict:get', 3, 0, 19, '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 01:51:48', 1, '2025-05-23 02:07:15', b'0');
-INSERT INTO `system_menu` VALUES (55, '新增字典类型', 'config:dict:type:add', 3, 1, 19, '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-16 01:20:14', 1, '2025-05-23 03:04:43', b'0');
-INSERT INTO `system_menu` VALUES (56, '新增字典', 'config:dict:add', 3, 2, 19, '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-16 01:24:22', 1, '2025-05-23 03:04:49', b'0');
-INSERT INTO `system_menu` VALUES (57, '修改字典类型', 'config:dict:type:edit', 3, 3, 19, '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-16 01:26:12', 1, '2025-05-23 03:04:50', b'0');
-INSERT INTO `system_menu` VALUES (58, '修改字典', 'config:dict:edit', 3, 4, 19, '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-16 01:26:23', 1, '2025-05-23 03:04:52', b'0');
-INSERT INTO `system_menu` VALUES (59, '删除字典', 'config:dict:delete', 3, 5, 19, '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-16 01:26:42', 1, '2025-05-23 03:04:53', b'0');
-INSERT INTO `system_menu` VALUES (60, '启用', 'system:user:enable', 3, 4, 7, '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 02:50:20', 1, '2025-05-23 02:50:20', b'0');
-INSERT INTO `system_menu` VALUES (61, '禁用', 'system:user:disable', 3, 5, 7, '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 02:50:34', 1, '2025-05-23 02:50:34', b'0');
-INSERT INTO `system_menu` VALUES (62, '重置密码', 'system:user:reset', 3, 6, 7, '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 02:51:08', 1, '2025-05-23 02:51:08', b'0');
-INSERT INTO `system_menu` VALUES (63, '启用', 'system:tenant:package:enable', 3, 4, 13, '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 02:52:15', 1, '2025-05-23 02:52:15', b'0');
-INSERT INTO `system_menu` VALUES (64, '禁用', 'system:tenant:package:disable', 3, 5, 13, '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 02:52:28', 1, '2025-05-23 02:52:28', b'0');
-INSERT INTO `system_menu` VALUES (65, '菜单权限', 'system:tenant:package:menu', 3, 6, 13, '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 02:52:59', 1, '2025-05-23 02:52:59', b'0');
-INSERT INTO `system_menu` VALUES (66, '启用', 'system:tenant:list:enable', 3, 4, 14, '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 02:54:11', 1, '2025-05-23 02:54:11', b'0');
-INSERT INTO `system_menu` VALUES (67, '禁用', 'system:tenant:list:disable', 3, 5, 14, '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 02:54:22', 1, '2025-05-23 02:54:22', b'0');
-INSERT INTO `system_menu` VALUES (68, '启用', 'system:department:enable', 3, 4, 10, '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 03:00:08', 1, '2025-05-23 03:00:08', b'0');
-INSERT INTO `system_menu` VALUES (69, '禁用', 'system:department:disable', 3, 5, 10, '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 03:00:25', 1, '2025-05-23 03:00:25', b'0');
-INSERT INTO `system_menu` VALUES (70, '启用', 'system:role:enable', 3, 4, 12, '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 03:01:13', 1, '2025-05-23 03:01:13', b'0');
-INSERT INTO `system_menu` VALUES (71, '禁用', 'system:role:disable', 3, 5, 12, '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 03:01:25', 1, '2025-05-23 03:01:25', b'0');
-INSERT INTO `system_menu` VALUES (72, '菜单权限', 'system:role:menu', 3, 6, 12, '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 03:02:17', 1, '2025-05-23 03:02:17', b'0');
-INSERT INTO `system_menu` VALUES (73, '数据权限', 'system:role:data', 3, 7, 12, '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 03:02:51', 1, '2025-05-23 03:02:51', b'0');
-INSERT INTO `system_menu` VALUES (74, '启用', 'system:post:enable', 3, 4, 21, '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 03:03:32', 1, '2025-05-23 03:03:32', b'0');
-INSERT INTO `system_menu` VALUES (75, '禁用', 'system:post:disable', 3, 5, 21, '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 03:03:43', 1, '2025-05-23 03:03:43', b'0');
-INSERT INTO `system_menu` VALUES (76, '启用', 'config:menu:enable', 3, 4, 18, '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 03:05:09', 1, '2025-05-23 03:05:09', b'0');
-INSERT INTO `system_menu` VALUES (77, '禁用', 'config:menu:disable', 3, 5, 18, '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 03:05:26', 1, '2025-05-23 03:05:26', b'0');
-INSERT INTO `system_menu` VALUES (79, '启用', 'config:dict:enable', 3, 6, 19, '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 03:06:38', 1, '2025-05-23 03:06:38', b'0');
-INSERT INTO `system_menu` VALUES (80, '禁用', 'config:dict:disable', 3, 7, 19, '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 03:06:48', 1, '2025-05-23 03:06:48', b'0');
+INSERT INTO `system_menu` VALUES (1, '仪表盘', '', 2, 50, 0, '/dashboard', 'dashboard', 'pages/Dashboard', 'Dashboard', 'global.menu.dashboard', 0, b'1', b'1', b'1', 1, '2025-03-25 03:07:08', 1, '2025-06-04 01:37:27', b'0');
+INSERT INTO `system_menu` VALUES (2, '系统管理', '', 1, 100, 0, '/system', 'system', NULL, NULL, 'global.menu.system', 0, b'1', b'1', b'1', 1, '2025-03-25 03:07:08', 1, '2025-06-04 01:10:34', b'0');
+INSERT INTO `system_menu` VALUES (3, '配置管理', '', 1, 200, 0, '/config', 'config', NULL, NULL, 'global.menu.config', 0, b'1', b'1', b'1', 1, '2025-03-25 03:07:08', 1, '2025-06-04 01:10:47', b'0');
+INSERT INTO `system_menu` VALUES (6, '支付管理', '', 1, 400, 0, '/pay', 'pay', '', '', 'global.menu.pay', 0, b'1', b'1', b'1', 1, '2025-05-12 00:53:57', 1, '2025-06-04 01:11:07', b'1');
+INSERT INTO `system_menu` VALUES (7, '用户管理', 'user', 2, 102, 2, '/system/user', 'user', 'pages/system/UserManage', 'UserManage', 'global.menu.user', 0, b'1', b'1', b'1', 1, '2025-05-12 00:54:51', 1, '2025-06-04 01:11:13', b'0');
+INSERT INTO `system_menu` VALUES (10, '部门管理', 'department', 2, 103, 2, '/system/department', 'department', 'pages/system/DepartmentManage', 'DepartmentManage', 'global.menu.department', 0, b'1', b'1', b'1', 1, '2025-05-14 06:31:37', 1, '2025-06-04 01:11:17', b'0');
+INSERT INTO `system_menu` VALUES (11, '租户管理', '', 1, 101, 2, '/system/tenant', 'tenant', '', '', 'global.menu.tenant', 0, b'1', b'0', b'1', 1, '2025-05-14 06:41:40', 1, '2025-06-04 01:11:29', b'0');
+INSERT INTO `system_menu` VALUES (12, '角色管理', 'role', 2, 104, 2, '/system/role', 'role', 'pages/system/RoleManage', 'RoleManage', 'global.menu.role', 0, b'1', b'1', b'1', 1, '2025-05-14 06:42:15', 1, '2025-06-04 01:11:39', b'0');
+INSERT INTO `system_menu` VALUES (13, '租户套餐', 'tenant:package', 2, 102, 11, '/system/tenant/package', 'tenant_package', 'pages/system/tenant/TenantPackageManage', 'TenantPackageManage', 'global.menu.tenant.package', 0, b'1', b'1', b'1', 1, '2025-05-15 14:08:27', 1, '2025-06-04 01:11:46', b'0');
+INSERT INTO `system_menu` VALUES (14, '租户列表', 'tenant:list', 2, 103, 11, '/system/tenant/list', 'tenant_list', 'pages/system/tenant/TenantListManage', 'TenantListManage', 'global.menu.tenant.list', 0, b'1', b'1', b'1', 1, '2025-05-15 14:09:52', 1, '2025-06-04 01:11:52', b'0');
+INSERT INTO `system_menu` VALUES (18, '菜单管理', 'menu', 2, 201, 3, '/config/menu', 'menu', 'pages/config/MenuManage', 'MenuManage', 'global.menu.menu', 0, b'1', b'1', b'1', 1, '2025-03-25 03:07:08', 1, '2025-06-04 01:11:59', b'0');
+INSERT INTO `system_menu` VALUES (19, '字典管理', 'dict', 2, 202, 3, '/config/dict', 'dict', 'pages/config/DictManage', 'DictManage', 'global.menu.dict', 0, b'1', b'1', b'1', 1, '2025-03-25 03:07:08', 1, '2025-06-04 01:12:08', b'0');
+INSERT INTO `system_menu` VALUES (21, '岗位管理', 'post', 2, 105, 2, '/system/post', 'post', 'pages/system/PostManage', 'PostManage', 'global.menu.post', 0, b'1', b'1', b'1', 1, '2025-05-18 07:22:36', 1, '2025-06-04 01:12:11', b'0');
+INSERT INTO `system_menu` VALUES (25, '查看', 'system:user:get', 3, 0, 7, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 01:52:33', 1, '2025-05-23 01:52:33', b'0');
+INSERT INTO `system_menu` VALUES (26, '新增', 'system:user:add', 3, 1, 7, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 01:52:46', 1, '2025-05-23 01:52:46', b'0');
+INSERT INTO `system_menu` VALUES (27, '修改', 'system:user:edit', 3, 2, 7, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 01:53:01', 1, '2025-05-23 01:53:01', b'0');
+INSERT INTO `system_menu` VALUES (28, '删除', 'system:user:delete', 3, 3, 7, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 01:53:13', 1, '2025-05-23 01:53:13', b'0');
+INSERT INTO `system_menu` VALUES (29, '查看', 'system:department:get', 3, 0, 10, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 01:53:41', 1, '2025-05-23 01:54:35', b'0');
+INSERT INTO `system_menu` VALUES (30, '新增', 'system:department:add', 3, 1, 10, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 01:54:01', 1, '2025-05-23 01:54:01', b'0');
+INSERT INTO `system_menu` VALUES (31, '修改', 'system:department:edit', 3, 2, 10, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 01:54:11', 1, '2025-05-23 01:54:11', b'0');
+INSERT INTO `system_menu` VALUES (32, '删除', 'system:department:delete', 3, 3, 10, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 01:54:23', 1, '2025-05-23 01:54:23', b'0');
+INSERT INTO `system_menu` VALUES (33, '查看', 'system:role:get', 3, 0, 12, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 01:56:15', 1, '2025-05-23 01:56:15', b'0');
+INSERT INTO `system_menu` VALUES (34, '新增', 'system:role:add', 3, 1, 12, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 01:56:23', 1, '2025-05-23 01:56:23', b'0');
+INSERT INTO `system_menu` VALUES (35, '修改', 'system:role:edit', 3, 2, 12, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 01:56:34', 1, '2025-05-23 01:56:34', b'0');
+INSERT INTO `system_menu` VALUES (36, '删除', 'system:role:delete', 3, 3, 12, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 01:56:44', 1, '2025-05-23 01:56:44', b'0');
+INSERT INTO `system_menu` VALUES (37, '查看', 'system:post:get', 3, 0, 21, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 01:57:10', 1, '2025-05-23 01:57:10', b'0');
+INSERT INTO `system_menu` VALUES (38, '新增', 'system:post:add', 3, 1, 21, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 01:57:20', 1, '2025-05-23 01:57:20', b'0');
+INSERT INTO `system_menu` VALUES (39, '修改', 'system:post:edit', 3, 2, 21, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 01:57:32', 1, '2025-05-23 01:57:32', b'0');
+INSERT INTO `system_menu` VALUES (40, '删除', 'system:post:delete', 3, 3, 21, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 01:57:42', 1, '2025-05-23 01:57:42', b'0');
+INSERT INTO `system_menu` VALUES (41, '查看', 'system:tenant:package:get', 3, 0, 13, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 01:58:07', 1, '2025-05-23 01:58:07', b'0');
+INSERT INTO `system_menu` VALUES (42, '新增', 'system:tenant:package:add', 3, 1, 13, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 01:58:16', 1, '2025-05-23 01:58:16', b'0');
+INSERT INTO `system_menu` VALUES (43, '修改', 'system:tenant:package:edit', 3, 2, 13, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 01:58:27', 1, '2025-05-23 01:58:27', b'0');
+INSERT INTO `system_menu` VALUES (44, '删除', 'system:tenant:package:delete', 3, 3, 13, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 01:58:38', 1, '2025-05-23 01:58:38', b'0');
+INSERT INTO `system_menu` VALUES (45, '查看', 'system:tenant:list:get', 3, 0, 14, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 01:58:52', 1, '2025-05-23 02:54:53', b'0');
+INSERT INTO `system_menu` VALUES (46, '新增', 'system:tenant:list:add', 3, 1, 14, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 01:59:01', 1, '2025-05-23 02:55:00', b'0');
+INSERT INTO `system_menu` VALUES (47, '修改', 'system:tenant:list:edit', 3, 2, 14, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 01:59:12', 1, '2025-05-23 02:55:06', b'0');
+INSERT INTO `system_menu` VALUES (48, '删除', 'system:tenant:list:delete', 3, 3, 14, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 01:59:22', 1, '2025-05-23 02:56:07', b'0');
+INSERT INTO `system_menu` VALUES (50, '查看', 'config:menu:get', 3, 0, 18, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 01:51:30', 1, '2025-05-23 02:07:36', b'0');
+INSERT INTO `system_menu` VALUES (51, '新增', 'config:menu:add', 3, 1, 18, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-13 03:32:06', 1, '2025-05-23 03:04:37', b'0');
+INSERT INTO `system_menu` VALUES (52, '编辑', 'config:menu:edit', 3, 2, 18, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-13 03:32:52', 1, '2025-05-23 03:04:39', b'0');
+INSERT INTO `system_menu` VALUES (53, '删除', 'config:menu:delete', 3, 3, 18, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-16 01:04:50', 1, '2025-05-23 03:04:42', b'0');
+INSERT INTO `system_menu` VALUES (54, '查看', 'config:dict:get', 3, 0, 19, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 01:51:48', 1, '2025-05-23 02:07:15', b'0');
+INSERT INTO `system_menu` VALUES (55, '新增字典类型', 'config:dict:type:add', 3, 1, 19, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-16 01:20:14', 1, '2025-05-23 03:04:43', b'0');
+INSERT INTO `system_menu` VALUES (56, '新增字典', 'config:dict:add', 3, 2, 19, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-16 01:24:22', 1, '2025-05-23 03:04:49', b'0');
+INSERT INTO `system_menu` VALUES (57, '修改字典类型', 'config:dict:type:edit', 3, 3, 19, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-16 01:26:12', 1, '2025-05-23 03:04:50', b'0');
+INSERT INTO `system_menu` VALUES (58, '修改字典', 'config:dict:edit', 3, 4, 19, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-16 01:26:23', 1, '2025-05-23 03:04:52', b'0');
+INSERT INTO `system_menu` VALUES (59, '删除字典', 'config:dict:delete', 3, 5, 19, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-16 01:26:42', 1, '2025-05-23 03:04:53', b'0');
+INSERT INTO `system_menu` VALUES (60, '启用', 'system:user:enable', 3, 4, 7, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 02:50:20', 1, '2025-05-23 02:50:20', b'0');
+INSERT INTO `system_menu` VALUES (61, '禁用', 'system:user:disable', 3, 5, 7, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 02:50:34', 1, '2025-05-23 02:50:34', b'0');
+INSERT INTO `system_menu` VALUES (62, '重置密码', 'system:user:reset', 3, 6, 7, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 02:51:08', 1, '2025-05-23 02:51:08', b'0');
+INSERT INTO `system_menu` VALUES (63, '启用', 'system:tenant:package:enable', 3, 4, 13, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 02:52:15', 1, '2025-05-23 02:52:15', b'0');
+INSERT INTO `system_menu` VALUES (64, '禁用', 'system:tenant:package:disable', 3, 5, 13, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 02:52:28', 1, '2025-05-23 02:52:28', b'0');
+INSERT INTO `system_menu` VALUES (65, '菜单权限', 'system:tenant:package:menu', 3, 6, 13, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 02:52:59', 1, '2025-05-23 02:52:59', b'0');
+INSERT INTO `system_menu` VALUES (66, '启用', 'system:tenant:list:enable', 3, 4, 14, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 02:54:11', 1, '2025-05-23 02:54:11', b'0');
+INSERT INTO `system_menu` VALUES (67, '禁用', 'system:tenant:list:disable', 3, 5, 14, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 02:54:22', 1, '2025-05-23 02:54:22', b'0');
+INSERT INTO `system_menu` VALUES (68, '启用', 'system:department:enable', 3, 4, 10, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 03:00:08', 1, '2025-05-23 03:00:08', b'0');
+INSERT INTO `system_menu` VALUES (69, '禁用', 'system:department:disable', 3, 5, 10, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 03:00:25', 1, '2025-05-23 03:00:25', b'0');
+INSERT INTO `system_menu` VALUES (70, '启用', 'system:role:enable', 3, 4, 12, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 03:01:13', 1, '2025-05-23 03:01:13', b'0');
+INSERT INTO `system_menu` VALUES (71, '禁用', 'system:role:disable', 3, 5, 12, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 03:01:25', 1, '2025-05-23 03:01:25', b'0');
+INSERT INTO `system_menu` VALUES (72, '菜单权限', 'system:role:menu', 3, 6, 12, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 03:02:17', 1, '2025-05-23 03:02:17', b'0');
+INSERT INTO `system_menu` VALUES (73, '数据权限', 'system:role:data', 3, 7, 12, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 03:02:51', 1, '2025-05-23 03:02:51', b'0');
+INSERT INTO `system_menu` VALUES (74, '启用', 'system:post:enable', 3, 4, 21, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 03:03:32', 1, '2025-05-23 03:03:32', b'0');
+INSERT INTO `system_menu` VALUES (75, '禁用', 'system:post:disable', 3, 5, 21, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 03:03:43', 1, '2025-05-23 03:03:43', b'0');
+INSERT INTO `system_menu` VALUES (76, '启用', 'config:menu:enable', 3, 4, 18, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 03:05:09', 1, '2025-05-23 03:05:09', b'0');
+INSERT INTO `system_menu` VALUES (77, '禁用', 'config:menu:disable', 3, 5, 18, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 03:05:26', 1, '2025-05-23 03:05:26', b'0');
+INSERT INTO `system_menu` VALUES (79, '启用', 'config:dict:enable', 3, 6, 19, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 03:06:38', 1, '2025-05-23 03:06:38', b'0');
+INSERT INTO `system_menu` VALUES (80, '禁用', 'config:dict:disable', 3, 7, 19, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 03:06:48', 1, '2025-05-23 03:06:48', b'0');
 
 -- ----------------------------
 -- Table structure for system_notice
@@ -546,7 +547,7 @@ CREATE TABLE `system_user`  (
 -- ----------------------------
 -- Records of system_user
 -- ----------------------------
-INSERT INTO `system_user` VALUES (1, 'admin', '$2b$06$Ohq86rDIvNuy/4ZvsTF4dOw.7I7QJj620LC25PwgYDmrKqKmKsJz6', '超级管理员', '超级管理员', '123@qq.com', '18888888888', 0, '', 0, '127.0.0.1', '2025-05-23 08:15:25', '0000', 1, 1, '2025-03-08 10:14:52', 1, '2025-05-23 08:15:22', b'0', 1);
+INSERT INTO `system_user` VALUES (1, 'admin', '$2b$06$Ohq86rDIvNuy/4ZvsTF4dOw.7I7QJj620LC25PwgYDmrKqKmKsJz6', '超级管理员', '超级管理员', '123@qq.com', '18888888888', 0, '', 0, '127.0.0.1', '2025-06-04 01:00:54', '0000', 1, 1, '2025-03-08 10:14:52', 1, '2025-06-04 01:00:54', b'0', 1);
 INSERT INTO `system_user` VALUES (11, 'test', '$2b$06$S2yMOy4Mp5gImLOEl8X3K.T8XAWrfXVwGXK/vOBL.30PGNnnGIDzy', '测试管理员', NULL, '', '15555555555', 0, '', 0, '127.0.0.1', '2025-05-23 08:16:27', '0000-0000', 7, 1, '2025-05-23 08:16:00', 1, '2025-05-23 08:16:25', b'0', 2);
 
 -- ----------------------------
