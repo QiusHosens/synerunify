@@ -40,4 +40,4 @@ spec:
         - destination:
             host: captcha-service.synerunify.svc.cluster.local
             port:
-              number: 9020
+              number: 8080
