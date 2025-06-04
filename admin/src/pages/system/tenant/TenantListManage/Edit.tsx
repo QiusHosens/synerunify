@@ -1,4 +1,4 @@
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Switch, TextField, Typography } from '@mui/material';
+import { Box, Button, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Switch, TextField, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
@@ -7,6 +7,7 @@ import { PickerValue } from '@mui/x-date-pickers/internals';
 import dayjs, { Dayjs } from 'dayjs';
 import { DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import CustomizedDialog from '@/components/CustomizedDialog';
 
 interface FormErrors {
   name?: string; // 租户名
@@ -24,7 +25,6 @@ const TenantEdit = forwardRef(({ onSubmit }: TenantEditProps, ref) => {
   const { t } = useTranslation();
 
   const [open, setOpen] = useState(false);
-  const [fullWidth] = useState(true);
   const [maxWidth] = useState<DialogProps['maxWidth']>('sm');
   const [packages, setPackages] = useState<SystemTenantPackageResponse[]>([]);
   const [expireTime, setExpireTime] = useState<Dayjs | null>();
@@ -190,130 +190,129 @@ const TenantEdit = forwardRef(({ onSubmit }: TenantEditProps, ref) => {
   };
 
   return (
-    <Dialog
-      fullWidth={fullWidth}
-      maxWidth={maxWidth}
+    <CustomizedDialog
       open={open}
       onClose={handleClose}
+      title={t('global.operate.add') + t('global.page.tenant')}
+      maxWidth={maxWidth}
+      actions={
+        <>
+          <Button onClick={handleSubmit}>{t('global.operate.update')}</Button>
+          <Button onClick={handleCancel}>{t('global.operate.cancel')}</Button>
+        </>
+      }
     >
-      <DialogTitle>{t('global.operate.add')}{t('global.page.tenant')}</DialogTitle>
-      <DialogContent>
-        <Box
-          noValidate
-          component="form"
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            m: 'auto',
-            width: 'fit-content',
-          }}
-        >
-          <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '240px' } }}>
-            <TextField
-              required
-              size="small"
-              label={t("page.tenant.title.name")}
-              name='name'
-              value={tenant.name}
-              onChange={handleInputChange}
-              error={!!errors.name}
-              helperText={errors.name}
-            />
-          </FormControl>
-          <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiSelect-root': { width: '240px' } }}>
-            <InputLabel required size="small" id="package-select-label">{t("page.tenant.title.package")}</InputLabel>
-            <Select
-              required
-              size="small"
-              classes={{ select: 'CustomSelectSelect' }}
-              labelId="package-select-label"
-              name="package_id"
-              value={tenant.package_id}
-              onChange={(e) => handleSelectChange(e)}
-              label={t("page.tenant.title.package")}
-            >
-              {packages.map(item => (<MenuItem key={item.id} value={item.id}>{item.name}</MenuItem>))}
-            </Select>
-          </FormControl>
-          <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '240px' } }}>
-            <TextField
-              required
-              size="small"
-              label={t("page.tenant.title.contact.name")}
-              name='contact_name'
-              value={tenant.contact_name}
-              onChange={handleInputChange}
-              error={!!errors.contact_name}
-              helperText={errors.contact_name}
-            />
-            <TextField
-              size="small"
-              label={t("page.tenant.title.contact.mobile")}
-              name="contact_mobile"
-              value={tenant.contact_mobile}
-              onChange={handleInputChange}
-            />
-          </FormControl>
-          <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '240px' } }}>
-            <TextField
-              size="small"
-              label={t("page.tenant.title.website")}
-              name="website"
-              value={tenant.website}
-              onChange={handleInputChange}
-            />
-          </FormControl>
-          <FormControl sx={{ minWidth: 120, '& .MuiPickersTextField-root': { mt: 2, width: '240px' } }}>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DateTimePicker
-                name='expire_time'
-                label={t("page.tenant.title.expire.time")}
-                value={expireTime}
-                onChange={(value) => handleDateTimeChange(value)}
-                slotProps={{
-                  textField: {
-                    size: 'small',
-                    required: true,
-                    error: !!errors.expire_time,
-                    helperText: errors.expire_time,
-                  },
-                  openPickerButton: {
-                    sx: {
-                      mr: -1,
-                      '& .MuiSvgIcon-root': {
-                        fontSize: '1rem',
-                      }
+      <Box
+        noValidate
+        component="form"
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          m: 'auto',
+          width: 'fit-content',
+        }}
+      >
+        <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '240px' } }}>
+          <TextField
+            required
+            size="small"
+            label={t("page.tenant.title.name")}
+            name='name'
+            value={tenant.name}
+            onChange={handleInputChange}
+            error={!!errors.name}
+            helperText={errors.name}
+          />
+        </FormControl>
+        <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiSelect-root': { width: '240px' } }}>
+          <InputLabel required size="small" id="package-select-label">{t("page.tenant.title.package")}</InputLabel>
+          <Select
+            required
+            size="small"
+            classes={{ select: 'CustomSelectSelect' }}
+            labelId="package-select-label"
+            name="package_id"
+            value={tenant.package_id}
+            onChange={(e) => handleSelectChange(e)}
+            label={t("page.tenant.title.package")}
+          >
+            {packages.map(item => (<MenuItem key={item.id} value={item.id}>{item.name}</MenuItem>))}
+          </Select>
+        </FormControl>
+        <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '240px' } }}>
+          <TextField
+            required
+            size="small"
+            label={t("page.tenant.title.contact.name")}
+            name='contact_name'
+            value={tenant.contact_name}
+            onChange={handleInputChange}
+            error={!!errors.contact_name}
+            helperText={errors.contact_name}
+          />
+          <TextField
+            size="small"
+            label={t("page.tenant.title.contact.mobile")}
+            name="contact_mobile"
+            value={tenant.contact_mobile}
+            onChange={handleInputChange}
+          />
+        </FormControl>
+        <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '240px' } }}>
+          <TextField
+            size="small"
+            label={t("page.tenant.title.website")}
+            name="website"
+            value={tenant.website}
+            onChange={handleInputChange}
+          />
+        </FormControl>
+        <FormControl sx={{ minWidth: 120, '& .MuiPickersTextField-root': { mt: 2, width: '240px' } }}>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DateTimePicker
+              name='expire_time'
+              label={t("page.tenant.title.expire.time")}
+              value={expireTime}
+              onChange={(value) => handleDateTimeChange(value)}
+              slotProps={{
+                textField: {
+                  size: 'small',
+                  required: true,
+                  error: !!errors.expire_time,
+                  helperText: errors.expire_time,
+                },
+                openPickerButton: {
+                  sx: {
+                    mr: -1,
+                    '& .MuiSvgIcon-root': {
+                      fontSize: '1rem',
                     }
-                  },
-                }}
-              />
-            </LocalizationProvider>
-          </FormControl>
-          <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '240px' } }}>
-            <TextField
-              required
-              size="small"
-              type="number"
-              label={t("page.tenant.title.account.count")}
-              name="account_count"
-              value={tenant.account_count}
-              onChange={handleInputChange}
-              error={!!errors.account_count}
-              helperText={errors.account_count}
+                  }
+                },
+              }}
             />
-          </FormControl>
-          <Box sx={{ mt: 2, display: 'flex', alignItems: 'center' }}>
-            <Typography sx={{ mr: 4 }}>{t("page.tenant.title.status")}</Typography>
-            <Switch sx={{ mr: 2 }} name='status' checked={!tenant.status} onChange={handleStatusChange} />
-            <Typography>{tenant.status == 0 ? t('page.tenant.switch.status.true') : t('page.tenant.switch.status.false')}</Typography>
-          </Box>
+          </LocalizationProvider>
+        </FormControl>
+        <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '240px' } }}>
+          <TextField
+            required
+            size="small"
+            type="number"
+            label={t("page.tenant.title.account.count")}
+            name="account_count"
+            value={tenant.account_count}
+            onChange={handleInputChange}
+            error={!!errors.account_count}
+            helperText={errors.account_count}
+          />
+        </FormControl>
+        <Box sx={{ mt: 2, display: 'flex', alignItems: 'center' }}>
+          <Typography sx={{ mr: 4 }}>{t("page.tenant.title.status")}</Typography>
+          <Switch sx={{ mr: 2 }} name='status' checked={!tenant.status} onChange={handleStatusChange} />
+          <Typography>{tenant.status == 0 ? t('page.tenant.switch.status.true') : t('page.tenant.switch.status.false')}</Typography>
         </Box>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={handleSubmit}>{t('global.operate.update')}</Button>
-        <Button onClick={handleCancel}>{t('global.operate.cancel')}</Button>
-      </DialogActions>
-    </Dialog >
+      </Box>
+    </CustomizedDialog>
   )
 });
 

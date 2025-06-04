@@ -39,7 +39,7 @@
   "global.operate.delete": "删除",
   "global.operate.more": "更多操作",
   
-  "global.description.delete": "确定删除记录 {{name}}?",
+  "global.description.delete": "确定删除记录【{{name}}】?",
 
   "global.helper.password.show": "显示密码",
   "global.helper.password.hide": "隐藏密码",

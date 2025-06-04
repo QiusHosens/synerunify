@@ -1,4 +1,4 @@
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormHelperText, IconButton, InputAdornment, InputLabel, MenuItem, OutlinedInput, Select, SelectChangeEvent, styled, SvgIcon, Switch, TextField, Typography } from '@mui/material';
+import { Box, Button, FormControl, FormHelperText, IconButton, InputAdornment, InputLabel, MenuItem, OutlinedInput, Select, SelectChangeEvent, SvgIcon, Switch, TextField, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
@@ -9,6 +9,7 @@ import PasswordHideIcon from '@/assets/image/svg/password_hide.svg';
 import DictSelect from '@/components/DictSelect';
 import CustomizedMultipleSelect, { Item } from '@/components/CustomizedMultipleSelect';
 import { Md5 } from 'ts-md5';
+import CustomizedDialog from '@/components/CustomizedDialog';
 
 interface FormValues {
   username: string; // 用户账号
@@ -47,7 +48,6 @@ const UserAdd = forwardRef(({ onSubmit }: UserAddProps, ref) => {
   const { t } = useTranslation();
 
   const [open, setOpen] = useState(false);
-  const [fullWidth] = useState(true);
   const [maxWidth] = useState<DialogProps['maxWidth']>('sm');
   const [showPassword, setShowPassword] = useState(false);
   const [roles, setRoles] = useState<SystemRoleResponse[]>([]);
@@ -68,10 +68,6 @@ const UserAdd = forwardRef(({ onSubmit }: UserAddProps, ref) => {
     post_ids: [],
   });
   const [errors, setErrors] = useState<FormErrors>({});
-
-  const CustomSvgIcon = styled(SvgIcon)({
-    fontSize: '1rem',
-  });
 
   useImperativeHandle(ref, () => ({
     show() {
@@ -229,7 +225,7 @@ const UserAdd = forwardRef(({ onSubmit }: UserAddProps, ref) => {
 
   const handleSubmitAndContinue = async () => {
     if (validateForm()) {
-      console.log('formValues', formValues);
+      // console.log('formValues', formValues);
       const user = formValues as SystemUserRequest;
       if (user.password) {
         user.password = Md5.hashStr(user.password);
@@ -257,6 +253,22 @@ const UserAdd = forwardRef(({ onSubmit }: UserAddProps, ref) => {
     }
 
     // console.log('formValues', formValues);
+
+    // Clear error when user starts typing
+    if (errors[name as keyof FormErrors]) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: undefined
+      }));
+    }
+  };
+
+  const handleSelectChange = (e: SelectChangeEvent<number>) => {
+    const { name, value } = e.target;
+    setFormValues(prev => ({
+      ...prev,
+      [name]: value
+    }));
 
     // Clear error when user starts typing
     if (errors[name as keyof FormErrors]) {
@@ -305,7 +317,7 @@ const UserAdd = forwardRef(({ onSubmit }: UserAddProps, ref) => {
     }
   };
 
-  const handleSelectChange = (e: SelectChangeEvent<string | number[]>) => {
+  const handleMultiSelectChange = (e: SelectChangeEvent<string | number[]>) => {
     const { name, value } = e.target;
     setFormValues(prev => ({
       ...prev,
@@ -348,152 +360,151 @@ const UserAdd = forwardRef(({ onSubmit }: UserAddProps, ref) => {
   };
 
   return (
-    <Dialog
-      fullWidth={fullWidth}
-      maxWidth={maxWidth}
+    <CustomizedDialog
       open={open}
       onClose={handleClose}
+      title={t('global.operate.add') + t('global.page.user')}
+      maxWidth={maxWidth}
+      actions={
+        <>
+          <Button onClick={handleSubmitAndContinue}>{t('global.operate.confirm.continue')}</Button>
+          <Button onClick={handleSubmit}>{t('global.operate.confirm')}</Button>
+          <Button onClick={handleCancel}>{t('global.operate.cancel')}</Button>
+        </>
+      }
     >
-      <DialogTitle>{t('global.operate.add')}{t('global.page.user')}</DialogTitle>
-      <DialogContent>
-        <Box
-          noValidate
-          component="form"
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            m: 'auto',
-            width: 'fit-content',
-          }}
-        >
-          <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiSelect-root': { width: '200px' } }}>
-            <SelectTree
-              expandToSelected
-              name='department_id'
-              size="small"
-              label={t('page.user.title.department.name')}
-              treeData={treeData}
-              value={selectedDepartmentId}
-              onChange={(name, node) => handleChange(name, node as TreeNode)}
-            />
-          </FormControl>
-          <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' } }}>
-            <TextField
-              required
-              size="small"
-              label={t("page.user.title.nickname")}
-              name='nickname'
-              value={formValues.nickname}
-              onChange={handleInputChange}
-              error={!!errors.nickname}
-              helperText={errors.nickname}
-            />
-            <TextField
-              required
-              size="small"
-              label={t("page.user.title.username")}
-              name='username'
-              value={formValues.username}
-              onChange={handleInputChange}
-              error={!!errors.username}
-              helperText={errors.username}
-              autoComplete="off"
-            />
-          </FormControl>
-          <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiOutlinedInput-root': { width: '200px' } }} variant="outlined" error={!!errors.password}>
-            <InputLabel required size="small" htmlFor="user-password">{t("page.user.title.password")}</InputLabel>
-            <OutlinedInput
-              required
-              size="small"
-              id="user-password"
-              type={showPassword ? 'text' : 'password'}
-              label={t("page.user.title.password")}
-              name="password"
-              value={formValues.password}
-              onChange={handleInputChange}
-              error={!!errors.password}
-              autoComplete="new-password"
-              endAdornment={
-                <InputAdornment position="end">
-                  <IconButton
-                    aria-label={
-                      showPassword ? t("global.helper.password.hide") : t("global.helper.password.show")
-                    }
-                    onClick={handleClickShowPassword}
-                    onMouseDown={handleMouseDownPassword}
-                    onMouseUp={handleMouseUpPassword}
-                    edge="end"
-                    sx={{
-                      p: 0.5,
-                      mr: -1,
-                    }}
-                  >
-                    {/* <CustomSvgIcon fontSize="small" component={showPassword ? PasswordShowIcon : PasswordHideIcon} /> */}
-                    <SvgIcon fontSize="small">
-                      {showPassword ? <PasswordShowIcon /> : <PasswordHideIcon />}
-                    </SvgIcon>
-                  </IconButton>
-                </InputAdornment>
-              }
-            />
-            <FormHelperText id="user-password">{errors.password}</FormHelperText>
-          </FormControl>
-          <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiSelect-root': { width: '200px' } }}>
-            <DictSelect name='sex' dict_type='sex' value={formValues.sex.toString()} onChange={handleTypeChange} label={t("page.user.title.sex")} />
-          </FormControl>
-          <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiSelect-root': { width: '200px' } }}>
-            <InputLabel required size="small" id="role-select-label">{t("page.user.title.role.name")}</InputLabel>
-            <Select
-              required
-              size="small"
-              labelId="role-select-label"
-              name="role_id"
-              value={formValues.role_id}
-              onChange={(e) => handleInputChange(e as any)}
-              label={t("page.user.title.role.name")}
-            >
-              {roles.map(item => (<MenuItem key={item.id} value={item.id}>{item.name}</MenuItem>))}
-            </Select>
-          </FormControl>
-          <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiSelect-root': { width: '200px' } }}>
-            <CustomizedMultipleSelect name='post_ids' value={formValues.post_ids} label={t("page.user.title.post")} items={postItems} onChange={handleSelectChange} />
-          </FormControl>
-          <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' } }}>
-            <TextField
-              size="small"
-              label={t("page.user.title.mobile")}
-              name="mobile"
-              value={formValues.mobile}
-              onChange={handleInputChange}
-            />
-            <TextField
-              size="small"
-              label={t("page.user.title.email")}
-              name="email"
-              value={formValues.email}
-              onChange={handleInputChange}
-            />
-            <TextField
-              size="small"
-              label={t("page.user.title.remark")}
-              name="remark"
-              value={formValues.remark}
-              onChange={handleInputChange}
-            />
-          </FormControl>
-          <Box sx={{ mt: 2, display: 'flex', alignItems: 'center' }}>
-            <Typography sx={{ mr: 4 }}>{t("page.user.title.status")}</Typography>
-            <Switch sx={{ mr: 2 }} name='status' checked={!formValues.status} onChange={handleStatusChange} />
-            <Typography>{formValues.status == 0 ? t('page.user.switch.status.true') : t('page.user.switch.status.false')}</Typography>
-          </Box>
+      <Box
+        noValidate
+        component="form"
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          m: 'auto',
+          width: 'fit-content',
+        }}
+      >
+        <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiSelect-root': { width: '200px' } }}>
+          <SelectTree
+            expandToSelected
+            name='department_id'
+            size="small"
+            label={t('page.user.title.department.name')}
+            treeData={treeData}
+            value={selectedDepartmentId}
+            onChange={(name, node) => handleChange(name, node as TreeNode)}
+          />
+        </FormControl>
+        <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' } }}>
+          <TextField
+            required
+            size="small"
+            label={t("page.user.title.nickname")}
+            name='nickname'
+            value={formValues.nickname}
+            onChange={handleInputChange}
+            error={!!errors.nickname}
+            helperText={errors.nickname}
+          />
+          <TextField
+            required
+            size="small"
+            label={t("page.user.title.username")}
+            name='username'
+            value={formValues.username}
+            onChange={handleInputChange}
+            error={!!errors.username}
+            helperText={errors.username}
+            autoComplete="off"
+          />
+        </FormControl>
+        <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiOutlinedInput-root': { width: '200px' } }} variant="outlined" error={!!errors.password}>
+          <InputLabel required size="small" htmlFor="user-password">{t("page.user.title.password")}</InputLabel>
+          <OutlinedInput
+            required
+            size="small"
+            id="user-password"
+            type={showPassword ? 'text' : 'password'}
+            label={t("page.user.title.password")}
+            name="password"
+            value={formValues.password}
+            onChange={handleInputChange}
+            error={!!errors.password}
+            autoComplete="new-password"
+            endAdornment={
+              <InputAdornment position="end">
+                <IconButton
+                  aria-label={
+                    showPassword ? t("global.helper.password.hide") : t("global.helper.password.show")
+                  }
+                  onClick={handleClickShowPassword}
+                  onMouseDown={handleMouseDownPassword}
+                  onMouseUp={handleMouseUpPassword}
+                  edge="end"
+                  sx={{
+                    p: 0.5,
+                    mr: -1,
+                  }}
+                >
+                  {/* <CustomSvgIcon fontSize="small" component={showPassword ? PasswordShowIcon : PasswordHideIcon} /> */}
+                  <SvgIcon fontSize="small">
+                    {showPassword ? <PasswordShowIcon /> : <PasswordHideIcon />}
+                  </SvgIcon>
+                </IconButton>
+              </InputAdornment>
+            }
+          />
+          <FormHelperText id="user-password">{errors.password}</FormHelperText>
+        </FormControl>
+        <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiSelect-root': { width: '200px' } }}>
+          <DictSelect name='sex' dict_type='sex' value={formValues.sex.toString()} onChange={handleTypeChange} label={t("page.user.title.sex")} />
+        </FormControl>
+        <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiSelect-root': { width: '200px' } }}>
+          <InputLabel required size="small" id="role-select-label">{t("page.user.title.role.name")}</InputLabel>
+          <Select
+            required
+            size="small"
+            labelId="role-select-label"
+            name="role_id"
+            value={formValues.role_id}
+            onChange={(e) => handleSelectChange(e)}
+            label={t("page.user.title.role.name")}
+          >
+            {roles.map(item => (<MenuItem key={item.id} value={item.id}>{item.name}</MenuItem>))}
+          </Select>
+        </FormControl>
+        <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiSelect-root': { width: '200px' } }}>
+          <CustomizedMultipleSelect name='post_ids' value={formValues.post_ids} label={t("page.user.title.post")} items={postItems} onChange={handleMultiSelectChange} />
+        </FormControl>
+        <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' } }}>
+          <TextField
+            size="small"
+            label={t("page.user.title.mobile")}
+            name="mobile"
+            value={formValues.mobile}
+            onChange={handleInputChange}
+          />
+          <TextField
+            size="small"
+            label={t("page.user.title.email")}
+            name="email"
+            value={formValues.email}
+            onChange={handleInputChange}
+          />
+          <TextField
+            size="small"
+            label={t("page.user.title.remark")}
+            name="remark"
+            value={formValues.remark}
+            onChange={handleInputChange}
+          />
+        </FormControl>
+        <Box sx={{ mt: 2, display: 'flex', alignItems: 'center' }}>
+          <Typography sx={{ mr: 4 }}>{t("page.user.title.status")}</Typography>
+          <Switch sx={{ mr: 2 }} name='status' checked={!formValues.status} onChange={handleStatusChange} />
+          <Typography>{formValues.status == 0 ? t('page.user.switch.status.true') : t('page.user.switch.status.false')}</Typography>
         </Box>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={handleSubmitAndContinue}>{t('global.operate.confirm.continue')}</Button>
-        <Button onClick={handleSubmit}>{t('global.operate.confirm')}</Button>
-        <Button onClick={handleCancel}>{t('global.operate.cancel')}</Button>
-      </DialogActions>
-    </Dialog >
+      </Box>
+    </CustomizedDialog>
   )
 });
 

@@ -1,8 +1,9 @@
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, TextField } from '@mui/material';
+import { Box, Button, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, TextField } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
 import { createDict, listDictType, SystemDictDataRequest, SystemDictTypeResponse } from '@/api/dict';
+import CustomizedDialog from '@/components/CustomizedDialog';
 
 interface FormValues {
   dict_type: string;
@@ -30,7 +31,6 @@ const DictAdd = forwardRef(({ onSubmit }: DictAddProps, ref) => {
 
   const [open, setOpen] = useState(false);
   const [types, setTypes] = useState<SystemDictTypeResponse[]>([]);
-  const [fullWidth] = useState(true);
   const [maxWidth] = useState<DialogProps['maxWidth']>('sm');
   const [formValues, setFormValues] = useState<FormValues>({
     dict_type: '',
@@ -155,89 +155,104 @@ const DictAdd = forwardRef(({ onSubmit }: DictAddProps, ref) => {
     }
   };
 
+  const handleSelectChange = (e: SelectChangeEvent<string>) => {
+    const { name, value } = e.target;
+    setFormValues(prev => ({
+      ...prev,
+      [name]: value
+    }));
+
+    // Clear error when user starts typing
+    if (errors[name as keyof FormErrors]) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: undefined
+      }));
+    }
+  };
+
   return (
-    <Dialog
-      fullWidth={fullWidth}
-      maxWidth={maxWidth}
+    <CustomizedDialog
       open={open}
       onClose={handleClose}
+      title={t('global.operate.add') + t('global.page.dict')}
+      maxWidth={maxWidth}
+      actions={
+        <>
+          <Button onClick={handleSubmitAndContinue}>{t('global.operate.confirm.continue')}</Button>
+          <Button onClick={handleSubmit}>{t('global.operate.confirm')}</Button>
+          <Button onClick={handleCancel}>{t('global.operate.cancel')}</Button>
+        </>
+      }
     >
-      <DialogTitle>{t('global.operate.add')}{t('global.page.dict')}</DialogTitle>
-      <DialogContent>
-        <Box
-          component="form"
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            m: 'auto',
-            width: 'fit-content',
-          }}
-        >
-          <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiSelect-root': { width: '200px' } }}>
-            <InputLabel required size="small" classes={{ root: 'CustomInputLabelRootSelect', shrink: 'CustomInputLabelShrinkSelect' }} id="dict-type-select-label">{t("page.dict.title.type")}</InputLabel>
-            <Select
-              required
-              size="small"
-              classes={{ select: 'CustomSelectSelect' }}
-              labelId="dict-type-select-label"
-              name="dict_type"
-              value={formValues.dict_type}
-              onChange={(e) => handleInputChange(e as any)}
-              // value={type}
-              // onChange={handleTypeChange}
-              label={t("page.menu.title.type")}
-            >
-              {types.map(item => (<MenuItem key={item.type} value={item.type}>{item.name}</MenuItem>))}
-            </Select>
-          </FormControl>
-          <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' } }}>
-            <TextField
-              required
-              size="small"
-              label={t("page.dict.title.label")}
-              name="label"
-              value={formValues.label}
-              onChange={handleInputChange}
-              error={!!errors.label}
-              helperText={errors.label}
-            />
-            <TextField
-              required
-              size="small"
-              label={t("page.dict.title.value")}
-              name="value"
-              value={formValues.value}
-              onChange={handleInputChange}
-              error={!!errors.value}
-              helperText={errors.value}
-            />
-            <TextField
-              required
-              size="small"
-              type="number"
-              label={t("page.dict.title.sort")}
-              name="sort"
-              value={formValues.sort}
-              onChange={handleInputChange}
-              error={!!errors.sort}
-              helperText={errors.sort}
-            />
-            <TextField
-              size="small"
-              label={t("page.dict.title.remark")}
-              name="remark"
-              value={formValues.remark}
-              onChange={handleInputChange}
-            />
-          </FormControl>
-        </Box>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={handleSubmitAndContinue}>{t('global.operate.confirm.continue')}</Button>
-        <Button onClick={handleSubmit}>{t('global.operate.confirm')}</Button>
-        <Button onClick={handleCancel}>{t('global.operate.cancel')}</Button>
-      </DialogActions>
-    </Dialog>
+      <Box
+        component="form"
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          m: 'auto',
+          width: 'fit-content',
+        }}
+      >
+        <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiSelect-root': { width: '200px' } }}>
+          <InputLabel required size="small" classes={{ root: 'CustomInputLabelRootSelect', shrink: 'CustomInputLabelShrinkSelect' }} id="dict-type-select-label">{t("page.dict.title.type")}</InputLabel>
+          <Select
+            required
+            size="small"
+            classes={{ select: 'CustomSelectSelect' }}
+            labelId="dict-type-select-label"
+            name="dict_type"
+            value={formValues.dict_type}
+            onChange={(e) => handleSelectChange(e)}
+            // value={type}
+            // onChange={handleTypeChange}
+            label={t("page.menu.title.type")}
+          >
+            {types.map(item => (<MenuItem key={item.type} value={item.type}>{item.name}</MenuItem>))}
+          </Select>
+        </FormControl>
+        <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' } }}>
+          <TextField
+            required
+            size="small"
+            label={t("page.dict.title.label")}
+            name="label"
+            value={formValues.label}
+            onChange={handleInputChange}
+            error={!!errors.label}
+            helperText={errors.label}
+          />
+          <TextField
+            required
+            size="small"
+            label={t("page.dict.title.value")}
+            name="value"
+            value={formValues.value}
+            onChange={handleInputChange}
+            error={!!errors.value}
+            helperText={errors.value}
+          />
+          <TextField
+            required
+            size="small"
+            type="number"
+            label={t("page.dict.title.sort")}
+            name="sort"
+            value={formValues.sort}
+            onChange={handleInputChange}
+            error={!!errors.sort}
+            helperText={errors.sort}
+          />
+          <TextField
+            size="small"
+            label={t("page.dict.title.remark")}
+            name="remark"
+            value={formValues.remark}
+            onChange={handleInputChange}
+          />
+        </FormControl>
+      </Box>
+    </CustomizedDialog>
   )
 });
 

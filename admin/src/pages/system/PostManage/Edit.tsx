@@ -1,8 +1,9 @@
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, Switch, TextField, Typography } from '@mui/material';
+import { Box, Button, FormControl, Switch, TextField, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
 import { SystemPostRequest, SystemPostResponse, updateSystemPost } from '@/api';
+import CustomizedDialog from '@/components/CustomizedDialog';
 
 interface FormErrors {
   name?: string; // 职位名称
@@ -17,7 +18,6 @@ const PostEdit = forwardRef(({ onSubmit }: PostEditProps, ref) => {
   const { t } = useTranslation();
 
   const [open, setOpen] = useState(false);
-  const [fullWidth] = useState(true);
   const [maxWidth] = useState<DialogProps['maxWidth']>('sm');
   const [post, setPost] = useState<SystemPostRequest>({
     id: 0,
@@ -125,73 +125,72 @@ const PostEdit = forwardRef(({ onSubmit }: PostEditProps, ref) => {
   };
 
   return (
-    <Dialog
-      fullWidth={fullWidth}
-      maxWidth={maxWidth}
+    <CustomizedDialog
       open={open}
       onClose={handleClose}
+      title={t('global.operate.edit') + t('global.page.post')}
+      maxWidth={maxWidth}
+      actions={
+        <>
+          <Button onClick={handleSubmit}>{t('global.operate.update')}</Button>
+          <Button onClick={handleCancel}>{t('global.operate.cancel')}</Button>
+        </>
+      }
     >
-      <DialogTitle>{t('global.operate.edit')}{t('global.page.post')}</DialogTitle>
-      <DialogContent>
-        <Box
-          noValidate
-          component="form"
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            m: 'auto',
-            width: 'fit-content',
-          }}
-        >
-          <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' } }}>
-            <TextField
-              required
-              size="small"
-              label={t("page.post.title.name")}
-              name='name'
-              value={post.name}
-              onChange={handleInputChange}
-              error={!!errors.name}
-              helperText={errors.name}
-            />
-            <TextField
-              size="small"
-              label={t("page.post.title.code")}
-              name='code'
-              value={post.code}
-              onChange={handleInputChange}
-            />
-            <TextField
-              required
-              size="small"
-              type="number"
-              label={t("page.post.title.sort")}
-              name="sort"
-              value={post.sort}
-              onChange={handleInputChange}
-              error={!!errors.sort}
-              helperText={errors.sort}
-            />
-            <TextField
-              size="small"
-              label={t("page.post.title.remark")}
-              name="remark"
-              value={post.remark}
-              onChange={handleInputChange}
-            />
-          </FormControl>
-          <Box sx={{ mt: 2, display: 'flex', alignItems: 'center' }}>
-            <Typography sx={{ mr: 4 }}>{t("page.post.title.status")}</Typography>
-            <Switch sx={{ mr: 2 }} name='status' checked={!post.status} onChange={handleStatusChange} />
-            <Typography>{post.status == 0 ? t('page.post.switch.status.true') : t('page.post.switch.status.false')}</Typography>
-          </Box>
+      <Box
+        noValidate
+        component="form"
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          m: 'auto',
+          width: 'fit-content',
+        }}
+      >
+        <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' } }}>
+          <TextField
+            required
+            size="small"
+            label={t("page.post.title.name")}
+            name='name'
+            value={post.name}
+            onChange={handleInputChange}
+            error={!!errors.name}
+            helperText={errors.name}
+          />
+          <TextField
+            size="small"
+            label={t("page.post.title.code")}
+            name='code'
+            value={post.code}
+            onChange={handleInputChange}
+          />
+          <TextField
+            required
+            size="small"
+            type="number"
+            label={t("page.post.title.sort")}
+            name="sort"
+            value={post.sort}
+            onChange={handleInputChange}
+            error={!!errors.sort}
+            helperText={errors.sort}
+          />
+          <TextField
+            size="small"
+            label={t("page.post.title.remark")}
+            name="remark"
+            value={post.remark}
+            onChange={handleInputChange}
+          />
+        </FormControl>
+        <Box sx={{ mt: 2, display: 'flex', alignItems: 'center' }}>
+          <Typography sx={{ mr: 4 }}>{t("page.post.title.status")}</Typography>
+          <Switch sx={{ mr: 2 }} name='status' checked={!post.status} onChange={handleStatusChange} />
+          <Typography>{post.status == 0 ? t('page.post.switch.status.true') : t('page.post.switch.status.false')}</Typography>
         </Box>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={handleSubmit}>{t('global.operate.update')}</Button>
-        <Button onClick={handleCancel}>{t('global.operate.cancel')}</Button>
-      </DialogActions>
-    </Dialog >
+      </Box>
+    </CustomizedDialog>
   )
 });
 

@@ -15,6 +15,7 @@ interface CustomizedDialogProps extends Omit<DialogProps, 'title'> {
 }
 
 const CustomizedDialog: React.FC<CustomizedDialogProps> = ({ open, onClose, title, children, actions, maxWidth = 'sm' }) => {
+  const [fullWidth] = useState(true);
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [position, setPosition] = useState({ x: 0, y: 0 });
@@ -70,13 +71,16 @@ const CustomizedDialog: React.FC<CustomizedDialogProps> = ({ open, onClose, titl
     <Dialog
       open={open}
       onClose={onClose}
-      PaperProps={{
-        style: {
-          transform: !isFullScreen ? `translate(${position.x}px, ${position.y}px)` : undefined,
-          transition: isDragging ? 'none' : 'transform 0.1s ease-out',
-        },
+      slotProps={{
+        paper: {
+          style: {
+            transform: !isFullScreen ? `translate(${position.x}px, ${position.y}px)` : undefined,
+            transition: isDragging ? 'none' : 'transform 0.1s ease-out',
+          },
+        }
       }}
       aria-labelledby="draggable-dialog-title"
+      fullWidth={fullWidth}
       maxWidth={isFullScreen ? false : maxWidth}
       fullScreen={isFullScreen}
       sx={{

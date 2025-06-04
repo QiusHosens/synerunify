@@ -1,7 +1,8 @@
 import { listMenu, SystemMenuResponse, SystemTenantPackageMenuRequest, SystemTenantPackageResponse, updateSystemTenantPackageMenu } from "@/api";
+import CustomizedDialog from "@/components/CustomizedDialog";
 import CustomizedTag from "@/components/CustomizedTag";
 import { getSelectedIds } from "@/utils/treeUtils";
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogProps, DialogTitle, FormControl, Stack } from "@mui/material";
+import { Box, Button, DialogProps, FormControl, Stack } from "@mui/material";
 import { RichTreeView, TreeViewSelectionPropagation } from "@mui/x-tree-view";
 import { forwardRef, useImperativeHandle, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -22,7 +23,6 @@ const TenantPackageMenuSetting = forwardRef(({ onSubmit }: TenantPackageMenuSett
   const { t } = useTranslation();
 
   const [open, setOpen] = useState(false);
-  const [fullWidth] = useState(true);
   const [maxWidth] = useState<DialogProps['maxWidth']>('sm');
 
   const [selectionPropagation] = useState<TreeViewSelectionPropagation>({
@@ -119,54 +119,53 @@ const TenantPackageMenuSetting = forwardRef(({ onSubmit }: TenantPackageMenuSett
   }
 
   return (
-    <Dialog
-      fullWidth={fullWidth}
-      maxWidth={maxWidth}
+    <CustomizedDialog
       open={open}
       onClose={handleClose}
+      title={t('page.tenant.package.operate.menu')}
+      maxWidth={maxWidth}
+      actions={
+        <>
+          <Button onClick={handleSubmit}>{t('global.operate.confirm')}</Button>
+          <Button onClick={handleCancel}>{t('global.operate.cancel')}</Button>
+        </>
+      }
     >
-      <DialogTitle>{t('page.tenant.package.operate.menu')}</DialogTitle>
-      <DialogContent>
-        <Box
-          noValidate
-          component="form"
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            m: 'auto',
-            width: 'fit-content',
-          }}
-        >
-          <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiStack-root': { mt: 2, width: '200px' } }}>
-            <Stack direction="row" spacing={2}>
-              <Box>{t('global.page.tenant.package')}{t('page.tenant.package.title.name')}</Box>
-              <Box>{tenantPackage && <CustomizedTag label={tenantPackage.name} />}</Box>
-            </Stack>
-          </FormControl>
-          <FormControl sx={{ mt: 2, minWidth: 120 }}>
-            <Stack direction="row" spacing={2}>
-              <Box>{t('page.tenant.package.operate.menu')}</Box>
-              <Box
-              // sx={{ p: 2, border: '1px solid rgba(0, 0, 0, 0.08)' }}
-              >
-                <RichTreeView
-                  items={menuTreeData}
-                  selectedItems={selectedItems}
-                  checkboxSelection
-                  multiSelect
-                  selectionPropagation={selectionPropagation}
-                  onSelectedItemsChange={handleSelectedItemsChange}
-                />
-              </Box>
-            </Stack>
-          </FormControl>
-        </Box>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={handleSubmit}>{t('global.operate.confirm')}</Button>
-        <Button onClick={handleCancel}>{t('global.operate.cancel')}</Button>
-      </DialogActions>
-    </Dialog >
+      <Box
+        noValidate
+        component="form"
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          m: 'auto',
+          width: 'fit-content',
+        }}
+      >
+        <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiStack-root': { mt: 2, width: '200px' } }}>
+          <Stack direction="row" spacing={2}>
+            <Box>{t('global.page.tenant.package')}{t('page.tenant.package.title.name')}</Box>
+            <Box>{tenantPackage && <CustomizedTag label={tenantPackage.name} />}</Box>
+          </Stack>
+        </FormControl>
+        <FormControl sx={{ mt: 2, minWidth: 120 }}>
+          <Stack direction="row" spacing={2}>
+            <Box>{t('page.tenant.package.operate.menu')}</Box>
+            <Box
+            // sx={{ p: 2, border: '1px solid rgba(0, 0, 0, 0.08)' }}
+            >
+              <RichTreeView
+                items={menuTreeData}
+                selectedItems={selectedItems}
+                checkboxSelection
+                multiSelect
+                selectionPropagation={selectionPropagation}
+                onSelectedItemsChange={handleSelectedItemsChange}
+              />
+            </Box>
+          </Stack>
+        </FormControl>
+      </Box>
+    </CustomizedDialog>
   )
 });
 

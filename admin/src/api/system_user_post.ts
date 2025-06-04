@@ -11,7 +11,7 @@ const apis = {
   enable: '/system/system_user_post/enable', // 启用
   disable: '/system/system_user_post/disable', // 禁用
 
-  get_user: '/system_user_post/get_user', // 查询用户
+  get_user: '/system/system_user_post/get_user', // 查询用户
 }
 
 export interface SystemUserPostRequest {

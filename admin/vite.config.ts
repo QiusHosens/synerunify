@@ -68,7 +68,7 @@ export default defineConfig({
     port: 8000,
     proxy: {
       "/api": {
-        target: "http://localhost:9000", // 目标 API 地址
+        target: "http://localhost:9000", // 目标 API 地址 http://192.168.1.18:30850/http://localhost:9000
         changeOrigin: true, // 允许跨域请求
         rewrite: (path) => path.replace(/^\/api/, ""), // 重写路径，将 /api 替换为空
       },

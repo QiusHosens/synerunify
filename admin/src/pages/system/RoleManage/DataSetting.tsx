@@ -1,7 +1,8 @@
 import { listSystemDepartment, SystemDepartmentResponse, SystemRoleDataRuleRequest, SystemRoleResponse, updateSystemRoleRule } from "@/api";
 import { listSystemDataScopeRule, SystemDataScopeRuleResponse } from "@/api/system_data_scope_rule";
+import CustomizedDialog from "@/components/CustomizedDialog";
 import CustomizedMultipleSelectTree from "@/components/CustomizedMultipleSelectTree";
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogProps, DialogTitle, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Stack } from "@mui/material";
+import { Box, Button, DialogProps, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Stack } from "@mui/material";
 import { forwardRef, ReactNode, useImperativeHandle, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -23,7 +24,6 @@ const RoleDataSetting = forwardRef(({ onSubmit }: RoleDataSettingProps, ref) => 
   const { t } = useTranslation();
 
   const [open, setOpen] = useState(false);
-  const [fullWidth] = useState(true);
   const [maxWidth] = useState<DialogProps['maxWidth']>('sm');
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [originRole, setOriginRole] = useState<SystemRoleResponse>();
@@ -153,50 +153,54 @@ const RoleDataSetting = forwardRef(({ onSubmit }: RoleDataSettingProps, ref) => 
   }
 
   return (
-    <Dialog
-      fullWidth={fullWidth}
-      maxWidth={maxWidth}
+    <CustomizedDialog
       open={open}
       onClose={handleClose}
+      title={t('page.role.operate.data')}
+      maxWidth={maxWidth}
+      actions={
+        <>
+          <Button onClick={handleSubmit}>{t('global.operate.confirm')}</Button>
+          <Button onClick={handleCancel}>{t('global.operate.cancel')}</Button>
+        </>
+      }
     >
-      <DialogTitle>{t('page.role.operate.data')}</DialogTitle>
-      <DialogContent>
-        <Box
-          noValidate
-          component="form"
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            m: 'auto',
-            width: 'fit-content',
-          }}
-        >
-          <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiStack-root': { mt: 2, width: '200px' } }}>
-            <Stack direction="row" spacing={2}>
-              <Box>{t('global.page.role')}{t('page.role.title.name')}</Box>
-              <Box>{originRole && originRole.name}</Box>
-            </Stack>
-            <Stack direction="row" spacing={2}>
-              <Box>{t('global.page.role')}{t('page.role.title.code')}</Box>
-              <Box>{originRole && originRole.code}</Box>
-            </Stack>
-          </FormControl>
-          <FormControl sx={{ mt: 3, minWidth: 120, '& .MuiSelect-root': { width: '200px' } }}>
-            <InputLabel required size="small" id="rule-select-label">{t("page.role.operate.data")}</InputLabel>
-            <Select
-              required
-              size="small"
-              classes={{ select: 'CustomSelectSelect' }}
-              labelId="rule-select-label"
-              name="data_scope_rule_id"
-              value={role && role.data_scope_rule_id}
-              onChange={handleRuleChange}
-              label={t("page.role.operate.data")}
-            >
-              {rules.map(item => (<MenuItem key={'rule-id-' + item.id} value={item.id}>{item.name}</MenuItem>))}
-            </Select>
-          </FormControl>
-          {role.data_scope_rule_id == RULE_ID_SPECIFY_DEPARTMENT && 
+      <Box
+        noValidate
+        component="form"
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          m: 'auto',
+          width: 'fit-content',
+        }}
+      >
+        <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiStack-root': { mt: 2, width: '200px' } }}>
+          <Stack direction="row" spacing={2}>
+            <Box>{t('global.page.role')}{t('page.role.title.name')}</Box>
+            <Box>{originRole && originRole.name}</Box>
+          </Stack>
+          <Stack direction="row" spacing={2}>
+            <Box>{t('global.page.role')}{t('page.role.title.code')}</Box>
+            <Box>{originRole && originRole.code}</Box>
+          </Stack>
+        </FormControl>
+        <FormControl sx={{ mt: 3, minWidth: 120, '& .MuiSelect-root': { width: '200px' } }}>
+          <InputLabel required size="small" id="rule-select-label">{t("page.role.operate.data")}</InputLabel>
+          <Select
+            required
+            size="small"
+            classes={{ select: 'CustomSelectSelect' }}
+            labelId="rule-select-label"
+            name="data_scope_rule_id"
+            value={role && role.data_scope_rule_id}
+            onChange={handleRuleChange}
+            label={t("page.role.operate.data")}
+          >
+            {rules.map(item => (<MenuItem key={'rule-id-' + item.id} value={item.id}>{item.name}</MenuItem>))}
+          </Select>
+        </FormControl>
+        {role.data_scope_rule_id == RULE_ID_SPECIFY_DEPARTMENT &&
           <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiSelect-root': { width: '200px' } }}>
             <CustomizedMultipleSelectTree
               required
@@ -209,13 +213,8 @@ const RoleDataSetting = forwardRef(({ onSubmit }: RoleDataSettingProps, ref) => 
               onSelectedItemsChange={handleSelectedItemsChange}
             />
           </FormControl>}
-        </Box>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={handleSubmit}>{t('global.operate.confirm')}</Button>
-        <Button onClick={handleCancel}>{t('global.operate.cancel')}</Button>
-      </DialogActions>
-    </Dialog >
+      </Box>
+    </CustomizedDialog>
   )
 });
 

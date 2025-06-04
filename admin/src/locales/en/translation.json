@@ -39,7 +39,7 @@
   "global.operate.delete": "Delete",
   "global.operate.more": "More Actions",
 
-  "global.description.delete": "Are you sure you want to delete the record {{name}}?",
+  "global.description.delete": "Are you sure you want to delete the record【{{name}}】?",
 
   "global.helper.password.show": "Show Password",
   "global.helper.password.hide": "Hide Password",

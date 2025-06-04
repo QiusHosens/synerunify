@@ -1,4 +1,4 @@
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormHelperText, IconButton, InputAdornment, InputLabel, MenuItem, OutlinedInput, Select, SelectChangeEvent, styled, SvgIcon, Switch, TextField, Typography } from '@mui/material';
+import { Box, Button, FormControl, FormHelperText, IconButton, InputAdornment, InputLabel, MenuItem, OutlinedInput, Select, SelectChangeEvent, SvgIcon, Switch, TextField, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
@@ -11,6 +11,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { PickerValue } from '@mui/x-date-pickers/internals';
 import { Md5 } from 'ts-md5';
+import CustomizedDialog from '@/components/CustomizedDialog';
 
 interface FormValues {
   name: string; // 租户名
@@ -45,7 +46,6 @@ const TenantAdd = forwardRef(({ onSubmit }: TenantAddProps, ref) => {
   const { t } = useTranslation();
 
   const [open, setOpen] = useState(false);
-  const [fullWidth] = useState(true);
   const [maxWidth] = useState<DialogProps['maxWidth']>('sm');
   const [showPassword, setShowPassword] = useState(false);
   const [packages, setPackages] = useState<SystemTenantPackageResponse[]>([]);
@@ -64,10 +64,6 @@ const TenantAdd = forwardRef(({ onSubmit }: TenantAddProps, ref) => {
     account_count: 1,
   });
   const [errors, setErrors] = useState<FormErrors>({});
-
-  const CustomSvgIcon = styled(SvgIcon)({
-    fontSize: '1rem',
-  });
 
   useImperativeHandle(ref, () => ({
     show() {
@@ -279,190 +275,189 @@ const TenantAdd = forwardRef(({ onSubmit }: TenantAddProps, ref) => {
   };
 
   return (
-    <Dialog
-      fullWidth={fullWidth}
-      maxWidth={maxWidth}
+    <CustomizedDialog
       open={open}
       onClose={handleClose}
+      title={t('global.operate.add') + t('global.page.tenant')}
+      maxWidth={maxWidth}
+      actions={
+        <>
+          <Button onClick={handleSubmitAndContinue}>{t('global.operate.confirm.continue')}</Button>
+          <Button onClick={handleSubmit}>{t('global.operate.confirm')}</Button>
+          <Button onClick={handleCancel}>{t('global.operate.cancel')}</Button>
+        </>
+      }
     >
-      <DialogTitle>{t('global.operate.add')}{t('global.page.tenant')}</DialogTitle>
-      <DialogContent>
-        <Box
-          noValidate
-          component="form"
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            m: 'auto',
-            width: 'fit-content',
-          }}
-        >
-          <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '240px' } }}>
-            <TextField
-              required
-              size="small"
-              label={t("page.tenant.title.name")}
-              name='name'
-              value={formValues.name}
-              onChange={handleInputChange}
-              error={!!errors.name}
-              helperText={errors.name}
-            />
-          </FormControl>
-          <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiSelect-root': { width: '240px' } }}>
-            <InputLabel required size="small" id="package-select-label">{t("page.tenant.title.package")}</InputLabel>
-            <Select
-              required
-              size="small"
-              classes={{ select: 'CustomSelectSelect' }}
-              labelId="package-select-label"
-              name="package_id"
-              value={formValues.package_id}
-              onChange={(e) => handleSelectChange(e)}
-              label={t("page.tenant.title.package")}
-            >
-              {packages.map(item => (<MenuItem key={item.id} value={item.id}>{item.name}</MenuItem>))}
-            </Select>
-          </FormControl>
-          <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '240px' } }}>
-            <TextField
-              required
-              size="small"
-              label={t("page.tenant.title.contact.name")}
-              name='contact_name'
-              value={formValues.contact_name}
-              onChange={handleInputChange}
-              error={!!errors.contact_name}
-              helperText={errors.contact_name}
-            />
-            <TextField
-              size="small"
-              label={t("page.tenant.title.contact.mobile")}
-              name="contact_mobile"
-              value={formValues.contact_mobile}
-              onChange={handleInputChange}
-            />
-            <TextField
-              required
-              size="small"
-              label={t("page.tenant.title.admin.username")}
-              name="username"
-              value={formValues.username}
-              onChange={handleInputChange}
-              error={!!errors.username}
-              helperText={errors.username}
-              autoComplete="off"
-            />
-          </FormControl>
-          <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiOutlinedInput-root': { width: '240px' } }} variant="outlined" error={!!errors.password}>
-            <InputLabel required size="small" htmlFor="tenant-admin-password">{t("page.tenant.title.admin.password")}</InputLabel>
-            <OutlinedInput
-              required
-              size="small"
-              id="tenant-admin-password"
-              type={showPassword ? 'text' : 'password'}
-              label={t("page.tenant.title.admin.password")}
-              name="password"
-              value={formValues.password}
-              onChange={handleInputChange}
-              error={!!errors.password}
-              autoComplete="new-password"
-              endAdornment={
-                <InputAdornment position="end">
-                  <IconButton
-                    aria-label={
-                      showPassword ? t("global.helper.password.hide") : t("global.helper.password.show")
+      <Box
+        noValidate
+        component="form"
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          m: 'auto',
+          width: 'fit-content',
+        }}
+      >
+        <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '240px' } }}>
+          <TextField
+            required
+            size="small"
+            label={t("page.tenant.title.name")}
+            name='name'
+            value={formValues.name}
+            onChange={handleInputChange}
+            error={!!errors.name}
+            helperText={errors.name}
+          />
+        </FormControl>
+        <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiSelect-root': { width: '240px' } }}>
+          <InputLabel required size="small" id="package-select-label">{t("page.tenant.title.package")}</InputLabel>
+          <Select
+            required
+            size="small"
+            classes={{ select: 'CustomSelectSelect' }}
+            labelId="package-select-label"
+            name="package_id"
+            value={formValues.package_id}
+            onChange={(e) => handleSelectChange(e)}
+            label={t("page.tenant.title.package")}
+          >
+            {packages.map(item => (<MenuItem key={item.id} value={item.id}>{item.name}</MenuItem>))}
+          </Select>
+        </FormControl>
+        <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '240px' } }}>
+          <TextField
+            required
+            size="small"
+            label={t("page.tenant.title.contact.name")}
+            name='contact_name'
+            value={formValues.contact_name}
+            onChange={handleInputChange}
+            error={!!errors.contact_name}
+            helperText={errors.contact_name}
+          />
+          <TextField
+            size="small"
+            label={t("page.tenant.title.contact.mobile")}
+            name="contact_mobile"
+            value={formValues.contact_mobile}
+            onChange={handleInputChange}
+          />
+          <TextField
+            required
+            size="small"
+            label={t("page.tenant.title.admin.username")}
+            name="username"
+            value={formValues.username}
+            onChange={handleInputChange}
+            error={!!errors.username}
+            helperText={errors.username}
+            autoComplete="off"
+          />
+        </FormControl>
+        <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiOutlinedInput-root': { width: '240px' } }} variant="outlined" error={!!errors.password}>
+          <InputLabel required size="small" htmlFor="tenant-admin-password">{t("page.tenant.title.admin.password")}</InputLabel>
+          <OutlinedInput
+            required
+            size="small"
+            id="tenant-admin-password"
+            type={showPassword ? 'text' : 'password'}
+            label={t("page.tenant.title.admin.password")}
+            name="password"
+            value={formValues.password}
+            onChange={handleInputChange}
+            error={!!errors.password}
+            autoComplete="new-password"
+            endAdornment={
+              <InputAdornment position="end">
+                <IconButton
+                  aria-label={
+                    showPassword ? t("global.helper.password.hide") : t("global.helper.password.show")
+                  }
+                  onClick={handleClickShowPassword}
+                  onMouseDown={handleMouseDownPassword}
+                  onMouseUp={handleMouseUpPassword}
+                  edge="end"
+                  sx={{
+                    p: 0.5,
+                    mr: -1,
+                  }}
+                >
+                  {/* <CustomSvgIcon fontSize="small" component={showPassword ? PasswordShowIcon : PasswordHideIcon} /> */}
+                  <SvgIcon fontSize="small">
+                    {showPassword ? <PasswordShowIcon /> : <PasswordHideIcon />}
+                  </SvgIcon>
+                </IconButton>
+              </InputAdornment>
+            }
+          />
+          <FormHelperText id="tenant-admin-password">{errors.password}</FormHelperText>
+        </FormControl>
+        <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '240px' } }}>
+          <TextField
+            required
+            size="small"
+            label={t("page.tenant.title.admin.nickname")}
+            name="nickname"
+            value={formValues.nickname}
+            onChange={handleInputChange}
+            error={!!errors.nickname}
+            helperText={errors.nickname}
+          />
+          <TextField
+            size="small"
+            label={t("page.tenant.title.website")}
+            name="website"
+            value={formValues.website}
+            onChange={handleInputChange}
+          />
+        </FormControl>
+        <FormControl sx={{ minWidth: 120, '& .MuiPickersTextField-root': { mt: 2, width: '240px' } }}>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DateTimePicker
+              name='expire_time'
+              label={t("page.tenant.title.expire.time")}
+              value={expireTime}
+              onChange={(value) => handleDateTimeChange(value)}
+              slotProps={{
+                textField: {
+                  size: 'small',
+                  required: true,
+                  error: !!errors.expire_time,
+                  helperText: errors.expire_time,
+                },
+                openPickerButton: {
+                  sx: {
+                    mr: -1,
+                    '& .MuiSvgIcon-root': {
+                      fontSize: '1rem',
                     }
-                    onClick={handleClickShowPassword}
-                    onMouseDown={handleMouseDownPassword}
-                    onMouseUp={handleMouseUpPassword}
-                    edge="end"
-                    sx={{
-                      p: 0.5,
-                      mr: -1,
-                    }}
-                  >
-                    {/* <CustomSvgIcon fontSize="small" component={showPassword ? PasswordShowIcon : PasswordHideIcon} /> */}
-                    <SvgIcon fontSize="small">
-                      {showPassword ? <PasswordShowIcon /> : <PasswordHideIcon />}
-                    </SvgIcon>
-                  </IconButton>
-                </InputAdornment>
-              }
+                  }
+                },
+              }}
             />
-            <FormHelperText id="tenant-admin-password">{errors.password}</FormHelperText>
-          </FormControl>
-          <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '240px' } }}>
-            <TextField
-              required
-              size="small"
-              label={t("page.tenant.title.admin.nickname")}
-              name="nickname"
-              value={formValues.nickname}
-              onChange={handleInputChange}
-              error={!!errors.nickname}
-              helperText={errors.nickname}
-            />
-            <TextField
-              size="small"
-              label={t("page.tenant.title.website")}
-              name="website"
-              value={formValues.website}
-              onChange={handleInputChange}
-            />
-          </FormControl>
-          <FormControl sx={{ minWidth: 120, '& .MuiPickersTextField-root': { mt: 2, width: '240px' } }}>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DateTimePicker
-                name='expire_time'
-                label={t("page.tenant.title.expire.time")}
-                value={expireTime}
-                onChange={(value) => handleDateTimeChange(value)}
-                slotProps={{
-                  textField: {
-                    size: 'small',
-                    required: true,
-                    error: !!errors.expire_time,
-                    helperText: errors.expire_time,
-                  },
-                  openPickerButton: {
-                    sx: {
-                      mr: -1,
-                      '& .MuiSvgIcon-root': {
-                        fontSize: '1rem',
-                      }
-                    }
-                  },
-                }}
-              />
-            </LocalizationProvider>
-          </FormControl>
-          <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '240px' } }}>
-            <TextField
-              required
-              size="small"
-              type="number"
-              label={t("page.tenant.title.account.count")}
-              name="account_count"
-              value={formValues.account_count}
-              onChange={handleInputChange}
-              error={!!errors.account_count}
-              helperText={errors.account_count}
-            />
-          </FormControl>
-          <Box sx={{ mt: 2, display: 'flex', alignItems: 'center' }}>
-            <Typography sx={{ mr: 4 }}>{t("page.tenant.title.status")}</Typography>
-            <Switch sx={{ mr: 2 }} name='status' checked={!formValues.status} onChange={handleStatusChange} />
-            <Typography>{formValues.status == 0 ? t('page.tenant.switch.status.true') : t('page.tenant.switch.status.false')}</Typography>
-          </Box>
+          </LocalizationProvider>
+        </FormControl>
+        <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '240px' } }}>
+          <TextField
+            required
+            size="small"
+            type="number"
+            label={t("page.tenant.title.account.count")}
+            name="account_count"
+            value={formValues.account_count}
+            onChange={handleInputChange}
+            error={!!errors.account_count}
+            helperText={errors.account_count}
+          />
+        </FormControl>
+        <Box sx={{ mt: 2, display: 'flex', alignItems: 'center' }}>
+          <Typography sx={{ mr: 4 }}>{t("page.tenant.title.status")}</Typography>
+          <Switch sx={{ mr: 2 }} name='status' checked={!formValues.status} onChange={handleStatusChange} />
+          <Typography>{formValues.status == 0 ? t('page.tenant.switch.status.true') : t('page.tenant.switch.status.false')}</Typography>
         </Box>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={handleSubmitAndContinue}>{t('global.operate.confirm.continue')}</Button>
-        <Button onClick={handleSubmit}>{t('global.operate.confirm')}</Button>
-        <Button onClick={handleCancel}>{t('global.operate.cancel')}</Button>
-      </DialogActions>
-    </Dialog >
+      </Box>
+    </CustomizedDialog>
   )
 });
 

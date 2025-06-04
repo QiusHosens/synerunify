@@ -1,4 +1,4 @@
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Switch, TextField, Typography } from '@mui/material';
+import { Box, Button, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Switch, TextField, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
@@ -6,6 +6,7 @@ import { getSystemUserPostByUser, listSystemDepartment, listSystemPost, listSyst
 import CustomizedMultipleSelect, { Item } from '@/components/CustomizedMultipleSelect';
 import DictSelect from '@/components/DictSelect';
 import SelectTree from '@/components/SelectTree';
+import CustomizedDialog from '@/components/CustomizedDialog';
 
 interface FormErrors {
   username?: string; // 用户账号
@@ -30,7 +31,6 @@ const UserEdit = forwardRef(({ onSubmit }: UserEditProps, ref) => {
   const { t } = useTranslation();
 
   const [open, setOpen] = useState(false);
-  const [fullWidth] = useState(true);
   const [maxWidth] = useState<DialogProps['maxWidth']>('sm');
   const [roles, setRoles] = useState<SystemRoleResponse[]>([]);
   const [postItems, setPostItems] = useState<Item[]>([]);
@@ -208,6 +208,22 @@ const UserEdit = forwardRef(({ onSubmit }: UserEditProps, ref) => {
     }
   };
 
+  const handleSelectChange = (e: SelectChangeEvent<number>) => {
+    const { name, value } = e.target;
+    setUser(prev => ({
+      ...prev,
+      [name]: value
+    }));
+
+    // Clear error when user starts typing
+    if (errors[name as keyof FormErrors]) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: undefined
+      }));
+    }
+  };
+
   const handleTypeChange = (e: SelectChangeEvent<string>) => {
     // console.log('target', e.target);
     const { name, value } = e.target;
@@ -246,7 +262,7 @@ const UserEdit = forwardRef(({ onSubmit }: UserEditProps, ref) => {
     }
   };
 
-  const handleSelectChange = (e: SelectChangeEvent<string | number[]>) => {
+  const handleMultiSelectChange = (e: SelectChangeEvent<string | number[]>) => {
     const { name, value } = e.target;
     setUser(prev => ({
       ...prev,
@@ -279,102 +295,101 @@ const UserEdit = forwardRef(({ onSubmit }: UserEditProps, ref) => {
   };
 
   return (
-    <Dialog
-      fullWidth={fullWidth}
-      maxWidth={maxWidth}
+    <CustomizedDialog
       open={open}
       onClose={handleClose}
+      title={t('global.operate.edit') + t('global.page.user')}
+      maxWidth={maxWidth}
+      actions={
+        <>
+          <Button onClick={handleSubmit}>{t('global.operate.update')}</Button>
+          <Button onClick={handleCancel}>{t('global.operate.cancel')}</Button>
+        </>
+      }
     >
-      <DialogTitle>{t('global.operate.edit')}{t('global.page.user')}</DialogTitle>
-      <DialogContent>
-        <Box
-          noValidate
-          component="form"
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            m: 'auto',
-            width: 'fit-content',
-          }}
-        >
-          <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiSelect-root': { width: '200px' } }}>
-            <SelectTree
-              expandToSelected
-              name='department_id'
-              size="small"
-              label={t('page.user.title.department.name')}
-              treeData={treeData}
-              value={selectedDepartmentId}
-              onChange={(name, node) => handleChange(name, node as TreeNode)}
-            />
-          </FormControl>
-          <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' } }}>
-            <TextField
-              required
-              size="small"
-              label={t("page.user.title.nickname")}
-              name='nickname'
-              value={user.nickname}
-              onChange={handleInputChange}
-              error={!!errors.nickname}
-              helperText={errors.nickname}
-            />
-          </FormControl>
-          <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiSelect-root': { width: '200px' } }}>
-            <DictSelect name='sex' dict_type='sex' value={user.sex.toString()} onChange={handleTypeChange} label={t("page.user.title.sex")} />
-          </FormControl>
-          <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiSelect-root': { width: '200px' } }}>
-            <InputLabel required size="small" id="role-select-label">{t("page.user.title.role.name")}</InputLabel>
-            <Select
-              required
-              size="small"
-              labelId="role-select-label"
-              name="role_id"
-              value={user.role_id}
-              onChange={(e) => handleInputChange(e as any)}
-              label={t("page.user.title.role.name")}
-            >
-              {roles.map(item => (<MenuItem key={item.id} value={item.id}>{item.name}</MenuItem>))}
-            </Select>
-          </FormControl>
-          <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiSelect-root': { width: '200px' } }}>
-            <CustomizedMultipleSelect name='post_ids' value={user.post_ids} label={t("page.user.title.post")} items={postItems} onChange={handleSelectChange} />
-          </FormControl>
-          <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' } }}>
-            <TextField
-              size="small"
-              label={t("page.user.title.mobile")}
-              name="mobile"
-              value={user.mobile}
-              onChange={handleInputChange}
-            />
-            <TextField
-              size="small"
-              label={t("page.user.title.email")}
-              name="email"
-              value={user.email}
-              onChange={handleInputChange}
-            />
-            <TextField
-              size="small"
-              label={t("page.user.title.remark")}
-              name="remark"
-              value={user.remark}
-              onChange={handleInputChange}
-            />
-          </FormControl>
-          <Box sx={{ mt: 2, display: 'flex', alignItems: 'center' }}>
-            <Typography sx={{ mr: 4 }}>{t("page.user.title.status")}</Typography>
-            <Switch sx={{ mr: 2 }} name='status' checked={!user.status} onChange={handleStatusChange} />
-            <Typography>{user.status == 0 ? t('page.user.switch.status.true') : t('page.user.switch.status.false')}</Typography>
-          </Box>
+      <Box
+        noValidate
+        component="form"
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          m: 'auto',
+          width: 'fit-content',
+        }}
+      >
+        <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiSelect-root': { width: '200px' } }}>
+          <SelectTree
+            expandToSelected
+            name='department_id'
+            size="small"
+            label={t('page.user.title.department.name')}
+            treeData={treeData}
+            value={selectedDepartmentId}
+            onChange={(name, node) => handleChange(name, node as TreeNode)}
+          />
+        </FormControl>
+        <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' } }}>
+          <TextField
+            required
+            size="small"
+            label={t("page.user.title.nickname")}
+            name='nickname'
+            value={user.nickname}
+            onChange={handleInputChange}
+            error={!!errors.nickname}
+            helperText={errors.nickname}
+          />
+        </FormControl>
+        <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiSelect-root': { width: '200px' } }}>
+          <DictSelect name='sex' dict_type='sex' value={user.sex.toString()} onChange={handleTypeChange} label={t("page.user.title.sex")} />
+        </FormControl>
+        <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiSelect-root': { width: '200px' } }}>
+          <InputLabel required size="small" id="role-select-label">{t("page.user.title.role.name")}</InputLabel>
+          <Select
+            required
+            size="small"
+            labelId="role-select-label"
+            name="role_id"
+            value={user.role_id}
+            onChange={(e) => handleSelectChange(e)}
+            label={t("page.user.title.role.name")}
+          >
+            {roles.map(item => (<MenuItem key={item.id} value={item.id}>{item.name}</MenuItem>))}
+          </Select>
+        </FormControl>
+        <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiSelect-root': { width: '200px' } }}>
+          <CustomizedMultipleSelect name='post_ids' value={user.post_ids} label={t("page.user.title.post")} items={postItems} onChange={handleMultiSelectChange} />
+        </FormControl>
+        <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' } }}>
+          <TextField
+            size="small"
+            label={t("page.user.title.mobile")}
+            name="mobile"
+            value={user.mobile}
+            onChange={handleInputChange}
+          />
+          <TextField
+            size="small"
+            label={t("page.user.title.email")}
+            name="email"
+            value={user.email}
+            onChange={handleInputChange}
+          />
+          <TextField
+            size="small"
+            label={t("page.user.title.remark")}
+            name="remark"
+            value={user.remark}
+            onChange={handleInputChange}
+          />
+        </FormControl>
+        <Box sx={{ mt: 2, display: 'flex', alignItems: 'center' }}>
+          <Typography sx={{ mr: 4 }}>{t("page.user.title.status")}</Typography>
+          <Switch sx={{ mr: 2 }} name='status' checked={!user.status} onChange={handleStatusChange} />
+          <Typography>{user.status == 0 ? t('page.user.switch.status.true') : t('page.user.switch.status.false')}</Typography>
         </Box>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={handleSubmit}>{t('global.operate.update')}</Button>
-        <Button onClick={handleCancel}>{t('global.operate.cancel')}</Button>
-      </DialogActions>
-    </Dialog >
+      </Box>
+    </CustomizedDialog>
   )
 });
 

@@ -1,9 +1,10 @@
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, InputLabel, MenuItem, Switch, TextField, Typography } from '@mui/material';
+import { Box, Button, FormControl, InputLabel, MenuItem, Switch, TextField, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { listDepartmentSystemUser, SystemDepartmentEditRequest, SystemDepartmentResponse, SystemUserBaseResponse, updateSystemDepartment } from '@/api';
+import CustomizedDialog from '@/components/CustomizedDialog';
 
 interface FormErrors {
   name?: string; // 部门名称
@@ -18,7 +19,6 @@ const DepartmentEdit = forwardRef(({ onSubmit }: DepartmentEditProps, ref) => {
   const { t } = useTranslation();
 
   const [open, setOpen] = useState(false);
-  const [fullWidth] = useState(true);
   const [maxWidth] = useState<DialogProps['maxWidth']>('sm');
   const [users, setUsers] = useState<SystemUserBaseResponse[]>([]);
   const [department, setDepartment] = useState<SystemDepartmentEditRequest>({
@@ -149,88 +149,87 @@ const DepartmentEdit = forwardRef(({ onSubmit }: DepartmentEditProps, ref) => {
   };
 
   return (
-    <Dialog
-      fullWidth={fullWidth}
-      maxWidth={maxWidth}
+    <CustomizedDialog
       open={open}
       onClose={handleClose}
+      title={t('global.operate.edit') + t('global.page.department')}
+      maxWidth={maxWidth}
+      actions={
+        <>
+          <Button onClick={handleSubmit}>{t('global.operate.update')}</Button>
+          <Button onClick={handleCancel}>{t('global.operate.cancel')}</Button>
+        </>
+      }
     >
-      <DialogTitle>{t('global.operate.edit')}{t('global.page.department')}</DialogTitle>
-      <DialogContent>
-        <Box
-          noValidate
-          component="form"
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            m: 'auto',
-            width: 'fit-content',
-          }}
-        >
-          <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' } }}>
-            <TextField
-              required
-              size="small"
-              label={t("page.department.title.name")}
-              name='name'
-              value={department.name}
-              onChange={handleInputChange}
-              error={!!errors.name}
-              helperText={errors.name}
-            />
-          </FormControl>
-          <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiSelect-root': { width: '200px' } }}>
-            <InputLabel size="small" id="leader-select-label">{t("page.department.title.leader.user.name")}</InputLabel>
-            <Select
-              size="small"
-              labelId="leader-select-label"
-              name="leader_user_id"
-              value={department.leader_user_id}
-              onChange={(e) => handleSelectChange(e)}
-              label={t("page.department.title.leader.user.name")}
-            >
-              {users.map(item => (<MenuItem key={item.id} value={item.id}>{item.nickname}</MenuItem>))}
-            </Select>
-          </FormControl>
-          <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' } }}>
-            <TextField
-              size="small"
-              label={t("page.department.title.phone")}
-              name="phone"
-              value={department.phone}
-              onChange={handleInputChange}
-            />
-            <TextField
-              size="small"
-              label={t("page.department.title.email")}
-              name="email"
-              value={department.email}
-              onChange={handleInputChange}
-            />
-            <TextField
-              required
-              size="small"
-              type="number"
-              label={t("page.department.title.sort")}
-              name="sort"
-              value={department.sort}
-              onChange={handleInputChange}
-              error={!!errors.sort}
-              helperText={errors.sort}
-            />
-          </FormControl>
-          <Box sx={{ mt: 2, display: 'flex', alignItems: 'center' }}>
-            <Typography sx={{ mr: 4 }}>{t("page.department.title.status")}</Typography>
-            <Switch sx={{ mr: 2 }} name='status' checked={!department.status} onChange={handleStatusChange} />
-            <Typography>{department.status == 0 ? t('page.department.switch.status.true') : t('page.department.switch.status.false')}</Typography>
-          </Box>
+      <Box
+        noValidate
+        component="form"
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          m: 'auto',
+          width: 'fit-content',
+        }}
+      >
+        <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' } }}>
+          <TextField
+            required
+            size="small"
+            label={t("page.department.title.name")}
+            name='name'
+            value={department.name}
+            onChange={handleInputChange}
+            error={!!errors.name}
+            helperText={errors.name}
+          />
+        </FormControl>
+        <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiSelect-root': { width: '200px' } }}>
+          <InputLabel size="small" id="leader-select-label">{t("page.department.title.leader.user.name")}</InputLabel>
+          <Select
+            size="small"
+            labelId="leader-select-label"
+            name="leader_user_id"
+            value={department.leader_user_id}
+            onChange={(e) => handleSelectChange(e)}
+            label={t("page.department.title.leader.user.name")}
+          >
+            {users.map(item => (<MenuItem key={item.id} value={item.id}>{item.nickname}</MenuItem>))}
+          </Select>
+        </FormControl>
+        <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' } }}>
+          <TextField
+            size="small"
+            label={t("page.department.title.phone")}
+            name="phone"
+            value={department.phone}
+            onChange={handleInputChange}
+          />
+          <TextField
+            size="small"
+            label={t("page.department.title.email")}
+            name="email"
+            value={department.email}
+            onChange={handleInputChange}
+          />
+          <TextField
+            required
+            size="small"
+            type="number"
+            label={t("page.department.title.sort")}
+            name="sort"
+            value={department.sort}
+            onChange={handleInputChange}
+            error={!!errors.sort}
+            helperText={errors.sort}
+          />
+        </FormControl>
+        <Box sx={{ mt: 2, display: 'flex', alignItems: 'center' }}>
+          <Typography sx={{ mr: 4 }}>{t("page.department.title.status")}</Typography>
+          <Switch sx={{ mr: 2 }} name='status' checked={!department.status} onChange={handleStatusChange} />
+          <Typography>{department.status == 0 ? t('page.department.switch.status.true') : t('page.department.switch.status.false')}</Typography>
         </Box>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={handleSubmit}>{t('global.operate.update')}</Button>
-        <Button onClick={handleCancel}>{t('global.operate.cancel')}</Button>
-      </DialogActions>
-    </Dialog >
+      </Box>
+    </CustomizedDialog>
   )
 });
 

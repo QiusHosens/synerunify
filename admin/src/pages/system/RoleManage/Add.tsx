@@ -1,9 +1,10 @@
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, SelectChangeEvent, Switch, TextField, Typography } from '@mui/material';
+import { Box, Button, FormControl, SelectChangeEvent, Switch, TextField, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
 import DictSelect from '@/components/DictSelect';
 import { createSystemRole, SystemRoleRequest } from '@/api/role';
+import CustomizedDialog from '@/components/CustomizedDialog';
 
 interface FormValues {
   type: number; // 角色类型
@@ -30,7 +31,6 @@ const RoleAdd = forwardRef(({ onSubmit }: RoleAddProps, ref) => {
   const { t } = useTranslation();
 
   const [open, setOpen] = useState(false);
-  const [fullWidth] = useState(true);
   const [maxWidth] = useState<DialogProps['maxWidth']>('sm');
   const [formValues, setFormValues] = useState<FormValues>({
     type: 0,
@@ -185,80 +185,79 @@ const RoleAdd = forwardRef(({ onSubmit }: RoleAddProps, ref) => {
   };
 
   return (
-    <Dialog
-      fullWidth={fullWidth}
-      maxWidth={maxWidth}
+    <CustomizedDialog
       open={open}
       onClose={handleClose}
+      title={t('global.operate.add') + t('global.page.role')}
+      maxWidth={maxWidth}
+      actions={
+        <>
+          <Button onClick={handleSubmitAndContinue}>{t('global.operate.confirm.continue')}</Button>
+          <Button onClick={handleSubmit}>{t('global.operate.confirm')}</Button>
+          <Button onClick={handleCancel}>{t('global.operate.cancel')}</Button>
+        </>
+      }
     >
-      <DialogTitle>{t('global.operate.add')}{t('global.page.role')}</DialogTitle>
-      <DialogContent>
-        <Box
-          noValidate
-          component="form"
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            m: 'auto',
-            width: 'fit-content',
-          }}
-        >
-          <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiSelect-root': { width: '200px' } }}>
-            <DictSelect name='type' dict_type='role_type' value={formValues.type.toString()} onChange={handleTypeChange} label={t("page.role.title.type")}></DictSelect>
-          </FormControl>
-          <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' } }}>
-            <TextField
-              required
-              size="small"
-              label={t("page.role.title.name")}
-              name='name'
-              value={formValues.name}
-              onChange={handleInputChange}
-              error={!!errors.name}
-              helperText={errors.name}
-            />
-            <TextField
-              size="small"
-              label={t("page.role.title.code")}
-              name="code"
-              value={formValues.code}
-              onChange={handleInputChange}
-              error={!!errors.code}
-              helperText={errors.code}
-            />
+      <Box
+        noValidate
+        component="form"
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          m: 'auto',
+          width: 'fit-content',
+        }}
+      >
+        <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiSelect-root': { width: '200px' } }}>
+          <DictSelect name='type' dict_type='role_type' value={formValues.type.toString()} onChange={handleTypeChange} label={t("page.role.title.type")}></DictSelect>
+        </FormControl>
+        <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' } }}>
+          <TextField
+            required
+            size="small"
+            label={t("page.role.title.name")}
+            name='name'
+            value={formValues.name}
+            onChange={handleInputChange}
+            error={!!errors.name}
+            helperText={errors.name}
+          />
+          <TextField
+            size="small"
+            label={t("page.role.title.code")}
+            name="code"
+            value={formValues.code}
+            onChange={handleInputChange}
+            error={!!errors.code}
+            helperText={errors.code}
+          />
 
-            <TextField
-              required
-              size="small"
-              type="number"
-              label={t("page.role.title.sort")}
-              name="sort"
-              value={formValues.sort}
-              onChange={handleInputChange}
-              error={!!errors.sort}
-              helperText={errors.sort}
-            />
-            <TextField
-              size="small"
-              label={t("page.role.title.remark")}
-              name="remark"
-              value={formValues.remark}
-              onChange={handleInputChange}
-            />
-          </FormControl>
-          <Box sx={{ mt: 2, display: 'flex', alignItems: 'center' }}>
-            <Typography sx={{ mr: 4 }}>{t("page.role.title.status")}</Typography>
-            <Switch sx={{ mr: 2 }} name='status' checked={!formValues.status} onChange={handleStatusChange} />
-            <Typography>{formValues.status == 0 ? t('page.role.switch.status.true') : t('page.role.switch.status.false')}</Typography>
-          </Box>
+          <TextField
+            required
+            size="small"
+            type="number"
+            label={t("page.role.title.sort")}
+            name="sort"
+            value={formValues.sort}
+            onChange={handleInputChange}
+            error={!!errors.sort}
+            helperText={errors.sort}
+          />
+          <TextField
+            size="small"
+            label={t("page.role.title.remark")}
+            name="remark"
+            value={formValues.remark}
+            onChange={handleInputChange}
+          />
+        </FormControl>
+        <Box sx={{ mt: 2, display: 'flex', alignItems: 'center' }}>
+          <Typography sx={{ mr: 4 }}>{t("page.role.title.status")}</Typography>
+          <Switch sx={{ mr: 2 }} name='status' checked={!formValues.status} onChange={handleStatusChange} />
+          <Typography>{formValues.status == 0 ? t('page.role.switch.status.true') : t('page.role.switch.status.false')}</Typography>
         </Box>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={handleSubmitAndContinue}>{t('global.operate.confirm.continue')}</Button>
-        <Button onClick={handleSubmit}>{t('global.operate.confirm')}</Button>
-        <Button onClick={handleCancel}>{t('global.operate.cancel')}</Button>
-      </DialogActions>
-    </Dialog >
+      </Box>
+    </CustomizedDialog>
   )
 });
 

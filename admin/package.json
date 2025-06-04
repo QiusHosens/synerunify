@@ -23,6 +23,7 @@
     "@mui/x-tree-view": "8.4.0",
     "axios": "^1.9.0",
     "dayjs": "^1.11.13",
+    "go-captcha-react": "^1.0.4",
     "i18next": "25.2.1",
     "i18next-browser-languagedetector": "^8.1.0",
     "react": "^19.0.0",

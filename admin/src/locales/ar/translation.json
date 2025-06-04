@@ -39,7 +39,7 @@
   "global.operate.delete": "حذف",
   "global.operate.more": "إجراءات إضافية",
 
-  "global.description.delete": "هل أنت متأكد من حذف السجل {{name}}؟",
+  "global.description.delete": "هل أنت متأكد من حذف السجل 【{{name}}】؟",
 
   "global.helper.password.show": "إظهار كلمة المرور",
   "global.helper.password.hide": "إخفاء كلمة المرور",

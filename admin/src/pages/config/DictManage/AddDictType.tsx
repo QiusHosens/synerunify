@@ -1,8 +1,9 @@
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, TextField } from '@mui/material';
+import { Box, Button, FormControl, TextField } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
 import { createDictType, SystemDictTypeRequest } from '@/api/dict';
+import CustomizedDialog from '@/components/CustomizedDialog';
 
 interface FormValues {
   name: string;
@@ -23,7 +24,6 @@ const DictTypeAdd = forwardRef(({ onSubmit }: DictTypeAddProps, ref) => {
   const { t } = useTranslation();
 
   const [open, setOpen] = useState(false);
-  const [fullWidth] = useState(true);
   const [maxWidth] = useState<DialogProps['maxWidth']>('sm');
   const [formValues, setFormValues] = useState<FormValues>({
     name: '',
@@ -93,59 +93,58 @@ const DictTypeAdd = forwardRef(({ onSubmit }: DictTypeAddProps, ref) => {
   };
 
   return (
-    <Dialog
-      fullWidth={fullWidth}
-      maxWidth={maxWidth}
+    <CustomizedDialog
       open={open}
       onClose={handleClose}
+      title={t('global.operate.add') + t('global.page.dict.type')}
+      maxWidth={maxWidth}
+      actions={
+        <>
+          <Button onClick={handleSubmit}>{t('global.operate.confirm')}</Button>
+          <Button onClick={handleCancel}>{t('global.operate.cancel')}</Button>
+        </>
+      }
     >
-      <DialogTitle>{t('global.operate.add')}{t('global.page.dict.type')}</DialogTitle>
-      <DialogContent>
-        <Box
-          component="form"
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            m: 'auto',
-            width: 'fit-content',
-          }}
-        >
-          <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' } }}>
-            <TextField
-              required
-              size="small"
-              label={t("page.dict.title.name")}
-              name="name"
-              value={formValues.name}
-              onChange={handleInputChange}
-              error={!!errors.name}
-              helperText={errors.name}
-            />
-            <TextField
-              required
-              size="small"
-              label={t("page.dict.title.type")}
-              name="type"
-              value={formValues.type}
-              onChange={handleInputChange}
-              error={!!errors.type}
-              helperText={errors.type}
-            />
-            <TextField
-              size="small"
-              label={t("page.dict.title.remark")}
-              name="remark"
-              value={formValues.remark}
-              onChange={handleInputChange}
-            />
-          </FormControl>
-        </Box>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={handleSubmit}>{t('global.operate.confirm')}</Button>
-        <Button onClick={handleCancel}>{t('global.operate.cancel')}</Button>
-      </DialogActions>
-    </Dialog>
+      <Box
+        component="form"
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          m: 'auto',
+          width: 'fit-content',
+        }}
+      >
+        <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' } }}>
+          <TextField
+            required
+            size="small"
+            label={t("page.dict.title.name")}
+            name="name"
+            value={formValues.name}
+            onChange={handleInputChange}
+            error={!!errors.name}
+            helperText={errors.name}
+          />
+          <TextField
+            required
+            size="small"
+            label={t("page.dict.title.type")}
+            name="type"
+            value={formValues.type}
+            onChange={handleInputChange}
+            error={!!errors.type}
+            helperText={errors.type}
+          />
+          <TextField
+            size="small"
+            label={t("page.dict.title.remark")}
+            name="remark"
+            value={formValues.remark}
+            onChange={handleInputChange}
+          />
+        </FormControl>
+      </Box>
+    </CustomizedDialog>
   )
 });
 
