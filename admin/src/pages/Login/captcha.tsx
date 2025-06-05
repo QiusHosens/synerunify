@@ -1,4 +1,5 @@
 import { CaptchaCheckRequest, checkData, getData } from "@/api";
+import { useMessage } from "@/components/GlobalMessage";
 import { Dialog, DialogContent, DialogProps } from "@mui/material";
 import GoCaptcha from "go-captcha-react";
 import { ClickData, ClickDot } from "go-captcha-react/dist/components/Click/meta/data";
@@ -33,6 +34,7 @@ interface CaptchaDialogProps {
 
 const CaptchaDialog = forwardRef(({ onSubmit }: CaptchaDialogProps, ref) => {
     const { t } = useTranslation();
+    const { showMessage } = useMessage();
 
     const [open, setOpen] = useState(false);
     const [maxWidth] = useState<DialogProps['maxWidth']>('sm');
@@ -121,23 +123,30 @@ const CaptchaDialog = forwardRef(({ onSubmit }: CaptchaDialogProps, ref) => {
 
     }
 
-    const handleClickConfirm = (dots: Array<ClickDot>, reset: () => void) => {
+    const handleClickConfirm = async (dots: Array<ClickDot>, reset: () => void) => {
         console.log('click confirm', dots);
-        return false;
+        let value = '';
+        for (let dot of dots) {
+            value = ',' + dot.x + ',' + dot.y;
+        }
+        value = value.substring(1);
+        return await handleConfirm(value);
     }
 
     const handleMove = (x: number, y: number) => {
 
     }
 
-    const handleSlideConfirm = (point: SlidePoint, reset: () => void) => {
+    const handleSlideConfirm = async (point: SlidePoint, reset: () => void) => {
         console.log('slide confirm', point);
-        return false;
+        const value = point.x + ',' + point.y;
+        return await handleConfirm(value);
     }
 
-    const handleSlideRegionConfirm = (point: SlideRegionPoint, reset: () => void) => {
+    const handleSlideRegionConfirm = async (point: SlideRegionPoint, reset: () => void) => {
         console.log('slide region confirm', point);
-        return false;
+        const value = point.x + ',' + point.y;
+        return await handleConfirm(value);
     }
 
     const handleRotate = (angle: number) => {
@@ -146,20 +155,30 @@ const CaptchaDialog = forwardRef(({ onSubmit }: CaptchaDialogProps, ref) => {
 
     const handleRotateConfirm = async (angle: number, reset: () => void) => {
         console.log('rotate confirm', angle);
-        if (checkRequest) {
-            const result = await checkData({
-                ...checkRequest,
-                value: String(angle)
-            });
-            console.log('rotate confirm result', result);
-            return result == 'ok';
-        }
-
-        return false;
+        return await handleConfirm(String(angle));
     }
 
     const handleRefresh = () => {
 
+    }
+
+    const handleConfirm = async (value: string): Promise<boolean> => {
+        if (checkRequest) {
+            const result = await checkData({
+                ...checkRequest,
+                value: value
+            });
+            console.log('confirm result', result);
+            if (result == 'ok') {
+                showMessage('验证成功', 'success', 3000);
+                onSubmit();
+            } else {
+                showMessage('验证失败,请重试', 'error', 3000);
+                handleRefresh();
+            }
+            return result == 'ok';
+        }
+        return false;
     }
 
     return (
