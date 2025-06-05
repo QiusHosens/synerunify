@@ -23,7 +23,6 @@ export default function SettingsButton({ sx }: SettingsButtonProps) {
     mode,
     navPosition,
     primaryKey,
-    primary,
     fontFamily,
     fontSize,
     setThemeMode,
@@ -39,7 +38,7 @@ export default function SettingsButton({ sx }: SettingsButtonProps) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
-  const CustomSlider = styled(Slider)(({ theme }: { theme: any }) => ({
+  const CustomSlider = styled(Slider)(() => ({
     
   }));
 

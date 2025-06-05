@@ -1,12 +1,13 @@
 import { CaptchaCheckRequest, checkData, getData } from "@/api";
 import { useMessage } from "@/components/GlobalMessage";
+import { useThemeStore } from "@/store";
 import { Dialog, DialogContent, DialogProps } from "@mui/material";
 import GoCaptcha from "go-captcha-react";
 import { ClickData, ClickDot } from "go-captcha-react/dist/components/Click/meta/data";
 import { RotateData } from "go-captcha-react/dist/components/Rotate/meta/data";
 import { SlideData, SlidePoint } from "go-captcha-react/dist/components/Slide/meta/data";
 import { SlideRegionData, SlideRegionPoint } from "go-captcha-react/dist/components/SlideRegion/meta/data";
-import { forwardRef, useImperativeHandle, useRef, useState } from "react";
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 // GoCaptchaTypeUnknown    = 0
@@ -33,12 +34,15 @@ interface CaptchaDialogProps {
 }
 
 const CaptchaDialog = forwardRef(({ onSubmit }: CaptchaDialogProps, ref) => {
-    const { t } = useTranslation();
+    const { i18n } = useTranslation();
+    const { mode } = useThemeStore();
     const { showMessage } = useMessage();
 
     const [open, setOpen] = useState(false);
     const [maxWidth] = useState<DialogProps['maxWidth']>('sm');
 
+    const [failCount, setFailCount] = useState<number>(0);
+    const [id, setId] = useState<string>('click-default-ch');
     const [idType, setIdType] = useState<number>(0);
     const [clickData, setClickData] = useState<ClickData>();
     const [slideData, setSlideData] = useState<SlideData>();
@@ -54,7 +58,7 @@ const CaptchaDialog = forwardRef(({ onSubmit }: CaptchaDialogProps, ref) => {
     useImperativeHandle(ref, () => ({
         show() {
             console.log('captcha show');
-            initCaptcha();
+            refreshId();
             setOpen(true);
         },
         hide() {
@@ -62,14 +66,57 @@ const CaptchaDialog = forwardRef(({ onSubmit }: CaptchaDialogProps, ref) => {
         },
     }));
 
-    const initCaptcha = async () => {
+    useEffect(() => {
+        refreshId();
+    }, [failCount]);
+
+    const refreshId = () => {
+        console.log('fail count', failCount);
         let id = 'click-default-ch';
-        id = 'rotate-default';
+        const count = failCount % 5;
+        switch (count) {
+            case 0:
+                if (mode == 'light') {
+                    if (i18n.language === 'en') {
+                        id = 'click-default-en';
+                        setId('click-default-en');
+                    } else {
+                        id = 'click-default-ch';
+                    }
+                } else {
+                    if (i18n.language === 'en') {
+                        id = 'click-dark-en';
+                    } else {
+                        id = 'click-dark-ch';
+                    }
+                }
+                break;
+            case 1:
+                if (mode == 'light') {
+                    id = 'click-shape-light-default';
+                } else {
+                    id = 'click-shape-dark-default';
+                }
+                break;
+            case 2:
+                id = 'slide-default';
+                break;
+            case 3:
+                id = 'drag-default';
+                break;
+            case 4:
+                id = 'rotate-default';
+                break;
+        }
+        setId(id);
+        refresh(id);
+    }
+
+    const refresh = async (id: string) => {
         const idType = CAPTCHA_ID_MAP[id];
         setIdType(idType);
-
         const result = await getData(id);
-        console.log('captcha', result);
+        // console.log('captcha', result);
 
         setCheckRequest({
             id,
@@ -119,47 +166,55 @@ const CaptchaDialog = forwardRef(({ onSubmit }: CaptchaDialogProps, ref) => {
         setOpen(false);
     };
 
-    const handleClick = (x: number, y: number) => {
-
-    }
-
     const handleClickConfirm = async (dots: Array<ClickDot>, reset: () => void) => {
         console.log('click confirm', dots);
         let value = '';
-        for (let dot of dots) {
+        for (const dot of dots) {
             value = ',' + dot.x + ',' + dot.y;
         }
         value = value.substring(1);
-        return await handleConfirm(value);
-    }
-
-    const handleMove = (x: number, y: number) => {
-
+        const result = await handleConfirm(value);
+        if (!result) {
+            reset();
+        }
+        return result;
     }
 
     const handleSlideConfirm = async (point: SlidePoint, reset: () => void) => {
         console.log('slide confirm', point);
         const value = point.x + ',' + point.y;
-        return await handleConfirm(value);
+        const result = await handleConfirm(value);
+        if (!result) {
+            reset();
+        }
+        return result;
     }
 
     const handleSlideRegionConfirm = async (point: SlideRegionPoint, reset: () => void) => {
         console.log('slide region confirm', point);
         const value = point.x + ',' + point.y;
-        return await handleConfirm(value);
-    }
-
-    const handleRotate = (angle: number) => {
-
+        const result = await handleConfirm(value);
+        if (!result) {
+            reset();
+        }
+        return result;
     }
 
     const handleRotateConfirm = async (angle: number, reset: () => void) => {
         console.log('rotate confirm', angle);
-        return await handleConfirm(String(angle));
+        const result = await handleConfirm(String(angle));
+        if (!result) {
+            reset();
+        }
+        return result;
+    }
+
+    const handleFailure = () => {
+        setFailCount(failCount + 1);
     }
 
     const handleRefresh = () => {
-
+        refresh(id);
     }
 
     const handleConfirm = async (value: string): Promise<boolean> => {
@@ -174,7 +229,7 @@ const CaptchaDialog = forwardRef(({ onSubmit }: CaptchaDialogProps, ref) => {
                 onSubmit();
             } else {
                 showMessage('验证失败,请重试', 'error', 3000);
-                handleRefresh();
+                handleFailure();
             }
             return result == 'ok';
         }
@@ -187,12 +242,12 @@ const CaptchaDialog = forwardRef(({ onSubmit }: CaptchaDialogProps, ref) => {
             open={open}
             onClose={handleClose}
         >
-            <DialogContent>
+            <DialogContent sx={{ p: 0 }}>
                 {(idType == 1 || idType == 2) && clickData && <GoCaptcha.Click
-                    config={{}}
+                    config={{ width: 300, height: 220 }}
                     data={clickData}
                     events={{
-                        click: handleClick,
+                        // click: handleClick,
                         refresh: handleRefresh,
                         close: handleClose,
                         confirm: handleClickConfirm
@@ -200,10 +255,10 @@ const CaptchaDialog = forwardRef(({ onSubmit }: CaptchaDialogProps, ref) => {
                     ref={clickRef}
                 />}
                 {idType == 3 && slideData && <GoCaptcha.Slide
-                    config={{}}
+                    config={{ width: 300, height: 220 }}
                     data={slideData}
                     events={{
-                        move: handleMove,
+                        // move: handleMove,
                         refresh: handleRefresh,
                         close: handleClose,
                         confirm: handleSlideConfirm
@@ -211,10 +266,10 @@ const CaptchaDialog = forwardRef(({ onSubmit }: CaptchaDialogProps, ref) => {
                     ref={slideRef}
                 />}
                 {idType == 4 && slideRegionData && <GoCaptcha.SlideRegion
-                    config={{}}
+                    config={{ width: 300, height: 220 }}
                     data={slideRegionData}
                     events={{
-                        move: handleMove,
+                        // move: handleMove,
                         refresh: handleRefresh,
                         close: handleClose,
                         confirm: handleSlideRegionConfirm
@@ -222,10 +277,10 @@ const CaptchaDialog = forwardRef(({ onSubmit }: CaptchaDialogProps, ref) => {
                     ref={slideRegionRef}
                 />}
                 {idType == 5 && rotateData && <GoCaptcha.Rotate
-                    config={{}}
+                    config={{ width: 300, height: 220 }}
                     data={rotateData}
                     events={{
-                        rotate: handleRotate,
+                        // rotate: handleRotate,
                         refresh: handleRefresh,
                         close: handleClose,
                         confirm: handleRotateConfirm

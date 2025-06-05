@@ -125,7 +125,6 @@ export default function Login() {
             mt: 2,
           }}
           onClick={handleOpenCaptchaDialog}
-          // onClick={handleLogin}
         >
           {t("login")}
         </Button>
