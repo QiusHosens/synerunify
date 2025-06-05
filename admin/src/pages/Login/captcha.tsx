@@ -134,7 +134,7 @@ const CaptchaDialog = forwardRef(({ onSubmit }: CaptchaDialogProps, ref) => {
             case 3:
                 setSlideData({
                     thumbX: 0,
-                    thumbY: 0,
+                    thumbY: result.display_y,
                     thumbWidth: result.thumb_width,
                     thumbHeight: result.thumb_height,
                     image: result.master_image_base64,
@@ -167,10 +167,10 @@ const CaptchaDialog = forwardRef(({ onSubmit }: CaptchaDialogProps, ref) => {
     };
 
     const handleClickConfirm = async (dots: Array<ClickDot>, reset: () => void) => {
-        console.log('click confirm', dots);
+        // console.log('click confirm', dots);
         let value = '';
         for (const dot of dots) {
-            value = ',' + dot.x + ',' + dot.y;
+            value += ',' + dot.x + ',' + dot.y;
         }
         value = value.substring(1);
         const result = await handleConfirm(value);
@@ -181,7 +181,7 @@ const CaptchaDialog = forwardRef(({ onSubmit }: CaptchaDialogProps, ref) => {
     }
 
     const handleSlideConfirm = async (point: SlidePoint, reset: () => void) => {
-        console.log('slide confirm', point);
+        // console.log('slide confirm', point);
         const value = point.x + ',' + point.y;
         const result = await handleConfirm(value);
         if (!result) {
@@ -191,7 +191,7 @@ const CaptchaDialog = forwardRef(({ onSubmit }: CaptchaDialogProps, ref) => {
     }
 
     const handleSlideRegionConfirm = async (point: SlideRegionPoint, reset: () => void) => {
-        console.log('slide region confirm', point);
+        // console.log('slide region confirm', point);
         const value = point.x + ',' + point.y;
         const result = await handleConfirm(value);
         if (!result) {
@@ -201,7 +201,7 @@ const CaptchaDialog = forwardRef(({ onSubmit }: CaptchaDialogProps, ref) => {
     }
 
     const handleRotateConfirm = async (angle: number, reset: () => void) => {
-        console.log('rotate confirm', angle);
+        // console.log('rotate confirm', angle);
         const result = await handleConfirm(String(angle));
         if (!result) {
             reset();

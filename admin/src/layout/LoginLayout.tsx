@@ -1,6 +1,7 @@
 import { Stack } from "@mui/material";
 import SettingsButton from "@/components/SettingsButton";
 import { styled } from '@mui/material/styles';
+import Language from "./MainLayout/Language";
 
 const SignInContainer = styled(Stack)(({ theme }) => ({
   height: 'calc((1 - var(--template-frame-height, 0)) * 100dvh)',
@@ -31,32 +32,13 @@ export default function LoginLayout({
   children: React.ReactNode;
 }) {
   return (
-    // <Box
-    //   className="center-align"
-    //   sx={{
-    //     minHeight: '100vh',
-    //     position: 'relative',
-    //     bgcolor: 'background.default',
-    //   }}
-    // >
-    //   {children}
-    //   <Box
-    //     sx={{
-    //       position: 'absolute',
-    //       top: 0,
-    //       right: 0,
-    //       pt: 3,
-    //       pr: 3,
-    //     }}>
-    //     <SettingsButton />
-    //   </Box>
-    // </Box>
-    // <AppTheme>
-    //   <CssBaseline enableColorScheme />
     <>
       <SignInContainer direction="column" justifyContent="space-between">
-        {/* <ColorModeIconDropdown sx={{ position: 'fixed', top: '1rem', right: '1rem' }} /> */}
-        <SettingsButton sx={{ position: 'fixed', top: '1rem', right: '1rem' }} />
+        <Stack direction="row" sx={{ gap: 1, position: 'fixed', top: '1rem', right: '1rem' }}>
+          <Language />
+          <SettingsButton />
+        </Stack>
+        {/* <SettingsButton sx={{ position: 'fixed', top: '1rem', right: '1rem' }} /> */}
         {children}
       </SignInContainer>
     </>
