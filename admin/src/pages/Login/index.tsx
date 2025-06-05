@@ -9,12 +9,13 @@ import {
 } from "@mui/material";
 import MuiCard from "@mui/material/Card";
 import { styled } from "@mui/material/styles";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useAuthStore, useHomeStore } from "@/store";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { login } from "@/api";
 import { Md5 } from "ts-md5";
+import CaptchaDialog from "./captcha";
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
@@ -43,6 +44,12 @@ export default function Login() {
   const { fetchAndSetHome } = useHomeStore();
   const navigate = useNavigate();
   const { t } = useTranslation();
+
+  const captchaDialog = useRef(null);
+
+  const handleOpenCaptchaDialog = () => {
+    (captchaDialog.current as any).show();
+  }
 
   const handleLogin = async () => {
     try {
@@ -117,10 +124,12 @@ export default function Login() {
           sx={{
             mt: 2,
           }}
-          onClick={handleLogin}
+          onClick={handleOpenCaptchaDialog}
+          // onClick={handleLogin}
         >
           {t("login")}
         </Button>
+        <CaptchaDialog ref={captchaDialog} onSubmit={handleLogin}></CaptchaDialog>
       </Box>
     </Card>
   );

@@ -9,3 +9,4 @@ export * from './system_department';
 export * from './system_user';
 export * from './system_post';
 export * from './system_user_post';
+export * from './captcha';
