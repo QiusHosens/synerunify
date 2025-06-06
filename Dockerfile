@@ -2,7 +2,7 @@
 FROM rust AS build-server
 
 RUN rustup target add x86_64-unknown-linux-musl
-RUN apt update && apt install -y musl-tools musl-dev
+RUN apt update && apt install -y musl-tools musl-dev protoc
 RUN update-ca-certificates
 
 WORKDIR /app
@@ -17,7 +17,7 @@ FROM golang:1.24 AS build-captcha
 
 WORKDIR /app
 
-COPY ./server/module/module-third/captcha-service ./captcha-service
+COPY ./server/module/module-third/module-captcha/captcha-service ./captcha-service
 
 ARG TARGETOS
 ARG TARGETARCH
@@ -41,6 +41,11 @@ RUN cd admin && \
 # build final
 FROM nginx
 WORKDIR /app
+
+# set env
+ENV SYSTEM_SERVER_PORT=9000
+ENV LOGGER_SERVER_PORT=9010
+ENV GRPC_CAPTCHA_SERVICE_URL=http://localhost:50051
 
 COPY --from=build-server /app/server/target/release/system-server ./system-server
 COPY --from=build-server /app/server/target/release/logger-server ./logger-server

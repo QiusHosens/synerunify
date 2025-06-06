@@ -14,6 +14,7 @@ pub struct Config {
     pub log_level: String, // 日志级别
     pub redis_url: String, // redis地址
     pub mongo_url: String, // mongo地址
+    pub grpc_captcha_service_url: String, // 验证码服务grpc地址
 }
 
 static CONFIG_INSTANCE: OnceLock<Config> = OnceLock::new();
@@ -43,6 +44,9 @@ impl Config {
             let mongo_url = env::var("MONGO_URL")
                 .unwrap_or_else(|_| "mongodb://synerunify:synerunify@127.0.0.1:27017".to_string());
 
+            let grpc_captcha_service_url = env::var("GRPC_CAPTCHA_SERVICE_URL")
+                .unwrap_or_else(|_| "http://localhost:50051".to_string());
+
             Config {
                 system_server_port,
                 logger_server_port,
@@ -51,6 +55,7 @@ impl Config {
                 log_level,
                 redis_url,
                 mongo_url,
+                grpc_captcha_service_url
             }
         }).clone()
     }
