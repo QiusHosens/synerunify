@@ -1,6 +1,7 @@
 use std::future::Future;
 use std::net::SocketAddr;
 use crate::convert::system_data_scope_rule::create_request_to_model;
+use crate::grpc::captcha;
 use anyhow::{anyhow, Result};
 use common::constants::enums::DeviceType;
 use sea_orm::{ActiveModelTrait, ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter, QuerySelect};
@@ -31,7 +32,11 @@ use super::{system_menu, system_user};
 pub async fn login(db: &DatabaseConnection, request_context: RequestContext, request: LoginRequest) -> Result<AuthBody> {
     let start = Instant::now();
     info!("into login: {:?}", request);
-    // 验证验证码 TODO
+    // 验证验证码
+    let status = captcha::check_status(request.captcha_key).await?;
+    if !status {
+        return Err(anyhow!("验证码校验失败"));
+    }
 
     // 查询用户
     let user_result = service::system_user::get_by_username(db, request.username).await?;

@@ -36,9 +36,11 @@ func UnaryServerInterceptor(dc *config.DynamicConfig, logger *zap.Logger, breake
 			logger.Warn("[GrpcMiddleware] Missing API Key")
 			return nil, status.Error(codes.Unauthenticated, "missing API Key")
 		}
-		if _, exists := apiKeyMap[apiKeys[0]]; !exists {
-			logger.Warn("[GrpcMiddleware] Invalid API Key", zap.String("key", apiKeys[0]))
-			return nil, status.Error(codes.Unauthenticated, "invalid API Key")
+		if len(apiKeyMap) > 0 {
+			if _, exists := apiKeyMap[apiKeys[0]]; !exists {
+				logger.Warn("[GrpcMiddleware] Invalid API Key", zap.String("key", apiKeys[0]))
+				return nil, status.Error(codes.Unauthenticated, "invalid API Key")
+			}
 		}
 
 		// Apply circuit breaker

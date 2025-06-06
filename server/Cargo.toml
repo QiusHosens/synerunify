@@ -5,6 +5,7 @@ members = [
     "tool/*",
     "module/module-test",
     "module/module-logger/*",
+    "module/module-third/module-captcha/captcha-grpc-rust",
 ]
 resolver = "2"
 

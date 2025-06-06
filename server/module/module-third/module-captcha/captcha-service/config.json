@@ -19,5 +19,5 @@
   "rate_limit_burst": 1000,
   "enable_cors": true,
   "log_level": "info",
-  "api_keys": ["synerunify-secret-key-12345678"]
+  "api_keys": ["synerunify-captcha-secret-key-12345678"]
 }

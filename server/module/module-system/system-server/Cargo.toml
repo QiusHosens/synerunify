@@ -96,3 +96,4 @@ strum_macros = "0.27"
 common = { path = "../../../framework/common" }
 macros = { path = "../../../framework/macros" }
 system-model = { path = "../system-model" }
+captcha-grpc-rust = { path = "../../module-third/module-captcha/captcha-grpc-rust" }

@@ -21,6 +21,7 @@ mod model;
 mod task;
 mod route;
 mod initializer;
+mod grpc;
 
 #[tokio::main]
 async fn main() -> Result<(), anyhow::Error> {
