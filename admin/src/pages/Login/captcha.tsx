@@ -30,11 +30,11 @@ const CAPTCHA_ID_MAP: { [key: string]: number } = {
 }
 
 interface CaptchaDialogProps {
-    onSubmit: () => void;
+    onSubmit: (captchaKey: string) => void;
 }
 
 const CaptchaDialog = forwardRef(({ onSubmit }: CaptchaDialogProps, ref) => {
-    const { i18n } = useTranslation();
+    const { t, i18n } = useTranslation();
     const { mode } = useThemeStore();
     const { showMessage } = useMessage();
 
@@ -223,12 +223,12 @@ const CaptchaDialog = forwardRef(({ onSubmit }: CaptchaDialogProps, ref) => {
                 ...checkRequest,
                 value: value
             });
-            console.log('confirm result', result);
+            // console.log('confirm result', result);
             if (result == 'ok') {
-                showMessage('验证成功', 'success', 3000);
-                onSubmit();
+                showMessage(t('page.login.message.captcha.success'), 'success', 3000);
+                onSubmit(checkRequest.captchaKey);
             } else {
-                showMessage('验证失败,请重试', 'error', 3000);
+                showMessage(t('page.login.message.captcha.failure'), 'error', 3000);
                 handleFailure();
             }
             return result == 'ok';

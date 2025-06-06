@@ -10,6 +10,7 @@ const apis = {
 export interface LoginRequest {
   username: string;
   password: string;
+  captcha_key: string;
 }
 
 interface TokenResponse {

@@ -1,11 +1,6 @@
 {
   "app.name": "我的应用",
-  "gloabl.page.login": "登录",
-  "page.login.title.username": "用户名",
-  "page.login.title.password": "密码",
-  "gloabl.page.dashboard": "仪表盘",
-  "page.dashboard.title.welcome": "欢迎来到仪表盘！",
-
+  
   "global.layout.setting": "设置",
   "global.layout.title.theme": "主题",
   "global.layout.title.nav": "布局",
@@ -44,6 +39,8 @@
   "global.helper.password.show": "显示密码",
   "global.helper.password.hide": "隐藏密码",
 
+  "gloabl.page.login": "登录",
+  "gloabl.page.dashboard": "仪表盘",
   "global.page.menu": "菜单",
   "global.page.dict": "字典",
   "global.page.dict.type": "字典类型",
@@ -53,6 +50,13 @@
   "global.page.department": "部门",
   "global.page.post": "岗位",
   "global.page.user": "用户",
+
+  "page.login.title.username": "用户名",
+  "page.login.title.password": "密码",
+  "page.login.message.captcha.success": "验证成功",
+  "page.login.message.captcha.failure": "验证失败,请重试",
+  
+  "page.dashboard.title.welcome": "欢迎来到仪表盘！",
 
   "page.dict.title.name": "名称",
   "page.dict.title.type": "类型",

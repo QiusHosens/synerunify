@@ -51,11 +51,11 @@ export default function Login() {
     (captchaDialog.current as any).show();
   }
 
-  const handleLogin = async () => {
+  const handleLogin = async (captchaKey: string) => {
     try {
       setError(null);
       const password_md5 = Md5.hashStr(password);
-      const response = await login({ username, password: password_md5 });
+      const response = await login({ username, password: password_md5, captcha_key: captchaKey });
       loginStore(
         response.token_type,
         response.access_token,

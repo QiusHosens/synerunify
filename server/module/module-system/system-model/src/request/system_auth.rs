@@ -9,6 +9,8 @@ pub struct LoginRequest {
     pub username: String, // 用户账号
 
     pub password: String, // 密码
+
+    pub captcha_key: String, // 验证码key
     
 }
 
