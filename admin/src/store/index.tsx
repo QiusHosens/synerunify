@@ -37,10 +37,12 @@ interface AuthState {
 
 // 主页状态,包括nickname,memus
 interface HomeState {
+  hasFetched: boolean; // 是否已经获取
   nickname: string | null; // 昵称
   routes: HomeMenuResponse[]; // 路由列表
   routeTree: HomeMenuResponse[]; // 路由树
   operates: HomeMenuResponse[]; // 操作
+  setHasFetched: (hasFetched: boolean) => void;
   setNickname: (nickname: string) => void;
   setRoutes: (routes: HomeMenuResponse[]) => void;
   setRouteTree: (routeTree: HomeMenuResponse[]) => void;
@@ -114,10 +116,12 @@ export const useAuthStore = create<AuthState>()(
   }));
 
 export const useHomeStore = create<HomeState>((set) => ({
+  hasFetched: false,
   nickname: null,
   routes: [],
   routeTree: [],
   operates: [],
+  setHasFetched: (hasFetched) => set({ hasFetched }),
   setNickname: (nickname) => set({ nickname }),
   setRoutes: (routes) => set({ routes }),
   setRouteTree: (routeTree) => set({ routeTree }),
@@ -127,14 +131,15 @@ export const useHomeStore = create<HomeState>((set) => ({
     return operates.some(op => op.permission === operateCode);
   },
   fetchAndSetHome: async (token) => {
-    console.log('invoke fetch and set home');
+    // console.log('invoke fetch and set home');
     const logout = () => {
       useAuthStore.getState().logout();
-      window.location.href = '/login';
+      // window.location.href = '/login';
     }
     if (token) {
       try {
         const routeData = await getHome();
+        set({ hasFetched: true });
         set({ nickname: routeData.nickname });
         let menus = routeData.menus;
         // 排序
@@ -191,7 +196,7 @@ export const useDictStore = create<DictState>((set) => ({
   fetchAndSetDict: async () => {
     try {
       const data = await listDict();
-      
+
       // 将数据转换为 Map 格式
       const dictMap = new Map<string, SystemDictDataResponse[]>();
       data.forEach((item) => {
@@ -200,7 +205,7 @@ export const useDictStore = create<DictState>((set) => ({
           dictMap.set(item.dict_type, [...existing, item]);
         }
       });
-      
+
       set({ dictOfType: dictMap });
     } catch (error) {
       console.error('Failed to fetch dictionary data:', error);

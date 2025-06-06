@@ -51,6 +51,8 @@ const CaptchaDialog = forwardRef(({ onSubmit }: CaptchaDialogProps, ref) => {
     const [rotateData, setRotateData] = useState<RotateData>();
     const [checkRequest, setCheckRequest] = useState<CaptchaCheckRequest>();
 
+    const isInitialMount = useRef(true);
+
     const clickRef = useRef(null);
     const slideRef = useRef(null);
     const slideRegionRef = useRef(null);
@@ -58,8 +60,11 @@ const CaptchaDialog = forwardRef(({ onSubmit }: CaptchaDialogProps, ref) => {
 
     useImperativeHandle(ref, () => ({
         show() {
-            console.log('captcha show');
+            // console.log('captcha show');
             refreshId();
+            if (isInitialMount.current) {
+                isInitialMount.current = false; // 首次打开对话框时设置为 false
+            }
             setOpen(true);
         },
         hide() {
@@ -68,11 +73,13 @@ const CaptchaDialog = forwardRef(({ onSubmit }: CaptchaDialogProps, ref) => {
     }));
 
     useEffect(() => {
-        refreshId();
+        if (!isInitialMount.current) {
+            refreshId(); // 仅在非初次挂载时调用
+        }
     }, [failCount]);
 
     const refreshId = () => {
-        console.log('fail count', failCount);
+        // console.log('fail count', failCount);
         let id = 'click-default-ch';
         const count = failCount % 5;
         switch (count) {

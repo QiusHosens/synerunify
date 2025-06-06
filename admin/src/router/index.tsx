@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useState } from 'react';
+import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore, useHomeStore } from '@/store';
 import Login from '@/pages/Login';
@@ -26,20 +26,26 @@ export default function Router() {
   const { access_token } = useAuthStore();
   const navigate = useNavigate();
   const location = useLocation();
-  const { routes, routeTree, fetchAndSetHome } = useHomeStore();
+  const { hasFetched, routes, routeTree, fetchAndSetHome } = useHomeStore();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  const hasInit = useRef(false);
+
   // 获取动态路由
   useEffect(() => {
-    // console.log('start init router')
-    // init();
-    // fetchAndSetHome(access_token);
+    init();
   }, []);
 
   const init = async () => {
+    if (hasInit.current) {
+      return;
+    }
+    hasInit.current = true;
     setLoading(true);
-    await fetchAndSetHome(access_token);
+    if (!hasFetched) {
+      await fetchAndSetHome(access_token);
+    }
     setLoading(false);
   }
 

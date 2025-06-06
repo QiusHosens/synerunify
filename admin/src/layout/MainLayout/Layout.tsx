@@ -1,7 +1,7 @@
 import Box from "@mui/material/Box";
 import SideMenu from "./SideMenu";
-import { useAuthStore, useDictStore, useHomeStore, useThemeStore } from "@/store";
-import { useEffect } from "react";
+import { useDictStore, useThemeStore } from "@/store";
+import { useEffect, useRef } from "react";
 import Header from "./Header";
 import TopMenu from "./TopMenu";
 import BottomMenu from "./BottomMenu";
@@ -21,9 +21,9 @@ export default function Layout({ routeTree, children }: LayoutProps) {
   const bottomMenuHeight = 72; // 底部导航栏高度
   const sideMenuWidth = 288; // 左侧导航栏宽度
 
-  // const { access_token } = useAuthStore();
-  // const { routeTree, fetchAndSetHome } = useHomeStore();
   const { fetchAndSetDict } = useDictStore();
+
+  const hasInit = useRef(false);
 
   const layoutStyles = {
     position: 'relative',
@@ -33,22 +33,16 @@ export default function Layout({ routeTree, children }: LayoutProps) {
     width: '100%',
   };
 
-  // useEffect(() => {
-  //   fetchAndSetHome(access_token);
-  //   fetchAndSetDict();
-  // }, [access_token, fetchAndSetHome]);
-
   useEffect(() => {
-    // fetchAndSetHome(access_token);
+    if (hasInit.current) {
+      return;
+    }
+    hasInit.current = true;
     fetchAndSetDict();
   }, []);
 
   return (
     <>
-      {/* <AppTheme themeComponents={xThemeComponents}> */}
-
-      {/* <CssBaseline enableColorScheme /> */}
-
       <Box sx={layoutStyles}>
         {
           navPosition === 'left' ?

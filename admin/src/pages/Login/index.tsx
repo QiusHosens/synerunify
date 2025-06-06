@@ -61,7 +61,7 @@ export default function Login() {
         response.access_token,
         response.refresh_token
       );
-      console.log('login success');
+      // console.log('login success');
       // 登录成功后获取动态路由
       await fetchAndSetHome(response.access_token);
 
