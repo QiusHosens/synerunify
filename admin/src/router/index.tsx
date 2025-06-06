@@ -1,5 +1,5 @@
-import { lazy, Suspense, useEffect } from 'react';
-import { Routes, Route, useNavigate } from 'react-router-dom';
+import { lazy, Suspense, useEffect, useState } from 'react';
+import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore, useHomeStore } from '@/store';
 import Login from '@/pages/Login';
 // import Login from '@/pages/Login/SignIn';
@@ -7,6 +7,7 @@ import Login from '@/pages/Login';
 import Layout from '@/layout/MainLayout/Layout';
 import React from 'react';
 import LoginLayout from '@/layout/LoginLayout';
+import { Box, CircularProgress, Typography } from '@mui/material';
 
 // 动态组件映射
 const componentMap: { [key: string]: React.LazyExoticComponent<React.ComponentType<Element>> } = {
@@ -24,47 +25,69 @@ const componentMap: { [key: string]: React.LazyExoticComponent<React.ComponentTy
 export default function Router() {
   const { access_token } = useAuthStore();
   const navigate = useNavigate();
+  const location = useLocation();
   const { routes, routeTree, fetchAndSetHome } = useHomeStore();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   // 获取动态路由
   useEffect(() => {
     // console.log('start init router')
-    fetchAndSetHome(access_token);
-  }, [access_token, fetchAndSetHome, navigate]);
+    // init();
+    // fetchAndSetHome(access_token);
+  }, []);
 
-  // 未登录时跳转到登录页
-  if (!access_token) {
+  const init = async () => {
+    setLoading(true);
+    await fetchAndSetHome(access_token);
+    setLoading(false);
+  }
+
+  // console.log('location', location.pathname);
+  // // 未登录时跳转到登录页
+  if (!access_token && location.pathname != '/login') {
     navigate('/login');
   }
 
   return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <Routes>
-        {/* 静态路由：登录页面 */}
-        <Route path="/login" 
-        // element={<Login />}
-        element={
-          <LoginLayout>
-            <Login />
-          </LoginLayout>} 
-          />
-        {/* 动态路由 */}
-        {routes.map((route) => (
-          <Route
-            key={route.path}
-            path={route.path}
+    <>
+      {/*  sx={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }} */}
+      {loading ? (
+        <Box sx={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          <CircularProgress />
+        </Box>
+      ) : error ? (
+        <Box sx={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          <Typography color="error">{error}</Typography>
+        </Box>
+      ) : (
+        <Routes>
+          {/* 静态路由：登录页面 */}
+          <Route path="/login"
+            // element={<Login />}
             element={
-              <Layout routeTree={routeTree}>
-                {componentMap[route.component] ? (
-                  React.createElement(componentMap[route.component])
-                ) : (
-                  <div>Component not found</div>
-                )}
-              </Layout>
-            }
+              <LoginLayout>
+                <Login />
+              </LoginLayout>}
           />
-        ))}
-      </Routes>
-    </Suspense>
+          {/* 动态路由 */}
+          {routes.map((route) => (
+            <Route
+              key={route.path}
+              path={route.path}
+              element={
+                <Layout routeTree={routeTree}>
+                  {componentMap[route.component] ? (
+                    React.createElement(componentMap[route.component])
+                  ) : (
+                    <div>Component not found</div>
+                  )}
+                </Layout>
+              }
+            />
+          ))}
+        </Routes>)
+      }
+    </>
   );
 }

@@ -12,6 +12,7 @@ import { zhCN as coreZhCN, enUS as coreEnus, frFR as coreFrFR, arSD as coreArSD 
 import { zhCN as dataGridZhCN, enUS as dataGridEnus, frFR as dataGridFrFR, arSD as dataGridArSD } from '@mui/x-data-grid/locales';
 import { zhCN as pickersZhCN, enUS as pickersEnus, frFR as pickersFrFR } from '@mui/x-date-pickers/locales';
 import { useTranslation } from 'react-i18next';
+import { Height } from '@mui/icons-material';
 
 export default function AppThemeProvider({ children }: { children: React.ReactNode }) {
   const { t, i18n } = useTranslation();
@@ -59,6 +60,15 @@ export default function AppThemeProvider({ children }: { children: React.ReactNo
     //   backgroundColor: theme.palette.background.default,
     //   margin: 0,
     // },
+    html: {
+      height: '100%',
+    },
+    body: {
+      height: 'inherit',
+    },
+    '#root': {
+      height: 'inherit',
+    },
     '.center-align': {
       display: 'flex',
       justifyContent: 'center',
