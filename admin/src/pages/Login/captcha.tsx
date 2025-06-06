@@ -41,6 +41,7 @@ const CaptchaDialog = forwardRef(({ onSubmit }: CaptchaDialogProps, ref) => {
     const [open, setOpen] = useState(false);
     const [maxWidth] = useState<DialogProps['maxWidth']>('sm');
 
+    const [config] = useState({ width: 300, height: 220 });
     const [failCount, setFailCount] = useState<number>(0);
     const [id, setId] = useState<string>('click-default-ch');
     const [idType, setIdType] = useState<number>(0);
@@ -238,13 +239,14 @@ const CaptchaDialog = forwardRef(({ onSubmit }: CaptchaDialogProps, ref) => {
 
     return (
         <Dialog
+            // fullWidth={true}
             maxWidth={maxWidth}
             open={open}
             onClose={handleClose}
         >
             <DialogContent sx={{ p: 0 }}>
                 {(idType == 1 || idType == 2) && clickData && <GoCaptcha.Click
-                    config={{ width: 300, height: 220 }}
+                    config={config}
                     data={clickData}
                     events={{
                         // click: handleClick,
@@ -255,7 +257,7 @@ const CaptchaDialog = forwardRef(({ onSubmit }: CaptchaDialogProps, ref) => {
                     ref={clickRef}
                 />}
                 {idType == 3 && slideData && <GoCaptcha.Slide
-                    config={{ width: 300, height: 220 }}
+                    config={config}
                     data={slideData}
                     events={{
                         // move: handleMove,
@@ -266,7 +268,7 @@ const CaptchaDialog = forwardRef(({ onSubmit }: CaptchaDialogProps, ref) => {
                     ref={slideRef}
                 />}
                 {idType == 4 && slideRegionData && <GoCaptcha.SlideRegion
-                    config={{ width: 300, height: 220 }}
+                    config={config}
                     data={slideRegionData}
                     events={{
                         // move: handleMove,
@@ -277,7 +279,7 @@ const CaptchaDialog = forwardRef(({ onSubmit }: CaptchaDialogProps, ref) => {
                     ref={slideRegionRef}
                 />}
                 {idType == 5 && rotateData && <GoCaptcha.Rotate
-                    config={{ width: 300, height: 220 }}
+                    config={config}
                     data={rotateData}
                     events={{
                         // rotate: handleRotate,
