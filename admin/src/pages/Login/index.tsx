@@ -76,7 +76,7 @@ export default function Login() {
   };
 
   return (
-    <Card variant="outlined">
+    <Card variant="outlined" sx={{ border: 'unset' }}>
       <Typography
         component="h1"
         variant="h4"

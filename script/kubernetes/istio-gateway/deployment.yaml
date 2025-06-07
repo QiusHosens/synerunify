@@ -41,3 +41,18 @@ spec:
             host: captcha-service.synerunify.svc.cluster.local
             port:
               number: 8080
+---
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: deny-captcha-manage
+  namespace: synerunify
+spec:
+  selector:
+    matchLabels:
+      istio: ingressgateway
+  action: DENY
+  rules:
+    - to:
+        - operation:
+            paths: ["/captcha/manage", "/captcha/manage/*"]

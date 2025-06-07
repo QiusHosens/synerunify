@@ -41,7 +41,7 @@ const CaptchaDialog = forwardRef(({ onSubmit }: CaptchaDialogProps, ref) => {
     const [open, setOpen] = useState(false);
     const [maxWidth] = useState<DialogProps['maxWidth']>('sm');
 
-    const [config] = useState({ width: 300, height: 220 });
+    const [config, setConfig] = useState({ width: 300, height: 220 });
     const [failCount, setFailCount] = useState<number>(0);
     const [id, setId] = useState<string>('click-default-ch');
     const [idType, setIdType] = useState<number>(0);
@@ -60,10 +60,9 @@ const CaptchaDialog = forwardRef(({ onSubmit }: CaptchaDialogProps, ref) => {
 
     useImperativeHandle(ref, () => ({
         show() {
-            // console.log('captcha show');
             refreshId();
             if (isInitialMount.current) {
-                isInitialMount.current = false; // 首次打开对话框时设置为 false
+                isInitialMount.current = false;
             }
             setOpen(true);
         },
@@ -74,12 +73,11 @@ const CaptchaDialog = forwardRef(({ onSubmit }: CaptchaDialogProps, ref) => {
 
     useEffect(() => {
         if (!isInitialMount.current) {
-            refreshId(); // 仅在非初次挂载时调用
+            refreshId();
         }
     }, [failCount]);
 
     const refreshId = () => {
-        // console.log('fail count', failCount);
         let id = 'click-default-ch';
         const count = failCount % 5;
         switch (count) {
@@ -124,46 +122,49 @@ const CaptchaDialog = forwardRef(({ onSubmit }: CaptchaDialogProps, ref) => {
         const idType = CAPTCHA_ID_MAP[id];
         setIdType(idType);
         const result = await getData(id);
-        // console.log('captcha', result);
 
         setCheckRequest({
             id,
             captchaKey: result.captcha_key,
         })
 
+        setConfig({
+            width: result.master_width,
+            height: result.master_height
+        })
+
+        const data = {
+            image: result.master_image_base64,
+            thumb: result.thumb_image_base64
+        };
+
         switch (idType) {
             case 1:
             case 2:
-                setClickData({
-                    image: result.master_image_base64,
-                    thumb: result.thumb_image_base64
-                });
+                setClickData(data);
                 break;
             case 3:
                 setSlideData({
+                    ...data,
                     thumbX: 0,
                     thumbY: result.display_y,
                     thumbWidth: result.thumb_width,
                     thumbHeight: result.thumb_height,
-                    image: result.master_image_base64,
-                    thumb: result.thumb_image_base64
                 });
                 break;
             case 4:
                 setSlideRegionData({
+                    ...data,
                     thumbX: 0,
                     thumbY: 0,
                     thumbWidth: result.thumb_width,
                     thumbHeight: result.thumb_height,
-                    image: result.master_image_base64,
-                    thumb: result.thumb_image_base64
                 });
                 break;
             case 5:
                 setRotateData({
+                    ...data,
                     angle: 0,
-                    image: result.master_image_base64,
-                    thumb: result.thumb_image_base64,
                     thumbSize: result.thumb_size
                 });
                 break;
@@ -175,7 +176,6 @@ const CaptchaDialog = forwardRef(({ onSubmit }: CaptchaDialogProps, ref) => {
     };
 
     const handleClickConfirm = async (dots: Array<ClickDot>, reset: () => void) => {
-        // console.log('click confirm', dots);
         let value = '';
         for (const dot of dots) {
             value += ',' + dot.x + ',' + dot.y;
@@ -189,7 +189,6 @@ const CaptchaDialog = forwardRef(({ onSubmit }: CaptchaDialogProps, ref) => {
     }
 
     const handleSlideConfirm = async (point: SlidePoint, reset: () => void) => {
-        // console.log('slide confirm', point);
         const value = point.x + ',' + point.y;
         const result = await handleConfirm(value);
         if (!result) {
@@ -199,7 +198,6 @@ const CaptchaDialog = forwardRef(({ onSubmit }: CaptchaDialogProps, ref) => {
     }
 
     const handleSlideRegionConfirm = async (point: SlideRegionPoint, reset: () => void) => {
-        // console.log('slide region confirm', point);
         const value = point.x + ',' + point.y;
         const result = await handleConfirm(value);
         if (!result) {
@@ -209,7 +207,6 @@ const CaptchaDialog = forwardRef(({ onSubmit }: CaptchaDialogProps, ref) => {
     }
 
     const handleRotateConfirm = async (angle: number, reset: () => void) => {
-        // console.log('rotate confirm', angle);
         const result = await handleConfirm(String(angle));
         if (!result) {
             reset();
@@ -231,12 +228,11 @@ const CaptchaDialog = forwardRef(({ onSubmit }: CaptchaDialogProps, ref) => {
                 ...checkRequest,
                 value: value
             });
-            // console.log('confirm result', result);
             if (result == 'ok') {
-                showMessage(t('page.login.message.captcha.success'), 'success', 3000);
+                showMessage(t('page.login.message.captcha.success'), 'success', 1000);
                 onSubmit(checkRequest.captchaKey);
             } else {
-                showMessage(t('page.login.message.captcha.failure'), 'error', 3000);
+                showMessage(t('page.login.message.captcha.failure'), 'error', 1000);
                 handleFailure();
             }
             return result == 'ok';
@@ -246,7 +242,6 @@ const CaptchaDialog = forwardRef(({ onSubmit }: CaptchaDialogProps, ref) => {
 
     return (
         <Dialog
-            // fullWidth={true}
             maxWidth={maxWidth}
             open={open}
             onClose={handleClose}
@@ -256,7 +251,6 @@ const CaptchaDialog = forwardRef(({ onSubmit }: CaptchaDialogProps, ref) => {
                     config={config}
                     data={clickData}
                     events={{
-                        // click: handleClick,
                         refresh: handleRefresh,
                         close: handleClose,
                         confirm: handleClickConfirm
@@ -267,7 +261,6 @@ const CaptchaDialog = forwardRef(({ onSubmit }: CaptchaDialogProps, ref) => {
                     config={config}
                     data={slideData}
                     events={{
-                        // move: handleMove,
                         refresh: handleRefresh,
                         close: handleClose,
                         confirm: handleSlideConfirm
@@ -278,7 +271,6 @@ const CaptchaDialog = forwardRef(({ onSubmit }: CaptchaDialogProps, ref) => {
                     config={config}
                     data={slideRegionData}
                     events={{
-                        // move: handleMove,
                         refresh: handleRefresh,
                         close: handleClose,
                         confirm: handleSlideRegionConfirm
@@ -289,7 +281,6 @@ const CaptchaDialog = forwardRef(({ onSubmit }: CaptchaDialogProps, ref) => {
                     config={config}
                     data={rotateData}
                     events={{
-                        // rotate: handleRotate,
                         refresh: handleRefresh,
                         close: handleClose,
                         confirm: handleRotateConfirm
