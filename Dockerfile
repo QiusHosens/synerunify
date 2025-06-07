@@ -2,10 +2,17 @@
 FROM rust AS build-server
 
 RUN rustup target add x86_64-unknown-linux-musl
-RUN apt update && apt install -y musl-tools musl-dev protoc
+RUN apt update && apt install -y musl-tools musl-dev curl unzip
 RUN update-ca-certificates
 
 WORKDIR /app
+
+# install protoc
+ARG PROTOC_VERSION=31.1
+RUN curl -Lo protoc.zip "https://github.com/protocolbuffers/protobuf/releases/download/v${PROTOC_VERSION}/protoc-${PROTOC_VERSION}-linux-x86_64.zip" && \
+    unzip protoc.zip -d /usr/local && \
+    rm protoc.zip && \
+    chmod +x /usr/local/bin/protoc
 
 COPY ./server ./server
 
