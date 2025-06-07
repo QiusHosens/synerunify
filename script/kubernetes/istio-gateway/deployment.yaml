@@ -51,7 +51,6 @@ spec:
   targetRefs:
     - kind: Service
       name: captcha-service
-      namespace: synerunify
   action: DENY
   rules:
     - to:
