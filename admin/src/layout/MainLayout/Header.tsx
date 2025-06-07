@@ -2,11 +2,11 @@ import { SxProps, Theme } from "@mui/material/styles";
 import Stack from '@mui/material/Stack';
 import NavbarBreadcrumbs from './NavbarBreadcrumbs';
 
-import Search from './Search';
 import SettingsButton from '@/components/SettingsButton';
 import { HomeMenuResponse } from '@/api';
 import Language from "./Language";
 import Notification from "./Notification";
+import Profile from "./Profile";
 
 interface HeaderProps {
   sx?: SxProps<Theme>;
@@ -48,6 +48,7 @@ export default function Header({ sx, height, routeTree }: HeaderProps) {
           <Language />
           <Notification />
           <SettingsButton />
+          <Profile />
         </Stack>
       </Stack>
     </Stack>
