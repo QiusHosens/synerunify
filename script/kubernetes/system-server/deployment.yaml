@@ -65,6 +65,11 @@ spec:
                 configMapKeyRef:
                   name: synerunify-config
                   key: LOG_LEVEL
+            - name: GRPC_CAPTCHA_SERVICE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: synerunify-config
+                  key: GRPC_CAPTCHA_SERVICE_URL
           resources: {}
           volumeMounts:
             - name: host-time
