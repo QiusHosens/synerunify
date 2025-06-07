@@ -1,12 +1,13 @@
-import { api } from '@/utils/request';
+import { api } from "@/utils/request";
+import { AxiosHeaders } from "axios";
 
-const CAPTCHA_KEY = 'synerunify-secret-key-12345678';
+const CAPTCHA_KEY = "synerunify-captcha-secret-key-12345678";
 
 const apis = {
-  getData: '/captcha/public/get-data', // 获取验证码数据
-  checkData: '/captcha/public/check-data', // 校验验证码数据
-  checkStatus: '/captcha/public/check-status', // 获取校验结果
-}
+  getData: "/captcha/public/get-data", // 获取验证码数据
+  checkData: "/captcha/public/check-data", // 校验验证码数据
+  checkStatus: "/captcha/public/check-status", // 获取校验结果
+};
 
 export interface CaptchaDataResponse {
   id: string;
@@ -33,18 +34,19 @@ export interface CaptchaCheckRequest {
 }
 
 export const getData = (id: string): Promise<CaptchaDataResponse> => {
-  return api.get<CaptchaDataResponse>(apis.getData, { id });
-  // return api.get<any>(apis.getData, { id: CAPTCHA_ID_LIST[5] }, {
-  //   headers: {
-  //     'X-API-Key': CAPTCHA_KEY,
-  //   }
-  // });
+  const headers = new AxiosHeaders();
+  headers.set("X-API-Key", CAPTCHA_KEY);
+  return api.get<CaptchaDataResponse>(apis.getData, { id }, { headers });
 };
 
 export const checkData = (request: CaptchaCheckRequest): Promise<string> => {
-  return api.post<string>(apis.checkData, request);
-}
+  const headers = new AxiosHeaders();
+  headers.set("X-API-Key", CAPTCHA_KEY);
+  return api.post<string>(apis.checkData, request, { headers });
+};
 
 export const checkStatus = (captchaKey: string): Promise<string> => {
-  return api.get<string>(apis.checkStatus, { captchaKey });
-}
+  const headers = new AxiosHeaders();
+  headers.set("X-API-Key", CAPTCHA_KEY);
+  return api.get<string>(apis.checkStatus, { captchaKey }, { headers });
+};
