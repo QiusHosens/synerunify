@@ -193,6 +193,7 @@ fn main() {
 
         let mut request_has_time = false;
         let mut has_tenant_field = false;
+        let mut has_status_field = false;
         for c in columns {
             let mut map = serde_json::Map::new();
             let column_name = get_column_name(&c.column_name);
@@ -229,6 +230,9 @@ fn main() {
             if column_name.clone() == "tenant_id" {
                 has_tenant_field = true;
             }
+            if column_name.clone() == "status" {
+                has_status_field = true;
+            }
         }
         
         context.insert("columns", &columns_data);
@@ -238,6 +242,7 @@ fn main() {
 
         context.insert("request_has_time", &request_has_time);
         context.insert("has_tenant_field", &has_tenant_field);
+        context.insert("has_status_field", &has_status_field);
 
         // model
         let model_code = tera.render("model",  &context).unwrap();

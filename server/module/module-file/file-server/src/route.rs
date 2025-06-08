@@ -1,5 +1,5 @@
 
-use crate::{api::system_files::system_files_router, AppState};
+use crate::{api::system_file::system_file_router, AppState};
 use axum::Router;
 use common::{middleware::{authorize::{authorize_handler, init_route_authorizes}, operation_logger::operation_logger_handler, request_context::request_context_handler}, utils::jwt_utils::AccessClaims};
 use utoipa::{Modify, OpenApi};
@@ -14,7 +14,7 @@ use utoipa_axum::router::OpenApiRouter;
         version = "1.0.0"
     ),
     tags(
-        (name = "system_files", description = "文件信息"),
+        (name = "system_file", description = "文件信息"),
     ),
     modifiers(&SecurityAddon)
 )]
@@ -33,7 +33,7 @@ pub async fn api(state: AppState) -> Router {
 
 pub async fn auth_router(state: AppState) -> OpenApiRouter {
     OpenApiRouter::new()
-        .nest("/system_files", system_files_router(state.clone()).await)
+        .nest("/system_file", system_file_router(state.clone()).await)
         .layer(axum::middleware::from_fn(authorize_handler))
         .layer(axum::middleware::from_fn(operation_logger_handler))
         .layer(axum::middleware::from_fn_with_state(state.clone(), request_context_handler))

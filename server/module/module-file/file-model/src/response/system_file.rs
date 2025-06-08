@@ -5,7 +5,7 @@ use serde_with::{serde_as, DisplayFromStr};
 
 // #[serde_as]
 #[derive(Deserialize, Serialize, Debug, Clone, ToSchema)]
-pub struct SystemFilesResponse {
+pub struct SystemFileResponse {
     
     pub id: i64, // 文件ID
     

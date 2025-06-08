@@ -5,6 +5,7 @@ use system_model::response::{{ table_name }}::{{ response_model_name }};
 use crate::convert::{{ table_name }}::{create_request_to_model, update_request_to_model, model_to_response};
 use anyhow::{Result, anyhow};
 use sea_orm::ActiveValue::Set;
+use common::constants::enum_constants::{STATUS_DISABLE, STATUS_ENABLE};
 use common::base::page::PaginatedResponse;
 use common::context::context::LoginUserContext;
 use common::interceptor::orm::active_filter::ActiveFilterEntityTrait;
@@ -33,7 +34,6 @@ pub async fn update(db: &DatabaseConnection, login_user: LoginUserContext, reque
 pub async fn delete(db: &DatabaseConnection, login_user: LoginUserContext, id: i64) -> Result<()> {
     let {{ table_name }} = {{ model_name }}ActiveModel {
         id: Set(id),
-        {% if has_tenant_field  %}tenant_id: Set(login_user.tenant_id),{% endif %}
         updater: Set(Some(login_user.id)),
         deleted: Set(true),
         ..Default::default()
@@ -82,3 +82,25 @@ pub async fn list(db: &DatabaseConnection, login_user: LoginUserContext) -> Resu
         .all(db).await?;
     Ok(list.into_iter().map(model_to_response).collect())
 }
+{% if has_status_field  %}
+pub async fn enable(db: &DatabaseConnection, login_user: LoginUserContext, id: i64) -> Result<()> {
+    let {{ table_name }} = {{ model_name }}ActiveModel {
+        id: Set(id),
+        updater: Set(Some(login_user.id)),
+        status: Set(STATUS_ENABLE),
+        ..Default::default()
+    };
+    {{ table_name }}.update(db).await?;
+    Ok(())
+}
+
+pub async fn disable(db: &DatabaseConnection, login_user: LoginUserContext, id: i64) -> Result<()> {
+    let {{ table_name }} = {{ model_name }}ActiveModel {
+        id: Set(id),
+        updater: Set(Some(login_user.id)),
+        status: Set(STATUS_DISABLE),
+        ..Default::default()
+    };
+    {{ table_name }}.update(db).await?;
+    Ok(())
+}{% endif %}

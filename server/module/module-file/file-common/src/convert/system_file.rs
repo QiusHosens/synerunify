@@ -1,10 +1,10 @@
 use sea_orm::{Set, NotSet};
-use crate::model::system_files::{self, Model as SystemFiles, ActiveModel as SystemFilesActiveModel};
-use file_model::request::system_files::{CreateSystemFilesRequest, UpdateSystemFilesRequest};
-use file_model::response::system_files::SystemFilesResponse;
+use crate::model::system_file::{self, Model as SystemFile, ActiveModel as SystemFileActiveModel};
+use file_model::request::system_file::{CreateSystemFileRequest, UpdateSystemFileRequest};
+use file_model::response::system_file::SystemFileResponse;
 
-pub fn create_request_to_model(request: &CreateSystemFilesRequest) -> SystemFilesActiveModel {
-    SystemFilesActiveModel {
+pub fn create_request_to_model(request: &CreateSystemFileRequest) -> SystemFileActiveModel {
+    SystemFileActiveModel {
         file_name: Set(request.file_name.clone()),
         file_type: request.file_type.as_ref().map_or(NotSet, |file_type| Set(Some(file_type.clone()))),
         file_size: Set(request.file_size.clone()),
@@ -15,8 +15,8 @@ pub fn create_request_to_model(request: &CreateSystemFilesRequest) -> SystemFile
     }
 }
 
-pub fn update_request_to_model(request: &UpdateSystemFilesRequest, existing: SystemFiles) -> SystemFilesActiveModel {
-    let mut active_model: SystemFilesActiveModel = existing.into();
+pub fn update_request_to_model(request: &UpdateSystemFileRequest, existing: SystemFile) -> SystemFileActiveModel {
+    let mut active_model: SystemFileActiveModel = existing.into();
     if let Some(file_name) = &request.file_name { 
         active_model.file_name = Set(file_name.clone());
     }
@@ -38,8 +38,8 @@ pub fn update_request_to_model(request: &UpdateSystemFilesRequest, existing: Sys
     active_model
 }
 
-pub fn model_to_response(model: SystemFiles) -> SystemFilesResponse {
-    SystemFilesResponse { 
+pub fn model_to_response(model: SystemFile) -> SystemFileResponse {
+    SystemFileResponse { 
         id: model.id,
         file_name: model.file_name,
         file_type: model.file_type,

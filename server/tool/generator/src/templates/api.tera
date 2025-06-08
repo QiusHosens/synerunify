@@ -20,7 +20,9 @@ pub async fn {{ table_name }}_router(state: AppState) -> OpenApiRouter {
         .routes(routes!(delete))
         .routes(routes!(get_by_id))
         .routes(routes!(list))
-        .routes(routes!(page))
+        .routes(routes!(page)){% if has_status_field  %}
+        .routes(routes!(enable))
+        .routes(routes!(disable)){% endif %}
         .with_state(state)
 }
 
@@ -191,3 +193,57 @@ async fn list(
         Err(e) => {CommonResult::with_err(&e.to_string())}
     }
 }
+{% if has_status_field  %}
+#[utoipa::path(
+    post,
+    path = "/enable/{id}",
+    operation_id = "{{ table_name }}_enable",
+    params(
+        ("id" = i64, Path, description = "id")
+    ),
+    responses(
+        (status = 204, description = "enable")
+    ),
+    tag = "{{ table_name }}",
+    security(
+        ("bearerAuth" = [])
+    )
+)]
+#[require_authorize(operation_id = "{{ table_name }}_enable", authorize = "")]
+async fn enable(
+    State(state): State<AppState>,
+    Extension(login_user): Extension<LoginUserContext>,
+    Path(id): Path<i64>,
+) -> CommonResult<()> {
+    match service::{{ table_name }}::enable(&state.db, login_user, id).await {
+        Ok(_) => {CommonResult::with_none()}
+        Err(e) => {CommonResult::with_err(&e.to_string())}
+    }
+}
+
+#[utoipa::path(
+    post,
+    path = "/disable/{id}",
+    operation_id = "{{ table_name }}_disable",
+    params(
+        ("id" = i64, Path, description = "id")
+    ),
+    responses(
+        (status = 204, description = "disable")
+    ),
+    tag = "{{ table_name }}",
+    security(
+        ("bearerAuth" = [])
+    )
+)]
+#[require_authorize(operation_id = "{{ table_name }}_disable", authorize = "")]
+async fn disable(
+    State(state): State<AppState>,
+    Extension(login_user): Extension<LoginUserContext>,
+    Path(id): Path<i64>,
+) -> CommonResult<()> {
+    match service::{{ table_name }}::disable(&state.db, login_user, id).await {
+        Ok(_) => {CommonResult::with_none()}
+        Err(e) => {CommonResult::with_err(&e.to_string())}
+    }
+}{% endif %}

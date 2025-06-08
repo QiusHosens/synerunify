@@ -4,7 +4,7 @@ use utoipa::ToSchema;
 use common::base::page::PaginatedRequest;
 
 #[derive(Serialize, Deserialize, Debug, ToSchema)]
-pub struct CreateSystemFilesRequest {
+pub struct CreateSystemFileRequest {
     
     pub file_name: String, // 文件名
     
@@ -21,7 +21,7 @@ pub struct CreateSystemFilesRequest {
 }
 
 #[derive(Serialize, Deserialize, Debug, ToSchema)]
-pub struct UpdateSystemFilesRequest {
+pub struct UpdateSystemFileRequest {
     
     pub id: i64, // 文件ID
     

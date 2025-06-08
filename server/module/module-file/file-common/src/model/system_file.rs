@@ -4,7 +4,7 @@ use sea_orm::entity::prelude::*;
 use common::interceptor::orm::active_filter::ActiveFilterEntityTrait;
 
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel)]
-#[sea_orm(table_name = "system_files")]
+#[sea_orm(table_name = "system_file")]
 pub struct Model {
     
     #[sea_orm(primary_key)]
