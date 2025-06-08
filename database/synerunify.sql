@@ -1,21 +1,807 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : 192.168.0.99_synerunify
+ Source Server         : 192.168.1.18_synerunify
  Source Server Type    : MySQL
- Source Server Version : 80100 (8.1.0)
- Source Host           : 192.168.0.99:30010
+ Source Server Version : 80200 (8.2.0)
+ Source Host           : 192.168.1.18:3306
  Source Schema         : synerunify
 
  Target Server Type    : MySQL
- Target Server Version : 80100 (8.1.0)
+ Target Server Version : 80200 (8.2.0)
  File Encoding         : 65001
 
- Date: 04/06/2025 09:44:51
+ Date: 08/06/2025 14:06:18
 */
 
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
+
+-- ----------------------------
+-- Table structure for erp_customers
+-- ----------------------------
+DROP TABLE IF EXISTS `erp_customers`;
+CREATE TABLE `erp_customers`  (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '客户ID',
+  `customer_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '客户名称',
+  `contact_person` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '联系人',
+  `phone` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '电话',
+  `email` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '邮箱',
+  `address` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '地址',
+  `status` tinyint NOT NULL DEFAULT 0 COMMENT '状态',
+  `sort_order` int NOT NULL DEFAULT 0 COMMENT '排序',
+  `tax_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '纳税人识别号',
+  `tax_rate` int NULL DEFAULT NULL COMMENT '税率,精确到万分位',
+  `bank_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '开户行',
+  `bank_account` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '银行账号',
+  `bank_address` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '开户地址',
+  `remarks` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
+  `department_code` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '部门编码',
+  `department_id` bigint NOT NULL COMMENT '部门ID',
+  `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updater` bigint NULL DEFAULT NULL COMMENT '更新者ID',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+  `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '客户信息表' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of erp_customers
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for erp_files
+-- ----------------------------
+DROP TABLE IF EXISTS `erp_files`;
+CREATE TABLE `erp_files`  (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '文件ID',
+  `file_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '文件名',
+  `file_type` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '文件类型',
+  `file_size` bigint NOT NULL COMMENT '文件大小（字节）',
+  `file_path` varchar(512) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '文件存储路径',
+  `department_code` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '部门编码',
+  `department_id` bigint NOT NULL COMMENT '部门ID',
+  `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updater` bigint NULL DEFAULT NULL COMMENT '更新者ID',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+  `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '文件信息表' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of erp_files
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for erp_financial_records
+-- ----------------------------
+DROP TABLE IF EXISTS `erp_financial_records`;
+CREATE TABLE `erp_financial_records`  (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '财务记录ID',
+  `record_type` tinyint NOT NULL DEFAULT 0 COMMENT '记录类型 (0=income, 1=expense)',
+  `amount` bigint NOT NULL COMMENT '金额',
+  `description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '描述',
+  `related_order_id` bigint NULL DEFAULT NULL COMMENT '关联订单ID',
+  `record_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '记录日期',
+  `user_id` bigint NULL DEFAULT NULL COMMENT '用户ID',
+  `department_code` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '部门编码',
+  `department_id` bigint NOT NULL COMMENT '部门ID',
+  `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updater` bigint NULL DEFAULT NULL COMMENT '更新者ID',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+  `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '财务记录表' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of erp_financial_records
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for erp_inbound_records
+-- ----------------------------
+DROP TABLE IF EXISTS `erp_inbound_records`;
+CREATE TABLE `erp_inbound_records`  (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '入库记录ID',
+  `purchase_id` bigint NULL DEFAULT NULL COMMENT '采购订单ID',
+  `warehouse_id` bigint NULL DEFAULT NULL COMMENT '仓库ID',
+  `product_id` bigint NULL DEFAULT NULL COMMENT '产品ID',
+  `quantity` int NOT NULL COMMENT '入库数量',
+  `inbound_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '入库日期',
+  `remarks` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
+  `department_code` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '部门编码',
+  `department_id` bigint NOT NULL COMMENT '部门ID',
+  `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updater` bigint NULL DEFAULT NULL COMMENT '更新者ID',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+  `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '入库记录表' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of erp_inbound_records
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for erp_inventory_checks
+-- ----------------------------
+DROP TABLE IF EXISTS `erp_inventory_checks`;
+CREATE TABLE `erp_inventory_checks`  (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '盘点记录ID',
+  `warehouse_id` bigint NULL DEFAULT NULL COMMENT '仓库ID',
+  `product_id` bigint NULL DEFAULT NULL COMMENT '产品ID',
+  `checked_quantity` int NOT NULL COMMENT '盘点数量',
+  `check_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '盘点日期',
+  `remarks` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
+  `department_code` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '部门编码',
+  `department_id` bigint NOT NULL COMMENT '部门ID',
+  `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updater` bigint NULL DEFAULT NULL COMMENT '更新者ID',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+  `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '库存盘点表' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of erp_inventory_checks
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for erp_inventory_records
+-- ----------------------------
+DROP TABLE IF EXISTS `erp_inventory_records`;
+CREATE TABLE `erp_inventory_records`  (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '库存记录ID',
+  `product_id` bigint NULL DEFAULT NULL COMMENT '产品ID',
+  `warehouse_id` bigint NULL DEFAULT NULL COMMENT '仓库ID',
+  `quantity` int NOT NULL COMMENT '数量',
+  `record_type` tinyint NOT NULL DEFAULT 0 COMMENT '记录类型 (0=in, 1=out)',
+  `record_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '记录日期',
+  `remarks` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
+  `department_code` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '部门编码',
+  `department_id` bigint NOT NULL COMMENT '部门ID',
+  `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updater` bigint NULL DEFAULT NULL COMMENT '更新者ID',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+  `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '库存记录表' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of erp_inventory_records
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for erp_inventory_transfers
+-- ----------------------------
+DROP TABLE IF EXISTS `erp_inventory_transfers`;
+CREATE TABLE `erp_inventory_transfers`  (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '调拨记录ID',
+  `from_warehouse_id` bigint NULL DEFAULT NULL COMMENT '调出仓库ID',
+  `to_warehouse_id` bigint NULL DEFAULT NULL COMMENT '调入仓库ID',
+  `product_id` bigint NULL DEFAULT NULL COMMENT '产品ID',
+  `quantity` int NOT NULL COMMENT '调拨数量',
+  `transfer_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '调拨日期',
+  `remarks` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
+  `department_code` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '部门编码',
+  `department_id` bigint NOT NULL COMMENT '部门ID',
+  `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updater` bigint NULL DEFAULT NULL COMMENT '更新者ID',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+  `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '库存调拨表' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of erp_inventory_transfers
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for erp_outbound_records
+-- ----------------------------
+DROP TABLE IF EXISTS `erp_outbound_records`;
+CREATE TABLE `erp_outbound_records`  (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '出库记录ID',
+  `order_id` bigint NULL DEFAULT NULL COMMENT '销售订单ID',
+  `warehouse_id` bigint NULL DEFAULT NULL COMMENT '仓库ID',
+  `product_id` bigint NULL DEFAULT NULL COMMENT '产品ID',
+  `quantity` int NOT NULL COMMENT '出库数量',
+  `outbound_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '出库日期',
+  `remarks` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
+  `department_code` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '部门编码',
+  `department_id` bigint NOT NULL COMMENT '部门ID',
+  `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updater` bigint NULL DEFAULT NULL COMMENT '更新者ID',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+  `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '出库记录表' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of erp_outbound_records
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for erp_payment_attachments
+-- ----------------------------
+DROP TABLE IF EXISTS `erp_payment_attachments`;
+CREATE TABLE `erp_payment_attachments`  (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '附件ID',
+  `payment_id` bigint NOT NULL COMMENT '付款ID',
+  `file_id` bigint NOT NULL COMMENT '文件ID',
+  `remarks` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
+  `department_code` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '部门编码',
+  `department_id` bigint NOT NULL COMMENT '部门ID',
+  `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updater` bigint NULL DEFAULT NULL COMMENT '更新者ID',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+  `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '付款附件表' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of erp_payment_attachments
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for erp_payment_details
+-- ----------------------------
+DROP TABLE IF EXISTS `erp_payment_details`;
+CREATE TABLE `erp_payment_details`  (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '付款详情ID',
+  `payment_id` bigint NOT NULL COMMENT '付款ID',
+  `purchase_order_id` bigint NULL DEFAULT NULL COMMENT '采购订单ID',
+  `purchase_return_id` bigint NULL DEFAULT NULL COMMENT '采购退货ID',
+  `amount` bigint NOT NULL COMMENT '金额',
+  `description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '描述',
+  `department_code` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '部门编码',
+  `department_id` bigint NOT NULL COMMENT '部门ID',
+  `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updater` bigint NULL DEFAULT NULL COMMENT '更新者ID',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+  `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '付款详情表' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of erp_payment_details
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for erp_payments
+-- ----------------------------
+DROP TABLE IF EXISTS `erp_payments`;
+CREATE TABLE `erp_payments`  (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '付款ID',
+  `purchase_order_id` bigint NULL DEFAULT NULL COMMENT '采购订单ID',
+  `supplier_id` bigint NULL DEFAULT NULL COMMENT '供应商ID',
+  `user_id` bigint NULL DEFAULT NULL COMMENT '关联用户ID',
+  `settlement_account_id` bigint NULL DEFAULT NULL COMMENT '结算账户ID',
+  `amount` bigint NOT NULL COMMENT '付款金额',
+  `discount_amount` bigint NULL DEFAULT 0 COMMENT '优惠金额',
+  `payment_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '付款日期',
+  `payment_method` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '付款方式 (如 bank_transfer, cash, credit)',
+  `description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '描述',
+  `status` tinyint NOT NULL DEFAULT 0 COMMENT '状态 (0=pending, 1=completed, 2=cancelled)',
+  `remarks` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
+  `department_code` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '部门编码',
+  `department_id` bigint NOT NULL COMMENT '部门ID',
+  `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updater` bigint NULL DEFAULT NULL COMMENT '更新者ID',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+  `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '付款表' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of erp_payments
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for erp_product_categories
+-- ----------------------------
+DROP TABLE IF EXISTS `erp_product_categories`;
+CREATE TABLE `erp_product_categories`  (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '分类ID',
+  `category_code` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '分类编码',
+  `category_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '分类名称',
+  `parent_id` bigint NULL DEFAULT NULL COMMENT '父分类ID',
+  `status` tinyint NOT NULL DEFAULT 0 COMMENT '状态',
+  `sort_order` int NOT NULL DEFAULT 0 COMMENT '排序',
+  `remarks` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
+  `department_code` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '部门编码',
+  `department_id` bigint NOT NULL COMMENT '部门ID',
+  `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updater` bigint NULL DEFAULT NULL COMMENT '更新者ID',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+  `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '产品分类表' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of erp_product_categories
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for erp_product_units
+-- ----------------------------
+DROP TABLE IF EXISTS `erp_product_units`;
+CREATE TABLE `erp_product_units`  (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '单位ID',
+  `unit_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '单位名称',
+  `status` tinyint NOT NULL DEFAULT 0 COMMENT '状态',
+  `sort_order` int NOT NULL DEFAULT 0 COMMENT '排序',
+  `remarks` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
+  `department_code` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '部门编码',
+  `department_id` bigint NOT NULL COMMENT '部门ID',
+  `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updater` bigint NULL DEFAULT NULL COMMENT '更新者ID',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+  `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '产品单位表' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of erp_product_units
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for erp_products
+-- ----------------------------
+DROP TABLE IF EXISTS `erp_products`;
+CREATE TABLE `erp_products`  (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '产品ID',
+  `product_code` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '产品编码',
+  `product_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '产品名称',
+  `category_id` bigint NULL DEFAULT NULL COMMENT '产品分类ID',
+  `unit_id` bigint NOT NULL COMMENT '产品单位ID',
+  `status` tinyint NOT NULL DEFAULT 0 COMMENT '状态',
+  `barcode` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '条码',
+  `specification` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '规格',
+  `shelf_life_days` int NULL DEFAULT NULL COMMENT '保质期天数',
+  `weight` int NULL DEFAULT NULL COMMENT '重量,kg,精确到百分位',
+  `purchase_price` bigint NULL DEFAULT NULL COMMENT '采购价格',
+  `sale_price` bigint NULL DEFAULT NULL COMMENT '销售价格',
+  `min_price` bigint NULL DEFAULT NULL COMMENT '最低价格',
+  `unit_price` bigint NOT NULL COMMENT '单价',
+  `stock_quantity` int NOT NULL DEFAULT 0 COMMENT '库存数量',
+  `min_stock` int NOT NULL DEFAULT 0 COMMENT '最低库存',
+  `remarks` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
+  `department_code` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '部门编码',
+  `department_id` bigint NOT NULL COMMENT '部门ID',
+  `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updater` bigint NULL DEFAULT NULL COMMENT '更新者ID',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+  `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '产品信息表' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of erp_products
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for erp_purchase_order_attachments
+-- ----------------------------
+DROP TABLE IF EXISTS `erp_purchase_order_attachments`;
+CREATE TABLE `erp_purchase_order_attachments`  (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '附件ID',
+  `purchase_id` bigint NULL DEFAULT NULL COMMENT '采购订单ID',
+  `file_id` bigint NULL DEFAULT NULL COMMENT '文件ID',
+  `remarks` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
+  `department_code` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '部门编码',
+  `department_id` bigint NOT NULL COMMENT '部门ID',
+  `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updater` bigint NULL DEFAULT NULL COMMENT '更新者ID',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+  `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '采购订单附件表' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of erp_purchase_order_attachments
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for erp_purchase_order_details
+-- ----------------------------
+DROP TABLE IF EXISTS `erp_purchase_order_details`;
+CREATE TABLE `erp_purchase_order_details`  (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '采购订单详情ID',
+  `purchase_id` bigint NULL DEFAULT NULL COMMENT '采购订单ID',
+  `product_id` bigint NULL DEFAULT NULL COMMENT '产品ID',
+  `quantity` int NOT NULL COMMENT '数量',
+  `unit_price` bigint NOT NULL COMMENT '单价',
+  `subtotal` bigint NOT NULL COMMENT '小计',
+  `tax_rate` int NULL DEFAULT 0 COMMENT '税率,精确到万分位',
+  `remarks` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
+  `department_code` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '部门编码',
+  `department_id` bigint NOT NULL COMMENT '部门ID',
+  `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updater` bigint NULL DEFAULT NULL COMMENT '更新者ID',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+  `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '采购订单详情表' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of erp_purchase_order_details
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for erp_purchase_orders
+-- ----------------------------
+DROP TABLE IF EXISTS `erp_purchase_orders`;
+CREATE TABLE `erp_purchase_orders`  (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '采购订单ID',
+  `order_number` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '订单编号',
+  `supplier_id` bigint NULL DEFAULT NULL COMMENT '供应商ID',
+  `user_id` bigint NULL DEFAULT NULL COMMENT '用户ID',
+  `purchase_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '采购日期',
+  `total_amount` bigint NOT NULL COMMENT '总金额',
+  `status` tinyint NOT NULL DEFAULT 0 COMMENT '订单状态 (0=pending, 1=completed, 2=cancelled)',
+  `discount_rate` bigint NULL DEFAULT 0 COMMENT '优惠率（百分比，1000表示10.00%）',
+  `settlement_account_id` bigint NULL DEFAULT NULL COMMENT '结算账户ID',
+  `deposit` bigint NULL DEFAULT 0 COMMENT '定金',
+  `remarks` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
+  `department_code` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '部门编码',
+  `department_id` bigint NOT NULL COMMENT '部门ID',
+  `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updater` bigint NULL DEFAULT NULL COMMENT '更新者ID',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+  `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE INDEX `order_number`(`order_number` ASC) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '采购订单表' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of erp_purchase_orders
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for erp_purchase_returns
+-- ----------------------------
+DROP TABLE IF EXISTS `erp_purchase_returns`;
+CREATE TABLE `erp_purchase_returns`  (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '退货ID',
+  `purchase_order_id` bigint NULL DEFAULT NULL COMMENT '采购订单ID',
+  `supplier_id` bigint NULL DEFAULT NULL COMMENT '供应商ID',
+  `warehouse_id` bigint NULL DEFAULT NULL COMMENT '仓库ID',
+  `return_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '退货日期',
+  `total_amount` bigint NOT NULL COMMENT '退货总金额',
+  `status` tinyint NOT NULL DEFAULT 0 COMMENT '状态 (0=pending, 1=completed, 2=cancelled)',
+  `remarks` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
+  `department_code` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '部门编码',
+  `department_id` bigint NOT NULL COMMENT '部门ID',
+  `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updater` bigint NULL DEFAULT NULL COMMENT '更新者ID',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+  `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '采购退货表' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of erp_purchase_returns
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for erp_receipt_attachments
+-- ----------------------------
+DROP TABLE IF EXISTS `erp_receipt_attachments`;
+CREATE TABLE `erp_receipt_attachments`  (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '附件ID',
+  `receipt_id` bigint NOT NULL COMMENT '收款ID',
+  `file_id` bigint NOT NULL COMMENT '文件ID',
+  `remarks` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
+  `department_code` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '部门编码',
+  `department_id` bigint NOT NULL COMMENT '部门ID',
+  `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updater` bigint NULL DEFAULT NULL COMMENT '更新者ID',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+  `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '收款附件表' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of erp_receipt_attachments
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for erp_receipt_details
+-- ----------------------------
+DROP TABLE IF EXISTS `erp_receipt_details`;
+CREATE TABLE `erp_receipt_details`  (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '收款详情ID',
+  `receipt_id` bigint NOT NULL COMMENT '收款ID',
+  `sales_order_id` bigint NULL DEFAULT NULL COMMENT '销售订单ID',
+  `sales_return_id` bigint NULL DEFAULT NULL COMMENT '销售退货ID',
+  `amount` bigint NOT NULL COMMENT '金额',
+  `description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '描述',
+  `department_code` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '部门编码',
+  `department_id` bigint NOT NULL COMMENT '部门ID',
+  `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updater` bigint NULL DEFAULT NULL COMMENT '更新者ID',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+  `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '收款详情表' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of erp_receipt_details
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for erp_receipts
+-- ----------------------------
+DROP TABLE IF EXISTS `erp_receipts`;
+CREATE TABLE `erp_receipts`  (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '收款ID',
+  `sales_order_id` bigint NULL DEFAULT NULL COMMENT '销售订单ID',
+  `customer_id` bigint NULL DEFAULT NULL COMMENT '客户ID',
+  `user_id` bigint NULL DEFAULT NULL COMMENT '关联用户ID',
+  `settlement_account_id` bigint NULL DEFAULT NULL COMMENT '结算账户ID',
+  `amount` bigint NOT NULL COMMENT '收款金额',
+  `discount_amount` bigint NULL DEFAULT 0 COMMENT '优惠金额',
+  `receipt_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '收款日期',
+  `payment_method` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '收款方式 (如 bank_transfer, cash, credit)',
+  `description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '描述',
+  `status` tinyint NOT NULL DEFAULT 0 COMMENT '状态 (0=pending, 1=completed, 2=cancelled)',
+  `remarks` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
+  `department_code` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '部门编码',
+  `department_id` bigint NOT NULL COMMENT '部门ID',
+  `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updater` bigint NULL DEFAULT NULL COMMENT '更新者ID',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+  `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '收款表' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of erp_receipts
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for erp_sales_order_attachments
+-- ----------------------------
+DROP TABLE IF EXISTS `erp_sales_order_attachments`;
+CREATE TABLE `erp_sales_order_attachments`  (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '附件ID',
+  `order_id` bigint NULL DEFAULT NULL COMMENT '销售订单ID',
+  `file_id` bigint NULL DEFAULT NULL COMMENT '文件ID',
+  `remarks` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
+  `department_code` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '部门编码',
+  `department_id` bigint NOT NULL COMMENT '部门ID',
+  `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updater` bigint NULL DEFAULT NULL COMMENT '更新者ID',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+  `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '销售订单附件表' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of erp_sales_order_attachments
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for erp_sales_order_details
+-- ----------------------------
+DROP TABLE IF EXISTS `erp_sales_order_details`;
+CREATE TABLE `erp_sales_order_details`  (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '订单详情ID',
+  `order_id` bigint NULL DEFAULT NULL COMMENT '订单ID',
+  `product_id` bigint NULL DEFAULT NULL COMMENT '产品ID',
+  `quantity` int NOT NULL COMMENT '数量',
+  `unit_price` bigint NOT NULL COMMENT '单价',
+  `subtotal` bigint NOT NULL COMMENT '小计',
+  `tax_rate` int NULL DEFAULT NULL COMMENT '税率,精确到万分位',
+  `remarks` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
+  `department_code` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '部门编码',
+  `department_id` bigint NOT NULL COMMENT '部门ID',
+  `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updater` bigint NULL DEFAULT NULL COMMENT '更新者ID',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+  `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '销售订单详情表' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of erp_sales_order_details
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for erp_sales_orders
+-- ----------------------------
+DROP TABLE IF EXISTS `erp_sales_orders`;
+CREATE TABLE `erp_sales_orders`  (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '订单ID',
+  `order_number` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '订单编号',
+  `customer_id` bigint NULL DEFAULT NULL COMMENT '客户ID',
+  `user_id` bigint NULL DEFAULT NULL COMMENT '用户ID',
+  `order_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '订单日期',
+  `total_amount` bigint NOT NULL COMMENT '总金额',
+  `status` tinyint NOT NULL DEFAULT 0 COMMENT '订单状态 (0=pending, 1=completed, 2=cancelled)',
+  `discount_rate` bigint NULL DEFAULT 0 COMMENT '优惠率（百分比，1000表示10.00%）',
+  `settlement_account_id` bigint NULL DEFAULT NULL COMMENT '结算账户ID',
+  `deposit` bigint NULL DEFAULT 0 COMMENT '定金',
+  `department_code` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '部门编码',
+  `department_id` bigint NOT NULL COMMENT '部门ID',
+  `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updater` bigint NULL DEFAULT NULL COMMENT '更新者ID',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+  `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE INDEX `order_number`(`order_number` ASC) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '销售订单表' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of erp_sales_orders
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for erp_sales_returns
+-- ----------------------------
+DROP TABLE IF EXISTS `erp_sales_returns`;
+CREATE TABLE `erp_sales_returns`  (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '退货ID',
+  `sales_order_id` bigint NULL DEFAULT NULL COMMENT '销售订单ID',
+  `customer_id` bigint NULL DEFAULT NULL COMMENT '客户ID',
+  `warehouse_id` bigint NULL DEFAULT NULL COMMENT '仓库ID',
+  `return_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '退货日期',
+  `total_amount` bigint NOT NULL COMMENT '退货总金额',
+  `status` tinyint NOT NULL DEFAULT 0 COMMENT '状态 (0=pending, 1=completed, 2=cancelled)',
+  `remarks` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
+  `department_code` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '部门编码',
+  `department_id` bigint NOT NULL COMMENT '部门ID',
+  `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updater` bigint NULL DEFAULT NULL COMMENT '更新者ID',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+  `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '销售退货表' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of erp_sales_returns
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for erp_settlement_accounts
+-- ----------------------------
+DROP TABLE IF EXISTS `erp_settlement_accounts`;
+CREATE TABLE `erp_settlement_accounts`  (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '账户ID',
+  `account_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '账户名称',
+  `bank_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '开户行',
+  `bank_account` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '银行账号',
+  `status` tinyint NOT NULL DEFAULT 0 COMMENT '状态',
+  `sort_order` int NOT NULL DEFAULT 0 COMMENT '排序',
+  `remarks` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
+  `department_code` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '部门编码',
+  `department_id` bigint NOT NULL COMMENT '部门ID',
+  `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updater` bigint NULL DEFAULT NULL COMMENT '更新者ID',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+  `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '结算账户表' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of erp_settlement_accounts
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for erp_suppliers
+-- ----------------------------
+DROP TABLE IF EXISTS `erp_suppliers`;
+CREATE TABLE `erp_suppliers`  (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '供应商ID',
+  `supplier_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '供应商名称',
+  `contact_person` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '联系人',
+  `phone` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '电话',
+  `email` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '邮箱',
+  `address` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '地址',
+  `status` tinyint NOT NULL DEFAULT 0 COMMENT '状态',
+  `tax_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '纳税人识别号',
+  `tax_rate` int NULL DEFAULT NULL COMMENT '税率,精确到万分位',
+  `bank_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '开户行',
+  `bank_account` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '银行账号',
+  `bank_address` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '开户地址',
+  `remarks` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
+  `sort_order` int NOT NULL DEFAULT 0 COMMENT '排序',
+  `department_code` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '部门编码',
+  `department_id` bigint NOT NULL COMMENT '部门ID',
+  `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updater` bigint NULL DEFAULT NULL COMMENT '更新者ID',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+  `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '供应商信息表' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of erp_suppliers
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for erp_warehouses
+-- ----------------------------
+DROP TABLE IF EXISTS `erp_warehouses`;
+CREATE TABLE `erp_warehouses`  (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '仓库ID',
+  `warehouse_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '仓库名称',
+  `location` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '仓库位置',
+  `status` tinyint NOT NULL DEFAULT 0 COMMENT '状态',
+  `sort_order` int NOT NULL DEFAULT 0 COMMENT '排序',
+  `storage_fee` bigint NULL DEFAULT NULL COMMENT '仓储费',
+  `handling_fee` bigint NULL DEFAULT NULL COMMENT '搬运费',
+  `manager` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '负责人',
+  `remarks` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
+  `department_code` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '部门编码',
+  `department_id` bigint NOT NULL COMMENT '部门ID',
+  `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updater` bigint NULL DEFAULT NULL COMMENT '更新者ID',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+  `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '仓库信息表' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of erp_warehouses
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for system_data_scope_rule
@@ -547,7 +1333,7 @@ CREATE TABLE `system_user`  (
 -- ----------------------------
 -- Records of system_user
 -- ----------------------------
-INSERT INTO `system_user` VALUES (1, 'admin', '$2b$06$Ohq86rDIvNuy/4ZvsTF4dOw.7I7QJj620LC25PwgYDmrKqKmKsJz6', '超级管理员', '超级管理员', '123@qq.com', '18888888888', 0, '', 0, '127.0.0.1', '2025-06-04 01:00:54', '0000', 1, 1, '2025-03-08 10:14:52', 1, '2025-06-04 01:00:54', b'0', 1);
+INSERT INTO `system_user` VALUES (1, 'admin', '$2b$06$Ohq86rDIvNuy/4ZvsTF4dOw.7I7QJj620LC25PwgYDmrKqKmKsJz6', '超级管理员', '超级管理员', '123@qq.com', '18888888888', 0, '', 0, '192.168.1.18', '2025-06-07 09:08:55', '0000', 1, 1, '2025-03-08 10:14:52', 1, '2025-06-07 09:08:54', b'0', 1);
 INSERT INTO `system_user` VALUES (11, 'test', '$2b$06$S2yMOy4Mp5gImLOEl8X3K.T8XAWrfXVwGXK/vOBL.30PGNnnGIDzy', '测试管理员', NULL, '', '15555555555', 0, '', 0, '127.0.0.1', '2025-05-23 08:16:27', '0000-0000', 7, 1, '2025-05-23 08:16:00', 1, '2025-05-23 08:16:25', b'0', 2);
 
 -- ----------------------------
