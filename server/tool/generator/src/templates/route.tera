@@ -1,7 +1,11 @@
 use axum::Router;
 use sea_orm::DatabaseConnection;
-use utoipa::OpenApi;
+use utoipa::{Modify, OpenApi};
 use utoipa_axum::router::OpenApiRouter;
+use common::middleware::request_context::request_context_handler;
+use common::middleware::authorize::{authorize_handler, init_route_authorizes};
+use common::middleware::operation_logger::operation_logger_handler;
+use common::utils::jwt_utils::AccessClaims;
 use std::sync::Arc;{% for table_name in table_names %}
 use crate::api::{{ table_name }}::{ {{ table_name }}_route, {{ table_name }}_router };{% endfor %}
 use crate::AppState;
@@ -16,15 +20,44 @@ use crate::AppState;
     ),
     tags({% for table_info in table_info_list %}
         (name = "{{ table_info.table_name }}", description = "{{ table_info.table_comment }}"),{% endfor %}
-    )
+    ),
+    modifiers(&SecurityAddon)
 )]
 pub struct ApiDocument;
 
 pub async fn api(state: AppState) -> Router {
-    let (router, api) = OpenApiRouter::with_openapi(ApiDocument::openapi()){% for table_name in table_names %}
-        .nest("/{{ table_name }}", {{ table_name }}_router(state.clone()).await){% endfor %}
+    let (router, api) = OpenApiRouter::with_openapi(ApiDocument::openapi())
+        .nest("/system", auth_router(state.clone()).await)
         .split_for_parts();
 
+    // 注册路由权限
+    init_route_authorizes(&api);
     router
-        .merge(utoipa_swagger_ui::SwaggerUi::new("/swagger-ui").url("/api-docs/openapi.json", api.clone()))
+        .merge(utoipa_swagger_ui::SwaggerUi::new("/system/swagger-ui").url("/system/api-docs/openapi.json", api.clone()))
+}
+
+pub async fn auth_router(state: AppState) -> OpenApiRouter {
+    OpenApiRouter::new(){% for table_name in table_names %}
+        .nest("/{{ table_name }}", {{ table_name }}_router(state.clone()).await){% endfor %}
+        .layer(axum::middleware::from_fn(authorize_handler))
+        .layer(axum::middleware::from_fn(operation_logger_handler))
+        .layer(axum::middleware::from_fn_with_state(state.clone(), request_context_handler))
+        .layer(axum::middleware::from_extractor::<AccessClaims>())
+}
+
+struct SecurityAddon;
+
+impl Modify for SecurityAddon {
+    fn modify(&self, openapi: &mut utoipa::openapi::OpenApi) {
+        let components = openapi.components.get_or_insert_with(Default::default);
+        components.security_schemes.insert(
+            "bearerAuth".to_string(),
+            utoipa::openapi::security::SecurityScheme::Http(
+                utoipa::openapi::security::HttpBuilder::new()
+                    .scheme(utoipa::openapi::security::HttpAuthScheme::Bearer)
+                    .bearer_format("JWT")
+                    .build()
+            ),
+        );
+    }
 }

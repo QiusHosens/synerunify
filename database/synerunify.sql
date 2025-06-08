@@ -11,7 +11,7 @@
  Target Server Version : 80200 (8.2.0)
  File Encoding         : 65001
 
- Date: 08/06/2025 14:35:09
+ Date: 08/06/2025 16:22:22
 */
 
 SET NAMES utf8mb4;
@@ -364,7 +364,6 @@ CREATE TABLE `erp_products`  (
   `purchase_price` bigint NULL DEFAULT NULL COMMENT '采购价格',
   `sale_price` bigint NULL DEFAULT NULL COMMENT '销售价格',
   `min_price` bigint NULL DEFAULT NULL COMMENT '最低价格',
-  `unit_price` bigint NOT NULL COMMENT '单价',
   `stock_quantity` int NOT NULL DEFAULT 0 COMMENT '库存数量',
   `min_stock` int NOT NULL DEFAULT 0 COMMENT '最低库存',
   `remarks` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
