@@ -11,7 +11,7 @@
  Target Server Version : 80200 (8.2.0)
  File Encoding         : 65001
 
- Date: 08/06/2025 21:42:05
+ Date: 08/06/2025 23:39:06
 */
 
 SET NAMES utf8mb4;
@@ -950,7 +950,7 @@ CREATE TABLE `system_menu`  (
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 81 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '菜单权限表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 112 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '菜单权限表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of system_menu
@@ -1022,6 +1022,36 @@ INSERT INTO `system_menu` VALUES (76, '启用', 'config:menu:enable', 3, 4, 18, 
 INSERT INTO `system_menu` VALUES (77, '禁用', 'config:menu:disable', 3, 5, 18, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 03:05:26', 1, '2025-05-23 03:05:26', b'0');
 INSERT INTO `system_menu` VALUES (79, '启用', 'config:dict:enable', 3, 6, 19, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 03:06:38', 1, '2025-05-23 03:06:38', b'0');
 INSERT INTO `system_menu` VALUES (80, '禁用', 'config:dict:disable', 3, 7, 19, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-05-23 03:06:48', 1, '2025-05-23 03:06:48', b'0');
+INSERT INTO `system_menu` VALUES (81, '审计日志', '', 1, 106, 2, '/system/audit', 'audit', '', '', 'global.menu.audit', 0, b'1', b'1', b'1', 1, '2025-06-08 14:30:52', 1, '2025-06-08 15:05:43', b'0');
+INSERT INTO `system_menu` VALUES (82, '操作日志', 'audit:operation', 2, 1061, 81, '/system/audit/operation', 'operation', 'pages/system/audit/OperationLogger', 'OperationLogger', 'global.menu.audit.operation', 0, b'1', b'1', b'1', 1, '2025-06-08 14:35:47', 1, '2025-06-08 14:35:47', b'0');
+INSERT INTO `system_menu` VALUES (83, '登录日志', 'audit:login', 2, 1062, 81, '/system/audit/login', 'operation', 'pages/system/audit/LoginLogger', 'LoginLogger', 'global.menu.audit.login', 0, b'1', b'1', b'1', 1, '2025-06-08 14:36:35', 1, '2025-06-08 14:36:35', b'0');
+INSERT INTO `system_menu` VALUES (84, 'ERP', '', 1, 300, 0, '/erp', 'erp', '', '', 'global.menu.erp', 0, b'1', b'1', b'1', 1, '2025-06-08 14:40:03', 1, '2025-06-08 15:05:45', b'0');
+INSERT INTO `system_menu` VALUES (85, '采购管理', '', 1, 301, 84, '/erp/purchase', 'purchase', '', '', 'global.menu.erp.purchase', 0, b'1', b'1', b'1', 1, '2025-06-08 14:46:06', 1, '2025-06-08 15:05:46', b'0');
+INSERT INTO `system_menu` VALUES (86, '销售管理', '', 1, 302, 84, '/erp/sale', 'sale', '', '', 'global.menu.erp.sale', 0, b'1', b'1', b'1', 1, '2025-06-08 14:46:58', 1, '2025-06-08 15:05:47', b'0');
+INSERT INTO `system_menu` VALUES (87, '库存管理', '', 1, 303, 84, '/erp/inventory', 'inventory', '', '', 'global.menu.erp.inventory', 0, b'1', b'1', b'1', 1, '2025-06-08 14:47:52', 1, '2025-06-08 15:05:49', b'0');
+INSERT INTO `system_menu` VALUES (88, '产品管理', '', 1, 304, 84, '/erp/product', 'product', '', '', 'global.menu.erp.product', 0, b'1', b'1', b'1', 1, '2025-06-08 14:48:25', 1, '2025-06-08 15:05:50', b'0');
+INSERT INTO `system_menu` VALUES (89, '财务管理', '', 1, 305, 84, '/erp/financial', 'financial', '', '', 'global.menu.erp.financial', 0, b'1', b'1', b'1', 1, '2025-06-08 14:49:12', 1, '2025-06-08 15:05:52', b'0');
+INSERT INTO `system_menu` VALUES (90, '采购订单', 'erp:purchase:order', 2, 3011, 85, '/erp/purchase/order', 'purchaseOrder', 'pages/erp/purchase/PurchaseOrder', 'PurchaseOrder', 'global.menu.erp.purchase.order', 0, b'1', b'1', b'1', 1, '2025-06-08 14:53:28', 1, '2025-06-08 15:08:13', b'0');
+INSERT INTO `system_menu` VALUES (91, '采购入库', 'erp:purchase:inbound', 2, 3012, 85, '/erp/purchase/inbound', 'purchaseInbound', 'pages/erp/purchase/PurchaseInbound', 'PurchaseInbound', 'global.menu.erp.purchase.inbound', 0, b'1', b'1', b'1', 1, '2025-06-08 14:56:52', 1, '2025-06-08 15:08:15', b'0');
+INSERT INTO `system_menu` VALUES (92, '采购退货', 'erp:purchase:return', 2, 3013, 85, '/erp/purchase/return', 'purchaseReturn', 'pages/erp/purchase/PurchaseReturn', 'PurchaseReturn', 'global.menu.erp.purchase.return', 0, b'1', b'1', b'1', 1, '2025-06-08 14:58:03', 1, '2025-06-08 15:08:17', b'0');
+INSERT INTO `system_menu` VALUES (93, '供应商信息', 'erp:purchase:supplier', 2, 3014, 85, '/erp/purchase/supplier', 'purchaseSupplier', 'pages/erp/purchase/PurchaseSupplier', 'PurchaseSupplier', 'global.menu.erp.purchase.supplier', 0, b'1', b'1', b'1', 1, '2025-06-08 14:59:08', 1, '2025-06-08 15:08:21', b'0');
+INSERT INTO `system_menu` VALUES (94, '销售订单', 'erp:sale:order', 2, 3021, 86, '/erp/sale/order', 'saleOrder', 'pages/erp/sale/SaleOrder', 'SaleOrder', 'global.menu.erp.sale.order', 0, b'1', b'1', b'1', 1, '2025-06-08 15:03:38', 1, '2025-06-08 15:09:39', b'0');
+INSERT INTO `system_menu` VALUES (95, '销售出库', 'erp:sale:outbound', 2, 3022, 86, '/erp/sale/outbound', 'saleOutbound', 'pages/erp/sale/SaleOutbound', 'SaleOutbound', 'global.menu.erp.sale.outbound', 0, b'1', b'1', b'1', 1, '2025-06-08 15:09:13', 1, '2025-06-08 15:09:13', b'0');
+INSERT INTO `system_menu` VALUES (96, '销售退货', 'erp:sale:return', 2, 3023, 86, '/erp/sale/return', 'saleReturn', 'pages/erp/sale/SaleReturn', 'SaleReturn', 'global.menu.erp.sale.return', 0, b'1', b'1', b'1', 1, '2025-06-08 15:10:39', 1, '2025-06-08 15:10:39', b'0');
+INSERT INTO `system_menu` VALUES (97, '客户信息', 'erp:sale:customer', 2, 3024, 86, '/erp/sale/customer', 'saleCustomer', 'pages/erp/sale/SaleCustomer', 'SaleCustomer', 'global.menu.erp.sale.customer', 0, b'1', b'1', b'1', 1, '2025-06-08 15:11:22', 1, '2025-06-08 15:11:22', b'0');
+INSERT INTO `system_menu` VALUES (98, '仓库管理', 'erp:inventory:warehouse', 2, 3031, 87, '/erp/inventory/warehouse', 'inventoryWarehouse', 'pages/erp/inventory/InventoryWarehouse', 'InventoryWarehouse', 'global.menu.erp.inventory.warehouse', 0, b'1', b'1', b'1', 1, '2025-06-08 15:14:13', 1, '2025-06-08 15:14:13', b'0');
+INSERT INTO `system_menu` VALUES (99, '产品库存', 'erp:inventory:product', 2, 3032, 87, '/erp/inventory/product', 'inventoryProduct', 'pages/erp/inventory/InventoryProduct', 'InventoryProduct', 'global.menu.erp.inventory.product', 0, b'1', b'1', b'1', 1, '2025-06-08 15:15:30', 1, '2025-06-08 15:15:30', b'0');
+INSERT INTO `system_menu` VALUES (100, '出入库记录', 'erp:inventory:record', 2, 3033, 87, '/erp/inventory/record', 'inventoryRecord', 'pages/erp/inventory/InventoryRecord', 'InventoryRecord', 'global.menu.erp.inventory.record', 0, b'1', b'1', b'1', 1, '2025-06-08 15:19:08', 1, '2025-06-08 15:19:29', b'0');
+INSERT INTO `system_menu` VALUES (101, '入库', 'erp:inventory:inbound', 2, 3034, 87, '/erp/inventory/inbound', 'inventoryInbound', 'pages/erp/inventory/InventoryInbound', 'InventoryInbound', 'global.menu.erp.inventory.inbound', 0, b'1', b'1', b'1', 1, '2025-06-08 15:18:27', 1, '2025-06-08 15:19:34', b'0');
+INSERT INTO `system_menu` VALUES (103, '出库', 'erp:inventory:outbound', 2, 3035, 87, '/erp/inventory/outbound', 'inventoryOutbound', 'pages/erp/inventory/InventoryOutbound', 'InventoryOutbound', 'global.menu.erp.inventory.outbound', 0, b'1', b'1', b'1', 1, '2025-06-08 15:20:20', 1, '2025-06-08 15:20:20', b'0');
+INSERT INTO `system_menu` VALUES (104, '库存调拨', 'erp:inventory:transfer', 2, 3036, 87, '/erp/inventory/transfer', 'inventoryTransfer', 'pages/erp/inventory/InventoryTransfer', 'InventoryTransfer', 'global.menu.erp.inventory.transfer', 0, b'1', b'1', b'1', 1, '2025-06-08 15:21:45', 1, '2025-06-08 15:21:45', b'0');
+INSERT INTO `system_menu` VALUES (105, '库存盘点', 'erp:inventory:check', 2, 3037, 87, '/erp/inventory/check', 'inventoryCheck', 'pages/erp/inventory/InventoryCheck', 'InventoryCheck', 'global.menu.erp.inventory.check', 0, b'1', b'1', b'1', 1, '2025-06-08 15:22:32', 1, '2025-06-08 15:22:32', b'0');
+INSERT INTO `system_menu` VALUES (106, '产品列表', 'erp:product:list', 2, 3041, 88, '/erp/product/list', 'productList', 'pages/erp/product/ProductList', 'ProductList', 'global.menu.erp.product.list', 0, b'1', b'1', b'1', 1, '2025-06-08 15:25:10', 1, '2025-06-08 15:25:10', b'0');
+INSERT INTO `system_menu` VALUES (107, '产品分类', 'erp:product:category', 2, 3042, 88, '/erp/product/category', 'productCategory', 'pages/erp/product/ProductCategory', 'ProductCategory', 'global.menu.erp.product.category', 0, b'1', b'1', b'1', 1, '2025-06-08 15:26:10', 1, '2025-06-08 15:26:10', b'0');
+INSERT INTO `system_menu` VALUES (108, '产品单位', 'erp:product:unit', 2, 3043, 88, '/erp/product/unit', 'productUnit', 'pages/erp/product/ProductUnit', 'ProductUnit', 'global.menu.erp.product.unit', 0, b'1', b'1', b'1', 1, '2025-06-08 15:26:42', 1, '2025-06-08 15:26:42', b'0');
+INSERT INTO `system_menu` VALUES (109, '付款', 'erp:financial:payment', 2, 3051, 89, '/erp/financial/payment', 'financialPayment', 'pages/erp/financial/FinancialPayment', 'FinancialPayment', 'global.menu.erp.financial.payment', 0, b'1', b'1', b'1', 1, '2025-06-08 15:28:21', 1, '2025-06-08 15:28:21', b'0');
+INSERT INTO `system_menu` VALUES (110, '收款', 'erp:financial:receipt', 2, 3052, 89, '/erp/financial/receipt', 'financialReceipt', 'pages/erp/financial/FinancialReceipt', 'FinancialReceipt', 'global.menu.erp.financial.receipt', 0, b'1', b'1', b'1', 1, '2025-06-08 15:29:02', 1, '2025-06-08 15:29:02', b'0');
+INSERT INTO `system_menu` VALUES (111, '结算账户', 'erp:financial:account', 2, 3053, 89, '/erp/financial/account', 'financialAccount', 'pages/erp/financial/FinancialAccount', 'FinancialAccount', 'global.menu.erp.financial.account', 0, b'1', b'1', b'1', 1, '2025-06-08 15:30:06', 1, '2025-06-08 15:30:06', b'0');
 
 -- ----------------------------
 -- Table structure for system_notice
@@ -1118,7 +1148,7 @@ CREATE TABLE `system_role_menu`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 184 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '角色和菜单关联表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 211 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '角色和菜单关联表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of system_role_menu
@@ -1226,6 +1256,33 @@ INSERT INTO `system_role_menu` VALUES (180, 2, 35, 1, '2025-05-23 07:34:48', 1, 
 INSERT INTO `system_role_menu` VALUES (181, 2, 71, 1, '2025-05-23 07:34:48', 1, '2025-05-23 07:34:48', b'0', 1);
 INSERT INTO `system_role_menu` VALUES (182, 2, 2, 1, '2025-05-23 07:34:48', 1, '2025-05-23 07:34:48', b'0', 1);
 INSERT INTO `system_role_menu` VALUES (183, 2, 39, 1, '2025-05-23 07:34:48', 1, '2025-05-23 07:34:48', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (184, 1, 91, 1, '2025-06-08 15:30:29', 1, '2025-06-08 15:30:29', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (185, 1, 85, 1, '2025-06-08 15:30:29', 1, '2025-06-08 15:30:29', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (186, 1, 87, 1, '2025-06-08 15:30:29', 1, '2025-06-08 15:30:29', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (187, 1, 101, 1, '2025-06-08 15:30:29', 1, '2025-06-08 15:30:29', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (188, 1, 84, 1, '2025-06-08 15:30:29', 1, '2025-06-08 15:30:29', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (189, 1, 94, 1, '2025-06-08 15:30:29', 1, '2025-06-08 15:30:29', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (190, 1, 100, 1, '2025-06-08 15:30:29', 1, '2025-06-08 15:30:29', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (191, 1, 105, 1, '2025-06-08 15:30:29', 1, '2025-06-08 15:30:29', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (192, 1, 89, 1, '2025-06-08 15:30:29', 1, '2025-06-08 15:30:29', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (193, 1, 103, 1, '2025-06-08 15:30:29', 1, '2025-06-08 15:30:29', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (194, 1, 88, 1, '2025-06-08 15:30:29', 1, '2025-06-08 15:30:29', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (195, 1, 111, 1, '2025-06-08 15:30:29', 1, '2025-06-08 15:30:29', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (196, 1, 86, 1, '2025-06-08 15:30:29', 1, '2025-06-08 15:30:29', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (197, 1, 97, 1, '2025-06-08 15:30:29', 1, '2025-06-08 15:30:29', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (198, 1, 98, 1, '2025-06-08 15:30:29', 1, '2025-06-08 15:30:29', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (199, 1, 99, 1, '2025-06-08 15:30:29', 1, '2025-06-08 15:30:29', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (200, 1, 92, 1, '2025-06-08 15:30:29', 1, '2025-06-08 15:30:29', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (201, 1, 108, 1, '2025-06-08 15:30:29', 1, '2025-06-08 15:30:29', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (202, 1, 95, 1, '2025-06-08 15:30:29', 1, '2025-06-08 15:30:29', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (203, 1, 109, 1, '2025-06-08 15:30:29', 1, '2025-06-08 15:30:29', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (204, 1, 107, 1, '2025-06-08 15:30:29', 1, '2025-06-08 15:30:29', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (205, 1, 110, 1, '2025-06-08 15:30:29', 1, '2025-06-08 15:30:29', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (206, 1, 106, 1, '2025-06-08 15:30:29', 1, '2025-06-08 15:30:29', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (207, 1, 93, 1, '2025-06-08 15:30:29', 1, '2025-06-08 15:30:29', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (208, 1, 104, 1, '2025-06-08 15:30:29', 1, '2025-06-08 15:30:29', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (209, 1, 90, 1, '2025-06-08 15:30:29', 1, '2025-06-08 15:30:29', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (210, 1, 96, 1, '2025-06-08 15:30:29', 1, '2025-06-08 15:30:29', b'0', 1);
 
 -- ----------------------------
 -- Table structure for system_role_menu_data_scope

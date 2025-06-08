@@ -71,7 +71,7 @@ const MenuAdd = forwardRef(({ onSubmit }: MenuAddProps, ref) => {
   const [formValues, setFormValues] = useState<FormValues>({
     name: '',
     permission: '',
-    type: 0,
+    type: 1,
     sort: 0,
     parent_id: 0,
     path: '',
@@ -88,7 +88,7 @@ const MenuAdd = forwardRef(({ onSubmit }: MenuAddProps, ref) => {
 
   useImperativeHandle(ref, () => ({
     show() {
-      initMenus();
+      refreshMenus();
       setOpen(true);
     },
     hide() {
@@ -160,7 +160,7 @@ const MenuAdd = forwardRef(({ onSubmit }: MenuAddProps, ref) => {
     setFormValues({
       name: '',
       permission: '',
-      type: 0,
+      type: 1,
       sort: 0,
       parent_id: 0,
       path: '',
@@ -176,7 +176,7 @@ const MenuAdd = forwardRef(({ onSubmit }: MenuAddProps, ref) => {
     setErrors({});
   }
 
-  const initMenus = async () => {
+  const refreshMenus = async () => {
     const result = await listMenu();
     const tree = buildMenuTree(result);
     setMenuTreeData(tree);
@@ -229,6 +229,8 @@ const MenuAdd = forwardRef(({ onSubmit }: MenuAddProps, ref) => {
       await createMenu(formValues as SystemMenuRequest);
       // resetInput();
       onSubmit();
+      // 更新数据
+      refreshMenus();
     }
   };
 
