@@ -1,10 +1,11 @@
 [workspace]
 members = [
-    "module/module-system/*",
-    "framework/*",
     "tool/*",
+    "framework/*",
     "module/module-test",
     "module/module-logger/*",
+    "module/module-file/*",
+    "module/module-system/*",
     "module/module-third/module-captcha/captcha-grpc-rust",
 ]
 resolver = "2"

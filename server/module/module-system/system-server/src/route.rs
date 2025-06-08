@@ -54,16 +54,9 @@ use common::utils::jwt_utils::AccessClaims;
 pub struct ApiDocument;
 
 pub async fn api(state: AppState) -> Router {
-    // Router::new()
-    //     .merge(no_auth_router(state.clone()).await)
-    //     .merge(auth_router(state.clone()).await)
-    //     .merge(utoipa_swagger_ui::SwaggerUi::new("/swagger-ui").url("/api-docs/openapi.json", ApiDocument::openapi()))
-
     let (router, api) = OpenApiRouter::with_openapi(ApiDocument::openapi())
         .nest("/system", no_auth_router(state.clone()).await)
         .nest("/system", auth_router(state.clone()).await)
-        // .merge(no_auth_router(state.clone()).await)
-        // .merge(auth_router(state.clone()).await)
         .split_for_parts();
 
     // 注册路由权限

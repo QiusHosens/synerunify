@@ -1,5 +1,5 @@
 [package]
-name = "logger-model"
+name = "file-model"
 version = { workspace = true }
 edition = { workspace = true }
 rust-version = { workspace = true }

@@ -11,7 +11,7 @@
  Target Server Version : 80200 (8.2.0)
  File Encoding         : 65001
 
- Date: 08/06/2025 14:06:18
+ Date: 08/06/2025 14:35:09
 */
 
 SET NAMES utf8mb4;
@@ -49,31 +49,6 @@ CREATE TABLE `erp_customers`  (
 
 -- ----------------------------
 -- Records of erp_customers
--- ----------------------------
-
--- ----------------------------
--- Table structure for erp_files
--- ----------------------------
-DROP TABLE IF EXISTS `erp_files`;
-CREATE TABLE `erp_files`  (
-  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '文件ID',
-  `file_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '文件名',
-  `file_type` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '文件类型',
-  `file_size` bigint NOT NULL COMMENT '文件大小（字节）',
-  `file_path` varchar(512) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '文件存储路径',
-  `department_code` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '部门编码',
-  `department_id` bigint NOT NULL COMMENT '部门ID',
-  `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
-  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `updater` bigint NULL DEFAULT NULL COMMENT '更新者ID',
-  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-  `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
-  `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '文件信息表' ROW_FORMAT = DYNAMIC;
-
--- ----------------------------
--- Records of erp_files
 -- ----------------------------
 
 -- ----------------------------
@@ -924,6 +899,31 @@ INSERT INTO `system_dict_type` VALUES (2, '菜单类型', 'menu_type', 0, '菜�
 INSERT INTO `system_dict_type` VALUES (3, '状态', 'status', 0, '状态', 1, '2025-04-29 01:37:35', 1, '2025-04-29 01:37:35', b'0');
 INSERT INTO `system_dict_type` VALUES (4, '是否删除', 'deleted', 0, '是否删除', 1, '2025-04-30 07:04:05', 1, '2025-04-30 07:04:05', b'0');
 INSERT INTO `system_dict_type` VALUES (5, '角色类型', 'role_type', 0, '角色类型', 1, '2025-05-14 09:29:30', 1, '2025-05-14 09:29:30', b'0');
+
+-- ----------------------------
+-- Table structure for system_files
+-- ----------------------------
+DROP TABLE IF EXISTS `system_files`;
+CREATE TABLE `system_files`  (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '文件ID',
+  `file_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '文件名',
+  `file_type` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '文件类型',
+  `file_size` bigint NOT NULL COMMENT '文件大小（字节）',
+  `file_path` varchar(512) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '文件存储路径',
+  `department_code` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '部门编码',
+  `department_id` bigint NOT NULL COMMENT '部门ID',
+  `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updater` bigint NULL DEFAULT NULL COMMENT '更新者ID',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+  `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '文件信息表' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of system_files
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for system_menu

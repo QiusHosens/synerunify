@@ -9,6 +9,8 @@ use tokio::sync::OnceCell;
 pub struct Config {
     pub system_server_port: u16, // 服务端口
     pub logger_server_port: u16, // 服务端口
+    pub file_server_port: u16, // 服务端口
+    pub erp_server_port: u16, // 服务端口
     pub database_url: String, // 数据库地址
     pub api_prefix: String, // api前缀
     pub log_level: String, // 日志级别
@@ -26,13 +28,21 @@ impl Config {
             let _ = dotenv();
 
             let system_server_port = env::var("SYSTEM_SERVER_PORT")
-                .unwrap_or_else(|_| "3000".to_string())
+                .unwrap_or_else(|_| "8080".to_string())
                 .parse::<u16>()
-                .unwrap_or(3000);
+                .unwrap_or(8080);
             let logger_server_port = env::var("LOGGER_SERVER_PORT")
-                .unwrap_or_else(|_| "3000".to_string())
+                .unwrap_or_else(|_| "8080".to_string())
                 .parse::<u16>()
-                .unwrap_or(3000);
+                .unwrap_or(8080);
+            let file_server_port = env::var("FILE_SERVER_PORT")
+                .unwrap_or_else(|_| "8080".to_string())
+                .parse::<u16>()
+                .unwrap_or(8080);
+            let erp_server_port = env::var("ERP_SERVER_PORT")
+                .unwrap_or_else(|_| "8080".to_string())
+                .parse::<u16>()
+                .unwrap_or(8080);
             let database_url = env::var("DATABASE_URL")
                 .unwrap_or_else(|_| "mysql://synerunify:synerunify@127.0.0.1:3306/synerunify".to_string());
             let api_prefix = env::var("API_PREFIX")
@@ -50,6 +60,8 @@ impl Config {
             Config {
                 system_server_port,
                 logger_server_port,
+                file_server_port,
+                erp_server_port,
                 database_url,
                 api_prefix,
                 log_level,

@@ -30,14 +30,14 @@ async fn main() -> Result<(), anyhow::Error> {
     let config = Config::load();
     let database = get_database_instance(config.database_url).await;
 
-    let ua_parser = UserAgentParser::from_yaml("regexes.yaml").expect("Failed to load regexes.yaml");
+    // let ua_parser = UserAgentParser::from_yaml("regexes.yaml").expect("Failed to load regexes.yaml");
 
     let cors = CorsLayer::new()
         .allow_origin(Any)
         .allow_methods(vec![Method::GET, Method::POST])
         .allow_headers(Any);
 
-    let state = AppState { db: database.clone(), ua_parser };
+    let state = AppState { db: database.clone(), ua_parser: None };
 
     // 执行初始化
     initialize(state.clone()).await;
