@@ -7,7 +7,5 @@ data:
   DATABASE_URL: 'mysql://synerunify:synerunify@mysql.synerunify-base.svc:3306/synerunify'
   REDIS_URL: 'redis://default:synerunify@redis.synerunify.svc:6379/'
   MONGO_URL: 'mongodb://synerunify:synerunify@mongo.synerunify.svc:27017'
-  SYSTEM_SERVER_PORT: '9000'
-  LOGGER_SERVER_PORT: '9010'
   LOG_LEVEL: 'info'
   GRPC_CAPTCHA_SERVICE_URL: 'http://captcha-service.synerunify.svc:50051'

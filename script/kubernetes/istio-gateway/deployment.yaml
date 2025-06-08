@@ -32,7 +32,31 @@ spec:
         - destination:
             host: system-server.synerunify.svc.cluster.local
             port:
-              number: 9000
+              number: 8080
+    - match:
+        - uri:
+            prefix: /logger
+      route:
+        - destination:
+            host: logger-server.synerunify.svc.cluster.local
+            port:
+              number: 8080
+    - match:
+        - uri:
+            prefix: /file
+      route:
+        - destination:
+            host: file-server.synerunify.svc.cluster.local
+            port:
+              number: 8080
+    - match:
+        - uri:
+            prefix: /erp
+      route:
+        - destination:
+            host: erp-server.synerunify.svc.cluster.local
+            port:
+              number: 8080
     - match:
         - uri:
             prefix: /captcha
