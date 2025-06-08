@@ -84,6 +84,11 @@ pub async fn login(db: &DatabaseConnection, request_context: RequestContext, req
             if is_disable(tenant.status) {
                 return Err(anyhow!("用户已被禁用"));
             } else {
+                // 检查用户租户过期时间
+                let now = Utc::now().naive_utc();
+                if tenant.expire_time < now {
+                    return Err(anyhow!("用户已过期"));
+                }
                 // 校验用户租户套餐状态
                 let tenant_package = system_tenant_package::find_by_id(&db, user.department_id).await?;
                 match tenant_package {
