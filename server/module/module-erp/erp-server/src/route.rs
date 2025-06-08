@@ -7,33 +7,33 @@ use common::middleware::authorize::{authorize_handler, init_route_authorizes};
 use common::middleware::operation_logger::operation_logger_handler;
 use common::utils::jwt_utils::AccessClaims;
 use std::sync::Arc;
-use crate::api::erp_customers::{ erp_customers_route, erp_customers_router };
-use crate::api::erp_financial_records::{ erp_financial_records_route, erp_financial_records_router };
-use crate::api::erp_inbound_records::{ erp_inbound_records_route, erp_inbound_records_router };
-use crate::api::erp_inventory_checks::{ erp_inventory_checks_route, erp_inventory_checks_router };
-use crate::api::erp_inventory_records::{ erp_inventory_records_route, erp_inventory_records_router };
-use crate::api::erp_inventory_transfers::{ erp_inventory_transfers_route, erp_inventory_transfers_router };
-use crate::api::erp_outbound_records::{ erp_outbound_records_route, erp_outbound_records_router };
-use crate::api::erp_payment_attachments::{ erp_payment_attachments_route, erp_payment_attachments_router };
-use crate::api::erp_payment_details::{ erp_payment_details_route, erp_payment_details_router };
-use crate::api::erp_payments::{ erp_payments_route, erp_payments_router };
-use crate::api::erp_product_categories::{ erp_product_categories_route, erp_product_categories_router };
-use crate::api::erp_product_units::{ erp_product_units_route, erp_product_units_router };
-use crate::api::erp_products::{ erp_products_route, erp_products_router };
-use crate::api::erp_purchase_order_attachments::{ erp_purchase_order_attachments_route, erp_purchase_order_attachments_router };
-use crate::api::erp_purchase_order_details::{ erp_purchase_order_details_route, erp_purchase_order_details_router };
-use crate::api::erp_purchase_orders::{ erp_purchase_orders_route, erp_purchase_orders_router };
-use crate::api::erp_purchase_returns::{ erp_purchase_returns_route, erp_purchase_returns_router };
-use crate::api::erp_receipt_attachments::{ erp_receipt_attachments_route, erp_receipt_attachments_router };
-use crate::api::erp_receipt_details::{ erp_receipt_details_route, erp_receipt_details_router };
-use crate::api::erp_receipts::{ erp_receipts_route, erp_receipts_router };
-use crate::api::erp_sales_order_attachments::{ erp_sales_order_attachments_route, erp_sales_order_attachments_router };
-use crate::api::erp_sales_order_details::{ erp_sales_order_details_route, erp_sales_order_details_router };
-use crate::api::erp_sales_orders::{ erp_sales_orders_route, erp_sales_orders_router };
-use crate::api::erp_sales_returns::{ erp_sales_returns_route, erp_sales_returns_router };
-use crate::api::erp_settlement_accounts::{ erp_settlement_accounts_route, erp_settlement_accounts_router };
-use crate::api::erp_suppliers::{ erp_suppliers_route, erp_suppliers_router };
-use crate::api::erp_warehouses::{ erp_warehouses_route, erp_warehouses_router };
+use crate::api::erp_customer::{ erp_customer_route, erp_customer_router };
+use crate::api::erp_financial_record::{ erp_financial_record_route, erp_financial_record_router };
+use crate::api::erp_inbound_record::{ erp_inbound_record_route, erp_inbound_record_router };
+use crate::api::erp_inventory_check::{ erp_inventory_check_route, erp_inventory_check_router };
+use crate::api::erp_inventory_record::{ erp_inventory_record_route, erp_inventory_record_router };
+use crate::api::erp_inventory_transfer::{ erp_inventory_transfer_route, erp_inventory_transfer_router };
+use crate::api::erp_outbound_record::{ erp_outbound_record_route, erp_outbound_record_router };
+use crate::api::erp_payment::{ erp_payment_route, erp_payment_router };
+use crate::api::erp_payment_attachment::{ erp_payment_attachment_route, erp_payment_attachment_router };
+use crate::api::erp_payment_detail::{ erp_payment_detail_route, erp_payment_detail_router };
+use crate::api::erp_product::{ erp_product_route, erp_product_router };
+use crate::api::erp_product_category::{ erp_product_category_route, erp_product_category_router };
+use crate::api::erp_product_unit::{ erp_product_unit_route, erp_product_unit_router };
+use crate::api::erp_purchase_order::{ erp_purchase_order_route, erp_purchase_order_router };
+use crate::api::erp_purchase_order_attachment::{ erp_purchase_order_attachment_route, erp_purchase_order_attachment_router };
+use crate::api::erp_purchase_order_detail::{ erp_purchase_order_detail_route, erp_purchase_order_detail_router };
+use crate::api::erp_purchase_return::{ erp_purchase_return_route, erp_purchase_return_router };
+use crate::api::erp_receipt::{ erp_receipt_route, erp_receipt_router };
+use crate::api::erp_receipt_attachment::{ erp_receipt_attachment_route, erp_receipt_attachment_router };
+use crate::api::erp_receipt_detail::{ erp_receipt_detail_route, erp_receipt_detail_router };
+use crate::api::erp_sales_order::{ erp_sales_order_route, erp_sales_order_router };
+use crate::api::erp_sales_order_attachment::{ erp_sales_order_attachment_route, erp_sales_order_attachment_router };
+use crate::api::erp_sales_order_detail::{ erp_sales_order_detail_route, erp_sales_order_detail_router };
+use crate::api::erp_sales_return::{ erp_sales_return_route, erp_sales_return_router };
+use crate::api::erp_settlement_account::{ erp_settlement_account_route, erp_settlement_account_router };
+use crate::api::erp_supplier::{ erp_supplier_route, erp_supplier_router };
+use crate::api::erp_warehouse::{ erp_warehouse_route, erp_warehouse_router };
 use crate::AppState;
 
 // openapi document
@@ -45,33 +45,33 @@ use crate::AppState;
         version = "1.0.0"
     ),
     tags(
-        (name = "erp_customers", description = "客户信息"),
-        (name = "erp_financial_records", description = "财务记录"),
-        (name = "erp_inbound_records", description = "入库记录"),
-        (name = "erp_inventory_checks", description = "库存盘点"),
-        (name = "erp_inventory_records", description = "库存记录"),
-        (name = "erp_inventory_transfers", description = "库存调拨"),
-        (name = "erp_outbound_records", description = "出库记录"),
-        (name = "erp_payment_attachments", description = "付款附件"),
-        (name = "erp_payment_details", description = "付款详情"),
-        (name = "erp_payments", description = "付款"),
-        (name = "erp_product_categories", description = "产品分类"),
-        (name = "erp_product_units", description = "产品单位"),
-        (name = "erp_products", description = "产品信息"),
-        (name = "erp_purchase_order_attachments", description = "采购订单附件"),
-        (name = "erp_purchase_order_details", description = "采购订单详情"),
-        (name = "erp_purchase_orders", description = "采购订单"),
-        (name = "erp_purchase_returns", description = "采购退货"),
-        (name = "erp_receipt_attachments", description = "收款附件"),
-        (name = "erp_receipt_details", description = "收款详情"),
-        (name = "erp_receipts", description = "收款"),
-        (name = "erp_sales_order_attachments", description = "销售订单附件"),
-        (name = "erp_sales_order_details", description = "销售订单详情"),
-        (name = "erp_sales_orders", description = "销售订单"),
-        (name = "erp_sales_returns", description = "销售退货"),
-        (name = "erp_settlement_accounts", description = "结算账户"),
-        (name = "erp_suppliers", description = "供应商信息"),
-        (name = "erp_warehouses", description = "仓库信息"),
+        (name = "erp_customer", description = "客户信息"),
+        (name = "erp_financial_record", description = "财务记录"),
+        (name = "erp_inbound_record", description = "入库记录"),
+        (name = "erp_inventory_check", description = "库存盘点"),
+        (name = "erp_inventory_record", description = "库存记录"),
+        (name = "erp_inventory_transfer", description = "库存调拨"),
+        (name = "erp_outbound_record", description = "出库记录"),
+        (name = "erp_payment", description = "付款"),
+        (name = "erp_payment_attachment", description = "付款附件"),
+        (name = "erp_payment_detail", description = "付款详情"),
+        (name = "erp_product", description = "产品信息"),
+        (name = "erp_product_category", description = "产品分类"),
+        (name = "erp_product_unit", description = "产品单位"),
+        (name = "erp_purchase_order", description = "采购订单"),
+        (name = "erp_purchase_order_attachment", description = "采购订单附件"),
+        (name = "erp_purchase_order_detail", description = "采购订单详情"),
+        (name = "erp_purchase_return", description = "采购退货"),
+        (name = "erp_receipt", description = "收款"),
+        (name = "erp_receipt_attachment", description = "收款附件"),
+        (name = "erp_receipt_detail", description = "收款详情"),
+        (name = "erp_sales_order", description = "销售订单"),
+        (name = "erp_sales_order_attachment", description = "销售订单附件"),
+        (name = "erp_sales_order_detail", description = "销售订单详情"),
+        (name = "erp_sales_return", description = "销售退货"),
+        (name = "erp_settlement_account", description = "结算账户"),
+        (name = "erp_supplier", description = "供应商信息"),
+        (name = "erp_warehouse", description = "仓库信息"),
     ),
     modifiers(&SecurityAddon)
 )]
@@ -90,33 +90,33 @@ pub async fn api(state: AppState) -> Router {
 
 pub async fn auth_router(state: AppState) -> OpenApiRouter {
     OpenApiRouter::new()
-        .nest("/erp_customers", erp_customers_router(state.clone()).await)
-        .nest("/erp_financial_records", erp_financial_records_router(state.clone()).await)
-        .nest("/erp_inbound_records", erp_inbound_records_router(state.clone()).await)
-        .nest("/erp_inventory_checks", erp_inventory_checks_router(state.clone()).await)
-        .nest("/erp_inventory_records", erp_inventory_records_router(state.clone()).await)
-        .nest("/erp_inventory_transfers", erp_inventory_transfers_router(state.clone()).await)
-        .nest("/erp_outbound_records", erp_outbound_records_router(state.clone()).await)
-        .nest("/erp_payment_attachments", erp_payment_attachments_router(state.clone()).await)
-        .nest("/erp_payment_details", erp_payment_details_router(state.clone()).await)
-        .nest("/erp_payments", erp_payments_router(state.clone()).await)
-        .nest("/erp_product_categories", erp_product_categories_router(state.clone()).await)
-        .nest("/erp_product_units", erp_product_units_router(state.clone()).await)
-        .nest("/erp_products", erp_products_router(state.clone()).await)
-        .nest("/erp_purchase_order_attachments", erp_purchase_order_attachments_router(state.clone()).await)
-        .nest("/erp_purchase_order_details", erp_purchase_order_details_router(state.clone()).await)
-        .nest("/erp_purchase_orders", erp_purchase_orders_router(state.clone()).await)
-        .nest("/erp_purchase_returns", erp_purchase_returns_router(state.clone()).await)
-        .nest("/erp_receipt_attachments", erp_receipt_attachments_router(state.clone()).await)
-        .nest("/erp_receipt_details", erp_receipt_details_router(state.clone()).await)
-        .nest("/erp_receipts", erp_receipts_router(state.clone()).await)
-        .nest("/erp_sales_order_attachments", erp_sales_order_attachments_router(state.clone()).await)
-        .nest("/erp_sales_order_details", erp_sales_order_details_router(state.clone()).await)
-        .nest("/erp_sales_orders", erp_sales_orders_router(state.clone()).await)
-        .nest("/erp_sales_returns", erp_sales_returns_router(state.clone()).await)
-        .nest("/erp_settlement_accounts", erp_settlement_accounts_router(state.clone()).await)
-        .nest("/erp_suppliers", erp_suppliers_router(state.clone()).await)
-        .nest("/erp_warehouses", erp_warehouses_router(state.clone()).await)
+        .nest("/erp_customer", erp_customer_router(state.clone()).await)
+        .nest("/erp_financial_record", erp_financial_record_router(state.clone()).await)
+        .nest("/erp_inbound_record", erp_inbound_record_router(state.clone()).await)
+        .nest("/erp_inventory_check", erp_inventory_check_router(state.clone()).await)
+        .nest("/erp_inventory_record", erp_inventory_record_router(state.clone()).await)
+        .nest("/erp_inventory_transfer", erp_inventory_transfer_router(state.clone()).await)
+        .nest("/erp_outbound_record", erp_outbound_record_router(state.clone()).await)
+        .nest("/erp_payment", erp_payment_router(state.clone()).await)
+        .nest("/erp_payment_attachment", erp_payment_attachment_router(state.clone()).await)
+        .nest("/erp_payment_detail", erp_payment_detail_router(state.clone()).await)
+        .nest("/erp_product", erp_product_router(state.clone()).await)
+        .nest("/erp_product_category", erp_product_category_router(state.clone()).await)
+        .nest("/erp_product_unit", erp_product_unit_router(state.clone()).await)
+        .nest("/erp_purchase_order", erp_purchase_order_router(state.clone()).await)
+        .nest("/erp_purchase_order_attachment", erp_purchase_order_attachment_router(state.clone()).await)
+        .nest("/erp_purchase_order_detail", erp_purchase_order_detail_router(state.clone()).await)
+        .nest("/erp_purchase_return", erp_purchase_return_router(state.clone()).await)
+        .nest("/erp_receipt", erp_receipt_router(state.clone()).await)
+        .nest("/erp_receipt_attachment", erp_receipt_attachment_router(state.clone()).await)
+        .nest("/erp_receipt_detail", erp_receipt_detail_router(state.clone()).await)
+        .nest("/erp_sales_order", erp_sales_order_router(state.clone()).await)
+        .nest("/erp_sales_order_attachment", erp_sales_order_attachment_router(state.clone()).await)
+        .nest("/erp_sales_order_detail", erp_sales_order_detail_router(state.clone()).await)
+        .nest("/erp_sales_return", erp_sales_return_router(state.clone()).await)
+        .nest("/erp_settlement_account", erp_settlement_account_router(state.clone()).await)
+        .nest("/erp_supplier", erp_supplier_router(state.clone()).await)
+        .nest("/erp_warehouse", erp_warehouse_router(state.clone()).await)
         .layer(axum::middleware::from_fn(authorize_handler))
         .layer(axum::middleware::from_fn(operation_logger_handler))
         .layer(axum::middleware::from_fn_with_state(state.clone(), request_context_handler))
