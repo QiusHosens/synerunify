@@ -11,7 +11,7 @@
  Target Server Version : 80200 (8.2.0)
  File Encoding         : 65001
 
- Date: 09/06/2025 20:50:15
+ Date: 09/06/2025 22:21:23
 */
 
 SET NAMES utf8mb4;
@@ -699,8 +699,6 @@ CREATE TABLE `erp_settlement_account`  (
   `status` tinyint NOT NULL DEFAULT 0 COMMENT '状态',
   `sort` int NOT NULL DEFAULT 0 COMMENT '排序',
   `remarks` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
-  `department_code` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '部门编码',
-  `department_id` bigint NOT NULL COMMENT '部门ID',
   `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updater` bigint NULL DEFAULT NULL COMMENT '更新者ID',
@@ -733,8 +731,6 @@ CREATE TABLE `erp_supplier`  (
   `bank_address` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '开户地址',
   `remarks` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
   `sort` int NOT NULL DEFAULT 0 COMMENT '排序',
-  `department_code` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '部门编码',
-  `department_id` bigint NOT NULL COMMENT '部门ID',
   `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updater` bigint NULL DEFAULT NULL COMMENT '更新者ID',
@@ -762,8 +758,6 @@ CREATE TABLE `erp_warehouse`  (
   `handling_fee` bigint NULL DEFAULT NULL COMMENT '搬运费',
   `manager` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '负责人',
   `remarks` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
-  `department_code` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '部门编码',
-  `department_id` bigint NOT NULL COMMENT '部门ID',
   `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updater` bigint NULL DEFAULT NULL COMMENT '更新者ID',
@@ -771,11 +765,12 @@ CREATE TABLE `erp_warehouse`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '仓库信息表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '仓库信息表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of erp_warehouse
 -- ----------------------------
+INSERT INTO `erp_warehouse` VALUES (1, '测试仓库', '高新区123', 0, 1, 10, 100, '测试负责人', '测试', 1, '2025-06-09 14:10:17', 1, '2025-06-09 14:17:59', b'0', 1);
 
 -- ----------------------------
 -- Table structure for system_data_scope_rule
