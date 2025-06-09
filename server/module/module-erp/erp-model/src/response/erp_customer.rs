@@ -9,7 +9,7 @@ pub struct ErpCustomerResponse {
     
     pub id: i64, // 客户ID
     
-    pub customer_name: String, // 客户名称
+    pub name: String, // 客户名称
     
     pub contact_person: Option<String>, // 联系人
     

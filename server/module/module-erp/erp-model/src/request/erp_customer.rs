@@ -6,7 +6,7 @@ use common::base::page::PaginatedRequest;
 #[derive(Serialize, Deserialize, Debug, ToSchema)]
 pub struct CreateErpCustomerRequest {
     
-    pub customer_name: String, // 客户名称
+    pub name: String, // 客户名称
     
     pub contact_person: Option<String>, // 联系人
     
@@ -43,7 +43,7 @@ pub struct UpdateErpCustomerRequest {
     
     pub id: i64, // 客户ID
     
-    pub customer_name: Option<String>, // 客户名称
+    pub name: Option<String>, // 客户名称
     
     pub contact_person: Option<String>, // 联系人
     

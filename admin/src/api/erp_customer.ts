@@ -14,7 +14,7 @@ const apis = {
 
 export interface ErpCustomerRequest {
   id: number; // 客户ID
-  customer_name: string; // 客户名称
+  name: string; // 客户名称
   contact_person: string; // 联系人
   phone: string; // 电话
   email: string; // 邮箱
@@ -33,7 +33,7 @@ export interface ErpCustomerRequest {
 
 export interface ErpCustomerResponse {
   id: number; // 客户ID
-  customer_name: string; // 客户名称
+  name: string; // 客户名称
   contact_person: string; // 联系人
   phone: string; // 电话
   email: string; // 邮箱

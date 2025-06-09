@@ -23,7 +23,7 @@ SET FOREIGN_KEY_CHECKS = 0;
 DROP TABLE IF EXISTS `erp_customer`;
 CREATE TABLE `erp_customer`  (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '客户ID',
-  `customer_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '客户名称',
+  `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '客户名称',
   `contact_person` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '联系人',
   `phone` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '电话',
   `email` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '邮箱',
@@ -754,7 +754,7 @@ CREATE TABLE `erp_supplier`  (
 DROP TABLE IF EXISTS `erp_warehouse`;
 CREATE TABLE `erp_warehouse`  (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '仓库ID',
-  `warehouse_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '仓库名称',
+  `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '仓库名称',
   `location` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '仓库位置',
   `status` tinyint NOT NULL DEFAULT 0 COMMENT '状态',
   `sort_order` int NOT NULL DEFAULT 0 COMMENT '排序',

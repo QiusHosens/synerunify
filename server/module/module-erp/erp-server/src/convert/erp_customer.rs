@@ -5,7 +5,7 @@ use erp_model::response::erp_customer::ErpCustomerResponse;
 
 pub fn create_request_to_model(request: &CreateErpCustomerRequest) -> ErpCustomerActiveModel {
     ErpCustomerActiveModel {
-        customer_name: Set(request.customer_name.clone()),
+        name: Set(request.name.clone()),
         contact_person: request.contact_person.as_ref().map_or(NotSet, |contact_person| Set(Some(contact_person.clone()))),
         phone: request.phone.as_ref().map_or(NotSet, |phone| Set(Some(phone.clone()))),
         email: request.email.as_ref().map_or(NotSet, |email| Set(Some(email.clone()))),
@@ -26,8 +26,8 @@ pub fn create_request_to_model(request: &CreateErpCustomerRequest) -> ErpCustome
 
 pub fn update_request_to_model(request: &UpdateErpCustomerRequest, existing: ErpCustomer) -> ErpCustomerActiveModel {
     let mut active_model: ErpCustomerActiveModel = existing.into();
-    if let Some(customer_name) = &request.customer_name { 
-        active_model.customer_name = Set(customer_name.clone());
+    if let Some(name) = &request.name {
+        active_model.name = Set(name.clone());
     }
     if let Some(contact_person) = &request.contact_person { 
         active_model.contact_person = Set(Some(contact_person.clone()));
@@ -77,7 +77,7 @@ pub fn update_request_to_model(request: &UpdateErpCustomerRequest, existing: Erp
 pub fn model_to_response(model: ErpCustomer) -> ErpCustomerResponse {
     ErpCustomerResponse { 
         id: model.id,
-        customer_name: model.customer_name,
+        name: model.name,
         contact_person: model.contact_person,
         phone: model.phone,
         email: model.email,

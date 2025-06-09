@@ -6,7 +6,7 @@ import { createErpCustomer, ErpCustomerRequest } from '@/api';
 import CustomizedDialog from '@/components/CustomizedDialog';
 
 interface FormValues {
-  customer_name: string; // 客户名称
+  name: string; // 客户名称
   contact_person: string; // 联系人
   phone: string; // 电话
   email: string; // 邮箱
@@ -24,7 +24,7 @@ interface FormValues {
   }
 
 interface FormErrors { 
-  customer_name?: string; // 客户名称
+  name?: string; // 客户名称
   status?: string; // 状态
   sort_order?: string; // 排序
   department_code?: string; // 部门编码
@@ -41,7 +41,7 @@ const ErpCustomerAdd = forwardRef(({ onSubmit }: ErpCustomerAddProps, ref) => {
   const [open, setOpen] = useState(false);
   const [maxWidth] = useState<DialogProps['maxWidth']>('sm');
   const [formValues, setFormValues] = useState<FormValues>({
-    customer_name: '',
+    name: '',
     contact_person: '',
     phone: '',
     email: '',
@@ -71,8 +71,8 @@ const ErpCustomerAdd = forwardRef(({ onSubmit }: ErpCustomerAddProps, ref) => {
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
     
-    if (!formValues.customer_name.trim()) {
-      newErrors.customer_name = t('page.post.error.customer_name');
+    if (!formValues.name.trim()) {
+      newErrors.name = t('page.post.error.name');
     }
     
     if (!formValues.status && formValues.status != 0) {
@@ -107,7 +107,7 @@ const ErpCustomerAdd = forwardRef(({ onSubmit }: ErpCustomerAddProps, ref) => {
 
   const reset = () => {
     setFormValues({
-      customer_name: '',
+      name: '',
       contact_person: '',
       phone: '',
       email: '',
@@ -206,12 +206,12 @@ const ErpCustomerAdd = forwardRef(({ onSubmit }: ErpCustomerAddProps, ref) => {
           <TextField
             required
             size="small"
-            label={t("page.post.title.customer_name")}
-            name='customer_name'
-            value={formValues.customer_name}
+            label={t("page.post.title.name")}
+            name='name'
+            value={formValues.name}
             onChange={handleInputChange}
-            error={!!errors.customer_name}
-            helperText={errors.customer_name}
+            error={!!errors.name}
+            helperText={errors.name}
           />
           <TextField
             size="small"

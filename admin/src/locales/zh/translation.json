@@ -260,7 +260,7 @@
   "page.user.operate.delete": "删除用户",
   "page.user.operate.reset": "重置密码",
 
-  "page.erp.inventory.warehouse.title.warehouse.name": "仓库名称",
+  "page.erp.inventory.warehouse.title.name": "仓库名称",
   "page.erp.inventory.warehouse.title.location": "仓库位置",
   "page.erp.inventory.warehouse.title.status": "状态",
   "page.erp.inventory.warehouse.title.sort.order": "排序",

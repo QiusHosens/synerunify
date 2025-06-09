@@ -52,7 +52,7 @@ export default function ErpCustomer() {
 
   const columns: GridColDef[] = useMemo(
     () => [
-      { field: 'customer_name', headerName: t("page."), flex: 1, minWidth: 100 },
+      { field: 'name', headerName: t("page."), flex: 1, minWidth: 100 },
       { field: 'contact_person', headerName: t("page."), flex: 1, minWidth: 100 },
       { field: 'phone', headerName: t("page."), flex: 1, minWidth: 100 },
       { field: 'email', headerName: t("page."), flex: 1, minWidth: 100 },

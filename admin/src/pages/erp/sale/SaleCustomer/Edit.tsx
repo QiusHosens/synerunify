@@ -6,7 +6,7 @@ import { ErpCustomerRequest, ErpCustomerResponse, updateErpCustomer } from '@/ap
 import CustomizedDialog from '@/components/CustomizedDialog';
 
 interface FormErrors { 
-  customer_name?: string; // 客户名称
+  name?: string; // 客户名称
   status?: string; // 状态
   sort_order?: string; // 排序
   department_code?: string; // 部门编码
@@ -24,7 +24,7 @@ const ErpCustomerEdit = forwardRef(({ onSubmit }: ErpCustomerEditProps, ref) => 
   const [maxWidth] = useState<DialogProps['maxWidth']>('sm');
   const [erpCustomer, setErpCustomer] = useState<ErpCustomerRequest>({
     id: 0,
-    customer_name: '',
+    name: '',
     contact_person: '',
     phone: '',
     email: '',
@@ -55,8 +55,8 @@ const ErpCustomerEdit = forwardRef(({ onSubmit }: ErpCustomerEditProps, ref) => 
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
     
-    if (!formValues.customer_name.trim()) {
-      newErrors.customer_name = t('page.post.error.customer_name');
+    if (!formValues.name.trim()) {
+      newErrors.name = t('page.post.error.name');
     }
     
     if (!formValues.status && formValues.status != 0) {
@@ -166,12 +166,12 @@ const ErpCustomerEdit = forwardRef(({ onSubmit }: ErpCustomerEditProps, ref) => 
           <TextField
             required
             size="small"
-            label={t("page.post.title.customer_name")}
-            name='customer_name'
-            value={ erpCustomer.customer_name}
+            label={t("page.post.title.name")}
+            name='name'
+            value={ erpCustomer.name}
             onChange={handleInputChange}
-            error={!!errors.customer_name}
-            helperText={errors.customer_name}
+            error={!!errors.name}
+            helperText={errors.name}
           />
           <TextField
             size="small"
