@@ -1,7 +1,5 @@
 {% for column in columns_request_create -%}
 "page.{{ table_name }}.title.{{ column.column_name }}": "{{ column.column_comment }}",
-{% endfor -%}
-"page.{{ table_name }}.switch.status.true": "开启",
-"page.{{ table_name }}.switch.status.false": "关闭",{% for column in columns_request_create -%}{% if not column.nullable %}
+{% endfor -%}{% for column in columns_request_create -%}{% if not column.nullable %}
 "page.{{ table_name }}.error.{{ column.column_name }}": "请输入{{ column.column_comment }}",{% endif -%}
 {% endfor -%}
