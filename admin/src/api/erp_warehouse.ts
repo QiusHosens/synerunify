@@ -2,14 +2,14 @@ import { PaginatedRequest, PaginatedResponse } from '@/base/page';
 import { api } from '@/utils/request';
 
 const apis = {
-  create: '/erp_warehouse/create', // 新增
-  update: '/erp_warehouse/update', // 修改
-  delete: '/erp_warehouse/delete', // 删除
-  get: '/erp_warehouse/get', // 单条查询
-  list: '/erp_warehouse/list', // 列表查询
-  page: '/erp_warehouse/page', // 分页查询
-  enable: '/erp_warehouse/enable', // 启用
-  disable: '/erp_warehouse/disable', // 禁用
+  create: '/erp/erp_warehouse/create', // 新增
+  update: '/erp/erp_warehouse/update', // 修改
+  delete: '/erp/erp_warehouse/delete', // 删除
+  get: '/erp/erp_warehouse/get', // 单条查询
+  list: '/erp/erp_warehouse/list', // 列表查询
+  page: '/erp/erp_warehouse/page', // 分页查询
+  enable: '/erp/erp_warehouse/enable', // 启用
+  disable: '/erp/erp_warehouse/disable', // 禁用
 }
 
 export interface ErpWarehouseRequest {

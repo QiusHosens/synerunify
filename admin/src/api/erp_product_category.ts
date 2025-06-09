@@ -2,14 +2,14 @@ import { PaginatedRequest, PaginatedResponse } from '@/base/page';
 import { api } from '@/utils/request';
 
 const apis = {
-  create: '/erp_product_category/create', // 新增
-  update: '/erp_product_category/update', // 修改
-  delete: '/erp_product_category/delete', // 删除
-  get: '/erp_product_category/get', // 单条查询
-  list: '/erp_product_category/list', // 列表查询
-  page: '/erp_product_category/page', // 分页查询
-  enable: '/erp_product_category/enable', // 启用
-  disable: '/erp_product_category/disable', // 禁用
+  create: '/erp/erp_product_category/create', // 新增
+  update: '/erp/erp_product_category/update', // 修改
+  delete: '/erp/erp_product_category/delete', // 删除
+  get: '/erp/erp_product_category/get', // 单条查询
+  list: '/erp/erp_product_category/list', // 列表查询
+  page: '/erp/erp_product_category/page', // 分页查询
+  enable: '/erp/erp_product_category/enable', // 启用
+  disable: '/erp/erp_product_category/disable', // 禁用
 }
 
 export interface ErpProductCategoryRequest {

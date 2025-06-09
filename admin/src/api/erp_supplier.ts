@@ -2,14 +2,14 @@ import { PaginatedRequest, PaginatedResponse } from '@/base/page';
 import { api } from '@/utils/request';
 
 const apis = {
-  create: '/erp_supplier/create', // 新增
-  update: '/erp_supplier/update', // 修改
-  delete: '/erp_supplier/delete', // 删除
-  get: '/erp_supplier/get', // 单条查询
-  list: '/erp_supplier/list', // 列表查询
-  page: '/erp_supplier/page', // 分页查询
-  enable: '/erp_supplier/enable', // 启用
-  disable: '/erp_supplier/disable', // 禁用
+  create: '/erp/erp_supplier/create', // 新增
+  update: '/erp/erp_supplier/update', // 修改
+  delete: '/erp/erp_supplier/delete', // 删除
+  get: '/erp/erp_supplier/get', // 单条查询
+  list: '/erp/erp_supplier/list', // 列表查询
+  page: '/erp/erp_supplier/page', // 分页查询
+  enable: '/erp/erp_supplier/enable', // 启用
+  disable: '/erp/erp_supplier/disable', // 禁用
 }
 
 export interface ErpSupplierRequest {

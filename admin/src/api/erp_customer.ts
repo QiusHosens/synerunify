@@ -2,14 +2,14 @@ import { PaginatedRequest, PaginatedResponse } from '@/base/page';
 import { api } from '@/utils/request';
 
 const apis = {
-  create: '/erp_customer/create', // 新增
-  update: '/erp_customer/update', // 修改
-  delete: '/erp_customer/delete', // 删除
-  get: '/erp_customer/get', // 单条查询
-  list: '/erp_customer/list', // 列表查询
-  page: '/erp_customer/page', // 分页查询
-  enable: '/erp_customer/enable', // 启用
-  disable: '/erp_customer/disable', // 禁用
+  create: '/erp/erp_customer/create', // 新增
+  update: '/erp/erp_customer/update', // 修改
+  delete: '/erp/erp_customer/delete', // 删除
+  get: '/erp/erp_customer/get', // 单条查询
+  list: '/erp/erp_customer/list', // 列表查询
+  page: '/erp/erp_customer/page', // 分页查询
+  enable: '/erp/erp_customer/enable', // 启用
+  disable: '/erp/erp_customer/disable', // 禁用
 }
 
 export interface ErpCustomerRequest {

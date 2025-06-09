@@ -2,12 +2,12 @@ import { PaginatedRequest, PaginatedResponse } from '@/base/page';
 import { api } from '@/utils/request';
 
 const apis = {
-  create: '/erp_receipt_attachment/create', // 新增
-  update: '/erp_receipt_attachment/update', // 修改
-  delete: '/erp_receipt_attachment/delete', // 删除
-  get: '/erp_receipt_attachment/get', // 单条查询
-  list: '/erp_receipt_attachment/list', // 列表查询
-  page: '/erp_receipt_attachment/page', // 分页查询
+  create: '/erp/erp_receipt_attachment/create', // 新增
+  update: '/erp/erp_receipt_attachment/update', // 修改
+  delete: '/erp/erp_receipt_attachment/delete', // 删除
+  get: '/erp/erp_receipt_attachment/get', // 单条查询
+  list: '/erp/erp_receipt_attachment/list', // 列表查询
+  page: '/erp/erp_receipt_attachment/page', // 分页查询
 }
 
 export interface ErpReceiptAttachmentRequest {

@@ -2,12 +2,12 @@ import { PaginatedRequest, PaginatedResponse } from '@/base/page';
 import { api } from '@/utils/request';
 
 const apis = {
-  create: '/erp_outbound_record/create', // 新增
-  update: '/erp_outbound_record/update', // 修改
-  delete: '/erp_outbound_record/delete', // 删除
-  get: '/erp_outbound_record/get', // 单条查询
-  list: '/erp_outbound_record/list', // 列表查询
-  page: '/erp_outbound_record/page', // 分页查询
+  create: '/erp/erp_outbound_record/create', // 新增
+  update: '/erp/erp_outbound_record/update', // 修改
+  delete: '/erp/erp_outbound_record/delete', // 删除
+  get: '/erp/erp_outbound_record/get', // 单条查询
+  list: '/erp/erp_outbound_record/list', // 列表查询
+  page: '/erp/erp_outbound_record/page', // 分页查询
 }
 
 export interface ErpOutboundRecordRequest {

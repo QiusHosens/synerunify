@@ -2,12 +2,12 @@ import { PaginatedRequest, PaginatedResponse } from '@/base/page';
 import { api } from '@/utils/request';
 
 const apis = {
-  create: '/erp_payment_detail/create', // 新增
-  update: '/erp_payment_detail/update', // 修改
-  delete: '/erp_payment_detail/delete', // 删除
-  get: '/erp_payment_detail/get', // 单条查询
-  list: '/erp_payment_detail/list', // 列表查询
-  page: '/erp_payment_detail/page', // 分页查询
+  create: '/erp/erp_payment_detail/create', // 新增
+  update: '/erp/erp_payment_detail/update', // 修改
+  delete: '/erp/erp_payment_detail/delete', // 删除
+  get: '/erp/erp_payment_detail/get', // 单条查询
+  list: '/erp/erp_payment_detail/list', // 列表查询
+  page: '/erp/erp_payment_detail/page', // 分页查询
 }
 
 export interface ErpPaymentDetailRequest {

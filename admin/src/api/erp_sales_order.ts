@@ -2,12 +2,12 @@ import { PaginatedRequest, PaginatedResponse } from '@/base/page';
 import { api } from '@/utils/request';
 
 const apis = {
-  create: '/erp_sales_order/create', // 新增
-  update: '/erp_sales_order/update', // 修改
-  delete: '/erp_sales_order/delete', // 删除
-  get: '/erp_sales_order/get', // 单条查询
-  list: '/erp_sales_order/list', // 列表查询
-  page: '/erp_sales_order/page', // 分页查询
+  create: '/erp/erp_sales_order/create', // 新增
+  update: '/erp/erp_sales_order/update', // 修改
+  delete: '/erp/erp_sales_order/delete', // 删除
+  get: '/erp/erp_sales_order/get', // 单条查询
+  list: '/erp/erp_sales_order/list', // 列表查询
+  page: '/erp/erp_sales_order/page', // 分页查询
 }
 
 export interface ErpSalesOrderRequest {

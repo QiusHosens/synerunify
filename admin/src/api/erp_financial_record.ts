@@ -2,12 +2,12 @@ import { PaginatedRequest, PaginatedResponse } from '@/base/page';
 import { api } from '@/utils/request';
 
 const apis = {
-  create: '/erp_financial_record/create', // 新增
-  update: '/erp_financial_record/update', // 修改
-  delete: '/erp_financial_record/delete', // 删除
-  get: '/erp_financial_record/get', // 单条查询
-  list: '/erp_financial_record/list', // 列表查询
-  page: '/erp_financial_record/page', // 分页查询
+  create: '/erp/erp_financial_record/create', // 新增
+  update: '/erp/erp_financial_record/update', // 修改
+  delete: '/erp/erp_financial_record/delete', // 删除
+  get: '/erp/erp_financial_record/get', // 单条查询
+  list: '/erp/erp_financial_record/list', // 列表查询
+  page: '/erp/erp_financial_record/page', // 分页查询
 }
 
 export interface ErpFinancialRecordRequest {

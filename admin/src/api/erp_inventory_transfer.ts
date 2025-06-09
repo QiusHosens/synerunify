@@ -2,12 +2,12 @@ import { PaginatedRequest, PaginatedResponse } from '@/base/page';
 import { api } from '@/utils/request';
 
 const apis = {
-  create: '/erp_inventory_transfer/create', // 新增
-  update: '/erp_inventory_transfer/update', // 修改
-  delete: '/erp_inventory_transfer/delete', // 删除
-  get: '/erp_inventory_transfer/get', // 单条查询
-  list: '/erp_inventory_transfer/list', // 列表查询
-  page: '/erp_inventory_transfer/page', // 分页查询
+  create: '/erp/erp_inventory_transfer/create', // 新增
+  update: '/erp/erp_inventory_transfer/update', // 修改
+  delete: '/erp/erp_inventory_transfer/delete', // 删除
+  get: '/erp/erp_inventory_transfer/get', // 单条查询
+  list: '/erp/erp_inventory_transfer/list', // 列表查询
+  page: '/erp/erp_inventory_transfer/page', // 分页查询
 }
 
 export interface ErpInventoryTransferRequest {
