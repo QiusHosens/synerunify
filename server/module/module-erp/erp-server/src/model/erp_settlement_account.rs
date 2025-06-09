@@ -10,7 +10,7 @@ pub struct Model {
     #[sea_orm(primary_key)]
     pub id: i64, // 账户ID
     
-    pub account_name: String, // 账户名称
+    pub name: String, // 账户名称
     
     pub bank_name: Option<String>, // 开户行
     

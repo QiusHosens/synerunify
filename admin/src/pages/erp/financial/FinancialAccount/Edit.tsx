@@ -6,7 +6,7 @@ import { ErpSettlementAccountRequest, ErpSettlementAccountResponse, updateErpSet
 import CustomizedDialog from '@/components/CustomizedDialog';
 
 interface FormErrors { 
-  account_name?: string; // 账户名称
+  name?: string; // 账户名称
   status?: string; // 状态
   sort_order?: string; // 排序
   department_code?: string; // 部门编码
@@ -24,7 +24,7 @@ const ErpSettlementAccountEdit = forwardRef(({ onSubmit }: ErpSettlementAccountE
   const [maxWidth] = useState<DialogProps['maxWidth']>('sm');
   const [erpSettlementAccount, setErpSettlementAccount] = useState<ErpSettlementAccountRequest>({
     id: 0,
-    account_name: '',
+    name: '',
     bank_name: '',
     bank_account: '',
     status: 0,
@@ -48,8 +48,8 @@ const ErpSettlementAccountEdit = forwardRef(({ onSubmit }: ErpSettlementAccountE
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
     
-    if (!formValues.account_name.trim()) {
-      newErrors.account_name = t('page.post.error.account_name');
+    if (!formValues.name.trim()) {
+      newErrors.name = t('page.post.error.name');
     }
     
     if (!formValues.status && formValues.status != 0) {
@@ -159,12 +159,12 @@ const ErpSettlementAccountEdit = forwardRef(({ onSubmit }: ErpSettlementAccountE
           <TextField
             required
             size="small"
-            label={t("page.post.title.account_name")}
-            name='account_name'
-            value={ erpSettlementAccount.account_name}
+            label={t("page.post.title.name")}
+            name='name'
+            value={ erpSettlementAccount.name}
             onChange={handleInputChange}
-            error={!!errors.account_name}
-            helperText={errors.account_name}
+            error={!!errors.name}
+            helperText={errors.name}
           />
           <TextField
             size="small"

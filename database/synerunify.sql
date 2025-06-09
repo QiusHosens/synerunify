@@ -693,7 +693,7 @@ CREATE TABLE `erp_sales_return`  (
 DROP TABLE IF EXISTS `erp_settlement_account`;
 CREATE TABLE `erp_settlement_account`  (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '账户ID',
-  `account_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '账户名称',
+  `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '账户名称',
   `bank_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '开户行',
   `bank_account` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '银行账号',
   `status` tinyint NOT NULL DEFAULT 0 COMMENT '状态',

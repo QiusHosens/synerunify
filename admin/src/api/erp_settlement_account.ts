@@ -14,7 +14,7 @@ const apis = {
 
 export interface ErpSettlementAccountRequest {
   id: number; // 账户ID
-  account_name: string; // 账户名称
+  name: string; // 账户名称
   bank_name: string; // 开户行
   bank_account: string; // 银行账号
   status: number; // 状态
@@ -26,7 +26,7 @@ export interface ErpSettlementAccountRequest {
 
 export interface ErpSettlementAccountResponse {
   id: number; // 账户ID
-  account_name: string; // 账户名称
+  name: string; // 账户名称
   bank_name: string; // 开户行
   bank_account: string; // 银行账号
   status: number; // 状态

@@ -5,7 +5,7 @@ use erp_model::response::erp_settlement_account::ErpSettlementAccountResponse;
 
 pub fn create_request_to_model(request: &CreateErpSettlementAccountRequest) -> ErpSettlementAccountActiveModel {
     ErpSettlementAccountActiveModel {
-        account_name: Set(request.account_name.clone()),
+        name: Set(request.name.clone()),
         bank_name: request.bank_name.as_ref().map_or(NotSet, |bank_name| Set(Some(bank_name.clone()))),
         bank_account: request.bank_account.as_ref().map_or(NotSet, |bank_account| Set(Some(bank_account.clone()))),
         status: Set(request.status.clone()),
@@ -19,8 +19,8 @@ pub fn create_request_to_model(request: &CreateErpSettlementAccountRequest) -> E
 
 pub fn update_request_to_model(request: &UpdateErpSettlementAccountRequest, existing: ErpSettlementAccount) -> ErpSettlementAccountActiveModel {
     let mut active_model: ErpSettlementAccountActiveModel = existing.into();
-    if let Some(account_name) = &request.account_name { 
-        active_model.account_name = Set(account_name.clone());
+    if let Some(name) = &request.name {
+        active_model.name = Set(name.clone());
     }
     if let Some(bank_name) = &request.bank_name { 
         active_model.bank_name = Set(Some(bank_name.clone()));
@@ -49,7 +49,7 @@ pub fn update_request_to_model(request: &UpdateErpSettlementAccountRequest, exis
 pub fn model_to_response(model: ErpSettlementAccount) -> ErpSettlementAccountResponse {
     ErpSettlementAccountResponse { 
         id: model.id,
-        account_name: model.account_name,
+        name: model.name,
         bank_name: model.bank_name,
         bank_account: model.bank_account,
         status: model.status,

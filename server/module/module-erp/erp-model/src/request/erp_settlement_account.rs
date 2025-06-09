@@ -6,7 +6,7 @@ use common::base::page::PaginatedRequest;
 #[derive(Serialize, Deserialize, Debug, ToSchema)]
 pub struct CreateErpSettlementAccountRequest {
     
-    pub account_name: String, // 账户名称
+    pub name: String, // 账户名称
     
     pub bank_name: Option<String>, // 开户行
     
@@ -29,7 +29,7 @@ pub struct UpdateErpSettlementAccountRequest {
     
     pub id: i64, // 账户ID
     
-    pub account_name: Option<String>, // 账户名称
+    pub name: Option<String>, // 账户名称
     
     pub bank_name: Option<String>, // 开户行
     

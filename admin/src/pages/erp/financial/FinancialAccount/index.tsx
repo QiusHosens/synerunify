@@ -52,7 +52,7 @@ export default function ErpSettlementAccount() {
 
   const columns: GridColDef[] = useMemo(
     () => [
-      { field: 'account_name', headerName: t("page."), flex: 1, minWidth: 100 },
+      { field: 'name', headerName: t("page."), flex: 1, minWidth: 100 },
       { field: 'bank_name', headerName: t("page."), flex: 1, minWidth: 100 },
       { field: 'bank_account', headerName: t("page."), flex: 1, minWidth: 100 },
       { field: 'status', headerName: t("page."), flex: 1, minWidth: 100 },
