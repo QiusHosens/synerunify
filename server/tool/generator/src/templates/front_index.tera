@@ -47,7 +47,7 @@ export default function {{ model_name }}() {
   );
 
   const statusDisabled = (status: number): boolean => {
-    return (status && !hasOperatePermission('system:post:enable')) || (!status && !hasOperatePermission('system:post:disable'));
+    return (status && !hasOperatePermission('system:mark_permission:enable')) || (!status && !hasOperatePermission('system:mark_permission:disable'));
   }
 {% endif %}
   const columns: GridColDef[] = useMemo(
@@ -58,7 +58,7 @@ export default function {{ model_name }}() {
       {
         field: 'status',
         sortable: false,
-        headerName: t("page.post.title.status"),
+        headerName: t("page.mark_translation.title.status"),
         flex: 1,
         minWidth: 80,
         renderCell: (params: GridRenderCellParams) => (
@@ -68,7 +68,7 @@ export default function {{ model_name }}() {
           </Box>
         ),
       },{% endif %}
-      { field: 'create_time', headerName: t("page.post.title.create.time"), flex: 1, minWidth: 180 },
+      { field: 'create_time', headerName: t("page.mark_translation.title.create.time"), flex: 1, minWidth: 180 },
       {
         field: 'actions',
         sortable: false,
@@ -79,19 +79,19 @@ export default function {{ model_name }}() {
         renderCell: (params: GridRenderCellParams) => (
           {% set box_sx = "{ height: '100%', display: 'flex', gap: 1, alignItems: 'center' }" -%}
           <Box sx={ {{ box_sx | safe }} }>
-            {hasOperatePermission('system:post:edit') && <Button
+            {hasOperatePermission('system:mark_permission:edit') && <Button
               size="small"
               variant='customOperate'
-              title={t('page.post.operate.edit')}
+              title={t('global.operate.edit') + t('global.page.mark_translation')}
               startIcon={<EditIcon />}
               onClick={() => handleClickOpenEdit(params.row)}
             />}
-            {hasOperatePermission('system:post:delete') && <Button
+            {hasOperatePermission('system:mark_permission:delete') && <Button
               {% set box_sx = "{color: 'error.main'}" -%}
               sx={ {{ box_sx | safe }} }
               size="small"
               variant='customOperate'
-              title={t('page.post.operate.delete')}
+              title={t('global.operate.delete') + t('global.page.mark_translation')}
               startIcon={<DeleteIcon />}
               onClick={() => handleClickOpenDelete(params.row)}
             />}
@@ -148,7 +148,7 @@ export default function {{ model_name }}() {
       {% set box_sx = "{mb: 2, display: 'flex', justifyContent: 'space-between'}" -%}
       <Box sx={ {{ box_sx | safe }} }>
         <Box></Box>
-        {hasOperatePermission('system:post:add') && <Button variant="customContained" onClick={handleClickOpenAdd}>
+        {hasOperatePermission('system:mark_permission:add') && <Button variant="customContained" onClick={handleClickOpenAdd}>
           {t('global.operate.add')}
         </Button>}
       </Box>

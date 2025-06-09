@@ -42,11 +42,11 @@ const {{ model_name }}Edit = forwardRef(({ onSubmit }: {{ model_name }}EditProps
     {% for column in columns_request_create %}{% if not column.nullable %}
     {% if column.ts_type == 'number' -%}
     if (!formValues.{{ column.column_name }} && formValues.{{ column.column_name }} != 0) {
-      newErrors.{{ column.column_name }} = t('page.post.error.{{ column.column_name }}');
+      newErrors.{{ column.column_name }} = t('page.mark_translation.error.{{ column.column_name }}');
     }
     {% else -%}
     if (!formValues.{{ column.column_name }}.trim()) {
-      newErrors.{{ column.column_name }} = t('page.post.error.{{ column.column_name }}');
+      newErrors.{{ column.column_name }} = t('page.mark_translation.error.{{ column.column_name }}');
     }
     {% endif -%}{% endif -%}{% endfor %}
     setErrors(newErrors);
@@ -119,7 +119,7 @@ const {{ model_name }}Edit = forwardRef(({ onSubmit }: {{ model_name }}EditProps
     <CustomizedDialog
       open={open}
       onClose={handleClose}
-      title={t('global.operate.edit') + t('global.page.post')}
+      title={t('global.operate.edit') + t('global.page.mark_translation')}
       maxWidth={maxWidth}
       actions={
         <>
@@ -144,7 +144,7 @@ const {{ model_name }}Edit = forwardRef(({ onSubmit }: {{ model_name }}EditProps
             required{% endif %}
             size="small"{% if column.ts_type == 'number' %}
             type="number"{% endif %}
-            label={t("page.post.title.{{ column.column_name }}")}
+            label={t("page.mark_translation.title.{{ column.column_name }}")}
             name='{{ column.column_name }}'
             value={ {{ model_name_lower }}.{{ column.column_name }}}
             onChange={handleInputChange}{% if not column.nullable %}
@@ -156,10 +156,10 @@ const {{ model_name }}Edit = forwardRef(({ onSubmit }: {{ model_name }}EditProps
         {% set box_sx = "{mt: 2, display: 'flex', alignItems: 'center'}" -%}
         <Box sx={ {{ box_sx | safe }} }>
           {% set box_sx = "{mr: 4}" -%}
-          <Typography sx={ {{ box_sx | safe }} }>{t("page.post.title.status")}</Typography>
+          <Typography sx={ {{ box_sx | safe }} }>{t("global.title.status")}</Typography>
           {% set box_sx = "{mr: 2}" -%}
           <Switch sx={ {{ box_sx | safe }} } name='status' checked={!{{ model_name_lower }}.status} onChange={handleStatusChange} />
-          <Typography>{ {{ model_name_lower }}.status == 0 ? t('page.post.switch.status.true') : t('page.post.switch.status.false')}</Typography>
+          <Typography>{ {{ model_name_lower }}.status == 0 ? t('global.switch.status.true') : t('global.switch.status.false')}</Typography>
         </Box>{% endif %}{% endfor %}
       </Box>
     </CustomizedDialog>

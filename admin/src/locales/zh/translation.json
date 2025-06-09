@@ -67,6 +67,10 @@
   "global.operate.edit": "编辑",
   "global.operate.delete": "删除",
   "global.operate.more": "更多操作",
+
+  "global.title.status": "状态",
+  "global.switch.status.true": "开启",
+  "global.switch.status.false": "关闭",
   
   "global.description.delete": "确定删除记录【{{name}}】?",
 
