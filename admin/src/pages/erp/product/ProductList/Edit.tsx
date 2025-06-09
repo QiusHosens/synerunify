@@ -6,7 +6,7 @@ import { ErpProductRequest, ErpProductResponse, updateErpProduct } from '@/api';
 import CustomizedDialog from '@/components/CustomizedDialog';
 
 interface FormErrors { 
-  product_name?: string; // 产品名称
+  name?: string; // 产品名称
   unit_id?: string; // 产品单位ID
   status?: string; // 状态
   stock_quantity?: string; // 库存数量
@@ -27,7 +27,7 @@ const ErpProductEdit = forwardRef(({ onSubmit }: ErpProductEditProps, ref) => {
   const [erpProduct, setErpProduct] = useState<ErpProductRequest>({
     id: 0,
     product_code: '',
-    product_name: '',
+    name: '',
     category_id: 0,
     unit_id: 0,
     status: 0,
@@ -59,8 +59,8 @@ const ErpProductEdit = forwardRef(({ onSubmit }: ErpProductEditProps, ref) => {
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
     
-    if (!formValues.product_name.trim()) {
-      newErrors.product_name = t('page.post.error.product_name');
+    if (!formValues.name.trim()) {
+      newErrors.name = t('page.post.error.name');
     }
     
     if (!formValues.unit_id && formValues.unit_id != 0) {
@@ -185,12 +185,12 @@ const ErpProductEdit = forwardRef(({ onSubmit }: ErpProductEditProps, ref) => {
           <TextField
             required
             size="small"
-            label={t("page.post.title.product_name")}
-            name='product_name'
-            value={ erpProduct.product_name}
+            label={t("page.post.title.name")}
+            name='name'
+            value={ erpProduct.name}
             onChange={handleInputChange}
-            error={!!errors.product_name}
-            helperText={errors.product_name}
+            error={!!errors.name}
+            helperText={errors.name}
           />
           <TextField
             size="small"

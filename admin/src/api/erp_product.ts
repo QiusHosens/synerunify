@@ -15,7 +15,7 @@ const apis = {
 export interface ErpProductRequest {
   id: number; // 产品ID
   product_code: string; // 产品编码
-  product_name: string; // 产品名称
+  name: string; // 产品名称
   category_id: number; // 产品分类ID
   unit_id: number; // 产品单位ID
   status: number; // 状态
@@ -36,7 +36,7 @@ export interface ErpProductRequest {
 export interface ErpProductResponse {
   id: number; // 产品ID
   product_code: string; // 产品编码
-  product_name: string; // 产品名称
+  name: string; // 产品名称
   category_id: number; // 产品分类ID
   unit_id: number; // 产品单位ID
   status: number; // 状态

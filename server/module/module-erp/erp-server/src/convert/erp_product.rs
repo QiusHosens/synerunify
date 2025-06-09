@@ -6,7 +6,7 @@ use erp_model::response::erp_product::ErpProductResponse;
 pub fn create_request_to_model(request: &CreateErpProductRequest) -> ErpProductActiveModel {
     ErpProductActiveModel {
         product_code: request.product_code.as_ref().map_or(NotSet, |product_code| Set(Some(product_code.clone()))),
-        product_name: Set(request.product_name.clone()),
+        name: Set(request.name.clone()),
         category_id: request.category_id.as_ref().map_or(NotSet, |category_id| Set(Some(category_id.clone()))),
         unit_id: Set(request.unit_id.clone()),
         status: Set(request.status.clone()),
@@ -31,8 +31,8 @@ pub fn update_request_to_model(request: &UpdateErpProductRequest, existing: ErpP
     if let Some(product_code) = &request.product_code { 
         active_model.product_code = Set(Some(product_code.clone()));
     }
-    if let Some(product_name) = &request.product_name { 
-        active_model.product_name = Set(product_name.clone());
+    if let Some(name) = &request.name {
+        active_model.name = Set(name.clone());
     }
     if let Some(category_id) = &request.category_id { 
         active_model.category_id = Set(Some(category_id.clone()));
@@ -86,7 +86,7 @@ pub fn model_to_response(model: ErpProduct) -> ErpProductResponse {
     ErpProductResponse { 
         id: model.id,
         product_code: model.product_code,
-        product_name: model.product_name,
+        name: model.name,
         category_id: model.category_id,
         unit_id: model.unit_id,
         status: model.status,

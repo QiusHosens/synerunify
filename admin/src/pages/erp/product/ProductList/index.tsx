@@ -53,7 +53,7 @@ export default function ErpProduct() {
   const columns: GridColDef[] = useMemo(
     () => [
       { field: 'product_code', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'product_name', headerName: t("page."), flex: 1, minWidth: 100 },
+      { field: 'name', headerName: t("page."), flex: 1, minWidth: 100 },
       { field: 'category_id', headerName: t("page."), flex: 1, minWidth: 100 },
       { field: 'unit_id', headerName: t("page."), flex: 1, minWidth: 100 },
       { field: 'status', headerName: t("page."), flex: 1, minWidth: 100 },

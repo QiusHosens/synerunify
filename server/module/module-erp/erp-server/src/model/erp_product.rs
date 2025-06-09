@@ -12,7 +12,7 @@ pub struct Model {
     
     pub product_code: Option<String>, // 产品编码
     
-    pub product_name: String, // 产品名称
+    pub name: String, // 产品名称
     
     pub category_id: Option<i64>, // 产品分类ID
     

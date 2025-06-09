@@ -7,7 +7,7 @@ import CustomizedDialog from '@/components/CustomizedDialog';
 
 interface FormValues {
   product_code: string; // 产品编码
-  product_name: string; // 产品名称
+  name: string; // 产品名称
   category_id: number; // 产品分类ID
   unit_id: number; // 产品单位ID
   status: number; // 状态
@@ -26,7 +26,7 @@ interface FormValues {
   }
 
 interface FormErrors { 
-  product_name?: string; // 产品名称
+  name?: string; // 产品名称
   unit_id?: string; // 产品单位ID
   status?: string; // 状态
   stock_quantity?: string; // 库存数量
@@ -46,7 +46,7 @@ const ErpProductAdd = forwardRef(({ onSubmit }: ErpProductAddProps, ref) => {
   const [maxWidth] = useState<DialogProps['maxWidth']>('sm');
   const [formValues, setFormValues] = useState<FormValues>({
     product_code: '',
-    product_name: '',
+    name: '',
     category_id: 0,
     unit_id: 0,
     status: 0,
@@ -77,8 +77,8 @@ const ErpProductAdd = forwardRef(({ onSubmit }: ErpProductAddProps, ref) => {
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
     
-    if (!formValues.product_name.trim()) {
-      newErrors.product_name = t('page.post.error.product_name');
+    if (!formValues.name.trim()) {
+      newErrors.name = t('page.post.error.name');
     }
     
     if (!formValues.unit_id && formValues.unit_id != 0) {
@@ -122,7 +122,7 @@ const ErpProductAdd = forwardRef(({ onSubmit }: ErpProductAddProps, ref) => {
   const reset = () => {
     setFormValues({
       product_code: '',
-      product_name: '',
+      name: '',
       category_id: 0,
       unit_id: 0,
       status: 0,
@@ -229,12 +229,12 @@ const ErpProductAdd = forwardRef(({ onSubmit }: ErpProductAddProps, ref) => {
           <TextField
             required
             size="small"
-            label={t("page.post.title.product_name")}
-            name='product_name'
-            value={formValues.product_name}
+            label={t("page.post.title.name")}
+            name='name'
+            value={formValues.name}
             onChange={handleInputChange}
-            error={!!errors.product_name}
-            helperText={errors.product_name}
+            error={!!errors.name}
+            helperText={errors.name}
           />
           <TextField
             size="small"

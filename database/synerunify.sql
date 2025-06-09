@@ -301,7 +301,7 @@ DROP TABLE IF EXISTS `erp_product`;
 CREATE TABLE `erp_product`  (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '产品ID',
   `product_code` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '产品编码',
-  `product_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '产品名称',
+  `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '产品名称',
   `category_id` bigint NULL DEFAULT NULL COMMENT '产品分类ID',
   `unit_id` bigint NOT NULL COMMENT '产品单位ID',
   `status` tinyint NOT NULL DEFAULT 0 COMMENT '状态',
