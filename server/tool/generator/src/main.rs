@@ -164,6 +164,7 @@ fn main() {
     tera.add_template_file(format!("{}/templates/front_add.tera", template_base_path),  Some("front_add")).unwrap();
     tera.add_template_file(format!("{}/templates/front_edit.tera", template_base_path),  Some("front_edit")).unwrap();
     tera.add_template_file(format!("{}/templates/front_delete.tera", template_base_path),  Some("front_delete")).unwrap();
+    tera.add_template_file(format!("{}/templates/front_translation.tera", template_base_path),  Some("front_translation")).unwrap();
 
     // 遍历表
     let mut mod_context = Context::new();
@@ -305,6 +306,11 @@ fn main() {
         let front_delete_code = tera.render("front_delete",  &context).unwrap();
         let file_path = format!("{}/front_page/{}/Delete.tsx", code_base_path, table);
         write_file(&file_path, &front_delete_code).unwrap();
+
+        // front translation
+        let front_translation_code = tera.render("front_translation",  &context).unwrap();
+        let file_path = format!("{}/front_translation/{}.json", code_base_path, table);
+        write_file(&file_path, &front_translation_code).unwrap();
     }
     mod_context.insert("table_names", &table_names);
     mod_context.insert("table_info_list", &table_info_list);
