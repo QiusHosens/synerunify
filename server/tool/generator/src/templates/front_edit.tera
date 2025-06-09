@@ -41,11 +41,11 @@ const {{ model_name }}Edit = forwardRef(({ onSubmit }: {{ model_name }}EditProps
     const newErrors: FormErrors = {};
     {% for column in columns_request_create %}{% if not column.nullable %}
     {% if column.ts_type == 'number' -%}
-    if (!formValues.{{ column.column_name }} && formValues.{{ column.column_name }} != 0) {
+    if (!{{ model_name_lower }}.{{ column.column_name }} && formValues.{{ column.column_name }} != 0) {
       newErrors.{{ column.column_name }} = t('page.mark_translation.error.{{ column.column_name }}');
     }
     {% else -%}
-    if (!formValues.{{ column.column_name }}.trim()) {
+    if (!{{ model_name_lower }}.{{ column.column_name }}.trim()) {
       newErrors.{{ column.column_name }} = t('page.mark_translation.error.{{ column.column_name }}');
     }
     {% endif -%}{% endif -%}{% endfor %}

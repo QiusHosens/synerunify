@@ -50,24 +50,24 @@ const ErpWarehouseEdit = forwardRef(({ onSubmit }: ErpWarehouseEditProps, ref) =
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
     
-    if (!formValues.warehouse_name.trim()) {
-      newErrors.warehouse_name = t('page.post.error.warehouse_name');
+    if (!erpWarehouse.warehouse_name.trim()) {
+      newErrors.warehouse_name = t('page.erp.inventory.warehouse.error.warehouse_name');
     }
     
-    if (!formValues.status && formValues.status != 0) {
-      newErrors.status = t('page.post.error.status');
+    if (!erpWarehouse.status && erpWarehouse.status != 0) {
+      newErrors.status = t('page.erp.inventory.warehouse.error.status');
     }
     
-    if (!formValues.sort_order && formValues.sort_order != 0) {
-      newErrors.sort_order = t('page.post.error.sort_order');
+    if (!erpWarehouse.sort_order && erpWarehouse.sort_order != 0) {
+      newErrors.sort_order = t('page.erp.inventory.warehouse.error.sort_order');
     }
     
-    if (!formValues.department_code.trim()) {
-      newErrors.department_code = t('page.post.error.department_code');
+    if (!erpWarehouse.department_code.trim()) {
+      newErrors.department_code = t('page.erp.inventory.warehouse.error.department_code');
     }
     
-    if (!formValues.department_id && formValues.department_id != 0) {
-      newErrors.department_id = t('page.post.error.department_id');
+    if (!erpWarehouse.department_id && erpWarehouse.department_id != 0) {
+      newErrors.department_id = t('page.erp.inventory.warehouse.error.department_id');
     }
     
     setErrors(newErrors);
@@ -140,7 +140,7 @@ const ErpWarehouseEdit = forwardRef(({ onSubmit }: ErpWarehouseEditProps, ref) =
     <CustomizedDialog
       open={open}
       onClose={handleClose}
-      title={t('global.operate.edit') + t('global.page.post')}
+      title={t('global.operate.edit') + t('global.page.erp.inventory.warehouse')}
       maxWidth={maxWidth}
       actions={
         <>
@@ -161,7 +161,7 @@ const ErpWarehouseEdit = forwardRef(({ onSubmit }: ErpWarehouseEditProps, ref) =
           <TextField
             required
             size="small"
-            label={t("page.post.title.warehouse_name")}
+            label={t("page.erp.inventory.warehouse.title.warehouse_name")}
             name='warehouse_name'
             value={ erpWarehouse.warehouse_name}
             onChange={handleInputChange}
@@ -170,7 +170,7 @@ const ErpWarehouseEdit = forwardRef(({ onSubmit }: ErpWarehouseEditProps, ref) =
           />
           <TextField
             size="small"
-            label={t("page.post.title.location")}
+            label={t("page.erp.inventory.warehouse.title.location")}
             name='location'
             value={ erpWarehouse.location}
             onChange={handleInputChange}
@@ -178,7 +178,7 @@ const ErpWarehouseEdit = forwardRef(({ onSubmit }: ErpWarehouseEditProps, ref) =
           <TextField
             size="small"
             type="number"
-            label={t("page.post.title.status")}
+            label={t("page.erp.inventory.warehouse.title.status")}
             name='status'
             value={ erpWarehouse.status}
             onChange={handleInputChange}
@@ -189,7 +189,7 @@ const ErpWarehouseEdit = forwardRef(({ onSubmit }: ErpWarehouseEditProps, ref) =
             required
             size="small"
             type="number"
-            label={t("page.post.title.sort_order")}
+            label={t("page.erp.inventory.warehouse.title.sort_order")}
             name='sort_order'
             value={ erpWarehouse.sort_order}
             onChange={handleInputChange}
@@ -199,7 +199,7 @@ const ErpWarehouseEdit = forwardRef(({ onSubmit }: ErpWarehouseEditProps, ref) =
           <TextField
             size="small"
             type="number"
-            label={t("page.post.title.storage_fee")}
+            label={t("page.erp.inventory.warehouse.title.storage_fee")}
             name='storage_fee'
             value={ erpWarehouse.storage_fee}
             onChange={handleInputChange}
@@ -207,21 +207,21 @@ const ErpWarehouseEdit = forwardRef(({ onSubmit }: ErpWarehouseEditProps, ref) =
           <TextField
             size="small"
             type="number"
-            label={t("page.post.title.handling_fee")}
+            label={t("page.erp.inventory.warehouse.title.handling_fee")}
             name='handling_fee'
             value={ erpWarehouse.handling_fee}
             onChange={handleInputChange}
           />
           <TextField
             size="small"
-            label={t("page.post.title.manager")}
+            label={t("page.erp.inventory.warehouse.title.manager")}
             name='manager'
             value={ erpWarehouse.manager}
             onChange={handleInputChange}
           />
           <TextField
             size="small"
-            label={t("page.post.title.remarks")}
+            label={t("page.erp.inventory.warehouse.title.remarks")}
             name='remarks'
             value={ erpWarehouse.remarks}
             onChange={handleInputChange}
@@ -229,7 +229,7 @@ const ErpWarehouseEdit = forwardRef(({ onSubmit }: ErpWarehouseEditProps, ref) =
           <TextField
             required
             size="small"
-            label={t("page.post.title.department_code")}
+            label={t("page.erp.inventory.warehouse.title.department_code")}
             name='department_code'
             value={ erpWarehouse.department_code}
             onChange={handleInputChange}
@@ -240,7 +240,7 @@ const ErpWarehouseEdit = forwardRef(({ onSubmit }: ErpWarehouseEditProps, ref) =
             required
             size="small"
             type="number"
-            label={t("page.post.title.department_id")}
+            label={t("page.erp.inventory.warehouse.title.department_id")}
             name='department_id'
             value={ erpWarehouse.department_id}
             onChange={handleInputChange}
@@ -249,9 +249,9 @@ const ErpWarehouseEdit = forwardRef(({ onSubmit }: ErpWarehouseEditProps, ref) =
           />
           </FormControl>
         <Box sx={ {mt: 2, display: 'flex', alignItems: 'center'} }>
-          <Typography sx={ {mr: 4} }>{t("page.post.title.status")}</Typography>
+          <Typography sx={ {mr: 4} }>{t("global.title.status")}</Typography>
           <Switch sx={ {mr: 2} } name='status' checked={!erpWarehouse.status} onChange={handleStatusChange} />
-          <Typography>{ erpWarehouse.status == 0 ? t('page.post.switch.status.true') : t('page.post.switch.status.false')}</Typography>
+          <Typography>{ erpWarehouse.status == 0 ? t('global.switch.status.true') : t('global.switch.status.false')}</Typography>
         </Box>
       </Box>
     </CustomizedDialog>

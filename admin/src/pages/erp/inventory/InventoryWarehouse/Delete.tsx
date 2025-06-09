@@ -47,7 +47,7 @@ const ErpWarehouseDelete = forwardRef(({ onSubmit }: ErpWarehouseDeleteProps, re
     <CustomizedDialog
       open={open}
       onClose={handleClose}
-      title={t('global.operate.delete') + t('global.page.post')}
+      title={t('global.operate.delete') + t('global.page.erp.inventory.warehouse')}
       maxWidth={maxWidth}
       actions={
         <>
@@ -57,7 +57,7 @@ const ErpWarehouseDelete = forwardRef(({ onSubmit }: ErpWarehouseDeleteProps, re
       }
     >
       <DialogContentText>
-        {t('global.description.delete', { name: erpWarehouse && erpWarehouse.name })}
+        {t('global.description.delete', { name: erpWarehouse && erpWarehouse.warehouse_name })}
       </DialogContentText>
     </CustomizedDialog>
   )

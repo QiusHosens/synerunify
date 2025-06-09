@@ -53,7 +53,7 @@ export default function {{ model_name }}() {
   const columns: GridColDef[] = useMemo(
     () => [
       {% for column in columns_request_create -%}
-      { field: '{{ column.column_name }}', headerName: t("page."), flex: 1, minWidth: 100 },
+      { field: '{{ column.column_name }}', headerName: t("page.mark_translation.title.{{ column.column_name }}"), flex: 1, minWidth: 100 },
       {% endfor -%}{% if has_status_field  %}
       {
         field: 'status',

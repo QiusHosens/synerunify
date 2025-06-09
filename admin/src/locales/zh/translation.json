@@ -258,5 +258,21 @@
   "page.user.error.role": "请选择角色",
   "page.user.operate.edit": "编辑用户",
   "page.user.operate.delete": "删除用户",
-  "page.user.operate.reset": "重置密码"
+  "page.user.operate.reset": "重置密码",
+
+  "page.erp.inventory.warehouse.title.warehouse.name": "仓库名称",
+  "page.erp.inventory.warehouse.title.location": "仓库位置",
+  "page.erp.inventory.warehouse.title.status": "状态",
+  "page.erp.inventory.warehouse.title.sort.order": "排序",
+  "page.erp.inventory.warehouse.title.storage.fee": "仓储费",
+  "page.erp.inventory.warehouse.title.handling.fee": "搬运费",
+  "page.erp.inventory.warehouse.title.manager": "负责人",
+  "page.erp.inventory.warehouse.title.remarks": "备注",
+  "page.erp.inventory.warehouse.title.department.code": "部门编码",
+  "page.erp.inventory.warehouse.title.department.id": "部门ID",
+  "page.erp.inventory.warehouse.error.warehouse.name": "请输入仓库名称",
+  "page.erp.inventory.warehouse.error.status": "请输入状态",
+  "page.erp.inventory.warehouse.error.sort.order": "请输入排序",
+  "page.erp.inventory.warehouse.error.department.code": "请输入部门编码",
+  "page.erp.inventory.warehouse.error.department.id": "请输入部门ID"
 }
