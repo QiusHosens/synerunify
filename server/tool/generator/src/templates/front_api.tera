@@ -7,9 +7,9 @@ const apis = {
   delete: '/{{ table_name }}/delete', // 删除
   get: '/{{ table_name }}/get', // 单条查询
   list: '/{{ table_name }}/list', // 列表查询
-  page: '/{{ table_name }}/page', // 分页查询
+  page: '/{{ table_name }}/page', // 分页查询{% if has_status_field  %}
   enable: '/{{ table_name }}/enable', // 启用
-  disable: '/{{ table_name }}/disable', // 禁用
+  disable: '/{{ table_name }}/disable', // 禁用{% endif %}
 }
 
 export interface {{ request_model_name }} {
@@ -51,11 +51,11 @@ export const list{{ model_name }} = (): Promise<Array<{{ response_model_name }}>
 export const page{{ model_name }} = (condition: {{ model_name }}QueryCondition): Promise<PaginatedResponse<{{ response_model_name }}>> => {
   return api.get<PaginatedResponse<{{ response_model_name }}>>(apis.page, condition);
 }
-
+{% if has_status_field  %}
 export const enable{{ model_name }} = (id: number): Promise<void> => {
   return api.post<void>(`${apis.enable}/${id}`);
 }
 
 export const disable{{ model_name }} = (id: number): Promise<void> => {
   return api.post<void>(`${apis.disable}/${id}`);
-}
+}{% endif %}

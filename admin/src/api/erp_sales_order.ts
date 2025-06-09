@@ -1,0 +1,73 @@
+import { PaginatedRequest, PaginatedResponse } from '@/base/page';
+import { api } from '@/utils/request';
+
+const apis = {
+  create: '/erp_sales_order/create', // 新增
+  update: '/erp_sales_order/update', // 修改
+  delete: '/erp_sales_order/delete', // 删除
+  get: '/erp_sales_order/get', // 单条查询
+  list: '/erp_sales_order/list', // 列表查询
+  page: '/erp_sales_order/page', // 分页查询
+}
+
+export interface ErpSalesOrderRequest {
+  id: number; // 订单ID
+  order_number: string; // 订单编号
+  customer_id: number; // 客户ID
+  user_id: number; // 用户ID
+  order_date: string; // 订单日期
+  total_amount: number; // 总金额
+  order_status: number; // 订单状态 (0=pending, 1=completed, 2=cancelled)
+  discount_rate: number; // 优惠率（百分比，1000表示10.00%）
+  settlement_account_id: number; // 结算账户ID
+  deposit: number; // 定金
+  department_code: string; // 部门编码
+  department_id: number; // 部门ID
+}
+
+export interface ErpSalesOrderResponse {
+  id: number; // 订单ID
+  order_number: string; // 订单编号
+  customer_id: number; // 客户ID
+  user_id: number; // 用户ID
+  order_date: string; // 订单日期
+  total_amount: number; // 总金额
+  order_status: number; // 订单状态 (0=pending, 1=completed, 2=cancelled)
+  discount_rate: number; // 优惠率（百分比，1000表示10.00%）
+  settlement_account_id: number; // 结算账户ID
+  deposit: number; // 定金
+  department_code: string; // 部门编码
+  department_id: number; // 部门ID
+  creator: number; // 创建者ID
+  create_time: string; // 创建时间
+  updater: number; // 更新者ID
+  update_time: string; // 更新时间
+}
+
+export interface ErpSalesOrderQueryCondition extends PaginatedRequest {
+
+}
+
+export const createErpSalesOrder = (erp_sales_order: ErpSalesOrderRequest): Promise<number> => {
+  return api.post<number>(apis.create, erp_sales_order);
+}
+
+export const updateErpSalesOrder = (erp_sales_order: ErpSalesOrderRequest): Promise<void> => {
+  return api.post<void>(apis.update, erp_sales_order);
+}
+
+export const deleteErpSalesOrder = (id: number): Promise<void> => {
+  return api.post<void>(`${apis.delete}/${id}`);
+}
+
+export const getErpSalesOrder = (id: number): Promise<ErpSalesOrderResponse> => {
+  return api.get<ErpSalesOrderResponse>(`${apis.get}/${id}`);
+}
+
+export const listErpSalesOrder = (): Promise<Array<ErpSalesOrderResponse>> => {
+  return api.get<Array<ErpSalesOrderResponse>>(apis.list);
+}
+
+export const pageErpSalesOrder = (condition: ErpSalesOrderQueryCondition): Promise<PaginatedResponse<ErpSalesOrderResponse>> => {
+  return api.get<PaginatedResponse<ErpSalesOrderResponse>>(apis.page, condition);
+}
