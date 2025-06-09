@@ -6,7 +6,7 @@ import { createErpWarehouse, ErpWarehouseRequest } from '@/api';
 import CustomizedDialog from '@/components/CustomizedDialog';
 
 interface FormValues {
-  warehouse_name: string; // 仓库名称
+  name: string; // 仓库名称
   location: string; // 仓库位置
   status: number; // 状态
   sort_order: number; // 排序
@@ -19,7 +19,7 @@ interface FormValues {
   }
 
 interface FormErrors { 
-  warehouse_name?: string; // 仓库名称
+  name?: string; // 仓库名称
   status?: string; // 状态
   sort_order?: string; // 排序
   department_code?: string; // 部门编码
@@ -36,7 +36,7 @@ const ErpWarehouseAdd = forwardRef(({ onSubmit }: ErpWarehouseAddProps, ref) => 
   const [open, setOpen] = useState(false);
   const [maxWidth] = useState<DialogProps['maxWidth']>('sm');
   const [formValues, setFormValues] = useState<FormValues>({
-    warehouse_name: '',
+    name: '',
     location: '',
     status: 0,
     sort_order: 0,
@@ -61,8 +61,8 @@ const ErpWarehouseAdd = forwardRef(({ onSubmit }: ErpWarehouseAddProps, ref) => 
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
     
-    if (!formValues.warehouse_name.trim()) {
-      newErrors.warehouse_name = t('page.erp.inventory.warehouse.error.warehouse_name');
+    if (!formValues.name.trim()) {
+      newErrors.name = t('page.erp.inventory.warehouse.error.name');
     }
     
     if (!formValues.status && formValues.status != 0) {
@@ -97,7 +97,7 @@ const ErpWarehouseAdd = forwardRef(({ onSubmit }: ErpWarehouseAddProps, ref) => 
 
   const reset = () => {
     setFormValues({
-      warehouse_name: '',
+      name: '',
       location: '',
       status: 0,
       sort_order: 0,
@@ -191,12 +191,12 @@ const ErpWarehouseAdd = forwardRef(({ onSubmit }: ErpWarehouseAddProps, ref) => 
           <TextField
             required
             size="small"
-            label={t("page.erp.inventory.warehouse.title.warehouse_name")}
-            name='warehouse_name'
-            value={formValues.warehouse_name}
+            label={t("page.erp.inventory.warehouse.title.name")}
+            name='name'
+            value={formValues.name}
             onChange={handleInputChange}
-            error={!!errors.warehouse_name}
-            helperText={errors.warehouse_name}
+            error={!!errors.name}
+            helperText={errors.name}
           />
           <TextField
             size="small"

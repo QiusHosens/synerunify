@@ -5,7 +5,7 @@ use erp_model::response::erp_warehouse::ErpWarehouseResponse;
 
 pub fn create_request_to_model(request: &CreateErpWarehouseRequest) -> ErpWarehouseActiveModel {
     ErpWarehouseActiveModel {
-        warehouse_name: Set(request.warehouse_name.clone()),
+        name: Set(request.name.clone()),
         location: request.location.as_ref().map_or(NotSet, |location| Set(Some(location.clone()))),
         status: Set(request.status.clone()),
         sort_order: Set(request.sort_order.clone()),
@@ -21,8 +21,8 @@ pub fn create_request_to_model(request: &CreateErpWarehouseRequest) -> ErpWareho
 
 pub fn update_request_to_model(request: &UpdateErpWarehouseRequest, existing: ErpWarehouse) -> ErpWarehouseActiveModel {
     let mut active_model: ErpWarehouseActiveModel = existing.into();
-    if let Some(warehouse_name) = &request.warehouse_name { 
-        active_model.warehouse_name = Set(warehouse_name.clone());
+    if let Some(name) = &request.name {
+        active_model.name = Set(name.clone());
     }
     if let Some(location) = &request.location { 
         active_model.location = Set(Some(location.clone()));
@@ -57,7 +57,7 @@ pub fn update_request_to_model(request: &UpdateErpWarehouseRequest, existing: Er
 pub fn model_to_response(model: ErpWarehouse) -> ErpWarehouseResponse {
     ErpWarehouseResponse { 
         id: model.id,
-        warehouse_name: model.warehouse_name,
+        name: model.name,
         location: model.location,
         status: model.status,
         sort_order: model.sort_order,

@@ -6,7 +6,7 @@ use common::base::page::PaginatedRequest;
 #[derive(Serialize, Deserialize, Debug, ToSchema)]
 pub struct CreateErpWarehouseRequest {
     
-    pub warehouse_name: String, // 仓库名称
+    pub name: String, // 仓库名称
     
     pub location: Option<String>, // 仓库位置
     
@@ -33,7 +33,7 @@ pub struct UpdateErpWarehouseRequest {
     
     pub id: i64, // 仓库ID
     
-    pub warehouse_name: Option<String>, // 仓库名称
+    pub name: Option<String>, // 仓库名称
     
     pub location: Option<String>, // 仓库位置
     

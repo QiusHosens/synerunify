@@ -10,7 +10,7 @@ pub struct Model {
     #[sea_orm(primary_key)]
     pub id: i64, // 仓库ID
     
-    pub warehouse_name: String, // 仓库名称
+    pub name: String, // 仓库名称
     
     pub location: Option<String>, // 仓库位置
     

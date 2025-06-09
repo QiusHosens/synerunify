@@ -6,7 +6,7 @@ import { ErpWarehouseRequest, ErpWarehouseResponse, updateErpWarehouse } from '@
 import CustomizedDialog from '@/components/CustomizedDialog';
 
 interface FormErrors { 
-  warehouse_name?: string; // 仓库名称
+  name?: string; // 仓库名称
   status?: string; // 状态
   sort_order?: string; // 排序
   department_code?: string; // 部门编码
@@ -24,7 +24,7 @@ const ErpWarehouseEdit = forwardRef(({ onSubmit }: ErpWarehouseEditProps, ref) =
   const [maxWidth] = useState<DialogProps['maxWidth']>('sm');
   const [erpWarehouse, setErpWarehouse] = useState<ErpWarehouseRequest>({
     id: 0,
-    warehouse_name: '',
+    name: '',
     location: '',
     status: 0,
     sort_order: 0,
@@ -50,8 +50,8 @@ const ErpWarehouseEdit = forwardRef(({ onSubmit }: ErpWarehouseEditProps, ref) =
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
     
-    if (!erpWarehouse.warehouse_name.trim()) {
-      newErrors.warehouse_name = t('page.erp.inventory.warehouse.error.warehouse_name');
+    if (!erpWarehouse.name.trim()) {
+      newErrors.name = t('page.erp.inventory.warehouse.error.name');
     }
     
     if (!erpWarehouse.status && erpWarehouse.status != 0) {
@@ -161,12 +161,12 @@ const ErpWarehouseEdit = forwardRef(({ onSubmit }: ErpWarehouseEditProps, ref) =
           <TextField
             required
             size="small"
-            label={t("page.erp.inventory.warehouse.title.warehouse_name")}
-            name='warehouse_name'
-            value={ erpWarehouse.warehouse_name}
+            label={t("page.erp.inventory.warehouse.title.name")}
+            name='name'
+            value={ erpWarehouse.name}
             onChange={handleInputChange}
-            error={!!errors.warehouse_name}
-            helperText={errors.warehouse_name}
+            error={!!errors.name}
+            helperText={errors.name}
           />
           <TextField
             size="small"

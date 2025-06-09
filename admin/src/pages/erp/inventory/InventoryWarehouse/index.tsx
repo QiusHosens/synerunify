@@ -52,7 +52,7 @@ export default function ErpWarehouse() {
 
   const columns: GridColDef[] = useMemo(
     () => [
-      { field: 'warehouse_name', headerName: t("page.erp.inventory.warehouse.title.warehouse.name"), flex: 1, minWidth: 100 },
+      { field: 'name', headerName: t("page.erp.inventory.warehouse.title.warehouse.name"), flex: 1, minWidth: 100 },
       { field: 'location', headerName: t("page.erp.inventory.warehouse.title.location"), flex: 1, minWidth: 100 },
       { field: 'status', headerName: t("page.erp.inventory.warehouse.title.status"), flex: 1, minWidth: 100 },
       { field: 'sort_order', headerName: t("page.erp.inventory.warehouse.title.sort.order"), flex: 1, minWidth: 100 },

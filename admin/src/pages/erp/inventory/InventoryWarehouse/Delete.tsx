@@ -57,7 +57,7 @@ const ErpWarehouseDelete = forwardRef(({ onSubmit }: ErpWarehouseDeleteProps, re
       }
     >
       <DialogContentText>
-        {t('global.description.delete', { name: erpWarehouse && erpWarehouse.warehouse_name })}
+        {t('global.description.delete', { name: erpWarehouse && erpWarehouse.name })}
       </DialogContentText>
     </CustomizedDialog>
   )

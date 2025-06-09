@@ -14,7 +14,7 @@ const apis = {
 
 export interface ErpWarehouseRequest {
   id: number; // 仓库ID
-  warehouse_name: string; // 仓库名称
+  name: string; // 仓库名称
   location: string; // 仓库位置
   status: number; // 状态
   sort_order: number; // 排序
@@ -28,7 +28,7 @@ export interface ErpWarehouseRequest {
 
 export interface ErpWarehouseResponse {
   id: number; // 仓库ID
-  warehouse_name: string; // 仓库名称
+  name: string; // 仓库名称
   location: string; // 仓库位置
   status: number; // 状态
   sort_order: number; // 排序
