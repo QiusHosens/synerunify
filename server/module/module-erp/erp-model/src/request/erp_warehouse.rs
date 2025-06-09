@@ -22,10 +22,6 @@ pub struct CreateErpWarehouseRequest {
     
     pub remarks: Option<String>, // 备注
     
-    pub department_code: String, // 部门编码
-    
-    pub department_id: i64, // 部门ID
-    
 }
 
 #[derive(Serialize, Deserialize, Debug, ToSchema)]
@@ -48,10 +44,6 @@ pub struct UpdateErpWarehouseRequest {
     pub manager: Option<String>, // 负责人
     
     pub remarks: Option<String>, // 备注
-    
-    pub department_code: Option<String>, // 部门编码
-    
-    pub department_id: Option<i64>, // 部门ID
     
 }
 

@@ -14,8 +14,6 @@ interface FormValues {
   handling_fee: number; // 搬运费
   manager: string; // 负责人
   remarks: string; // 备注
-  department_code: string; // 部门编码
-  department_id: number; // 部门ID
 }
 
 interface FormErrors {
@@ -44,8 +42,6 @@ const ErpWarehouseAdd = forwardRef(({ onSubmit }: ErpWarehouseAddProps, ref) => 
     handling_fee: 0,
     manager: '',
     remarks: '',
-    department_code: '',
-    department_id: 0,
   });
   const [errors, setErrors] = useState<FormErrors>({});
 
@@ -73,14 +69,6 @@ const ErpWarehouseAdd = forwardRef(({ onSubmit }: ErpWarehouseAddProps, ref) => 
       newErrors.sort = t('page.erp.inventory.warehouse.error.sort.order');
     }
 
-    if (!formValues.department_code.trim()) {
-      newErrors.department_code = t('page.erp.inventory.warehouse.error.department.code');
-    }
-
-    if (!formValues.department_id && formValues.department_id != 0) {
-      newErrors.department_id = t('page.erp.inventory.warehouse.error.department.id');
-    }
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -105,8 +93,6 @@ const ErpWarehouseAdd = forwardRef(({ onSubmit }: ErpWarehouseAddProps, ref) => 
       handling_fee: 0,
       manager: '',
       remarks: '',
-      department_code: '',
-      department_id: 0,
     });
     setErrors({});
   }
@@ -206,16 +192,6 @@ const ErpWarehouseAdd = forwardRef(({ onSubmit }: ErpWarehouseAddProps, ref) => 
             name='location'
             value={formValues.location}
             onChange={handleInputChange}
-          />
-          <TextField
-            size="small"
-            type="number"
-            label={t("page.erp.inventory.warehouse.title.status")}
-            name='status'
-            value={formValues.status}
-            onChange={handleInputChange}
-            error={!!errors.status}
-            helperText={errors.status}
           />
           <TextField
             required

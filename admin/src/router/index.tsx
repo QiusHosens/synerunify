@@ -80,7 +80,12 @@ export default function Router() {
   }
 
   return (
-    <Suspense fallback={<div>t("global.router.loading")</div>}>
+    <Suspense
+      fallback={
+        <Box sx={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          <CircularProgress />
+        </Box>
+      }>
       {/*  sx={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }} */}
       {loading ? (
         <Box sx={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>

@@ -271,11 +271,7 @@
   "page.erp.inventory.warehouse.title.handling.fee": "搬运费",
   "page.erp.inventory.warehouse.title.manager": "负责人",
   "page.erp.inventory.warehouse.title.remarks": "备注",
-  "page.erp.inventory.warehouse.title.department.code": "部门编码",
-  "page.erp.inventory.warehouse.title.department.id": "部门ID",
   "page.erp.inventory.warehouse.error.warehouse.name": "请输入仓库名称",
   "page.erp.inventory.warehouse.error.status": "请输入状态",
-  "page.erp.inventory.warehouse.error.sort": "请输入排序",
-  "page.erp.inventory.warehouse.error.department.code": "请输入部门编码",
-  "page.erp.inventory.warehouse.error.department.id": "请输入部门ID"
+  "page.erp.inventory.warehouse.error.sort": "请输入排序"
 }

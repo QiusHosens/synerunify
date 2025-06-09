@@ -54,7 +54,7 @@ export default function ErpWarehouse() {
     () => [
       { field: 'name', headerName: t("page.erp.inventory.warehouse.title.name"), flex: 1, minWidth: 100 },
       { field: 'location', headerName: t("page.erp.inventory.warehouse.title.location"), flex: 1, minWidth: 100 },
-      { field: 'sort', headerName: t("page.erp.inventory.warehouse.title.sort.order"), flex: 1, minWidth: 60 },
+      { field: 'sort', headerName: t("page.erp.inventory.warehouse.title.sort"), flex: 1, minWidth: 60 },
       { field: 'manager', headerName: t("page.erp.inventory.warehouse.title.manager"), flex: 1, minWidth: 100 },
       { field: 'remarks', headerName: t("page.erp.inventory.warehouse.title.remarks"), flex: 1, minWidth: 100 },
       {
