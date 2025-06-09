@@ -9,7 +9,6 @@ import DepartmentAdd from './Add';
 import { getParentNodeLists, Node } from '@/utils/treeUtils';
 import MenuEdit from './Edit';
 import MenuDelete from './Delete';
-import CustomizedDictTag from '@/components/CustomizedDictTag';
 import { useHomeStore } from '@/store';
 import { disableSystemDepartment, enableSystemDepartment, listSystemDepartment, SystemDepartmentResponse } from '@/api';
 

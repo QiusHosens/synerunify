@@ -10,6 +10,8 @@
   "global.layout.profile.title.swtich.account": "切换账号",
   "global.layout.profile.title.logout": "退出登录",
 
+  "global.router.loading": "加载中...",
+
   "global.menu.dashboard": "仪表盘",
   "global.menu.system": "系统管理",
   "global.menu.config": "配置管理",

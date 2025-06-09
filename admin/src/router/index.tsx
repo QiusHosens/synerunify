@@ -8,6 +8,7 @@ import Layout from '@/layout/MainLayout/Layout';
 import React from 'react';
 import LoginLayout from '@/layout/LoginLayout';
 import { Box, CircularProgress, Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 
 // 动态组件映射
 const componentMap: { [key: string]: React.LazyExoticComponent<React.ComponentType<Element>> } = {
@@ -20,9 +21,32 @@ const componentMap: { [key: string]: React.LazyExoticComponent<React.ComponentTy
   'pages/system/RoleManage': lazy(() => import('@/pages/system/RoleManage')),
   'pages/system/PostManage': lazy(() => import('@/pages/system/PostManage')),
   'pages/system/UserManage': lazy(() => import('@/pages/system/UserManage')),
+
+  'pages/erp/purchase/PurchaseOrder': lazy(() => import('@/pages/erp/purchase/PurchaseOrder')),
+  'pages/erp/purchase/PurchaseInbound': lazy(() => import('@/pages/erp/purchase/PurchaseInbound')),
+  'pages/erp/purchase/PurchaseReturn': lazy(() => import('@/pages/erp/purchase/PurchaseReturn')),
+  'pages/erp/purchase/PurchaseSupplier': lazy(() => import('@/pages/erp/purchase/PurchaseSupplier')),
+  'pages/erp/sale/SaleOrder': lazy(() => import('@/pages/erp/sale/SaleOrder')),
+  'pages/erp/sale/SaleOutbound': lazy(() => import('@/pages/erp/sale/SaleOutbound')),
+  'pages/erp/sale/SaleReturn': lazy(() => import('@/pages/erp/sale/SaleReturn')),
+  'pages/erp/sale/SaleCustomer': lazy(() => import('@/pages/erp/sale/SaleCustomer')),
+  'pages/erp/inventory/InventoryWarehouse': lazy(() => import('@/pages/erp/inventory/InventoryWarehouse')),
+  'pages/erp/inventory/InventoryProduct': lazy(() => import('@/pages/erp/inventory/InventoryProduct')),
+  'pages/erp/inventory/InventoryRecord': lazy(() => import('@/pages/erp/inventory/InventoryRecord')),
+  'pages/erp/inventory/InventoryInbound': lazy(() => import('@/pages/erp/inventory/InventoryInbound')),
+  'pages/erp/inventory/InventoryOutbound': lazy(() => import('@/pages/erp/inventory/InventoryOutbound')),
+  'pages/erp/inventory/InventoryTransfer': lazy(() => import('@/pages/erp/inventory/InventoryTransfer')),
+  'pages/erp/inventory/InventoryCheck': lazy(() => import('@/pages/erp/inventory/InventoryCheck')),
+  'pages/erp/product/ProductList': lazy(() => import('@/pages/erp/product/ProductList')),
+  'pages/erp/product/ProductCategory': lazy(() => import('@/pages/erp/product/ProductCategory')),
+  'pages/erp/product/ProductUnit': lazy(() => import('@/pages/erp/product/ProductUnit')),
+  'pages/erp/financial/FinancialPayment': lazy(() => import('@/pages/erp/financial/FinancialPayment')),
+  'pages/erp/financial/FinancialReceipt': lazy(() => import('@/pages/erp/financial/FinancialReceipt')),
+  'pages/erp/financial/FinancialAccount': lazy(() => import('@/pages/erp/financial/FinancialAccount')),
 };
 
 export default function Router() {
+  const { t } = useTranslation();
   const { access_token } = useAuthStore();
   const navigate = useNavigate();
   const location = useLocation();
@@ -56,7 +80,7 @@ export default function Router() {
   }
 
   return (
-    <>
+    <Suspense fallback={<div>t("global.router.loading")</div>}>
       {/*  sx={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }} */}
       {loading ? (
         <Box sx={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
@@ -94,6 +118,6 @@ export default function Router() {
           ))}
         </Routes>)
       }
-    </>
+    </Suspense>
   );
 }
