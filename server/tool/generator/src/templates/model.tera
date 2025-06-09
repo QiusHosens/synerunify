@@ -8,7 +8,7 @@ use common::interceptor::orm::active_filter::ActiveFilterEntityTrait;
 pub struct Model {
     {% for column in columns %}{% if column.is_key  %}
     #[sea_orm(primary_key)]{% endif %}
-    pub {{ column.column_name }}: {% if column.nullable  %}Option<{{ column.rust_type  }}>{% else %}{{ column.rust_type  }}{% endif %}, // {{ column.column_comment  }}
+    pub {{ column.column_name }}: {% if column.nullable %}Option<{{ column.rust_type }}>{% else %}{{ column.rust_type }}{% endif %}, // {{ column.column_comment }}
     {% endfor %}
 }
 

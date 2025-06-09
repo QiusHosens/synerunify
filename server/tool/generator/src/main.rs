@@ -160,6 +160,10 @@ fn main() {
     tera.add_template_file(format!("{}/templates/route.tera", template_base_path),  Some("route")).unwrap();
 
     tera.add_template_file(format!("{}/templates/front_api.tera", template_base_path),  Some("front_api")).unwrap();
+    tera.add_template_file(format!("{}/templates/front_index.tera", template_base_path),  Some("front_index")).unwrap();
+    tera.add_template_file(format!("{}/templates/front_add.tera", template_base_path),  Some("front_add")).unwrap();
+    tera.add_template_file(format!("{}/templates/front_edit.tera", template_base_path),  Some("front_edit")).unwrap();
+    tera.add_template_file(format!("{}/templates/front_delete.tera", template_base_path),  Some("front_delete")).unwrap();
 
     // 遍历表
     let mut mod_context = Context::new();
@@ -178,7 +182,10 @@ fn main() {
         let columns = get_table_columns(&mut conn, &table);
         let mut context = Context::new();
 
+        context.insert("api_prefix",  "erp");
+
         context.insert("table_comment",  &table_comment);
+        context.insert("model_name_lower",  &format!("{}", inflections::case::to_camel_case(&table)));
         context.insert("model_name",  &format!("{}", inflections::case::to_pascal_case(&table)));
         context.insert("request_model_name",  &format!("{}Request", inflections::case::to_pascal_case(&table)));
         context.insert("response_model_name",  &format!("{}Response", inflections::case::to_pascal_case(&table)));
@@ -278,6 +285,26 @@ fn main() {
         let front_api_code = tera.render("front_api",  &context).unwrap();
         let file_path = format!("{}/front_api/{}.ts", code_base_path, table);
         write_file(&file_path, &front_api_code).unwrap();
+
+        // front index
+        let front_index_code = tera.render("front_index",  &context).unwrap();
+        let file_path = format!("{}/front_page/{}/index.tsx", code_base_path, table);
+        write_file(&file_path, &front_index_code).unwrap();
+
+        // front add
+        let front_add_code = tera.render("front_add",  &context).unwrap();
+        let file_path = format!("{}/front_page/{}/Add.tsx", code_base_path, table);
+        write_file(&file_path, &front_add_code).unwrap();
+
+        // front edit
+        let front_edit_code = tera.render("front_edit",  &context).unwrap();
+        let file_path = format!("{}/front_page/{}/Edit.tsx", code_base_path, table);
+        write_file(&file_path, &front_edit_code).unwrap();
+
+        // front delete
+        let front_delete_code = tera.render("front_delete",  &context).unwrap();
+        let file_path = format!("{}/front_page/{}/Delete.tsx", code_base_path, table);
+        write_file(&file_path, &front_delete_code).unwrap();
     }
     mod_context.insert("table_names", &table_names);
     mod_context.insert("table_info_list", &table_info_list);

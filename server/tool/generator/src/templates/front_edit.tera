@@ -1,0 +1,169 @@
+import { Box, Button, FormControl, Switch, TextField, Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
+import { forwardRef, useImperativeHandle, useState } from 'react';
+import { DialogProps } from '@mui/material/Dialog';
+import { {{ model_name }}Request, {{ model_name }}Response, update{{ model_name }} } from '@/api';
+import CustomizedDialog from '@/components/CustomizedDialog';
+
+interface FormErrors { {% for column in columns_request_create -%}{% if not column.nullable %}
+  {{ column.column_name }}?: string; // {{ column.column_comment }}{% endif -%}
+  {% endfor %}
+}
+
+interface {{ model_name }}EditProps {
+  onSubmit: () => void;
+}
+
+const {{ model_name }}Edit = forwardRef(({ onSubmit }: {{ model_name }}EditProps, ref) => {
+  const { t } = useTranslation();
+
+  const [open, setOpen] = useState(false);
+  const [maxWidth] = useState<DialogProps['maxWidth']>('sm');
+  const [{{ model_name_lower }}, set{{ model_name }}] = useState<{{ model_name }}Request>({
+    id: 0,
+    {% for column in columns_request_create -%}
+    {{ column.column_name }}: {% if column.ts_type == 'number' %}0{% else %}''{% endif %},
+    {% endfor -%}
+  });
+  const [errors, setErrors] = useState<FormErrors>({});
+
+  useImperativeHandle(ref, () => ({
+    show({{ model_name_lower }}: {{ model_name }}Response) {
+      initForm({{ model_name_lower }});
+      setOpen(true);
+    },
+    hide() {
+      setOpen(false);
+    },
+  }));
+
+  const validateForm = (): boolean => {
+    const newErrors: FormErrors = {};
+    {% for column in columns_request_create %}{% if not column.nullable %}
+    {% if column.ts_type == 'number' -%}
+    if (!formValues.{{ column.column_name }} && formValues.{{ column.column_name }} != 0) {
+      newErrors.{{ column.column_name }} = t('page.post.error.{{ column.column_name }}');
+    }
+    {% else -%}
+    if (!formValues.{{ column.column_name }}.trim()) {
+      newErrors.{{ column.column_name }} = t('page.post.error.{{ column.column_name }}');
+    }
+    {% endif -%}{% endif -%}{% endfor %}
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleCancel = () => {
+    setOpen(false);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const initForm = ({{ model_name_lower }}: {{ model_name }}Response) => {
+    set{{ model_name }}({
+      ...{{ model_name_lower }},
+    })
+    setErrors({});
+  }
+
+  const handleSubmit = async () => {
+    if (validateForm()) {
+      await update{{ model_name }}({{ model_name_lower }});
+      handleClose();
+      onSubmit();
+    }
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value, type } = e.target;
+    if (type == 'number') {
+      const numberValue = Number(value);
+      set{{ model_name }}(prev => ({
+        ...prev,
+        [name]: numberValue
+      }));
+    } else {
+      set{{ model_name }}(prev => ({
+        ...prev,
+        [name]: value
+      }));
+    }
+
+    if (errors[name as keyof FormErrors]) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: undefined
+      }));
+    }
+  };
+
+  const handleStatusChange = (e: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
+    const { name } = e.target;
+
+    set{{ model_name }}(prev => ({
+      ...prev,
+      [name]: checked ? 0 : 1
+    }));
+
+    if (errors[name as keyof FormErrors]) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: undefined
+      }));
+    }
+  };
+
+  return (
+    <CustomizedDialog
+      open={open}
+      onClose={handleClose}
+      title={t('global.operate.edit') + t('global.page.post')}
+      maxWidth={maxWidth}
+      actions={
+        <>
+          <Button onClick={handleSubmit}>{t('global.operate.update')}</Button>
+          <Button onClick={handleCancel}>{t('global.operate.cancel')}</Button>
+        </>
+      }
+    >
+      <Box
+        noValidate
+        component="form"
+        {% set box_sx = "{display: 'flex',
+          flexDirection: 'column',
+          m: 'auto',
+          width: 'fit-content',}" -%}
+        sx={ {{ box_sx | safe }} }
+      >
+        {% set box_sx = "{minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' }}" -%}
+        <FormControl sx={ {{ box_sx | safe }} }>
+          {% for column in columns_request_create -%}
+          <TextField{% if not column.nullable and column.column_name != 'status' %}
+            required{% endif %}
+            size="small"{% if column.ts_type == 'number' %}
+            type="number"{% endif %}
+            label={t("page.post.title.{{ column.column_name }}")}
+            name='{{ column.column_name }}'
+            value={ {{ model_name_lower }}.{{ column.column_name }}}
+            onChange={handleInputChange}{% if not column.nullable %}
+            error={!!errors.{{ column.column_name }}}
+            helperText={errors.{{ column.column_name }}}{% endif %}
+          />
+          {% endfor -%}
+        </FormControl>{% for column in columns_request_create -%}{% if column.column_name == 'status' %}
+        {% set box_sx = "{mt: 2, display: 'flex', alignItems: 'center'}" -%}
+        <Box sx={ {{ box_sx | safe }} }>
+          {% set box_sx = "{mr: 4}" -%}
+          <Typography sx={ {{ box_sx | safe }} }>{t("page.post.title.status")}</Typography>
+          {% set box_sx = "{mr: 2}" -%}
+          <Switch sx={ {{ box_sx | safe }} } name='status' checked={!{{ model_name_lower }}.status} onChange={handleStatusChange} />
+          <Typography>{ {{ model_name_lower }}.status == 0 ? t('page.post.switch.status.true') : t('page.post.switch.status.false')}</Typography>
+        </Box>{% endif %}{% endfor %}
+      </Box>
+    </CustomizedDialog>
+  )
+});
+
+export default {{ model_name }}Edit;
