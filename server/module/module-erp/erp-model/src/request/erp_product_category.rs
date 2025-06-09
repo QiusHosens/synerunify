@@ -6,9 +6,9 @@ use common::base::page::PaginatedRequest;
 #[derive(Serialize, Deserialize, Debug, ToSchema)]
 pub struct CreateErpProductCategoryRequest {
     
-    pub category_code: Option<String>, // 分类编码
+    pub code: Option<String>, // 分类编码
     
-    pub category_name: String, // 分类名称
+    pub name: String, // 分类名称
     
     pub parent_id: Option<i64>, // 父分类ID
     
@@ -29,9 +29,9 @@ pub struct UpdateErpProductCategoryRequest {
     
     pub id: i64, // 分类ID
     
-    pub category_code: Option<String>, // 分类编码
+    pub code: Option<String>, // 分类编码
     
-    pub category_name: Option<String>, // 分类名称
+    pub name: Option<String>, // 分类名称
     
     pub parent_id: Option<i64>, // 父分类ID
     

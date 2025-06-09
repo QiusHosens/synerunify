@@ -336,8 +336,8 @@ CREATE TABLE `erp_product`  (
 DROP TABLE IF EXISTS `erp_product_category`;
 CREATE TABLE `erp_product_category`  (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '分类ID',
-  `category_code` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '分类编码',
-  `category_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '分类名称',
+  `code` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '分类编码',
+  `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '分类名称',
   `parent_id` bigint NULL DEFAULT NULL COMMENT '父分类ID',
   `status` tinyint NOT NULL DEFAULT 0 COMMENT '状态',
   `sort_order` int NOT NULL DEFAULT 0 COMMENT '排序',

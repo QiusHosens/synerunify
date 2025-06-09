@@ -14,8 +14,8 @@ const apis = {
 
 export interface ErpProductCategoryRequest {
   id: number; // 分类ID
-  category_code: string; // 分类编码
-  category_name: string; // 分类名称
+  code: string; // 分类编码
+  name: string; // 分类名称
   parent_id: number; // 父分类ID
   status: number; // 状态
   sort_order: number; // 排序
@@ -26,8 +26,8 @@ export interface ErpProductCategoryRequest {
 
 export interface ErpProductCategoryResponse {
   id: number; // 分类ID
-  category_code: string; // 分类编码
-  category_name: string; // 分类名称
+  code: string; // 分类编码
+  name: string; // 分类名称
   parent_id: number; // 父分类ID
   status: number; // 状态
   sort_order: number; // 排序

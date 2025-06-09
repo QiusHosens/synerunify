@@ -5,8 +5,8 @@ use erp_model::response::erp_product_category::ErpProductCategoryResponse;
 
 pub fn create_request_to_model(request: &CreateErpProductCategoryRequest) -> ErpProductCategoryActiveModel {
     ErpProductCategoryActiveModel {
-        category_code: request.category_code.as_ref().map_or(NotSet, |category_code| Set(Some(category_code.clone()))),
-        category_name: Set(request.category_name.clone()),
+        code: request.code.as_ref().map_or(NotSet, |code| Set(Some(code.clone()))),
+        name: Set(request.name.clone()),
         parent_id: request.parent_id.as_ref().map_or(NotSet, |parent_id| Set(Some(parent_id.clone()))),
         status: Set(request.status.clone()),
         sort_order: Set(request.sort_order.clone()),
@@ -19,11 +19,11 @@ pub fn create_request_to_model(request: &CreateErpProductCategoryRequest) -> Erp
 
 pub fn update_request_to_model(request: &UpdateErpProductCategoryRequest, existing: ErpProductCategory) -> ErpProductCategoryActiveModel {
     let mut active_model: ErpProductCategoryActiveModel = existing.into();
-    if let Some(category_code) = &request.category_code { 
-        active_model.category_code = Set(Some(category_code.clone()));
+    if let Some(code) = &request.code {
+        active_model.code = Set(Some(code.clone()));
     }
-    if let Some(category_name) = &request.category_name { 
-        active_model.category_name = Set(category_name.clone());
+    if let Some(name) = &request.name {
+        active_model.name = Set(name.clone());
     }
     if let Some(parent_id) = &request.parent_id { 
         active_model.parent_id = Set(Some(parent_id.clone()));
@@ -49,8 +49,8 @@ pub fn update_request_to_model(request: &UpdateErpProductCategoryRequest, existi
 pub fn model_to_response(model: ErpProductCategory) -> ErpProductCategoryResponse {
     ErpProductCategoryResponse { 
         id: model.id,
-        category_code: model.category_code,
-        category_name: model.category_name,
+        code: model.code,
+        name: model.name,
         parent_id: model.parent_id,
         status: model.status,
         sort_order: model.sort_order,

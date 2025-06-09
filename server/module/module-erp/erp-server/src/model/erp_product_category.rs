@@ -10,9 +10,9 @@ pub struct Model {
     #[sea_orm(primary_key)]
     pub id: i64, // 分类ID
     
-    pub category_code: Option<String>, // 分类编码
+    pub code: Option<String>, // 分类编码
     
-    pub category_name: String, // 分类名称
+    pub name: String, // 分类名称
     
     pub parent_id: Option<i64>, // 父分类ID
     

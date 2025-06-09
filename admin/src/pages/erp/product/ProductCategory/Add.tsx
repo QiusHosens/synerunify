@@ -6,8 +6,8 @@ import { createErpProductCategory, ErpProductCategoryRequest } from '@/api';
 import CustomizedDialog from '@/components/CustomizedDialog';
 
 interface FormValues {
-  category_code: string; // 分类编码
-  category_name: string; // 分类名称
+  code: string; // 分类编码
+  name: string; // 分类名称
   parent_id: number; // 父分类ID
   status: number; // 状态
   sort_order: number; // 排序
@@ -17,7 +17,7 @@ interface FormValues {
   }
 
 interface FormErrors { 
-  category_name?: string; // 分类名称
+  name?: string; // 分类名称
   status?: string; // 状态
   sort_order?: string; // 排序
   department_code?: string; // 部门编码
@@ -34,8 +34,8 @@ const ErpProductCategoryAdd = forwardRef(({ onSubmit }: ErpProductCategoryAddPro
   const [open, setOpen] = useState(false);
   const [maxWidth] = useState<DialogProps['maxWidth']>('sm');
   const [formValues, setFormValues] = useState<FormValues>({
-    category_code: '',
-    category_name: '',
+    code: '',
+    name: '',
     parent_id: 0,
     status: 0,
     sort_order: 0,
@@ -57,8 +57,8 @@ const ErpProductCategoryAdd = forwardRef(({ onSubmit }: ErpProductCategoryAddPro
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
     
-    if (!formValues.category_name.trim()) {
-      newErrors.category_name = t('page.post.error.category_name');
+    if (!formValues.name.trim()) {
+      newErrors.name = t('page.post.error.name');
     }
     
     if (!formValues.status && formValues.status != 0) {
@@ -93,8 +93,8 @@ const ErpProductCategoryAdd = forwardRef(({ onSubmit }: ErpProductCategoryAddPro
 
   const reset = () => {
     setFormValues({
-      category_code: '',
-      category_name: '',
+      code: '',
+      name: '',
       parent_id: 0,
       status: 0,
       sort_order: 0,
@@ -184,20 +184,20 @@ const ErpProductCategoryAdd = forwardRef(({ onSubmit }: ErpProductCategoryAddPro
         <FormControl sx={ {minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' }} }>
           <TextField
             size="small"
-            label={t("page.post.title.category_code")}
-            name='category_code'
-            value={formValues.category_code}
+            label={t("page.post.title.code")}
+            name='code'
+            value={formValues.code}
             onChange={handleInputChange}
           />
           <TextField
             required
             size="small"
-            label={t("page.post.title.category_name")}
-            name='category_name'
-            value={formValues.category_name}
+            label={t("page.post.title.name")}
+            name='name'
+            value={formValues.name}
             onChange={handleInputChange}
-            error={!!errors.category_name}
-            helperText={errors.category_name}
+            error={!!errors.name}
+            helperText={errors.name}
           />
           <TextField
             size="small"

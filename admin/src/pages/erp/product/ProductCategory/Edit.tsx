@@ -6,7 +6,7 @@ import { ErpProductCategoryRequest, ErpProductCategoryResponse, updateErpProduct
 import CustomizedDialog from '@/components/CustomizedDialog';
 
 interface FormErrors { 
-  category_name?: string; // 分类名称
+  name?: string; // 分类名称
   status?: string; // 状态
   sort_order?: string; // 排序
   department_code?: string; // 部门编码
@@ -24,8 +24,8 @@ const ErpProductCategoryEdit = forwardRef(({ onSubmit }: ErpProductCategoryEditP
   const [maxWidth] = useState<DialogProps['maxWidth']>('sm');
   const [erpProductCategory, setErpProductCategory] = useState<ErpProductCategoryRequest>({
     id: 0,
-    category_code: '',
-    category_name: '',
+    code: '',
+    name: '',
     parent_id: 0,
     status: 0,
     sort_order: 0,
@@ -48,8 +48,8 @@ const ErpProductCategoryEdit = forwardRef(({ onSubmit }: ErpProductCategoryEditP
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
     
-    if (!formValues.category_name.trim()) {
-      newErrors.category_name = t('page.post.error.category_name');
+    if (!formValues.name.trim()) {
+      newErrors.name = t('page.post.error.name');
     }
     
     if (!formValues.status && formValues.status != 0) {
@@ -158,20 +158,20 @@ const ErpProductCategoryEdit = forwardRef(({ onSubmit }: ErpProductCategoryEditP
         <FormControl sx={ {minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' }} }>
           <TextField
             size="small"
-            label={t("page.post.title.category_code")}
-            name='category_code'
-            value={ erpProductCategory.category_code}
+            label={t("page.post.title.code")}
+            name='code'
+            value={ erpProductCategory.code}
             onChange={handleInputChange}
           />
           <TextField
             required
             size="small"
-            label={t("page.post.title.category_name")}
-            name='category_name'
-            value={ erpProductCategory.category_name}
+            label={t("page.post.title.name")}
+            name='name'
+            value={ erpProductCategory.name}
             onChange={handleInputChange}
-            error={!!errors.category_name}
-            helperText={errors.category_name}
+            error={!!errors.name}
+            helperText={errors.name}
           />
           <TextField
             size="small"
