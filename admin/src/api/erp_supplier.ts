@@ -14,7 +14,7 @@ const apis = {
 
 export interface ErpSupplierRequest {
   id: number; // 供应商ID
-  supplier_name: string; // 供应商名称
+  name: string; // 供应商名称
   contact_person: string; // 联系人
   phone: string; // 电话
   email: string; // 邮箱
@@ -33,7 +33,7 @@ export interface ErpSupplierRequest {
 
 export interface ErpSupplierResponse {
   id: number; // 供应商ID
-  supplier_name: string; // 供应商名称
+  name: string; // 供应商名称
   contact_person: string; // 联系人
   phone: string; // 电话
   email: string; // 邮箱

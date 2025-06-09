@@ -6,7 +6,7 @@ import { ErpSupplierRequest, ErpSupplierResponse, updateErpSupplier } from '@/ap
 import CustomizedDialog from '@/components/CustomizedDialog';
 
 interface FormErrors { 
-  supplier_name?: string; // 供应商名称
+  name?: string; // 供应商名称
   status?: string; // 状态
   sort_order?: string; // 排序
   department_code?: string; // 部门编码
@@ -24,7 +24,7 @@ const ErpSupplierEdit = forwardRef(({ onSubmit }: ErpSupplierEditProps, ref) => 
   const [maxWidth] = useState<DialogProps['maxWidth']>('sm');
   const [erpSupplier, setErpSupplier] = useState<ErpSupplierRequest>({
     id: 0,
-    supplier_name: '',
+    name: '',
     contact_person: '',
     phone: '',
     email: '',
@@ -55,8 +55,8 @@ const ErpSupplierEdit = forwardRef(({ onSubmit }: ErpSupplierEditProps, ref) => 
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
     
-    if (!formValues.supplier_name.trim()) {
-      newErrors.supplier_name = t('page.post.error.supplier_name');
+    if (!formValues.name.trim()) {
+      newErrors.name = t('page.post.error.name');
     }
     
     if (!formValues.status && formValues.status != 0) {
@@ -166,12 +166,12 @@ const ErpSupplierEdit = forwardRef(({ onSubmit }: ErpSupplierEditProps, ref) => 
           <TextField
             required
             size="small"
-            label={t("page.post.title.supplier_name")}
-            name='supplier_name'
-            value={ erpSupplier.supplier_name}
+            label={t("page.post.title.name")}
+            name='name'
+            value={ erpSupplier.name}
             onChange={handleInputChange}
-            error={!!errors.supplier_name}
-            helperText={errors.supplier_name}
+            error={!!errors.name}
+            helperText={errors.name}
           />
           <TextField
             size="small"

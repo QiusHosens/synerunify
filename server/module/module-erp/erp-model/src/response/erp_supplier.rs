@@ -9,7 +9,7 @@ pub struct ErpSupplierResponse {
     
     pub id: i64, // 供应商ID
     
-    pub supplier_name: String, // 供应商名称
+    pub name: String, // 供应商名称
     
     pub contact_person: Option<String>, // 联系人
     

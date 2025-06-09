@@ -5,7 +5,7 @@ use erp_model::response::erp_supplier::ErpSupplierResponse;
 
 pub fn create_request_to_model(request: &CreateErpSupplierRequest) -> ErpSupplierActiveModel {
     ErpSupplierActiveModel {
-        supplier_name: Set(request.supplier_name.clone()),
+        name: Set(request.name.clone()),
         contact_person: request.contact_person.as_ref().map_or(NotSet, |contact_person| Set(Some(contact_person.clone()))),
         phone: request.phone.as_ref().map_or(NotSet, |phone| Set(Some(phone.clone()))),
         email: request.email.as_ref().map_or(NotSet, |email| Set(Some(email.clone()))),
@@ -26,8 +26,8 @@ pub fn create_request_to_model(request: &CreateErpSupplierRequest) -> ErpSupplie
 
 pub fn update_request_to_model(request: &UpdateErpSupplierRequest, existing: ErpSupplier) -> ErpSupplierActiveModel {
     let mut active_model: ErpSupplierActiveModel = existing.into();
-    if let Some(supplier_name) = &request.supplier_name { 
-        active_model.supplier_name = Set(supplier_name.clone());
+    if let Some(name) = &request.name {
+        active_model.name = Set(name.clone());
     }
     if let Some(contact_person) = &request.contact_person { 
         active_model.contact_person = Set(Some(contact_person.clone()));
@@ -77,7 +77,7 @@ pub fn update_request_to_model(request: &UpdateErpSupplierRequest, existing: Erp
 pub fn model_to_response(model: ErpSupplier) -> ErpSupplierResponse {
     ErpSupplierResponse { 
         id: model.id,
-        supplier_name: model.supplier_name,
+        name: model.name,
         contact_person: model.contact_person,
         phone: model.phone,
         email: model.email,

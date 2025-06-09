@@ -6,7 +6,7 @@ import { createErpSupplier, ErpSupplierRequest } from '@/api';
 import CustomizedDialog from '@/components/CustomizedDialog';
 
 interface FormValues {
-  supplier_name: string; // 供应商名称
+  name: string; // 供应商名称
   contact_person: string; // 联系人
   phone: string; // 电话
   email: string; // 邮箱
@@ -24,7 +24,7 @@ interface FormValues {
   }
 
 interface FormErrors { 
-  supplier_name?: string; // 供应商名称
+  name?: string; // 供应商名称
   status?: string; // 状态
   sort_order?: string; // 排序
   department_code?: string; // 部门编码
@@ -41,7 +41,7 @@ const ErpSupplierAdd = forwardRef(({ onSubmit }: ErpSupplierAddProps, ref) => {
   const [open, setOpen] = useState(false);
   const [maxWidth] = useState<DialogProps['maxWidth']>('sm');
   const [formValues, setFormValues] = useState<FormValues>({
-    supplier_name: '',
+    name: '',
     contact_person: '',
     phone: '',
     email: '',
@@ -71,8 +71,8 @@ const ErpSupplierAdd = forwardRef(({ onSubmit }: ErpSupplierAddProps, ref) => {
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
     
-    if (!formValues.supplier_name.trim()) {
-      newErrors.supplier_name = t('page.post.error.supplier_name');
+    if (!formValues.name.trim()) {
+      newErrors.name = t('page.post.error.name');
     }
     
     if (!formValues.status && formValues.status != 0) {
@@ -107,7 +107,7 @@ const ErpSupplierAdd = forwardRef(({ onSubmit }: ErpSupplierAddProps, ref) => {
 
   const reset = () => {
     setFormValues({
-      supplier_name: '',
+      name: '',
       contact_person: '',
       phone: '',
       email: '',
@@ -206,12 +206,12 @@ const ErpSupplierAdd = forwardRef(({ onSubmit }: ErpSupplierAddProps, ref) => {
           <TextField
             required
             size="small"
-            label={t("page.post.title.supplier_name")}
-            name='supplier_name'
-            value={formValues.supplier_name}
+            label={t("page.post.title.name")}
+            name='name'
+            value={formValues.name}
             onChange={handleInputChange}
-            error={!!errors.supplier_name}
-            helperText={errors.supplier_name}
+            error={!!errors.name}
+            helperText={errors.name}
           />
           <TextField
             size="small"
