@@ -17,7 +17,7 @@ export interface ErpWarehouseRequest {
   name: string; // 仓库名称
   location: string; // 仓库位置
   status: number; // 状态
-  sort_order: number; // 排序
+  sort: number; // 排序
   storage_fee: number; // 仓储费
   handling_fee: number; // 搬运费
   manager: string; // 负责人
@@ -31,7 +31,7 @@ export interface ErpWarehouseResponse {
   name: string; // 仓库名称
   location: string; // 仓库位置
   status: number; // 状态
-  sort_order: number; // 排序
+  sort: number; // 排序
   storage_fee: number; // 仓储费
   handling_fee: number; // 搬运费
   manager: string; // 负责人

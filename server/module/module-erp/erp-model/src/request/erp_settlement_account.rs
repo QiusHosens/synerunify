@@ -14,7 +14,7 @@ pub struct CreateErpSettlementAccountRequest {
     
     pub status: i8, // 状态
     
-    pub sort_order: i32, // 排序
+    pub sort: i32, // 排序
     
     pub remarks: Option<String>, // 备注
     
@@ -37,7 +37,7 @@ pub struct UpdateErpSettlementAccountRequest {
     
     pub status: Option<i8>, // 状态
     
-    pub sort_order: Option<i32>, // 排序
+    pub sort: Option<i32>, // 排序
     
     pub remarks: Option<String>, // 备注
     

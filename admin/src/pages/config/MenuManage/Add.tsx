@@ -173,6 +173,8 @@ const MenuAdd = forwardRef(({ onSubmit }: MenuAddProps, ref) => {
       keep_alive: true,
       always_show: true,
     });
+    setType('1');
+    setSelectedMenuId(0);
     setErrors({});
   }
 

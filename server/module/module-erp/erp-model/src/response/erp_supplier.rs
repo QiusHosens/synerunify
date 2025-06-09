@@ -33,7 +33,7 @@ pub struct ErpSupplierResponse {
     
     pub remarks: Option<String>, // 备注
     
-    pub sort_order: i32, // 排序
+    pub sort: i32, // 排序
     
     pub department_code: String, // 部门编码
     

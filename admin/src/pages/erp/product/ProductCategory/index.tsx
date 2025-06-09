@@ -56,7 +56,7 @@ export default function ErpProductCategory() {
       { field: 'name', headerName: t("page."), flex: 1, minWidth: 100 },
       { field: 'parent_id', headerName: t("page."), flex: 1, minWidth: 100 },
       { field: 'status', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'sort_order', headerName: t("page."), flex: 1, minWidth: 100 },
+      { field: 'sort', headerName: t("page."), flex: 1, minWidth: 100 },
       { field: 'remarks', headerName: t("page."), flex: 1, minWidth: 100 },
       { field: 'department_code', headerName: t("page."), flex: 1, minWidth: 100 },
       { field: 'department_id', headerName: t("page."), flex: 1, minWidth: 100 },

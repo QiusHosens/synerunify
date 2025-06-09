@@ -47,21 +47,16 @@ export default function ErpWarehouse() {
   );
 
   const statusDisabled = (status: number): boolean => {
-    return (status && !hasOperatePermission('system:mark_permission:enable')) || (!status && !hasOperatePermission('system:mark_permission:disable'));
+    return (status && !hasOperatePermission('erp:inventory:warehouse:enable')) || (!status && !hasOperatePermission('erp:inventory:warehouse:disable'));
   }
 
   const columns: GridColDef[] = useMemo(
     () => [
       { field: 'name', headerName: t("page.erp.inventory.warehouse.title.name"), flex: 1, minWidth: 100 },
       { field: 'location', headerName: t("page.erp.inventory.warehouse.title.location"), flex: 1, minWidth: 100 },
-      { field: 'status', headerName: t("page.erp.inventory.warehouse.title.status"), flex: 1, minWidth: 100 },
-      { field: 'sort_order', headerName: t("page.erp.inventory.warehouse.title.sort.order"), flex: 1, minWidth: 100 },
-      { field: 'storage_fee', headerName: t("page.erp.inventory.warehouse.title.storage.fee"), flex: 1, minWidth: 100 },
-      { field: 'handling_fee', headerName: t("page.erp.inventory.warehouse.title.handling.fee"), flex: 1, minWidth: 100 },
+      { field: 'sort', headerName: t("page.erp.inventory.warehouse.title.sort.order"), flex: 1, minWidth: 60 },
       { field: 'manager', headerName: t("page.erp.inventory.warehouse.title.manager"), flex: 1, minWidth: 100 },
       { field: 'remarks', headerName: t("page.erp.inventory.warehouse.title.remarks"), flex: 1, minWidth: 100 },
-      { field: 'department_code', headerName: t("page.erp.inventory.warehouse.title.department.code"), flex: 1, minWidth: 100 },
-      { field: 'department_id', headerName: t("page.erp.inventory.warehouse.title.department.id"), flex: 1, minWidth: 100 },
       {
         field: 'status',
         sortable: false,
@@ -74,7 +69,7 @@ export default function ErpWarehouse() {
           </Box>
         ),
       },
-      { field: 'create_time', headerName: t("page.erp.inventory.warehouse.title.create.time"), flex: 1, minWidth: 180 },
+      { field: 'create_time', headerName: t("global.title.create.time"), flex: 1, minWidth: 180 },
       {
         field: 'actions',
         sortable: false,
@@ -84,14 +79,14 @@ export default function ErpWarehouse() {
         minWidth: 100,
         renderCell: (params: GridRenderCellParams) => (
           <Box sx={ { height: '100%', display: 'flex', gap: 1, alignItems: 'center' } }>
-            {hasOperatePermission('system:mark_permission:edit') && <Button
+            {hasOperatePermission('erp:inventory:warehouse:edit') && <Button
               size="small"
               variant='customOperate'
               title={t('global.operate.edit') + t('global.page.erp.inventory.warehouse')}
               startIcon={<EditIcon />}
               onClick={() => handleClickOpenEdit(params.row)}
             />}
-            {hasOperatePermission('system:mark_permission:delete') && <Button
+            {hasOperatePermission('erp:inventory:warehouse:delete') && <Button
               sx={ {color: 'error.main'} }
               size="small"
               variant='customOperate'
@@ -150,7 +145,7 @@ export default function ErpWarehouse() {
     <Box sx={ {height: '100%', display: 'flex', flexDirection: 'column'} }>
       <Box sx={ {mb: 2, display: 'flex', justifyContent: 'space-between'} }>
         <Box></Box>
-        {hasOperatePermission('system:mark_permission:add') && <Button variant="customContained" onClick={handleClickOpenAdd}>
+        {hasOperatePermission('erp:inventory:warehouse:add') && <Button variant="customContained" onClick={handleClickOpenAdd}>
           {t('global.operate.add')}
         </Button>}
       </Box>

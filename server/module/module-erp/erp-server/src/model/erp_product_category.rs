@@ -18,7 +18,7 @@ pub struct Model {
     
     pub status: i8, // 状态
     
-    pub sort_order: i32, // 排序
+    pub sort: i32, // 排序
     
     pub remarks: Option<String>, // 备注
     

@@ -11,7 +11,7 @@
  Target Server Version : 80200 (8.2.0)
  File Encoding         : 65001
 
- Date: 08/06/2025 23:39:06
+ Date: 09/06/2025 20:50:15
 */
 
 SET NAMES utf8mb4;
@@ -29,7 +29,7 @@ CREATE TABLE `erp_customer`  (
   `email` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '邮箱',
   `address` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '地址',
   `status` tinyint NOT NULL DEFAULT 0 COMMENT '状态',
-  `sort_order` int NOT NULL DEFAULT 0 COMMENT '排序',
+  `sort` int NOT NULL DEFAULT 0 COMMENT '排序',
   `tax_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '纳税人识别号',
   `tax_rate` int NULL DEFAULT NULL COMMENT '税率,精确到万分位',
   `bank_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '开户行',
@@ -340,7 +340,7 @@ CREATE TABLE `erp_product_category`  (
   `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '分类名称',
   `parent_id` bigint NULL DEFAULT NULL COMMENT '父分类ID',
   `status` tinyint NOT NULL DEFAULT 0 COMMENT '状态',
-  `sort_order` int NOT NULL DEFAULT 0 COMMENT '排序',
+  `sort` int NOT NULL DEFAULT 0 COMMENT '排序',
   `remarks` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
   `department_code` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '部门编码',
   `department_id` bigint NOT NULL COMMENT '部门ID',
@@ -365,7 +365,7 @@ CREATE TABLE `erp_product_unit`  (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '单位ID',
   `unit_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '单位名称',
   `status` tinyint NOT NULL DEFAULT 0 COMMENT '状态',
-  `sort_order` int NOT NULL DEFAULT 0 COMMENT '排序',
+  `sort` int NOT NULL DEFAULT 0 COMMENT '排序',
   `remarks` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
   `department_code` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '部门编码',
   `department_id` bigint NOT NULL COMMENT '部门ID',
@@ -697,7 +697,7 @@ CREATE TABLE `erp_settlement_account`  (
   `bank_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '开户行',
   `bank_account` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '银行账号',
   `status` tinyint NOT NULL DEFAULT 0 COMMENT '状态',
-  `sort_order` int NOT NULL DEFAULT 0 COMMENT '排序',
+  `sort` int NOT NULL DEFAULT 0 COMMENT '排序',
   `remarks` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
   `department_code` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '部门编码',
   `department_id` bigint NOT NULL COMMENT '部门ID',
@@ -732,7 +732,7 @@ CREATE TABLE `erp_supplier`  (
   `bank_account` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '银行账号',
   `bank_address` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '开户地址',
   `remarks` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
-  `sort_order` int NOT NULL DEFAULT 0 COMMENT '排序',
+  `sort` int NOT NULL DEFAULT 0 COMMENT '排序',
   `department_code` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '部门编码',
   `department_id` bigint NOT NULL COMMENT '部门ID',
   `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
@@ -757,7 +757,7 @@ CREATE TABLE `erp_warehouse`  (
   `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '仓库名称',
   `location` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '仓库位置',
   `status` tinyint NOT NULL DEFAULT 0 COMMENT '状态',
-  `sort_order` int NOT NULL DEFAULT 0 COMMENT '排序',
+  `sort` int NOT NULL DEFAULT 0 COMMENT '排序',
   `storage_fee` bigint NULL DEFAULT NULL COMMENT '仓储费',
   `handling_fee` bigint NULL DEFAULT NULL COMMENT '搬运费',
   `manager` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '负责人',
@@ -950,7 +950,7 @@ CREATE TABLE `system_menu`  (
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 112 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '菜单权限表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 118 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '菜单权限表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of system_menu
@@ -1052,6 +1052,12 @@ INSERT INTO `system_menu` VALUES (108, '产品单位', 'erp:product:unit', 2, 30
 INSERT INTO `system_menu` VALUES (109, '付款', 'erp:financial:payment', 2, 3051, 89, '/erp/financial/payment', 'financialPayment', 'pages/erp/financial/FinancialPayment', 'FinancialPayment', 'global.menu.erp.financial.payment', 0, b'1', b'1', b'1', 1, '2025-06-08 15:28:21', 1, '2025-06-08 15:28:21', b'0');
 INSERT INTO `system_menu` VALUES (110, '收款', 'erp:financial:receipt', 2, 3052, 89, '/erp/financial/receipt', 'financialReceipt', 'pages/erp/financial/FinancialReceipt', 'FinancialReceipt', 'global.menu.erp.financial.receipt', 0, b'1', b'1', b'1', 1, '2025-06-08 15:29:02', 1, '2025-06-08 15:29:02', b'0');
 INSERT INTO `system_menu` VALUES (111, '结算账户', 'erp:financial:account', 2, 3053, 89, '/erp/financial/account', 'financialAccount', 'pages/erp/financial/FinancialAccount', 'FinancialAccount', 'global.menu.erp.financial.account', 0, b'1', b'1', b'1', 1, '2025-06-08 15:30:06', 1, '2025-06-08 15:30:06', b'0');
+INSERT INTO `system_menu` VALUES (112, '查看', 'erp:inventory:warehouse:get', 3, 0, 98, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-09 12:33:30', 1, '2025-06-09 12:34:27', b'0');
+INSERT INTO `system_menu` VALUES (113, '新增', 'erp:inventory:warehouse:add', 3, 1, 98, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-09 12:34:18', 1, '2025-06-09 12:34:18', b'0');
+INSERT INTO `system_menu` VALUES (114, '修改', 'erp:inventory:warehouse:edit', 3, 2, 98, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-09 12:36:21', 1, '2025-06-09 12:36:21', b'0');
+INSERT INTO `system_menu` VALUES (115, '删除', 'erp:inventory:warehouse:delete', 3, 3, 98, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-09 12:36:38', 1, '2025-06-09 12:36:38', b'0');
+INSERT INTO `system_menu` VALUES (116, '启用', 'erp:inventory:warehouse:enable', 3, 4, 98, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-09 12:37:29', 1, '2025-06-09 12:37:29', b'0');
+INSERT INTO `system_menu` VALUES (117, '禁用', 'erp:inventory:warehouse:disable', 3, 5, 98, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-09 12:37:45', 1, '2025-06-09 12:37:45', b'0');
 
 -- ----------------------------
 -- Table structure for system_notice
@@ -1148,7 +1154,7 @@ CREATE TABLE `system_role_menu`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 211 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '角色和菜单关联表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 217 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '角色和菜单关联表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of system_role_menu
@@ -1283,6 +1289,12 @@ INSERT INTO `system_role_menu` VALUES (207, 1, 93, 1, '2025-06-08 15:30:29', 1, 
 INSERT INTO `system_role_menu` VALUES (208, 1, 104, 1, '2025-06-08 15:30:29', 1, '2025-06-08 15:30:29', b'0', 1);
 INSERT INTO `system_role_menu` VALUES (209, 1, 90, 1, '2025-06-08 15:30:29', 1, '2025-06-08 15:30:29', b'0', 1);
 INSERT INTO `system_role_menu` VALUES (210, 1, 96, 1, '2025-06-08 15:30:29', 1, '2025-06-08 15:30:29', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (211, 1, 116, 1, '2025-06-09 12:43:42', 1, '2025-06-09 12:43:42', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (212, 1, 115, 1, '2025-06-09 12:43:42', 1, '2025-06-09 12:43:42', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (213, 1, 114, 1, '2025-06-09 12:43:42', 1, '2025-06-09 12:43:42', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (214, 1, 113, 1, '2025-06-09 12:43:42', 1, '2025-06-09 12:43:42', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (215, 1, 112, 1, '2025-06-09 12:43:42', 1, '2025-06-09 12:43:42', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (216, 1, 117, 1, '2025-06-09 12:43:42', 1, '2025-06-09 12:43:42', b'0', 1);
 
 -- ----------------------------
 -- Table structure for system_role_menu_data_scope

@@ -20,7 +20,7 @@ export interface ErpCustomerRequest {
   email: string; // 邮箱
   address: string; // 地址
   status: number; // 状态
-  sort_order: number; // 排序
+  sort: number; // 排序
   tax_id: string; // 纳税人识别号
   tax_rate: number; // 税率,精确到万分位
   bank_name: string; // 开户行
@@ -39,7 +39,7 @@ export interface ErpCustomerResponse {
   email: string; // 邮箱
   address: string; // 地址
   status: number; // 状态
-  sort_order: number; // 排序
+  sort: number; // 排序
   tax_id: string; // 纳税人识别号
   tax_rate: number; // 税率,精确到万分位
   bank_name: string; // 开户行

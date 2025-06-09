@@ -11,7 +11,7 @@ pub fn create_request_to_model(request: &CreateErpCustomerRequest) -> ErpCustome
         email: request.email.as_ref().map_or(NotSet, |email| Set(Some(email.clone()))),
         address: request.address.as_ref().map_or(NotSet, |address| Set(Some(address.clone()))),
         status: Set(request.status.clone()),
-        sort_order: Set(request.sort_order.clone()),
+        sort: Set(request.sort.clone()),
         tax_id: request.tax_id.as_ref().map_or(NotSet, |tax_id| Set(Some(tax_id.clone()))),
         tax_rate: request.tax_rate.as_ref().map_or(NotSet, |tax_rate| Set(Some(tax_rate.clone()))),
         bank_name: request.bank_name.as_ref().map_or(NotSet, |bank_name| Set(Some(bank_name.clone()))),
@@ -44,8 +44,8 @@ pub fn update_request_to_model(request: &UpdateErpCustomerRequest, existing: Erp
     if let Some(status) = &request.status { 
         active_model.status = Set(status.clone());
     }
-    if let Some(sort_order) = &request.sort_order { 
-        active_model.sort_order = Set(sort_order.clone());
+    if let Some(sort) = &request.sort {
+        active_model.sort = Set(sort.clone());
     }
     if let Some(tax_id) = &request.tax_id { 
         active_model.tax_id = Set(Some(tax_id.clone()));
@@ -83,7 +83,7 @@ pub fn model_to_response(model: ErpCustomer) -> ErpCustomerResponse {
         email: model.email,
         address: model.address,
         status: model.status,
-        sort_order: model.sort_order,
+        sort: model.sort,
         tax_id: model.tax_id,
         tax_rate: model.tax_rate,
         bank_name: model.bank_name,

@@ -8,7 +8,7 @@ pub fn create_request_to_model(request: &CreateErpWarehouseRequest) -> ErpWareho
         name: Set(request.name.clone()),
         location: request.location.as_ref().map_or(NotSet, |location| Set(Some(location.clone()))),
         status: Set(request.status.clone()),
-        sort_order: Set(request.sort_order.clone()),
+        sort: Set(request.sort.clone()),
         storage_fee: request.storage_fee.as_ref().map_or(NotSet, |storage_fee| Set(Some(storage_fee.clone()))),
         handling_fee: request.handling_fee.as_ref().map_or(NotSet, |handling_fee| Set(Some(handling_fee.clone()))),
         manager: request.manager.as_ref().map_or(NotSet, |manager| Set(Some(manager.clone()))),
@@ -30,8 +30,8 @@ pub fn update_request_to_model(request: &UpdateErpWarehouseRequest, existing: Er
     if let Some(status) = &request.status { 
         active_model.status = Set(status.clone());
     }
-    if let Some(sort_order) = &request.sort_order { 
-        active_model.sort_order = Set(sort_order.clone());
+    if let Some(sort) = &request.sort {
+        active_model.sort = Set(sort.clone());
     }
     if let Some(storage_fee) = &request.storage_fee { 
         active_model.storage_fee = Set(Some(storage_fee.clone()));
@@ -60,7 +60,7 @@ pub fn model_to_response(model: ErpWarehouse) -> ErpWarehouseResponse {
         name: model.name,
         location: model.location,
         status: model.status,
-        sort_order: model.sort_order,
+        sort: model.sort,
         storage_fee: model.storage_fee,
         handling_fee: model.handling_fee,
         manager: model.manager,

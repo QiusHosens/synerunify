@@ -9,7 +9,7 @@ pub fn create_request_to_model(request: &CreateErpSettlementAccountRequest) -> E
         bank_name: request.bank_name.as_ref().map_or(NotSet, |bank_name| Set(Some(bank_name.clone()))),
         bank_account: request.bank_account.as_ref().map_or(NotSet, |bank_account| Set(Some(bank_account.clone()))),
         status: Set(request.status.clone()),
-        sort_order: Set(request.sort_order.clone()),
+        sort: Set(request.sort.clone()),
         remarks: request.remarks.as_ref().map_or(NotSet, |remarks| Set(Some(remarks.clone()))),
         department_code: Set(request.department_code.clone()),
         department_id: Set(request.department_id.clone()),
@@ -31,8 +31,8 @@ pub fn update_request_to_model(request: &UpdateErpSettlementAccountRequest, exis
     if let Some(status) = &request.status { 
         active_model.status = Set(status.clone());
     }
-    if let Some(sort_order) = &request.sort_order { 
-        active_model.sort_order = Set(sort_order.clone());
+    if let Some(sort) = &request.sort {
+        active_model.sort = Set(sort.clone());
     }
     if let Some(remarks) = &request.remarks { 
         active_model.remarks = Set(Some(remarks.clone()));
@@ -53,7 +53,7 @@ pub fn model_to_response(model: ErpSettlementAccount) -> ErpSettlementAccountRes
         bank_name: model.bank_name,
         bank_account: model.bank_account,
         status: model.status,
-        sort_order: model.sort_order,
+        sort: model.sort,
         remarks: model.remarks,
         department_code: model.department_code,
         department_id: model.department_id,

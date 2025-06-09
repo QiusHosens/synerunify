@@ -17,7 +17,7 @@ pub fn create_request_to_model(request: &CreateErpSupplierRequest) -> ErpSupplie
         bank_account: request.bank_account.as_ref().map_or(NotSet, |bank_account| Set(Some(bank_account.clone()))),
         bank_address: request.bank_address.as_ref().map_or(NotSet, |bank_address| Set(Some(bank_address.clone()))),
         remarks: request.remarks.as_ref().map_or(NotSet, |remarks| Set(Some(remarks.clone()))),
-        sort_order: Set(request.sort_order.clone()),
+        sort: Set(request.sort.clone()),
         department_code: Set(request.department_code.clone()),
         department_id: Set(request.department_id.clone()),
         ..Default::default()
@@ -62,8 +62,8 @@ pub fn update_request_to_model(request: &UpdateErpSupplierRequest, existing: Erp
     if let Some(remarks) = &request.remarks { 
         active_model.remarks = Set(Some(remarks.clone()));
     }
-    if let Some(sort_order) = &request.sort_order { 
-        active_model.sort_order = Set(sort_order.clone());
+    if let Some(sort) = &request.sort {
+        active_model.sort = Set(sort.clone());
     }
     if let Some(department_code) = &request.department_code { 
         active_model.department_code = Set(department_code.clone());
@@ -89,7 +89,7 @@ pub fn model_to_response(model: ErpSupplier) -> ErpSupplierResponse {
         bank_account: model.bank_account,
         bank_address: model.bank_address,
         remarks: model.remarks,
-        sort_order: model.sort_order,
+        sort: model.sort,
         department_code: model.department_code,
         department_id: model.department_id,
         creator: model.creator,

@@ -12,7 +12,7 @@ interface FormValues {
   email: string; // 邮箱
   address: string; // 地址
   status: number; // 状态
-  sort_order: number; // 排序
+  sort: number; // 排序
   tax_id: string; // 纳税人识别号
   tax_rate: number; // 税率,精确到万分位
   bank_name: string; // 开户行
@@ -26,7 +26,7 @@ interface FormValues {
 interface FormErrors { 
   name?: string; // 客户名称
   status?: string; // 状态
-  sort_order?: string; // 排序
+  sort?: string; // 排序
   department_code?: string; // 部门编码
   department_id?: string; // 部门ID
 }
@@ -47,7 +47,7 @@ const ErpCustomerAdd = forwardRef(({ onSubmit }: ErpCustomerAddProps, ref) => {
     email: '',
     address: '',
     status: 0,
-    sort_order: 0,
+    sort: 0,
     tax_id: '',
     tax_rate: 0,
     bank_name: '',
@@ -79,8 +79,8 @@ const ErpCustomerAdd = forwardRef(({ onSubmit }: ErpCustomerAddProps, ref) => {
       newErrors.status = t('page.post.error.status');
     }
     
-    if (!formValues.sort_order && formValues.sort_order != 0) {
-      newErrors.sort_order = t('page.post.error.sort_order');
+    if (!formValues.sort && formValues.sort != 0) {
+      newErrors.sort = t('page.post.error.sort');
     }
     
     if (!formValues.department_code.trim()) {
@@ -113,7 +113,7 @@ const ErpCustomerAdd = forwardRef(({ onSubmit }: ErpCustomerAddProps, ref) => {
       email: '',
       address: '',
       status: 0,
-      sort_order: 0,
+      sort: 0,
       tax_id: '',
       tax_rate: 0,
       bank_name: '',
@@ -255,12 +255,12 @@ const ErpCustomerAdd = forwardRef(({ onSubmit }: ErpCustomerAddProps, ref) => {
             required
             size="small"
             type="number"
-            label={t("page.post.title.sort_order")}
-            name='sort_order'
-            value={formValues.sort_order}
+            label={t("page.post.title.sort")}
+            name='sort'
+            value={formValues.sort}
             onChange={handleInputChange}
-            error={!!errors.sort_order}
-            helperText={errors.sort_order}
+            error={!!errors.sort}
+            helperText={errors.sort}
           />
           <TextField
             size="small"

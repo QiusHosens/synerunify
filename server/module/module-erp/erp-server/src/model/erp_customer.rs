@@ -22,7 +22,7 @@ pub struct Model {
     
     pub status: i8, // 状态
     
-    pub sort_order: i32, // 排序
+    pub sort: i32, // 排序
     
     pub tax_id: Option<String>, // 纳税人识别号
     

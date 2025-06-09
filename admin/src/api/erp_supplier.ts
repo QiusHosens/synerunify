@@ -26,7 +26,7 @@ export interface ErpSupplierRequest {
   bank_account: string; // 银行账号
   bank_address: string; // 开户地址
   remarks: string; // 备注
-  sort_order: number; // 排序
+  sort: number; // 排序
   department_code: string; // 部门编码
   department_id: number; // 部门ID
 }
@@ -45,7 +45,7 @@ export interface ErpSupplierResponse {
   bank_account: string; // 银行账号
   bank_address: string; // 开户地址
   remarks: string; // 备注
-  sort_order: number; // 排序
+  sort: number; // 排序
   department_code: string; // 部门编码
   department_id: number; // 部门ID
   creator: number; // 创建者ID

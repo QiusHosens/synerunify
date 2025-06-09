@@ -8,7 +8,7 @@ import CustomizedDialog from '@/components/CustomizedDialog';
 interface FormErrors { 
   name?: string; // 仓库名称
   status?: string; // 状态
-  sort_order?: string; // 排序
+  sort?: string; // 排序
   department_code?: string; // 部门编码
   department_id?: string; // 部门ID
 }
@@ -27,7 +27,7 @@ const ErpWarehouseEdit = forwardRef(({ onSubmit }: ErpWarehouseEditProps, ref) =
     name: '',
     location: '',
     status: 0,
-    sort_order: 0,
+    sort: 0,
     storage_fee: 0,
     handling_fee: 0,
     manager: '',
@@ -58,8 +58,8 @@ const ErpWarehouseEdit = forwardRef(({ onSubmit }: ErpWarehouseEditProps, ref) =
       newErrors.status = t('page.erp.inventory.warehouse.error.status');
     }
     
-    if (!erpWarehouse.sort_order && erpWarehouse.sort_order != 0) {
-      newErrors.sort_order = t('page.erp.inventory.warehouse.error.sort_order');
+    if (!erpWarehouse.sort && erpWarehouse.sort != 0) {
+      newErrors.sort = t('page.erp.inventory.warehouse.error.sort');
     }
     
     if (!erpWarehouse.department_code.trim()) {
@@ -189,12 +189,12 @@ const ErpWarehouseEdit = forwardRef(({ onSubmit }: ErpWarehouseEditProps, ref) =
             required
             size="small"
             type="number"
-            label={t("page.erp.inventory.warehouse.title.sort_order")}
-            name='sort_order'
-            value={ erpWarehouse.sort_order}
+            label={t("page.erp.inventory.warehouse.title.sort")}
+            name='sort'
+            value={ erpWarehouse.sort}
             onChange={handleInputChange}
-            error={!!errors.sort_order}
-            helperText={errors.sort_order}
+            error={!!errors.sort}
+            helperText={errors.sort}
           />
           <TextField
             size="small"

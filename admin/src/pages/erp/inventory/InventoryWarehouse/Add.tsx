@@ -9,19 +9,19 @@ interface FormValues {
   name: string; // 仓库名称
   location: string; // 仓库位置
   status: number; // 状态
-  sort_order: number; // 排序
+  sort: number; // 排序
   storage_fee: number; // 仓储费
   handling_fee: number; // 搬运费
   manager: string; // 负责人
   remarks: string; // 备注
   department_code: string; // 部门编码
   department_id: number; // 部门ID
-  }
+}
 
-interface FormErrors { 
+interface FormErrors {
   name?: string; // 仓库名称
   status?: string; // 状态
-  sort_order?: string; // 排序
+  sort?: string; // 排序
   department_code?: string; // 部门编码
   department_id?: string; // 部门ID
 }
@@ -39,14 +39,14 @@ const ErpWarehouseAdd = forwardRef(({ onSubmit }: ErpWarehouseAddProps, ref) => 
     name: '',
     location: '',
     status: 0,
-    sort_order: 0,
+    sort: 0,
     storage_fee: 0,
     handling_fee: 0,
     manager: '',
     remarks: '',
     department_code: '',
     department_id: 0,
-    });
+  });
   const [errors, setErrors] = useState<FormErrors>({});
 
   useImperativeHandle(ref, () => ({
@@ -60,27 +60,27 @@ const ErpWarehouseAdd = forwardRef(({ onSubmit }: ErpWarehouseAddProps, ref) => 
 
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
-    
+
     if (!formValues.name.trim()) {
       newErrors.name = t('page.erp.inventory.warehouse.error.name');
     }
-    
+
     if (!formValues.status && formValues.status != 0) {
       newErrors.status = t('page.erp.inventory.warehouse.error.status');
     }
-    
-    if (!formValues.sort_order && formValues.sort_order != 0) {
-      newErrors.sort_order = t('page.erp.inventory.warehouse.error.sort_order');
+
+    if (!formValues.sort && formValues.sort != 0) {
+      newErrors.sort = t('page.erp.inventory.warehouse.error.sort.order');
     }
-    
+
     if (!formValues.department_code.trim()) {
-      newErrors.department_code = t('page.erp.inventory.warehouse.error.department_code');
+      newErrors.department_code = t('page.erp.inventory.warehouse.error.department.code');
     }
-    
+
     if (!formValues.department_id && formValues.department_id != 0) {
-      newErrors.department_id = t('page.erp.inventory.warehouse.error.department_id');
+      newErrors.department_id = t('page.erp.inventory.warehouse.error.department.id');
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -100,14 +100,14 @@ const ErpWarehouseAdd = forwardRef(({ onSubmit }: ErpWarehouseAddProps, ref) => 
       name: '',
       location: '',
       status: 0,
-      sort_order: 0,
+      sort: 0,
       storage_fee: 0,
       handling_fee: 0,
       manager: '',
       remarks: '',
       department_code: '',
       department_id: 0,
-      });
+    });
     setErrors({});
   }
 
@@ -182,12 +182,14 @@ const ErpWarehouseAdd = forwardRef(({ onSubmit }: ErpWarehouseAddProps, ref) => 
       <Box
         noValidate
         component="form"
-        sx={ {display: 'flex',
+        sx={{
+          display: 'flex',
           flexDirection: 'column',
           m: 'auto',
-          width: 'fit-content',} }
+          width: 'fit-content',
+        }}
       >
-        <FormControl sx={ {minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' }} }>
+        <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' } }}>
           <TextField
             required
             size="small"
@@ -219,17 +221,17 @@ const ErpWarehouseAdd = forwardRef(({ onSubmit }: ErpWarehouseAddProps, ref) => 
             required
             size="small"
             type="number"
-            label={t("page.erp.inventory.warehouse.title.sort_order")}
-            name='sort_order'
-            value={formValues.sort_order}
+            label={t("page.erp.inventory.warehouse.title.sort")}
+            name='sort'
+            value={formValues.sort}
             onChange={handleInputChange}
-            error={!!errors.sort_order}
-            helperText={errors.sort_order}
+            error={!!errors.sort}
+            helperText={errors.sort}
           />
           <TextField
             size="small"
             type="number"
-            label={t("page.erp.inventory.warehouse.title.storage_fee")}
+            label={t("page.erp.inventory.warehouse.title.storage.fee")}
             name='storage_fee'
             value={formValues.storage_fee}
             onChange={handleInputChange}
@@ -237,7 +239,7 @@ const ErpWarehouseAdd = forwardRef(({ onSubmit }: ErpWarehouseAddProps, ref) => 
           <TextField
             size="small"
             type="number"
-            label={t("page.erp.inventory.warehouse.title.handling_fee")}
+            label={t("page.erp.inventory.warehouse.title.handling.fee")}
             name='handling_fee'
             value={formValues.handling_fee}
             onChange={handleInputChange}
@@ -256,31 +258,10 @@ const ErpWarehouseAdd = forwardRef(({ onSubmit }: ErpWarehouseAddProps, ref) => 
             value={formValues.remarks}
             onChange={handleInputChange}
           />
-          <TextField
-            required
-            size="small"
-            label={t("page.erp.inventory.warehouse.title.department_code")}
-            name='department_code'
-            value={formValues.department_code}
-            onChange={handleInputChange}
-            error={!!errors.department_code}
-            helperText={errors.department_code}
-          />
-          <TextField
-            required
-            size="small"
-            type="number"
-            label={t("page.erp.inventory.warehouse.title.department_id")}
-            name='department_id'
-            value={formValues.department_id}
-            onChange={handleInputChange}
-            error={!!errors.department_id}
-            helperText={errors.department_id}
-          />
-          </FormControl>
-        <Box sx={ {mt: 2, display: 'flex', alignItems: 'center'} }>
-          <Typography sx={ {mr: 4} }>{t("global.title.status")}</Typography>
-          <Switch sx={ {mr: 2} } name='status' checked={!formValues.status} onChange={handleStatusChange} />
+        </FormControl>
+        <Box sx={{ mt: 2, display: 'flex', alignItems: 'center' }}>
+          <Typography sx={{ mr: 4 }}>{t("global.title.status")}</Typography>
+          <Switch sx={{ mr: 2 }} name='status' checked={!formValues.status} onChange={handleStatusChange} />
           <Typography>{formValues.status == 0 ? t('global.switch.status.true') : t('global.switch.status.false')}</Typography>
         </Box>
       </Box>

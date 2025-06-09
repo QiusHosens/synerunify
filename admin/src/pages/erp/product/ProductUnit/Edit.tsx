@@ -8,7 +8,7 @@ import CustomizedDialog from '@/components/CustomizedDialog';
 interface FormErrors { 
   unit_name?: string; // 单位名称
   status?: string; // 状态
-  sort_order?: string; // 排序
+  sort?: string; // 排序
   department_code?: string; // 部门编码
   department_id?: string; // 部门ID
 }
@@ -26,7 +26,7 @@ const ErpProductUnitEdit = forwardRef(({ onSubmit }: ErpProductUnitEditProps, re
     id: 0,
     unit_name: '',
     status: 0,
-    sort_order: 0,
+    sort: 0,
     remarks: '',
     department_code: '',
     department_id: 0,
@@ -54,8 +54,8 @@ const ErpProductUnitEdit = forwardRef(({ onSubmit }: ErpProductUnitEditProps, re
       newErrors.status = t('page.post.error.status');
     }
     
-    if (!formValues.sort_order && formValues.sort_order != 0) {
-      newErrors.sort_order = t('page.post.error.sort_order');
+    if (!formValues.sort && formValues.sort != 0) {
+      newErrors.sort = t('page.post.error.sort');
     }
     
     if (!formValues.department_code.trim()) {
@@ -178,12 +178,12 @@ const ErpProductUnitEdit = forwardRef(({ onSubmit }: ErpProductUnitEditProps, re
             required
             size="small"
             type="number"
-            label={t("page.post.title.sort_order")}
-            name='sort_order'
-            value={ erpProductUnit.sort_order}
+            label={t("page.post.title.sort")}
+            name='sort'
+            value={ erpProductUnit.sort}
             onChange={handleInputChange}
-            error={!!errors.sort_order}
-            helperText={errors.sort_order}
+            error={!!errors.sort}
+            helperText={errors.sort}
           />
           <TextField
             size="small"

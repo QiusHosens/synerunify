@@ -18,7 +18,7 @@ pub struct CreateErpCustomerRequest {
     
     pub status: i8, // 状态
     
-    pub sort_order: i32, // 排序
+    pub sort: i32, // 排序
     
     pub tax_id: Option<String>, // 纳税人识别号
     
@@ -55,7 +55,7 @@ pub struct UpdateErpCustomerRequest {
     
     pub status: Option<i8>, // 状态
     
-    pub sort_order: Option<i32>, // 排序
+    pub sort: Option<i32>, // 排序
     
     pub tax_id: Option<String>, // 纳税人识别号
     

@@ -16,7 +16,7 @@ export interface ErpProductUnitRequest {
   id: number; // 单位ID
   unit_name: string; // 单位名称
   status: number; // 状态
-  sort_order: number; // 排序
+  sort: number; // 排序
   remarks: string; // 备注
   department_code: string; // 部门编码
   department_id: number; // 部门ID
@@ -26,7 +26,7 @@ export interface ErpProductUnitResponse {
   id: number; // 单位ID
   unit_name: string; // 单位名称
   status: number; // 状态
-  sort_order: number; // 排序
+  sort: number; // 排序
   remarks: string; // 备注
   department_code: string; // 部门编码
   department_id: number; // 部门ID

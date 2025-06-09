@@ -64,7 +64,7 @@ export default function ErpSupplier() {
       { field: 'bank_account', headerName: t("page."), flex: 1, minWidth: 100 },
       { field: 'bank_address', headerName: t("page."), flex: 1, minWidth: 100 },
       { field: 'remarks', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'sort_order', headerName: t("page."), flex: 1, minWidth: 100 },
+      { field: 'sort', headerName: t("page."), flex: 1, minWidth: 100 },
       { field: 'department_code', headerName: t("page."), flex: 1, minWidth: 100 },
       { field: 'department_id', headerName: t("page."), flex: 1, minWidth: 100 },
       

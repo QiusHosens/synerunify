@@ -18,7 +18,7 @@ export interface ErpProductCategoryRequest {
   name: string; // 分类名称
   parent_id: number; // 父分类ID
   status: number; // 状态
-  sort_order: number; // 排序
+  sort: number; // 排序
   remarks: string; // 备注
   department_code: string; // 部门编码
   department_id: number; // 部门ID
@@ -30,7 +30,7 @@ export interface ErpProductCategoryResponse {
   name: string; // 分类名称
   parent_id: number; // 父分类ID
   status: number; // 状态
-  sort_order: number; // 排序
+  sort: number; // 排序
   remarks: string; // 备注
   department_code: string; // 部门编码
   department_id: number; // 部门ID

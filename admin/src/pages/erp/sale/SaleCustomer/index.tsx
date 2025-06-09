@@ -58,7 +58,7 @@ export default function ErpCustomer() {
       { field: 'email', headerName: t("page."), flex: 1, minWidth: 100 },
       { field: 'address', headerName: t("page."), flex: 1, minWidth: 100 },
       { field: 'status', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'sort_order', headerName: t("page."), flex: 1, minWidth: 100 },
+      { field: 'sort', headerName: t("page."), flex: 1, minWidth: 100 },
       { field: 'tax_id', headerName: t("page."), flex: 1, minWidth: 100 },
       { field: 'tax_rate', headerName: t("page."), flex: 1, minWidth: 100 },
       { field: 'bank_name', headerName: t("page."), flex: 1, minWidth: 100 },

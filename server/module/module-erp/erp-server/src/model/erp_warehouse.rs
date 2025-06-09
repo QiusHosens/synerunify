@@ -16,7 +16,7 @@ pub struct Model {
     
     pub status: i8, // 状态
     
-    pub sort_order: i32, // 排序
+    pub sort: i32, // 排序
     
     pub storage_fee: Option<i64>, // 仓储费
     

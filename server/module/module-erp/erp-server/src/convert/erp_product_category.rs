@@ -9,7 +9,7 @@ pub fn create_request_to_model(request: &CreateErpProductCategoryRequest) -> Erp
         name: Set(request.name.clone()),
         parent_id: request.parent_id.as_ref().map_or(NotSet, |parent_id| Set(Some(parent_id.clone()))),
         status: Set(request.status.clone()),
-        sort_order: Set(request.sort_order.clone()),
+        sort: Set(request.sort.clone()),
         remarks: request.remarks.as_ref().map_or(NotSet, |remarks| Set(Some(remarks.clone()))),
         department_code: Set(request.department_code.clone()),
         department_id: Set(request.department_id.clone()),
@@ -31,8 +31,8 @@ pub fn update_request_to_model(request: &UpdateErpProductCategoryRequest, existi
     if let Some(status) = &request.status { 
         active_model.status = Set(status.clone());
     }
-    if let Some(sort_order) = &request.sort_order { 
-        active_model.sort_order = Set(sort_order.clone());
+    if let Some(sort) = &request.sort {
+        active_model.sort = Set(sort.clone());
     }
     if let Some(remarks) = &request.remarks { 
         active_model.remarks = Set(Some(remarks.clone()));
@@ -53,7 +53,7 @@ pub fn model_to_response(model: ErpProductCategory) -> ErpProductCategoryRespons
         name: model.name,
         parent_id: model.parent_id,
         status: model.status,
-        sort_order: model.sort_order,
+        sort: model.sort,
         remarks: model.remarks,
         department_code: model.department_code,
         department_id: model.department_id,

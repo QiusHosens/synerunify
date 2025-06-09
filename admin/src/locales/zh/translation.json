@@ -69,6 +69,8 @@
   "global.operate.more": "更多操作",
 
   "global.title.status": "状态",
+  "global.title.create.time": "创建时间",
+  "global.title.update.time": "更新时间",
   "global.switch.status.true": "开启",
   "global.switch.status.false": "关闭",
   
@@ -88,6 +90,7 @@
   "global.page.department": "部门",
   "global.page.post": "岗位",
   "global.page.user": "用户",
+  "global.page.erp.inventory.warehouse": "仓库",
 
   "page.login.title.username": "用户名",
   "page.login.title.password": "密码",
@@ -263,7 +266,7 @@
   "page.erp.inventory.warehouse.title.name": "仓库名称",
   "page.erp.inventory.warehouse.title.location": "仓库位置",
   "page.erp.inventory.warehouse.title.status": "状态",
-  "page.erp.inventory.warehouse.title.sort.order": "排序",
+  "page.erp.inventory.warehouse.title.sort": "排序",
   "page.erp.inventory.warehouse.title.storage.fee": "仓储费",
   "page.erp.inventory.warehouse.title.handling.fee": "搬运费",
   "page.erp.inventory.warehouse.title.manager": "负责人",
@@ -272,7 +275,7 @@
   "page.erp.inventory.warehouse.title.department.id": "部门ID",
   "page.erp.inventory.warehouse.error.warehouse.name": "请输入仓库名称",
   "page.erp.inventory.warehouse.error.status": "请输入状态",
-  "page.erp.inventory.warehouse.error.sort.order": "请输入排序",
+  "page.erp.inventory.warehouse.error.sort": "请输入排序",
   "page.erp.inventory.warehouse.error.department.code": "请输入部门编码",
   "page.erp.inventory.warehouse.error.department.id": "请输入部门ID"
 }

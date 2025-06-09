@@ -30,7 +30,7 @@ pub struct CreateErpSupplierRequest {
     
     pub remarks: Option<String>, // 备注
     
-    pub sort_order: i32, // 排序
+    pub sort: i32, // 排序
     
     pub department_code: String, // 部门编码
     
@@ -67,7 +67,7 @@ pub struct UpdateErpSupplierRequest {
     
     pub remarks: Option<String>, // 备注
     
-    pub sort_order: Option<i32>, // 排序
+    pub sort: Option<i32>, // 排序
     
     pub department_code: Option<String>, // 部门编码
     
