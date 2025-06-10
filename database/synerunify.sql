@@ -1,17 +1,17 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : 192.168.0.99_synerunify
+ Source Server         : 192.168.1.18_synerunify
  Source Server Type    : MySQL
- Source Server Version : 80100 (8.1.0)
- Source Host           : 192.168.0.99:30010
+ Source Server Version : 80200 (8.2.0)
+ Source Host           : 192.168.1.18:3306
  Source Schema         : synerunify
 
  Target Server Type    : MySQL
- Target Server Version : 80100 (8.1.0)
+ Target Server Version : 80200 (8.2.0)
  File Encoding         : 65001
 
- Date: 10/06/2025 18:00:55
+ Date: 10/06/2025 22:51:04
 */
 
 SET NAMES utf8mb4;
@@ -707,11 +707,12 @@ CREATE TABLE `erp_settlement_account`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '结算账户表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '结算账户表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of erp_settlement_account
 -- ----------------------------
+INSERT INTO `erp_settlement_account` VALUES (1, '测试账户', '中国银行', '1234567890', 0, 0, '测试账户', 1, '2025-06-10 14:25:49', 1, '2025-06-10 14:28:16', b'0', 1);
 
 -- ----------------------------
 -- Table structure for erp_supplier
@@ -739,11 +740,12 @@ CREATE TABLE `erp_supplier`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '供应商信息表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '供应商信息表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of erp_supplier
 -- ----------------------------
+INSERT INTO `erp_supplier` VALUES (1, '测试供应商', '测试', '18888888777', '123@q.com', '高新区', 0, 'x12334', 13, '中国银行', '12345678', '高新区', '测试', 0, 1, '2025-06-10 14:48:11', 1, '2025-06-10 14:50:04', b'0', 1);
 
 -- ----------------------------
 -- Table structure for erp_warehouse
@@ -946,7 +948,7 @@ CREATE TABLE `system_menu`  (
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 136 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '菜单权限表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 154 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '菜单权限表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of system_menu
@@ -1038,8 +1040,8 @@ INSERT INTO `system_menu` VALUES (97, '客户信息', 'erp:sale:customer', 2, 30
 INSERT INTO `system_menu` VALUES (98, '仓库管理', 'erp:inventory:warehouse', 2, 3031, 87, '/erp/inventory/warehouse', 'inventoryWarehouse', 'pages/erp/inventory/InventoryWarehouse', 'InventoryWarehouse', 'global.menu.erp.inventory.warehouse', 0, b'1', b'1', b'1', 1, '2025-06-08 15:14:13', 1, '2025-06-08 15:14:13', b'0');
 INSERT INTO `system_menu` VALUES (99, '产品库存', 'erp:inventory:product', 2, 3032, 87, '/erp/inventory/product', 'inventoryProduct', 'pages/erp/inventory/InventoryProduct', 'InventoryProduct', 'global.menu.erp.inventory.product', 0, b'1', b'1', b'1', 1, '2025-06-08 15:15:30', 1, '2025-06-08 15:15:30', b'0');
 INSERT INTO `system_menu` VALUES (100, '出入库记录', 'erp:inventory:record', 2, 3033, 87, '/erp/inventory/record', 'inventoryRecord', 'pages/erp/inventory/InventoryRecord', 'InventoryRecord', 'global.menu.erp.inventory.record', 0, b'1', b'1', b'1', 1, '2025-06-08 15:19:08', 1, '2025-06-08 15:19:29', b'0');
-INSERT INTO `system_menu` VALUES (101, '入库', 'erp:inventory:inbound', 2, 3034, 87, '/erp/inventory/inbound', 'inventoryInbound', 'pages/erp/inventory/InventoryInbound', 'InventoryInbound', 'global.menu.erp.inventory.inbound', 0, b'1', b'1', b'1', 1, '2025-06-08 15:18:27', 1, '2025-06-08 15:19:34', b'0');
-INSERT INTO `system_menu` VALUES (103, '出库', 'erp:inventory:outbound', 2, 3035, 87, '/erp/inventory/outbound', 'inventoryOutbound', 'pages/erp/inventory/InventoryOutbound', 'InventoryOutbound', 'global.menu.erp.inventory.outbound', 0, b'1', b'1', b'1', 1, '2025-06-08 15:20:20', 1, '2025-06-08 15:20:20', b'0');
+INSERT INTO `system_menu` VALUES (101, '其他入库', 'erp:inventory:inbound', 2, 3034, 87, '/erp/inventory/inbound', 'inventoryInbound', 'pages/erp/inventory/InventoryInbound', 'InventoryInbound', 'global.menu.erp.inventory.inbound', 0, b'1', b'1', b'1', 1, '2025-06-08 15:18:27', 1, '2025-06-10 13:47:21', b'0');
+INSERT INTO `system_menu` VALUES (103, '其他出库', 'erp:inventory:outbound', 2, 3035, 87, '/erp/inventory/outbound', 'inventoryOutbound', 'pages/erp/inventory/InventoryOutbound', 'InventoryOutbound', 'global.menu.erp.inventory.outbound', 0, b'1', b'1', b'1', 1, '2025-06-08 15:20:20', 1, '2025-06-10 13:54:10', b'0');
 INSERT INTO `system_menu` VALUES (104, '库存调拨', 'erp:inventory:transfer', 2, 3036, 87, '/erp/inventory/transfer', 'inventoryTransfer', 'pages/erp/inventory/InventoryTransfer', 'InventoryTransfer', 'global.menu.erp.inventory.transfer', 0, b'1', b'1', b'1', 1, '2025-06-08 15:21:45', 1, '2025-06-08 15:21:45', b'0');
 INSERT INTO `system_menu` VALUES (105, '库存盘点', 'erp:inventory:check', 2, 3037, 87, '/erp/inventory/check', 'inventoryCheck', 'pages/erp/inventory/InventoryCheck', 'InventoryCheck', 'global.menu.erp.inventory.check', 0, b'1', b'1', b'1', 1, '2025-06-08 15:22:32', 1, '2025-06-08 15:22:32', b'0');
 INSERT INTO `system_menu` VALUES (106, '产品列表', 'erp:product:list', 2, 3041, 88, '/erp/product/list', 'productList', 'pages/erp/product/ProductList', 'ProductList', 'global.menu.erp.product.list', 0, b'1', b'1', b'1', 1, '2025-06-08 15:25:10', 1, '2025-06-08 15:25:10', b'0');
@@ -1072,6 +1074,24 @@ INSERT INTO `system_menu` VALUES (132, '修改', 'erp:product:list:edit', 3, 2, 
 INSERT INTO `system_menu` VALUES (133, '删除', 'erp:product:list:delete', 3, 3, 106, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:13:54', 1, '2025-06-10 02:13:54', b'0');
 INSERT INTO `system_menu` VALUES (134, '启用', 'erp:product:list:enable', 3, 4, 106, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:15:01', 1, '2025-06-10 02:15:01', b'0');
 INSERT INTO `system_menu` VALUES (135, '禁用', 'erp:product:list:disable', 3, 5, 106, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:15:29', 1, '2025-06-10 02:15:29', b'0');
+INSERT INTO `system_menu` VALUES (136, '查看', 'erp:financial:account:get', 3, 0, 111, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:12:20', 1, '2025-06-10 02:12:20', b'0');
+INSERT INTO `system_menu` VALUES (137, '新增', 'erp:financial:account:add', 3, 1, 111, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:13:19', 1, '2025-06-10 02:13:19', b'0');
+INSERT INTO `system_menu` VALUES (138, '修改', 'erp:financial:account:edit', 3, 2, 111, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:13:36', 1, '2025-06-10 02:13:36', b'0');
+INSERT INTO `system_menu` VALUES (139, '删除', 'erp:financial:account:delete', 3, 3, 111, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:13:54', 1, '2025-06-10 02:13:54', b'0');
+INSERT INTO `system_menu` VALUES (140, '启用', 'erp:financial:account:enable', 3, 4, 111, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:15:01', 1, '2025-06-10 02:15:01', b'0');
+INSERT INTO `system_menu` VALUES (141, '禁用', 'erp:financial:account:disable', 3, 5, 111, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:15:29', 1, '2025-06-10 02:15:29', b'0');
+INSERT INTO `system_menu` VALUES (142, '查看', 'erp:purchase:supplier:get', 3, 0, 93, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 13:55:40', 1, '2025-06-10 13:55:40', b'0');
+INSERT INTO `system_menu` VALUES (143, '新增', 'erp:purchase:supplier:add', 3, 1, 93, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 14:01:27', 1, '2025-06-10 14:01:27', b'0');
+INSERT INTO `system_menu` VALUES (144, '修改', 'erp:purchase:supplier:edit', 3, 2, 93, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 14:06:50', 1, '2025-06-10 14:06:50', b'0');
+INSERT INTO `system_menu` VALUES (145, '删除', 'erp:purchase:supplier:delete', 3, 3, 93, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 14:08:09', 1, '2025-06-10 14:08:09', b'0');
+INSERT INTO `system_menu` VALUES (146, '启用', 'erp:purchase:supplier:enable', 3, 4, 93, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 14:14:35', 1, '2025-06-10 14:14:35', b'0');
+INSERT INTO `system_menu` VALUES (147, '禁用', 'erp:purchase:supplier:disable', 3, 5, 93, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 14:14:51', 1, '2025-06-10 14:14:51', b'0');
+INSERT INTO `system_menu` VALUES (148, '查看', 'erp:sale:customer:get', 3, 0, 97, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:12:20', 1, '2025-06-10 02:12:20', b'0');
+INSERT INTO `system_menu` VALUES (149, '新增', 'erp:sale:customer:add', 3, 1, 97, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:13:19', 1, '2025-06-10 02:13:19', b'0');
+INSERT INTO `system_menu` VALUES (150, '修改', 'erp:sale:customer:edit', 3, 2, 97, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:13:36', 1, '2025-06-10 02:13:36', b'0');
+INSERT INTO `system_menu` VALUES (151, '删除', 'erp:sale:customer:delete', 3, 3, 97, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:13:54', 1, '2025-06-10 02:13:54', b'0');
+INSERT INTO `system_menu` VALUES (152, '启用', 'erp:sale:customer:enable', 3, 4, 97, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:15:01', 1, '2025-06-10 02:15:01', b'0');
+INSERT INTO `system_menu` VALUES (153, '禁用', 'erp:sale:customer:disable', 3, 5, 97, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:15:29', 1, '2025-06-10 02:15:29', b'0');
 
 -- ----------------------------
 -- Table structure for system_notice
@@ -1168,7 +1188,7 @@ CREATE TABLE `system_role_menu`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 235 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '角色和菜单关联表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 253 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '角色和菜单关联表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of system_role_menu
@@ -1327,6 +1347,24 @@ INSERT INTO `system_role_menu` VALUES (231, 1, 122, 1, '2025-06-10 02:29:29', 1,
 INSERT INTO `system_role_menu` VALUES (232, 1, 133, 1, '2025-06-10 02:29:29', 1, '2025-06-10 02:29:29', b'0', 1);
 INSERT INTO `system_role_menu` VALUES (233, 1, 124, 1, '2025-06-10 02:29:29', 1, '2025-06-10 02:29:29', b'0', 1);
 INSERT INTO `system_role_menu` VALUES (234, 1, 131, 1, '2025-06-10 02:29:29', 1, '2025-06-10 02:29:29', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (235, 1, 137, 1, '2025-06-10 14:23:11', 1, '2025-06-10 14:23:11', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (236, 1, 146, 1, '2025-06-10 14:23:11', 1, '2025-06-10 14:23:11', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (237, 1, 148, 1, '2025-06-10 14:23:11', 1, '2025-06-10 14:23:11', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (238, 1, 145, 1, '2025-06-10 14:23:11', 1, '2025-06-10 14:23:11', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (239, 1, 151, 1, '2025-06-10 14:23:11', 1, '2025-06-10 14:23:11', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (240, 1, 136, 1, '2025-06-10 14:23:11', 1, '2025-06-10 14:23:11', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (241, 1, 141, 1, '2025-06-10 14:23:11', 1, '2025-06-10 14:23:11', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (242, 1, 142, 1, '2025-06-10 14:23:11', 1, '2025-06-10 14:23:11', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (243, 1, 152, 1, '2025-06-10 14:23:11', 1, '2025-06-10 14:23:11', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (244, 1, 138, 1, '2025-06-10 14:23:11', 1, '2025-06-10 14:23:11', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (245, 1, 140, 1, '2025-06-10 14:23:11', 1, '2025-06-10 14:23:11', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (246, 1, 143, 1, '2025-06-10 14:23:11', 1, '2025-06-10 14:23:11', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (247, 1, 153, 1, '2025-06-10 14:23:11', 1, '2025-06-10 14:23:11', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (248, 1, 144, 1, '2025-06-10 14:23:11', 1, '2025-06-10 14:23:11', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (249, 1, 149, 1, '2025-06-10 14:23:11', 1, '2025-06-10 14:23:11', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (250, 1, 147, 1, '2025-06-10 14:23:11', 1, '2025-06-10 14:23:11', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (251, 1, 150, 1, '2025-06-10 14:23:11', 1, '2025-06-10 14:23:11', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (252, 1, 139, 1, '2025-06-10 14:23:11', 1, '2025-06-10 14:23:11', b'0', 1);
 
 -- ----------------------------
 -- Table structure for system_role_menu_data_scope
@@ -1433,7 +1471,7 @@ CREATE TABLE `system_user`  (
 -- ----------------------------
 -- Records of system_user
 -- ----------------------------
-INSERT INTO `system_user` VALUES (1, 'admin', '$2b$06$Ohq86rDIvNuy/4ZvsTF4dOw.7I7QJj620LC25PwgYDmrKqKmKsJz6', '超级管理员', '超级管理员', '123@qq.com', '18888888888', 0, '', 0, '127.0.0.1', '2025-06-10 02:31:12', '0000', 1, 1, '2025-03-08 10:14:52', 1, '2025-06-10 02:31:08', b'0', 1);
+INSERT INTO `system_user` VALUES (1, 'admin', '$2b$06$Ohq86rDIvNuy/4ZvsTF4dOw.7I7QJj620LC25PwgYDmrKqKmKsJz6', '超级管理员', '超级管理员', '123@qq.com', '18888888888', 0, '', 0, '127.0.0.1', '2025-06-10 11:44:24', '0000', 1, 1, '2025-03-08 10:14:52', 1, '2025-06-10 11:44:27', b'0', 1);
 INSERT INTO `system_user` VALUES (11, 'test', '$2b$06$S2yMOy4Mp5gImLOEl8X3K.T8XAWrfXVwGXK/vOBL.30PGNnnGIDzy', '测试管理员', NULL, '', '15555555555', 0, '', 0, '127.0.0.1', '2025-05-23 08:16:27', '0000-0000', 7, 1, '2025-05-23 08:16:00', 1, '2025-05-23 08:16:25', b'0', 2);
 
 -- ----------------------------
