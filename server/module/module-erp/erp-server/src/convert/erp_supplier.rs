@@ -18,8 +18,6 @@ pub fn create_request_to_model(request: &CreateErpSupplierRequest) -> ErpSupplie
         bank_address: request.bank_address.as_ref().map_or(NotSet, |bank_address| Set(Some(bank_address.clone()))),
         remarks: request.remarks.as_ref().map_or(NotSet, |remarks| Set(Some(remarks.clone()))),
         sort: Set(request.sort.clone()),
-        department_code: Set(request.department_code.clone()),
-        department_id: Set(request.department_id.clone()),
         ..Default::default()
     }
 }
@@ -65,12 +63,6 @@ pub fn update_request_to_model(request: &UpdateErpSupplierRequest, existing: Erp
     if let Some(sort) = &request.sort {
         active_model.sort = Set(sort.clone());
     }
-    if let Some(department_code) = &request.department_code { 
-        active_model.department_code = Set(department_code.clone());
-    }
-    if let Some(department_id) = &request.department_id { 
-        active_model.department_id = Set(department_id.clone());
-    }
     active_model
 }
 
@@ -90,8 +82,6 @@ pub fn model_to_response(model: ErpSupplier) -> ErpSupplierResponse {
         bank_address: model.bank_address,
         remarks: model.remarks,
         sort: model.sort,
-        department_code: model.department_code,
-        department_id: model.department_id,
         creator: model.creator,
         create_time: model.create_time,
         updater: model.updater,

@@ -47,40 +47,30 @@ export default function ErpSupplier() {
   );
 
   const statusDisabled = (status: number): boolean => {
-    return (status && !hasOperatePermission('system:post:enable')) || (!status && !hasOperatePermission('system:post:disable'));
+    return (status && !hasOperatePermission('erp:purchase:supplier:enable')) || (!status && !hasOperatePermission('erp:purchase:supplier:disable'));
   }
 
   const columns: GridColDef[] = useMemo(
     () => [
-      { field: 'name', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'contact_person', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'phone', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'email', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'address', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'status', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'tax_id', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'tax_rate', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'bank_name', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'bank_account', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'bank_address', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'remarks', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'sort', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'department_code', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'department_id', headerName: t("page."), flex: 1, minWidth: 100 },
-      
+      { field: 'name', headerName: t("page.erp.purchase.supplier.title.name"), flex: 1, minWidth: 100 },
+      { field: 'contact_person', headerName: t("page.erp.purchase.supplier.title.contact.person"), flex: 1, minWidth: 100 },
+      { field: 'phone', headerName: t("page.erp.purchase.supplier.title.phone"), flex: 1, minWidth: 100 },
+      { field: 'tax_rate', headerName: t("page.erp.purchase.supplier.title.tax.rate"), flex: 1, minWidth: 100 },
+      { field: 'remarks', headerName: t("page.erp.purchase.supplier.title.remarks"), flex: 1, minWidth: 100 },
+      { field: 'sort', headerName: t("page.erp.purchase.supplier.title.sort"), flex: 1, minWidth: 100 },
       {
         field: 'status',
         sortable: false,
-        headerName: t("page.post.title.status"),
+        headerName: t("global.title.status"),
         flex: 1,
         minWidth: 80,
         renderCell: (params: GridRenderCellParams) => (
-          <Box sx={ { height: '100%', display: 'flex', gap: 1, alignItems: 'center' } }>
+          <Box sx={{ height: '100%', display: 'flex', gap: 1, alignItems: 'center' }}>
             <Switch name="status" checked={!params.row.status} disabled={statusDisabled(params.row.status)} onChange={(event, checked) => handleStatusChange(event, checked, params.row)} />
           </Box>
         ),
       },
-      { field: 'create_time', headerName: t("page.post.title.create.time"), flex: 1, minWidth: 180 },
+      { field: 'create_time', headerName: t("global.title.create.time"), flex: 1, minWidth: 180 },
       {
         field: 'actions',
         sortable: false,
@@ -89,19 +79,19 @@ export default function ErpSupplier() {
         flex: 1,
         minWidth: 100,
         renderCell: (params: GridRenderCellParams) => (
-          <Box sx={ { height: '100%', display: 'flex', gap: 1, alignItems: 'center' } }>
-            {hasOperatePermission('system:post:edit') && <Button
+          <Box sx={{ height: '100%', display: 'flex', gap: 1, alignItems: 'center' }}>
+            {hasOperatePermission('erp:purchase:supplier:edit') && <Button
               size="small"
               variant='customOperate'
-              title={t('page.post.operate.edit')}
+              title={t('global.operate.edit') + t('global.page.erp.purchase.supplier')}
               startIcon={<EditIcon />}
               onClick={() => handleClickOpenEdit(params.row)}
             />}
-            {hasOperatePermission('system:post:delete') && <Button
-              sx={ {color: 'error.main'} }
+            {hasOperatePermission('erp:purchase:supplier:delete') && <Button
+              sx={{ color: 'error.main' }}
               size="small"
               variant='customOperate'
-              title={t('page.post.operate.delete')}
+              title={t('global.operate.delete') + t('global.page.erp.purchase.supplier')}
               startIcon={<DeleteIcon />}
               onClick={() => handleClickOpenDelete(params.row)}
             />}
@@ -153,10 +143,10 @@ export default function ErpSupplier() {
   };
 
   return (
-    <Box sx={ {height: '100%', display: 'flex', flexDirection: 'column'} }>
-      <Box sx={ {mb: 2, display: 'flex', justifyContent: 'space-between'} }>
+    <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+      <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between' }}>
         <Box></Box>
-        {hasOperatePermission('system:post:add') && <Button variant="customContained" onClick={handleClickOpenAdd}>
+        {hasOperatePermission('erp:purchase:supplier:add') && <Button variant="customContained" onClick={handleClickOpenAdd}>
           {t('global.operate.add')}
         </Button>}
       </Box>
@@ -173,7 +163,7 @@ export default function ErpSupplier() {
         filterModel={filterModel}
         onFilterModelChange={handleFilterModelChange}
         pageSizeOptions={[10, 20, 50, 100]}
-        paginationModel={ {page: condition.page - 1, pageSize: condition.size} }
+        paginationModel={{ page: condition.page - 1, pageSize: condition.size }}
         onPaginationModelChange={(model) => {
           setCondition((prev) => ({
             ...prev,
