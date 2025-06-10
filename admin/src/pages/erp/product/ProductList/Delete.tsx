@@ -47,7 +47,7 @@ const ErpProductDelete = forwardRef(({ onSubmit }: ErpProductDeleteProps, ref) =
     <CustomizedDialog
       open={open}
       onClose={handleClose}
-      title={t('global.operate.delete') + t('global.page.post')}
+      title={t('global.operate.delete') + t('global.page.erp.product.list')}
       maxWidth={maxWidth}
       actions={
         <>

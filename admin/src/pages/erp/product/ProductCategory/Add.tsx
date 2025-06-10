@@ -130,10 +130,6 @@ const ErpProductCategoryAdd = forwardRef(({ onSubmit }: ErpProductCategoryAddPro
       newErrors.name = t('page.erp.product.category.error.name');
     }
 
-    if (!formValues.status && formValues.status != 0) {
-      newErrors.status = t('page.erp.product.category.error.status');
-    }
-
     if (!formValues.sort && formValues.sort != 0) {
       newErrors.sort = t('page.erp.product.category.error.sort');
     }

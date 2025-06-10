@@ -50,10 +50,6 @@ const ErpWarehouseEdit = forwardRef(({ onSubmit }: ErpWarehouseEditProps, ref) =
       newErrors.name = t('page.erp.inventory.warehouse.error.name');
     }
 
-    if (!erpWarehouse.status && erpWarehouse.status != 0) {
-      newErrors.status = t('page.erp.inventory.warehouse.error.status');
-    }
-
     if (!erpWarehouse.sort && erpWarehouse.sort != 0) {
       newErrors.sort = t('page.erp.inventory.warehouse.error.sort');
     }

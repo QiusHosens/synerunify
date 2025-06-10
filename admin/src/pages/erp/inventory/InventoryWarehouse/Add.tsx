@@ -61,10 +61,6 @@ const ErpWarehouseAdd = forwardRef(({ onSubmit }: ErpWarehouseAddProps, ref) => 
       newErrors.name = t('page.erp.inventory.warehouse.error.name');
     }
 
-    if (!formValues.status && formValues.status != 0) {
-      newErrors.status = t('page.erp.inventory.warehouse.error.status');
-    }
-
     if (!formValues.sort && formValues.sort != 0) {
       newErrors.sort = t('page.erp.inventory.warehouse.error.sort.order');
     }

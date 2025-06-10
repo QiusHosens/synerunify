@@ -118,10 +118,6 @@ const ErpProductCategoryEdit = forwardRef(({ onSubmit }: ErpProductCategoryEditP
       newErrors.name = t('page.erp.product.category.error.name');
     }
 
-    if (!erpProductCategory.status && erpProductCategory.status != 0) {
-      newErrors.status = t('page.erp.product.category.error.status');
-    }
-
     if (!erpProductCategory.sort && erpProductCategory.sort != 0) {
       newErrors.sort = t('page.erp.product.category.error.sort');
     }

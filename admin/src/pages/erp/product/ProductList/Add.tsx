@@ -21,18 +21,14 @@ interface FormValues {
   stock_quantity: number; // 库存数量
   min_stock: number; // 最低库存
   remarks: string; // 备注
-  department_code: string; // 部门编码
-  department_id: number; // 部门ID
-  }
+}
 
-interface FormErrors { 
+interface FormErrors {
   name?: string; // 产品名称
   unit_id?: string; // 产品单位ID
   status?: string; // 状态
   stock_quantity?: string; // 库存数量
   min_stock?: string; // 最低库存
-  department_code?: string; // 部门编码
-  department_id?: string; // 部门ID
 }
 
 interface ErpProductAddProps {
@@ -60,9 +56,7 @@ const ErpProductAdd = forwardRef(({ onSubmit }: ErpProductAddProps, ref) => {
     stock_quantity: 0,
     min_stock: 0,
     remarks: '',
-    department_code: '',
-    department_id: 0,
-    });
+  });
   const [errors, setErrors] = useState<FormErrors>({});
 
   useImperativeHandle(ref, () => ({
@@ -76,35 +70,23 @@ const ErpProductAdd = forwardRef(({ onSubmit }: ErpProductAddProps, ref) => {
 
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
-    
+
     if (!formValues.name.trim()) {
-      newErrors.name = t('page.post.error.name');
+      newErrors.name = t('page.erp.product.list.error.name');
     }
-    
+
     if (!formValues.unit_id && formValues.unit_id != 0) {
-      newErrors.unit_id = t('page.post.error.unit_id');
+      newErrors.unit_id = t('page.erp.product.list.error.unit');
     }
-    
-    if (!formValues.status && formValues.status != 0) {
-      newErrors.status = t('page.post.error.status');
-    }
-    
+
     if (!formValues.stock_quantity && formValues.stock_quantity != 0) {
-      newErrors.stock_quantity = t('page.post.error.stock_quantity');
+      newErrors.stock_quantity = t('page.erp.product.list.error.stock.quantity');
     }
-    
+
     if (!formValues.min_stock && formValues.min_stock != 0) {
-      newErrors.min_stock = t('page.post.error.min_stock');
+      newErrors.min_stock = t('page.erp.product.list.error.min.stock');
     }
-    
-    if (!formValues.department_code.trim()) {
-      newErrors.department_code = t('page.post.error.department_code');
-    }
-    
-    if (!formValues.department_id && formValues.department_id != 0) {
-      newErrors.department_id = t('page.post.error.department_id');
-    }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -136,9 +118,7 @@ const ErpProductAdd = forwardRef(({ onSubmit }: ErpProductAddProps, ref) => {
       stock_quantity: 0,
       min_stock: 0,
       remarks: '',
-      department_code: '',
-      department_id: 0,
-      });
+    });
     setErrors({});
   }
 
@@ -200,7 +180,7 @@ const ErpProductAdd = forwardRef(({ onSubmit }: ErpProductAddProps, ref) => {
     <CustomizedDialog
       open={open}
       onClose={handleClose}
-      title={t('global.operate.add') + t('global.page.post')}
+      title={t('global.operate.add') + t('global.page.erp.product.list')}
       maxWidth={maxWidth}
       actions={
         <>
@@ -213,15 +193,17 @@ const ErpProductAdd = forwardRef(({ onSubmit }: ErpProductAddProps, ref) => {
       <Box
         noValidate
         component="form"
-        sx={ {display: 'flex',
+        sx={{
+          display: 'flex',
           flexDirection: 'column',
           m: 'auto',
-          width: 'fit-content',} }
+          width: 'fit-content',
+        }}
       >
-        <FormControl sx={ {minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' }} }>
+        <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' } }}>
           <TextField
             size="small"
-            label={t("page.post.title.product_code")}
+            label={t("page.erp.product.list.title.product.code")}
             name='product_code'
             value={formValues.product_code}
             onChange={handleInputChange}
@@ -229,7 +211,7 @@ const ErpProductAdd = forwardRef(({ onSubmit }: ErpProductAddProps, ref) => {
           <TextField
             required
             size="small"
-            label={t("page.post.title.name")}
+            label={t("page.erp.product.list.title.name")}
             name='name'
             value={formValues.name}
             onChange={handleInputChange}
@@ -239,7 +221,7 @@ const ErpProductAdd = forwardRef(({ onSubmit }: ErpProductAddProps, ref) => {
           <TextField
             size="small"
             type="number"
-            label={t("page.post.title.category_id")}
+            label={t("page.erp.product.list.title.category")}
             name='category_id'
             value={formValues.category_id}
             onChange={handleInputChange}
@@ -248,7 +230,7 @@ const ErpProductAdd = forwardRef(({ onSubmit }: ErpProductAddProps, ref) => {
             required
             size="small"
             type="number"
-            label={t("page.post.title.unit_id")}
+            label={t("page.erp.product.list.title.unit")}
             name='unit_id'
             value={formValues.unit_id}
             onChange={handleInputChange}
@@ -257,24 +239,14 @@ const ErpProductAdd = forwardRef(({ onSubmit }: ErpProductAddProps, ref) => {
           />
           <TextField
             size="small"
-            type="number"
-            label={t("page.post.title.status")}
-            name='status'
-            value={formValues.status}
-            onChange={handleInputChange}
-            error={!!errors.status}
-            helperText={errors.status}
-          />
-          <TextField
-            size="small"
-            label={t("page.post.title.barcode")}
+            label={t("page.erp.product.list.title.barcode")}
             name='barcode'
             value={formValues.barcode}
             onChange={handleInputChange}
           />
           <TextField
             size="small"
-            label={t("page.post.title.specification")}
+            label={t("page.erp.product.list.title.specification")}
             name='specification'
             value={formValues.specification}
             onChange={handleInputChange}
@@ -282,7 +254,7 @@ const ErpProductAdd = forwardRef(({ onSubmit }: ErpProductAddProps, ref) => {
           <TextField
             size="small"
             type="number"
-            label={t("page.post.title.shelf_life_days")}
+            label={t("page.erp.product.list.title.shelf.life.days")}
             name='shelf_life_days'
             value={formValues.shelf_life_days}
             onChange={handleInputChange}
@@ -290,7 +262,7 @@ const ErpProductAdd = forwardRef(({ onSubmit }: ErpProductAddProps, ref) => {
           <TextField
             size="small"
             type="number"
-            label={t("page.post.title.weight")}
+            label={t("page.erp.product.list.title.weight")}
             name='weight'
             value={formValues.weight}
             onChange={handleInputChange}
@@ -298,7 +270,7 @@ const ErpProductAdd = forwardRef(({ onSubmit }: ErpProductAddProps, ref) => {
           <TextField
             size="small"
             type="number"
-            label={t("page.post.title.purchase_price")}
+            label={t("page.erp.product.list.title.purchase.price")}
             name='purchase_price'
             value={formValues.purchase_price}
             onChange={handleInputChange}
@@ -306,7 +278,7 @@ const ErpProductAdd = forwardRef(({ onSubmit }: ErpProductAddProps, ref) => {
           <TextField
             size="small"
             type="number"
-            label={t("page.post.title.sale_price")}
+            label={t("page.erp.product.list.title.sale.price")}
             name='sale_price'
             value={formValues.sale_price}
             onChange={handleInputChange}
@@ -314,7 +286,7 @@ const ErpProductAdd = forwardRef(({ onSubmit }: ErpProductAddProps, ref) => {
           <TextField
             size="small"
             type="number"
-            label={t("page.post.title.min_price")}
+            label={t("page.erp.product.list.title.min.price")}
             name='min_price'
             value={formValues.min_price}
             onChange={handleInputChange}
@@ -323,7 +295,7 @@ const ErpProductAdd = forwardRef(({ onSubmit }: ErpProductAddProps, ref) => {
             required
             size="small"
             type="number"
-            label={t("page.post.title.stock_quantity")}
+            label={t("page.erp.product.list.title.stock.quantity")}
             name='stock_quantity'
             value={formValues.stock_quantity}
             onChange={handleInputChange}
@@ -334,7 +306,7 @@ const ErpProductAdd = forwardRef(({ onSubmit }: ErpProductAddProps, ref) => {
             required
             size="small"
             type="number"
-            label={t("page.post.title.min_stock")}
+            label={t("page.erp.product.list.title.min.stock")}
             name='min_stock'
             value={formValues.min_stock}
             onChange={handleInputChange}
@@ -343,37 +315,16 @@ const ErpProductAdd = forwardRef(({ onSubmit }: ErpProductAddProps, ref) => {
           />
           <TextField
             size="small"
-            label={t("page.post.title.remarks")}
+            label={t("page.erp.product.list.title.remarks")}
             name='remarks'
             value={formValues.remarks}
             onChange={handleInputChange}
           />
-          <TextField
-            required
-            size="small"
-            label={t("page.post.title.department_code")}
-            name='department_code'
-            value={formValues.department_code}
-            onChange={handleInputChange}
-            error={!!errors.department_code}
-            helperText={errors.department_code}
-          />
-          <TextField
-            required
-            size="small"
-            type="number"
-            label={t("page.post.title.department_id")}
-            name='department_id'
-            value={formValues.department_id}
-            onChange={handleInputChange}
-            error={!!errors.department_id}
-            helperText={errors.department_id}
-          />
-          </FormControl>
-        <Box sx={ {mt: 2, display: 'flex', alignItems: 'center'} }>
-          <Typography sx={ {mr: 4} }>{t("page.post.title.status")}</Typography>
-          <Switch sx={ {mr: 2} } name='status' checked={!formValues.status} onChange={handleStatusChange} />
-          <Typography>{formValues.status == 0 ? t('page.post.switch.status.true') : t('page.post.switch.status.false')}</Typography>
+        </FormControl>
+        <Box sx={{ mt: 2, display: 'flex', alignItems: 'center' }}>
+          <Typography sx={{ mr: 4 }}>{t("global.title.status")}</Typography>
+          <Switch sx={{ mr: 2 }} name='status' checked={!formValues.status} onChange={handleStatusChange} />
+          <Typography>{formValues.status == 0 ? t('global.switch.status.true') : t('global.switch.status.false')}</Typography>
         </Box>
       </Box>
     </CustomizedDialog>
