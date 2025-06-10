@@ -14,7 +14,7 @@ const apis = {
 
 export interface ErpProductUnitRequest {
   id: number; // 单位ID
-  unit_name: string; // 单位名称
+  name: string; // 单位名称
   status: number; // 状态
   sort: number; // 排序
   remarks: string; // 备注
@@ -22,7 +22,7 @@ export interface ErpProductUnitRequest {
 
 export interface ErpProductUnitResponse {
   id: number; // 单位ID
-  unit_name: string; // 单位名称
+  name: string; // 单位名称
   status: number; // 状态
   sort: number; // 排序
   remarks: string; // 备注

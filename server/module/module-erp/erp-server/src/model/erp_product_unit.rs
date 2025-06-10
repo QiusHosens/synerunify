@@ -10,7 +10,7 @@ pub struct Model {
     #[sea_orm(primary_key)]
     pub id: i64, // 单位ID
     
-    pub unit_name: String, // 单位名称
+    pub name: String, // 单位名称
     
     pub status: i8, // 状态
     

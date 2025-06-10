@@ -52,7 +52,7 @@ export default function ErpProductUnit() {
 
   const columns: GridColDef[] = useMemo(
     () => [
-      { field: 'unit_name', headerName: t("page."), flex: 1, minWidth: 100 },
+      { field: 'name', headerName: t("page."), flex: 1, minWidth: 100 },
       { field: 'status', headerName: t("page."), flex: 1, minWidth: 100 },
       { field: 'sort', headerName: t("page."), flex: 1, minWidth: 100 },
       { field: 'remarks', headerName: t("page."), flex: 1, minWidth: 100 },

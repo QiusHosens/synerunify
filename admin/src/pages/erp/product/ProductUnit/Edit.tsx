@@ -6,7 +6,7 @@ import { ErpProductUnitRequest, ErpProductUnitResponse, updateErpProductUnit } f
 import CustomizedDialog from '@/components/CustomizedDialog';
 
 interface FormErrors { 
-  unit_name?: string; // 单位名称
+  name?: string; // 单位名称
   status?: string; // 状态
   sort?: string; // 排序
   department_code?: string; // 部门编码
@@ -24,7 +24,7 @@ const ErpProductUnitEdit = forwardRef(({ onSubmit }: ErpProductUnitEditProps, re
   const [maxWidth] = useState<DialogProps['maxWidth']>('sm');
   const [erpProductUnit, setErpProductUnit] = useState<ErpProductUnitRequest>({
     id: 0,
-    unit_name: '',
+    name: '',
     status: 0,
     sort: 0,
     remarks: '',
@@ -46,8 +46,8 @@ const ErpProductUnitEdit = forwardRef(({ onSubmit }: ErpProductUnitEditProps, re
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
     
-    if (!formValues.unit_name.trim()) {
-      newErrors.unit_name = t('page.post.error.unit_name');
+    if (!formValues.name.trim()) {
+      newErrors.name = t('page.post.error.name');
     }
     
     if (!formValues.status && formValues.status != 0) {
@@ -157,12 +157,12 @@ const ErpProductUnitEdit = forwardRef(({ onSubmit }: ErpProductUnitEditProps, re
           <TextField
             required
             size="small"
-            label={t("page.post.title.unit_name")}
-            name='unit_name'
-            value={ erpProductUnit.unit_name}
+            label={t("page.post.title.name")}
+            name='name'
+            value={ erpProductUnit.name}
             onChange={handleInputChange}
-            error={!!errors.unit_name}
-            helperText={errors.unit_name}
+            error={!!errors.name}
+            helperText={errors.name}
           />
           <TextField
             size="small"

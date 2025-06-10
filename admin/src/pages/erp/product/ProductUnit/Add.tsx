@@ -6,7 +6,7 @@ import { createErpProductUnit, ErpProductUnitRequest } from '@/api';
 import CustomizedDialog from '@/components/CustomizedDialog';
 
 interface FormValues {
-  unit_name: string; // 单位名称
+  name: string; // 单位名称
   status: number; // 状态
   sort: number; // 排序
   remarks: string; // 备注
@@ -15,7 +15,7 @@ interface FormValues {
   }
 
 interface FormErrors { 
-  unit_name?: string; // 单位名称
+  name?: string; // 单位名称
   status?: string; // 状态
   sort?: string; // 排序
   department_code?: string; // 部门编码
@@ -32,7 +32,7 @@ const ErpProductUnitAdd = forwardRef(({ onSubmit }: ErpProductUnitAddProps, ref)
   const [open, setOpen] = useState(false);
   const [maxWidth] = useState<DialogProps['maxWidth']>('sm');
   const [formValues, setFormValues] = useState<FormValues>({
-    unit_name: '',
+    name: '',
     status: 0,
     sort: 0,
     remarks: '',
@@ -53,8 +53,8 @@ const ErpProductUnitAdd = forwardRef(({ onSubmit }: ErpProductUnitAddProps, ref)
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
     
-    if (!formValues.unit_name.trim()) {
-      newErrors.unit_name = t('page.post.error.unit_name');
+    if (!formValues.name.trim()) {
+      newErrors.name = t('page.post.error.name');
     }
     
     if (!formValues.status && formValues.status != 0) {
@@ -89,7 +89,7 @@ const ErpProductUnitAdd = forwardRef(({ onSubmit }: ErpProductUnitAddProps, ref)
 
   const reset = () => {
     setFormValues({
-      unit_name: '',
+      name: '',
       status: 0,
       sort: 0,
       remarks: '',
@@ -179,12 +179,12 @@ const ErpProductUnitAdd = forwardRef(({ onSubmit }: ErpProductUnitAddProps, ref)
           <TextField
             required
             size="small"
-            label={t("page.post.title.unit_name")}
-            name='unit_name'
-            value={formValues.unit_name}
+            label={t("page.post.title.name")}
+            name='name'
+            value={formValues.name}
             onChange={handleInputChange}
-            error={!!errors.unit_name}
-            helperText={errors.unit_name}
+            error={!!errors.name}
+            helperText={errors.name}
           />
           <TextField
             size="small"

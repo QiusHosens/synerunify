@@ -5,7 +5,7 @@ use erp_model::response::erp_product_unit::ErpProductUnitResponse;
 
 pub fn create_request_to_model(request: &CreateErpProductUnitRequest) -> ErpProductUnitActiveModel {
     ErpProductUnitActiveModel {
-        unit_name: Set(request.unit_name.clone()),
+        name: Set(request.name.clone()),
         status: Set(request.status.clone()),
         sort: Set(request.sort.clone()),
         remarks: request.remarks.as_ref().map_or(NotSet, |remarks| Set(Some(remarks.clone()))),
@@ -15,8 +15,8 @@ pub fn create_request_to_model(request: &CreateErpProductUnitRequest) -> ErpProd
 
 pub fn update_request_to_model(request: &UpdateErpProductUnitRequest, existing: ErpProductUnit) -> ErpProductUnitActiveModel {
     let mut active_model: ErpProductUnitActiveModel = existing.into();
-    if let Some(unit_name) = &request.unit_name { 
-        active_model.unit_name = Set(unit_name.clone());
+    if let Some(name) = &request.name {
+        active_model.name = Set(name.clone());
     }
     if let Some(status) = &request.status { 
         active_model.status = Set(status.clone());
@@ -33,7 +33,7 @@ pub fn update_request_to_model(request: &UpdateErpProductUnitRequest, existing: 
 pub fn model_to_response(model: ErpProductUnit) -> ErpProductUnitResponse {
     ErpProductUnitResponse { 
         id: model.id,
-        unit_name: model.unit_name,
+        name: model.name,
         status: model.status,
         sort: model.sort,
         remarks: model.remarks,
