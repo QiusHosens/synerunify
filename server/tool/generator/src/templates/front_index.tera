@@ -47,7 +47,7 @@ export default function {{ model_name }}() {
   );
 
   const statusDisabled = (status: number): boolean => {
-    return (status && !hasOperatePermission('system:mark_permission:enable')) || (!status && !hasOperatePermission('system:mark_permission:disable'));
+    return (status && !hasOperatePermission('mark_permission:enable')) || (!status && !hasOperatePermission('mark_permission:disable'));
   }
 {% endif %}
   const columns: GridColDef[] = useMemo(
@@ -58,7 +58,7 @@ export default function {{ model_name }}() {
       {
         field: 'status',
         sortable: false,
-        headerName: t("page.mark_translation.title.status"),
+        headerName: t("global.title.status"),
         flex: 1,
         minWidth: 80,
         renderCell: (params: GridRenderCellParams) => (
@@ -68,7 +68,7 @@ export default function {{ model_name }}() {
           </Box>
         ),
       },{% endif %}
-      { field: 'create_time', headerName: t("page.mark_translation.title.create.time"), flex: 1, minWidth: 180 },
+      { field: 'create_time', headerName: t("global.title.create.time"), flex: 1, minWidth: 180 },
       {
         field: 'actions',
         sortable: false,
@@ -79,14 +79,14 @@ export default function {{ model_name }}() {
         renderCell: (params: GridRenderCellParams) => (
           {% set box_sx = "{ height: '100%', display: 'flex', gap: 1, alignItems: 'center' }" -%}
           <Box sx={ {{ box_sx | safe }} }>
-            {hasOperatePermission('system:mark_permission:edit') && <Button
+            {hasOperatePermission('mark_permission:edit') && <Button
               size="small"
               variant='customOperate'
               title={t('global.operate.edit') + t('global.page.mark_translation')}
               startIcon={<EditIcon />}
               onClick={() => handleClickOpenEdit(params.row)}
             />}
-            {hasOperatePermission('system:mark_permission:delete') && <Button
+            {hasOperatePermission('mark_permission:delete') && <Button
               {% set box_sx = "{color: 'error.main'}" -%}
               sx={ {{ box_sx | safe }} }
               size="small"
@@ -148,7 +148,7 @@ export default function {{ model_name }}() {
       {% set box_sx = "{mb: 2, display: 'flex', justifyContent: 'space-between'}" -%}
       <Box sx={ {{ box_sx | safe }} }>
         <Box></Box>
-        {hasOperatePermission('system:mark_permission:add') && <Button variant="customContained" onClick={handleClickOpenAdd}>
+        {hasOperatePermission('mark_permission:add') && <Button variant="customContained" onClick={handleClickOpenAdd}>
           {t('global.operate.add')}
         </Button>}
       </Box>

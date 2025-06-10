@@ -5,12 +5,10 @@ import { DialogProps } from '@mui/material/Dialog';
 import { ErpProductCategoryRequest, ErpProductCategoryResponse, updateErpProductCategory } from '@/api';
 import CustomizedDialog from '@/components/CustomizedDialog';
 
-interface FormErrors { 
+interface FormErrors {
   name?: string; // 分类名称
   status?: string; // 状态
   sort?: string; // 排序
-  department_code?: string; // 部门编码
-  department_id?: string; // 部门ID
 }
 
 interface ErpProductCategoryEditProps {
@@ -30,9 +28,7 @@ const ErpProductCategoryEdit = forwardRef(({ onSubmit }: ErpProductCategoryEditP
     status: 0,
     sort: 0,
     remarks: '',
-    department_code: '',
-    department_id: 0,
-    });
+  });
   const [errors, setErrors] = useState<FormErrors>({});
 
   useImperativeHandle(ref, () => ({
@@ -47,27 +43,19 @@ const ErpProductCategoryEdit = forwardRef(({ onSubmit }: ErpProductCategoryEditP
 
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
-    
-    if (!formValues.name.trim()) {
-      newErrors.name = t('page.post.error.name');
+
+    if (!erpProductCategory.name.trim()) {
+      newErrors.name = t('page.erp.product.category.error.name');
     }
-    
-    if (!formValues.status && formValues.status != 0) {
-      newErrors.status = t('page.post.error.status');
+
+    if (!erpProductCategory.status && erpProductCategory.status != 0) {
+      newErrors.status = t('page.erp.product.category.error.status');
     }
-    
-    if (!formValues.sort && formValues.sort != 0) {
-      newErrors.sort = t('page.post.error.sort');
+
+    if (!erpProductCategory.sort && erpProductCategory.sort != 0) {
+      newErrors.sort = t('page.erp.product.category.error.sort');
     }
-    
-    if (!formValues.department_code.trim()) {
-      newErrors.department_code = t('page.post.error.department_code');
-    }
-    
-    if (!formValues.department_id && formValues.department_id != 0) {
-      newErrors.department_id = t('page.post.error.department_id');
-    }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -138,7 +126,7 @@ const ErpProductCategoryEdit = forwardRef(({ onSubmit }: ErpProductCategoryEditP
     <CustomizedDialog
       open={open}
       onClose={handleClose}
-      title={t('global.operate.edit') + t('global.page.post')}
+      title={t('global.operate.edit') + t('global.page.erp.product.category')}
       maxWidth={maxWidth}
       actions={
         <>
@@ -150,25 +138,27 @@ const ErpProductCategoryEdit = forwardRef(({ onSubmit }: ErpProductCategoryEditP
       <Box
         noValidate
         component="form"
-        sx={ {display: 'flex',
+        sx={{
+          display: 'flex',
           flexDirection: 'column',
           m: 'auto',
-          width: 'fit-content',} }
+          width: 'fit-content',
+        }}
       >
-        <FormControl sx={ {minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' }} }>
+        <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' } }}>
           <TextField
             size="small"
-            label={t("page.post.title.code")}
+            label={t("page.erp.product.category.title.code")}
             name='code'
-            value={ erpProductCategory.code}
+            value={erpProductCategory.code}
             onChange={handleInputChange}
           />
           <TextField
             required
             size="small"
-            label={t("page.post.title.name")}
+            label={t("page.erp.product.category.title.name")}
             name='name'
-            value={ erpProductCategory.name}
+            value={erpProductCategory.name}
             onChange={handleInputChange}
             error={!!errors.name}
             helperText={errors.name}
@@ -176,17 +166,17 @@ const ErpProductCategoryEdit = forwardRef(({ onSubmit }: ErpProductCategoryEditP
           <TextField
             size="small"
             type="number"
-            label={t("page.post.title.parent_id")}
+            label={t("page.erp.product.category.title.parent_id")}
             name='parent_id'
-            value={ erpProductCategory.parent_id}
+            value={erpProductCategory.parent_id}
             onChange={handleInputChange}
           />
           <TextField
             size="small"
             type="number"
-            label={t("page.post.title.status")}
+            label={t("page.erp.product.category.title.status")}
             name='status'
-            value={ erpProductCategory.status}
+            value={erpProductCategory.status}
             onChange={handleInputChange}
             error={!!errors.status}
             helperText={errors.status}
@@ -195,46 +185,25 @@ const ErpProductCategoryEdit = forwardRef(({ onSubmit }: ErpProductCategoryEditP
             required
             size="small"
             type="number"
-            label={t("page.post.title.sort")}
+            label={t("page.erp.product.category.title.sort")}
             name='sort'
-            value={ erpProductCategory.sort}
+            value={erpProductCategory.sort}
             onChange={handleInputChange}
             error={!!errors.sort}
             helperText={errors.sort}
           />
           <TextField
             size="small"
-            label={t("page.post.title.remarks")}
+            label={t("page.erp.product.category.title.remarks")}
             name='remarks'
-            value={ erpProductCategory.remarks}
+            value={erpProductCategory.remarks}
             onChange={handleInputChange}
           />
-          <TextField
-            required
-            size="small"
-            label={t("page.post.title.department_code")}
-            name='department_code'
-            value={ erpProductCategory.department_code}
-            onChange={handleInputChange}
-            error={!!errors.department_code}
-            helperText={errors.department_code}
-          />
-          <TextField
-            required
-            size="small"
-            type="number"
-            label={t("page.post.title.department_id")}
-            name='department_id'
-            value={ erpProductCategory.department_id}
-            onChange={handleInputChange}
-            error={!!errors.department_id}
-            helperText={errors.department_id}
-          />
-          </FormControl>
-        <Box sx={ {mt: 2, display: 'flex', alignItems: 'center'} }>
-          <Typography sx={ {mr: 4} }>{t("page.post.title.status")}</Typography>
-          <Switch sx={ {mr: 2} } name='status' checked={!erpProductCategory.status} onChange={handleStatusChange} />
-          <Typography>{ erpProductCategory.status == 0 ? t('page.post.switch.status.true') : t('page.post.switch.status.false')}</Typography>
+        </FormControl>
+        <Box sx={{ mt: 2, display: 'flex', alignItems: 'center' }}>
+          <Typography sx={{ mr: 4 }}>{t("global.title.status")}</Typography>
+          <Switch sx={{ mr: 2 }} name='status' checked={!erpProductCategory.status} onChange={handleStatusChange} />
+          <Typography>{erpProductCategory.status == 0 ? t('global.switch.status.true') : t('global.switch.status.false')}</Typography>
         </Box>
       </Box>
     </CustomizedDialog>

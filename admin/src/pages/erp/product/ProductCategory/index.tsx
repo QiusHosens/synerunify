@@ -1,28 +1,23 @@
 import { Box, Button, Switch } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { DataGrid, GridCallbackDetails, GridColDef, GridFilterModel, GridRenderCellParams, GridSortModel } from '@mui/x-data-grid';
+import { GridColDef, GridRenderCellParams, GridSortModel } from '@mui/x-data-grid';
 import EditIcon from '@/assets/image/svg/edit.svg';
 import DeleteIcon from '@/assets/image/svg/delete.svg';
-import { disableErpProductCategory, enableErpProductCategory, pageErpProductCategory, ErpProductCategoryQueryCondition, ErpProductCategoryResponse } from '@/api';
+import { disableErpProductCategory, enableErpProductCategory, ErpProductCategoryResponse, listErpProductCategory } from '@/api';
 import ErpProductCategoryAdd from './Add';
 import ErpProductCategoryEdit from './Edit';
 import ErpProductCategoryDelete from './Delete';
 import { useHomeStore } from '@/store';
+import CustomizedDataGridPro from '@/components/CustomizedDataGridPro';
+import { getParentNodeLists, Node } from '@/utils/treeUtils';
 
 export default function ErpProductCategory() {
   const { t } = useTranslation();
   const { hasOperatePermission } = useHomeStore();
 
-  const [total, setTotal] = useState<number>(0);
-  const [condition, setCondition] = useState<ErpProductCategoryQueryCondition>({
-    page: 1,
-    size: 20,
-  });
-
   const [records, setRecords] = useState<Array<ErpProductCategoryResponse>>([]);
-  const [sortModel, setSortModel] = useState<GridSortModel>([]);
-  const [filterModel, setFilterModel] = useState<GridFilterModel>();
+  const [sortModel] = useState<GridSortModel>([]);
 
   const addErpProductCategory = useRef(null);
   const editErpProductCategory = useRef(null);
@@ -47,33 +42,28 @@ export default function ErpProductCategory() {
   );
 
   const statusDisabled = (status: number): boolean => {
-    return (status && !hasOperatePermission('system:post:enable')) || (!status && !hasOperatePermission('system:post:disable'));
+    return (status && !hasOperatePermission('erp:product:category:enable')) || (!status && !hasOperatePermission('erp:product:category:disable'));
   }
 
   const columns: GridColDef[] = useMemo(
     () => [
-      { field: 'code', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'name', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'parent_id', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'status', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'sort', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'remarks', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'department_code', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'department_id', headerName: t("page."), flex: 1, minWidth: 100 },
-      
+      { field: 'name', headerName: t("page.erp.product.category.title.name"), flex: 2, minWidth: 200 },
+      { field: 'code', headerName: t("page.erp.product.category.title.code"), flex: 1, minWidth: 100 },
+      { field: 'sort', headerName: t("page.erp.product.category.title.sort"), flex: 1, minWidth: 60 },
+      { field: 'remarks', headerName: t("page.erp.product.category.title.remarks"), flex: 1, minWidth: 100 },
       {
         field: 'status',
         sortable: false,
-        headerName: t("page.post.title.status"),
+        headerName: t("global.title.status"),
         flex: 1,
         minWidth: 80,
         renderCell: (params: GridRenderCellParams) => (
-          <Box sx={ { height: '100%', display: 'flex', gap: 1, alignItems: 'center' } }>
+          <Box sx={{ height: '100%', display: 'flex', gap: 1, alignItems: 'center' }}>
             <Switch name="status" checked={!params.row.status} disabled={statusDisabled(params.row.status)} onChange={(event, checked) => handleStatusChange(event, checked, params.row)} />
           </Box>
         ),
       },
-      { field: 'create_time', headerName: t("page.post.title.create.time"), flex: 1, minWidth: 180 },
+      { field: 'create_time', headerName: t("global.title.create.time"), flex: 1, minWidth: 180 },
       {
         field: 'actions',
         sortable: false,
@@ -82,19 +72,19 @@ export default function ErpProductCategory() {
         flex: 1,
         minWidth: 100,
         renderCell: (params: GridRenderCellParams) => (
-          <Box sx={ { height: '100%', display: 'flex', gap: 1, alignItems: 'center' } }>
-            {hasOperatePermission('system:post:edit') && <Button
+          <Box sx={{ height: '100%', display: 'flex', gap: 1, alignItems: 'center' }}>
+            {hasOperatePermission('erp:product:category:edit') && <Button
               size="small"
               variant='customOperate'
-              title={t('page.post.operate.edit')}
+              title={t('global.operate.edit') + t('global.page.erp.product.category')}
               startIcon={<EditIcon />}
               onClick={() => handleClickOpenEdit(params.row)}
             />}
-            {hasOperatePermission('system:post:delete') && <Button
-              sx={ {color: 'error.main'} }
+            {hasOperatePermission('erp:product:category:delete') && <Button
+              sx={{ color: 'error.main' }}
               size="small"
               variant='customOperate'
-              title={t('page.post.operate.delete')}
+              title={t('global.operate.delete') + t('global.page.erp.product.category')}
               startIcon={<DeleteIcon />}
               onClick={() => handleClickOpenDelete(params.row)}
             />}
@@ -105,10 +95,25 @@ export default function ErpProductCategory() {
     [t, handleStatusChange]
   );
 
-  const queryRecords = async (condition: ErpProductCategoryQueryCondition) => {
-    const result = await pageErpProductCategory(condition);
-    setRecords(result.list);
-    setTotal(result.total);
+  const queryRecords = async () => {
+    const result = await listErpProductCategory();
+    const nodes: Node[] = [];
+    result.forEach(category => {
+      nodes.push({
+        id: category.id,
+        parent_id: category.parent_id == 0 ? undefined : category.parent_id
+      } as Node)
+    });
+    const parentNodeLists = getParentNodeLists(nodes);
+    result.forEach(category => {
+      const parentNodes = parentNodeLists.get(category.id);
+      category.hierarchy = [];
+      if (parentNodes && parentNodes.length > 0) {
+        parentNodes.forEach(node => category.hierarchy.push(node.id.toString()));
+      }
+      category.hierarchy.push(category.id.toString());
+    })
+    setRecords(result);
   };
 
   const handleClickOpenAdd = () => {
@@ -125,55 +130,28 @@ export default function ErpProductCategory() {
 
   useEffect(() => {
     refreshData();
-  }, [condition]);
+  }, []);
 
-  const handleSortModelChange = (model: GridSortModel, details: GridCallbackDetails) => {
-    setSortModel(model);
-    if (model.length > 0) {
-      setCondition((prev) => ({ ...prev, ...{ sort_field: model[0].field, sort: model[0].sort } } as ErpProductCategoryQueryCondition));
-    }
-  };
-
-  const handleFilterModelChange = (model: GridFilterModel, _details: GridCallbackDetails) => {
-    setFilterModel(model);
-    if (model.items.length > 0) {
-      setCondition((prev) => ({ ...prev, ...{ filter_field: model.items[0].field, filter_operator: model.items[0].operator, filter_value: model.items[0].value } } as ErpProductCategoryQueryCondition));
-    }
-  }
+  const getTreeDataPath = (row: any) => row && row.hierarchy;
 
   const refreshData = () => {
-    queryRecords(condition);
+    queryRecords();
   };
 
   return (
-    <Box sx={ {height: '100%', display: 'flex', flexDirection: 'column'} }>
-      <Box sx={ {mb: 2, display: 'flex', justifyContent: 'space-between'} }>
+    <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+      <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between' }}>
         <Box></Box>
-        {hasOperatePermission('system:post:add') && <Button variant="customContained" onClick={handleClickOpenAdd}>
+        {hasOperatePermission('erp:product:category:add') && <Button variant="customContained" onClick={handleClickOpenAdd}>
           {t('global.operate.add')}
         </Button>}
       </Box>
-      <DataGrid
-        rowCount={total}
-        rows={records}
+      <CustomizedDataGridPro
         columns={columns}
-        getRowId={(row) => row.id}
-        pagination
-        paginationMode="server"
-        sortingMode="server"
-        sortModel={sortModel}
-        onSortModelChange={handleSortModelChange}
-        filterModel={filterModel}
-        onFilterModelChange={handleFilterModelChange}
-        pageSizeOptions={[10, 20, 50, 100]}
-        paginationModel={ {page: condition.page - 1, pageSize: condition.size} }
-        onPaginationModelChange={(model) => {
-          setCondition((prev) => ({
-            ...prev,
-            page: model.page + 1,
-            size: model.pageSize,
-          }));
-        }}
+        initialRows={records}
+        getTreeDataPath={getTreeDataPath}
+        hideFooter={true}
+        initSortModel={sortModel}
       />
       <ErpProductCategoryAdd ref={addErpProductCategory} onSubmit={refreshData} />
       <ErpProductCategoryEdit ref={editErpProductCategory} onSubmit={refreshData} />

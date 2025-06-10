@@ -20,8 +20,6 @@ export interface ErpProductCategoryRequest {
   status: number; // 状态
   sort: number; // 排序
   remarks: string; // 备注
-  department_code: string; // 部门编码
-  department_id: number; // 部门ID
 }
 
 export interface ErpProductCategoryResponse {
@@ -32,12 +30,12 @@ export interface ErpProductCategoryResponse {
   status: number; // 状态
   sort: number; // 排序
   remarks: string; // 备注
-  department_code: string; // 部门编码
-  department_id: number; // 部门ID
   creator: number; // 创建者ID
   create_time: string; // 创建时间
   updater: number; // 更新者ID
   update_time: string; // 更新时间
+
+  hierarchy: string[];
 }
 
 export interface ErpProductCategoryQueryCondition extends PaginatedRequest {

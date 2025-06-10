@@ -1,17 +1,17 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : 192.168.1.18_synerunify
+ Source Server         : 192.168.0.99_synerunify
  Source Server Type    : MySQL
- Source Server Version : 80200 (8.2.0)
- Source Host           : 192.168.1.18:3306
+ Source Server Version : 80100 (8.1.0)
+ Source Host           : 192.168.0.99:30010
  Source Schema         : synerunify
 
  Target Server Type    : MySQL
- Target Server Version : 80200 (8.2.0)
+ Target Server Version : 80100 (8.1.0)
  File Encoding         : 65001
 
- Date: 09/06/2025 22:21:23
+ Date: 10/06/2025 10:15:50
 */
 
 SET NAMES utf8mb4;
@@ -315,8 +315,6 @@ CREATE TABLE `erp_product`  (
   `stock_quantity` int NOT NULL DEFAULT 0 COMMENT '库存数量',
   `min_stock` int NOT NULL DEFAULT 0 COMMENT '最低库存',
   `remarks` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
-  `department_code` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '部门编码',
-  `department_id` bigint NOT NULL COMMENT '部门ID',
   `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updater` bigint NULL DEFAULT NULL COMMENT '更新者ID',
@@ -342,8 +340,6 @@ CREATE TABLE `erp_product_category`  (
   `status` tinyint NOT NULL DEFAULT 0 COMMENT '状态',
   `sort` int NOT NULL DEFAULT 0 COMMENT '排序',
   `remarks` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
-  `department_code` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '部门编码',
-  `department_id` bigint NOT NULL COMMENT '部门ID',
   `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updater` bigint NULL DEFAULT NULL COMMENT '更新者ID',
@@ -367,8 +363,6 @@ CREATE TABLE `erp_product_unit`  (
   `status` tinyint NOT NULL DEFAULT 0 COMMENT '状态',
   `sort` int NOT NULL DEFAULT 0 COMMENT '排序',
   `remarks` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
-  `department_code` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '部门编码',
-  `department_id` bigint NOT NULL COMMENT '部门ID',
   `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updater` bigint NULL DEFAULT NULL COMMENT '更新者ID',
@@ -945,7 +939,7 @@ CREATE TABLE `system_menu`  (
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 118 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '菜单权限表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 124 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '菜单权限表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of system_menu
@@ -1053,6 +1047,12 @@ INSERT INTO `system_menu` VALUES (114, '修改', 'erp:inventory:warehouse:edit',
 INSERT INTO `system_menu` VALUES (115, '删除', 'erp:inventory:warehouse:delete', 3, 3, 98, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-09 12:36:38', 1, '2025-06-09 12:36:38', b'0');
 INSERT INTO `system_menu` VALUES (116, '启用', 'erp:inventory:warehouse:enable', 3, 4, 98, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-09 12:37:29', 1, '2025-06-09 12:37:29', b'0');
 INSERT INTO `system_menu` VALUES (117, '禁用', 'erp:inventory:warehouse:disable', 3, 5, 98, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-09 12:37:45', 1, '2025-06-09 12:37:45', b'0');
+INSERT INTO `system_menu` VALUES (118, '查看', 'erp:product:category:get', 3, 0, 107, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:12:20', 1, '2025-06-10 02:12:20', b'0');
+INSERT INTO `system_menu` VALUES (119, '新增', 'erp:product:category:add', 3, 1, 107, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:13:19', 1, '2025-06-10 02:13:19', b'0');
+INSERT INTO `system_menu` VALUES (120, '修改', 'erp:product:category:edit', 3, 2, 107, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:13:36', 1, '2025-06-10 02:13:36', b'0');
+INSERT INTO `system_menu` VALUES (121, '删除', 'erp:product:category:delete', 3, 3, 107, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:13:54', 1, '2025-06-10 02:13:54', b'0');
+INSERT INTO `system_menu` VALUES (122, '启用', 'erp:product:category:enable', 3, 4, 107, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:15:01', 1, '2025-06-10 02:15:01', b'0');
+INSERT INTO `system_menu` VALUES (123, '禁用', 'erp:product:category:disable', 3, 5, 107, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:15:29', 1, '2025-06-10 02:15:29', b'0');
 
 -- ----------------------------
 -- Table structure for system_notice
@@ -1396,7 +1396,7 @@ CREATE TABLE `system_user`  (
 -- ----------------------------
 -- Records of system_user
 -- ----------------------------
-INSERT INTO `system_user` VALUES (1, 'admin', '$2b$06$Ohq86rDIvNuy/4ZvsTF4dOw.7I7QJj620LC25PwgYDmrKqKmKsJz6', '超级管理员', '超级管理员', '123@qq.com', '18888888888', 0, '', 0, '192.168.1.18', '2025-06-07 09:08:55', '0000', 1, 1, '2025-03-08 10:14:52', 1, '2025-06-07 09:08:54', b'0', 1);
+INSERT INTO `system_user` VALUES (1, 'admin', '$2b$06$Ohq86rDIvNuy/4ZvsTF4dOw.7I7QJj620LC25PwgYDmrKqKmKsJz6', '超级管理员', '超级管理员', '123@qq.com', '18888888888', 0, '', 0, '127.0.0.1', '2025-06-10 01:47:21', '0000', 1, 1, '2025-03-08 10:14:52', 1, '2025-06-10 01:47:17', b'0', 1);
 INSERT INTO `system_user` VALUES (11, 'test', '$2b$06$S2yMOy4Mp5gImLOEl8X3K.T8XAWrfXVwGXK/vOBL.30PGNnnGIDzy', '测试管理员', NULL, '', '15555555555', 0, '', 0, '127.0.0.1', '2025-05-23 08:16:27', '0000-0000', 7, 1, '2025-05-23 08:16:00', 1, '2025-05-23 08:16:25', b'0', 2);
 
 -- ----------------------------

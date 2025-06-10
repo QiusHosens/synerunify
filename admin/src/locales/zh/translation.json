@@ -91,6 +91,9 @@
   "global.page.post": "岗位",
   "global.page.user": "用户",
   "global.page.erp.inventory.warehouse": "仓库",
+  "global.page.erp.product.category": "产品分类",
+  "global.page.erp.product.unit": "产品单位",
+  "global.page.erp.product.list": "产品",
 
   "page.login.title.username": "用户名",
   "page.login.title.password": "密码",
@@ -273,5 +276,15 @@
   "page.erp.inventory.warehouse.title.remarks": "备注",
   "page.erp.inventory.warehouse.error.warehouse.name": "请输入仓库名称",
   "page.erp.inventory.warehouse.error.status": "请输入状态",
-  "page.erp.inventory.warehouse.error.sort": "请输入排序"
+  "page.erp.inventory.warehouse.error.sort": "请输入排序",
+
+  "page.erp.product.category.title.code": "分类编码",
+  "page.erp.product.category.title.name": "分类名称",
+  "page.erp.product.category.title.parent": "上级分类",
+  "page.erp.product.category.title.status": "状态",
+  "page.erp.product.category.title.sort": "排序",
+  "page.erp.product.category.title.remarks": "备注",
+  "page.erp.product.category.error.name": "请输入分类名称",
+  "page.erp.product.category.error.status": "请输入状态",
+  "page.erp.product.category.error.sort": "请输入排序"
 }

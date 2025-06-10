@@ -21,10 +21,6 @@ pub struct ErpProductCategoryResponse {
     
     pub remarks: Option<String>, // 备注
     
-    pub department_code: String, // 部门编码
-    
-    pub department_id: i64, // 部门ID
-    
     pub creator: Option<i64>, // 创建者ID
     
     // #[serde_as(as = "DisplayFromStr")]

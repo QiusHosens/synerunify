@@ -1,4 +1,5 @@
-use sea_orm::{DatabaseConnection, EntityTrait, ColumnTrait, ActiveModelTrait, PaginatorTrait, QueryOrder, QueryFilter, Condition};
+use common::interceptor::orm::simple_support::SimpleSupport;
+use sea_orm::{ActiveModelTrait, ColumnTrait, Condition, DatabaseConnection, EntityTrait, Order, PaginatorTrait, QueryFilter, QueryOrder};
 use crate::model::erp_product_unit::{Model as ErpProductUnitModel, ActiveModel as ErpProductUnitActiveModel, Entity as ErpProductUnitEntity, Column};
 use erp_model::request::erp_product_unit::{CreateErpProductUnitRequest, UpdateErpProductUnitRequest, PaginatedKeywordRequest};
 use erp_model::response::erp_product_unit::ErpProductUnitResponse;
@@ -53,8 +54,10 @@ pub async fn get_by_id(db: &DatabaseConnection, login_user: LoginUserContext, id
 }
 
 pub async fn get_paginated(db: &DatabaseConnection, login_user: LoginUserContext, params: PaginatedKeywordRequest) -> Result<PaginatedResponse<ErpProductUnitResponse>> {
-    let condition = Condition::all().add(Column::TenantId.eq(login_user.tenant_id));let paginator = ErpProductUnitEntity::find_active_with_condition(condition)
-        .order_by_desc(Column::UpdateTime)
+    let condition = Condition::all().add(Column::TenantId.eq(login_user.tenant_id));
+    let paginator = ErpProductUnitEntity::find_active_with_condition(condition)
+        .support_filter(params.base.filter_field, params.base.filter_operator, params.base.filter_value)
+        .support_order(params.base.sort_field, params.base.sort, Some(vec![(Column::Sort, Order::Asc)]))
         .paginate(db, params.base.size);
 
     let total = paginator.num_items().await?;

@@ -50,7 +50,7 @@ pub async fn erp_product_unit_route(state: AppState) -> Router {
         ("bearerAuth" = [])
     )
 )]
-#[require_authorize(operation_id = "erp_product_unit_create", authorize = "")]
+#[require_authorize(operation_id = "erp_product_unit_create", authorize = "erp:product:unit:add")]
 async fn create(
     State(state): State<AppState>,
     Extension(login_user): Extension<LoginUserContext>,
@@ -75,7 +75,7 @@ async fn create(
         ("bearerAuth" = [])
     )
 )]
-#[require_authorize(operation_id = "erp_product_unit_update", authorize = "")]
+#[require_authorize(operation_id = "erp_product_unit_update", authorize = "erp:product:unit:edit")]
 async fn update(
     State(state): State<AppState>,
     Extension(login_user): Extension<LoginUserContext>,
@@ -102,7 +102,7 @@ async fn update(
         ("bearerAuth" = [])
     )
 )]
-#[require_authorize(operation_id = "erp_product_unit_delete", authorize = "")]
+#[require_authorize(operation_id = "erp_product_unit_delete", authorize = "erp:product:unit:delete")]
 async fn delete(
     State(state): State<AppState>,
     Extension(login_user): Extension<LoginUserContext>,
@@ -129,7 +129,7 @@ async fn delete(
         ("bearerAuth" = [])
     )
 )]
-#[require_authorize(operation_id = "erp_product_unit_get_by_id", authorize = "")]
+#[require_authorize(operation_id = "erp_product_unit_get_by_id", authorize = "erp:product:unit:get")]
 async fn get_by_id(
     State(state): State<AppState>,
     Extension(login_user): Extension<LoginUserContext>,
@@ -159,7 +159,7 @@ async fn get_by_id(
         ("bearerAuth" = [])
     )
 )]
-#[require_authorize(operation_id = "erp_product_unit_page", authorize = "")]
+#[require_authorize(operation_id = "erp_product_unit_page", authorize = "erp:product:unit:get")]
 async fn page(
     State(state): State<AppState>,
     Extension(login_user): Extension<LoginUserContext>,
@@ -183,7 +183,7 @@ async fn page(
         ("bearerAuth" = [])
     )
 )]
-#[require_authorize(operation_id = "erp_product_unit_list", authorize = "")]
+#[require_authorize(operation_id = "erp_product_unit_list", authorize = "erp:product:unit:get")]
 async fn list(
     State(state): State<AppState>,
     Extension(login_user): Extension<LoginUserContext>,
@@ -209,7 +209,7 @@ async fn list(
         ("bearerAuth" = [])
     )
 )]
-#[require_authorize(operation_id = "erp_product_unit_enable", authorize = "")]
+#[require_authorize(operation_id = "erp_product_unit_enable", authorize = "erp:product:unit:enable")]
 async fn enable(
     State(state): State<AppState>,
     Extension(login_user): Extension<LoginUserContext>,
@@ -236,7 +236,7 @@ async fn enable(
         ("bearerAuth" = [])
     )
 )]
-#[require_authorize(operation_id = "erp_product_unit_disable", authorize = "")]
+#[require_authorize(operation_id = "erp_product_unit_disable", authorize = "erp:product:unit:disable")]
 async fn disable(
     State(state): State<AppState>,
     Extension(login_user): Extension<LoginUserContext>,
