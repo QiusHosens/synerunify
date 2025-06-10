@@ -1,4 +1,5 @@
-use sea_orm::{DatabaseConnection, EntityTrait, ColumnTrait, ActiveModelTrait, PaginatorTrait, QueryOrder, QueryFilter, Condition};
+use common::interceptor::orm::simple_support::SimpleSupport;
+use sea_orm::{DatabaseConnection, EntityTrait, Order, ColumnTrait, ActiveModelTrait, PaginatorTrait, QueryOrder, QueryFilter, Condition};
 use crate::model::{{ table_name }}::{Model as {{ model_name }}Model, ActiveModel as {{ model_name }}ActiveModel, Entity as {{ model_name }}Entity, Column};
 use system_model::request::{{ table_name }}::{Create{{ request_model_name }}, Update{{ request_model_name }}, PaginatedKeywordRequest};
 use system_model::response::{{ table_name }}::{{ response_model_name }};
@@ -55,7 +56,8 @@ pub async fn get_by_id(db: &DatabaseConnection, login_user: LoginUserContext, id
 pub async fn get_paginated(db: &DatabaseConnection, login_user: LoginUserContext, params: PaginatedKeywordRequest) -> Result<PaginatedResponse<{{ response_model_name }}>> {
     {% if has_tenant_field  %}let condition = Condition::all().add(Column::TenantId.eq(login_user.tenant_id));{% endif -%}
     let paginator = {{ model_name }}Entity::{% if has_tenant_field  %}find_active_with_condition(condition){% else %}find_active(){% endif %}
-        .order_by_desc(Column::UpdateTime)
+        .support_filter(params.base.filter_field, params.base.filter_operator, params.base.filter_value)
+        .support_order(params.base.sort_field, params.base.sort, Some(vec![(Column::Id, Order::Asc)]))
         .paginate(db, params.base.size);
 
     let total = paginator.num_items().await?;
