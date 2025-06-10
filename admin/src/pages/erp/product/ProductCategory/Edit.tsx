@@ -2,13 +2,21 @@ import { Box, Button, FormControl, Switch, TextField, Typography } from '@mui/ma
 import { useTranslation } from 'react-i18next';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
-import { ErpProductCategoryRequest, ErpProductCategoryResponse, updateErpProductCategory } from '@/api';
+import { ErpProductCategoryRequest, ErpProductCategoryResponse, listErpProductCategory, updateErpProductCategory } from '@/api';
 import CustomizedDialog from '@/components/CustomizedDialog';
+import SelectTree from '@/components/SelectTree';
 
 interface FormErrors {
   name?: string; // 分类名称
   status?: string; // 状态
   sort?: string; // 排序
+}
+
+interface TreeNode {
+  id: string | number;
+  parent_id: number; // 父菜单ID
+  label: string;
+  children: TreeNode[];
 }
 
 interface ErpProductCategoryEditProps {
@@ -20,6 +28,15 @@ const ErpProductCategoryEdit = forwardRef(({ onSubmit }: ErpProductCategoryEditP
 
   const [open, setOpen] = useState(false);
   const [maxWidth] = useState<DialogProps['maxWidth']>('sm');
+  const [treeData, setTreeData] = useState<TreeNode[]>([
+    {
+      id: 0,
+      parent_id: -1,
+      label: '根节点',
+      children: [],
+    }
+  ]);
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string | number>(0);
   const [erpProductCategory, setErpProductCategory] = useState<ErpProductCategoryRequest>({
     id: 0,
     code: '',
@@ -34,12 +51,65 @@ const ErpProductCategoryEdit = forwardRef(({ onSubmit }: ErpProductCategoryEditP
   useImperativeHandle(ref, () => ({
     show(erpProductCategory: ErpProductCategoryResponse) {
       initForm(erpProductCategory);
+      initCategorys(erpProductCategory);
       setOpen(true);
     },
     hide() {
       setOpen(false);
     },
   }));
+
+  const initCategorys = async (erpProductCategory: ErpProductCategoryResponse) => {
+    const result = await listErpProductCategory();
+
+    setSelectedCategoryId(erpProductCategory.parent_id);
+
+    // 添加根节点
+    result.splice(0, 0, {
+      id: 0,
+      parent_id: -1,
+      name: '根节点',
+    } as ErpProductCategoryResponse);
+
+    const root = findRoot(result);
+    const tree = buildTree(result, root?.parent_id);
+    setTreeData(tree);
+  }
+
+  const findRoot = (list: ErpProductCategoryResponse[]): ErpProductCategoryResponse | undefined => {
+    const ids = list.map(item => item.id);
+    const parentIds = list.map(item => item.parent_id);
+    const rootIds = parentIds.filter(id => ids.indexOf(id) < 0);
+    if (rootIds.length > 0) {
+      const rootId = rootIds[0];
+      return list.filter(item => rootId === item.parent_id)[0];
+    }
+    return undefined;
+  }
+
+  const buildTree = (list: ErpProductCategoryResponse[], rootParentId: number | undefined): TreeNode[] => {
+    const map: { [key: string]: TreeNode } = {};
+    const tree: TreeNode[] = [];
+
+    for (const item of list) {
+      map[item.id] = {
+        id: item.id,
+        parent_id: item.parent_id,
+        label: item.name,
+        children: [],
+      };
+    }
+
+    for (const item of list) {
+      if (item.parent_id === rootParentId) {
+        tree.push(map[item.id]);
+      } else if (map[item.parent_id]) {
+        map[item.parent_id].children.push(map[item.id]);
+      }
+    }
+
+    return tree;
+  }
 
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
@@ -122,6 +192,22 @@ const ErpProductCategoryEdit = forwardRef(({ onSubmit }: ErpProductCategoryEditP
     }
   };
 
+  const handleChange = (name: string, node: TreeNode) => {
+    setSelectedCategoryId(node.id);
+    setErpProductCategory(prev => ({
+      ...prev,
+      [name]: node.id
+    }));
+
+    // Clear error when user starts typing
+    if (errors[name as keyof FormErrors]) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: undefined
+      }));
+    }
+  };
+
   return (
     <CustomizedDialog
       open={open}
@@ -145,14 +231,18 @@ const ErpProductCategoryEdit = forwardRef(({ onSubmit }: ErpProductCategoryEditP
           width: 'fit-content',
         }}
       >
-        <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' } }}>
-          <TextField
+        <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiSelect-root': { width: '200px' } }}>
+          <SelectTree
+            expandToSelected
+            name='parent_id'
             size="small"
-            label={t("page.erp.product.category.title.code")}
-            name='code'
-            value={erpProductCategory.code}
-            onChange={handleInputChange}
+            label={t('page.erp.product.category.title.parent')}
+            treeData={treeData}
+            value={selectedCategoryId}
+            onChange={(name, node) => handleChange(name, node as TreeNode)}
           />
+        </FormControl>
+        <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' } }}>
           <TextField
             required
             size="small"
@@ -165,10 +255,9 @@ const ErpProductCategoryEdit = forwardRef(({ onSubmit }: ErpProductCategoryEditP
           />
           <TextField
             size="small"
-            type="number"
-            label={t("page.erp.product.category.title.parent_id")}
-            name='parent_id'
-            value={erpProductCategory.parent_id}
+            label={t("page.erp.product.category.title.code")}
+            name='code'
+            value={erpProductCategory.code}
             onChange={handleInputChange}
           />
           <TextField

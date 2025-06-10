@@ -54,7 +54,7 @@ const DepartmentAdd = forwardRef(({ onSubmit }: DepartmentAddProps, ref) => {
 
   useImperativeHandle(ref, () => ({
     show() {
-      refreshDepartments();
+      refreshDepartments(true);
       initUsers();
       setOpen(true);
     },
@@ -109,10 +109,10 @@ const DepartmentAdd = forwardRef(({ onSubmit }: DepartmentAddProps, ref) => {
     setUsers(result);
   }
 
-  const refreshDepartments = async () => {
+  const refreshDepartments = async (isInit: boolean) => {
     const result = await listSystemDepartment();
     const root = findRoot(result);
-    if (root) {
+    if (root && isInit) {
       setSelectedDepartmentId(root.id);
       setFormValues(prev => ({
         ...prev,
@@ -163,7 +163,6 @@ const DepartmentAdd = forwardRef(({ onSubmit }: DepartmentAddProps, ref) => {
   const handleSubmit = async () => {
     if (validateForm()) {
       await createSystemDepartment(formValues as SystemDepartmentRequest);
-      refreshDepartments();
       handleClose();
       onSubmit();
     }
@@ -171,10 +170,8 @@ const DepartmentAdd = forwardRef(({ onSubmit }: DepartmentAddProps, ref) => {
 
   const handleSubmitAndContinue = async () => {
     if (validateForm()) {
-      // console.log('formValues', formValues);
       await createSystemDepartment(formValues as SystemDepartmentRequest);
-      // resetInput();
-      refreshDepartments();
+      refreshDepartments(false);
       onSubmit();
     }
   };

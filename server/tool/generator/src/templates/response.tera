@@ -2,13 +2,15 @@ use chrono::NaiveDateTime;
 use serde::{Serialize, Deserialize};
 use utoipa::ToSchema;
 use serde_with::{serde_as, DisplayFromStr};
+use common::formatter::string_date_time::StringDateTime;
 
-// #[serde_as]
+#[serde_as]
 #[derive(Deserialize, Serialize, Debug, Clone, ToSchema)]
 pub struct {{ response_model_name }} {
     {% for column in columns_response -%}{% if column.is_date %}
     // #[serde_as(as = "DisplayFromStr")]
     // #[serde(with = "serde_with::chrono::naive_datetime")]
+    #[serde_as(as = "StringDateTime")]
     #[schema(value_type = String, format = Date)]{% endif %}
     pub {{ column.column_name }}: {% if column.nullable  %}Option<{{ column.rust_type  }}>{% else %}{{ column.rust_type  }}{% endif %}, // {{ column.column_comment  }}
     {% endfor %}
