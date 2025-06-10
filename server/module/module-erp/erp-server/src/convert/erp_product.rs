@@ -8,7 +8,7 @@ pub fn create_request_to_model(request: &CreateErpProductRequest) -> ErpProductA
         product_code: request.product_code.as_ref().map_or(NotSet, |product_code| Set(Some(product_code.clone()))),
         name: Set(request.name.clone()),
         category_id: request.category_id.as_ref().map_or(NotSet, |category_id| Set(Some(category_id.clone()))),
-        unit_id: Set(request.unit_id.clone()),
+        unit_id: request.unit_id.as_ref().map_or(NotSet, |unit_id| Set(Some(unit_id.clone()))),
         status: Set(request.status.clone()),
         barcode: request.barcode.as_ref().map_or(NotSet, |barcode| Set(Some(barcode.clone()))),
         specification: request.specification.as_ref().map_or(NotSet, |specification| Set(Some(specification.clone()))),
@@ -36,7 +36,7 @@ pub fn update_request_to_model(request: &UpdateErpProductRequest, existing: ErpP
         active_model.category_id = Set(Some(category_id.clone()));
     }
     if let Some(unit_id) = &request.unit_id { 
-        active_model.unit_id = Set(unit_id.clone());
+        active_model.unit_id = Set(Some(unit_id.clone()));
     }
     if let Some(status) = &request.status { 
         active_model.status = Set(status.clone());

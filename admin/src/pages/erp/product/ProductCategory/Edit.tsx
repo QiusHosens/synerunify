@@ -14,7 +14,7 @@ interface FormErrors {
 
 interface TreeNode {
   id: string | number;
-  parent_id: number; // 父菜单ID
+  parent_id: number;
   label: string;
   children: TreeNode[];
 }

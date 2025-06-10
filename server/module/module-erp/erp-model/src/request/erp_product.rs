@@ -12,7 +12,7 @@ pub struct CreateErpProductRequest {
     
     pub category_id: Option<i64>, // 产品分类ID
     
-    pub unit_id: i64, // 产品单位ID
+    pub unit_id: Option<i64>, // 产品单位ID
     
     pub status: i8, // 状态
     
