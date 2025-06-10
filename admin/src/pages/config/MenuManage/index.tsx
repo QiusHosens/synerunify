@@ -145,7 +145,7 @@ export default function MenuManage() {
 
   const queryRecords = async () => {
     const result = await listMenu();
-    // console.log('menu list', result);
+    console.log('menu list', result);
     const nodes: Node[] = [];
     result.forEach(menu => {
       nodes.push({

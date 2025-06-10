@@ -14,21 +14,25 @@ use crate::database::redis::RedisManager;
 use crate::database::redis_constants::REDIS_KEY_LOGGER_OPERATION_PREFIX;
 
 pub async fn operation_logger_handler(request: Request, next: Next) -> Result<Response, StatusCode> {
+    let start = Instant::now();
     let request_context = match request.extensions().get::<RequestContext>() {
         Some(x) => x.clone(),
         None => return Ok(next.run(request).await),
     };
     let login_user = request.extensions().get::<LoginUserContext>().cloned();
 
+    info!("operation logger time1: {:?}", start.elapsed().as_millis());
     let now = Instant::now();
     let request_end = next.run(request).await;
     let duration = now.elapsed();
+    info!("operation logger time2: {:?}", start.elapsed().as_millis());
     let result_string = match request_end.extensions().get::<CommonResultJsonString>() {
         Some(x) => x.0.clone(),
         None => "".to_string(),
     };
     // 记录操作日志,异步
     add_logger(request_context, login_user, result_string, duration);
+    info!("operation logger time3: {:?}", start.elapsed().as_millis());
     Ok(request_end)
 }
 

@@ -47,7 +47,7 @@ const ErpSettlementAccountDelete = forwardRef(({ onSubmit }: ErpSettlementAccoun
     <CustomizedDialog
       open={open}
       onClose={handleClose}
-      title={t('global.operate.delete') + t('global.page.post')}
+      title={t('global.operate.delete') + t('global.page.erp.financial.account')}
       maxWidth={maxWidth}
       actions={
         <>

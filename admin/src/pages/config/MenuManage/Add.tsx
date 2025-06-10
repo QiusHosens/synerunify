@@ -341,8 +341,6 @@ const MenuAdd = forwardRef(({ onSubmit }: MenuAddProps, ref) => {
     }
   }
 
-
-
   const handleChange = (name: string, node: TreeNode) => {
     setSelectedMenuId(node.id);
     // console.log('Selected:', value);
