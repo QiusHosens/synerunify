@@ -11,7 +11,7 @@
  Target Server Version : 80100 (8.1.0)
  File Encoding         : 65001
 
- Date: 10/06/2025 14:10:32
+ Date: 10/06/2025 18:00:55
 */
 
 SET NAMES utf8mb4;
@@ -303,7 +303,7 @@ CREATE TABLE `erp_product`  (
   `product_code` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '产品编码',
   `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '产品名称',
   `category_id` bigint NULL DEFAULT NULL COMMENT '产品分类ID',
-  `unit_id` bigint NOT NULL COMMENT '产品单位ID',
+  `unit_id` bigint NULL DEFAULT NULL COMMENT '产品单位ID',
   `status` tinyint NOT NULL DEFAULT 0 COMMENT '状态',
   `barcode` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '条码',
   `specification` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '规格',
@@ -322,11 +322,12 @@ CREATE TABLE `erp_product`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '产品信息表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '产品信息表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of erp_product
 -- ----------------------------
+INSERT INTO `erp_product` VALUES (1, 'test', '测试产品', NULL, NULL, 0, '', '1', 3, 1, 3, 3, 2, 5, 1, '测试', 1, '2025-06-10 08:24:00', 1, '2025-06-10 08:24:00', b'0', 1);
 
 -- ----------------------------
 -- Table structure for erp_product_category
@@ -374,11 +375,13 @@ CREATE TABLE `erp_product_unit`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '产品单位表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '产品单位表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of erp_product_unit
 -- ----------------------------
+INSERT INTO `erp_product_unit` VALUES (1, 'kg', 0, 0, '重量', 1, '2025-06-10 06:45:31', 1, '2025-06-10 06:45:52', b'0', 1);
+INSERT INTO `erp_product_unit` VALUES (2, 'g', 0, 0, '重量', 1, '2025-06-10 06:45:45', 1, '2025-06-10 06:45:45', b'0', 1);
 
 -- ----------------------------
 -- Table structure for erp_purchase_order
