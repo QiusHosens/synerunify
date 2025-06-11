@@ -39,7 +39,7 @@ anyhow = "1.0.98"
 # log
 tracing = { version = "0.1.41" }
 tracing-appender = { version = "0.2.3" }
-tracing-subscriber = { version = "0.3.19" }
+tracing-subscriber = { version = "0.3.19", features = ["env-filter"] }
 
 macros = { path = "../../framework/macros" }
 once_cell = "1.21.3"

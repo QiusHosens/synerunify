@@ -1,9 +1,9 @@
-use sea_orm::{DatabaseConnection, EntityTrait, ColumnTrait, ActiveModelTrait, PaginatorTrait, QueryOrder, QueryFilter, Condition};
+use sea_orm::{ActiveModelTrait, ColumnTrait, Condition, DatabaseConnection, DatabaseTransaction, EntityTrait, PaginatorTrait, QueryFilter, QueryOrder};
 use crate::model::erp_purchase_order_detail::{Model as ErpPurchaseOrderDetailModel, ActiveModel as ErpPurchaseOrderDetailActiveModel, Entity as ErpPurchaseOrderDetailEntity, Column};
 use erp_model::request::erp_purchase_order_detail::{CreateErpPurchaseOrderDetailRequest, UpdateErpPurchaseOrderDetailRequest, PaginatedKeywordRequest};
 use erp_model::response::erp_purchase_order_detail::ErpPurchaseOrderDetailResponse;
 use crate::convert::erp_purchase_order_detail::{create_request_to_model, update_request_to_model, model_to_response};
-use anyhow::{Result, anyhow};
+use anyhow::{anyhow, Ok, Result};
 use sea_orm::ActiveValue::Set;
 use common::constants::enum_constants::{STATUS_DISABLE, STATUS_ENABLE};
 use common::base::page::PaginatedResponse;
@@ -17,6 +17,29 @@ pub async fn create(db: &DatabaseConnection, login_user: LoginUserContext, reque
     erp_purchase_order_detail.tenant_id = Set(login_user.tenant_id);
     let erp_purchase_order_detail = erp_purchase_order_detail.insert(db).await?;
     Ok(erp_purchase_order_detail.id)
+}
+
+pub async fn create_batch(db: &DatabaseConnection, txn: &DatabaseTransaction, login_user: LoginUserContext, purchase_id: i64, requests: Vec<CreateErpPurchaseOrderDetailRequest>) -> Result<()> {
+    let models: Vec<ErpPurchaseOrderDetailActiveModel> = requests
+        .into_iter()
+        .map(|request| {
+            let mut model: ErpPurchaseOrderDetailActiveModel = create_request_to_model(&request);
+            model.purchase_id = Set(purchase_id);
+            model.department_id = Set(login_user.department_id);
+            model.department_code = Set(login_user.department_code.clone());
+            model.creator = Set(Some(login_user.id));
+            model.updater = Set(Some(login_user.id));
+            model.tenant_id = Set(login_user.tenant_id);
+            model
+        })
+        .collect();
+
+    if !models.is_empty() {
+        ErpPurchaseOrderDetailEntity::insert_many(models)
+            .exec(txn)
+            .await?;
+    }
+    Ok(())
 }
 
 pub async fn update(db: &DatabaseConnection, login_user: LoginUserContext, request: UpdateErpPurchaseOrderDetailRequest) -> Result<()> {

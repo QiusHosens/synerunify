@@ -5,32 +5,21 @@ use erp_model::response::erp_purchase_order::ErpPurchaseOrderResponse;
 
 pub fn create_request_to_model(request: &CreateErpPurchaseOrderRequest) -> ErpPurchaseOrderActiveModel {
     ErpPurchaseOrderActiveModel {
-        order_number: Set(request.order_number.clone()),
-        supplier_id: request.supplier_id.as_ref().map_or(NotSet, |supplier_id| Set(Some(supplier_id.clone()))),
-        user_id: request.user_id.as_ref().map_or(NotSet, |user_id| Set(Some(user_id.clone()))),
+        supplier_id: Set(request.supplier_id.clone()),
         purchase_date: Set(request.purchase_date.clone()),
         total_amount: Set(request.total_amount.clone()),
-        order_status: Set(request.order_status.clone()),
         discount_rate: request.discount_rate.as_ref().map_or(NotSet, |discount_rate| Set(Some(discount_rate.clone()))),
         settlement_account_id: request.settlement_account_id.as_ref().map_or(NotSet, |settlement_account_id| Set(Some(settlement_account_id.clone()))),
         deposit: request.deposit.as_ref().map_or(NotSet, |deposit| Set(Some(deposit.clone()))),
         remarks: request.remarks.as_ref().map_or(NotSet, |remarks| Set(Some(remarks.clone()))),
-        department_code: Set(request.department_code.clone()),
-        department_id: Set(request.department_id.clone()),
         ..Default::default()
     }
 }
 
 pub fn update_request_to_model(request: &UpdateErpPurchaseOrderRequest, existing: ErpPurchaseOrder) -> ErpPurchaseOrderActiveModel {
     let mut active_model: ErpPurchaseOrderActiveModel = existing.into();
-    if let Some(order_number) = &request.order_number { 
-        active_model.order_number = Set(order_number.clone());
-    }
     if let Some(supplier_id) = &request.supplier_id { 
-        active_model.supplier_id = Set(Some(supplier_id.clone()));
-    }
-    if let Some(user_id) = &request.user_id { 
-        active_model.user_id = Set(Some(user_id.clone()));
+        active_model.supplier_id = Set(supplier_id.clone());
     }
     if let Some(purchase_date) = &request.purchase_date { 
         active_model.purchase_date = Set(purchase_date.clone());
@@ -52,12 +41,6 @@ pub fn update_request_to_model(request: &UpdateErpPurchaseOrderRequest, existing
     }
     if let Some(remarks) = &request.remarks { 
         active_model.remarks = Set(Some(remarks.clone()));
-    }
-    if let Some(department_code) = &request.department_code { 
-        active_model.department_code = Set(department_code.clone());
-    }
-    if let Some(department_id) = &request.department_id { 
-        active_model.department_id = Set(department_id.clone());
     }
     active_model
 }

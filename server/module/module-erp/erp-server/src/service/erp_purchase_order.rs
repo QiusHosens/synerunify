@@ -1,9 +1,12 @@
-use sea_orm::{DatabaseConnection, EntityTrait, ColumnTrait, ActiveModelTrait, PaginatorTrait, QueryOrder, QueryFilter, Condition};
+use common::interceptor::orm::simple_support::SimpleSupport;
+use common::utils::snowflake_generator::SnowflakeGenerator;
+use sea_orm::{ActiveModelTrait, ColumnTrait, Condition, DatabaseConnection, EntityTrait, Order, PaginatorTrait, QueryFilter, QueryOrder, TransactionTrait};
 use crate::model::erp_purchase_order::{Model as ErpPurchaseOrderModel, ActiveModel as ErpPurchaseOrderActiveModel, Entity as ErpPurchaseOrderEntity, Column};
+use crate::service::{erp_purchase_order_attachment, erp_purchase_order_detail};
 use erp_model::request::erp_purchase_order::{CreateErpPurchaseOrderRequest, UpdateErpPurchaseOrderRequest, PaginatedKeywordRequest};
 use erp_model::response::erp_purchase_order::ErpPurchaseOrderResponse;
 use crate::convert::erp_purchase_order::{create_request_to_model, update_request_to_model, model_to_response};
-use anyhow::{Result, anyhow};
+use anyhow::{anyhow, Context, Result};
 use sea_orm::ActiveValue::Set;
 use common::constants::enum_constants::{STATUS_DISABLE, STATUS_ENABLE};
 use common::base::page::PaginatedResponse;
@@ -12,10 +15,29 @@ use common::interceptor::orm::active_filter::ActiveFilterEntityTrait;
 
 pub async fn create(db: &DatabaseConnection, login_user: LoginUserContext, request: CreateErpPurchaseOrderRequest) -> Result<i64> {
     let mut erp_purchase_order = create_request_to_model(&request);
-    erp_purchase_order.creator = Set(Some(login_user.id));
-    erp_purchase_order.updater = Set(Some(login_user.id));
-    erp_purchase_order.tenant_id = Set(login_user.tenant_id);
-    let erp_purchase_order = erp_purchase_order.insert(db).await?;
+    // 生成订单编号
+    let generator = SnowflakeGenerator::new();
+    match generator.generate() {
+        Ok(id) => erp_purchase_order.order_number = Set(id),
+        Err(e) => return Err(anyhow!("订单编号生成失败")),
+    }
+    // 开启事务
+    let txn = db.begin().await?;
+    // 创建订单
+    erp_purchase_order.user_id = Set(login_user.id.clone());
+    erp_purchase_order.order_status = Set(0);
+    erp_purchase_order.department_id = Set(login_user.department_id.clone());
+    erp_purchase_order.department_code = Set(login_user.department_code.clone());
+    erp_purchase_order.creator = Set(Some(login_user.id.clone()));
+    erp_purchase_order.updater = Set(Some(login_user.id.clone()));
+    erp_purchase_order.tenant_id = Set(login_user.tenant_id.clone());
+    let erp_purchase_order = erp_purchase_order.insert(&txn).await?;
+    // 创建订单商品详情
+    erp_purchase_order_detail::create_batch(&db, &txn, login_user.clone(), erp_purchase_order.id, request.purchase_products);
+    // 创建订单文件
+    erp_purchase_order_attachment::create_batch(&db, &txn, login_user, erp_purchase_order.id, request.purchase_attachment);
+    // 提交事务
+    txn.commit().await.with_context(|| "Failed to commit transaction")?;
     Ok(erp_purchase_order.id)
 }
 
@@ -53,8 +75,12 @@ pub async fn get_by_id(db: &DatabaseConnection, login_user: LoginUserContext, id
 }
 
 pub async fn get_paginated(db: &DatabaseConnection, login_user: LoginUserContext, params: PaginatedKeywordRequest) -> Result<PaginatedResponse<ErpPurchaseOrderResponse>> {
-    let condition = Condition::all().add(Column::TenantId.eq(login_user.tenant_id));let paginator = ErpPurchaseOrderEntity::find_active_with_condition(condition)
-        .order_by_desc(Column::UpdateTime)
+    let condition = Condition::all().add(Column::TenantId.eq(login_user.tenant_id));
+    let paginator = ErpPurchaseOrderEntity::find_active_with_data_permission(login_user.clone())
+        // 增加供应商查询 TODO
+        .filter(Column::TenantId.eq(login_user.tenant_id))
+        .support_filter(params.base.filter_field, params.base.filter_operator, params.base.filter_value)
+        .support_order(params.base.sort_field, params.base.sort, Some(vec![(Column::Id, Order::Desc)]))
         .paginate(db, params.base.size);
 
     let total = paginator.num_items().await?;

@@ -67,27 +67,27 @@ const ErpPurchaseOrderAdd = forwardRef(({ onSubmit }: ErpPurchaseOrderAddProps, 
     const newErrors: FormErrors = {};
     
     if (!formValues.order_number.trim()) {
-      newErrors.order_number = t('page.post.error.order_number');
+      newErrors.order_number = t('page.mark_translation.error.order_number');
     }
     
     if (!formValues.purchase_date.trim()) {
-      newErrors.purchase_date = t('page.post.error.purchase_date');
+      newErrors.purchase_date = t('page.mark_translation.error.purchase_date');
     }
     
     if (!formValues.total_amount && formValues.total_amount != 0) {
-      newErrors.total_amount = t('page.post.error.total_amount');
+      newErrors.total_amount = t('page.mark_translation.error.total_amount');
     }
     
     if (!formValues.order_status && formValues.order_status != 0) {
-      newErrors.order_status = t('page.post.error.order_status');
+      newErrors.order_status = t('page.mark_translation.error.order_status');
     }
     
     if (!formValues.department_code.trim()) {
-      newErrors.department_code = t('page.post.error.department_code');
+      newErrors.department_code = t('page.mark_translation.error.department_code');
     }
     
     if (!formValues.department_id && formValues.department_id != 0) {
-      newErrors.department_id = t('page.post.error.department_id');
+      newErrors.department_id = t('page.mark_translation.error.department_id');
     }
     
     setErrors(newErrors);
@@ -180,7 +180,7 @@ const ErpPurchaseOrderAdd = forwardRef(({ onSubmit }: ErpPurchaseOrderAddProps, 
     <CustomizedDialog
       open={open}
       onClose={handleClose}
-      title={t('global.operate.add') + t('global.page.post')}
+      title={t('global.operate.add') + t('global.page.mark_translation')}
       maxWidth={maxWidth}
       actions={
         <>
@@ -202,7 +202,7 @@ const ErpPurchaseOrderAdd = forwardRef(({ onSubmit }: ErpPurchaseOrderAddProps, 
           <TextField
             required
             size="small"
-            label={t("page.post.title.order_number")}
+            label={t("page.mark_translation.title.order_number")}
             name='order_number'
             value={formValues.order_number}
             onChange={handleInputChange}
@@ -212,7 +212,7 @@ const ErpPurchaseOrderAdd = forwardRef(({ onSubmit }: ErpPurchaseOrderAddProps, 
           <TextField
             size="small"
             type="number"
-            label={t("page.post.title.supplier_id")}
+            label={t("page.mark_translation.title.supplier_id")}
             name='supplier_id'
             value={formValues.supplier_id}
             onChange={handleInputChange}
@@ -220,7 +220,7 @@ const ErpPurchaseOrderAdd = forwardRef(({ onSubmit }: ErpPurchaseOrderAddProps, 
           <TextField
             size="small"
             type="number"
-            label={t("page.post.title.user_id")}
+            label={t("page.mark_translation.title.user_id")}
             name='user_id'
             value={formValues.user_id}
             onChange={handleInputChange}
@@ -228,7 +228,7 @@ const ErpPurchaseOrderAdd = forwardRef(({ onSubmit }: ErpPurchaseOrderAddProps, 
           <TextField
             required
             size="small"
-            label={t("page.post.title.purchase_date")}
+            label={t("page.mark_translation.title.purchase_date")}
             name='purchase_date'
             value={formValues.purchase_date}
             onChange={handleInputChange}
@@ -239,7 +239,7 @@ const ErpPurchaseOrderAdd = forwardRef(({ onSubmit }: ErpPurchaseOrderAddProps, 
             required
             size="small"
             type="number"
-            label={t("page.post.title.total_amount")}
+            label={t("page.mark_translation.title.total_amount")}
             name='total_amount'
             value={formValues.total_amount}
             onChange={handleInputChange}
@@ -250,7 +250,7 @@ const ErpPurchaseOrderAdd = forwardRef(({ onSubmit }: ErpPurchaseOrderAddProps, 
             required
             size="small"
             type="number"
-            label={t("page.post.title.order_status")}
+            label={t("page.mark_translation.title.order_status")}
             name='order_status'
             value={formValues.order_status}
             onChange={handleInputChange}
@@ -260,7 +260,7 @@ const ErpPurchaseOrderAdd = forwardRef(({ onSubmit }: ErpPurchaseOrderAddProps, 
           <TextField
             size="small"
             type="number"
-            label={t("page.post.title.discount_rate")}
+            label={t("page.mark_translation.title.discount_rate")}
             name='discount_rate'
             value={formValues.discount_rate}
             onChange={handleInputChange}
@@ -268,7 +268,7 @@ const ErpPurchaseOrderAdd = forwardRef(({ onSubmit }: ErpPurchaseOrderAddProps, 
           <TextField
             size="small"
             type="number"
-            label={t("page.post.title.settlement_account_id")}
+            label={t("page.mark_translation.title.settlement_account_id")}
             name='settlement_account_id'
             value={formValues.settlement_account_id}
             onChange={handleInputChange}
@@ -276,14 +276,14 @@ const ErpPurchaseOrderAdd = forwardRef(({ onSubmit }: ErpPurchaseOrderAddProps, 
           <TextField
             size="small"
             type="number"
-            label={t("page.post.title.deposit")}
+            label={t("page.mark_translation.title.deposit")}
             name='deposit'
             value={formValues.deposit}
             onChange={handleInputChange}
           />
           <TextField
             size="small"
-            label={t("page.post.title.remarks")}
+            label={t("page.mark_translation.title.remarks")}
             name='remarks'
             value={formValues.remarks}
             onChange={handleInputChange}
@@ -291,7 +291,7 @@ const ErpPurchaseOrderAdd = forwardRef(({ onSubmit }: ErpPurchaseOrderAddProps, 
           <TextField
             required
             size="small"
-            label={t("page.post.title.department_code")}
+            label={t("page.mark_translation.title.department_code")}
             name='department_code'
             value={formValues.department_code}
             onChange={handleInputChange}
@@ -302,7 +302,7 @@ const ErpPurchaseOrderAdd = forwardRef(({ onSubmit }: ErpPurchaseOrderAddProps, 
             required
             size="small"
             type="number"
-            label={t("page.post.title.department_id")}
+            label={t("page.mark_translation.title.department_id")}
             name='department_id'
             value={formValues.department_id}
             onChange={handleInputChange}

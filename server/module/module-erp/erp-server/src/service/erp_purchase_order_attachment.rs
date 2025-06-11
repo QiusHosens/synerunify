@@ -1,4 +1,4 @@
-use sea_orm::{DatabaseConnection, EntityTrait, ColumnTrait, ActiveModelTrait, PaginatorTrait, QueryOrder, QueryFilter, Condition};
+use sea_orm::{ActiveModelTrait, ColumnTrait, Condition, DatabaseConnection, DatabaseTransaction, EntityTrait, PaginatorTrait, QueryFilter, QueryOrder};
 use crate::model::erp_purchase_order_attachment::{Model as ErpPurchaseOrderAttachmentModel, ActiveModel as ErpPurchaseOrderAttachmentActiveModel, Entity as ErpPurchaseOrderAttachmentEntity, Column};
 use erp_model::request::erp_purchase_order_attachment::{CreateErpPurchaseOrderAttachmentRequest, UpdateErpPurchaseOrderAttachmentRequest, PaginatedKeywordRequest};
 use erp_model::response::erp_purchase_order_attachment::ErpPurchaseOrderAttachmentResponse;
@@ -17,6 +17,31 @@ pub async fn create(db: &DatabaseConnection, login_user: LoginUserContext, reque
     erp_purchase_order_attachment.tenant_id = Set(login_user.tenant_id);
     let erp_purchase_order_attachment = erp_purchase_order_attachment.insert(db).await?;
     Ok(erp_purchase_order_attachment.id)
+}
+
+pub async fn create_batch(db: &DatabaseConnection, txn: &DatabaseTransaction, login_user: LoginUserContext, purchase_id: i64, requests: Vec<CreateErpPurchaseOrderAttachmentRequest>) -> Result<()> {
+    let models: Vec<ErpPurchaseOrderAttachmentActiveModel> = requests
+        .into_iter()
+        .map(|request| {
+            let mut model = create_request_to_model(&request);
+            model.purchase_id = Set(purchase_id);
+            model.department_id = Set(login_user.department_id);
+            model.department_code = Set(login_user.department_code.clone());
+            model.creator = Set(Some(login_user.id));
+            model.updater = Set(Some(login_user.id));
+            model.tenant_id = Set(login_user.tenant_id);
+            model
+        })
+        .collect();
+
+    if !models.is_empty() {
+        ErpPurchaseOrderAttachmentEntity::insert_many(models)
+            .exec(txn)
+            .await?;
+    }
+
+    // 设置文件状态为有效 TODO
+    Ok(())
 }
 
 pub async fn update(db: &DatabaseConnection, login_user: LoginUserContext, request: UpdateErpPurchaseOrderAttachmentRequest) -> Result<()> {

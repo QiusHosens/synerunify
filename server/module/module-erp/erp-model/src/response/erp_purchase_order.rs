@@ -2,8 +2,9 @@ use chrono::NaiveDateTime;
 use serde::{Serialize, Deserialize};
 use utoipa::ToSchema;
 use serde_with::{serde_as, DisplayFromStr};
+use common::formatter::string_date_time::StringDateTime;
 
-// #[serde_as]
+#[serde_as]
 #[derive(Deserialize, Serialize, Debug, Clone, ToSchema)]
 pub struct ErpPurchaseOrderResponse {
     
@@ -11,9 +12,9 @@ pub struct ErpPurchaseOrderResponse {
     
     pub order_number: String, // 订单编号
     
-    pub supplier_id: Option<i64>, // 供应商ID
+    pub supplier_name: String, // 供应商名称
     
-    pub user_id: Option<i64>, // 用户ID
+    // pub user_name: String, // 用户名称
     
     // #[serde_as(as = "DisplayFromStr")]
     // #[serde(with = "serde_with::chrono::naive_datetime")]
@@ -26,20 +27,19 @@ pub struct ErpPurchaseOrderResponse {
     
     pub discount_rate: Option<i64>, // 优惠率（百分比，1000表示10.00%）
     
-    pub settlement_account_id: Option<i64>, // 结算账户ID
+    pub settlement_account_name: Option<String>, // 结算账户
     
     pub deposit: Option<i64>, // 定金
     
     pub remarks: Option<String>, // 备注
     
-    pub department_code: String, // 部门编码
-    
-    pub department_id: i64, // 部门ID
+    pub department_name: String, // 部门名称
     
     pub creator: Option<i64>, // 创建者ID
     
     // #[serde_as(as = "DisplayFromStr")]
     // #[serde(with = "serde_with::chrono::naive_datetime")]
+    #[serde_as(as = "StringDateTime")]
     #[schema(value_type = String, format = Date)]
     pub create_time: NaiveDateTime, // 创建时间
     
@@ -47,6 +47,7 @@ pub struct ErpPurchaseOrderResponse {
     
     // #[serde_as(as = "DisplayFromStr")]
     // #[serde(with = "serde_with::chrono::naive_datetime")]
+    #[serde_as(as = "StringDateTime")]
     #[schema(value_type = String, format = Date)]
     pub update_time: NaiveDateTime, // 更新时间
     
