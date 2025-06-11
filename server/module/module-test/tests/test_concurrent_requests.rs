@@ -7,7 +7,7 @@ use tokio::time::{sleep, Duration, Instant};
 use tokio::runtime::Builder;
 
 const MENU_LIST_ADDR: &str = "localhost/system/system_menu/list";
-const USER_AUTHORIZATION: &str = "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJkZXZpY2VfdHlwZSI6IndlYiIsInN1YiI6MSwidGVuYW50X2lkIjoxLCJleHAiOjE3NDk2MDg1MDksImlhdCI6MTc0OTYwNzYwOX0.0QohWgQRLZTiuEPuBahqvPbNl3gei0nkfxxI-8hWZ80";
+const USER_AUTHORIZATION: &str = "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJkZXZpY2VfdHlwZSI6IndlYiIsInN1YiI6MSwidGVuYW50X2lkIjoxLCJleHAiOjE3NDk2MDk5NTQsImlhdCI6MTc0OTYwOTA1NH0.I7mlaD_gcYJwU4ZD8JepBk7QvHqWxurzHO2BAfhqhmA";
 // const USER_AUTHORIZATION: &str = "Bearer test-token";
 
 // 定义一个简单的 handler，验证 token
@@ -125,6 +125,7 @@ async fn test_concurrent_requests() {
     // 收集所有响应
     let mut success_count = 0;
     let mut failed_count = 0;
+    let mut good_count = 0;
 
     for handle in handles {
         let (req_id, response, start_time, end_time, duration) = handle.await.unwrap();
@@ -138,6 +139,10 @@ async fn test_concurrent_requests() {
             duration.as_secs_f64() * 1000.0 // 转换为毫秒
         );
 
+        if (duration.as_secs_f64() * 1000.0 < 1000.0) {
+            good_count += 1;
+        }
+
         if response.status() == StatusCode::OK {
             let body = response.text().await.unwrap();
             // assert_eq!(body, "Hello, World!", "Request {} failed: wrong body", req_id);
@@ -150,8 +155,8 @@ async fn test_concurrent_requests() {
 
     // 打印总结
     println!(
-        "Test completed: {} successful, {} failed",
-        success_count, failed_count
+        "Test completed: {} successful, {} failed, {} is good",
+        success_count, failed_count, good_count
     );
 
     // 验证所有请求都成功

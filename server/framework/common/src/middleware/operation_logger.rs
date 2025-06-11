@@ -21,18 +21,18 @@ pub async fn operation_logger_handler(request: Request, next: Next) -> Result<Re
     };
     let login_user = request.extensions().get::<LoginUserContext>().cloned();
 
-    info!("operation logger time1: {:?}", start.elapsed().as_millis());
+    info!("operation logger time1: {:?}ms", Instant::now().duration_since(start).as_secs_f64() * 1000.0);
     let now = Instant::now();
     let request_end = next.run(request).await;
     let duration = now.elapsed();
-    info!("operation logger time2: {:?}", start.elapsed().as_millis());
+    info!("operation logger time2: {:?}ms", Instant::now().duration_since(start).as_secs_f64() * 1000.0);
     let result_string = match request_end.extensions().get::<CommonResultJsonString>() {
         Some(x) => x.0.clone(),
         None => "".to_string(),
     };
     // 记录操作日志,异步
     add_logger(request_context, login_user, result_string, duration);
-    info!("operation logger time3: {:?}", start.elapsed().as_millis());
+    info!("operation logger time3: {:?}ms", Instant::now().duration_since(start).as_secs_f64() * 1000.0);
     Ok(request_end)
 }
 
@@ -79,7 +79,7 @@ async fn add_logger_redis(request_context: RequestContext, login_user: Option<Lo
         deleted: false,
         tenant_id
     };
-    info!("operation logger: {:?}", operation_logger);
+    // info!("operation logger: {:?}", operation_logger);
     RedisManager::push_list::<_, String>(REDIS_KEY_LOGGER_OPERATION_PREFIX, serde_json::to_string(&operation_logger)?)?;
     Ok(())
 }
