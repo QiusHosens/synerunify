@@ -13,6 +13,8 @@ use common::interceptor::orm::active_filter::ActiveFilterEntityTrait;
 
 pub async fn create(db: &DatabaseConnection, login_user: LoginUserContext, request: CreateErpCustomerRequest) -> Result<i64> {
     let mut erp_customer = create_request_to_model(&request);
+    erp_customer.department_id = Set(login_user.department_id);
+    erp_customer.department_code = Set(login_user.department_code);
     erp_customer.creator = Set(Some(login_user.id));
     erp_customer.updater = Set(Some(login_user.id));
     erp_customer.tenant_id = Set(login_user.tenant_id);

@@ -303,8 +303,6 @@ const ErpCustomerAdd = forwardRef(({ onSubmit }: ErpCustomerAddProps, ref) => {
               />
             </Grid>
             <Grid size={{ xs: 12, md: 6 }}>
-            </Grid>
-            <Grid size={{ xs: 12, md: 6 }}>
               <Box sx={{ mt: 2, display: 'flex', alignItems: 'center' }}>
                 <Typography sx={{ mr: 4 }}>{t("global.title.status")}</Typography>
                 <Switch sx={{ mr: 2 }} name='status' checked={!formValues.status} onChange={handleStatusChange} />
