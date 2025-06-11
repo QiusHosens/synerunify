@@ -97,3 +97,6 @@ common = { path = "../../../framework/common" }
 macros = { path = "../../../framework/macros" }
 system-model = { path = "../system-model" }
 captcha-grpc-rust = { path = "../../module-third/module-captcha/captcha-grpc-rust" }
+
+[dev-dependencies]
+reqwest = { version = "0.12", features = ["json"] }

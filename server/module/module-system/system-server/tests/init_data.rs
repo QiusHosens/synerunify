@@ -26,8 +26,8 @@ fn test_verify() {
     let password_md5 = get_md5(password);
     let duration_md5 = start.elapsed();
     let is_match = match verify_password(password_md5, pass.to_string()) {
-        Ok(isMatch) => {
-            isMatch
+        Ok(is_match) => {
+            is_match
         }
         Err(_) => {
             println!("verify error");
