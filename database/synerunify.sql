@@ -11,7 +11,7 @@
  Target Server Version : 80200 (8.2.0)
  File Encoding         : 65001
 
- Date: 10/06/2025 22:51:04
+ Date: 11/06/2025 23:20:09
 */
 
 SET NAMES utf8mb4;
@@ -45,11 +45,12 @@ CREATE TABLE `erp_customer`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '客户信息表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '客户信息表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of erp_customer
 -- ----------------------------
+INSERT INTO `erp_customer` VALUES (1, '测试客户', '测试客户', '18888888777', '123@q.com', '高新区', 0, 0, 'x12334', 0, '中国银行', '12345678', '高新区', '测试', '0000', 1, 1, '2025-06-11 12:47:19', 1, '2025-06-11 12:49:07', b'0', 1);
 
 -- ----------------------------
 -- Table structure for erp_financial_record
@@ -389,9 +390,9 @@ INSERT INTO `erp_product_unit` VALUES (2, 'g', 0, 0, '重量', 1, '2025-06-10 06
 DROP TABLE IF EXISTS `erp_purchase_order`;
 CREATE TABLE `erp_purchase_order`  (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '采购订单ID',
-  `order_number` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '订单编号',
-  `supplier_id` bigint NULL DEFAULT NULL COMMENT '供应商ID',
-  `user_id` bigint NULL DEFAULT NULL COMMENT '用户ID',
+  `order_number` bigint NOT NULL COMMENT '订单编号',
+  `supplier_id` bigint NOT NULL COMMENT '供应商ID',
+  `user_id` bigint NOT NULL COMMENT '用户ID',
   `purchase_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '采购日期',
   `total_amount` bigint NOT NULL COMMENT '总金额',
   `order_status` tinyint NOT NULL DEFAULT 0 COMMENT '订单状态 (0=pending, 1=completed, 2=cancelled)',
@@ -421,8 +422,8 @@ CREATE TABLE `erp_purchase_order`  (
 DROP TABLE IF EXISTS `erp_purchase_order_attachment`;
 CREATE TABLE `erp_purchase_order_attachment`  (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '附件ID',
-  `purchase_id` bigint NULL DEFAULT NULL COMMENT '采购订单ID',
-  `file_id` bigint NULL DEFAULT NULL COMMENT '文件ID',
+  `purchase_id` bigint NOT NULL COMMENT '采购订单ID',
+  `file_id` bigint NOT NULL COMMENT '文件ID',
   `remarks` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
   `department_code` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '部门编码',
   `department_id` bigint NOT NULL COMMENT '部门ID',
@@ -638,8 +639,8 @@ CREATE TABLE `erp_sales_order_attachment`  (
 DROP TABLE IF EXISTS `erp_sales_order_detail`;
 CREATE TABLE `erp_sales_order_detail`  (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '订单详情ID',
-  `order_id` bigint NULL DEFAULT NULL COMMENT '订单ID',
-  `product_id` bigint NULL DEFAULT NULL COMMENT '产品ID',
+  `order_id` bigint NOT NULL COMMENT '订单ID',
+  `product_id` bigint NOT NULL COMMENT '产品ID',
   `quantity` int NOT NULL COMMENT '数量',
   `unit_price` bigint NOT NULL COMMENT '单价',
   `subtotal` bigint NOT NULL COMMENT '小计',
@@ -1471,7 +1472,7 @@ CREATE TABLE `system_user`  (
 -- ----------------------------
 -- Records of system_user
 -- ----------------------------
-INSERT INTO `system_user` VALUES (1, 'admin', '$2b$06$Ohq86rDIvNuy/4ZvsTF4dOw.7I7QJj620LC25PwgYDmrKqKmKsJz6', '超级管理员', '超级管理员', '123@qq.com', '18888888888', 0, '', 0, '127.0.0.1', '2025-06-10 11:44:24', '0000', 1, 1, '2025-03-08 10:14:52', 1, '2025-06-10 11:44:27', b'0', 1);
+INSERT INTO `system_user` VALUES (1, 'admin', '$2b$06$Ohq86rDIvNuy/4ZvsTF4dOw.7I7QJj620LC25PwgYDmrKqKmKsJz6', '超级管理员', '超级管理员', '123@qq.com', '18888888888', 0, '', 0, '127.0.0.1', '2025-06-11 11:45:01', '0000', 1, 1, '2025-03-08 10:14:52', 1, '2025-06-11 11:45:01', b'0', 1);
 INSERT INTO `system_user` VALUES (11, 'test', '$2b$06$S2yMOy4Mp5gImLOEl8X3K.T8XAWrfXVwGXK/vOBL.30PGNnnGIDzy', '测试管理员', NULL, '', '15555555555', 0, '', 0, '127.0.0.1', '2025-05-23 08:16:27', '0000-0000', 7, 1, '2025-05-23 08:16:00', 1, '2025-05-23 08:16:25', b'0', 2);
 
 -- ----------------------------
