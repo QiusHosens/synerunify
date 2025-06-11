@@ -1,4 +1,4 @@
-import { Box, Button, FormControl, Switch, TextField, Typography } from '@mui/material';
+import { Box, Button, FormControl, Grid, Switch, TextField, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
@@ -19,16 +19,12 @@ interface FormValues {
   bank_account: string; // 银行账号
   bank_address: string; // 开户地址
   remarks: string; // 备注
-  department_code: string; // 部门编码
-  department_id: number; // 部门ID
-  }
+}
 
-interface FormErrors { 
+interface FormErrors {
   name?: string; // 客户名称
   status?: string; // 状态
   sort?: string; // 排序
-  department_code?: string; // 部门编码
-  department_id?: string; // 部门ID
 }
 
 interface ErpCustomerAddProps {
@@ -54,9 +50,7 @@ const ErpCustomerAdd = forwardRef(({ onSubmit }: ErpCustomerAddProps, ref) => {
     bank_account: '',
     bank_address: '',
     remarks: '',
-    department_code: '',
-    department_id: 0,
-    });
+  });
   const [errors, setErrors] = useState<FormErrors>({});
 
   useImperativeHandle(ref, () => ({
@@ -70,27 +64,15 @@ const ErpCustomerAdd = forwardRef(({ onSubmit }: ErpCustomerAddProps, ref) => {
 
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
-    
+
     if (!formValues.name.trim()) {
-      newErrors.name = t('page.post.error.name');
+      newErrors.name = t('page.erp.sale.customer.error.name');
     }
-    
-    if (!formValues.status && formValues.status != 0) {
-      newErrors.status = t('page.post.error.status');
-    }
-    
+
     if (!formValues.sort && formValues.sort != 0) {
-      newErrors.sort = t('page.post.error.sort');
+      newErrors.sort = t('page.erp.sale.customer.error.sort');
     }
-    
-    if (!formValues.department_code.trim()) {
-      newErrors.department_code = t('page.post.error.department_code');
-    }
-    
-    if (!formValues.department_id && formValues.department_id != 0) {
-      newErrors.department_id = t('page.post.error.department_id');
-    }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -120,9 +102,7 @@ const ErpCustomerAdd = forwardRef(({ onSubmit }: ErpCustomerAddProps, ref) => {
       bank_account: '',
       bank_address: '',
       remarks: '',
-      department_code: '',
-      department_id: 0,
-      });
+    });
     setErrors({});
   }
 
@@ -184,7 +164,7 @@ const ErpCustomerAdd = forwardRef(({ onSubmit }: ErpCustomerAddProps, ref) => {
     <CustomizedDialog
       open={open}
       onClose={handleClose}
-      title={t('global.operate.add') + t('global.page.post')}
+      title={t('global.operate.add') + t('global.page.erp.sale.customer')}
       maxWidth={maxWidth}
       actions={
         <>
@@ -197,141 +177,142 @@ const ErpCustomerAdd = forwardRef(({ onSubmit }: ErpCustomerAddProps, ref) => {
       <Box
         noValidate
         component="form"
-        sx={ {display: 'flex',
+        sx={{
+          display: 'flex',
           flexDirection: 'column',
           m: 'auto',
-          width: 'fit-content',} }
+          width: 'fit-content',
+        }}
       >
-        <FormControl sx={ {minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' }} }>
-          <TextField
-            required
-            size="small"
-            label={t("page.post.title.name")}
-            name='name'
-            value={formValues.name}
-            onChange={handleInputChange}
-            error={!!errors.name}
-            helperText={errors.name}
-          />
-          <TextField
-            size="small"
-            label={t("page.post.title.contact_person")}
-            name='contact_person'
-            value={formValues.contact_person}
-            onChange={handleInputChange}
-          />
-          <TextField
-            size="small"
-            label={t("page.post.title.phone")}
-            name='phone'
-            value={formValues.phone}
-            onChange={handleInputChange}
-          />
-          <TextField
-            size="small"
-            label={t("page.post.title.email")}
-            name='email'
-            value={formValues.email}
-            onChange={handleInputChange}
-          />
-          <TextField
-            size="small"
-            label={t("page.post.title.address")}
-            name='address'
-            value={formValues.address}
-            onChange={handleInputChange}
-          />
-          <TextField
-            size="small"
-            type="number"
-            label={t("page.post.title.status")}
-            name='status'
-            value={formValues.status}
-            onChange={handleInputChange}
-            error={!!errors.status}
-            helperText={errors.status}
-          />
-          <TextField
-            required
-            size="small"
-            type="number"
-            label={t("page.post.title.sort")}
-            name='sort'
-            value={formValues.sort}
-            onChange={handleInputChange}
-            error={!!errors.sort}
-            helperText={errors.sort}
-          />
-          <TextField
-            size="small"
-            label={t("page.post.title.tax_id")}
-            name='tax_id'
-            value={formValues.tax_id}
-            onChange={handleInputChange}
-          />
-          <TextField
-            size="small"
-            type="number"
-            label={t("page.post.title.tax_rate")}
-            name='tax_rate'
-            value={formValues.tax_rate}
-            onChange={handleInputChange}
-          />
-          <TextField
-            size="small"
-            label={t("page.post.title.bank_name")}
-            name='bank_name'
-            value={formValues.bank_name}
-            onChange={handleInputChange}
-          />
-          <TextField
-            size="small"
-            label={t("page.post.title.bank_account")}
-            name='bank_account'
-            value={formValues.bank_account}
-            onChange={handleInputChange}
-          />
-          <TextField
-            size="small"
-            label={t("page.post.title.bank_address")}
-            name='bank_address'
-            value={formValues.bank_address}
-            onChange={handleInputChange}
-          />
-          <TextField
-            size="small"
-            label={t("page.post.title.remarks")}
-            name='remarks'
-            value={formValues.remarks}
-            onChange={handleInputChange}
-          />
-          <TextField
-            required
-            size="small"
-            label={t("page.post.title.department_code")}
-            name='department_code'
-            value={formValues.department_code}
-            onChange={handleInputChange}
-            error={!!errors.department_code}
-            helperText={errors.department_code}
-          />
-          <TextField
-            required
-            size="small"
-            type="number"
-            label={t("page.post.title.department_id")}
-            name='department_id'
-            value={formValues.department_id}
-            onChange={handleInputChange}
-            error={!!errors.department_id}
-            helperText={errors.department_id}
-          />
-          </FormControl>
-        <Box sx={ {mt: 2, display: 'flex', alignItems: 'center'} }>
-          <Typography sx={ {mr: 4} }>{t("page.post.title.status")}</Typography>
-          <Switch sx={ {mr: 2} } name='status' checked={!formValues.status} onChange={handleStatusChange} />
-          <Typography>{formValues.status == 0 ? t('page.post.switch.status.true') : t('page.post.switch.status.false')}</Typography>
-        </Box>
+        <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' } }}>
+          <Grid container spacing={2} sx={{ '& .MuiGrid-root': { display: 'flex', justifyContent: "center", alignItems: "center", } }}>
+            <Grid size={{ xs: 12, md: 6 }}>
+              <TextField
+                required
+                size="small"
+                label={t("page.erp.sale.customer.title.name")}
+                name='name'
+                value={formValues.name}
+                onChange={handleInputChange}
+                error={!!errors.name}
+                helperText={errors.name}
+              />
+            </Grid>
+            <Grid size={{ xs: 12, md: 6 }}>
+              <TextField
+                size="small"
+                label={t("page.erp.sale.customer.title.contact.person")}
+                name='contact_person'
+                value={formValues.contact_person}
+                onChange={handleInputChange}
+              />
+            </Grid>
+            <Grid size={{ xs: 12, md: 6 }}>
+              <TextField
+                size="small"
+                label={t("page.erp.sale.customer.title.phone")}
+                name='phone'
+                value={formValues.phone}
+                onChange={handleInputChange}
+              />
+            </Grid>
+            <Grid size={{ xs: 12, md: 6 }}>
+              <TextField
+                size="small"
+                label={t("page.erp.sale.customer.title.email")}
+                name='email'
+                value={formValues.email}
+                onChange={handleInputChange}
+              />
+            </Grid>
+            <Grid size={{ xs: 12, md: 6 }}>
+              <TextField
+                size="small"
+                label={t("page.erp.sale.customer.title.address")}
+                name='address'
+                value={formValues.address}
+                onChange={handleInputChange}
+              />
+            </Grid>
+            <Grid size={{ xs: 12, md: 6 }}>
+              <TextField
+                required
+                size="small"
+                type="number"
+                label={t("page.erp.sale.customer.title.sort")}
+                name='sort'
+                value={formValues.sort}
+                onChange={handleInputChange}
+                error={!!errors.sort}
+                helperText={errors.sort}
+              />
+            </Grid>
+            <Grid size={{ xs: 12, md: 6 }}>
+              <TextField
+                size="small"
+                label={t("page.erp.sale.customer.title.tax.id")}
+                name='tax_id'
+                value={formValues.tax_id}
+                onChange={handleInputChange}
+              />
+            </Grid>
+            <Grid size={{ xs: 12, md: 6 }}>
+              <TextField
+                size="small"
+                type="number"
+                label={t("page.erp.sale.customer.title.tax.rate")}
+                name='tax_rate'
+                value={formValues.tax_rate}
+                onChange={handleInputChange}
+              />
+            </Grid>
+            <Grid size={{ xs: 12, md: 6 }}>
+              <TextField
+                size="small"
+                label={t("page.erp.sale.customer.title.bank.name")}
+                name='bank_name'
+                value={formValues.bank_name}
+                onChange={handleInputChange}
+              />
+            </Grid>
+            <Grid size={{ xs: 12, md: 6 }}>
+              <TextField
+                size="small"
+                label={t("page.erp.sale.customer.title.bank.account")}
+                name='bank_account'
+                value={formValues.bank_account}
+                onChange={handleInputChange}
+              />
+            </Grid>
+            <Grid size={{ xs: 12, md: 6 }}>
+              <TextField
+                size="small"
+                label={t("page.erp.sale.customer.title.bank.address")}
+                name='bank_address'
+                value={formValues.bank_address}
+                onChange={handleInputChange}
+              />
+            </Grid>
+            <Grid size={{ xs: 12, md: 6 }}>
+              <TextField
+                size="small"
+                label={t("page.erp.sale.customer.title.remarks")}
+                name='remarks'
+                value={formValues.remarks}
+                onChange={handleInputChange}
+              />
+            </Grid>
+            <Grid size={{ xs: 12, md: 6 }}>
+            </Grid>
+            <Grid size={{ xs: 12, md: 6 }}>
+              <Box sx={{ mt: 2, display: 'flex', alignItems: 'center' }}>
+                <Typography sx={{ mr: 4 }}>{t("global.title.status")}</Typography>
+                <Switch sx={{ mr: 2 }} name='status' checked={!formValues.status} onChange={handleStatusChange} />
+                <Typography>{formValues.status == 0 ? t('global.switch.status.true') : t('global.switch.status.false')}</Typography>
+              </Box>
+            </Grid>
+          </Grid>
+        </FormControl>
       </Box>
     </CustomizedDialog>
   )

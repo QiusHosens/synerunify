@@ -5,12 +5,10 @@ import { DialogProps } from '@mui/material/Dialog';
 import { ErpCustomerRequest, ErpCustomerResponse, updateErpCustomer } from '@/api';
 import CustomizedDialog from '@/components/CustomizedDialog';
 
-interface FormErrors { 
+interface FormErrors {
   name?: string; // 客户名称
   status?: string; // 状态
   sort?: string; // 排序
-  department_code?: string; // 部门编码
-  department_id?: string; // 部门ID
 }
 
 interface ErpCustomerEditProps {
@@ -37,9 +35,7 @@ const ErpCustomerEdit = forwardRef(({ onSubmit }: ErpCustomerEditProps, ref) => 
     bank_account: '',
     bank_address: '',
     remarks: '',
-    department_code: '',
-    department_id: 0,
-    });
+  });
   const [errors, setErrors] = useState<FormErrors>({});
 
   useImperativeHandle(ref, () => ({
@@ -54,27 +50,15 @@ const ErpCustomerEdit = forwardRef(({ onSubmit }: ErpCustomerEditProps, ref) => 
 
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
-    
-    if (!formValues.name.trim()) {
-      newErrors.name = t('page.post.error.name');
+
+    if (!erpCustomer.name.trim()) {
+      newErrors.name = t('page.erp.sale.customer.error.name');
     }
-    
-    if (!formValues.status && formValues.status != 0) {
-      newErrors.status = t('page.post.error.status');
+
+    if (!erpCustomer.sort && erpCustomer.sort != 0) {
+      newErrors.sort = t('page.erp.sale.customer.error.sort');
     }
-    
-    if (!formValues.sort && formValues.sort != 0) {
-      newErrors.sort = t('page.post.error.sort');
-    }
-    
-    if (!formValues.department_code.trim()) {
-      newErrors.department_code = t('page.post.error.department_code');
-    }
-    
-    if (!formValues.department_id && formValues.department_id != 0) {
-      newErrors.department_id = t('page.post.error.department_id');
-    }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -145,7 +129,7 @@ const ErpCustomerEdit = forwardRef(({ onSubmit }: ErpCustomerEditProps, ref) => 
     <CustomizedDialog
       open={open}
       onClose={handleClose}
-      title={t('global.operate.edit') + t('global.page.post')}
+      title={t('global.operate.edit') + t('global.page.erp.sale.customer')}
       maxWidth={maxWidth}
       actions={
         <>
@@ -157,140 +141,111 @@ const ErpCustomerEdit = forwardRef(({ onSubmit }: ErpCustomerEditProps, ref) => 
       <Box
         noValidate
         component="form"
-        sx={ {display: 'flex',
+        sx={{
+          display: 'flex',
           flexDirection: 'column',
           m: 'auto',
-          width: 'fit-content',} }
+          width: 'fit-content',
+        }}
       >
-        <FormControl sx={ {minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' }} }>
+        <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' } }}>
           <TextField
             required
             size="small"
-            label={t("page.post.title.name")}
+            label={t("page.erp.sale.customer.title.name")}
             name='name'
-            value={ erpCustomer.name}
+            value={erpCustomer.name}
             onChange={handleInputChange}
             error={!!errors.name}
             helperText={errors.name}
           />
           <TextField
             size="small"
-            label={t("page.post.title.contact_person")}
+            label={t("page.erp.sale.customer.title.contact.person")}
             name='contact_person'
-            value={ erpCustomer.contact_person}
+            value={erpCustomer.contact_person}
             onChange={handleInputChange}
           />
           <TextField
             size="small"
-            label={t("page.post.title.phone")}
+            label={t("page.erp.sale.customer.title.phone")}
             name='phone'
-            value={ erpCustomer.phone}
+            value={erpCustomer.phone}
             onChange={handleInputChange}
           />
           <TextField
             size="small"
-            label={t("page.post.title.email")}
+            label={t("page.erp.sale.customer.title.email")}
             name='email'
-            value={ erpCustomer.email}
+            value={erpCustomer.email}
             onChange={handleInputChange}
           />
           <TextField
             size="small"
-            label={t("page.post.title.address")}
+            label={t("page.erp.sale.customer.title.address")}
             name='address'
-            value={ erpCustomer.address}
+            value={erpCustomer.address}
             onChange={handleInputChange}
-          />
-          <TextField
-            size="small"
-            type="number"
-            label={t("page.post.title.status")}
-            name='status'
-            value={ erpCustomer.status}
-            onChange={handleInputChange}
-            error={!!errors.status}
-            helperText={errors.status}
           />
           <TextField
             required
             size="small"
             type="number"
-            label={t("page.post.title.sort")}
+            label={t("page.erp.sale.customer.title.sort")}
             name='sort'
-            value={ erpCustomer.sort}
+            value={erpCustomer.sort}
             onChange={handleInputChange}
             error={!!errors.sort}
             helperText={errors.sort}
           />
           <TextField
             size="small"
-            label={t("page.post.title.tax_id")}
+            label={t("page.erp.sale.customer.title.tax.id")}
             name='tax_id'
-            value={ erpCustomer.tax_id}
+            value={erpCustomer.tax_id}
             onChange={handleInputChange}
           />
           <TextField
             size="small"
             type="number"
-            label={t("page.post.title.tax_rate")}
+            label={t("page.erp.sale.customer.title.tax.rate")}
             name='tax_rate'
-            value={ erpCustomer.tax_rate}
+            value={erpCustomer.tax_rate}
             onChange={handleInputChange}
           />
           <TextField
             size="small"
-            label={t("page.post.title.bank_name")}
+            label={t("page.erp.sale.customer.title.bank.name")}
             name='bank_name'
-            value={ erpCustomer.bank_name}
+            value={erpCustomer.bank_name}
             onChange={handleInputChange}
           />
           <TextField
             size="small"
-            label={t("page.post.title.bank_account")}
+            label={t("page.erp.sale.customer.title.bank.account")}
             name='bank_account'
-            value={ erpCustomer.bank_account}
+            value={erpCustomer.bank_account}
             onChange={handleInputChange}
           />
           <TextField
             size="small"
-            label={t("page.post.title.bank_address")}
+            label={t("page.erp.sale.customer.title.bank.address")}
             name='bank_address'
-            value={ erpCustomer.bank_address}
+            value={erpCustomer.bank_address}
             onChange={handleInputChange}
           />
           <TextField
             size="small"
-            label={t("page.post.title.remarks")}
+            label={t("page.erp.sale.customer.title.remarks")}
             name='remarks'
-            value={ erpCustomer.remarks}
+            value={erpCustomer.remarks}
             onChange={handleInputChange}
           />
-          <TextField
-            required
-            size="small"
-            label={t("page.post.title.department_code")}
-            name='department_code'
-            value={ erpCustomer.department_code}
-            onChange={handleInputChange}
-            error={!!errors.department_code}
-            helperText={errors.department_code}
-          />
-          <TextField
-            required
-            size="small"
-            type="number"
-            label={t("page.post.title.department_id")}
-            name='department_id'
-            value={ erpCustomer.department_id}
-            onChange={handleInputChange}
-            error={!!errors.department_id}
-            helperText={errors.department_id}
-          />
-          </FormControl>
-        <Box sx={ {mt: 2, display: 'flex', alignItems: 'center'} }>
-          <Typography sx={ {mr: 4} }>{t("page.post.title.status")}</Typography>
-          <Switch sx={ {mr: 2} } name='status' checked={!erpCustomer.status} onChange={handleStatusChange} />
-          <Typography>{ erpCustomer.status == 0 ? t('page.post.switch.status.true') : t('page.post.switch.status.false')}</Typography>
+        </FormControl>
+        <Box sx={{ mt: 2, display: 'flex', alignItems: 'center' }}>
+          <Typography sx={{ mr: 4 }}>{t("global.title.status")}</Typography>
+          <Switch sx={{ mr: 2 }} name='status' checked={!erpCustomer.status} onChange={handleStatusChange} />
+          <Typography>{erpCustomer.status == 0 ? t('global.switch.status.true') : t('global.switch.status.false')}</Typography>
         </Box>
       </Box>
     </CustomizedDialog>

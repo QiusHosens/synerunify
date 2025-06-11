@@ -27,8 +27,6 @@ export interface ErpCustomerRequest {
   bank_account: string; // 银行账号
   bank_address: string; // 开户地址
   remarks: string; // 备注
-  department_code: string; // 部门编码
-  department_id: number; // 部门ID
 }
 
 export interface ErpCustomerResponse {
@@ -46,8 +44,6 @@ export interface ErpCustomerResponse {
   bank_account: string; // 银行账号
   bank_address: string; // 开户地址
   remarks: string; // 备注
-  department_code: string; // 部门编码
-  department_id: number; // 部门ID
   creator: number; // 创建者ID
   create_time: string; // 创建时间
   updater: number; // 更新者ID

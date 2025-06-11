@@ -96,6 +96,7 @@
   "global.page.erp.product.list": "产品",
   "global.page.erp.financial.account": "账户",
   "global.page.erp.purchase.supplier": "供应商",
+  "global.page.erp.sale.customer": "客户",
 
   "page.login.title.username": "用户名",
   "page.login.title.password": "密码",
@@ -338,5 +339,22 @@
   "page.erp.purchase.supplier.title.remarks": "备注",
   "page.erp.purchase.supplier.title.sort": "排序",
   "page.erp.purchase.supplier.error.name": "请输入供应商名称",
-  "page.erp.purchase.supplier.error.sort": "请输入排序"
+  "page.erp.purchase.supplier.error.sort": "请输入排序",
+
+  "page.erp.sale.customer.title.name": "客户名称",
+  "page.erp.sale.customer.title.contact.person": "联系人",
+  "page.erp.sale.customer.title.phone": "电话",
+  "page.erp.sale.customer.title.email": "邮箱",
+  "page.erp.sale.customer.title.address": "地址",
+  "page.erp.sale.customer.title.status": "状态",
+  "page.erp.sale.customer.title.sort": "排序",
+  "page.erp.sale.customer.title.tax.id": "纳税人识别号",
+  "page.erp.sale.customer.title.tax.rate": "税率,精确到万分位",
+  "page.erp.sale.customer.title.bank.name": "开户行",
+  "page.erp.sale.customer.title.bank.account": "银行账号",
+  "page.erp.sale.customer.title.bank.address": "开户地址",
+  "page.erp.sale.customer.title.remarks": "备注",
+  "page.erp.sale.customer.error.name": "请输入客户名称",
+  "page.erp.sale.customer.error.status": "请输入状态",
+  "page.erp.sale.customer.error.sort": "请输入排序"
 }

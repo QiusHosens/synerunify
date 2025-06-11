@@ -47,31 +47,21 @@ export default function ErpCustomer() {
   );
 
   const statusDisabled = (status: number): boolean => {
-    return (status && !hasOperatePermission('system:post:enable')) || (!status && !hasOperatePermission('system:post:disable'));
+    return (status && !hasOperatePermission('erp:sale:customer:enable')) || (!status && !hasOperatePermission('erp:sale:customer:disable'));
   }
 
   const columns: GridColDef[] = useMemo(
     () => [
-      { field: 'name', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'contact_person', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'phone', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'email', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'address', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'status', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'sort', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'tax_id', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'tax_rate', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'bank_name', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'bank_account', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'bank_address', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'remarks', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'department_code', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'department_id', headerName: t("page."), flex: 1, minWidth: 100 },
-
+      { field: 'name', headerName: t("page.erp.sale.customer.title.name"), flex: 1, minWidth: 100 },
+      { field: 'contact_person', headerName: t("page.erp.sale.customer.title.contact.person"), flex: 1, minWidth: 100 },
+      { field: 'phone', headerName: t("page.erp.sale.customer.title.phone"), flex: 1, minWidth: 100 },
+      { field: 'address', headerName: t("page.erp.sale.customer.title.address"), flex: 1, minWidth: 100 },
+      { field: 'sort', headerName: t("page.erp.sale.customer.title.sort"), flex: 1, minWidth: 60 },
+      { field: 'remarks', headerName: t("page.erp.sale.customer.title.remarks"), flex: 1, minWidth: 100 },
       {
         field: 'status',
         sortable: false,
-        headerName: t("page.post.title.status"),
+        headerName: t("global.title.status"),
         flex: 1,
         minWidth: 80,
         renderCell: (params: GridRenderCellParams) => (
@@ -80,7 +70,7 @@ export default function ErpCustomer() {
           </Box>
         ),
       },
-      { field: 'create_time', headerName: t("page.post.title.create.time"), flex: 1, minWidth: 180 },
+      { field: 'create_time', headerName: t("global.title.create.time"), flex: 1, minWidth: 180 },
       {
         field: 'actions',
         sortable: false,
@@ -90,18 +80,18 @@ export default function ErpCustomer() {
         minWidth: 100,
         renderCell: (params: GridRenderCellParams) => (
           <Box sx={{ height: '100%', display: 'flex', gap: 1, alignItems: 'center' }}>
-            {hasOperatePermission('system:post:edit') && <Button
+            {hasOperatePermission('erp:sale:customer:edit') && <Button
               size="small"
               variant='customOperate'
-              title={t('page.post.operate.edit')}
+              title={t('global.operate.edit') + t('global.page.erp.sale.customer')}
               startIcon={<EditIcon />}
               onClick={() => handleClickOpenEdit(params.row)}
             />}
-            {hasOperatePermission('system:post:delete') && <Button
+            {hasOperatePermission('erp:sale:customer:delete') && <Button
               sx={{ color: 'error.main' }}
               size="small"
               variant='customOperate'
-              title={t('page.post.operate.delete')}
+              title={t('global.operate.delete') + t('global.page.erp.sale.customer')}
               startIcon={<DeleteIcon />}
               onClick={() => handleClickOpenDelete(params.row)}
             />}
@@ -156,7 +146,7 @@ export default function ErpCustomer() {
     <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
       <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between' }}>
         <Box></Box>
-        {hasOperatePermission('system:post:add') && <Button variant="customContained" onClick={handleClickOpenAdd}>
+        {hasOperatePermission('erp:sale:customer:add') && <Button variant="customContained" onClick={handleClickOpenAdd}>
           {t('global.operate.add')}
         </Button>}
       </Box>
