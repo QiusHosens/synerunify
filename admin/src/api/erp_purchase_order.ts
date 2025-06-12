@@ -12,9 +12,7 @@ const apis = {
 
 export interface ErpPurchaseOrderRequest {
   id: number; // 采购订单ID
-  order_number: string; // 订单编号
   supplier_id: number; // 供应商ID
-  user_id: number; // 用户ID
   purchase_date: string; // 采购日期
   total_amount: number; // 总金额
   order_status: number; // 订单状态 (0=pending, 1=completed, 2=cancelled)
@@ -22,8 +20,6 @@ export interface ErpPurchaseOrderRequest {
   settlement_account_id: number; // 结算账户ID
   deposit: number; // 定金
   remarks: string; // 备注
-  department_code: string; // 部门编码
-  department_id: number; // 部门ID
 }
 
 export interface ErpPurchaseOrderResponse {
@@ -44,6 +40,9 @@ export interface ErpPurchaseOrderResponse {
   create_time: string; // 创建时间
   updater: number; // 更新者ID
   update_time: string; // 更新时间
+
+  supplier_name: string; // 供应商名
+  settlement_account_name: string; // 结算账户名
 }
 
 export interface ErpPurchaseOrderQueryCondition extends PaginatedRequest {

@@ -1,10 +1,10 @@
 import { Box, Button, Switch } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { DataGrid, GridCallbackDetails, GridColDef, GridFilterModel, GridRenderCellParams, GridSortModel } from '@mui/x-data-grid';
 import EditIcon from '@/assets/image/svg/edit.svg';
 import DeleteIcon from '@/assets/image/svg/delete.svg';
-import { disableErpPurchaseOrder, enableErpPurchaseOrder, pageErpPurchaseOrder, ErpPurchaseOrderQueryCondition, ErpPurchaseOrderResponse } from '@/api';
+import { pageErpPurchaseOrder, ErpPurchaseOrderQueryCondition, ErpPurchaseOrderResponse } from '@/api';
 import ErpPurchaseOrderAdd from './Add';
 import ErpPurchaseOrderEdit from './Edit';
 import ErpPurchaseOrderDelete from './Delete';
@@ -30,19 +30,15 @@ export default function ErpPurchaseOrder() {
 
   const columns: GridColDef[] = useMemo(
     () => [
-      { field: 'order_number', headerName: t("page.mark_translation.title.order_number"), flex: 1, minWidth: 100 },
-      { field: 'supplier_id', headerName: t("page.mark_translation.title.supplier_id"), flex: 1, minWidth: 100 },
-      { field: 'user_id', headerName: t("page.mark_translation.title.user_id"), flex: 1, minWidth: 100 },
-      { field: 'purchase_date', headerName: t("page.mark_translation.title.purchase_date"), flex: 1, minWidth: 100 },
-      { field: 'total_amount', headerName: t("page.mark_translation.title.total_amount"), flex: 1, minWidth: 100 },
-      { field: 'order_status', headerName: t("page.mark_translation.title.order_status"), flex: 1, minWidth: 100 },
-      { field: 'discount_rate', headerName: t("page.mark_translation.title.discount_rate"), flex: 1, minWidth: 100 },
-      { field: 'settlement_account_id', headerName: t("page.mark_translation.title.settlement_account_id"), flex: 1, minWidth: 100 },
-      { field: 'deposit', headerName: t("page.mark_translation.title.deposit"), flex: 1, minWidth: 100 },
-      { field: 'remarks', headerName: t("page.mark_translation.title.remarks"), flex: 1, minWidth: 100 },
-      { field: 'department_code', headerName: t("page.mark_translation.title.department_code"), flex: 1, minWidth: 100 },
-      { field: 'department_id', headerName: t("page.mark_translation.title.department_id"), flex: 1, minWidth: 100 },
-      
+      { field: 'order_number', headerName: t("page.erp.purchase.order.title.order.number"), flex: 1, minWidth: 100 },
+      { field: 'supplier_name', headerName: t("page.erp.purchase.order.title.supplier"), flex: 1, minWidth: 100 },
+      { field: 'purchase_date', headerName: t("page.erp.purchase.order.title.purchase.date"), flex: 1, minWidth: 100 },
+      { field: 'total_amount', headerName: t("page.erp.purchase.order.title.total.amount"), flex: 1, minWidth: 100 },
+      { field: 'discount_rate', headerName: t("page.erp.purchase.order.title.discount.rate"), flex: 1, minWidth: 100 },
+      { field: 'settlement_account_name', headerName: t("page.erp.purchase.order.title.settlement.account"), flex: 1, minWidth: 100 },
+      { field: 'deposit', headerName: t("page.erp.purchase.order.title.deposit"), flex: 1, minWidth: 100 },
+      { field: 'remarks', headerName: t("page.erp.purchase.order.title.remarks"), flex: 1, minWidth: 100 },
+      { field: 'order_status', headerName: t("page.erp.purchase.order.title.order.status"), flex: 1, minWidth: 100 },
       { field: 'create_time', headerName: t("global.title.create.time"), flex: 1, minWidth: 180 },
       {
         field: 'actions',
@@ -53,18 +49,18 @@ export default function ErpPurchaseOrder() {
         minWidth: 100,
         renderCell: (params: GridRenderCellParams) => (
           <Box sx={ { height: '100%', display: 'flex', gap: 1, alignItems: 'center' } }>
-            {hasOperatePermission('mark_permission:edit') && <Button
+            {hasOperatePermission('erp:purchase:order:edit') && <Button
               size="small"
               variant='customOperate'
-              title={t('global.operate.edit') + t('global.page.mark_translation')}
+              title={t('global.operate.edit') + t('global.page.erp.purchase.order')}
               startIcon={<EditIcon />}
               onClick={() => handleClickOpenEdit(params.row)}
             />}
-            {hasOperatePermission('mark_permission:delete') && <Button
+            {hasOperatePermission('erp:purchase:order:delete') && <Button
               sx={ {color: 'error.main'} }
               size="small"
               variant='customOperate'
-              title={t('global.operate.delete') + t('global.page.mark_translation')}
+              title={t('global.operate.delete') + t('global.page.erp.purchase.order')}
               startIcon={<DeleteIcon />}
               onClick={() => handleClickOpenDelete(params.row)}
             />}
@@ -72,7 +68,7 @@ export default function ErpPurchaseOrder() {
         ),
       },
     ],
-    [t, handleStatusChange]
+    [t]
   );
 
   const queryRecords = async (condition: ErpPurchaseOrderQueryCondition) => {
@@ -119,7 +115,7 @@ export default function ErpPurchaseOrder() {
     <Box sx={ {height: '100%', display: 'flex', flexDirection: 'column'} }>
       <Box sx={ {mb: 2, display: 'flex', justifyContent: 'space-between'} }>
         <Box></Box>
-        {hasOperatePermission('mark_permission:add') && <Button variant="customContained" onClick={handleClickOpenAdd}>
+        {hasOperatePermission('erp:purchase:order:add') && <Button variant="customContained" onClick={handleClickOpenAdd}>
           {t('global.operate.add')}
         </Button>}
       </Box>

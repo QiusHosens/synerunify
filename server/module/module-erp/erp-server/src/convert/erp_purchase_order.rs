@@ -1,7 +1,9 @@
 use sea_orm::{Set, NotSet};
 use crate::model::erp_purchase_order::{self, Model as ErpPurchaseOrder, ActiveModel as ErpPurchaseOrderActiveModel};
 use erp_model::request::erp_purchase_order::{CreateErpPurchaseOrderRequest, UpdateErpPurchaseOrderRequest};
-use erp_model::response::erp_purchase_order::ErpPurchaseOrderResponse;
+use erp_model::response::erp_purchase_order::{ErpPurchaseOrderPageResponse, ErpPurchaseOrderResponse};
+use crate::model::erp_supplier::{Model as ErpSupplierModel, ActiveModel as ErpSupplierActiveModel, Entity as ErpSupplierEntity};
+use crate::model::erp_settlement_account::{Model as ErpSettlementAccountModel, ActiveModel as ErpSettlementAccountActiveModel, Entity as ErpSettlementAccountEntity};
 
 pub fn create_request_to_model(request: &CreateErpPurchaseOrderRequest) -> ErpPurchaseOrderActiveModel {
     ErpPurchaseOrderActiveModel {
@@ -64,5 +66,33 @@ pub fn model_to_response(model: ErpPurchaseOrder) -> ErpPurchaseOrderResponse {
         create_time: model.create_time,
         updater: model.updater,
         update_time: model.update_time,
+    }
+}
+
+pub fn model_to_page_response(model: ErpPurchaseOrder, model_supplier: Option<ErpSupplierModel>, model_settlement_account: Option<ErpSettlementAccountModel>) -> ErpPurchaseOrderPageResponse {
+    let supplier_name = model_supplier.map(|supplier| supplier.name.clone());
+    let settlement_account_name = model_settlement_account.map(|settlement_account| settlement_account.name.clone());
+
+    ErpPurchaseOrderPageResponse { 
+        id: model.id,
+        order_number: model.order_number,
+        supplier_id: model.supplier_id,
+        user_id: model.user_id,
+        purchase_date: model.purchase_date,
+        total_amount: model.total_amount,
+        order_status: model.order_status,
+        discount_rate: model.discount_rate,
+        settlement_account_id: model.settlement_account_id,
+        deposit: model.deposit,
+        remarks: model.remarks,
+        department_code: model.department_code,
+        department_id: model.department_id,
+        creator: model.creator,
+        create_time: model.create_time,
+        updater: model.updater,
+        update_time: model.update_time,
+
+        supplier_name,
+        settlement_account_name,
     }
 }
