@@ -125,14 +125,14 @@ async fn auth_middleware(req: Request<axum::body::Body>, next: Next) -> Result<R
 }
 
 pub mod common {
-    pub fn get_user_name(value: &String, field_type: &str) -> String {
-        format!("user: {} (type: {})", value, field_type)
+    pub fn get_user_name<T: ToString>(value: &T, fill_type: &str) -> String {
+        format!("user: {} (type: {})", value.to_string(), fill_type)
     }
 }
 
 #[derive(ExtendFields)]
 struct MyStruct {
-    #[extend_fields(field = "user_name", field_type = "user", invocation = "common::get_user_name")]
+    #[extend_fields(field = "user_name", fill_type = "user", invocation = "common::get_user_name")]
     name: String,
     value: i32,
 }
@@ -146,16 +146,30 @@ struct UserStruct {
 
 #[derive(ExtendFields)]
 struct ExtraStruct {
-    #[extend_fields(field = "custom_name", field_type = "custom", invocation = "common::get_user_name")]
+    #[extend_fields(field = "custom_name", fill_type = "custom", invocation = "common::get_user_name")]
     name: String,
     data: i32,
 }
 
 #[derive(ExtendFields)]
 struct NoInvocationStruct {
-    #[extend_fields(field = "raw_name", field_type = "raw")]
+    #[extend_fields(field = "raw_name", fill_type = "raw")]
     name: String,
     data: i32,
+}
+
+#[derive(ExtendFields)]
+struct NumberStruct {
+    #[extend_fields(field = "number_name", fill_type = "number", invocation = "common::get_user_name")]
+    id: i64,
+    count: i32,
+}
+
+#[derive(ExtendFields)]
+struct ByteStruct {
+    #[extend_fields(field = "byte_name", fill_type = "byte", invocation = "common::get_user_name")]
+    code: i8,
+    flag: bool,
 }
 
 #[tokio::main]
@@ -203,6 +217,20 @@ async fn main() -> Result<(), anyhow::Error> {
     };
     let json = serde_json::to_string_pretty(&no_invocation_struct).unwrap();
     println!("\nNoInvocationStruct JSON:\n{}", json);
+
+    let number_struct = NumberStruct {
+        id: 1234567890,
+        count: 10,
+    };
+    let json = serde_json::to_string_pretty(&number_struct).unwrap();
+    println!("\nNumberStruct JSON:\n{}", json);
+
+    let byte_struct = ByteStruct {
+        code: 42,
+        flag: true,
+    };
+    let json = serde_json::to_string_pretty(&byte_struct).unwrap();
+    println!("\nByteStruct JSON:\n{}", json);
 
     Ok(())
 }

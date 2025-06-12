@@ -2,15 +2,15 @@ use serde::Serialize;
 use macros::ExtendFields;
 use serde_json::{json, Value};
 
-pub mod common {
-    pub fn get_user_name(value: &String, field_type: &str) -> String {
-        format!("user: {} (type: {})", value, field_type)
+pub mod handler {
+    pub fn get_user_name<T: ToString>(value: &T, fill_type: &str) -> String {
+        format!("user: {} (type: {})", value.to_string(), fill_type)
     }
 }
 
 #[derive(ExtendFields)]
 struct MyStruct {
-    #[extend_fields(field = "user_name", field_type = "user", invocation = "common::get_user_name")]
+    #[extend_fields(field = "user_name", fill_type = "user", invocation = "handler::get_user_name")]
     name: String,
     value: i32,
 }
@@ -24,16 +24,30 @@ struct UserStruct {
 
 #[derive(ExtendFields)]
 struct ExtraStruct {
-    #[extend_fields(field = "custom_name", field_type = "custom", invocation = "common::get_user_name")]
+    #[extend_fields(field = "custom_name", fill_type = "custom", invocation = "handler::get_user_name")]
     name: String,
     data: i32,
 }
 
 #[derive(ExtendFields)]
 struct NoInvocationStruct {
-    #[extend_fields(field = "raw_name", field_type = "raw")]
+    #[extend_fields(field = "raw_name", fill_type = "raw")]
     name: String,
     data: i32,
+}
+
+#[derive(ExtendFields)]
+struct NumberStruct {
+    #[extend_fields(field = "number_name", fill_type = "number", invocation = "handler::get_user_name")]
+    id: i64,
+    count: i32,
+}
+
+#[derive(ExtendFields)]
+struct ByteStruct {
+    #[extend_fields(field = "byte_name", fill_type = "byte", invocation = "handler::get_user_name")]
+    code: i8,
+    flag: bool,
 }
 
 #[test]
@@ -122,6 +136,36 @@ fn test_no_invocation() {
         "name": "direct",
         "data": 60,
         "raw_name": "direct"
+    });
+    assert_eq!(json, expected);
+}
+
+#[test]
+fn test_number_field() {
+    let number_struct = NumberStruct {
+        id: 1234567890,
+        count: 10,
+    };
+    let json: Value = serde_json::to_value(&number_struct).unwrap();
+    let expected = json!({
+        "id": 1234567890,
+        "count": 10,
+        "number_name": "user: 1234567890 (type: number)"
+    });
+    assert_eq!(json, expected);
+}
+
+#[test]
+fn test_byte_field() {
+    let byte_struct = ByteStruct {
+        code: 42,
+        flag: true,
+    };
+    let json: Value = serde_json::to_value(&byte_struct).unwrap();
+    let expected = json!({
+        "code": 42,
+        "flag": true,
+        "byte_name": "user: 42 (type: byte)"
     });
     assert_eq!(json, expected);
 }

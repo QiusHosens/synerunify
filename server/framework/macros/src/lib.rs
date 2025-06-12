@@ -80,12 +80,12 @@ mod example {
 }
 */
 
-/// 字段扩展宏
+/// 字段扩展宏,给字段扩展自定义字段,值为根据方法获取的值
 #[derive(Default)]
 struct ExtendFieldsArgs {
-    field: Option<String>,
-    field_type: Option<String>,
-    invocation: Option<Path>,
+    field: Option<String>, // 扩展字段
+    fill_type: Option<String>, // 填充类型
+    invocation: Option<Path>, // 方法
 }
 
 impl Parse for ExtendFieldsArgs {
@@ -120,15 +120,15 @@ impl Parse for ExtendFieldsArgs {
                                     return Err(syn::Error::new_spanned(&nv.value, "Expected string literal for field"));
                                 }
                             }
-                            "field_type" => {
+                            "fill_type" => {
                                 if let syn::Expr::Lit(expr_lit) = &nv.value {
                                     if let syn::Lit::Str(lit) = &expr_lit.lit {
-                                        args.field_type = Some(lit.value());
+                                        args.fill_type = Some(lit.value());
                                     } else {
-                                        return Err(syn::Error::new_spanned(&nv.value, "Expected string literal for field_type"));
+                                        return Err(syn::Error::new_spanned(&nv.value, "Expected string literal for fill_type"));
                                     }
                                 } else {
-                                    return Err(syn::Error::new_spanned(&nv.value, "Expected string literal for field_type"));
+                                    return Err(syn::Error::new_spanned(&nv.value, "Expected string literal for fill_type"));
                                 }
                             }
                             "invocation" => {
@@ -190,18 +190,18 @@ pub fn derive_extend_fields(input: TokenStream) -> TokenStream {
                         field_str.clone() + "_name"
                     }
                 });
-                let field_type = args.field_type.unwrap_or_else(|| "String".to_string());
+                let fill_type = args.fill_type.unwrap_or_else(|| "String".to_string());
                 let invocation = args.invocation;
-                extend_field_info.push((field_ident, field_name, field_type, invocation));
+                extend_field_info.push((field_ident, field_name, fill_type, invocation));
             }
         }
     }
 
     // 生成序列化逻辑
-    let serialize_extend_fields = extend_field_info.iter().map(|(ident, field_name, field_type, invocation)| {
+    let serialize_extend_fields = extend_field_info.iter().map(|(ident, field_name, fill_type, invocation)| {
         if let Some(invocation) = invocation {
             quote! {
-                let value = #invocation(&self.#ident, #field_type);
+                let value = #invocation(&self.#ident, #fill_type);
                 map.serialize_entry(#field_name, &value)?;
             }
         } else {
