@@ -46,6 +46,8 @@ ctor = "0.4.2"
 dashmap = "6.1.0"
 regex = "1.11.1"
 
+serde_json = "1.0"
+
 macros = { path = "../../framework/macros" }
 
 [dev-dependencies]

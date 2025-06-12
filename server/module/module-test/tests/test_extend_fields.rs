@@ -2,14 +2,14 @@ use macros::ExtendFields;
 use serde::Serialize;
 
 fn main() {
-    #[derive(Serialize, ExtendFields)]
+    #[derive(ExtendFields)]
     struct MyStruct {
         #[extend_fields]
         name: String,
         value: i32,
     }
 
-    #[derive(Serialize, ExtendFields)]
+    #[derive(ExtendFields)]
     struct UserStruct {
         #[extend_fields(fields = "custom_length,custom_is_short")]
         user_id: String,

@@ -11,13 +11,15 @@ use axum::http::Request;
 use axum::middleware::Next;
 use axum::response::Response;
 use axum::routing::{get, post, MethodRouter};
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use tracing::info;
 use utoipa::OpenApi;
-use macros::require_authorize;
+use macros::{require_authorize, ExtendFields};
 use once_cell::sync::Lazy;
 use ctor;
 use dashmap::DashMap;
+
+mod tests;
 
 #[derive(Deserialize, Debug, Clone)]
 struct LoginUserContext {
@@ -122,25 +124,85 @@ async fn auth_middleware(req: Request<axum::body::Body>, next: Next) -> Result<R
     Ok(next.run(req).await)
 }
 
+pub mod common {
+    pub fn get_user_name(value: &String, field_type: &str) -> String {
+        format!("user: {} (type: {})", value, field_type)
+    }
+}
+
+#[derive(ExtendFields)]
+struct MyStruct {
+    #[extend_fields(field = "user_name", field_type = "user", invocation = "common::get_user_name")]
+    name: String,
+    value: i32,
+}
+
+#[derive(ExtendFields)]
+struct UserStruct {
+    #[extend_fields]
+    user_id: String,
+    score: i32,
+}
+
+#[derive(ExtendFields)]
+struct ExtraStruct {
+    #[extend_fields(field = "custom_name", field_type = "custom", invocation = "common::get_user_name")]
+    name: String,
+    data: i32,
+}
+
+#[derive(ExtendFields)]
+struct NoInvocationStruct {
+    #[extend_fields(field = "raw_name", field_type = "raw")]
+    name: String,
+    data: i32,
+}
+
 #[tokio::main]
 async fn main() -> Result<(), anyhow::Error> {
-    let state = AppState {};
+    // let state = AppState {};
 
-    let app = Router::new()
-        .route("/update", post(update)) // 使用 Axum 原生路由
-        .route("/user", get(user))
-        // .layer(axum::middleware::from_fn(auth_middleware))
-        .layer(axum::middleware::from_fn(auth_handler))
-        .with_state(state)
-        .merge(utoipa_swagger_ui::SwaggerUi::new("/swagger-ui").url("/api-doc.json", ApiDoc::openapi()))
-    ;
+    // let app = Router::new()
+    //     .route("/update", post(update)) // 使用 Axum 原生路由
+    //     .route("/user", get(user))
+    //     // .layer(axum::middleware::from_fn(auth_middleware))
+    //     .layer(axum::middleware::from_fn(auth_handler))
+    //     .with_state(state)
+    //     .merge(utoipa_swagger_ui::SwaggerUi::new("/swagger-ui").url("/api-doc.json", ApiDoc::openapi()))
+    // ;
 
-    // let app = axum::Router::new().merge(router);
-    let listener = tokio::net::TcpListener::bind(&"127.0.0.1:3100").await?;
-    axum::serve(listener, app.into_make_service_with_connect_info::<std::net::SocketAddr>()).await?;
+    // // let app = axum::Router::new().merge(router);
+    // let listener = tokio::net::TcpListener::bind(&"127.0.0.1:3100").await?;
+    // axum::serve(listener, app.into_make_service_with_connect_info::<std::net::SocketAddr>()).await?;
+
+    // 测试普通字段名
+    let my_struct = MyStruct {
+        name: String::from("示例"),
+        value: 42,
+    };
+    let json = serde_json::to_string_pretty(&my_struct).unwrap();
+    println!("MyStruct JSON:\n{}", json);
+
+    let user_struct = UserStruct {
+        user_id: String::from("user123"),
+        score: 100,
+    };
+    let json = serde_json::to_string_pretty(&user_struct).unwrap();
+    println!("\nUserStruct JSON:\n{}", json);
+
+    let extra_struct = ExtraStruct {
+        name: String::from("测试"),
+        data: 50,
+    };
+    let json = serde_json::to_string_pretty(&extra_struct).unwrap();
+    println!("\nExtraStruct JSON:\n{}", json);
+
+    let no_invocation_struct = NoInvocationStruct {
+        name: String::from("直接值"),
+        data: 60,
+    };
+    let json = serde_json::to_string_pretty(&no_invocation_struct).unwrap();
+    println!("\nNoInvocationStruct JSON:\n{}", json);
+
     Ok(())
-    // axum::Server::bind(&"127.0.0.1:3000".parse().unwrap())
-    //     .serve(app.into_make_service())
-    //     .await
-    //     .unwrap();
 }

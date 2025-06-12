@@ -2,8 +2,8 @@ extern crate proc_macro;
 
 use proc_macro::TokenStream;
 use quote::quote;
-use syn::parse::Parse;
-use syn::{parse_macro_input, Expr, ItemFn, Lit, LitStr, Meta, MetaNameValue};
+use syn::parse::{Parse, ParseStream};
+use syn::{parse_macro_input, Data, DeriveInput, Expr, Fields, ItemFn, Lit, LitStr, Meta, MetaNameValue, Path, Token};
 use syn::punctuated::Punctuated;
 use syn::token::Comma;
 
@@ -81,24 +81,82 @@ mod example {
 */
 
 /// 字段扩展宏
+#[derive(Default)]
 struct ExtendFieldsArgs {
-    fields: Option<Vec<String>>,
+    field: Option<String>,
+    field_type: Option<String>,
+    invocation: Option<Path>,
 }
 
 impl Parse for ExtendFieldsArgs {
     fn parse(input: ParseStream) -> syn::Result<Self> {
+        let mut args = ExtendFieldsArgs::default();
+        // eprintln!("Input: {:?}", input);
         if input.is_empty() {
-            return Ok(ExtendFieldsArgs { fields: None });
+            // eprintln!("Input is empty");
+            return Ok(args);
         }
 
-        let mut fields = Vec::new();
-        let args = Punctuated::<syn::LitStr, Token![,]>::parse_terminated(input)?;
-        for arg in args {
-            fields.push(arg.value());
+        let parsed_args = Punctuated::<syn::Meta, Token![,]>::parse_terminated(input);
+        match parsed_args {
+            Ok(parsed_args) => {
+                // eprintln!("Parsed args: {:?}", parsed_args);
+                for meta in parsed_args {
+                    // eprintln!("Meta: {:?}", meta);
+                    if let syn::Meta::NameValue(nv) = meta {
+                        // eprintln!("NameValue: path={:?}, value={:?}", nv.path, nv.value);
+                        let ident = nv.path.get_ident().ok_or_else(|| {
+                            syn::Error::new_spanned(&nv.path, "Expected identifier")
+                        })?;
+                        match ident.to_string().as_str() {
+                            "field" => {
+                                if let syn::Expr::Lit(expr_lit) = &nv.value {
+                                    if let syn::Lit::Str(lit) = &expr_lit.lit {
+                                        args.field = Some(lit.value());
+                                    } else {
+                                        return Err(syn::Error::new_spanned(&nv.value, "Expected string literal for field"));
+                                    }
+                                } else {
+                                    return Err(syn::Error::new_spanned(&nv.value, "Expected string literal for field"));
+                                }
+                            }
+                            "field_type" => {
+                                if let syn::Expr::Lit(expr_lit) = &nv.value {
+                                    if let syn::Lit::Str(lit) = &expr_lit.lit {
+                                        args.field_type = Some(lit.value());
+                                    } else {
+                                        return Err(syn::Error::new_spanned(&nv.value, "Expected string literal for field_type"));
+                                    }
+                                } else {
+                                    return Err(syn::Error::new_spanned(&nv.value, "Expected string literal for field_type"));
+                                }
+                            }
+                            "invocation" => {
+                                if let syn::Expr::Lit(expr_lit) = &nv.value {
+                                    if let syn::Lit::Str(lit) = &expr_lit.lit {
+                                        args.invocation = Some(lit.parse().map_err(|_| {
+                                            syn::Error::new_spanned(lit, "Invalid path for invocation")
+                                        })?);
+                                    } else {
+                                        return Err(syn::Error::new_spanned(&nv.value, "Expected string literal for invocation"));
+                                    }
+                                } else {
+                                    return Err(syn::Error::new_spanned(&nv.value, "Expected string literal for invocation"));
+                                }
+                            }
+                            _ => return Err(syn::Error::new_spanned(&nv.path, "Unknown attribute")),
+                        }
+                    } else {
+                        return Err(syn::Error::new_spanned(&meta, "Expected name-value attribute"));
+                    }
+                }
+                Ok(args)
+            }
+            Err(e) => {
+                eprintln!("Parse error: {:?}", e);
+                Err(e)
+            }
         }
-        Ok(ExtendFieldsArgs {
-            fields: Some(fields),
-        })
     }
 }
 
@@ -117,37 +175,39 @@ pub fn derive_extend_fields(input: TokenStream) -> TokenStream {
         _ => panic!("ExtendFields only supports structs"),
     };
 
-    // 收集需要添加额外字段的字段及其自定义字段名
+    // 收集需要添加额外字段的字段及其参数
     let mut extend_field_info = Vec::new();
     for field in fields.iter() {
         let field_ident = field.ident.as_ref().expect("Expected named field");
         for attr in &field.attrs {
             if attr.path().is_ident("extend_fields") {
-                let args: ExtendFieldsArgs = attr.parse_args().unwrap_or(ExtendFieldsArgs { fields: None });
+                let args: ExtendFieldsArgs = attr.parse_args().unwrap_or_default();
                 let field_str = field_ident.to_string();
-                let extend_fields = args.fields.unwrap_or_else(|| {
-                    let first_field = if field_str.ends_with("_id") {
+                let field_name = args.field.unwrap_or_else(|| {
+                    if field_str.ends_with("_id") {
                         field_str[..field_str.len() - 3].to_string() + "_name"
                     } else {
                         field_str.clone() + "_name"
-                    };
-                    vec![
-                        first_field,
-                        format!("{}_is_short", field_str),
-                    ]
+                    }
                 });
-                extend_field_info.push((field_ident, extend_fields));
+                let field_type = args.field_type.unwrap_or_else(|| "String".to_string());
+                let invocation = args.invocation;
+                extend_field_info.push((field_ident, field_name, field_type, invocation));
             }
         }
     }
 
     // 生成序列化逻辑
-    let serialize_extend_fields = extend_field_info.iter().map(|(ident, extend_fields)| {
-        let length_field = &extend_fields[0];
-        let is_short_field = &extend_fields[1];
-        quote! {
-            map.serialize_entry(#length_field, &self.#ident.len())?;
-            map.serialize_entry(#is_short_field, &(self.#ident.len() < 5))?;
+    let serialize_extend_fields = extend_field_info.iter().map(|(ident, field_name, field_type, invocation)| {
+        if let Some(invocation) = invocation {
+            quote! {
+                let value = #invocation(&self.#ident, #field_type);
+                map.serialize_entry(#field_name, &value)?;
+            }
+        } else {
+            quote! {
+                map.serialize_entry(#field_name, &self.#ident)?;
+            }
         }
     });
 
