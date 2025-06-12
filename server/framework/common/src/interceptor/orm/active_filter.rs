@@ -9,6 +9,8 @@ use sea_orm::{
 
 const DATA_PERMISSION_DEFAULT_FIELD_DEPARTMENT_ID: &str = "department_id";
 const DATA_PERMISSION_DEFAULT_FIELD_DEPARTMENT_CODE: &str = "department_code";
+const DATA_PERMISSION_DEFAULT_FIELD_USER_ID: &str = "user_id";
+const DATA_PERMISSION_DEFAULT_FIELD_CREATOR: &str = "creator";
 
 pub trait ActiveFilterEntityTrait: EntityTrait
 where
@@ -77,6 +79,7 @@ where
 
         let mut column_department_id = None;
         let mut column_department_code = None;
+        let mut column_user = None;
         let mut column_field = None;
 
         if let Some(field) = data_permission.field.as_ref() {
@@ -108,6 +111,26 @@ where
                     return query
                         .filter(Condition::all().add(sea_orm::sea_query::Expr::val(1).eq(0)));
                 }
+            } else if data_permission.id == 4 {
+                // 查找 user_id 列
+                column_user = Self::Column::iter().find(|col| {
+                    col.to_string()
+                        .eq_ignore_ascii_case(DATA_PERMISSION_DEFAULT_FIELD_USER_ID)
+                });
+
+                if column_user.is_none() {
+                    // 查找 creator 列
+                    column_user = Self::Column::iter().find(|col| {
+                        col.to_string()
+                            .eq_ignore_ascii_case(DATA_PERMISSION_DEFAULT_FIELD_CREATOR)
+                    });
+                }
+
+                // 如果没有 user_id/creator 列，返回空结果
+                if column_user.is_none() {
+                    return query
+                        .filter(Condition::all().add(sea_orm::sea_query::Expr::val(1).eq(0)));
+                }
             }
         }
 
@@ -134,7 +157,13 @@ where
             }
             // 仅本人数据权限
             4 => {
-                // TODO
+                if column_user.is_some() {
+                    query = query.filter(
+                        column_user
+                            .unwrap()
+                            .eq(login_user.id),
+                    );
+                }
             }
             // 指定部门数据权限
             5 => {
