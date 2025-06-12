@@ -57,4 +57,7 @@ strum_macros = "0.27"
 # cron
 cron = "0.15.0"
 
+# grpc
+tonic = "0.13.1"
+
 macros = { path = "../macros" }

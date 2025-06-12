@@ -5,6 +5,9 @@ use common::database::mysql::{get_database_instance, DATABASE_INSTANCE};
 use common::task::task_manager::TaskManager;
 use once_cell::sync::Lazy;
 use task::tenant_expire_task::TenantExpireTask;
+use tonic::transport::Server;
+use std::net::SocketAddr;
+use std::str::FromStr;
 use std::sync::Arc;
 use sea_orm::DatabaseConnection;
 use tower_http::cors::{Any, CorsLayer};
@@ -12,6 +15,7 @@ use tracing::info;
 use uaparser::UserAgentParser;
 use common::middleware::logger;
 use common::state::app_state::AppState;
+use crate::grpc::service::system::create_system_service;
 use crate::initializer::initialize;
 
 mod api;
@@ -47,15 +51,24 @@ async fn main() -> Result<(), anyhow::Error> {
     // 每天00:05执行
     task_manager.add_task(TenantExpireTask::new(state.clone()), "0 5 0 * * *").await;
 
-    let app = route::api(state).await
+    let app = route::api(state.clone()).await
         .layer(cors)
         .layer(axum::middleware::from_fn(logger::panic_handler)) // 添加异常处理中间件
         ;
 
+    // HTTP
     let addr = format!("0.0.0.0:{}", config.system_server_port);
     let listener = tokio::net::TcpListener::bind(&addr).await?;
     info!("Server running on {}", addr);
     let server_future = axum::serve(listener, app.into_make_service_with_connect_info::<std::net::SocketAddr>());
+
+    // gRPC
+    let grpc_addr = SocketAddr::from_str(&format!("0.0.0.0:{}", config.system_server_grpc_port))?;
+    let grpc_server_future = Server::builder()
+        .add_service(create_system_service(state.clone()))
+        .serve(grpc_addr);
+
+    info!("gRPC Server running on {}", grpc_addr);
 
     tokio::select! {
         result = server_future => {
@@ -63,6 +76,12 @@ async fn main() -> Result<(), anyhow::Error> {
                 eprintln!("Web server unexpected exit: {}", e);
             }
             println!("Web server has stopped");
+        }
+        result = grpc_server_future => {
+            if let Err(e) = result {
+                eprintln!("gRPC server unexpected exit: {}", e);
+            }
+            println!("gRPC server has stopped");
         }
         _ = tokio::signal::ctrl_c() => {
             println!("The program is closed when the exit signal is received");

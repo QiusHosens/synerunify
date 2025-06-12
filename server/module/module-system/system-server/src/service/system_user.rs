@@ -273,6 +273,13 @@ pub async fn find_by_id(db: &DatabaseConnection, id: i64) -> Result<Option<Syste
     Ok(system_user.map(model_to_response))
 }
 
+pub async fn find_by_ids(db: &DatabaseConnection, ids: Vec<i64>) -> Result<Vec<SystemUserBaseResponse>> {
+    let list = SystemUserEntity::find_active()
+        .filter(Column::Id.is_in(ids))
+        .all(db).await?;
+    Ok(list.into_iter().map(model_to_base_response).collect())
+}
+
 pub async fn list_department_user(db: &DatabaseConnection, login_user: LoginUserContext) -> Result<Vec<SystemUserBaseResponse>> {
     let condition = Condition::all().add(Column::TenantId.eq(login_user.tenant_id));
     let list = SystemUserEntity::find_active_with_condition(condition)

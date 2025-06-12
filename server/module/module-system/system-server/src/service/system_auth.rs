@@ -1,7 +1,7 @@
 use std::future::Future;
 use std::net::SocketAddr;
 use crate::convert::system_data_scope_rule::create_request_to_model;
-use crate::grpc::captcha;
+use crate::grpc::client::captcha;
 use anyhow::{anyhow, Result};
 use common::constants::enums::DeviceType;
 use sea_orm::{ActiveModelTrait, ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter, QuerySelect};

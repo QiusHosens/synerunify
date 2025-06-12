@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+package system;
+
+service SystemService {
+  rpc GetUser(GetUserRequest) returns (GetUserResponse) {}
+  rpc GetDepartment(GetDepartmentRequest) returns (GetDepartmentResponse) {}
+}
+
+message GetUserRequest {
+  repeated int64 id = 1;
+}
+
+message GetUserResponse {
+  repeated UserResponse list = 1;
+}
+
+message UserResponse {
+  int64 id = 1;
+  string nickname = 2;
+}
+
+message GetDepartmentRequest {
+  repeated int64 id = 1;
+}
+
+message GetDepartmentResponse {
+  repeated DepartmentResponse list = 1;
+}
+
+message DepartmentResponse {
+  int64 id = 1;
+  string name = 2;
+}

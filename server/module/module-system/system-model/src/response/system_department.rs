@@ -83,3 +83,14 @@ pub struct SystemDepartmentPageResponse {
     pub update_time: NaiveDateTime, // 更新时间
     
 }
+
+#[derive(Deserialize, Serialize, Debug, Clone, ToSchema)]
+pub struct SystemDepartmentBaseResponse {
+    
+    pub id: i64, // id
+    
+    pub code: String, // 部门编码
+    
+    pub name: String, // 部门名称
+
+}

@@ -4,8 +4,8 @@ use sea_orm::{ActiveModelTrait, ColumnTrait, Condition, DatabaseConnection, Data
 use crate::model::system_department::{Model as SystemDepartmentModel, ActiveModel as SystemDepartmentActiveModel, Entity as SystemDepartmentEntity, Column, Relation};
 use crate::model::system_user::{Model as SystemUserModel, ActiveModel as SystemUserActiveModel, Entity as SystemUserEntity, Column as SystemUserColumn};
 use system_model::request::system_department::{CreateSystemDepartmentRequest, UpdateSystemDepartmentRequest, PaginatedKeywordRequest};
-use system_model::response::system_department::{SystemDepartmentPageResponse, SystemDepartmentResponse};
-use crate::convert::system_department::{create_request_to_model, model_to_page_response, model_to_response, update_request_to_model};
+use system_model::response::system_department::{SystemDepartmentBaseResponse, SystemDepartmentPageResponse, SystemDepartmentResponse};
+use crate::convert::system_department::{create_request_to_model, model_to_base_response, model_to_page_response, model_to_response, update_request_to_model};
 use anyhow::{anyhow, Context, Result};
 use sea_orm::ActiveValue::Set;
 use common::base::page::PaginatedResponse;
@@ -163,4 +163,11 @@ pub async fn find_by_id(db: &DatabaseConnection, id: i64) -> Result<Option<Syste
     let system_department = SystemDepartmentEntity::find_active_by_id(id)
         .one(db).await?;
     Ok(system_department)
+}
+
+pub async fn find_by_ids(db: &DatabaseConnection, ids: Vec<i64>) -> Result<Vec<SystemDepartmentBaseResponse>> {
+    let list = SystemDepartmentEntity::find_active()
+        .filter(Column::Id.is_in(ids))
+        .all(db).await?;
+    Ok(list.into_iter().map(model_to_base_response).collect())
 }

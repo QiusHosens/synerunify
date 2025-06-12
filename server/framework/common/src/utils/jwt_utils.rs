@@ -13,15 +13,15 @@ use serde_json::json;
 use tracing::{error, info};
 use utoipa::ToSchema;
 
-static SECRET_KEY: Lazy<Vec<u8>> = Lazy::new(|| b"synerunify:token:secret-key".to_vec());
+pub static SECRET_KEY: Lazy<Vec<u8>> = Lazy::new(|| b"synerunify:token:secret-key".to_vec());
 
 // Access Token Claims
 #[derive(Debug, Serialize, Deserialize)]
 pub struct AccessClaims {
-    device_type: String, // 设备类型
-    sub: i64,  // 用户id
-    tenant_id: i64, // 租户id
-    exp: i64, // 过期时间
+    pub device_type: String, // 设备类型
+    pub sub: i64,  // 用户id
+    pub tenant_id: i64, // 租户id
+    pub exp: i64, // 过期时间
     iat: i64, // 签发时间
 }
 
@@ -130,7 +130,7 @@ where
             return Err(AuthError::TokenExpired);
         }
 
-        if !is_valid_tenant(claims.tenant_id).await? {
+        if !is_valid_tenant(claims.tenant_id)? {
             return Err(AuthError::InvalidTenant);
         }
 
@@ -153,7 +153,7 @@ where
     }
 }
 
-pub async fn is_valid_tenant(tenant_id: i64) -> Result<bool, AuthError> {
+pub fn is_valid_tenant(tenant_id: i64) -> Result<bool, AuthError> {
     let exists: bool = RedisManager::is_set_member(REDIS_KEY_TENANTS_LIST, tenant_id)
         .map_err(|e| AuthError::InvalidTenant)?;
 
@@ -219,7 +219,7 @@ pub async fn refresh_token(refresh_token: String) -> Result<AuthBody, AuthError>
         return Err(AuthError::TokenExpired);
     }
 
-    if !is_valid_tenant(token_data.claims.tenant_id).await? {
+    if !is_valid_tenant(token_data.claims.tenant_id)? {
         error!("invalid tenant");
         return Err(AuthError::InvalidTenant);
     }

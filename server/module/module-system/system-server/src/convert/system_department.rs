@@ -2,7 +2,7 @@ use sea_orm::{Set, NotSet};
 use crate::model::system_department::{self, Model as SystemDepartment, ActiveModel as SystemDepartmentActiveModel};
 use crate::model::system_user::{self, Model as SystemUser, ActiveModel as SystemUserActiveModel};
 use system_model::request::system_department::{CreateSystemDepartmentRequest, UpdateSystemDepartmentRequest};
-use system_model::response::system_department::{SystemDepartmentPageResponse, SystemDepartmentResponse};
+use system_model::response::system_department::{SystemDepartmentBaseResponse, SystemDepartmentPageResponse, SystemDepartmentResponse};
 
 pub fn create_request_to_model(request: &CreateSystemDepartmentRequest) -> SystemDepartmentActiveModel {
     SystemDepartmentActiveModel {
@@ -77,5 +77,13 @@ pub fn model_to_page_response(model: SystemDepartment, user_model: Option<System
         update_time: model.update_time,
 
         leader_user_name,
+    }
+}
+
+pub fn model_to_base_response(model: SystemDepartment) -> SystemDepartmentBaseResponse {
+    SystemDepartmentBaseResponse { 
+        id: model.id,
+        code: model.code,
+        name: model.name,
     }
 }

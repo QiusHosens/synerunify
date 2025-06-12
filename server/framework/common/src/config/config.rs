@@ -8,6 +8,7 @@ use tokio::sync::OnceCell;
 #[derive(Deserialize, Debug, Clone)]
 pub struct Config {
     pub system_server_port: u16, // 服务端口
+    pub system_server_grpc_port: u16, // 服务端口
     pub logger_server_port: u16, // 服务端口
     pub file_server_port: u16, // 服务端口
     pub erp_server_port: u16, // 服务端口
@@ -31,6 +32,10 @@ impl Config {
                 .unwrap_or_else(|_| "8080".to_string())
                 .parse::<u16>()
                 .unwrap_or(8080);
+            let system_server_grpc_port = env::var("SYSTEM_SERVER_GRPC_PORT")
+                .unwrap_or_else(|_| "50051".to_string())
+                .parse::<u16>()
+                .unwrap_or(50051);
             let logger_server_port = env::var("LOGGER_SERVER_PORT")
                 .unwrap_or_else(|_| "8080".to_string())
                 .parse::<u16>()
@@ -59,6 +64,7 @@ impl Config {
 
             Config {
                 system_server_port,
+                system_server_grpc_port,
                 logger_server_port,
                 file_server_port,
                 erp_server_port,
