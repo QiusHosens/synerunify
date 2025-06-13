@@ -12,6 +12,7 @@ use axum::middleware::Next;
 use axum::response::Response;
 use axum::routing::{get, post, MethodRouter};
 use serde::{Deserialize, Serialize};
+use tokio::task;
 use tracing::info;
 use utoipa::OpenApi;
 use macros::{require_authorize, ExtendFields};
@@ -126,7 +127,8 @@ async fn auth_middleware(req: Request<axum::body::Body>, next: Next) -> Result<R
 }
 
 pub mod common {
-    use tokio::runtime::Runtime;
+    use tokio::{runtime::Runtime, task};
+    use once_cell::sync::Lazy;
 
     pub fn get_user_name<T: ToString>(value: &T, fill_type: &str) -> String {
         // let rt = Runtime::new().unwrap();
@@ -138,6 +140,20 @@ pub mod common {
         let rt = Runtime::new().unwrap();
         // 阻塞执行异步 get
         let g = rt.block_on(get());
+        format!("user: {} (type: {}), g: {}", value.to_string(), fill_type, g)
+    }
+
+    // 全局 Runtime
+    static RT: Lazy<Runtime> = Lazy::new(|| {
+        Runtime::new().expect("Failed to create Tokio runtime")
+    });
+
+    pub fn get_user<T: ToString>(value: &T, fill_type: &str) -> String {
+        // 在同步函数中安全运行阻塞操作
+        let g = task::block_in_place(|| {
+            let rt = tokio::runtime::Runtime::new().expect("Failed to create Tokio runtime");
+            rt.block_on(get())
+        });
         format!("user: {} (type: {}), g: {}", value.to_string(), fill_type, g)
     }
 
@@ -184,25 +200,25 @@ struct NumberStruct {
 
 #[derive(ExtendFields)]
 struct ByteStruct {
-    #[extend_fields(field = "byte_name", fill_type = "byte", invocation = "common::get_user_name")]
+    #[extend_fields(field = "byte_name", fill_type = "byte", invocation = "common::get_user")]
     code: i8,
     flag: bool,
 }
 
-#[derive(ExtendFields)]
+#[derive(Deserialize, ExtendFields)]
 struct User {
     #[extend_fields(invocation = "system_common::service::system::get_user_name")]
     id: i64,
     #[extend_fields(invocation = "system_common::service::system::get_user_name")]
     user_id: i64,
     #[extend_fields(invocation = "system_common::service::system::get_user_name")]
-    creator: i64,
+    creator: Option<i64>,
     value: String,
 }
 
-// #[tokio::main]
-// async fn main() -> Result<(), anyhow::Error> {
-fn main() {
+#[tokio::main]
+async fn main() -> Result<(), anyhow::Error> {
+// fn main() {
     // let state = AppState {};
 
     // let app = Router::new()
@@ -219,56 +235,62 @@ fn main() {
     // axum::serve(listener, app.into_make_service_with_connect_info::<std::net::SocketAddr>()).await?;
 
     // 测试普通字段名
-    let my_struct = MyStruct {
-        name: String::from("示例"),
-        value: 42,
-    };
-    let json = serde_json::to_string_pretty(&my_struct).unwrap();
-    println!("MyStruct JSON:\n{}", json);
+    // let my_struct = MyStruct {
+    //     name: String::from("示例"),
+    //     value: 42,
+    // };
+    // let json = serde_json::to_string_pretty(&my_struct).unwrap();
+    // println!("MyStruct JSON:\n{}", json);
 
-    let user_struct = UserStruct {
-        user_id: String::from("user123"),
-        score: 100,
-    };
-    let json = serde_json::to_string_pretty(&user_struct).unwrap();
-    println!("\nUserStruct JSON:\n{}", json);
+    // let user_struct = UserStruct {
+    //     user_id: String::from("user123"),
+    //     score: 100,
+    // };
+    // let json = serde_json::to_string_pretty(&user_struct).unwrap();
+    // println!("\nUserStruct JSON:\n{}", json);
 
-    let extra_struct = ExtraStruct {
-        name: String::from("测试"),
-        data: 50,
-    };
-    let json = serde_json::to_string_pretty(&extra_struct).unwrap();
-    println!("\nExtraStruct JSON:\n{}", json);
+    // let extra_struct = ExtraStruct {
+    //     name: String::from("测试"),
+    //     data: 50,
+    // };
+    // let json = serde_json::to_string_pretty(&extra_struct).unwrap();
+    // println!("\nExtraStruct JSON:\n{}", json);
 
-    let no_invocation_struct = NoInvocationStruct {
-        name: String::from("直接值"),
-        data: 60,
-    };
-    let json = serde_json::to_string_pretty(&no_invocation_struct).unwrap();
-    println!("\nNoInvocationStruct JSON:\n{}", json);
+    // let no_invocation_struct = NoInvocationStruct {
+    //     name: String::from("直接值"),
+    //     data: 60,
+    // };
+    // let json = serde_json::to_string_pretty(&no_invocation_struct).unwrap();
+    // println!("\nNoInvocationStruct JSON:\n{}", json);
 
-    let number_struct = NumberStruct {
-        id: 1234567890,
-        count: 10,
-    };
-    let json = serde_json::to_string_pretty(&number_struct).unwrap();
-    println!("\nNumberStruct JSON:\n{}", json);
+    // let number_struct = NumberStruct {
+    //     id: 1234567890,
+    //     count: 10,
+    // };
+    // let json = serde_json::to_string_pretty(&number_struct).unwrap();
+    // println!("\nNumberStruct JSON:\n{}", json);
 
     let byte_struct = ByteStruct {
         code: 42,
         flag: true,
     };
     let json = serde_json::to_string_pretty(&byte_struct).unwrap();
+    // let json = task::spawn_blocking(move || {
+    //     serde_json::to_string_pretty(&byte_struct)
+    // }).await??;
     println!("\nByteStruct JSON:\n{}", json);
 
     let user = User {
         id: 1,
         user_id: 1,
-        creator: 1,
+        creator: None,
         value: "user".to_string(),
     };
     let json = serde_json::to_string_pretty(&user).unwrap();
+    // let json = task::spawn_blocking(move || {
+    //     serde_json::to_string_pretty(&user)
+    // }).await??;
     println!("\nUser JSON:\n{}", json);
 
-    // Ok(())
+    Ok(())
 }

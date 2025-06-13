@@ -190,7 +190,10 @@ async fn list(
 ) -> CommonResult<Vec<ErpWarehouseResponse>> {
     match service::erp_warehouse::list(&state.db, login_user).await {
         Ok(data) => {CommonResult::with_data(data)}
-        Err(e) => {CommonResult::with_err(&e.to_string())}
+        Err(e) => {
+            eprintln!("Error: {:#?}", e);
+            CommonResult::with_err(&e.to_string())
+        }
     }
 }
 

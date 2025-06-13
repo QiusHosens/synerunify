@@ -96,4 +96,4 @@ strum_macros = "0.27"
 common = { path = "../../../framework/common" }
 macros = { path = "../../../framework/macros" }
 erp-model = { path = "../erp-model" }
-system-grpc = { path = "../../module-system/system-grpc" }
+system-common = { path = "../../module-system/system-common" }

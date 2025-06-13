@@ -10,6 +10,7 @@ pub struct GrpcSystemService {
 impl GrpcSystemService {
     pub async fn new() -> Result<Self> {
         let config = Config::load();
+        println!("grpc url, {:?}", config.grpc_system_service_url);
         let client = SystemClient::new(&config.grpc_system_service_url)
             .await
             .map_err(|e| anyhow!("Failed to connect to gRPC service: {}", e))?;
@@ -38,4 +39,14 @@ impl GrpcSystemService {
         }).collect();
         Ok(departments)
     }
+}
+
+pub async fn get_user(ids: Vec<i64>) -> Result<Vec<SystemUserBaseResponse>> {
+  let mut service = GrpcSystemService::new().await?;
+  service.get_user(ids).await
+}
+
+pub async fn get_department(ids: Vec<i64>) -> Result<Vec<SystemDepartmentBaseResponse>> {
+  let mut service = GrpcSystemService::new().await?;
+  service.get_department(ids).await
 }

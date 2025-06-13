@@ -3,7 +3,7 @@ extern crate proc_macro;
 use proc_macro::TokenStream;
 use quote::quote;
 use syn::parse::{Parse, ParseStream};
-use syn::{parse_macro_input, Data, DeriveInput, Expr, Fields, ItemFn, Lit, LitStr, Meta, MetaNameValue, Path, Token};
+use syn::{parse_macro_input, Data, DeriveInput, Expr, Fields, ItemFn, Lit, LitStr, Meta, MetaNameValue, Path, Token, Type};
 use syn::punctuated::Punctuated;
 use syn::token::Comma;
 
@@ -83,9 +83,9 @@ mod example {
 /// 字段扩展宏,给字段扩展自定义字段,值为根据方法获取的值
 #[derive(Default)]
 struct ExtendFieldsArgs {
-    field: Option<String>, // 扩展字段
-    fill_type: Option<String>, // 填充类型
-    invocation: Option<Path>, // 方法
+    field: Option<String>,
+    fill_type: Option<String>,
+    invocation: Option<Path>,
 }
 
 impl Parse for ExtendFieldsArgs {
@@ -179,15 +179,14 @@ pub fn derive_extend_fields(input: TokenStream) -> TokenStream {
     let mut extend_field_info = Vec::new();
     for field in fields.iter() {
         let field_ident = field.ident.as_ref().expect("Expected named field");
+        let field_type = &field.ty;
+        let is_option = is_option_type(field_type);
         for attr in &field.attrs {
             if attr.path().is_ident("extend_fields") {
                 let args: ExtendFieldsArgs = attr.parse_args().unwrap_or_default();
                 let field_str = field_ident.to_string();
                 let field_name = args.field.unwrap_or_else(|| {
-                    if field_str == "id" {
-                        "name".to_string()
-                    }
-                    else if field_str.ends_with("_id") {
+                    if field_str.ends_with("_id") {
                         field_str[..field_str.len() - 3].to_string() + "_name"
                     } else {
                         field_str.clone() + "_name"
@@ -195,17 +194,24 @@ pub fn derive_extend_fields(input: TokenStream) -> TokenStream {
                 });
                 let fill_type = args.fill_type.unwrap_or_else(|| "String".to_string());
                 let invocation = args.invocation;
-                extend_field_info.push((field_ident, field_name, fill_type, invocation));
+                extend_field_info.push((field_ident, field_name, fill_type, invocation, is_option));
             }
         }
     }
 
     // 生成序列化逻辑
-    let serialize_extend_fields = extend_field_info.iter().map(|(ident, field_name, fill_type, invocation)| {
+    let serialize_extend_fields = extend_field_info.iter().map(|(ident, field_name, fill_type, invocation, is_option)| {
         if let Some(invocation) = invocation {
-            quote! {
-                let value = #invocation(&self.#ident, #fill_type);
-                map.serialize_entry(#field_name, &value)?;
+            if *is_option {
+                quote! {
+                    let value = self.#ident.as_ref().map(|v| #invocation(v, #fill_type)).unwrap_or_default();
+                    map.serialize_entry(#field_name, &value)?;
+                }
+            } else {
+                quote! {
+                    let value = #invocation(&self.#ident, #fill_type);
+                    map.serialize_entry(#field_name, &value)?;
+                }
             }
         } else {
             quote! {
@@ -221,6 +227,16 @@ pub fn derive_extend_fields(input: TokenStream) -> TokenStream {
             map.serialize_entry(stringify!(#ident), &self.#ident)?;
         }
     });
+
+    // 检查字段类型是否为 Option
+    fn is_option_type(ty: &Type) -> bool {
+        if let Type::Path(type_path) = ty {
+            if let Some(segment) = type_path.path.segments.last() {
+                return segment.ident == "Option" && matches!(segment.arguments, syn::PathArguments::AngleBracketed(_));
+            }
+        }
+        false
+    }
 
     // 生成自定义序列化实现
     let expanded = quote! {
