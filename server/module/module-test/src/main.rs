@@ -18,6 +18,7 @@ use macros::{require_authorize, ExtendFields};
 use once_cell::sync::Lazy;
 use ctor;
 use dashmap::DashMap;
+use system_common::service::system::get_user_name;
 
 mod tests;
 
@@ -125,8 +126,24 @@ async fn auth_middleware(req: Request<axum::body::Body>, next: Next) -> Result<R
 }
 
 pub mod common {
+    use tokio::runtime::Runtime;
+
     pub fn get_user_name<T: ToString>(value: &T, fill_type: &str) -> String {
-        format!("user: {} (type: {})", value.to_string(), fill_type)
+        // let rt = Runtime::new().unwrap();
+        // format!("user: {} (type: {})", value.to_string(), fill_type)
+        // let rt = Runtime::new().unwrap();
+        // let g = rt.block_on(get());
+        // let g = tokio::runtime::Handle::current().block_on(get());
+        // 创建独立运行时
+        let rt = Runtime::new().unwrap();
+        // 阻塞执行异步 get
+        let g = rt.block_on(get());
+        format!("user: {} (type: {}), g: {}", value.to_string(), fill_type, g)
+    }
+
+    pub async fn get() -> String {
+        tokio::time::sleep(std::time::Duration::from_secs(1)).await;
+        "async".to_string()
     }
 }
 
@@ -172,8 +189,20 @@ struct ByteStruct {
     flag: bool,
 }
 
-#[tokio::main]
-async fn main() -> Result<(), anyhow::Error> {
+#[derive(ExtendFields)]
+struct User {
+    #[extend_fields(invocation = "system_common::service::system::get_user_name")]
+    id: i64,
+    #[extend_fields(invocation = "system_common::service::system::get_user_name")]
+    user_id: i64,
+    #[extend_fields(invocation = "system_common::service::system::get_user_name")]
+    creator: i64,
+    value: String,
+}
+
+// #[tokio::main]
+// async fn main() -> Result<(), anyhow::Error> {
+fn main() {
     // let state = AppState {};
 
     // let app = Router::new()
@@ -232,5 +261,14 @@ async fn main() -> Result<(), anyhow::Error> {
     let json = serde_json::to_string_pretty(&byte_struct).unwrap();
     println!("\nByteStruct JSON:\n{}", json);
 
-    Ok(())
+    let user = User {
+        id: 1,
+        user_id: 1,
+        creator: 1,
+        value: "user".to_string(),
+    };
+    let json = serde_json::to_string_pretty(&user).unwrap();
+    println!("\nUser JSON:\n{}", json);
+
+    // Ok(())
 }

@@ -184,7 +184,10 @@ pub fn derive_extend_fields(input: TokenStream) -> TokenStream {
                 let args: ExtendFieldsArgs = attr.parse_args().unwrap_or_default();
                 let field_str = field_ident.to_string();
                 let field_name = args.field.unwrap_or_else(|| {
-                    if field_str.ends_with("_id") {
+                    if field_str == "id" {
+                        "name".to_string()
+                    }
+                    else if field_str.ends_with("_id") {
                         field_str[..field_str.len() - 3].to_string() + "_name"
                     } else {
                         field_str.clone() + "_name"

@@ -49,6 +49,7 @@ regex = "1.11.1"
 serde_json = "1.0"
 
 macros = { path = "../../framework/macros" }
+system-common = { path = "../module-system/system-common" }
 
 [dev-dependencies]
 chrono = { version = "0.4.41" }

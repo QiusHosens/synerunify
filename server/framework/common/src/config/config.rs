@@ -18,6 +18,7 @@ pub struct Config {
     pub redis_url: String, // redis地址
     pub mongo_url: String, // mongo地址
     pub grpc_captcha_service_url: String, // 验证码服务grpc地址
+    pub grpc_system_service_url: String, // 系统服务grpc地址
 }
 
 static CONFIG_INSTANCE: OnceLock<Config> = OnceLock::new();
@@ -61,6 +62,8 @@ impl Config {
 
             let grpc_captcha_service_url = env::var("GRPC_CAPTCHA_SERVICE_URL")
                 .unwrap_or_else(|_| "http://localhost:50051".to_string());
+            let grpc_system_service_url = env::var("GRPC_SYSTEM_SERVICE_URL")
+                .unwrap_or_else(|_| "http://localhost:50051".to_string());
 
             Config {
                 system_server_port,
@@ -73,7 +76,8 @@ impl Config {
                 log_level,
                 redis_url,
                 mongo_url,
-                grpc_captcha_service_url
+                grpc_captcha_service_url,
+                grpc_system_service_url
             }
         }).clone()
     }
