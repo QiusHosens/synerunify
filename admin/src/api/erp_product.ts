@@ -37,6 +37,7 @@ export interface ErpProductResponse {
   name: string; // 产品名称
   category_id: number; // 产品分类ID
   unit_id: number; // 产品单位ID
+  unit_name: number; // 产品单位名
   status: number; // 状态
   barcode: string; // 条码
   specification: string; // 规格

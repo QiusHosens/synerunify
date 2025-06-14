@@ -370,6 +370,26 @@
   "page.erp.purchase.order.title.deposit": "定金",
   "page.erp.purchase.order.title.remarks": "备注",
   "page.erp.purchase.order.placeholder.order.number": "订单编号,由系统自动生成",
+  "page.erp.purchase.order.error.supplier": "请选择供应商",
   "page.erp.purchase.order.error.purchase.date": "请选择采购日期",
-  "page.erp.purchase.order.error.total.amount": "请输入总金额"
+  "page.erp.purchase.order.error.total.amount": "请输入总金额",
+
+  "page.erp.purchase.order.title.check.list": "订单产品清单",
+  "page.erp.purchase.order.title.operate.add": "添加采购产品",
+  "page.erp.purchase.order.detail.title.no": "序号",
+  "page.erp.purchase.order.detail.title.product": "产品名称",
+  "page.erp.purchase.order.detail.title.stock": "库存",
+  "page.erp.purchase.order.detail.title.barcode": "条码",
+  "page.erp.purchase.order.detail.title.unit": "单位",
+  "page.erp.purchase.order.detail.title.remarks": "备注",
+  "page.erp.purchase.order.detail.title.quantity": "数量",
+  "page.erp.purchase.order.detail.title.unit.price": "单价",
+  "page.erp.purchase.order.detail.title.subtotal": "小计",
+  "page.erp.purchase.order.detail.title.tax.rate": "税率",
+  "page.erp.purchase.order.detail.title.tax": "税额",
+  "page.erp.purchase.order.detail.title.tax.total": "税额合计",
+  "page.erp.purchase.order.detail.error.product": "请选择产品",
+  "page.erp.purchase.order.detail.error.quantity": "请输入数量",
+  "page.erp.purchase.order.detail.error.unit.price": "请输入单价",
+  "page.erp.purchase.order.detail.error.tax.rate": "请输入税率"
 }

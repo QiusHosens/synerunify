@@ -453,7 +453,7 @@ const UserAdd = forwardRef(({ onSubmit }: UserAddProps, ref) => {
               </InputAdornment>
             }
           />
-          <FormHelperText id="user-password">{errors.password}</FormHelperText>
+          <FormHelperText sx={{ color: 'error.main' }} id="user-password">{errors.password}</FormHelperText>
         </FormControl>
         <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiSelect-root': { width: '200px' } }}>
           <DictSelect name='sex' dict_type='sex' value={formValues.sex.toString()} onChange={handleTypeChange} label={t("page.user.title.sex")} />

@@ -11,12 +11,10 @@ const apis = {
 }
 
 export interface ErpPurchaseOrderAttachmentRequest {
-  id: number; // 附件ID
-  purchase_id: number; // 采购订单ID
+  id?: number; // 附件ID
+  purchase_id?: number; // 采购订单ID
   file_id: number; // 文件ID
   remarks: string; // 备注
-  department_code: string; // 部门编码
-  department_id: number; // 部门ID
 }
 
 export interface ErpPurchaseOrderAttachmentResponse {

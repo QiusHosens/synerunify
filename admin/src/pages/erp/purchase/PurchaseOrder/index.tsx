@@ -1,4 +1,4 @@
-import { Box, Button, Switch } from '@mui/material';
+import { Box, Button } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { DataGrid, GridCallbackDetails, GridColDef, GridFilterModel, GridRenderCellParams, GridSortModel } from '@mui/x-data-grid';
@@ -48,7 +48,7 @@ export default function ErpPurchaseOrder() {
         flex: 1,
         minWidth: 100,
         renderCell: (params: GridRenderCellParams) => (
-          <Box sx={ { height: '100%', display: 'flex', gap: 1, alignItems: 'center' } }>
+          <Box sx={{ height: '100%', display: 'flex', gap: 1, alignItems: 'center' }}>
             {hasOperatePermission('erp:purchase:order:edit') && <Button
               size="small"
               variant='customOperate'
@@ -57,7 +57,7 @@ export default function ErpPurchaseOrder() {
               onClick={() => handleClickOpenEdit(params.row)}
             />}
             {hasOperatePermission('erp:purchase:order:delete') && <Button
-              sx={ {color: 'error.main'} }
+              sx={{ color: 'error.main' }}
               size="small"
               variant='customOperate'
               title={t('global.operate.delete') + t('global.page.erp.purchase.order')}
@@ -112,8 +112,8 @@ export default function ErpPurchaseOrder() {
   };
 
   return (
-    <Box sx={ {height: '100%', display: 'flex', flexDirection: 'column'} }>
-      <Box sx={ {mb: 2, display: 'flex', justifyContent: 'space-between'} }>
+    <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+      <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between' }}>
         <Box></Box>
         {hasOperatePermission('erp:purchase:order:add') && <Button variant="customContained" onClick={handleClickOpenAdd}>
           {t('global.operate.add')}
@@ -132,7 +132,7 @@ export default function ErpPurchaseOrder() {
         filterModel={filterModel}
         onFilterModelChange={handleFilterModelChange}
         pageSizeOptions={[10, 20, 50, 100]}
-        paginationModel={ {page: condition.page - 1, pageSize: condition.size} }
+        paginationModel={{ page: condition.page - 1, pageSize: condition.size }}
         onPaginationModelChange={(model) => {
           setCondition((prev) => ({
             ...prev,
