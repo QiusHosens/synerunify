@@ -11,6 +11,7 @@ use axum::http::Request;
 use axum::middleware::Next;
 use axum::response::Response;
 use axum::routing::{get, post, MethodRouter};
+use chrono::{Local, NaiveDateTime};
 use serde::{Deserialize, Serialize};
 use tokio::task;
 use tracing::info;
@@ -20,6 +21,9 @@ use once_cell::sync::Lazy;
 use ctor;
 use dashmap::DashMap;
 use system_common::service::system::get_user_name;
+use serde_with::{serde_as, DisplayFromStr};
+use common::formatter::string_date_time::StringDateTime;
+// use serde_with::{serde_as, chrono::NaiveDateTime as ChronoNaiveDateTime, formats::Strftime};
 
 mod tests;
 
@@ -126,7 +130,7 @@ async fn auth_middleware(req: Request<axum::body::Body>, next: Next) -> Result<R
     Ok(next.run(req).await)
 }
 
-pub mod common {
+mod common_local {
     use tokio::{runtime::Runtime, task};
     use once_cell::sync::Lazy;
 
@@ -163,58 +167,79 @@ pub mod common {
     }
 }
 
-#[derive(ExtendFields)]
-struct MyStruct {
-    #[extend_fields(field = "user_name", fill_type = "user", invocation = "common::get_user_name")]
-    name: String,
-    value: i32,
-}
+// #[derive(ExtendFields)]
+// struct MyStruct {
+//     #[extend_fields(field = "user_name", fill_type = "user", invocation = "common_local::get_user_name")]
+//     name: String,
+//     value: i32,
+// }
 
-#[derive(ExtendFields)]
-struct UserStruct {
-    #[extend_fields]
-    user_id: String,
-    score: i32,
-}
+// #[derive(ExtendFields)]
+// struct UserStruct {
+//     #[extend_fields]
+//     user_id: String,
+//     score: i32,
+// }
 
-#[derive(ExtendFields)]
-struct ExtraStruct {
-    #[extend_fields(field = "custom_name", fill_type = "custom", invocation = "common::get_user_name")]
-    name: String,
-    data: i32,
-}
+// #[derive(ExtendFields)]
+// struct ExtraStruct {
+//     #[extend_fields(field = "custom_name", fill_type = "custom", invocation = "common_local::get_user_name")]
+//     name: String,
+//     data: i32,
+// }
 
-#[derive(ExtendFields)]
-struct NoInvocationStruct {
-    #[extend_fields(field = "raw_name", fill_type = "raw")]
-    name: String,
-    data: i32,
-}
+// #[derive(ExtendFields)]
+// struct NoInvocationStruct {
+//     #[extend_fields(field = "raw_name", fill_type = "raw")]
+//     name: String,
+//     data: i32,
+// }
 
-#[derive(ExtendFields)]
-struct NumberStruct {
-    #[extend_fields(field = "number_name", fill_type = "number", invocation = "common::get_user_name")]
-    id: i64,
-    count: i32,
-}
+// #[derive(ExtendFields)]
+// struct NumberStruct {
+//     #[extend_fields(field = "number_name", fill_type = "number", invocation = "common_local::get_user_name")]
+//     id: i64,
+//     count: i32,
+// }
 
-#[derive(ExtendFields)]
+#[serde_as]
+// #[extend_fields]
+#[derive(Deserialize, ExtendFields)]
+// #[derive(Deserialize, Serialize)]
 struct ByteStruct {
-    #[extend_fields(field = "byte_name", fill_type = "byte", invocation = "common::get_user")]
+    #[extend_fields(field = "byte_name", fill_type = "byte", invocation = "common_local::get_user")]
     code: i8,
     flag: bool,
+    #[serde_as(as = "StringDateTime")]
+    date: NaiveDateTime,
 }
 
-#[derive(Deserialize, ExtendFields)]
-struct User {
-    #[extend_fields(invocation = "system_common::service::system::get_user_name")]
-    id: i64,
-    #[extend_fields(invocation = "system_common::service::system::get_user_name")]
-    user_id: i64,
-    #[extend_fields(invocation = "system_common::service::system::get_user_name")]
-    creator: Option<i64>,
-    value: String,
-}
+// #[serde_as]
+// #[derive(Deserialize, Serialize, ExtendFields, Clone, Copy)]
+// #[derive(ExtendFields, Serialize)]
+// struct ByteStruct {
+//     #[extend_fields(field = "byte_name", fill_type = "user", invocation = "common_local::get_user")]
+//     code: i8,
+//     flag: bool,
+//     // #[serde_as(as = "ChronoNaiveDateTime<Strftime>")]
+//     // #[serde_with(format = "%Y-%m-%d %H:%M:%S")]
+//     // #[serde_as(as = "StringDateTime")]
+//     date: NaiveDateTime,
+// }
+
+// #[serde_as]
+// #[derive(Deserialize, Serialize, ExtendFields, Clone, Copy)]
+// struct User {
+//     #[extend_fields(invocation = "system_common::service::system::get_user_name")]
+//     id: i64,
+//     #[extend_fields(invocation = "system_common::service::system::get_user_name")]
+//     user_id: i64,
+//     #[extend_fields(invocation = "system_common::service::system::get_user_name")]
+//     creator: Option<i64>,
+//     // value: String,
+//     // #[serde_as(as = "StringDateTime")]
+//     date: NaiveDateTime,
+// }
 
 #[tokio::main]
 async fn main() -> Result<(), anyhow::Error> {
@@ -273,6 +298,7 @@ async fn main() -> Result<(), anyhow::Error> {
     let byte_struct = ByteStruct {
         code: 42,
         flag: true,
+        date: Local::now().naive_utc()
     };
     let json = serde_json::to_string_pretty(&byte_struct).unwrap();
     // let json = task::spawn_blocking(move || {
@@ -280,17 +306,18 @@ async fn main() -> Result<(), anyhow::Error> {
     // }).await??;
     println!("\nByteStruct JSON:\n{}", json);
 
-    let user = User {
-        id: 1,
-        user_id: 1,
-        creator: None,
-        value: "user".to_string(),
-    };
-    let json = serde_json::to_string_pretty(&user).unwrap();
-    // let json = task::spawn_blocking(move || {
-    //     serde_json::to_string_pretty(&user)
-    // }).await??;
-    println!("\nUser JSON:\n{}", json);
+    // let user = User {
+    //     id: 1,
+    //     user_id: 1,
+    //     creator: None,
+    //     // value: "user".to_string(),
+    //     date: Local::now().naive_utc()
+    // };
+    // let json = serde_json::to_string_pretty(&user).unwrap();
+    // // let json = task::spawn_blocking(move || {
+    // //     serde_json::to_string_pretty(&user)
+    // // }).await??;
+    // println!("\nUser JSON:\n{}", json);
 
     Ok(())
 }
