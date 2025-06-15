@@ -2,6 +2,7 @@ use axum::handler::HandlerWithoutStateExt;
 use axum::http::Method;
 use common::config::config::Config;
 use common::database::mysql::{get_database_instance, DATABASE_INSTANCE};
+use common::utils::minio_utils::MinioClient;
 use once_cell::sync::Lazy;
 use std::sync::Arc;
 use tokio::sync::Mutex;
@@ -21,6 +22,8 @@ async fn main() -> Result<(), anyhow::Error> {
     let config = Config::load();
     let database = get_database_instance(config.database_url).await;
 
+    let minio = MinioClient::new(&config.minio_url, &config.minio_access_key, &config.minio_secret_key).await?;
+
     let cors = CorsLayer::new()
         .allow_origin(Any)
         .allow_methods(vec![Method::GET, Method::POST])
@@ -28,7 +31,7 @@ async fn main() -> Result<(), anyhow::Error> {
 
     // let ua_parser = UserAgentParser::from_yaml("regexes.yaml").expect("Failed to load regexes.yaml");
 
-    let state = AppState { db: database.clone(), ua_parser: None };
+    let state = AppState { db: database.clone(), ua_parser: None, minio: Some(minio) };
 
     let app = route::api(state).await
         .layer(cors)

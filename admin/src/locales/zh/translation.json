@@ -375,6 +375,7 @@
   "page.erp.purchase.order.error.total.amount": "请输入总金额",
 
   "page.erp.purchase.order.title.check.list": "订单产品清单",
+  "page.erp.purchase.order.title.attachment": "订单附件",
   "page.erp.purchase.order.title.operate.add": "添加采购产品",
   "page.erp.purchase.order.detail.title.no": "序号",
   "page.erp.purchase.order.detail.title.product": "产品名称",

@@ -5,9 +5,9 @@ use utoipa_axum::router::OpenApiRouter;
 use utoipa_axum::routes;
 use ctor;
 use macros::require_authorize;
-use axum::{routing::{get, post}, Router, extract::{State, Path, Json, Query}, response::IntoResponse, Extension};
+use axum::{extract::{Json, Multipart, Path, Query, State}, http::StatusCode, response::IntoResponse, routing::{get, post}, Extension, Router};
 use common::base::page::PaginatedResponse;
-use file_model::request::system_file::{CreateSystemFileRequest, UpdateSystemFileRequest, PaginatedKeywordRequest};
+use file_model::request::system_file::{CreateSystemFileRequest, PaginatedKeywordRequest, UpdateSystemFileRequest, UploadSystemFileRequest};
 use file_model::response::system_file::SystemFileResponse;
 use common::base::response::CommonResult;
 use common::context::context::LoginUserContext;
@@ -21,6 +21,8 @@ pub async fn system_file_router(state: AppState) -> OpenApiRouter {
         .routes(routes!(get_by_id))
         .routes(routes!(list))
         .routes(routes!(page))
+        .routes(routes!(upload))
+        .routes(routes!(download))
         .with_state(state)
 }
 
@@ -191,3 +193,116 @@ async fn list(
         Err(e) => {CommonResult::with_err(&e.to_string())}
     }
 }
+
+#[utoipa::path(
+    post,
+    path = "/upload",
+    operation_id = "system_file_upload",
+    request_body(content_type = "multipart/form-data", content = UploadSystemFileRequest),
+    responses(
+        (status = 204, description = "upload")
+    ),
+    tag = "system_file",
+    security(
+        ("bearerAuth" = [])
+    )
+)]
+#[require_authorize(operation_id = "system_file_upload", authorize = "")]
+async fn upload(
+    State(state): State<AppState>,
+    Extension(login_user): Extension<LoginUserContext>,
+    mut multipart: Multipart,
+) -> CommonResult<i64> {
+    match service::system_file::upload(&state.db, login_user, state.minio, multipart).await {
+        Ok(Some(id)) => {CommonResult::with_data(id)}
+        Ok(None) => {CommonResult::with_none()}
+        Err(e) => {CommonResult::with_err(&e.to_string())}
+    }
+}
+
+#[utoipa::path(
+    get,
+    path = "/download/{id}",
+    operation_id = "system_file_download",
+    params(
+        ("id" = i64, Path, description = "id")
+    ),
+    responses(
+        (status = 200, description = "download", content_type = "application/octet-stream"),
+        (status = 404, description = "File not found"),
+        (status = 500, description = "Internal server error")
+    ),
+    tag = "system_file",
+    security(
+        ("bearerAuth" = [])
+    )
+)]
+#[require_authorize(operation_id = "system_file_download", authorize = "")]
+async fn download(
+    State(state): State<AppState>,
+    Extension(login_user): Extension<LoginUserContext>,
+    Path(id): Path<i64>,
+) -> Result<impl IntoResponse, StatusCode> {
+    let file = match service::system_file::get_file_data(&state.db, login_user, state.minio, id).await {
+        Ok(Some(data)) => data,
+        Ok(None) => {
+            return Err(StatusCode::NOT_FOUND)
+        },
+        Err(_) => return Err(StatusCode::INTERNAL_SERVER_ERROR),
+    };
+    
+    let mut content_type = mime::APPLICATION_OCTET_STREAM;
+    if file.file_type.is_some() {
+        content_type = file.file_type
+        .unwrap()
+        .parse::<mime::Mime>()
+        .unwrap_or(mime::APPLICATION_OCTET_STREAM);
+    }
+
+    Ok((
+        StatusCode::OK,
+        [
+            (axum::http::header::CONTENT_TYPE, content_type.to_string()),
+            (
+                axum::http::header::CONTENT_DISPOSITION,
+                format!("attachment; filename=\"{}\"", file.file_name)
+            ),
+        ],
+        file.data,
+    ))
+}
+
+// #[utoipa::path(
+//     get,
+//     path = "/download/{file_id}/{file_name}",
+//     params(
+//         ("file_id" = String, Path, description = "File ID"),
+//         ("file_name" = String, Path, description = "File name")
+//     ),
+//     responses(
+//         (status = 200, description = "File downloaded successfully", content_type = "application/octet-stream"),
+//         (status = 404, description = "File not found"),
+//         (status = 500, description = "Internal server error")
+//     )
+// )]
+// async fn download_file(
+//     State(state): State<Arc<AppState>>,
+//     Path((file_id, file_name)): Path<(String, String)>,
+// ) -> Result<impl IntoResponse, StatusCode> {
+//     let bucket_name = "uploads";
+//     let minio = &state.minio;
+
+//     let data = minio
+//         .download_file(bucket_name, &file_id, &file_name)
+//         .await
+//         .map_err(|e| match e {
+//             MinioError::NotFound => StatusCode::NOT_FOUND,
+//             _ => StatusCode::INTERNAL_SERVER_ERROR,
+//         })?;
+
+//     Ok((
+//         StatusCode::OK,
+//         [(axum::http::header::CONTENT_TYPE, "application/octet-stream")],
+//         data,
+//     ))
+// }

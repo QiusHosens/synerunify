@@ -60,4 +60,7 @@ cron = "0.15.0"
 # grpc
 tonic = "0.13.1"
 
+# minio
+minio = "0.3.0"
+
 macros = { path = "../macros" }

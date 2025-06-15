@@ -36,3 +36,20 @@ pub struct SystemFileResponse {
     pub update_time: NaiveDateTime, // 更新时间
     
 }
+
+#[derive(Deserialize, Serialize, Debug, Clone, ToSchema)]
+pub struct SystemFileDataResponse {
+    
+    pub id: i64, // 文件ID
+    
+    pub file_name: String, // 文件名
+    
+    pub file_type: Option<String>, // 文件类型
+    
+    pub file_size: i64, // 文件大小（字节）
+    
+    pub file_path: String, // 文件存储路径
+
+    pub data: Vec<u8>, // 文件数据
+    
+}

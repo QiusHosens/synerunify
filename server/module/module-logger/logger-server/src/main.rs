@@ -42,7 +42,7 @@ async fn main() -> Result<(), anyhow::Error> {
 
     // let ua_parser = UserAgentParser::from_yaml("regexes.yaml").expect("Failed to load regexes.yaml");
 
-    let state = AppState { db: Default::default(), ua_parser: None };
+    let state = AppState { db: Default::default(), ua_parser: None, minio: None };
 
     // let app = Router::new()
     //     .fallback_service(config.api_prefix.as_ref(), route::api(database).await)

@@ -17,6 +17,9 @@ pub struct Config {
     pub log_level: String, // 日志级别
     pub redis_url: String, // redis地址
     pub mongo_url: String, // mongo地址
+    pub minio_url: String, // minio api地址
+    pub minio_access_key: String, // minio access key
+    pub minio_secret_key: String, // minio secret key
     pub grpc_captcha_service_url: String, // 验证码服务grpc地址
     pub grpc_system_service_url: String, // 系统服务grpc地址
 }
@@ -60,6 +63,13 @@ impl Config {
             let mongo_url = env::var("MONGO_URL")
                 .unwrap_or_else(|_| "mongodb://synerunify:synerunify@127.0.0.1:27017".to_string());
 
+            let minio_url = env::var("MINIO_URL")
+                .unwrap_or_else(|_| "http://localhost:9000".to_string());
+            let minio_access_key = env::var("MINIO_ACCESS_KEY")
+                .unwrap_or_else(|_| "synerunify".to_string());
+            let minio_secret_key = env::var("MINIO_SECRET_KEY")
+                .unwrap_or_else(|_| "synerunify".to_string());
+
             let grpc_captcha_service_url = env::var("GRPC_CAPTCHA_SERVICE_URL")
                 .unwrap_or_else(|_| "http://localhost:50051".to_string());
             let grpc_system_service_url = env::var("GRPC_SYSTEM_SERVICE_URL")
@@ -76,6 +86,9 @@ impl Config {
                 log_level,
                 redis_url,
                 mongo_url,
+                minio_url,
+                minio_access_key,
+                minio_secret_key,
                 grpc_captcha_service_url,
                 grpc_system_service_url
             }

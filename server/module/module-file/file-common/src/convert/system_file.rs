@@ -1,7 +1,7 @@
 use sea_orm::{Set, NotSet};
 use crate::model::system_file::{self, Model as SystemFile, ActiveModel as SystemFileActiveModel};
 use file_model::request::system_file::{CreateSystemFileRequest, UpdateSystemFileRequest};
-use file_model::response::system_file::SystemFileResponse;
+use file_model::response::system_file::{SystemFileDataResponse, SystemFileResponse};
 
 pub fn create_request_to_model(request: &CreateSystemFileRequest) -> SystemFileActiveModel {
     SystemFileActiveModel {
@@ -51,5 +51,17 @@ pub fn model_to_response(model: SystemFile) -> SystemFileResponse {
         create_time: model.create_time,
         updater: model.updater,
         update_time: model.update_time,
+    }
+}
+
+pub fn model_to_data_response(model: SystemFile, data: Vec<u8>) -> SystemFileDataResponse {
+    SystemFileDataResponse { 
+        id: model.id,
+        file_name: model.file_name,
+        file_type: model.file_type,
+        file_size: model.file_size,
+        file_path: model.file_path,
+
+        data
     }
 }

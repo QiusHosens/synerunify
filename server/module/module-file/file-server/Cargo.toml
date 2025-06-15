@@ -17,6 +17,7 @@ axum = { version = "0.8.4", default-features = false, features = [
     "json",
     "tokio",
     "http1",
+    "multipart",
 ] }
 tower-http = { version = "0.6.4", default-features = false, features = [
     "fs",
@@ -46,6 +47,7 @@ tokio = "1.45.0"
 anyhow = "1.0.98"
 dotenvy = "0.15.7" # 读取配置文件
 ctor = "0.4.2"
+mime = "0.3.17"
 
 # swagger ui
 utoipa = { version = "5.3.1" }

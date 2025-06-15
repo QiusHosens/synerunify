@@ -8,6 +8,17 @@ rust-version = { workspace = true }
 unused_imports = "allow"
 
 [dependencies]
+axum = { version = "0.8.4", default-features = false, features = [
+    "matched-path",
+    "form",
+    "tracing",
+    "query",
+    "json",
+    "tokio",
+    "http1",
+    "multipart",
+] }
+
 serde = { version = "1.0.219", default-features = false, features = ["derive"] }
 serde_json = "1.0.140"
 chrono = { version = "0.4.41" }       # 用于处理时间
@@ -21,6 +32,7 @@ utoipa = { version = "5.3.1", features = ["axum_extras"] } # 添加 utoipa，支
 utoipa-swagger-ui = { version = "9.0.0", features = ["axum"] } # 添加 Swagger UI 支持
 
 anyhow = "1.0.98" # 返回
+mime = "0.3.17"
 
 common = { path = "../../../framework/common" }
 file-model = { path = "../file-model" }

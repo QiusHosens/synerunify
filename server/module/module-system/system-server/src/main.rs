@@ -41,7 +41,7 @@ async fn main() -> Result<(), anyhow::Error> {
         .allow_methods(vec![Method::GET, Method::POST])
         .allow_headers(Any);
 
-    let state = AppState { db: database.clone(), ua_parser: None };
+    let state = AppState { db: database.clone(), ua_parser: None, minio: None };
 
     // 执行初始化
     initialize(state.clone()).await;

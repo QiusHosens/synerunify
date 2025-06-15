@@ -40,6 +40,13 @@ pub struct UpdateSystemFileRequest {
 }
 
 #[derive(Serialize, Deserialize, Debug, ToSchema)]
+pub struct UploadSystemFileRequest {
+    
+    #[schema(format = Binary, content_media_type = "application/octet-stream")] 
+    file: String, 
+}
+
+#[derive(Serialize, Deserialize, Debug, ToSchema)]
 pub struct PaginatedKeywordRequest {
     #[serde(flatten)]
     pub base: PaginatedRequest,
