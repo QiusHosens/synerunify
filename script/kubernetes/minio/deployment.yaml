@@ -1,0 +1,103 @@
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: minio
+  namespace: synerunify
+  labels:
+    app: minio
+  annotations:
+    deployment.kubernetes.io/revision: '2'
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: minio
+  template:
+    metadata:
+      labels:
+        app: minio
+    spec:
+      volumes:
+        - name: host-time
+          hostPath:
+            path: /etc/localtime
+            type: ''
+        - name: data
+          hostPath:
+            path: /data/volume/minio/data
+            type: ''
+      containers:
+        - name: minio
+          image: 'minio/minio'
+          args:
+            - server
+            - /data
+            - --console-address
+            - ":9001"
+          ports:
+            - name: api-9000
+              containerPort: 9000
+              protocol: TCP
+            - name: console-9001
+              containerPort: 9001
+              protocol: TCP
+          env:
+            - name: MINIO_ROOT_USER
+              value: synerunify
+            - name: MINIO_ROOT_PASSWORD
+              value: synerunify
+          resources: {}
+          volumeMounts:
+            - name: host-time
+              readOnly: true
+              mountPath: /etc/localtime
+            - name: data
+              mountPath: /data
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          imagePullPolicy: IfNotPresent
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      serviceAccountName: default
+      securityContext: {}
+      schedulerName: default-scheduler
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 25%
+      maxSurge: 25%
+  revisionHistoryLimit: 10
+  progressDeadlineSeconds: 600
+...
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: minio
+  namespace: synerunify
+  labels:
+    app: minio
+spec:
+  ports:
+    - name: api-9000
+      protocol: TCP
+      port: 9000
+      targetPort: 9000
+      nodePort: 10000
+    - name: console-9001
+      protocol: TCP
+      port: 9001
+      targetPort: 9001
+      nodePort: 10001
+  selector:
+    app: minio
+  type: NodePort
+  sessionAffinity: None
+  externalTrafficPolicy: Cluster
+  ipFamilies:
+    - IPv4
+  ipFamilyPolicy: SingleStack
+  internalTrafficPolicy: Cluster
+...
