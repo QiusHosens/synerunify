@@ -2,7 +2,7 @@ import { Box, Button, Card, FormControl, FormHelperText, Grid, InputLabel, MenuI
 import { useTranslation } from 'react-i18next';
 import { forwardRef, useImperativeHandle, useState, useCallback } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
-import { createErpPurchaseOrder, ErpProductResponse, ErpPurchaseOrderRequest, ErpSettlementAccountResponse, ErpSupplierResponse, listErpProduct, listErpSettlementAccount, listErpSupplier } from '@/api';
+import { createErpPurchaseOrder, ErpProductResponse, ErpPurchaseOrderAttachmentRequest, ErpPurchaseOrderDetailRequest, ErpPurchaseOrderRequest, ErpSettlementAccountResponse, ErpSupplierResponse, listErpProduct, listErpSettlementAccount, listErpSupplier } from '@/api';
 import CustomizedDialog from '@/components/CustomizedDialog';
 import { PickerValue } from '@mui/x-date-pickers/internals';
 import { DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers';
@@ -213,18 +213,40 @@ const ErpPurchaseOrderAdd = forwardRef(({ onSubmit }: ErpPurchaseOrderAddProps, 
 
   const handleSubmit = useCallback(async () => {
     if (validateForm()) {
-      await createErpPurchaseOrder(formValues as ErpPurchaseOrderRequest);
+      const purchase_products: ErpPurchaseOrderDetailRequest[] = [];
+      for (const product of formValues.purchase_products) {
+        purchase_products.push({
+          product_id: product.product_id!,
+          quantity: product.quantity,
+          unit_price: product.unit_price,
+          subtotal: product.subtotal,
+          tax_rate: product.tax_rate,
+          remarks: product.remarks,
+        } as ErpPurchaseOrderDetailRequest);
+      }
+      const purchase_attachment: ErpPurchaseOrderAttachmentRequest[] = [];
+      for (const attachment of formValues.purchase_attachment) {
+        purchase_attachment.push({
+          file_id: attachment.file_id!
+        } as ErpPurchaseOrderAttachmentRequest);
+      }
+      const request: ErpPurchaseOrderRequest = {
+        supplier_id: formValues.supplier_id!,
+        purchase_date: formValues.purchase_date,
+        total_amount: formValues.total_amount,
+        discount_rate: formValues.discount_rate,
+        settlement_account_id: formValues.settlement_account_id,
+        deposit: formValues.deposit,
+        remarks: formValues.remarks,
+        purchase_products,
+        purchase_attachment
+      }
+      console.debug('request', request);
+      await createErpPurchaseOrder(request);
       handleClose();
       onSubmit();
     }
   }, [formValues, validateForm, handleClose, onSubmit]);
-
-  const handleSubmitAndContinue = useCallback(async () => {
-    if (validateForm()) {
-      await createErpPurchaseOrder(formValues as ErpPurchaseOrderRequest);
-      onSubmit();
-    }
-  }, [formValues, validateForm, onSubmit]);
 
   const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type } = e.target;
@@ -335,7 +357,7 @@ const ErpPurchaseOrderAdd = forwardRef(({ onSubmit }: ErpPurchaseOrderAddProps, 
 
       // 上传文件
       try {
-        await uploadSystemFile(file.file, (progress) => {
+        const result = await uploadSystemFile(file.file, (progress) => {
           setFormValues((prev) => {
             const updatedAttachments = prev.purchase_attachment.map((item, idx) => {
               if (idx !== index) return item;
@@ -344,23 +366,13 @@ const ErpPurchaseOrderAdd = forwardRef(({ onSubmit }: ErpPurchaseOrderAddProps, 
             })
             return { ...prev, purchase_attachment: updatedAttachments };
           });
-        }).then(id => {
-          setFormValues((prev) => {
-            const updatedAttachments = prev.purchase_attachment.map((item, idx) => {
-              if (idx !== index) return item;
-              const updatedItem = { ...item, file_id: id };
-              return updatedItem;
-            })
-            return { ...prev, purchase_attachment: updatedAttachments };
-          })
         });
-
 
         // 上传完成
         setFormValues((prev) => {
           const updatedAttachments = prev.purchase_attachment.map((item, idx) => {
             if (idx !== index) return item;
-            const updatedItem = { ...item, file: { ...item.file!, status: 'done' as const } };
+            const updatedItem = { ...item, file_id: result, file: { ...item.file!, status: 'done' as const } };
             return updatedItem;
           })
           return { ...prev, purchase_attachment: updatedAttachments };
@@ -394,7 +406,6 @@ const ErpPurchaseOrderAdd = forwardRef(({ onSubmit }: ErpPurchaseOrderAddProps, 
       maxWidth={maxWidth}
       actions={
         <>
-          <Button onClick={handleSubmitAndContinue}>{t('global.operate.confirm.continue')}</Button>
           <Button onClick={handleSubmit}>{t('global.operate.confirm')}</Button>
           <Button onClick={handleCancel}>{t('global.operate.cancel')}</Button>
         </>
@@ -430,7 +441,7 @@ const ErpPurchaseOrderAdd = forwardRef(({ onSubmit }: ErpPurchaseOrderAddProps, 
               </FormControl>
             </Grid>
             <Grid size={{ xs: 12, md: 12 / 5 }}>
-              <FormControl sx={{ minWidth: 120, width: '100%' }}>
+              <FormControl sx={{ mt: 2, minWidth: 120, width: '100%' }}>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <DateTimePicker
                     name="purchase_date"
@@ -652,7 +663,7 @@ const ErpPurchaseOrderAdd = forwardRef(({ onSubmit }: ErpPurchaseOrderAddProps, 
                   width={fileWidth}
                   height={fileHeight}
                 >
-                  <PreviewImage src=''/>
+                  <PreviewImage src='' />
                 </CustomizedFileUpload>
               </Grid>
             ))}

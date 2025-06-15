@@ -18,10 +18,10 @@ export interface ErpPurchaseOrderRequest {
   purchase_date: string; // 采购日期
   total_amount: number; // 总金额
   order_status?: number; // 订单状态 (0=pending, 1=completed, 2=cancelled)
-  discount_rate: number; // 优惠率（百分比，1000表示10.00%）
-  settlement_account_id: number; // 结算账户ID
-  deposit: number; // 定金
-  remarks: string; // 备注
+  discount_rate?: number; // 优惠率（百分比，1000表示10.00%）
+  settlement_account_id?: number; // 结算账户ID
+  deposit?: number; // 定金
+  remarks?: string; // 备注
 
   purchase_products: ErpPurchaseOrderDetailRequest[]; // 采购的产品列表
   purchase_attachment: ErpPurchaseOrderAttachmentRequest[]; // 采购的附件列表

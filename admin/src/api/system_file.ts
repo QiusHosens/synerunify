@@ -1,6 +1,6 @@
 import { PaginatedRequest, PaginatedResponse } from "@/base/page";
 import request, { api } from "@/utils/request";
-import { AxiosProgressEvent } from "axios";
+import { AxiosProgressEvent, AxiosResponse } from "axios";
 
 const apis = {
   create: "/file/system_file/create", // 新增
@@ -76,18 +76,23 @@ export const uploadSystemFile = (
   const formData = new FormData();
   formData.append("file", file);
 
-  return request.post<number>(apis.upload, formData, {
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
-    onUploadProgress: (progressEvent: AxiosProgressEvent) => {
-      if (progressEvent.total) {
-        const percentCompleted = Math.round(
-          (progressEvent.loaded * 100) / progressEvent.total
-        );
-        console.log('upload file percent', percentCompleted);
-        onProgress(percentCompleted);
-      }
-    },
-  }).then(response => response.data);
+  return request
+    .post<number>(apis.upload, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+      onUploadProgress: (progressEvent: AxiosProgressEvent) => {
+        if (progressEvent.total) {
+          const percentCompleted = Math.round(
+            (progressEvent.loaded * 100) / progressEvent.total
+          );
+          console.debug("upload file percent", percentCompleted);
+          onProgress(percentCompleted);
+        }
+      },
+    })
+    .then((response: AxiosResponse<number> | number) => {
+      const data = typeof response === 'number' ? response : response.data;
+      return data;
+    });
 };

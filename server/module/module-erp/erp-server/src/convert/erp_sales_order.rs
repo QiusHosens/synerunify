@@ -14,8 +14,6 @@ pub fn create_request_to_model(request: &CreateErpSalesOrderRequest) -> ErpSales
         discount_rate: request.discount_rate.as_ref().map_or(NotSet, |discount_rate| Set(Some(discount_rate.clone()))),
         settlement_account_id: request.settlement_account_id.as_ref().map_or(NotSet, |settlement_account_id| Set(Some(settlement_account_id.clone()))),
         deposit: request.deposit.as_ref().map_or(NotSet, |deposit| Set(Some(deposit.clone()))),
-        department_code: Set(request.department_code.clone()),
-        department_id: Set(request.department_id.clone()),
         ..Default::default()
     }
 }
@@ -48,12 +46,6 @@ pub fn update_request_to_model(request: &UpdateErpSalesOrderRequest, existing: E
     }
     if let Some(deposit) = &request.deposit { 
         active_model.deposit = Set(Some(deposit.clone()));
-    }
-    if let Some(department_code) = &request.department_code { 
-        active_model.department_code = Set(department_code.clone());
-    }
-    if let Some(department_id) = &request.department_id { 
-        active_model.department_id = Set(department_id.clone());
     }
     active_model
 }

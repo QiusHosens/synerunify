@@ -1,6 +1,7 @@
 use axum::extract::Multipart;
 use common::utils::minio_utils::{MinioClient, MinioError};
-use sea_orm::{DatabaseConnection, EntityTrait, ColumnTrait, ActiveModelTrait, PaginatorTrait, QueryOrder, QueryFilter, Condition};
+use sea_orm::prelude::Expr;
+use sea_orm::{ActiveModelTrait, ColumnTrait, Condition, DatabaseConnection, DatabaseTransaction, EntityTrait, PaginatorTrait, QueryFilter, QueryOrder};
 use crate::model::system_file::{Model as SystemFileModel, ActiveModel as SystemFileActiveModel, Entity as SystemFileEntity, Column};
 use file_model::request::system_file::{CreateSystemFileRequest, UpdateSystemFileRequest, PaginatedKeywordRequest};
 use file_model::response::system_file::{SystemFileDataResponse, SystemFileResponse};
@@ -83,6 +84,30 @@ pub async fn list(db: &DatabaseConnection, login_user: LoginUserContext) -> Resu
     Ok(list.into_iter().map(model_to_response).collect())
 }
 
+pub async fn enable(db: &DatabaseConnection, login_user: LoginUserContext, id: i64) -> Result<()> {
+    let system_file = SystemFileActiveModel {
+        id: Set(id),
+        updater: Set(Some(login_user.id)),
+        status: Set(STATUS_ENABLE),
+        ..Default::default()
+    };
+    system_file.update(db).await?;
+    Ok(())
+}
+
+pub async fn enable_outer(_db: &DatabaseConnection, txn: &DatabaseTransaction, _login_user: LoginUserContext, ids: Vec<i64>) -> Result<()> {
+    if ids.is_empty() {
+        return Ok(());
+    }
+
+    SystemFileEntity::update_many()
+        .col_expr(Column::Status, Expr::value(STATUS_ENABLE))
+        .filter(Column::Id.is_in(ids))
+        .exec(txn)
+        .await?;
+    Ok(())
+}
+
 pub async fn upload(db: &DatabaseConnection, login_user: LoginUserContext, minio: Option<MinioClient>, mut multipart: Multipart) -> Result<Option<i64>> {
     if minio.is_none() {
         return Err(anyhow!("客户端初始化失败"));
@@ -103,12 +128,13 @@ pub async fn upload(db: &DatabaseConnection, login_user: LoginUserContext, minio
                 },
             };
 
-            // 保存到数据库
+            // 保存到数据库,默认停用
             let system_file = SystemFileActiveModel {
                 file_name: Set(file_name),
                 file_type: Set(Some(content_type)),
                 file_size: Set(data.len() as i64),
                 file_path: Set(path),
+                status: Set(STATUS_DISABLE),
                 department_code: Set(login_user.department_code),
                 department_id: Set(login_user.department_id),
                 creator: Set(Some(login_user.id)),

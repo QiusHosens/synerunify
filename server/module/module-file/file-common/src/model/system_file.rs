@@ -17,6 +17,8 @@ pub struct Model {
     pub file_size: i64, // 文件大小（字节）
     
     pub file_path: String, // 文件存储路径
+
+    pub status: i8, // 状态
     
     pub department_code: String, // 部门编码
     

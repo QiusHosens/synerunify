@@ -1,6 +1,7 @@
 use common::interceptor::orm::simple_support::SimpleSupport;
 use common::utils::snowflake_generator::SnowflakeGenerator;
 use sea_orm::{ActiveModelTrait, ColumnTrait, Condition, DatabaseConnection, EntityTrait, JoinType, Order, PaginatorTrait, QueryFilter, QueryOrder, QuerySelect, RelationTrait, TransactionTrait};
+use tracing::info;
 use crate::model::erp_purchase_order::{Model as ErpPurchaseOrderModel, ActiveModel as ErpPurchaseOrderActiveModel, Entity as ErpPurchaseOrderEntity, Column, Relation};
 use crate::model::erp_supplier::{Model as ErpSupplierModel, ActiveModel as ErpSupplierActiveModel, Entity as ErpSupplierEntity};
 use crate::model::erp_settlement_account::{Model as ErpSettlementAccountModel, ActiveModel as ErpSettlementAccountActiveModel, Entity as ErpSettlementAccountEntity};
@@ -35,9 +36,9 @@ pub async fn create(db: &DatabaseConnection, login_user: LoginUserContext, reque
     erp_purchase_order.tenant_id = Set(login_user.tenant_id.clone());
     let erp_purchase_order = erp_purchase_order.insert(&txn).await?;
     // 创建订单商品详情
-    erp_purchase_order_detail::create_batch(&db, &txn, login_user.clone(), erp_purchase_order.id, request.purchase_products);
+    erp_purchase_order_detail::create_batch(&db, &txn, login_user.clone(), erp_purchase_order.id, request.purchase_products).await?;
     // 创建订单文件
-    erp_purchase_order_attachment::create_batch(&db, &txn, login_user, erp_purchase_order.id, request.purchase_attachment);
+    erp_purchase_order_attachment::create_batch(&db, &txn, login_user, erp_purchase_order.id, request.purchase_attachment).await?;
     // 提交事务
     txn.commit().await.with_context(|| "Failed to commit transaction")?;
     Ok(erp_purchase_order.id)

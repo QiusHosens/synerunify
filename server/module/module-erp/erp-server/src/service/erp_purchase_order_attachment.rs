@@ -1,9 +1,12 @@
+use std::clone;
+
+use file_common::service::system_file;
 use sea_orm::{ActiveModelTrait, ColumnTrait, Condition, DatabaseConnection, DatabaseTransaction, EntityTrait, PaginatorTrait, QueryFilter, QueryOrder};
 use crate::model::erp_purchase_order_attachment::{Model as ErpPurchaseOrderAttachmentModel, ActiveModel as ErpPurchaseOrderAttachmentActiveModel, Entity as ErpPurchaseOrderAttachmentEntity, Column};
 use erp_model::request::erp_purchase_order_attachment::{CreateErpPurchaseOrderAttachmentRequest, UpdateErpPurchaseOrderAttachmentRequest, PaginatedKeywordRequest};
 use erp_model::response::erp_purchase_order_attachment::ErpPurchaseOrderAttachmentResponse;
 use crate::convert::erp_purchase_order_attachment::{create_request_to_model, update_request_to_model, model_to_response};
-use anyhow::{Result, anyhow};
+use anyhow::{anyhow, Context, Result};
 use sea_orm::ActiveValue::Set;
 use common::constants::enum_constants::{STATUS_DISABLE, STATUS_ENABLE};
 use common::base::page::PaginatedResponse;
@@ -20,6 +23,8 @@ pub async fn create(db: &DatabaseConnection, login_user: LoginUserContext, reque
 }
 
 pub async fn create_batch(db: &DatabaseConnection, txn: &DatabaseTransaction, login_user: LoginUserContext, purchase_id: i64, requests: Vec<CreateErpPurchaseOrderAttachmentRequest>) -> Result<()> {
+    let file_ids: Vec<i64> = requests.iter().clone().map(|request| request.file_id).collect();
+
     let models: Vec<ErpPurchaseOrderAttachmentActiveModel> = requests
         .into_iter()
         .map(|request| {
@@ -37,10 +42,12 @@ pub async fn create_batch(db: &DatabaseConnection, txn: &DatabaseTransaction, lo
     if !models.is_empty() {
         ErpPurchaseOrderAttachmentEntity::insert_many(models)
             .exec(txn)
-            .await?;
+            .await
+            .with_context(|| "Failed to save attachment")?;
     }
 
-    // 设置文件状态为有效 TODO
+    // 启用文件
+    system_file::enable_outer(&db, &txn, login_user, file_ids).await?;
     Ok(())
 }
 

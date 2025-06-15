@@ -1,8 +1,11 @@
 use chrono::NaiveDateTime;
 use serde::{Serialize, Deserialize};
+use serde_with::serde_as;
 use utoipa::ToSchema;
 use common::base::page::PaginatedRequest;
+use common::formatter::string_date_time::StringDateTime;
 
+#[serde_as]
 #[derive(Serialize, Deserialize, Debug, ToSchema)]
 pub struct CreateErpSalesOrderRequest {
     
@@ -14,6 +17,7 @@ pub struct CreateErpSalesOrderRequest {
     
     // #[serde_as(as = "DisplayFromStr")]
     // #[serde(with = "serde_with::chrono::naive_datetime")]
+    #[serde_as(as = "StringDateTime")]
     #[schema(value_type = String, format = Date)]
     pub order_date: NaiveDateTime, // 订单日期
     
@@ -26,10 +30,6 @@ pub struct CreateErpSalesOrderRequest {
     pub settlement_account_id: Option<i64>, // 结算账户ID
     
     pub deposit: Option<i64>, // 定金
-    
-    pub department_code: String, // 部门编码
-    
-    pub department_id: i64, // 部门ID
     
 }
 
@@ -58,10 +58,6 @@ pub struct UpdateErpSalesOrderRequest {
     pub settlement_account_id: Option<i64>, // 结算账户ID
     
     pub deposit: Option<i64>, // 定金
-    
-    pub department_code: Option<String>, // 部门编码
-    
-    pub department_id: Option<i64>, // 部门ID
     
 }
 

@@ -1,9 +1,10 @@
 use sea_orm::{ActiveModelTrait, ColumnTrait, Condition, DatabaseConnection, DatabaseTransaction, EntityTrait, PaginatorTrait, QueryFilter, QueryOrder};
+use tracing::info;
 use crate::model::erp_purchase_order_detail::{Model as ErpPurchaseOrderDetailModel, ActiveModel as ErpPurchaseOrderDetailActiveModel, Entity as ErpPurchaseOrderDetailEntity, Column};
 use erp_model::request::erp_purchase_order_detail::{CreateErpPurchaseOrderDetailRequest, UpdateErpPurchaseOrderDetailRequest, PaginatedKeywordRequest};
 use erp_model::response::erp_purchase_order_detail::ErpPurchaseOrderDetailResponse;
 use crate::convert::erp_purchase_order_detail::{create_request_to_model, update_request_to_model, model_to_response};
-use anyhow::{anyhow, Ok, Result};
+use anyhow::{anyhow, Context, Ok, Result};
 use sea_orm::ActiveValue::Set;
 use common::constants::enum_constants::{STATUS_DISABLE, STATUS_ENABLE};
 use common::base::page::PaginatedResponse;
@@ -37,7 +38,8 @@ pub async fn create_batch(db: &DatabaseConnection, txn: &DatabaseTransaction, lo
     if !models.is_empty() {
         ErpPurchaseOrderDetailEntity::insert_many(models)
             .exec(txn)
-            .await?;
+            .await
+            .with_context(|| "Failed to save detail")?;
     }
     Ok(())
 }

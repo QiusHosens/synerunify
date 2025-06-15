@@ -14,7 +14,7 @@ export interface ErpPurchaseOrderAttachmentRequest {
   id?: number; // 附件ID
   purchase_id?: number; // 采购订单ID
   file_id: number; // 文件ID
-  remarks: string; // 备注
+  remarks?: string; // 备注
 }
 
 export interface ErpPurchaseOrderAttachmentResponse {

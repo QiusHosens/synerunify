@@ -19,7 +19,7 @@ export interface ErpPurchaseOrderDetailRequest {
   unit_price: number; // 单价
   subtotal: number; // 小计
   tax_rate: number; // 税率,精确到万分位
-  remarks: string; // 备注
+  remarks?: string; // 备注
 }
 
 export interface ErpPurchaseOrderDetailModel {
