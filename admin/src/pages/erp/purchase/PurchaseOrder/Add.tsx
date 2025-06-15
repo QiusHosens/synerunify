@@ -99,6 +99,15 @@ const ErpPurchaseOrderAdd = forwardRef(({ onSubmit }: ErpPurchaseOrderAddProps, 
     textAlign: 'center',
   }));
 
+  const PreviewImage = styled('img')({
+    width: '100%',
+    height: '100%',
+    objectFit: 'contain',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+  });
+
   useImperativeHandle(ref, () => ({
     show() {
       initSuppliers();
@@ -641,7 +650,7 @@ const ErpPurchaseOrderAdd = forwardRef(({ onSubmit }: ErpPurchaseOrderAddProps, 
                   width={480}
                   height={280}
                 >
-                  <Box></Box>
+                  <PreviewImage src=''/>
                 </CustomizedFileUpload>
               </Grid>
             ))}

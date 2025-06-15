@@ -1,13 +1,14 @@
-import React, { useEffect, useCallback } from 'react';
-import { Box, Typography, Paper, LinearProgress, IconButton } from '@mui/material';
-import { styled } from '@mui/material/styles';
+import React, { useEffect, useCallback, useRef } from 'react';
+import { Box, Typography, Paper, LinearProgress, IconButton, Button } from '@mui/material';
+import { alpha, styled } from '@mui/material/styles';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import DeleteIcon from '@mui/icons-material/Delete';
+import DeleteIcon from '@/assets/image/svg/delete.svg';
 
 // 定义文件类型
 export interface UploadFile {
     uid: string;
     name: string;
+    filename: string; // 去掉扩展名的文件名字
     status: 'uploading' | 'done' | 'error' | 'removed';
     file: File;
     previewUrl?: string; // 用于本地图片预览
@@ -26,6 +27,9 @@ const UploadArea = styled(Paper, {
     '&:hover': {
         borderColor: theme.palette.primary.main,
         backgroundColor: '#f5f5f5',
+        '& .file-upload-delete': {
+            display: 'inline-flex'
+        }
     },
     cursor: 'pointer',
     transition: 'all 0.3s',
@@ -52,10 +56,10 @@ const DeleteButton = styled(IconButton)(({ theme }) => ({
     position: 'absolute',
     top: theme.spacing(1),
     right: theme.spacing(1),
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    color: theme.palette.common.white,
+    backgroundColor: alpha(theme.palette.primary.main, 0.2),
+    color: theme.palette.error.main,
     '&:hover': {
-        backgroundColor: 'rgba(0, 0, 0, 0.7)',
+        backgroundColor: alpha(theme.palette.primary.main, 0.4),
     },
 }));
 
@@ -81,6 +85,9 @@ const CustomizedFileUpload: React.FC<UploadProps> = ({
     height,
     children,
 }) => {
+    // 使用 useRef 跟踪当前 blob URL
+    const blobUrlRef = useRef<string | null>(null);
+
     // 处理文件选择
     const handleFileChange = useCallback(
         (files: FileList | null) => {
@@ -93,23 +100,32 @@ const CustomizedFileUpload: React.FC<UploadProps> = ({
                 return;
             }
 
+            // 释放旧的 blob URL
+            if (blobUrlRef.current) {
+                URL.revokeObjectURL(blobUrlRef.current);
+                blobUrlRef.current = null;
+            }
+
+            const filename = selectedFile.name.indexOf('.') > 0 ? selectedFile.name.substring(0, selectedFile.name.lastIndexOf('.')) : selectedFile.name;
+
             const newFile: UploadFile = {
                 uid: Math.random().toString(36).substring(2),
                 name: selectedFile.name,
+                filename,
                 status: 'uploading',
                 file: selectedFile,
                 progress: 0,
                 previewUrl: selectedFile.type.startsWith('image/') ? URL.createObjectURL(selectedFile) : undefined,
             };
 
-            // 释放旧预览 URL
-            if (file?.previewUrl) {
-                URL.revokeObjectURL(file.previewUrl);
+            // 保存新的 blob URL
+            if (newFile.previewUrl) {
+                blobUrlRef.current = newFile.previewUrl;
             }
 
             onChange?.(newFile, 'upload');
         },
-        [file, maxSize, onChange]
+        [maxSize, onChange]
     );
 
     // 处理拖拽上传
@@ -123,20 +139,22 @@ const CustomizedFileUpload: React.FC<UploadProps> = ({
 
     // 处理文件删除
     const handleRemove = useCallback(() => {
-        if (file?.previewUrl) {
-            URL.revokeObjectURL(file.previewUrl);
+        if (blobUrlRef.current) {
+            URL.revokeObjectURL(blobUrlRef.current);
+            blobUrlRef.current = null;
         }
         onChange?.(null, 'remove');
-    }, [file, onChange]);
+    }, [onChange]);
 
-    // 清理预览 URL
+    // 清理 blob URL
     useEffect(() => {
         return () => {
-            if (file?.previewUrl) {
-                URL.revokeObjectURL(file.previewUrl);
+            if (blobUrlRef.current) {
+                URL.revokeObjectURL(blobUrlRef.current);
+                blobUrlRef.current = null;
             }
         };
-    }, [file]);
+    }, []);
 
     return (
         <Box>
@@ -166,13 +184,29 @@ const CustomizedFileUpload: React.FC<UploadProps> = ({
                         <Box sx={{ width: '100%', position: 'absolute', top: 0, left: 0 }}>
                             <LinearProgress variant="determinate" value={file.progress || 0} />
                         </Box>
+                        <Typography
+                            variant="caption"
+                            color="textPrimary"
+                            sx={{ position: 'absolute', bottom: 8, maxWidth: '90%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+                        >
+                            {file.filename}
+                        </Typography>
                     </>
                 ) : file?.status === 'done' ? (
                     <>
-                        {children}
-                        <DeleteButton onClick={(e) => { e.stopPropagation(); handleRemove(); }}>
+                        {/* {children} */}
+                        <PreviewImage src={file.previewUrl} />
+                        <DeleteButton className='file-upload-delete' sx={{ display: 'none' }} onClick={(e) => { e.stopPropagation(); handleRemove(); }}>
                             <DeleteIcon fontSize="small" />
                         </DeleteButton>
+
+                        <Typography
+                            variant="caption"
+                            color="textPrimary"
+                            sx={{ position: 'absolute', bottom: 8, maxWidth: '90%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+                        >
+                            {file.filename}
+                        </Typography>
                     </>
                 ) : (
                     <>
@@ -186,7 +220,7 @@ const CustomizedFileUpload: React.FC<UploadProps> = ({
                     </>
                 )}
             </UploadArea>
-            {file?.status === 'done' && (
+            {/* {file?.status === 'done' && (
                 <Typography
                     variant="caption"
                     color="textPrimary"
@@ -202,7 +236,7 @@ const CustomizedFileUpload: React.FC<UploadProps> = ({
                 >
                     {file.name}
                 </Typography>
-            )}
+            )} */}
         </Box>
     );
 };
