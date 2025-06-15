@@ -1,17 +1,17 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : 192.168.0.99_synerunify
+ Source Server         : 192.168.1.18_synerunify
  Source Server Type    : MySQL
- Source Server Version : 80100 (8.1.0)
- Source Host           : 192.168.0.99:30010
+ Source Server Version : 80200 (8.2.0)
+ Source Host           : 192.168.1.18:3306
  Source Schema         : synerunify
 
  Target Server Type    : MySQL
- Target Server Version : 80100 (8.1.0)
+ Target Server Version : 80200 (8.2.0)
  File Encoding         : 65001
 
- Date: 12/06/2025 17:59:33
+ Date: 15/06/2025 21:46:30
 */
 
 SET NAMES utf8mb4;
@@ -410,11 +410,16 @@ CREATE TABLE `erp_purchase_order`  (
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `order_number`(`order_number` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '采购订单表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '采购订单表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of erp_purchase_order
 -- ----------------------------
+INSERT INTO `erp_purchase_order` VALUES (1, 59962819939930112, 1, 1, '2025-06-15 00:00:00', 100, 0, 1, 1, 10, '测试', '0000', 1, 1, '2025-06-15 11:10:53', 1, '2025-06-15 11:10:53', b'0', 1);
+INSERT INTO `erp_purchase_order` VALUES (2, 59964807209553920, 1, 1, '2025-06-16 00:00:00', 100, 0, 1, 1, 5, '测试', '0000', 1, 1, '2025-06-15 11:18:47', 1, '2025-06-15 11:18:47', b'0', 1);
+INSERT INTO `erp_purchase_order` VALUES (3, 59965337910644736, 1, 1, '2025-06-16 00:00:00', 1000, 0, 1, 1, 1000, '测试', '0000', 1, 1, '2025-06-15 11:20:53', 1, '2025-06-15 11:20:53', b'0', 1);
+INSERT INTO `erp_purchase_order` VALUES (4, 59966267620069376, 1, 1, '2025-06-15 00:00:00', 16643, 0, 1, 1, 12, '1', '0000', 1, 1, '2025-06-15 11:24:35', 1, '2025-06-15 11:24:35', b'0', 1);
+INSERT INTO `erp_purchase_order` VALUES (6, 59969975170895872, 1, 1, '2025-06-16 00:00:00', 1232, 0, 1, 1, 123, '测试', '0000', 1, 1, '2025-06-15 11:39:19', 1, '2025-06-15 11:39:19', b'0', 1);
 
 -- ----------------------------
 -- Table structure for erp_purchase_order_attachment
@@ -434,11 +439,12 @@ CREATE TABLE `erp_purchase_order_attachment`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '采购订单附件表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '采购订单附件表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of erp_purchase_order_attachment
 -- ----------------------------
+INSERT INTO `erp_purchase_order_attachment` VALUES (2, 6, 42, NULL, '0000', 1, 1, '2025-06-15 11:39:19', 1, '2025-06-15 11:39:19', b'0', 1);
 
 -- ----------------------------
 -- Table structure for erp_purchase_order_detail
@@ -462,11 +468,12 @@ CREATE TABLE `erp_purchase_order_detail`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '采购订单详情表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '采购订单详情表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of erp_purchase_order_detail
 -- ----------------------------
+INSERT INTO `erp_purchase_order_detail` VALUES (2, 6, 1, 2, 60, 120, 1, '测试', '0000', 1, 1, '2025-06-15 11:39:19', 1, '2025-06-15 11:39:19', b'0', 1);
 
 -- ----------------------------
 -- Table structure for erp_purchase_return
@@ -922,6 +929,7 @@ CREATE TABLE `system_file`  (
   `file_type` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '文件类型',
   `file_size` bigint NOT NULL COMMENT '文件大小（字节）',
   `file_path` varchar(512) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '文件存储路径',
+  `status` tinyint NOT NULL COMMENT '状态',
   `department_code` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '部门编码',
   `department_id` bigint NOT NULL COMMENT '部门ID',
   `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
@@ -931,11 +939,53 @@ CREATE TABLE `system_file`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '文件信息表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 43 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '文件信息表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of system_file
 -- ----------------------------
+INSERT INTO `system_file` VALUES (1, '增值税发票.jpg', 'image/jpeg', 84093, '2025/06/15/59861365463977984_增值税发票.jpg', 0, '0000', 1, 1, '2025-06-15 04:27:44', 1, '2025-06-15 04:27:44', b'0', 1);
+INSERT INTO `system_file` VALUES (2, '增值税发票.jpg', 'image/jpeg', 84093, '2025/06/15/59872828287094784_增值税发票.jpg', 0, '0000', 1, 1, '2025-06-15 05:13:17', 1, '2025-06-15 05:13:17', b'0', 1);
+INSERT INTO `system_file` VALUES (3, '增值税发票.jpg', 'image/jpeg', 84093, '2025/06/15/59880014488801280_增值税发票.jpg', 0, '0000', 1, 1, '2025-06-15 05:41:50', 1, '2025-06-15 05:41:50', b'0', 1);
+INSERT INTO `system_file` VALUES (4, '增值税发票.jpg', 'image/jpeg', 84093, '2025/06/15/59881350756306944_增值税发票.jpg', 0, '0000', 1, 1, '2025-06-15 05:47:09', 1, '2025-06-15 05:47:09', b'0', 1);
+INSERT INTO `system_file` VALUES (5, '增值税发票.jpg', 'image/jpeg', 84093, '2025/06/15/59893421816418304_增值税发票.jpg', 0, '0000', 1, 1, '2025-06-15 06:35:07', 1, '2025-06-15 06:35:07', b'0', 1);
+INSERT INTO `system_file` VALUES (6, '增值税发票.jpg', 'image/jpeg', 84093, '2025/06/15/59921757091401728_增值税发票.jpg', 0, '0000', 1, 1, '2025-06-15 08:27:43', 1, '2025-06-15 08:27:43', b'0', 1);
+INSERT INTO `system_file` VALUES (7, '增值税发票.jpg', 'image/jpeg', 84093, '2025/06/15/59921798560485376_增值税发票.jpg', 0, '0000', 1, 1, '2025-06-15 08:27:53', 1, '2025-06-15 08:27:53', b'0', 1);
+INSERT INTO `system_file` VALUES (8, '增值税发票.jpg', 'image/jpeg', 84093, '2025/06/15/59923237097705472_增值税发票.jpg', 0, '0000', 1, 1, '2025-06-15 08:33:36', 1, '2025-06-15 08:33:36', b'0', 1);
+INSERT INTO `system_file` VALUES (9, '增值税发票.jpg', 'image/jpeg', 84093, '2025/06/15/59924312458530816_增值税发票.jpg', 0, '0000', 1, 1, '2025-06-15 08:37:52', 1, '2025-06-15 08:37:52', b'0', 1);
+INSERT INTO `system_file` VALUES (10, '增值税发票.jpg', 'image/jpeg', 84093, '2025/06/15/59927456680775680_增值税发票.jpg', 0, '0000', 1, 1, '2025-06-15 08:50:22', 1, '2025-06-15 08:50:22', b'0', 1);
+INSERT INTO `system_file` VALUES (11, '增值税发票.jpg', 'image/jpeg', 84093, '2025/06/15/59929011249221632_增值税发票.jpg', 0, '0000', 1, 1, '2025-06-15 08:56:32', 1, '2025-06-15 08:56:32', b'0', 1);
+INSERT INTO `system_file` VALUES (12, '增值税发票1.jpg', 'image/jpeg', 84093, '2025/06/15/59929077015908352_增值税发票1.jpg', 0, '0000', 1, 1, '2025-06-15 08:56:48', 1, '2025-06-15 08:56:48', b'0', 1);
+INSERT INTO `system_file` VALUES (13, '增值税发票.jpg', 'image/jpeg', 84093, '2025/06/15/59929096708165632_增值税发票.jpg', 0, '0000', 1, 1, '2025-06-15 08:56:53', 1, '2025-06-15 08:56:53', b'0', 1);
+INSERT INTO `system_file` VALUES (14, '增值税发票.jpg', 'image/jpeg', 84093, '2025/06/15/59930505470021632_增值税发票.jpg', 0, '0000', 1, 1, '2025-06-15 09:02:29', 1, '2025-06-15 09:02:29', b'0', 1);
+INSERT INTO `system_file` VALUES (15, '增值税发票.jpg', 'image/jpeg', 84093, '2025/06/15/59931697700933632_增值税发票.jpg', 0, '0000', 1, 1, '2025-06-15 09:07:13', 1, '2025-06-15 09:07:13', b'0', 1);
+INSERT INTO `system_file` VALUES (16, '增值税发票.jpg', 'image/jpeg', 84093, '2025/06/15/59931974495637504_增值税发票.jpg', 0, '0000', 1, 1, '2025-06-15 09:08:19', 1, '2025-06-15 09:08:19', b'0', 1);
+INSERT INTO `system_file` VALUES (17, '增值税发票.jpg', 'image/jpeg', 84093, '2025/06/15/59935301769891840_增值税发票.jpg', 0, '0000', 1, 1, '2025-06-15 09:21:32', 1, '2025-06-15 09:21:32', b'0', 1);
+INSERT INTO `system_file` VALUES (18, '增值税发票1.jpg', 'image/jpeg', 84093, '2025/06/15/59935741282619392_增值税发票1.jpg', 0, '0000', 1, 1, '2025-06-15 09:23:17', 1, '2025-06-15 09:23:17', b'0', 1);
+INSERT INTO `system_file` VALUES (19, '增值税发票.jpg', 'image/jpeg', 84093, '2025/06/15/59935817757364224_增值税发票.jpg', 0, '0000', 1, 1, '2025-06-15 09:23:35', 1, '2025-06-15 09:23:35', b'0', 1);
+INSERT INTO `system_file` VALUES (20, '增值税发票.jpg', 'image/jpeg', 84093, '2025/06/15/59939261842984960_增值税发票.jpg', 0, '0000', 1, 1, '2025-06-15 09:37:16', 1, '2025-06-15 09:37:16', b'0', 1);
+INSERT INTO `system_file` VALUES (21, '增值税发票1.jpg', 'image/jpeg', 84093, '2025/06/15/59940126351953920_增值税发票1.jpg', 0, '0000', 1, 1, '2025-06-15 09:40:42', 1, '2025-06-15 09:40:42', b'0', 1);
+INSERT INTO `system_file` VALUES (22, '增值税发票.jpg', 'image/jpeg', 84093, '2025/06/15/59940167456133120_增值税发票.jpg', 0, '0000', 1, 1, '2025-06-15 09:40:52', 1, '2025-06-15 09:40:52', b'0', 1);
+INSERT INTO `system_file` VALUES (23, '增值税发票.jpg', 'image/jpeg', 84093, '2025/06/15/59941100063821824_增值税发票.jpg', 0, '0000', 1, 1, '2025-06-15 09:44:35', 1, '2025-06-15 09:44:35', b'0', 1);
+INSERT INTO `system_file` VALUES (24, '增值税发票1.jpg', 'image/jpeg', 84093, '2025/06/15/59941106665656320_增值税发票1.jpg', 0, '0000', 1, 1, '2025-06-15 09:44:36', 1, '2025-06-15 09:44:36', b'0', 1);
+INSERT INTO `system_file` VALUES (25, '增值税发票.jpg', 'image/jpeg', 84093, '2025/06/15/59942054226038784_增值税发票.jpg', 0, '0000', 1, 1, '2025-06-15 09:48:22', 1, '2025-06-15 09:48:22', b'0', 1);
+INSERT INTO `system_file` VALUES (26, '增值税发票1.jpg', 'image/jpeg', 84093, '2025/06/15/59942060848844800_增值税发票1.jpg', 0, '0000', 1, 1, '2025-06-15 09:48:24', 1, '2025-06-15 09:48:24', b'0', 1);
+INSERT INTO `system_file` VALUES (27, '增值税发票.jpg', 'image/jpeg', 84093, '2025/06/15/59942071024226304_增值税发票.jpg', 0, '0000', 1, 1, '2025-06-15 09:48:26', 1, '2025-06-15 09:48:26', b'0', 1);
+INSERT INTO `system_file` VALUES (28, '增值税发票.jpg', 'image/jpeg', 84093, '2025/06/15/59945104915304448_增值税发票.jpg', 0, '0000', 1, 1, '2025-06-15 10:00:29', 1, '2025-06-15 10:00:29', b'0', 1);
+INSERT INTO `system_file` VALUES (29, '增值税发票1.jpg', 'image/jpeg', 84093, '2025/06/15/59945121612828672_增值税发票1.jpg', 0, '0000', 1, 1, '2025-06-15 10:00:33', 1, '2025-06-15 10:00:33', b'0', 1);
+INSERT INTO `system_file` VALUES (30, '增值税发票.jpg', 'image/jpeg', 84093, '2025/06/15/59947283143200768_增值税发票.jpg', 0, '0000', 1, 1, '2025-06-15 10:09:09', 1, '2025-06-15 10:09:09', b'0', 1);
+INSERT INTO `system_file` VALUES (31, '增值税发票1.jpg', 'image/jpeg', 84093, '2025/06/15/59947824841756672_增值税发票1.jpg', 0, '0000', 1, 1, '2025-06-15 10:11:18', 1, '2025-06-15 10:11:18', b'0', 1);
+INSERT INTO `system_file` VALUES (32, '增值税发票.jpg', 'image/jpeg', 84093, '2025/06/15/59953719759867904_增值税发票.jpg', 1, '0000', 1, 1, '2025-06-15 10:34:43', 1, '2025-06-15 10:34:43', b'0', 1);
+INSERT INTO `system_file` VALUES (33, '增值税发票1.jpg', 'image/jpeg', 84093, '2025/06/15/59953997909331968_增值税发票1.jpg', 1, '0000', 1, 1, '2025-06-15 10:35:50', 1, '2025-06-15 10:35:50', b'0', 1);
+INSERT INTO `system_file` VALUES (34, '增值税发票.jpg', 'image/jpeg', 84093, '2025/06/15/59954924984733696_增值税发票.jpg', 1, '0000', 1, 1, '2025-06-15 10:39:31', 1, '2025-06-15 10:39:31', b'0', 1);
+INSERT INTO `system_file` VALUES (35, '增值税发票.jpg', 'image/jpeg', 84093, '2025/06/15/59955310621626368_增值税发票.jpg', 1, '0000', 1, 1, '2025-06-15 10:41:03', 1, '2025-06-15 10:41:03', b'0', 1);
+INSERT INTO `system_file` VALUES (36, '增值税发票1.jpg', 'image/jpeg', 84093, '2025/06/15/59955511944024064_增值税发票1.jpg', 1, '0000', 1, 1, '2025-06-15 10:41:51', 1, '2025-06-15 10:41:51', b'0', 1);
+INSERT INTO `system_file` VALUES (37, '增值税发票.jpg', 'image/jpeg', 84093, '2025/06/15/59957577886208000_增值税发票.jpg', 1, '0000', 1, 1, '2025-06-15 10:50:03', 1, '2025-06-15 10:50:03', b'0', 1);
+INSERT INTO `system_file` VALUES (38, '增值税发票.jpg', 'image/jpeg', 84093, '2025/06/15/59960339877335040_增值税发票.jpg', 1, '0000', 1, 1, '2025-06-15 11:01:02', 1, '2025-06-15 11:01:02', b'0', 1);
+INSERT INTO `system_file` VALUES (39, '增值税发票.jpg', 'image/jpeg', 84093, '2025/06/15/59964800213454848_增值税发票.jpg', 1, '0000', 1, 1, '2025-06-15 11:18:45', 1, '2025-06-15 11:18:45', b'0', 1);
+INSERT INTO `system_file` VALUES (40, '增值税发票.jpg', 'image/jpeg', 84093, '2025/06/15/59965326640549888_增值税发票.jpg', 1, '0000', 1, 1, '2025-06-15 11:20:51', 1, '2025-06-15 11:20:51', b'0', 1);
+INSERT INTO `system_file` VALUES (41, '增值税发票.jpg', 'image/jpeg', 84093, '2025/06/15/59966263547400192_增值税发票.jpg', 1, '0000', 1, 1, '2025-06-15 11:24:34', 1, '2025-06-15 11:24:34', b'0', 1);
+INSERT INTO `system_file` VALUES (42, '增值税发票.jpg', 'image/jpeg', 84093, '2025/06/15/59967445963640832_增值税发票.jpg', 0, '0000', 1, 1, '2025-06-15 11:29:16', 1, '2025-06-15 11:39:19', b'0', 1);
 
 -- ----------------------------
 -- Table structure for system_menu
@@ -1498,7 +1548,7 @@ CREATE TABLE `system_user`  (
 -- ----------------------------
 -- Records of system_user
 -- ----------------------------
-INSERT INTO `system_user` VALUES (1, 'admin', '$2b$06$Ohq86rDIvNuy/4ZvsTF4dOw.7I7QJj620LC25PwgYDmrKqKmKsJz6', '超级管理员', '超级管理员', '123@qq.com', '18888888888', 0, '', 0, '127.0.0.1', '2025-06-12 02:51:30', '0000', 1, 1, '2025-03-08 10:14:52', 1, '2025-06-12 02:51:21', b'0', 1);
+INSERT INTO `system_user` VALUES (1, 'admin', '$2b$06$Ohq86rDIvNuy/4ZvsTF4dOw.7I7QJj620LC25PwgYDmrKqKmKsJz6', '超级管理员', '超级管理员', '123@qq.com', '18888888888', 0, '', 0, '127.0.0.1', '2025-06-15 09:58:38', '0000', 1, 1, '2025-03-08 10:14:52', 1, '2025-06-15 09:58:40', b'0', 1);
 INSERT INTO `system_user` VALUES (11, 'test', '$2b$06$S2yMOy4Mp5gImLOEl8X3K.T8XAWrfXVwGXK/vOBL.30PGNnnGIDzy', '测试管理员', NULL, '', '15555555555', 0, '', 0, '127.0.0.1', '2025-05-23 08:16:27', '0000-0000', 7, 1, '2025-05-23 08:16:00', 1, '2025-05-23 08:16:25', b'0', 2);
 
 -- ----------------------------

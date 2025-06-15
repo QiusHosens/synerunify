@@ -1,15 +1,32 @@
-import { Box, Button, FormControl, Stack, Switch, TextField, Typography } from '@mui/material';
+import { Box, Button, Card, FormControl, FormHelperText, Grid, InputLabel, MenuItem, Select, SelectChangeEvent, Stack, styled, TextField, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { forwardRef, useImperativeHandle, useState } from 'react';
+import { forwardRef, useCallback, useImperativeHandle, useState } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
-import { ErpPurchaseOrderRequest, ErpPurchaseOrderResponse, updateErpPurchaseOrder } from '@/api';
+import { ErpProductResponse, ErpPurchaseOrderAttachmentRequest, ErpPurchaseOrderDetailRequest, ErpPurchaseOrderRequest, ErpPurchaseOrderResponse, ErpSettlementAccountResponse, ErpSupplierResponse, listErpProduct, listErpPurchaseOrderAttachmentByPurchase, listErpPurchaseOrderDetailByPurchase, listErpSettlementAccount, listErpSupplier, updateErpPurchaseOrder } from '@/api';
 import CustomizedDialog from '@/components/CustomizedDialog';
 import CustomizedTag from '@/components/CustomizedTag';
+import { Dayjs } from 'dayjs';
+import AddCircleSharpIcon from '@mui/icons-material/AddCircleSharp';
+import DeleteIcon from '@/assets/image/svg/delete.svg';
+import { PickerValue } from '@mui/x-date-pickers/internals';
+import { useMessage } from '@/components/GlobalMessage';
+import CustomizedFileUpload, { UploadFile } from '@/components/CustomizedFileUpload';
+import { uploadSystemFile } from '@/api/system_file';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers';
+
+interface FormProductErrors {
+  product_id?: string;
+  quantity?: string;
+  unit_price?: string;
+  tax_rate?: string;
+}
 
 interface FormErrors {
-  purchase_date?: string; // 采购日期
-  total_amount?: string; // 总金额
-  order_status?: string; // 订单状态 (0=pending, 1=completed, 2=cancelled)
+  supplier_id?: string;
+  purchase_date?: string;
+  total_amount?: string;
+  purchase_products: FormProductErrors[];
 }
 
 interface ErpPurchaseOrderEditProps {
@@ -18,9 +35,13 @@ interface ErpPurchaseOrderEditProps {
 
 const ErpPurchaseOrderEdit = forwardRef(({ onSubmit }: ErpPurchaseOrderEditProps, ref) => {
   const { t } = useTranslation();
-
+  const { showMessage } = useMessage();
   const [open, setOpen] = useState(false);
-  const [maxWidth] = useState<DialogProps['maxWidth']>('sm');
+  const [maxWidth] = useState<DialogProps['maxWidth']>('xl');
+  const [suppliers, setSuppliers] = useState<ErpSupplierResponse[]>([]);
+  const [settlementAccounts, setSettlementAccounts] = useState<ErpSettlementAccountResponse[]>([]);
+  const [products, setProducts] = useState<ErpProductResponse[]>([]);
+  const [purchaseDate, setPurchaseDate] = useState<Dayjs | null>(null);
   const [erpPurchaseOrderRequest, setErpPurchaseOrderRequest] = useState<ErpPurchaseOrderRequest>({
     id: 0,
     supplier_id: 0,
@@ -31,13 +52,46 @@ const ErpPurchaseOrderEdit = forwardRef(({ onSubmit }: ErpPurchaseOrderEditProps
     settlement_account_id: 0,
     deposit: 0,
     remarks: '',
+    purchase_products: [],
+    purchase_attachment: [],
   });
   const [erpPurchaseOrder, setErpPurchaseOrder] = useState<ErpPurchaseOrderResponse>();
-  const [errors, setErrors] = useState<FormErrors>({});
+  const [errors, setErrors] = useState<FormErrors>({
+    purchase_products: [],
+  });
+  const [fileWidth] = useState<number>(420);
+  const [fileHeight] = useState<number>(245);
+
+  const TableContainer = styled(Box)({
+    display: 'table',
+    width: '100%',
+  });
+
+  const TableRow = styled(Box)({
+    display: 'table-row',
+  });
+
+  const TableCell = styled(Box)(({ theme }) => ({
+    display: 'table-cell',
+    padding: theme.spacing(1),
+    textAlign: 'center',
+  }));
+
+  const PreviewImage = styled('img')({
+    width: '100%',
+    height: '100%',
+    objectFit: 'contain',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+  });
 
   useImperativeHandle(ref, () => ({
     show(erpPurchaseOrderRequest: ErpPurchaseOrderResponse) {
       initForm(erpPurchaseOrderRequest);
+      initSuppliers();
+      initSettlementAccounts();
+      initProducts();
       setOpen(true);
     },
     hide() {
@@ -45,78 +99,137 @@ const ErpPurchaseOrderEdit = forwardRef(({ onSubmit }: ErpPurchaseOrderEditProps
     },
   }));
 
-  const validateForm = (): boolean => {
-    const newErrors: FormErrors = {};
+  const initSuppliers = useCallback(async () => {
+    const result = await listErpSupplier();
+    setSuppliers(result);
+  }, []);
+
+  const initSettlementAccounts = useCallback(async () => {
+    const result = await listErpSettlementAccount();
+    setSettlementAccounts(result);
+  }, []);
+
+  const initProducts = useCallback(async () => {
+    const result = await listErpProduct();
+    setProducts(result);
+  }, []);
+
+  const validateForm = useCallback((): boolean => {
+    const newErrors: FormErrors = {
+      purchase_products: erpPurchaseOrderRequest.purchase_products.map((_, index) => ({
+        rowNumber: index + 1,
+        product_id: undefined,
+        quantity: undefined,
+        unit_price: undefined,
+        tax_rate: undefined,
+      })),
+    };
+
+    if (!erpPurchaseOrderRequest.supplier_id && erpPurchaseOrderRequest.supplier_id !== 0) {
+      newErrors.supplier_id = t('page.erp.purchase.order.error.supplier');
+    }
 
     if (!erpPurchaseOrderRequest.purchase_date.trim()) {
-      newErrors.purchase_date = t('page.erp.purchase.order.error.purchase_date');
+      newErrors.purchase_date = t('page.erp.purchase.order.error.purchase.date');
     }
 
-    if (!erpPurchaseOrderRequest.total_amount && erpPurchaseOrderRequest.total_amount != 0) {
-      newErrors.total_amount = t('page.erp.purchase.order.error.total_amount');
+    if (!erpPurchaseOrderRequest.total_amount && erpPurchaseOrderRequest.total_amount !== 0) {
+      newErrors.total_amount = t('page.erp.purchase.order.error.total.amount');
     }
 
-    if (!erpPurchaseOrderRequest.order_status && erpPurchaseOrderRequest.order_status != 0) {
-      newErrors.order_status = t('page.erp.purchase.order.error.order_status');
-    }
+    erpPurchaseOrderRequest.purchase_products.forEach((product, index) => {
+      if (!product.product_id && product.product_id !== 0) {
+        newErrors.purchase_products[index].product_id = t('page.erp.purchase.order.detail.error.product');
+      }
+      if (!product.quantity) {
+        newErrors.purchase_products[index].quantity = t('page.erp.purchase.order.detail.error.quantity');
+      }
+      if (!product.unit_price && product.unit_price !== 0) {
+        newErrors.purchase_products[index].unit_price = t('page.erp.purchase.order.detail.error.unit.price');
+      }
+      if (!product.tax_rate && product.tax_rate !== 0) {
+        newErrors.purchase_products[index].tax_rate = t('page.erp.purchase.order.detail.error.tax.rate');
+      }
+    });
 
     setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+    return !Object.keys(newErrors).some((key) => {
+      if (key === 'purchase_products') {
+        return newErrors.purchase_products.some((err) =>
+          Object.values(err).some((value) => value !== undefined)
+        );
+      }
+      return newErrors[key as keyof FormErrors];
+    });
+  }, [erpPurchaseOrderRequest, t]);
 
   const handleCancel = () => {
     setOpen(false);
   };
 
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     setOpen(false);
-  };
+  }, []);
 
-  const initForm = (erpPurchaseOrder: ErpPurchaseOrderResponse) => {
+  const initForm = async (erpPurchaseOrder: ErpPurchaseOrderResponse) => {
+    // 查询订单详情
+    const purchase_products = await listErpPurchaseOrderDetailByPurchase(erpPurchaseOrder.id);
+    // 查询订单文件
+    const purchase_attachment = await listErpPurchaseOrderAttachmentByPurchase(erpPurchaseOrder.id);
     setErpPurchaseOrderRequest({
       ...erpPurchaseOrder,
+      purchase_products,
+      purchase_attachment,
     })
     setErpPurchaseOrder(erpPurchaseOrder)
-    setErrors({});
+    setErrors({ purchase_products: [] });
+    setPurchaseDate(null);
   }
 
-  const handleSubmit = async () => {
+  const handleSubmit = useCallback(async () => {
     if (validateForm()) {
-      await updateErpPurchaseOrder(erpPurchaseOrderRequest);
+      const purchase_products: ErpPurchaseOrderDetailRequest[] = [];
+      for (const product of erpPurchaseOrderRequest.purchase_products) {
+        purchase_products.push({
+          id: product.id,
+          product_id: product.product_id!,
+          quantity: product.quantity,
+          unit_price: product.unit_price,
+          subtotal: product.subtotal,
+          tax_rate: product.tax_rate,
+          remarks: product.remarks,
+        } as ErpPurchaseOrderDetailRequest);
+      }
+      const purchase_attachment: ErpPurchaseOrderAttachmentRequest[] = [];
+      for (const attachment of erpPurchaseOrderRequest.purchase_attachment) {
+        purchase_attachment.push({
+          id: attachment.id,
+          file_id: attachment.file_id!
+        } as ErpPurchaseOrderAttachmentRequest);
+      }
+      const request: ErpPurchaseOrderRequest = {
+        id: erpPurchaseOrderRequest.id,
+        supplier_id: erpPurchaseOrderRequest.supplier_id!,
+        purchase_date: erpPurchaseOrderRequest.purchase_date,
+        total_amount: erpPurchaseOrderRequest.total_amount,
+        discount_rate: erpPurchaseOrderRequest.discount_rate,
+        settlement_account_id: erpPurchaseOrderRequest.settlement_account_id,
+        deposit: erpPurchaseOrderRequest.deposit,
+        remarks: erpPurchaseOrderRequest.remarks,
+        purchase_products,
+        purchase_attachment
+      }
+      await updateErpPurchaseOrder(request);
       handleClose();
       onSubmit();
     }
-  };
+  }, [erpPurchaseOrderRequest, validateForm, handleClose, onSubmit]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type } = e.target;
-    if (type == 'number') {
-      const numberValue = Number(value);
-      setErpPurchaseOrderRequest(prev => ({
-        ...prev,
-        [name]: numberValue
-      }));
-    } else {
-      setErpPurchaseOrderRequest(prev => ({
-        ...prev,
-        [name]: value
-      }));
-    }
-
-    if (errors[name as keyof FormErrors]) {
-      setErrors(prev => ({
-        ...prev,
-        [name]: undefined
-      }));
-    }
-  };
-
-  const handleStatusChange = (e: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
-    const { name } = e.target;
-
-    setErpPurchaseOrderRequest(prev => ({
+    setErpPurchaseOrderRequest((prev) => ({
       ...prev,
-      [name]: checked ? 0 : 1
+      [name]: type === 'number' ? Number(value) : value,
     }));
 
     if (errors[name as keyof FormErrors]) {
@@ -126,6 +239,148 @@ const ErpPurchaseOrderEdit = forwardRef(({ onSubmit }: ErpPurchaseOrderEditProps
       }));
     }
   };
+
+  const handleSelectChange = useCallback((e: SelectChangeEvent<number>) => {
+    const { name, value } = e.target;
+    setErpPurchaseOrderRequest((prev) => ({ ...prev, [name]: value }));
+    setErrors((prev) => ({ ...prev, [name]: undefined }));
+  }, []);
+
+  const handleDateTimeChange = useCallback((value: PickerValue) => {
+    setPurchaseDate(value);
+    if (value) {
+      setErpPurchaseOrderRequest((prev) => ({ ...prev, purchase_date: value.format('YYYY-MM-DD HH:mm:ss') }));
+      setErrors((prev) => ({ ...prev, purchase_date: undefined }));
+    }
+  }, []);
+
+  const handleAddPurchaseProduct = useCallback(() => {
+    if (!products || products.length == 0) {
+      showMessage(t('page.erp.purchase.order.detail.error.product.empty'));
+    }
+    const newProduct: ErpPurchaseOrderDetailRequest = {
+      product_id: products[0].id,
+      quantity: 1,
+      unit_price: 0,
+      subtotal: 0,
+      tax_rate: 0,
+      remarks: '',
+      product: products[0],
+    };
+    setErpPurchaseOrderRequest((prev) => ({
+      ...prev,
+      purchase_products: [...prev.purchase_products, newProduct],
+    }));
+    setErrors((prev) => ({
+      ...prev,
+      purchase_products: [
+        ...prev.purchase_products,
+        { product_id: undefined, quantity: undefined, unit_price: undefined, tax_rate: undefined },
+      ],
+    }));
+  }, [products, showMessage, t]);
+
+  const handleClickProductDelete = useCallback((index: number) => {
+    setErpPurchaseOrderRequest((prev) => ({
+      ...prev,
+      purchase_products: prev.purchase_products.filter((_, idx) => idx !== index),
+    }));
+    setErrors((prev) => ({
+      ...prev,
+      purchase_products: prev.purchase_products.filter((_, idx) => idx !== index),
+    }));
+  }, []);
+
+  const handleProductSelectChange = useCallback((e: SelectChangeEvent<number>, index: number) => {
+    const { value } = e.target;
+    const product = products.find((p) => p.id === value);
+    setErpPurchaseOrderRequest((prev) => ({
+      ...prev,
+      purchase_products: prev.purchase_products.map((item, idx) =>
+        idx === index ? { ...item, product_id: value, product } : item
+      ),
+    }));
+    setErrors((prev) => ({
+      ...prev,
+      purchase_products: prev.purchase_products.map((item, idx) =>
+        idx === index ? { ...item, product_id: undefined } : item
+      ),
+    }));
+  }, [products]);
+
+  const handleProductInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>, index: number) => {
+    const { name, value, type } = e.target;
+    const numberValue = type === 'number' ? Number(value) : value;
+    setErpPurchaseOrderRequest((prev) => {
+      const updatedProducts = prev.purchase_products.map((item, idx) => {
+        if (idx !== index) return item;
+        const updatedItem = { ...item, [name]: numberValue };
+        if (name === 'quantity' || name === 'unit_price') {
+          updatedItem.subtotal = updatedItem.quantity * updatedItem.unit_price;
+        }
+        return updatedItem;
+      });
+      return { ...prev, purchase_products: updatedProducts };
+    });
+    setErrors((prev) => ({
+      ...prev,
+      purchase_products: prev.purchase_products.map((item, idx) =>
+        idx === index ? { ...item, [name]: undefined } : item
+      ),
+    }));
+  }, []);
+
+  const handleFileChange = useCallback(async (file: UploadFile | null, action: 'upload' | 'remove', index: number) => {
+    console.log(`Upload ${index} file updated:`, file, `Action: ${action}`);
+
+    if (action === 'upload' && file) {
+      // 更新文件列表,增加一个附件,等待上传完成后在写入信息
+      setErpPurchaseOrderRequest((prev) => {
+        return { ...prev, purchase_attachment: [...prev.purchase_attachment, { file }] };
+      })
+
+      // 上传文件
+      try {
+        const result = await uploadSystemFile(file.file, (progress) => {
+          setErpPurchaseOrderRequest((prev) => {
+            const updatedAttachments = prev.purchase_attachment.map((item, idx) => {
+              if (idx !== index) return item;
+              const updatedItem = { ...item, file: { ...item.file!, progress } };
+              return updatedItem;
+            })
+            return { ...prev, purchase_attachment: updatedAttachments };
+          });
+        });
+
+        // 上传完成
+        setErpPurchaseOrderRequest((prev) => {
+          const updatedAttachments = prev.purchase_attachment.map((item, idx) => {
+            if (idx !== index) return item;
+            const updatedItem = { ...item, file_id: result, file: { ...item.file!, status: 'done' as const } };
+            return updatedItem;
+          })
+          return { ...prev, purchase_attachment: updatedAttachments };
+        });
+      } catch (error) {
+        console.error('upload file error', error);
+        // 上传失败
+        setErpPurchaseOrderRequest((prev) => {
+          const updatedAttachments = prev.purchase_attachment.map((item, idx) => {
+            if (idx !== index) return item;
+            const updatedItem = { ...item, file: { ...item.file!, status: 'error' as const } };
+            return updatedItem;
+          })
+          return { ...prev, purchase_attachment: updatedAttachments };
+        });
+      }
+    } else if (action === 'remove') {
+      // 删除文件并移除上传框
+      setErpPurchaseOrderRequest((prev) => {
+        const updatedAttachments = prev.purchase_attachment.filter((_, idx) => idx !== index);
+        return { ...prev, purchase_attachment: updatedAttachments };
+      });
+    }
+  }, []);
 
   return (
     <CustomizedDialog
@@ -140,95 +395,279 @@ const ErpPurchaseOrderEdit = forwardRef(({ onSubmit }: ErpPurchaseOrderEditProps
         </>
       }
     >
-      <Box
-        noValidate
-        component="form"
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          m: 'auto',
-          width: 'fit-content',
-        }}
-      >
-        <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiStack-root': { mt: 2, width: '200px' } }}>
-          <Stack direction="row" spacing={2}>
-            <Box>{t('page.erp.purchase.order.title.order_number')}</Box>
-            <Box>{erpPurchaseOrder && <CustomizedTag label={erpPurchaseOrder.order_number} />}</Box>
-          </Stack>
+      <Box noValidate component="form" sx={{ display: 'flex', flexDirection: 'column', m: 'auto', width: 'fit-content' }}>
+        <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '100%' } }}>
+          <Grid container rowSpacing={2} columnSpacing={4} sx={{ '& .MuiGrid-root': { display: 'flex', justifyContent: 'center', alignItems: 'center' } }}>
+            <Grid size={{ xs: 12, md: 12 / 5 }}>
+              <Stack direction="row" spacing={2}>
+                <Box>{t('page.erp.purchase.order.title.order.number')}</Box>
+                <Box>{erpPurchaseOrder && <CustomizedTag label={erpPurchaseOrder.order_number} />}</Box>
+              </Stack>
+            </Grid>
+            <Grid size={{ xs: 12, md: 12 / 5 }}>
+              <FormControl sx={{ mt: 2, minWidth: 120, width: '100%' }}>
+                <InputLabel required size="small" id="supplier-select-label">{t('page.erp.purchase.order.title.supplier')}</InputLabel>
+                <Select
+                  required
+                  size="small"
+                  id="supplier-helper"
+                  labelId="supplier-select-label"
+                  name="supplier_id"
+                  value={erpPurchaseOrderRequest.supplier_id ?? ''}
+                  onChange={handleSelectChange}
+                  label={t('page.erp.purchase.order.title.supplier')}
+                  error={!!errors.supplier_id}
+                >
+                  {suppliers.map((item) => (
+                    <MenuItem key={item.id} value={item.id}>
+                      {item.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+                <FormHelperText sx={{ color: 'error.main' }}>{errors.supplier_id}</FormHelperText>
+              </FormControl>
+            </Grid>
+            <Grid size={{ xs: 12, md: 12 / 5 }}>
+              <FormControl sx={{ mt: 2, minWidth: 120, width: '100%' }}>
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <DateTimePicker
+                    name="purchase_date"
+                    label={t('page.erp.purchase.order.title.purchase.date')}
+                    value={purchaseDate}
+                    onChange={handleDateTimeChange}
+                    slotProps={{
+                      textField: {
+                        size: 'small',
+                        required: true,
+                        error: !!errors.purchase_date,
+                        helperText: errors.purchase_date,
+                      },
+                      openPickerButton: {
+                        sx: { mr: -1, '& .MuiSvgIcon-root': { fontSize: '1rem' } },
+                      },
+                    }}
+                  />
+                </LocalizationProvider>
+              </FormControl>
+            </Grid>
+            <Grid size={{ xs: 12, md: 12 / 5 }}>
+              <TextField
+                required
+                size="small"
+                type="number"
+                label={t('page.erp.purchase.order.title.total.amount')}
+                name="total_amount"
+                value={erpPurchaseOrderRequest.total_amount}
+                onChange={handleInputChange}
+                error={!!errors.total_amount}
+                helperText={errors.total_amount}
+              />
+            </Grid>
+            <Grid size={{ xs: 12, md: 12 / 5 }}>
+              <TextField
+                size="small"
+                type="number"
+                label={t('page.erp.purchase.order.title.discount.rate')}
+                name="discount_rate"
+                value={erpPurchaseOrderRequest.discount_rate}
+                onChange={handleInputChange}
+              />
+            </Grid>
+            <Grid size={{ xs: 12, md: 12 / 5 }}>
+              <FormControl sx={{ mt: 2, minWidth: 120, width: '100%' }}>
+                <InputLabel size="small" id="settlement-account-select-label">{t('page.erp.purchase.order.title.settlement.account')}</InputLabel>
+                <Select
+                  size="small"
+                  labelId="settlement-account-select-label"
+                  name="settlement_account_id"
+                  value={erpPurchaseOrderRequest.settlement_account_id ?? ''}
+                  onChange={handleSelectChange}
+                  label={t('page.erp.purchase.order.title.settlement.account')}
+                >
+                  {settlementAccounts.map((item) => (
+                    <MenuItem key={item.id} value={item.id}>
+                      {item.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid size={{ xs: 12, md: 12 / 5 }}>
+              <TextField
+                size="small"
+                type="number"
+                label={t('page.erp.purchase.order.title.deposit')}
+                name="deposit"
+                value={erpPurchaseOrderRequest.deposit}
+                onChange={handleInputChange}
+              />
+            </Grid>
+            <Grid size={{ xs: 12, md: 12 / 5 }}>
+              <TextField
+                size="small"
+                label={t('page.erp.purchase.order.title.remarks')}
+                name="remarks"
+                value={erpPurchaseOrderRequest.remarks}
+                onChange={handleInputChange}
+              />
+            </Grid>
+          </Grid>
         </FormControl>
-        <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' } }}>
-          <TextField
-            size="small"
-            type="number"
-            label={t("page.erp.purchase.order.title.supplier_id")}
-            name='supplier_id'
-            value={erpPurchaseOrderRequest.supplier_id}
-            onChange={handleInputChange}
-          />
-          <TextField
-            required
-            size="small"
-            label={t("page.erp.purchase.order.title.purchase_date")}
-            name='purchase_date'
-            value={erpPurchaseOrderRequest.purchase_date}
-            onChange={handleInputChange}
-            error={!!errors.purchase_date}
-            helperText={errors.purchase_date}
-          />
-          <TextField
-            required
-            size="small"
-            type="number"
-            label={t("page.erp.purchase.order.title.total_amount")}
-            name='total_amount'
-            value={erpPurchaseOrderRequest.total_amount}
-            onChange={handleInputChange}
-            error={!!errors.total_amount}
-            helperText={errors.total_amount}
-          />
-          <TextField
-            required
-            size="small"
-            type="number"
-            label={t("page.erp.purchase.order.title.order_status")}
-            name='order_status'
-            value={erpPurchaseOrderRequest.order_status}
-            onChange={handleInputChange}
-            error={!!errors.order_status}
-            helperText={errors.order_status}
-          />
-          <TextField
-            size="small"
-            type="number"
-            label={t("page.erp.purchase.order.title.discount_rate")}
-            name='discount_rate'
-            value={erpPurchaseOrderRequest.discount_rate}
-            onChange={handleInputChange}
-          />
-          <TextField
-            size="small"
-            type="number"
-            label={t("page.erp.purchase.order.title.settlement_account_id")}
-            name='settlement_account_id'
-            value={erpPurchaseOrderRequest.settlement_account_id}
-            onChange={handleInputChange}
-          />
-          <TextField
-            size="small"
-            type="number"
-            label={t("page.erp.purchase.order.title.deposit")}
-            name='deposit'
-            value={erpPurchaseOrderRequest.deposit}
-            onChange={handleInputChange}
-          />
-          <TextField
-            size="small"
-            label={t("page.erp.purchase.order.title.remarks")}
-            name='remarks'
-            value={erpPurchaseOrderRequest.remarks}
-            onChange={handleInputChange}
-          />
-        </FormControl>
+
+        <Typography variant="body1" sx={{ mt: 3, fontSize: '1rem', fontWeight: 500 }}>
+          {t('page.erp.purchase.order.title.check.list')}
+        </Typography>
+        <Card variant="outlined" sx={{ width: '100%', mt: 1, p: 2 }}>
+          <TableContainer>
+            <TableRow>
+              <TableCell sx={{ width: 50 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.no')}</Typography></TableCell>
+              <TableCell sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.product')}</Typography></TableCell>
+              <TableCell sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.stock')}</Typography></TableCell>
+              <TableCell sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.barcode')}</Typography></TableCell>
+              <TableCell sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.unit')}</Typography></TableCell>
+              <TableCell sx={{ width: 200 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.remarks')}</Typography></TableCell>
+              <TableCell sx={{ width: 150 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.quantity')}</Typography></TableCell>
+              <TableCell sx={{ width: 150 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.unit.price')}</Typography></TableCell>
+              <TableCell sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.subtotal')}</Typography></TableCell>
+              <TableCell sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.tax.rate')}</Typography></TableCell>
+              <TableCell sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.tax')}</Typography></TableCell>
+              <TableCell sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.tax.total')}</Typography></TableCell>
+              <TableCell sx={{ width: 50 }}><Typography variant="body1">{t('global.operate.actions')}</Typography></TableCell>
+            </TableRow>
+            {erpPurchaseOrderRequest.purchase_products.map((item, index) => (
+              <TableRow key={index}>
+                <TableCell sx={{ width: 50, verticalAlign: 'middle' }}><Typography variant="body1">{index + 1}</Typography></TableCell>
+                <TableCell sx={{ width: 100 }}>
+                  <FormControl sx={{ minWidth: 120, width: '100%' }}>
+                    <Select
+                      size="small"
+                      name="product_id"
+                      value={item.product_id ?? ''}
+                      onChange={(e) => handleProductSelectChange(e, index)}
+                      error={!!(errors.purchase_products[index]?.product_id)}
+                    >
+                      {products.map((product) => (
+                        <MenuItem key={product.id} value={product.id}>
+                          {product.name}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                    <FormHelperText sx={{ color: 'error.main' }}>{errors.purchase_products[index]?.product_id}</FormHelperText>
+                  </FormControl>
+                </TableCell>
+                <TableCell sx={{ width: 50 }}>
+                  <TextField size="small" value={item.product?.stock_quantity ?? ''} disabled />
+                </TableCell>
+                <TableCell sx={{ width: 50 }}>
+                  <TextField size="small" value={item.product?.barcode ?? ''} disabled />
+                </TableCell>
+                <TableCell sx={{ width: 50 }}>
+                  <TextField size="small" value={item.product?.unit_name ?? ''} disabled />
+                </TableCell>
+                <TableCell sx={{ width: 50 }}>
+                  <TextField
+                    size="small"
+                    name="remarks"
+                    value={item.remarks}
+                    onChange={(e) => handleProductInputChange(e as React.ChangeEvent<HTMLInputElement>, index)}
+                  />
+                </TableCell>
+                <TableCell sx={{ width: 50 }}>
+                  <TextField
+                    size="small"
+                    type="number"
+                    name="quantity"
+                    value={item.quantity}
+                    onChange={(e) => handleProductInputChange(e as React.ChangeEvent<HTMLInputElement>, index)}
+                    error={!!(errors.purchase_products[index]?.quantity)}
+                    helperText={errors.purchase_products[index]?.quantity}
+                  />
+                </TableCell>
+                <TableCell sx={{ width: 50 }}>
+                  <TextField
+                    size="small"
+                    type="number"
+                    name="unit_price"
+                    value={item.unit_price}
+                    onChange={(e) => handleProductInputChange(e as React.ChangeEvent<HTMLInputElement>, index)}
+                    error={!!(errors.purchase_products[index]?.unit_price)}
+                    helperText={errors.purchase_products[index]?.unit_price}
+                  />
+                </TableCell>
+                <TableCell sx={{ width: 50 }}>
+                  <TextField size="small" value={item.subtotal} disabled />
+                </TableCell>
+                <TableCell sx={{ width: 50 }}>
+                  <TextField
+                    size="small"
+                    type="number"
+                    name="tax_rate"
+                    value={item.tax_rate}
+                    onChange={(e) => handleProductInputChange(e as React.ChangeEvent<HTMLInputElement>, index)}
+                    error={!!(errors.purchase_products[index]?.tax_rate)}
+                    helperText={errors.purchase_products[index]?.tax_rate}
+                  />
+                </TableCell>
+                <TableCell sx={{ width: 50 }}>
+                  <TextField size="small" value={(item.quantity * item.unit_price * item.tax_rate) / 100} disabled />
+                </TableCell>
+                <TableCell sx={{ width: 50 }}>
+                  <TextField size="small" value={item.quantity * item.unit_price * (1 + item.tax_rate / 100)} disabled />
+                </TableCell>
+                <TableCell sx={{ width: 50, verticalAlign: 'middle' }}>
+                  <Button
+                    sx={{ color: 'error.main' }}
+                    size="small"
+                    variant="customOperate"
+                    title={t('global.operate.delete') + t('global.page.erp.purchase.order')}
+                    startIcon={<DeleteIcon />}
+                    onClick={() => handleClickProductDelete(index)}
+                  />
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableContainer>
+          <Box sx={{ mt: 2, display: 'flex', justifyContent: 'center' }}>
+            <Button variant="outlined" startIcon={<AddCircleSharpIcon />} onClick={handleAddPurchaseProduct}>
+              {t('page.erp.purchase.order.title.operate.add')}
+            </Button>
+          </Box>
+        </Card>
+
+        <Typography variant="body1" sx={{ mt: 3, fontSize: '1rem', fontWeight: 500 }}>
+          {t('page.erp.purchase.order.title.attachment')}
+        </Typography>
+        <Card variant="outlined" sx={{ width: '100%', mt: 1, p: 2 }}>
+          <Grid container rowSpacing={2} columnSpacing={4} sx={{ '& .MuiGrid-root': { display: 'flex', justifyContent: 'center', alignItems: 'center' } }}>
+            {erpPurchaseOrderRequest.purchase_attachment.map((item, index) => (
+              <Grid key={index} size={{ xs: 12, md: 4 }}>
+                <CustomizedFileUpload
+                  id={'file-upload-' + index}
+                  accept=".jpg,jpeg,.png"
+                  maxSize={100}
+                  onChange={(files, action) => handleFileChange(files, action, index)}
+                  file={item.file}
+                  width={fileWidth}
+                  height={fileHeight}
+                >
+                  <PreviewImage src='' />
+                </CustomizedFileUpload>
+              </Grid>
+            ))}
+            <Grid size={{ xs: 12, md: 4 }}>
+              <CustomizedFileUpload
+                id={'file-upload-' + erpPurchaseOrderRequest.purchase_attachment.length}
+                accept=".jpg,jpeg,.png"
+                maxSize={100}
+                onChange={(file, action) => handleFileChange(file, action, erpPurchaseOrderRequest.purchase_attachment.length)}
+                width={fileWidth}
+                height={fileHeight}
+              >
+                <Box></Box>
+              </CustomizedFileUpload>
+            </Grid>
+          </Grid>
+        </Card>
       </Box>
     </CustomizedDialog>
   )

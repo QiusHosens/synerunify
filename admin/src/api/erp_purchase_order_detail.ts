@@ -9,6 +9,7 @@ const apis = {
   get: '/erp/erp_purchase_order_detail/get', // 单条查询
   list: '/erp/erp_purchase_order_detail/list', // 列表查询
   page: '/erp/erp_purchase_order_detail/page', // 分页查询
+  list_purchase: '/erp/erp_purchase_order_detail/list_purchase', // 采购订单详情列表
 }
 
 export interface ErpPurchaseOrderDetailRequest {
@@ -20,6 +21,8 @@ export interface ErpPurchaseOrderDetailRequest {
   subtotal: number; // 小计
   tax_rate: number; // 税率,精确到万分位
   remarks?: string; // 备注
+
+  product?: ErpProductResponse;
 }
 
 export interface ErpPurchaseOrderDetailModel {
@@ -75,4 +78,8 @@ export const listErpPurchaseOrderDetail = (): Promise<Array<ErpPurchaseOrderDeta
 
 export const pageErpPurchaseOrderDetail = (condition: ErpPurchaseOrderDetailQueryCondition): Promise<PaginatedResponse<ErpPurchaseOrderDetailResponse>> => {
   return api.get<PaginatedResponse<ErpPurchaseOrderDetailResponse>>(apis.page, condition);
+}
+
+export const listErpPurchaseOrderDetailByPurchase = (id: number): Promise<Array<ErpPurchaseOrderDetailResponse>> => {
+  return api.get<Array<ErpPurchaseOrderDetailResponse>>(`${apis.list_purchase}/${id}`);
 }

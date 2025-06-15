@@ -1,7 +1,7 @@
 use sea_orm::{Set, NotSet};
 use crate::model::erp_purchase_order_attachment::{self, Model as ErpPurchaseOrderAttachment, ActiveModel as ErpPurchaseOrderAttachmentActiveModel};
 use erp_model::request::erp_purchase_order_attachment::{CreateErpPurchaseOrderAttachmentRequest, UpdateErpPurchaseOrderAttachmentRequest};
-use erp_model::response::erp_purchase_order_attachment::ErpPurchaseOrderAttachmentResponse;
+use erp_model::response::erp_purchase_order_attachment::{ErpPurchaseOrderAttachmentBaseResponse, ErpPurchaseOrderAttachmentResponse};
 
 pub fn create_request_to_model(request: &CreateErpPurchaseOrderAttachmentRequest) -> ErpPurchaseOrderAttachmentActiveModel {
     ErpPurchaseOrderAttachmentActiveModel {
@@ -35,5 +35,14 @@ pub fn model_to_response(model: ErpPurchaseOrderAttachment) -> ErpPurchaseOrderA
         create_time: model.create_time,
         updater: model.updater,
         update_time: model.update_time,
+    }
+}
+
+pub fn model_to_base_response(model: ErpPurchaseOrderAttachment) -> ErpPurchaseOrderAttachmentBaseResponse {
+    ErpPurchaseOrderAttachmentBaseResponse { 
+        id: model.id,
+        purchase_id: model.purchase_id,
+        file_id: model.file_id,
+        remarks: model.remarks,
     }
 }

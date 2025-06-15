@@ -397,5 +397,6 @@
   "page.erp.purchase.order.detail.error.product": "请选择产品",
   "page.erp.purchase.order.detail.error.quantity": "请输入数量",
   "page.erp.purchase.order.detail.error.unit.price": "请输入单价",
-  "page.erp.purchase.order.detail.error.tax.rate": "请输入税率"
+  "page.erp.purchase.order.detail.error.tax.rate": "请输入税率",
+  "page.erp.purchase.order.detail.error.product.empty": "产品为空,请先添加产品"
 }

@@ -4,8 +4,8 @@ use file_common::service::system_file;
 use sea_orm::{ActiveModelTrait, ColumnTrait, Condition, DatabaseConnection, DatabaseTransaction, EntityTrait, PaginatorTrait, QueryFilter, QueryOrder};
 use crate::model::erp_purchase_order_attachment::{Model as ErpPurchaseOrderAttachmentModel, ActiveModel as ErpPurchaseOrderAttachmentActiveModel, Entity as ErpPurchaseOrderAttachmentEntity, Column};
 use erp_model::request::erp_purchase_order_attachment::{CreateErpPurchaseOrderAttachmentRequest, UpdateErpPurchaseOrderAttachmentRequest, PaginatedKeywordRequest};
-use erp_model::response::erp_purchase_order_attachment::ErpPurchaseOrderAttachmentResponse;
-use crate::convert::erp_purchase_order_attachment::{create_request_to_model, update_request_to_model, model_to_response};
+use erp_model::response::erp_purchase_order_attachment::{ErpPurchaseOrderAttachmentBaseResponse, ErpPurchaseOrderAttachmentResponse};
+use crate::convert::erp_purchase_order_attachment::{create_request_to_model, model_to_base_response, model_to_response, update_request_to_model};
 use anyhow::{anyhow, Context, Result};
 use sea_orm::ActiveValue::Set;
 use common::constants::enum_constants::{STATUS_DISABLE, STATUS_ENABLE};
@@ -111,4 +111,12 @@ pub async fn list(db: &DatabaseConnection, login_user: LoginUserContext) -> Resu
     let condition = Condition::all().add(Column::TenantId.eq(login_user.tenant_id));let list = ErpPurchaseOrderAttachmentEntity::find_active_with_condition(condition)
         .all(db).await?;
     Ok(list.into_iter().map(model_to_response).collect())
+}
+
+pub async fn list_by_purchase_id(db: &DatabaseConnection, login_user: LoginUserContext, purchase_id: i64) -> Result<Vec<ErpPurchaseOrderAttachmentBaseResponse>> {
+    let list = ErpPurchaseOrderAttachmentEntity::find_active_with_data_permission(login_user.clone())
+        .filter(Column::TenantId.eq(login_user.tenant_id))
+        .filter(Column::PurchaseId.eq(purchase_id))
+        .all(db).await?;
+    Ok(list.into_iter().map(model_to_base_response).collect())
 }

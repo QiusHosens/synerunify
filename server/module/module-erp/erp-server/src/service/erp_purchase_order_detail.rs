@@ -2,8 +2,8 @@ use sea_orm::{ActiveModelTrait, ColumnTrait, Condition, DatabaseConnection, Data
 use tracing::info;
 use crate::model::erp_purchase_order_detail::{Model as ErpPurchaseOrderDetailModel, ActiveModel as ErpPurchaseOrderDetailActiveModel, Entity as ErpPurchaseOrderDetailEntity, Column};
 use erp_model::request::erp_purchase_order_detail::{CreateErpPurchaseOrderDetailRequest, UpdateErpPurchaseOrderDetailRequest, PaginatedKeywordRequest};
-use erp_model::response::erp_purchase_order_detail::ErpPurchaseOrderDetailResponse;
-use crate::convert::erp_purchase_order_detail::{create_request_to_model, update_request_to_model, model_to_response};
+use erp_model::response::erp_purchase_order_detail::{ErpPurchaseOrderDetailBaseResponse, ErpPurchaseOrderDetailResponse};
+use crate::convert::erp_purchase_order_detail::{create_request_to_model, model_to_base_response, model_to_response, update_request_to_model};
 use anyhow::{anyhow, Context, Ok, Result};
 use sea_orm::ActiveValue::Set;
 use common::constants::enum_constants::{STATUS_DISABLE, STATUS_ENABLE};
@@ -104,4 +104,12 @@ pub async fn list(db: &DatabaseConnection, login_user: LoginUserContext) -> Resu
     let condition = Condition::all().add(Column::TenantId.eq(login_user.tenant_id));let list = ErpPurchaseOrderDetailEntity::find_active_with_condition(condition)
         .all(db).await?;
     Ok(list.into_iter().map(model_to_response).collect())
+}
+
+pub async fn list_by_purchase_id(db: &DatabaseConnection, login_user: LoginUserContext, purchase_id: i64) -> Result<Vec<ErpPurchaseOrderDetailBaseResponse>> {
+    let list = ErpPurchaseOrderDetailEntity::find_active_with_data_permission(login_user.clone())
+        .filter(Column::TenantId.eq(login_user.tenant_id))
+        .filter(Column::PurchaseId.eq(purchase_id))
+        .all(db).await?;
+    Ok(list.into_iter().map(model_to_base_response).collect())
 }

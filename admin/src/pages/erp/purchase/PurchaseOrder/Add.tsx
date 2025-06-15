@@ -12,10 +12,10 @@ import AddCircleSharpIcon from '@mui/icons-material/AddCircleSharp';
 import DeleteIcon from '@/assets/image/svg/delete.svg';
 import CustomizedFileUpload, { UploadFile } from '@/components/CustomizedFileUpload';
 import { uploadSystemFile } from '@/api/system_file';
+import { useMessage } from '@/components/GlobalMessage';
 
 interface FormProductValues {
-  rowNumber: number;
-  product_id?: number;
+  product_id: number;
   quantity: number;
   unit_price: number;
   subtotal: number;
@@ -44,7 +44,6 @@ interface FormValues {
 }
 
 interface FormProductErrors {
-  rowNumber: number;
   product_id?: string;
   quantity?: string;
   unit_price?: string;
@@ -64,13 +63,13 @@ interface ErpPurchaseOrderAddProps {
 
 const ErpPurchaseOrderAdd = forwardRef(({ onSubmit }: ErpPurchaseOrderAddProps, ref) => {
   const { t } = useTranslation();
+  const { showMessage } = useMessage();
   const [open, setOpen] = useState(false);
   const [maxWidth] = useState<DialogProps['maxWidth']>('xl');
   const [suppliers, setSuppliers] = useState<ErpSupplierResponse[]>([]);
   const [settlementAccounts, setSettlementAccounts] = useState<ErpSettlementAccountResponse[]>([]);
   const [products, setProducts] = useState<ErpProductResponse[]>([]);
   const [purchaseDate, setPurchaseDate] = useState<Dayjs | null>(null);
-  const [rowNumber, setRowNumber] = useState(1);
   const [formValues, setFormValues] = useState<FormValues>({
     purchase_date: '',
     total_amount: 0,
@@ -139,8 +138,7 @@ const ErpPurchaseOrderAdd = forwardRef(({ onSubmit }: ErpPurchaseOrderAddProps, 
 
   const validateForm = useCallback((): boolean => {
     const newErrors: FormErrors = {
-      purchase_products: formValues.purchase_products.map((_, index) => ({
-        rowNumber: index + 1,
+      purchase_products: formValues.purchase_products.map(() => ({
         product_id: undefined,
         quantity: undefined,
         unit_price: undefined,
@@ -179,22 +177,12 @@ const ErpPurchaseOrderAdd = forwardRef(({ onSubmit }: ErpPurchaseOrderAddProps, 
     return !Object.keys(newErrors).some((key) => {
       if (key === 'purchase_products') {
         return newErrors.purchase_products.some((err) =>
-          Object.values(err).some((value) => value !== undefined && value !== err.rowNumber)
+          Object.values(err).some((value) => value !== undefined)
         );
       }
       return newErrors[key as keyof FormErrors];
     });
   }, [formValues, t]);
-
-  const handleCancel = useCallback(() => {
-    setOpen(false);
-    reset();
-  }, []);
-
-  const handleClose = useCallback(() => {
-    setOpen(false);
-    reset();
-  }, []);
 
   const reset = useCallback(() => {
     setFormValues({
@@ -208,8 +196,17 @@ const ErpPurchaseOrderAdd = forwardRef(({ onSubmit }: ErpPurchaseOrderAddProps, 
     });
     setPurchaseDate(null);
     setErrors({ purchase_products: [] });
-    setRowNumber(1);
   }, []);
+
+  const handleCancel = () => {
+    setOpen(false);
+    reset();
+  };
+
+  const handleClose = useCallback(() => {
+    setOpen(false);
+    reset();
+  }, [reset]);
 
   const handleSubmit = useCallback(async () => {
     if (validateForm()) {
@@ -241,7 +238,6 @@ const ErpPurchaseOrderAdd = forwardRef(({ onSubmit }: ErpPurchaseOrderAddProps, 
         purchase_products,
         purchase_attachment
       }
-      console.debug('request', request);
       await createErpPurchaseOrder(request);
       handleClose();
       onSubmit();
@@ -272,16 +268,17 @@ const ErpPurchaseOrderAdd = forwardRef(({ onSubmit }: ErpPurchaseOrderAddProps, 
   }, []);
 
   const handleAddPurchaseProduct = useCallback(() => {
-    setRowNumber((prev) => prev + 1);
+    if (!products || products.length == 0) {
+      showMessage(t('page.erp.purchase.order.detail.error.product.empty'));
+    }
     const newProduct: FormProductValues = {
-      rowNumber: rowNumber + 1,
-      product_id: products.length > 0 ? products[0].id : undefined,
+      product_id: products[0].id,
       quantity: 1,
       unit_price: 0,
       subtotal: 0,
       tax_rate: 0,
       remarks: '',
-      product: products.length > 0 ? products[0] : undefined,
+      product: products[0],
     };
     setFormValues((prev) => ({
       ...prev,
@@ -291,10 +288,10 @@ const ErpPurchaseOrderAdd = forwardRef(({ onSubmit }: ErpPurchaseOrderAddProps, 
       ...prev,
       purchase_products: [
         ...prev.purchase_products,
-        { rowNumber: rowNumber + 1, product_id: undefined, quantity: undefined, unit_price: undefined, tax_rate: undefined },
+        { product_id: undefined, quantity: undefined, unit_price: undefined, tax_rate: undefined },
       ],
     }));
-  }, [products, rowNumber]);
+  }, [products, showMessage, t]);
 
   const handleClickProductDelete = useCallback((index: number) => {
     setFormValues((prev) => ({
@@ -548,7 +545,7 @@ const ErpPurchaseOrderAdd = forwardRef(({ onSubmit }: ErpPurchaseOrderAddProps, 
               <TableCell sx={{ width: 50 }}><Typography variant="body1">{t('global.operate.actions')}</Typography></TableCell>
             </TableRow>
             {formValues.purchase_products.map((item, index) => (
-              <TableRow key={item.rowNumber}>
+              <TableRow key={index}>
                 <TableCell sx={{ width: 50, verticalAlign: 'middle' }}><Typography variant="body1">{index + 1}</Typography></TableCell>
                 <TableCell sx={{ width: 100 }}>
                   <FormControl sx={{ minWidth: 120, width: '100%' }}>
