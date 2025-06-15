@@ -1,8 +1,10 @@
 import React, { useEffect, useCallback, useRef } from 'react';
-import { Box, Typography, Paper, LinearProgress, IconButton, Button } from '@mui/material';
+import { Box, Typography, Paper, LinearProgress, IconButton } from '@mui/material';
 import { alpha, styled } from '@mui/material/styles';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import DeleteIcon from '@/assets/image/svg/delete.svg';
+import { useTranslation } from 'react-i18next';
+import { useMessage } from './GlobalMessage';
 
 // 定义文件类型
 export interface UploadFile {
@@ -85,6 +87,8 @@ const CustomizedFileUpload: React.FC<UploadProps> = ({
     height,
     children,
 }) => {
+    const { t } = useTranslation();
+    const { showMessage } = useMessage();
     // 使用 useRef 跟踪当前 blob URL
     const blobUrlRef = useRef<string | null>(null);
 
@@ -96,7 +100,8 @@ const CustomizedFileUpload: React.FC<UploadProps> = ({
             const selectedFile = files[0];
             const fileSizeMB = selectedFile.size / 1024 / 1024;
             if (fileSizeMB > maxSize) {
-                alert(`文件 ${selectedFile.name} 超过大小限制 (${maxSize}MB)`);
+                // alert(`文件 ${selectedFile.name} 超过大小限制 (${maxSize}MB)`);
+                showMessage(t('global.helper.file.limit', { name: selectedFile.name, size: maxSize }));
                 return;
             }
 
@@ -212,31 +217,14 @@ const CustomizedFileUpload: React.FC<UploadProps> = ({
                     <>
                         <CloudUploadIcon color="primary" sx={{ fontSize: 40 }} />
                         <Typography variant="body1" color="textSecondary" sx={{ mt: 1 }}>
-                            点击或拖拽文件到此区域上传
+                            {t('global.helper.file.upload.type')}
                         </Typography>
                         <Typography variant="caption" color="textSecondary">
-                            支持 {accept === '*' ? '所有文件类型' : accept}，最大 {maxSize}MB
+                            {t('global.helper.file.upload.support', { type: accept === "*" ? t('global.helper.file.upload.support.all') : accept, size: maxSize })}
                         </Typography>
                     </>
                 )}
             </UploadArea>
-            {/* {file?.status === 'done' && (
-                <Typography
-                    variant="caption"
-                    color="textPrimary"
-                    sx={{
-                        mt: 1,
-                        textAlign: 'center',
-                        display: 'block',
-                        maxWidth: width || '100%',
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        whiteSpace: 'nowrap',
-                    }}
-                >
-                    {file.name}
-                </Typography>
-            )} */}
         </Box>
     );
 };

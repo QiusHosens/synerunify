@@ -79,6 +79,11 @@
   "global.helper.password.show": "显示密码",
   "global.helper.password.hide": "隐藏密码",
 
+  "global.helper.file.limit": "文件【{{name}}】超过大小限制{{size}}MB",
+  "global.helper.file.upload.type": "点击或拖拽文件到此区域上传",
+  "global.helper.file.upload.support": "支持{{type}},最大{{size}}MB",
+  "global.helper.file.upload.support.all": "所有文件类型",
+
   "gloabl.page.login": "登录",
   "gloabl.page.dashboard": "仪表盘",
   "global.page.menu": "菜单",

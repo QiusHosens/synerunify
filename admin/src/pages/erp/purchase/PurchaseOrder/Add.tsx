@@ -83,6 +83,8 @@ const ErpPurchaseOrderAdd = forwardRef(({ onSubmit }: ErpPurchaseOrderAddProps, 
   const [errors, setErrors] = useState<FormErrors>({
     purchase_products: [],
   });
+  const [fileWidth] = useState<number>(420);
+  const [fileHeight] = useState<number>(245);
 
   const TableContainer = styled(Box)({
     display: 'table',
@@ -640,28 +642,28 @@ const ErpPurchaseOrderAdd = forwardRef(({ onSubmit }: ErpPurchaseOrderAddProps, 
         <Card variant="outlined" sx={{ width: '100%', mt: 1, p: 2 }}>
           <Grid container rowSpacing={2} columnSpacing={4} sx={{ '& .MuiGrid-root': { display: 'flex', justifyContent: 'center', alignItems: 'center' } }}>
             {formValues.purchase_attachment.map((item, index) => (
-              <Grid key={index} size={{ xs: 12, md: 6 }}>
+              <Grid key={index} size={{ xs: 12, md: 4 }}>
                 <CustomizedFileUpload
                   id={'file-upload-' + index}
                   accept=".jpg,jpeg,.png"
                   maxSize={100}
                   onChange={(files, action) => handleFileChange(files, action, index)}
                   file={item.file}
-                  width={480}
-                  height={280}
+                  width={fileWidth}
+                  height={fileHeight}
                 >
                   <PreviewImage src=''/>
                 </CustomizedFileUpload>
               </Grid>
             ))}
-            <Grid size={{ xs: 12, md: 6 }}>
+            <Grid size={{ xs: 12, md: 4 }}>
               <CustomizedFileUpload
                 id={'file-upload-' + formValues.purchase_attachment.length}
                 accept=".jpg,jpeg,.png"
                 maxSize={100}
                 onChange={(file, action) => handleFileChange(file, action, formValues.purchase_attachment.length)}
-                width={480}
-                height={280}
+                width={fileWidth}
+                height={fileHeight}
               >
                 <Box></Box>
               </CustomizedFileUpload>
