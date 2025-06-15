@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { Box, Typography, Paper, LinearProgress, IconButton } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
@@ -10,7 +10,7 @@ export interface UploadFile {
   name: string;
   status: 'uploading' | 'done' | 'error' | 'removed';
   file: File;
-  previewUrl?: string; // 用于图片预览
+  previewUrl?: string; // 用于本地图片预览
   progress?: number; // 上传进度
 }
 
@@ -62,71 +62,52 @@ const DeleteButton = styled(IconButton)(({ theme }) => ({
 // Upload 组件属性
 interface UploadProps {
   accept?: string;
-  multiple?: boolean;
-  maxCount?: number;
   maxSize?: number; // 文件大小限制，单位 MB
-  onChange?: (files: UploadFile[], action: 'upload' | 'remove') => void;
-  onProgress?: (uid: string, progress: number) => void; // 新增进度回调
+  onChange?: (file: UploadFile | null, action: 'upload' | 'remove') => void;
+  file?: UploadFile | null; // 外部控制的单个文件
   width?: string | number; // 宽度
   height?: string | number; // 高度
-  fileList?: UploadFile[]; // 由父组件控制文件列表
+  children?: React.ReactNode; // 上传完成后的内容（例如远程图片）
 }
 
 const CustomizedFileUpload: React.FC<UploadProps> = ({
   accept = '*',
-  multiple = false,
-  maxCount = 10,
   maxSize = 10,
   onChange,
-  onProgress,
+  file = null,
   width,
   height,
-  fileList: externalFileList = [],
+  children,
 }) => {
-  const [fileList, setFileList] = useState<UploadFile[]>(externalFileList);
-
-  // 同步外部 fileList
-  useEffect(() => {
-    setFileList(externalFileList);
-  }, [externalFileList]);
-
   // 处理文件选择
   const handleFileChange = useCallback(
     (files: FileList | null) => {
-      if (!files) return;
+      if (!files || files.length === 0) return;
 
-      const newFiles: UploadFile[] = Array.from(files).map((file) => ({
+      const selectedFile = files[0];
+      const fileSizeMB = selectedFile.size / 1024 / 1024;
+      if (fileSizeMB > maxSize) {
+        alert(`文件 ${selectedFile.name} 超过大小限制 (${maxSize}MB)`);
+        return;
+      }
+
+      const newFile: UploadFile = {
         uid: Math.random().toString(36).substring(2),
-        name: file.name,
-        status: 'uploading' as const,
-        file,
+        name: selectedFile.name,
+        status: 'uploading',
+        file: selectedFile,
         progress: 0,
-        previewUrl: file.type.startsWith('image/') ? URL.createObjectURL(file) : undefined,
-      }));
+        previewUrl: selectedFile.type.startsWith('image/') ? URL.createObjectURL(selectedFile) : undefined,
+      };
 
-      // 验证文件大小和数量
-      const validFiles = newFiles.filter((file) => {
-        const fileSizeMB = file.file.size / 1024 / 1024;
-        if (fileSizeMB > maxSize) {
-          alert(`文件 ${file.name} 超过大小限制 (${maxSize}MB)`);
-          return false;
-        }
-        return true;
-      });
+      // 释放旧预览 URL
+      if (file?.previewUrl) {
+        URL.revokeObjectURL(file.previewUrl);
+      }
 
-      // 替换当前文件列表
-      const updatedFileList = validFiles.slice(0, maxCount);
-      setFileList(updatedFileList);
-      onChange?.(updatedFileList, 'upload');
-
-      // 释放旧的预览 URL
-      fileList.forEach((file) => {
-        if (file.previewUrl) {
-          URL.revokeObjectURL(file.previewUrl);
-        }
-      });
+      onChange?.(newFile, 'upload');
     },
-    [fileList, maxCount, maxSize, onChange]
+    [file, maxSize, onChange]
   );
 
   // 处理拖拽上传
@@ -140,37 +121,20 @@ const CustomizedFileUpload: React.FC<UploadProps> = ({
 
   // 处理文件删除
   const handleRemove = useCallback(() => {
-    const updatedFileList = fileList.map((file) => ({ ...file, status: 'removed' as const }));
-    const filteredFileList = updatedFileList.filter((file) => file.status !== 'removed');
-    setFileList(filteredFileList);
-    onChange?.(filteredFileList, 'remove');
-
-    // 释放图片预览 URL
-    fileList.forEach((file) => {
-      if (file.previewUrl) {
-        URL.revokeObjectURL(file.previewUrl);
-      }
-    });
-  }, [fileList, onChange]);
+    if (file?.previewUrl) {
+      URL.revokeObjectURL(file.previewUrl);
+    }
+    onChange?.(null, 'remove');
+  }, [file, onChange]);
 
   // 清理预览 URL
   useEffect(() => {
     return () => {
-      fileList.forEach((file) => {
-        if (file.previewUrl) {
-          URL.revokeObjectURL(file.previewUrl);
-        }
-      });
+      if (file?.previewUrl) {
+        URL.revokeObjectURL(file.previewUrl);
+      }
     };
-  }, [fileList]);
-
-  // 检查是否有图片文件用于预览
-  const hasImagePreview = fileList.some(
-    (file) => file.status === 'done' && file.file.type.startsWith('image/')
-  );
-  const previewFile = fileList.find(
-    (file) => file.status === 'done' && file.file.type.startsWith('image/')
-  );
+  }, [file]);
 
   return (
     <Box>
@@ -181,7 +145,7 @@ const CustomizedFileUpload: React.FC<UploadProps> = ({
         width={width}
         height={height}
         onClick={() => {
-          if (!fileList.some((file) => file.status === 'uploading')) {
+          if (file?.status !== 'uploading') {
             document.getElementById('file-upload')?.click();
           }
         }}
@@ -189,18 +153,21 @@ const CustomizedFileUpload: React.FC<UploadProps> = ({
         <input
           type="file"
           accept={accept}
-          multiple={multiple}
+          multiple={false}
           style={{ display: 'none' }}
           id="file-upload"
           onChange={(e) => handleFileChange(e.target.files)}
         />
-        {fileList.some((file) => file.status === 'uploading') ? (
-          <Box sx={{ width: '100%', position: 'absolute', top: 0, left: 0 }}>
-            <LinearProgress variant="determinate" value={fileList[0]?.progress || 0} />
-          </Box>
-        ) : hasImagePreview && previewFile?.previewUrl ? (
+        {file?.status === 'uploading' && file?.previewUrl ? (
           <>
-            <PreviewImage src={previewFile.previewUrl} alt="Preview" />
+            <PreviewImage src={file.previewUrl} alt="Local Preview" />
+            <Box sx={{ width: '100%', position: 'absolute', top: 0, left: 0 }}>
+              <LinearProgress variant="determinate" value={file.progress || 0} />
+            </Box>
+          </>
+        ) : file?.status === 'done' ? (
+          <>
+            {children}
             <DeleteButton onClick={(e) => { e.stopPropagation(); handleRemove(); }}>
               <DeleteIcon fontSize="small" />
             </DeleteButton>
@@ -217,7 +184,7 @@ const CustomizedFileUpload: React.FC<UploadProps> = ({
           </>
         )}
       </UploadArea>
-      {hasImagePreview && previewFile && (
+      {file?.status === 'done' && (
         <Typography
           variant="caption"
           color="textPrimary"
@@ -231,7 +198,7 @@ const CustomizedFileUpload: React.FC<UploadProps> = ({
             whiteSpace: 'nowrap',
           }}
         >
-          {previewFile.name}
+          {file.name}
         </Typography>
       )}
     </Box>

@@ -11,6 +11,7 @@ import { Dayjs } from 'dayjs';
 import AddCircleSharpIcon from '@mui/icons-material/AddCircleSharp';
 import DeleteIcon from '@/assets/image/svg/delete.svg';
 import CustomizedFileUpload, { UploadFile } from '@/components/CustomizedFileUpload';
+import { uploadSystemFile } from '@/api/system_file';
 
 interface FormProductValues {
   rowNumber: number;
@@ -24,8 +25,10 @@ interface FormProductValues {
 }
 
 interface FormAttachmentValues {
-  file_id: number;
-  remarks: string;
+  file_id?: number;
+  remarks?: string;
+
+  file?: UploadFile | null;
 }
 
 interface FormValues {
@@ -59,43 +62,6 @@ interface ErpPurchaseOrderAddProps {
   onSubmit: () => void;
 }
 
-// 上传文件的 HTTP POST 方法
-const uploadFile = async (
-  file: File,
-  onProgress: (progress: number) => void
-): Promise<void> => {
-  const formData = new FormData();
-  formData.append('file', file);
-
-  try {
-    // const response = await fetch('https://api.example.com/upload', {
-    //   method: 'POST',
-    //   body: formData,
-    // });
-
-    // 模拟进度（因 fetch 不直接支持 onprogress，实际需使用 XMLHttpRequest）
-    // 这里为了演示，使用定时器模拟，实际使用请替换为真实进度
-    return new Promise((resolve, reject) => {
-      let progress = 0;
-      const interval = setInterval(() => {
-        progress += 10;
-        onProgress(progress);
-        if (progress >= 100) {
-          clearInterval(interval);
-          resolve();
-          // if (response.ok) {
-          //   resolve();
-          // } else {
-          //   reject(new Error('Upload failed'));
-          // }
-        }
-      }, 100);
-    });
-  } catch (error) {
-    throw error;
-  }
-};
-
 const ErpPurchaseOrderAdd = forwardRef(({ onSubmit }: ErpPurchaseOrderAddProps, ref) => {
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
@@ -117,11 +83,6 @@ const ErpPurchaseOrderAdd = forwardRef(({ onSubmit }: ErpPurchaseOrderAddProps, 
   const [errors, setErrors] = useState<FormErrors>({
     purchase_products: [],
   });
-
-  // 测试文件上传
-  const [uploadComponents, setUploadComponents] = useState<
-    { id: number; hasFile: boolean; fileList: UploadFile[] }[]
-  >([{ id: 0, hasFile: false, fileList: [] }]);
 
   const TableContainer = styled(Box)({
     display: 'table',
@@ -352,104 +313,67 @@ const ErpPurchaseOrderAdd = forwardRef(({ onSubmit }: ErpPurchaseOrderAddProps, 
     }));
   }, []);
 
-  // const handleFileChange = useCallback((files: UploadFile[], action: 'upload' | 'remove', index: number) => {
-  //   console.log(`Upload ${index} files updated:`, files);
-  //   // 上传文件 TODO
-  //   setFormValues((prev) => {
+  const handleFileChange = useCallback(async (file: UploadFile | null, action: 'upload' | 'remove', index: number) => {
+    console.log(`Upload ${index} file updated:`, file, `Action: ${action}`);
 
-  //     return { ...prev };
-  //   })
-  //   // 如果上传完成（有文件且状态为 done），添加一个新上传框
-  //   if (files.length > 0 && files.every((file) => file.status === 'done')) {
-  //     // setUploadComponents((prev) => [...prev, prev.length]);
+    if (action === 'upload' && file) {
+      // 更新文件列表,增加一个附件,等待上传完成后在写入信息
+      setFormValues((prev) => {
+        return { ...prev, purchase_attachment: [...prev.purchase_attachment, { file }] };
+      })
 
-  //   }
-  // }, []);
-
-  const handleFileChange = useCallback(
-    async (files: UploadFile[], action: 'upload' | 'remove', index: number) => {
-      console.log(`Upload ${index} files updated:`, files, `Action: ${action}`);
-
-      if (action === 'upload' && files.length > 0) {
-        // 更新文件列表
-        setUploadComponents((prev) => {
-          const updatedComponents = [...prev];
-          updatedComponents[index] = { ...updatedComponents[index], fileList: files };
-          return updatedComponents;
+      // 上传文件
+      try {
+        await uploadSystemFile(file.file, (progress) => {
+          setFormValues((prev) => {
+            const updatedAttachments = prev.purchase_attachment.map((item, idx) => {
+              if (idx !== index) return item;
+              const updatedItem = { ...item, file: { ...item.file!, progress } };
+              return updatedItem;
+            })
+            return { ...prev, purchase_attachment: updatedAttachments };
+          });
+        }).then(id => {
+          setFormValues((prev) => {
+            const updatedAttachments = prev.purchase_attachment.map((item, idx) => {
+              if (idx !== index) return item;
+              const updatedItem = { ...item, file_id: id };
+              return updatedItem;
+            })
+            return { ...prev, purchase_attachment: updatedAttachments };
+          })
         });
 
-        // 执行上传
-        try {
-          await Promise.all(
-            files.map((file) =>
-              uploadFile(file.file, (progress) => {
-                setUploadComponents((prev) => {
-                  const updatedComponents = [...prev];
-                  updatedComponents[index] = {
-                    ...updatedComponents[index],
-                    fileList: updatedComponents[index].fileList.map((f) =>
-                      f.uid === file.uid ? { ...f, progress } : f
-                    ),
-                  };
-                  return updatedComponents;
-                });
-              })
-            )
-          );
 
-          // 上传完成
-          setUploadComponents((prev) => {
-            let updatedComponents = [...prev];
-            updatedComponents[index] = {
-              ...updatedComponents[index],
-              hasFile: true,
-              fileList: updatedComponents[index].fileList.map((f) => ({
-                ...f,
-                status: 'done' as const,
-              })),
-            };
-
-            // 如果最后一个上传框有文件，添加新上传框
-            if (updatedComponents[updatedComponents.length - 1].hasFile) {
-              updatedComponents = [
-                ...updatedComponents,
-                { id: updatedComponents.length, hasFile: false, fileList: [] },
-              ];
-            }
-
-            return updatedComponents;
-          });
-        } catch (error) {
-          // 上传失败
-          setUploadComponents((prev) => {
-            const updatedComponents = [...prev];
-            updatedComponents[index] = {
-              ...updatedComponents[index],
-              fileList: updatedComponents[index].fileList.map((f) => ({
-                ...f,
-                status: 'error' as const,
-              })),
-            };
-            return updatedComponents;
-          });
-        }
-      } else if (action === 'remove') {
-        // 删除文件并移除上传框
-        setUploadComponents((prev) => {
-          let updatedComponents = prev.filter((_, i) => i !== index);
-          // 确保至少有一个空上传框
-          if (updatedComponents.length === 0 || updatedComponents.every((comp) => comp.hasFile)) {
-            updatedComponents = [
-              ...updatedComponents,
-              { id: updatedComponents.length, hasFile: false, fileList: [] },
-            ];
-          }
-          return updatedComponents;
+        // 上传完成
+        setFormValues((prev) => {
+          const updatedAttachments = prev.purchase_attachment.map((item, idx) => {
+            if (idx !== index) return item;
+            const updatedItem = { ...item, file: { ...item.file!, status: 'done' as const } };
+            return updatedItem;
+          })
+          return { ...prev, purchase_attachment: updatedAttachments };
+        });
+      } catch (error) {
+        console.error('upload file error', error);
+        // 上传失败
+        setFormValues((prev) => {
+          const updatedAttachments = prev.purchase_attachment.map((item, idx) => {
+            if (idx !== index) return item;
+            const updatedItem = { ...item, file: { ...item.file!, status: 'error' as const } };
+            return updatedItem;
+          })
+          return { ...prev, purchase_attachment: updatedAttachments };
         });
       }
-    },
-    []
-  );
+    } else if (action === 'remove') {
+      // 删除文件并移除上传框
+      setFormValues((prev) => {
+        const updatedAttachments = prev.purchase_attachment.filter((_, idx) => idx !== index);
+        return { ...prev, purchase_attachment: updatedAttachments };
+      });
+    }
+  }, []);
 
   return (
     <CustomizedDialog
@@ -704,75 +628,33 @@ const ErpPurchaseOrderAdd = forwardRef(({ onSubmit }: ErpPurchaseOrderAddProps, 
         <Typography variant="body1" sx={{ mt: 3, fontSize: '1rem', fontWeight: 500 }}>
           {t('page.erp.purchase.order.title.attachment')}
         </Typography>
-        {/* <Card variant="outlined" sx={{ width: '100%', mt: 1, p: 2 }}>
+        <Card variant="outlined" sx={{ width: '100%', mt: 1, p: 2 }}>
           <Grid container rowSpacing={2} columnSpacing={4} sx={{ '& .MuiGrid-root': { display: 'flex', justifyContent: 'center', alignItems: 'center' } }}>
             {formValues.purchase_attachment.map((item, index) => (
-              <Grid key={index} size={{ xs: 12, md: 12 / 5 }}>
+              <Grid key={index} size={{ xs: 12, md: 6 }}>
                 <CustomizedFileUpload
                   accept=".jpg,.png"
-                  multiple={false}
-                  maxCount={1}
                   maxSize={5}
                   onChange={(files, action) => handleFileChange(files, action, index)}
-                  onProgress={(uid, progress) => {
-                    setUploadComponents((prev) => {
-                      const updatedComponents = [...prev];
-                      updatedComponents[index] = {
-                        ...updatedComponents[index],
-                        fileList: updatedComponents[index].fileList.map((f) =>
-                          f.uid === uid ? { ...f, progress } : f
-                        ),
-                      };
-                      return updatedComponents;
-                    });
-                  }}
-                  fileList={comp.fileList}
+                  file={item.file}
                   width={480}
                   height={280}
-                />
+                >
+                  <Box></Box>
+                </CustomizedFileUpload>
               </Grid>
             ))}
             <Grid size={{ xs: 12, md: 6 }}>
               <CustomizedFileUpload
                 accept=".jpg,.png,.pdf"
-                multiple
-                maxCount={5}
                 maxSize={5}
-                onChange={handleFileChange}
+                onChange={(file, action) => handleFileChange(file, action, formValues.purchase_attachment.length)}
                 width={480}
                 height={280}
-              />
+              >
+                <Box></Box>
+              </CustomizedFileUpload>
             </Grid>
-          </Grid>
-        </Card> */}
-        <Card variant="outlined" sx={{ width: '100%', mt: 1, p: 2 }}>
-          <Grid container rowSpacing={2} columnSpacing={4} sx={{ '& .MuiGrid-root': { display: 'flex', justifyContent: 'center', alignItems: 'center' } }}>
-            {uploadComponents.map((comp, index) => (
-              <Box key={comp.id} sx={{ mb: 2 }}>
-                <CustomizedFileUpload
-                  accept=".jpg,.png"
-                  multiple={false}
-                  maxCount={1}
-                  maxSize={5}
-                  onChange={(files, action) => handleFileChange(files, action, index)}
-                  onProgress={(uid, progress) => {
-                    setUploadComponents((prev) => {
-                      const updatedComponents = [...prev];
-                      updatedComponents[index] = {
-                        ...updatedComponents[index],
-                        fileList: updatedComponents[index].fileList.map((f) =>
-                          f.uid === uid ? { ...f, progress } : f
-                        ),
-                      };
-                      return updatedComponents;
-                    });
-                  }}
-                  fileList={comp.fileList}
-                  width={400}
-                  height={200}
-                />
-              </Box>
-            ))}
           </Grid>
         </Card>
       </Box>

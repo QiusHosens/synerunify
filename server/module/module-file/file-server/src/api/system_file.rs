@@ -271,38 +271,3 @@ async fn download(
         file.data,
     ))
 }
-
-// #[utoipa::path(
-//     get,
-//     path = "/download/{file_id}/{file_name}",
-//     params(
-//         ("file_id" = String, Path, description = "File ID"),
-//         ("file_name" = String, Path, description = "File name")
-//     ),
-//     responses(
-//         (status = 200, description = "File downloaded successfully", content_type = "application/octet-stream"),
-//         (status = 404, description = "File not found"),
-//         (status = 500, description = "Internal server error")
-//     )
-// )]
-// async fn download_file(
-//     State(state): State<Arc<AppState>>,
-//     Path((file_id, file_name)): Path<(String, String)>,
-// ) -> Result<impl IntoResponse, StatusCode> {
-//     let bucket_name = "uploads";
-//     let minio = &state.minio;
-
-//     let data = minio
-//         .download_file(bucket_name, &file_id, &file_name)
-//         .await
-//         .map_err(|e| match e {
-//             MinioError::NotFound => StatusCode::NOT_FOUND,
-//             _ => StatusCode::INTERNAL_SERVER_ERROR,
-//         })?;
-
-//     Ok((
-//         StatusCode::OK,
-//         [(axum::http::header::CONTENT_TYPE, "application/octet-stream")],
-//         data,
-//     ))
-// }
