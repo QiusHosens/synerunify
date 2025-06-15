@@ -633,8 +633,9 @@ const ErpPurchaseOrderAdd = forwardRef(({ onSubmit }: ErpPurchaseOrderAddProps, 
             {formValues.purchase_attachment.map((item, index) => (
               <Grid key={index} size={{ xs: 12, md: 6 }}>
                 <CustomizedFileUpload
-                  accept=".jpg,.png"
-                  maxSize={5}
+                  id={'file-upload-' + index}
+                  accept=".jpg,jpeg,.png"
+                  maxSize={100}
                   onChange={(files, action) => handleFileChange(files, action, index)}
                   file={item.file}
                   width={480}
@@ -646,8 +647,9 @@ const ErpPurchaseOrderAdd = forwardRef(({ onSubmit }: ErpPurchaseOrderAddProps, 
             ))}
             <Grid size={{ xs: 12, md: 6 }}>
               <CustomizedFileUpload
-                accept=".jpg,.png,.pdf"
-                maxSize={5}
+                id={'file-upload-' + formValues.purchase_attachment.length}
+                accept=".jpg,jpeg,.png"
+                maxSize={100}
                 onChange={(file, action) => handleFileChange(file, action, formValues.purchase_attachment.length)}
                 width={480}
                 height={280}
