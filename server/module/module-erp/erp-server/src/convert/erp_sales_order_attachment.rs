@@ -5,31 +5,27 @@ use erp_model::response::erp_sales_order_attachment::ErpSalesOrderAttachmentResp
 
 pub fn create_request_to_model(request: &CreateErpSalesOrderAttachmentRequest) -> ErpSalesOrderAttachmentActiveModel {
     ErpSalesOrderAttachmentActiveModel {
-        order_id: request.order_id.as_ref().map_or(NotSet, |order_id| Set(Some(order_id.clone()))),
-        file_id: request.file_id.as_ref().map_or(NotSet, |file_id| Set(Some(file_id.clone()))),
+        file_id: Set(request.file_id.clone()),
         remarks: request.remarks.as_ref().map_or(NotSet, |remarks| Set(Some(remarks.clone()))),
-        department_code: Set(request.department_code.clone()),
-        department_id: Set(request.department_id.clone()),
+        ..Default::default()
+    }
+}
+
+pub fn update_add_request_to_model(request: &UpdateErpSalesOrderAttachmentRequest) -> ErpSalesOrderAttachmentActiveModel {
+    ErpSalesOrderAttachmentActiveModel {
+        file_id: Set(request.file_id.clone()),
+        remarks: request.remarks.as_ref().map_or(NotSet, |remarks| Set(Some(remarks.clone()))),
         ..Default::default()
     }
 }
 
 pub fn update_request_to_model(request: &UpdateErpSalesOrderAttachmentRequest, existing: ErpSalesOrderAttachment) -> ErpSalesOrderAttachmentActiveModel {
     let mut active_model: ErpSalesOrderAttachmentActiveModel = existing.into();
-    if let Some(order_id) = &request.order_id { 
-        active_model.order_id = Set(Some(order_id.clone()));
-    }
-    if let Some(file_id) = &request.file_id { 
-        active_model.file_id = Set(Some(file_id.clone()));
+    if let file_id = &request.file_id { 
+        active_model.file_id = Set(file_id.clone());
     }
     if let Some(remarks) = &request.remarks { 
         active_model.remarks = Set(Some(remarks.clone()));
-    }
-    if let Some(department_code) = &request.department_code { 
-        active_model.department_code = Set(department_code.clone());
-    }
-    if let Some(department_id) = &request.department_id { 
-        active_model.department_id = Set(department_id.clone());
     }
     active_model
 }

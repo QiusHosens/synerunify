@@ -10,11 +10,11 @@ pub struct Model {
     #[sea_orm(primary_key)]
     pub id: i64, // 订单ID
     
-    pub order_number: String, // 订单编号
+    pub order_number: i64, // 订单编号
     
-    pub customer_id: Option<i64>, // 客户ID
+    pub customer_id: i64, // 客户ID
     
-    pub user_id: Option<i64>, // 用户ID
+    pub user_id: i64, // 用户ID
     
     pub order_date: NaiveDateTime, // 订单日期
     
@@ -27,6 +27,8 @@ pub struct Model {
     pub settlement_account_id: Option<i64>, // 结算账户ID
     
     pub deposit: Option<i64>, // 定金
+
+    pub remarks: Option<String>, // 备注
     
     pub department_code: String, // 部门编码
     

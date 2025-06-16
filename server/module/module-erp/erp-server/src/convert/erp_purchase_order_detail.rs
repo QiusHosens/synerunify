@@ -29,6 +29,9 @@ pub fn update_add_request_to_model(request: &UpdateErpPurchaseOrderDetailRequest
 
 pub fn update_request_to_model(request: &UpdateErpPurchaseOrderDetailRequest, existing: ErpPurchaseOrderDetail) -> ErpPurchaseOrderDetailActiveModel {
     let mut active_model: ErpPurchaseOrderDetailActiveModel = existing.into();
+    if let product_id = &request.product_id { 
+        active_model.product_id = Set(product_id.clone());
+    }
     if let quantity = &request.quantity { 
         active_model.quantity = Set(quantity.clone());
     }

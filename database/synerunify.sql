@@ -1,17 +1,17 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : 192.168.1.18_synerunify
+ Source Server         : 192.168.0.99_synerunify
  Source Server Type    : MySQL
- Source Server Version : 80200 (8.2.0)
- Source Host           : 192.168.1.18:3306
+ Source Server Version : 80100 (8.1.0)
+ Source Host           : 192.168.0.99:30010
  Source Schema         : synerunify
 
  Target Server Type    : MySQL
- Target Server Version : 80200 (8.2.0)
+ Target Server Version : 80100 (8.1.0)
  File Encoding         : 65001
 
- Date: 15/06/2025 21:46:30
+ Date: 16/06/2025 17:47:22
 */
 
 SET NAMES utf8mb4;
@@ -591,15 +591,16 @@ CREATE TABLE `erp_receipt_detail`  (
 DROP TABLE IF EXISTS `erp_sales_order`;
 CREATE TABLE `erp_sales_order`  (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '订单ID',
-  `order_number` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '订单编号',
-  `customer_id` bigint NULL DEFAULT NULL COMMENT '客户ID',
-  `user_id` bigint NULL DEFAULT NULL COMMENT '用户ID',
+  `order_number` bigint NOT NULL COMMENT '订单编号',
+  `customer_id` bigint NOT NULL COMMENT '客户ID',
+  `user_id` bigint NOT NULL COMMENT '用户ID',
   `order_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '订单日期',
   `total_amount` bigint NOT NULL COMMENT '总金额',
   `order_status` tinyint NOT NULL DEFAULT 0 COMMENT '订单状态 (0=pending, 1=completed, 2=cancelled)',
   `discount_rate` bigint NULL DEFAULT 0 COMMENT '优惠率（百分比，1000表示10.00%）',
   `settlement_account_id` bigint NULL DEFAULT NULL COMMENT '结算账户ID',
   `deposit` bigint NULL DEFAULT 0 COMMENT '定金',
+  `remarks` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
   `department_code` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '部门编码',
   `department_id` bigint NOT NULL COMMENT '部门ID',
   `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
@@ -622,8 +623,8 @@ CREATE TABLE `erp_sales_order`  (
 DROP TABLE IF EXISTS `erp_sales_order_attachment`;
 CREATE TABLE `erp_sales_order_attachment`  (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '附件ID',
-  `order_id` bigint NULL DEFAULT NULL COMMENT '销售订单ID',
-  `file_id` bigint NULL DEFAULT NULL COMMENT '文件ID',
+  `order_id` bigint NOT NULL COMMENT '销售订单ID',
+  `file_id` bigint NOT NULL COMMENT '文件ID',
   `remarks` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
   `department_code` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '部门编码',
   `department_id` bigint NOT NULL COMMENT '部门ID',
@@ -1013,7 +1014,7 @@ CREATE TABLE `system_menu`  (
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 160 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '菜单权限表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 161 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '菜单权限表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of system_menu
@@ -1161,8 +1162,8 @@ INSERT INTO `system_menu` VALUES (154, '查看', 'erp:purchase:order:get', 3, 0,
 INSERT INTO `system_menu` VALUES (155, '新增', 'erp:purchase:order:add', 3, 1, 90, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:13:19', 1, '2025-06-10 02:13:19', b'0');
 INSERT INTO `system_menu` VALUES (156, '修改', 'erp:purchase:order:edit', 3, 2, 90, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:13:36', 1, '2025-06-10 02:13:36', b'0');
 INSERT INTO `system_menu` VALUES (157, '删除', 'erp:purchase:order:delete', 3, 3, 90, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:13:54', 1, '2025-06-10 02:13:54', b'0');
-INSERT INTO `system_menu` VALUES (158, '修改状态', 'erp:purchase:order:edit.status', 3, 4, 90, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:15:01', 1, '2025-06-12 02:48:53', b'0');
-INSERT INTO `system_menu` VALUES (159, '取消订单', 'erp:purchase:order:cancel', 3, 5, 90, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:15:29', 1, '2025-06-12 02:49:10', b'0');
+INSERT INTO `system_menu` VALUES (158, '已收货', 'erp:purchase:order:received', 3, 4, 90, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:15:01', 1, '2025-06-16 08:39:45', b'0');
+INSERT INTO `system_menu` VALUES (159, '取消订单', 'erp:purchase:order:cancel', 3, 5, 90, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:15:29', 1, '2025-06-16 08:39:50', b'0');
 
 -- ----------------------------
 -- Table structure for system_notice

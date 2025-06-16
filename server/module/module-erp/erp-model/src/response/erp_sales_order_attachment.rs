@@ -9,9 +9,9 @@ pub struct ErpSalesOrderAttachmentResponse {
     
     pub id: i64, // 附件ID
     
-    pub order_id: Option<i64>, // 销售订单ID
+    pub order_id: i64, // 销售订单ID
     
-    pub file_id: Option<i64>, // 文件ID
+    pub file_id: i64, // 文件ID
     
     pub remarks: Option<String>, // 备注
     

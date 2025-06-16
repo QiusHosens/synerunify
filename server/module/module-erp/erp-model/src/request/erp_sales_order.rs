@@ -5,15 +5,14 @@ use utoipa::ToSchema;
 use common::base::page::PaginatedRequest;
 use common::formatter::string_date_time::StringDateTime;
 
+use crate::request::erp_sales_order_attachment::{CreateErpSalesOrderAttachmentRequest, UpdateErpSalesOrderAttachmentRequest};
+use crate::request::erp_sales_order_detail::{CreateErpSalesOrderDetailRequest, UpdateErpSalesOrderDetailRequest};
+
 #[serde_as]
 #[derive(Serialize, Deserialize, Debug, ToSchema)]
 pub struct CreateErpSalesOrderRequest {
     
-    pub order_number: String, // 订单编号
-    
-    pub customer_id: Option<i64>, // 客户ID
-    
-    pub user_id: Option<i64>, // 用户ID
+    pub customer_id: i64, // 客户ID
     
     // #[serde_as(as = "DisplayFromStr")]
     // #[serde(with = "serde_with::chrono::naive_datetime")]
@@ -23,13 +22,17 @@ pub struct CreateErpSalesOrderRequest {
     
     pub total_amount: i64, // 总金额
     
-    pub order_status: i8, // 订单状态 (0=pending, 1=completed, 2=cancelled)
-    
     pub discount_rate: Option<i64>, // 优惠率（百分比，1000表示10.00%）
     
     pub settlement_account_id: Option<i64>, // 结算账户ID
     
     pub deposit: Option<i64>, // 定金
+
+    pub remarks: Option<String>, // 备注
+
+    pub sale_products: Vec<CreateErpSalesOrderDetailRequest>, // 销售的产品列表
+
+    pub sale_attachment: Vec<CreateErpSalesOrderAttachmentRequest>, // 销售的附件列表
     
 }
 
@@ -38,11 +41,7 @@ pub struct UpdateErpSalesOrderRequest {
     
     pub id: i64, // 订单ID
     
-    pub order_number: Option<String>, // 订单编号
-    
     pub customer_id: Option<i64>, // 客户ID
-    
-    pub user_id: Option<i64>, // 用户ID
     
     // #[serde_as(as = "DisplayFromStr")]
     // #[serde(with = "serde_with::chrono::naive_datetime")]
@@ -51,13 +50,17 @@ pub struct UpdateErpSalesOrderRequest {
     
     pub total_amount: Option<i64>, // 总金额
     
-    pub order_status: Option<i8>, // 订单状态 (0=pending, 1=completed, 2=cancelled)
-    
     pub discount_rate: Option<i64>, // 优惠率（百分比，1000表示10.00%）
     
     pub settlement_account_id: Option<i64>, // 结算账户ID
     
     pub deposit: Option<i64>, // 定金
+
+    pub remarks: Option<String>, // 备注
+
+    pub sale_products: Vec<UpdateErpSalesOrderDetailRequest>, // 销售的产品列表
+
+    pub sale_attachment: Vec<UpdateErpSalesOrderAttachmentRequest>, // 销售的附件列表
     
 }
 

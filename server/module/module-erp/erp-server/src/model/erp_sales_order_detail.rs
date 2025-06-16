@@ -10,9 +10,9 @@ pub struct Model {
     #[sea_orm(primary_key)]
     pub id: i64, // 订单详情ID
     
-    pub order_id: Option<i64>, // 订单ID
+    pub order_id: i64, // 订单ID
     
-    pub product_id: Option<i64>, // 产品ID
+    pub product_id: i64, // 产品ID
     
     pub quantity: i32, // 数量
     
