@@ -46,13 +46,12 @@ const componentMap: { [key: string]: React.LazyExoticComponent<React.ComponentTy
 };
 
 export default function Router() {
-  const { t } = useTranslation();
   const { access_token } = useAuthStore();
   const navigate = useNavigate();
   const location = useLocation();
   const { hasFetched, routes, routeTree, fetchAndSetHome } = useHomeStore();
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [error] = useState(null);
 
   const hasInit = useRef(false);
 

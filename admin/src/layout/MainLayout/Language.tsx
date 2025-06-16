@@ -8,7 +8,7 @@ import CountrySAIcon from '@/assets/image/svg/SA.svg';
 
 const Language = () => {
     const theme = useTheme();
-    const { t, i18n } = useTranslation();
+    const { i18n } = useTranslation();
 
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);

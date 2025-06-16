@@ -49,6 +49,7 @@ export default function RenderMenuItems({ routes, depth = 0 }: { routes: HomeMen
     };
     setInitialOpen(routes);
     setOpen((prev) => ({ ...prev, ...initialOpen }));
+  // }, []);
   }, [routes, location.pathname]);
 
   const handleClick = (id: number) => {
