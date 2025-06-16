@@ -11,16 +11,21 @@ pub fn create_request_to_model(request: &CreateErpPurchaseOrderAttachmentRequest
     }
 }
 
+pub fn update_add_request_to_model(request: &UpdateErpPurchaseOrderAttachmentRequest) -> ErpPurchaseOrderAttachmentActiveModel {
+    ErpPurchaseOrderAttachmentActiveModel {
+        file_id: Set(request.file_id.clone()),
+        remarks: request.remarks.as_ref().map_or(NotSet, |remarks| Set(Some(remarks.clone()))),
+        ..Default::default()
+    }
+}
+
 pub fn update_request_to_model(request: &UpdateErpPurchaseOrderAttachmentRequest, existing: ErpPurchaseOrderAttachment) -> ErpPurchaseOrderAttachmentActiveModel {
     let mut active_model: ErpPurchaseOrderAttachmentActiveModel = existing.into();
+    if let file_id = &request.file_id { 
+        active_model.file_id = Set(file_id.clone());
+    }
     if let Some(remarks) = &request.remarks { 
         active_model.remarks = Set(Some(remarks.clone()));
-    }
-    if let Some(department_code) = &request.department_code { 
-        active_model.department_code = Set(department_code.clone());
-    }
-    if let Some(department_id) = &request.department_id { 
-        active_model.department_id = Set(department_id.clone());
     }
     active_model
 }

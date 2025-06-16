@@ -15,15 +15,27 @@ pub fn create_request_to_model(request: &CreateErpPurchaseOrderDetailRequest) ->
     }
 }
 
+pub fn update_add_request_to_model(request: &UpdateErpPurchaseOrderDetailRequest) -> ErpPurchaseOrderDetailActiveModel {
+    ErpPurchaseOrderDetailActiveModel {
+        product_id: Set(request.product_id.clone()),
+        quantity: Set(request.quantity.clone()),
+        unit_price: Set(request.unit_price.clone()),
+        subtotal: Set(request.subtotal.clone()),
+        tax_rate: request.tax_rate.as_ref().map_or(NotSet, |tax_rate| Set(Some(tax_rate.clone()))),
+        remarks: request.remarks.as_ref().map_or(NotSet, |remarks| Set(Some(remarks.clone()))),
+        ..Default::default()
+    }
+}
+
 pub fn update_request_to_model(request: &UpdateErpPurchaseOrderDetailRequest, existing: ErpPurchaseOrderDetail) -> ErpPurchaseOrderDetailActiveModel {
     let mut active_model: ErpPurchaseOrderDetailActiveModel = existing.into();
-    if let Some(quantity) = &request.quantity { 
+    if let quantity = &request.quantity { 
         active_model.quantity = Set(quantity.clone());
     }
-    if let Some(unit_price) = &request.unit_price { 
+    if let unit_price = &request.unit_price { 
         active_model.unit_price = Set(unit_price.clone());
     }
-    if let Some(subtotal) = &request.subtotal { 
+    if let subtotal = &request.subtotal { 
         active_model.subtotal = Set(subtotal.clone());
     }
     if let Some(tax_rate) = &request.tax_rate { 
@@ -31,12 +43,6 @@ pub fn update_request_to_model(request: &UpdateErpPurchaseOrderDetailRequest, ex
     }
     if let Some(remarks) = &request.remarks { 
         active_model.remarks = Set(Some(remarks.clone()));
-    }
-    if let Some(department_code) = &request.department_code { 
-        active_model.department_code = Set(department_code.clone());
-    }
-    if let Some(department_id) = &request.department_id { 
-        active_model.department_id = Set(department_id.clone());
     }
     active_model
 }

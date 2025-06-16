@@ -5,7 +5,7 @@ use utoipa::ToSchema;
 use common::base::page::PaginatedRequest;
 use common::formatter::string_date_time::StringDateTime;
 
-use crate::request::{erp_purchase_order_attachment::CreateErpPurchaseOrderAttachmentRequest, erp_purchase_order_detail::CreateErpPurchaseOrderDetailRequest};
+use crate::request::{erp_purchase_order_attachment::{CreateErpPurchaseOrderAttachmentRequest, UpdateErpPurchaseOrderAttachmentRequest}, erp_purchase_order_detail::{CreateErpPurchaseOrderDetailRequest, UpdateErpPurchaseOrderDetailRequest}};
 
 #[serde_as]
 #[derive(Serialize, Deserialize, Debug, ToSchema)]
@@ -49,8 +49,6 @@ pub struct UpdateErpPurchaseOrderRequest {
     
     pub total_amount: Option<i64>, // 总金额
     
-    pub order_status: Option<i8>, // 订单状态 (0=pending, 1=completed, 2=cancelled)
-    
     pub discount_rate: Option<i64>, // 优惠率（百分比，1000表示10.00%）
     
     pub settlement_account_id: Option<i64>, // 结算账户ID
@@ -59,9 +57,9 @@ pub struct UpdateErpPurchaseOrderRequest {
     
     pub remarks: Option<String>, // 备注
 
-    pub purchase_products: Option<CreateErpPurchaseOrderDetailRequest>, // 采购的产品列表
+    pub purchase_products: Vec<UpdateErpPurchaseOrderDetailRequest>, // 采购的产品列表
 
-    pub purchase_attachment: Option<CreateErpPurchaseOrderAttachmentRequest>, // 采购的附件列表
+    pub purchase_attachment: Vec<UpdateErpPurchaseOrderAttachmentRequest>, // 采购的附件列表
     
 }
 

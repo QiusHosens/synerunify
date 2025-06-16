@@ -29,9 +29,6 @@ pub fn update_request_to_model(request: &UpdateErpPurchaseOrderRequest, existing
     if let Some(total_amount) = &request.total_amount { 
         active_model.total_amount = Set(total_amount.clone());
     }
-    if let Some(order_status) = &request.order_status { 
-        active_model.order_status = Set(order_status.clone());
-    }
     if let Some(discount_rate) = &request.discount_rate { 
         active_model.discount_rate = Set(Some(discount_rate.clone()));
     }

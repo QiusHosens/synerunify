@@ -95,13 +95,28 @@ pub async fn enable(db: &DatabaseConnection, login_user: LoginUserContext, id: i
     Ok(())
 }
 
-pub async fn enable_outer(_db: &DatabaseConnection, txn: &DatabaseTransaction, _login_user: LoginUserContext, ids: Vec<i64>) -> Result<()> {
+pub async fn enable_outer(_db: &DatabaseConnection, txn: &DatabaseTransaction, login_user: LoginUserContext, ids: Vec<i64>) -> Result<()> {
     if ids.is_empty() {
         return Ok(());
     }
 
     SystemFileEntity::update_many()
         .col_expr(Column::Status, Expr::value(STATUS_ENABLE))
+        .col_expr(Column::Updater, Expr::value(Some(login_user.id)))
+        .filter(Column::Id.is_in(ids))
+        .exec(txn)
+        .await?;
+    Ok(())
+}
+
+pub async fn disable_outer(_db: &DatabaseConnection, txn: &DatabaseTransaction, login_user: LoginUserContext, ids: Vec<i64>) -> Result<()> {
+    if ids.is_empty() {
+        return Ok(());
+    }
+
+    SystemFileEntity::update_many()
+        .col_expr(Column::Status, Expr::value(STATUS_DISABLE))
+        .col_expr(Column::Updater, Expr::value(Some(login_user.id)))
         .filter(Column::Id.is_in(ids))
         .exec(txn)
         .await?;
