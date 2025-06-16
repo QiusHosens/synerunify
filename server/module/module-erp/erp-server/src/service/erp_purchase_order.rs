@@ -11,7 +11,7 @@ use erp_model::response::erp_purchase_order::{ErpPurchaseOrderPageResponse, ErpP
 use crate::convert::erp_purchase_order::{create_request_to_model, model_to_page_response, model_to_response, update_request_to_model};
 use anyhow::{anyhow, Context, Result};
 use sea_orm::ActiveValue::Set;
-use common::constants::enum_constants::{STATUS_DISABLE, STATUS_ENABLE};
+use common::constants::enum_constants::{PURCHASE_ORDER_STATUS_CANCEL, PURCHASE_ORDER_STATUS_COMPLETE, PURCHASE_ORDER_STATUS_PLACED, PURCHASE_ORDER_STATUS_RECEIVED, STATUS_DISABLE, STATUS_ENABLE};
 use common::base::page::PaginatedResponse;
 use common::context::context::LoginUserContext;
 use common::interceptor::orm::active_filter::ActiveFilterEntityTrait;
@@ -26,7 +26,7 @@ pub async fn create(db: &DatabaseConnection, login_user: LoginUserContext, reque
     }
     
     erp_purchase_order.user_id = Set(login_user.id.clone());
-    erp_purchase_order.order_status = Set(0);
+    erp_purchase_order.order_status = Set(PURCHASE_ORDER_STATUS_PLACED);
     erp_purchase_order.department_id = Set(login_user.department_id.clone());
     erp_purchase_order.department_code = Set(login_user.department_code.clone());
     erp_purchase_order.creator = Set(Some(login_user.id.clone()));
@@ -51,6 +51,15 @@ pub async fn update(db: &DatabaseConnection, login_user: LoginUserContext, reque
         .one(db)
         .await?
         .ok_or_else(|| anyhow!("记录未找到"))?;
+
+    // 已收货/已完成状态订单不能修改
+    if PURCHASE_ORDER_STATUS_RECEIVED.eq(&erp_purchase_order.order_status) {
+        return Err(anyhow!("订单已收货,不能修改"));
+    }
+
+    if PURCHASE_ORDER_STATUS_COMPLETE.eq(&erp_purchase_order.order_status) {
+        return Err(anyhow!("订单已完成,不能修改"));
+    }
 
     let purchase_order = erp_purchase_order.clone();
 
@@ -126,4 +135,28 @@ pub async fn list(db: &DatabaseConnection, login_user: LoginUserContext) -> Resu
     let condition = Condition::all().add(Column::TenantId.eq(login_user.tenant_id));let list = ErpPurchaseOrderEntity::find_active_with_condition(condition)
         .all(db).await?;
     Ok(list.into_iter().map(model_to_response).collect())
+}
+
+/// 订单已收货
+pub async fn received(db: &DatabaseConnection, login_user: LoginUserContext, id: i64) -> Result<()> {
+    let erp_purchase_order = ErpPurchaseOrderActiveModel {
+        id: Set(id),
+        updater: Set(Some(login_user.id)),
+        order_status: Set(PURCHASE_ORDER_STATUS_RECEIVED),
+        ..Default::default()
+    };
+    erp_purchase_order.update(db).await?;
+    Ok(())
+}
+
+/// 取消订单
+pub async fn cancel(db: &DatabaseConnection, login_user: LoginUserContext, id: i64) -> Result<()> {
+    let erp_purchase_order = ErpPurchaseOrderActiveModel {
+        id: Set(id),
+        updater: Set(Some(login_user.id)),
+        order_status: Set(PURCHASE_ORDER_STATUS_CANCEL),
+        ..Default::default()
+    };
+    erp_purchase_order.update(db).await?;
+    Ok(())
 }

@@ -21,6 +21,8 @@ pub async fn erp_purchase_order_router(state: AppState) -> OpenApiRouter {
         .routes(routes!(get_by_id))
         .routes(routes!(list))
         .routes(routes!(page))
+        .routes(routes!(received))
+        .routes(routes!(cancel))
         .with_state(state)
 }
 
@@ -188,6 +190,60 @@ async fn list(
 ) -> CommonResult<Vec<ErpPurchaseOrderResponse>> {
     match service::erp_purchase_order::list(&state.db, login_user).await {
         Ok(data) => {CommonResult::with_data(data)}
+        Err(e) => {CommonResult::with_err(&e.to_string())}
+    }
+}
+
+#[utoipa::path(
+    post,
+    path = "/received/{id}",
+    operation_id = "erp_purchase_order_received",
+    params(
+        ("id" = i64, Path, description = "id")
+    ),
+    responses(
+        (status = 204, description = "received")
+    ),
+    tag = "erp_purchase_order",
+    security(
+        ("bearerAuth" = [])
+    )
+)]
+#[require_authorize(operation_id = "erp_purchase_order_received", authorize = "")]
+async fn received(
+    State(state): State<AppState>,
+    Extension(login_user): Extension<LoginUserContext>,
+    Path(id): Path<i64>,
+) -> CommonResult<()> {
+    match service::erp_purchase_order::received(&state.db, login_user, id).await {
+        Ok(_) => {CommonResult::with_none()}
+        Err(e) => {CommonResult::with_err(&e.to_string())}
+    }
+}
+
+#[utoipa::path(
+    post,
+    path = "/cancel/{id}",
+    operation_id = "erp_purchase_order_cancel",
+    params(
+        ("id" = i64, Path, description = "id")
+    ),
+    responses(
+        (status = 204, description = "cancel")
+    ),
+    tag = "erp_purchase_order",
+    security(
+        ("bearerAuth" = [])
+    )
+)]
+#[require_authorize(operation_id = "erp_purchase_order_cancel", authorize = "")]
+async fn cancel(
+    State(state): State<AppState>,
+    Extension(login_user): Extension<LoginUserContext>,
+    Path(id): Path<i64>,
+) -> CommonResult<()> {
+    match service::erp_purchase_order::cancel(&state.db, login_user, id).await {
+        Ok(_) => {CommonResult::with_none()}
         Err(e) => {CommonResult::with_err(&e.to_string())}
     }
 }

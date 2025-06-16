@@ -115,8 +115,6 @@ pub async fn update_batch(db: &DatabaseConnection, txn: &DatabaseTransaction, lo
             .filter(Column::Id.is_in(to_mark_deleted))
             .exec(txn)
             .await?;
-
-
     }
 
     // 批量更新（逐条更新，因内容不一致）
