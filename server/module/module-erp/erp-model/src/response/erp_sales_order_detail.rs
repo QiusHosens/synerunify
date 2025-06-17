@@ -42,3 +42,24 @@ pub struct ErpSalesOrderDetailResponse {
     pub update_time: NaiveDateTime, // 更新时间
     
 }
+
+#[derive(Deserialize, Serialize, Debug, Clone, ToSchema)]
+pub struct ErpSalesOrderDetailBaseResponse {
+    
+    pub id: i64, // 订单详情ID
+    
+    pub order_id: i64, // 订单ID
+    
+    pub product_id: i64, // 产品ID
+    
+    pub quantity: i32, // 数量
+    
+    pub unit_price: i64, // 单价
+    
+    pub subtotal: i64, // 小计
+    
+    pub tax_rate: Option<i32>, // 税率,精确到万分位
+    
+    pub remarks: Option<String>, // 备注
+    
+}

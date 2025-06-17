@@ -7,8 +7,8 @@ use crate::model::erp_supplier::{Model as ErpSupplierModel, ActiveModel as ErpSu
 use crate::model::erp_settlement_account::{Model as ErpSettlementAccountModel, ActiveModel as ErpSettlementAccountActiveModel, Entity as ErpSettlementAccountEntity};
 use crate::service::{erp_purchase_order_attachment, erp_purchase_order_detail};
 use erp_model::request::erp_purchase_order::{CreateErpPurchaseOrderRequest, UpdateErpPurchaseOrderRequest, PaginatedKeywordRequest};
-use erp_model::response::erp_purchase_order::{ErpPurchaseOrderPageResponse, ErpPurchaseOrderResponse};
-use crate::convert::erp_purchase_order::{create_request_to_model, model_to_page_response, model_to_response, update_request_to_model};
+use erp_model::response::erp_purchase_order::{ErpPurchaseOrderBaseResponse, ErpPurchaseOrderPageResponse, ErpPurchaseOrderResponse};
+use crate::convert::erp_purchase_order::{create_request_to_model, model_to_base_response, model_to_page_response, model_to_response, update_request_to_model};
 use anyhow::{anyhow, Context, Result};
 use sea_orm::ActiveValue::Set;
 use common::constants::enum_constants::{PURCHASE_ORDER_STATUS_CANCEL, PURCHASE_ORDER_STATUS_COMPLETE, PURCHASE_ORDER_STATUS_PLACED, PURCHASE_ORDER_STATUS_RECEIVED, STATUS_DISABLE, STATUS_ENABLE};
@@ -99,6 +99,23 @@ pub async fn get_by_id(db: &DatabaseConnection, login_user: LoginUserContext, id
     let erp_purchase_order = ErpPurchaseOrderEntity::find_active_with_condition(condition)
         .one(db).await?;
     Ok(erp_purchase_order.map(model_to_response))
+}
+
+pub async fn get_detail_by_id(db: &DatabaseConnection, login_user: LoginUserContext, id: i64) -> Result<Option<ErpPurchaseOrderBaseResponse>> {
+    let condition = Condition::all()
+            .add(Column::Id.eq(id))
+            .add(Column::TenantId.eq(login_user.tenant_id.clone()));
+            
+    let erp_purchase_order = ErpPurchaseOrderEntity::find_active_with_data_permission(login_user.clone())
+        .filter(condition)
+        .one(db).await?;
+    if erp_purchase_order.is_none() {
+        return Ok(None);
+    }
+    let erp_purchase_order = erp_purchase_order.unwrap();
+    let details = erp_purchase_order_detail::list_by_purchase_id(&db, login_user.clone(), id).await?;
+    let attachments = erp_purchase_order_attachment::list_by_purchase_id(&db, login_user, id).await?;
+    Ok(Some(model_to_base_response(erp_purchase_order, details, attachments)))
 }
 
 pub async fn get_paginated(db: &DatabaseConnection, login_user: LoginUserContext, params: PaginatedKeywordRequest) -> Result<PaginatedResponse<ErpPurchaseOrderPageResponse>> {

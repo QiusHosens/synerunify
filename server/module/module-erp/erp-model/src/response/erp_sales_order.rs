@@ -4,6 +4,8 @@ use utoipa::ToSchema;
 use serde_with::{serde_as, DisplayFromStr};
 use common::formatter::string_date_time::StringDateTime;
 
+use crate::response::{erp_sales_order_attachment::ErpSalesOrderAttachmentBaseResponse, erp_sales_order_detail::ErpSalesOrderDetailBaseResponse};
+
 // #[serde_as]
 #[derive(Deserialize, Serialize, Debug, Clone, ToSchema)]
 pub struct ErpSalesOrderResponse {
@@ -104,5 +106,39 @@ pub struct ErpSalesOrderPageResponse {
     pub customer_name: Option<String>, // 客户名
 
     pub settlement_account_name: Option<String>, // 结算账户名
+    
+}
+
+#[serde_as]
+#[derive(Deserialize, Serialize, Debug, Clone, ToSchema)]
+pub struct ErpSalesOrderBaseResponse {
+    
+    pub id: i64, // 订单ID
+    
+    pub order_number: i64, // 订单编号
+    
+    pub customer_id: i64, // 客户ID
+    
+    pub user_id: i64, // 用户ID
+    
+    // #[serde_as(as = "DisplayFromStr")]
+    // #[serde(with = "serde_with::chrono::naive_datetime")]
+    #[serde_as(as = "StringDateTime")]
+    #[schema(value_type = String, format = Date)]
+    pub order_date: NaiveDateTime, // 订单日期
+    
+    pub total_amount: i64, // 总金额
+    
+    pub order_status: i8, // 订单状态
+    
+    pub discount_rate: Option<i64>, // 优惠率（百分比，1000表示10.00%）
+    
+    pub settlement_account_id: Option<i64>, // 结算账户ID
+    
+    pub deposit: Option<i64>, // 定金
+
+    pub sale_products: Vec<ErpSalesOrderDetailBaseResponse>, // 销售的产品列表
+
+    pub sale_attachment: Vec<ErpSalesOrderAttachmentBaseResponse>, // 销售的附件列表
     
 }

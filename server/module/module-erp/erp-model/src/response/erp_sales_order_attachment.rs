@@ -34,3 +34,16 @@ pub struct ErpSalesOrderAttachmentResponse {
     pub update_time: NaiveDateTime, // 更新时间
     
 }
+
+#[derive(Deserialize, Serialize, Debug, Clone, ToSchema)]
+pub struct ErpSalesOrderAttachmentBaseResponse {
+    
+    pub id: i64, // 附件ID
+    
+    pub order_id: i64, // 销售订单ID
+    
+    pub file_id: i64, // 文件ID
+    
+    pub remarks: Option<String>, // 备注
+    
+}

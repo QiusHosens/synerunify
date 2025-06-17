@@ -1,7 +1,7 @@
 use sea_orm::{Set, NotSet};
 use crate::model::erp_sales_order_detail::{self, Model as ErpSalesOrderDetail, ActiveModel as ErpSalesOrderDetailActiveModel};
 use erp_model::request::erp_sales_order_detail::{CreateErpSalesOrderDetailRequest, UpdateErpSalesOrderDetailRequest};
-use erp_model::response::erp_sales_order_detail::ErpSalesOrderDetailResponse;
+use erp_model::response::erp_sales_order_detail::{ErpSalesOrderDetailBaseResponse, ErpSalesOrderDetailResponse};
 
 pub fn create_request_to_model(request: &CreateErpSalesOrderDetailRequest) -> ErpSalesOrderDetailActiveModel {
     ErpSalesOrderDetailActiveModel {
@@ -66,5 +66,18 @@ pub fn model_to_response(model: ErpSalesOrderDetail) -> ErpSalesOrderDetailRespo
         create_time: model.create_time,
         updater: model.updater,
         update_time: model.update_time,
+    }
+}
+
+pub fn model_to_base_response(model: ErpSalesOrderDetail) -> ErpSalesOrderDetailBaseResponse {
+    ErpSalesOrderDetailBaseResponse { 
+        id: model.id,
+        order_id: model.order_id,
+        product_id: model.product_id,
+        quantity: model.quantity,
+        unit_price: model.unit_price,
+        subtotal: model.subtotal,
+        tax_rate: model.tax_rate,
+        remarks: model.remarks,
     }
 }

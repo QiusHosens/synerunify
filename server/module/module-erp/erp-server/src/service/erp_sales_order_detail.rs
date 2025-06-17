@@ -5,8 +5,8 @@ use sea_orm::{ActiveModelTrait, ColumnTrait, Condition, DatabaseConnection, Data
 use crate::model::erp_sales_order_detail::{Model as ErpSalesOrderDetailModel, ActiveModel as ErpSalesOrderDetailActiveModel, Entity as ErpSalesOrderDetailEntity, Column};
 use crate::model::erp_sales_order::{Model as ErpSalesOrderModel};
 use erp_model::request::erp_sales_order_detail::{CreateErpSalesOrderDetailRequest, UpdateErpSalesOrderDetailRequest, PaginatedKeywordRequest};
-use erp_model::response::erp_sales_order_detail::ErpSalesOrderDetailResponse;
-use crate::convert::erp_sales_order_detail::{create_request_to_model, model_to_response, update_add_request_to_model, update_request_to_model};
+use erp_model::response::erp_sales_order_detail::{ErpSalesOrderDetailBaseResponse, ErpSalesOrderDetailResponse};
+use crate::convert::erp_sales_order_detail::{create_request_to_model, model_to_base_response, model_to_response, update_add_request_to_model, update_request_to_model};
 use anyhow::{anyhow, Context, Result};
 use sea_orm::ActiveValue::Set;
 use common::constants::enum_constants::{STATUS_DISABLE, STATUS_ENABLE};
@@ -168,4 +168,12 @@ pub async fn list(db: &DatabaseConnection, login_user: LoginUserContext) -> Resu
     let condition = Condition::all().add(Column::TenantId.eq(login_user.tenant_id));let list = ErpSalesOrderDetailEntity::find_active_with_condition(condition)
         .all(db).await?;
     Ok(list.into_iter().map(model_to_response).collect())
+}
+
+pub async fn list_by_sale_id(db: &DatabaseConnection, login_user: LoginUserContext, sale_id: i64) -> Result<Vec<ErpSalesOrderDetailBaseResponse>> {
+    let list = ErpSalesOrderDetailEntity::find_active_with_data_permission(login_user.clone())
+        .filter(Column::TenantId.eq(login_user.tenant_id))
+        .filter(Column::OrderId.eq(sale_id))
+        .all(db).await?;
+    Ok(list.into_iter().map(model_to_base_response).collect())
 }

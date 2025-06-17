@@ -1,7 +1,9 @@
+use erp_model::response::erp_purchase_order_attachment::ErpPurchaseOrderAttachmentBaseResponse;
+use erp_model::response::erp_purchase_order_detail::ErpPurchaseOrderDetailBaseResponse;
 use sea_orm::{Set, NotSet};
 use crate::model::erp_purchase_order::{self, Model as ErpPurchaseOrder, ActiveModel as ErpPurchaseOrderActiveModel};
 use erp_model::request::erp_purchase_order::{CreateErpPurchaseOrderRequest, UpdateErpPurchaseOrderRequest};
-use erp_model::response::erp_purchase_order::{ErpPurchaseOrderPageResponse, ErpPurchaseOrderResponse};
+use erp_model::response::erp_purchase_order::{ErpPurchaseOrderBaseResponse, ErpPurchaseOrderPageResponse, ErpPurchaseOrderResponse};
 use crate::model::erp_supplier::{Model as ErpSupplierModel, ActiveModel as ErpSupplierActiveModel, Entity as ErpSupplierEntity};
 use crate::model::erp_settlement_account::{Model as ErpSettlementAccountModel, ActiveModel as ErpSettlementAccountActiveModel, Entity as ErpSettlementAccountEntity};
 
@@ -91,5 +93,24 @@ pub fn model_to_page_response(model: ErpPurchaseOrder, model_supplier: Option<Er
 
         supplier_name,
         settlement_account_name,
+    }
+}
+
+pub fn model_to_base_response(model: ErpPurchaseOrder, details: Vec<ErpPurchaseOrderDetailBaseResponse>, attachments: Vec<ErpPurchaseOrderAttachmentBaseResponse>) -> ErpPurchaseOrderBaseResponse {
+    ErpPurchaseOrderBaseResponse { 
+        id: model.id,
+        order_number: model.order_number,
+        supplier_id: model.supplier_id,
+        user_id: model.user_id,
+        purchase_date: model.purchase_date,
+        total_amount: model.total_amount,
+        order_status: model.order_status,
+        discount_rate: model.discount_rate,
+        settlement_account_id: model.settlement_account_id,
+        deposit: model.deposit,
+        remarks: model.remarks,
+
+        purchase_products: details,
+        purchase_attachment: attachments,
     }
 }

@@ -6,7 +6,7 @@ use ctor;
 use macros::require_authorize;
 use axum::{routing::{get, post}, Router, extract::{State, Path, Json, Query}, response::IntoResponse, Extension};
 use common::base::page::PaginatedResponse;
-use erp_model::{request::erp_purchase_order::{CreateErpPurchaseOrderRequest, PaginatedKeywordRequest, UpdateErpPurchaseOrderRequest}, response::erp_purchase_order::ErpPurchaseOrderPageResponse};
+use erp_model::{request::erp_purchase_order::{CreateErpPurchaseOrderRequest, PaginatedKeywordRequest, UpdateErpPurchaseOrderRequest}, response::erp_purchase_order::{ErpPurchaseOrderBaseResponse, ErpPurchaseOrderPageResponse}};
 use erp_model::response::erp_purchase_order::ErpPurchaseOrderResponse;
 use common::base::response::CommonResult;
 use common::context::context::LoginUserContext;
@@ -23,6 +23,7 @@ pub async fn erp_purchase_order_router(state: AppState) -> OpenApiRouter {
         .routes(routes!(page))
         .routes(routes!(received))
         .routes(routes!(cancel))
+        .routes(routes!(get_detail_by_id))
         .with_state(state)
 }
 
@@ -190,6 +191,34 @@ async fn list(
 ) -> CommonResult<Vec<ErpPurchaseOrderResponse>> {
     match service::erp_purchase_order::list(&state.db, login_user).await {
         Ok(data) => {CommonResult::with_data(data)}
+        Err(e) => {CommonResult::with_err(&e.to_string())}
+    }
+}
+
+#[utoipa::path(
+    get,
+    path = "/get_detail/{id}",
+    operation_id = "erp_purchase_order_get_detail_by_id",
+    params(
+        ("id" = i64, Path, description = "id")
+    ),
+    responses(
+        (status = 200, description = "get detail by id", body = CommonResult<ErpPurchaseOrderBaseResponse>)
+    ),
+    tag = "erp_purchase_order",
+    security(
+        ("bearerAuth" = [])
+    )
+)]
+#[require_authorize(operation_id = "erp_purchase_order_get_detail_by_id", authorize = "")]
+async fn get_detail_by_id(
+    State(state): State<AppState>,
+    Extension(login_user): Extension<LoginUserContext>,
+    Path(id): Path<i64>,
+) -> CommonResult<ErpPurchaseOrderBaseResponse> {
+    match service::erp_purchase_order::get_detail_by_id(&state.db, login_user, id).await {
+        Ok(Some(data)) => {CommonResult::with_data(data)}
+        Ok(None) => {CommonResult::with_none()}
         Err(e) => {CommonResult::with_err(&e.to_string())}
     }
 }

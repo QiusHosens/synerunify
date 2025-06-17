@@ -1,9 +1,11 @@
+use erp_model::response::erp_sales_order_attachment::ErpSalesOrderAttachmentBaseResponse;
+use erp_model::response::erp_sales_order_detail::ErpSalesOrderDetailBaseResponse;
 use sea_orm::{Set, NotSet};
 use crate::model::erp_sales_order::{self, Model as ErpSalesOrder, ActiveModel as ErpSalesOrderActiveModel};
 use crate::model::erp_customer::{Model as ErpCustomerModel};
 use crate::model::erp_settlement_account::{Model as ErpSettlementAccountModel};
 use erp_model::request::erp_sales_order::{CreateErpSalesOrderRequest, UpdateErpSalesOrderRequest};
-use erp_model::response::erp_sales_order::{ErpSalesOrderPageResponse, ErpSalesOrderResponse};
+use erp_model::response::erp_sales_order::{ErpSalesOrderBaseResponse, ErpSalesOrderPageResponse, ErpSalesOrderResponse};
 
 pub fn create_request_to_model(request: &CreateErpSalesOrderRequest) -> ErpSalesOrderActiveModel {
     ErpSalesOrderActiveModel {
@@ -86,5 +88,23 @@ pub fn model_to_page_response(model: ErpSalesOrder, model_customer: Option<ErpCu
 
         customer_name,
         settlement_account_name,
+    }
+}
+
+pub fn model_to_base_response(model: ErpSalesOrder, details: Vec<ErpSalesOrderDetailBaseResponse>, attachments: Vec<ErpSalesOrderAttachmentBaseResponse>) -> ErpSalesOrderBaseResponse {
+    ErpSalesOrderBaseResponse { 
+        id: model.id,
+        order_number: model.order_number,
+        customer_id: model.customer_id,
+        user_id: model.user_id,
+        order_date: model.order_date,
+        total_amount: model.total_amount,
+        order_status: model.order_status,
+        discount_rate: model.discount_rate,
+        settlement_account_id: model.settlement_account_id,
+        deposit: model.deposit,
+
+        sale_products: details,
+        sale_attachment: attachments,
     }
 }
