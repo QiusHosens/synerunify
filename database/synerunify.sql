@@ -11,7 +11,7 @@
  Target Server Version : 80100 (8.1.0)
  File Encoding         : 65001
 
- Date: 16/06/2025 17:47:22
+ Date: 17/06/2025 18:00:41
 */
 
 SET NAMES utf8mb4;
@@ -86,8 +86,8 @@ DROP TABLE IF EXISTS `erp_inbound_record`;
 CREATE TABLE `erp_inbound_record`  (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '入库记录ID',
   `purchase_id` bigint NULL DEFAULT NULL COMMENT '采购订单ID',
-  `warehouse_id` bigint NULL DEFAULT NULL COMMENT '仓库ID',
-  `product_id` bigint NULL DEFAULT NULL COMMENT '产品ID',
+  `warehouse_id` bigint NOT NULL COMMENT '仓库ID',
+  `product_id` bigint NOT NULL COMMENT '产品ID',
   `quantity` int NOT NULL COMMENT '入库数量',
   `inbound_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '入库日期',
   `remarks` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',

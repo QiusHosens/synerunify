@@ -8,9 +8,9 @@ pub struct CreateErpInboundRecordRequest {
     
     pub purchase_id: Option<i64>, // 采购订单ID
     
-    pub warehouse_id: Option<i64>, // 仓库ID
+    pub warehouse_id: i64, // 仓库ID
     
-    pub product_id: Option<i64>, // 产品ID
+    pub product_id: i64, // 产品ID
     
     pub quantity: i32, // 入库数量
     
@@ -50,6 +50,22 @@ pub struct UpdateErpInboundRecordRequest {
     pub department_code: Option<String>, // 部门编码
     
     pub department_id: Option<i64>, // 部门ID
+    
+}
+
+#[derive(Serialize, Deserialize, Debug, ToSchema)]
+pub struct CreateErpInboundPurchaseRequest {
+    
+    pub purchase_id: i64, // 采购订单ID
+    
+    pub warehouse_id: i64, // 仓库ID
+    
+    // #[serde_as(as = "DisplayFromStr")]
+    // #[serde(with = "serde_with::chrono::naive_datetime")]
+    #[schema(value_type = String, format = Date)]
+    pub inbound_date: NaiveDateTime, // 入库日期
+    
+    pub remarks: Option<String>, // 备注
     
 }
 

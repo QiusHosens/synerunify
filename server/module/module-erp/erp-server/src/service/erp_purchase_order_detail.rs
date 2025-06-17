@@ -172,7 +172,7 @@ pub async fn list(db: &DatabaseConnection, login_user: LoginUserContext) -> Resu
 }
 
 pub async fn list_by_purchase_id(db: &DatabaseConnection, login_user: LoginUserContext, purchase_id: i64) -> Result<Vec<ErpPurchaseOrderDetailBaseResponse>> {
-    let list = ErpPurchaseOrderDetailEntity::find_active_with_data_permission(login_user.clone())
+    let list = ErpPurchaseOrderDetailEntity::find_active()
         .filter(Column::TenantId.eq(login_user.tenant_id))
         .filter(Column::PurchaseId.eq(purchase_id))
         .all(db).await?;

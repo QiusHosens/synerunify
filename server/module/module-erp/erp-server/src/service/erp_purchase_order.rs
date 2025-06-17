@@ -47,7 +47,7 @@ pub async fn create(db: &DatabaseConnection, login_user: LoginUserContext, reque
 }
 
 pub async fn update(db: &DatabaseConnection, login_user: LoginUserContext, request: UpdateErpPurchaseOrderRequest) -> Result<()> {
-    let erp_purchase_order = ErpPurchaseOrderEntity::find_by_id(request.id)
+    let erp_purchase_order = ErpPurchaseOrderEntity::find_active_by_id(request.id)
         .one(db)
         .await?
         .ok_or_else(|| anyhow!("记录未找到"))?;
@@ -175,4 +175,14 @@ pub async fn cancel(db: &DatabaseConnection, login_user: LoginUserContext, id: i
     };
     erp_purchase_order.update(db).await?;
     Ok(())
+}
+
+pub async fn find_by_id(db: &DatabaseConnection, login_user: LoginUserContext, id: i64) -> Result<ErpPurchaseOrderModel> {
+    let erp_purchase_order = ErpPurchaseOrderEntity::find_active_by_id(id)
+        .filter(Column::TenantId.eq(login_user.tenant_id))
+        .one(db)
+        .await?
+        .ok_or_else(|| anyhow!("记录未找到"))?;
+
+    Ok(erp_purchase_order)
 }

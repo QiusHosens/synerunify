@@ -12,9 +12,9 @@ pub struct Model {
     
     pub purchase_id: Option<i64>, // 采购订单ID
     
-    pub warehouse_id: Option<i64>, // 仓库ID
+    pub warehouse_id: i64, // 仓库ID
     
-    pub product_id: Option<i64>, // 产品ID
+    pub product_id: i64, // 产品ID
     
     pub quantity: i32, // 入库数量
     

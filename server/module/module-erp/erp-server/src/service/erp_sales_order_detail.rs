@@ -171,7 +171,7 @@ pub async fn list(db: &DatabaseConnection, login_user: LoginUserContext) -> Resu
 }
 
 pub async fn list_by_sale_id(db: &DatabaseConnection, login_user: LoginUserContext, sale_id: i64) -> Result<Vec<ErpSalesOrderDetailBaseResponse>> {
-    let list = ErpSalesOrderDetailEntity::find_active_with_data_permission(login_user.clone())
+    let list = ErpSalesOrderDetailEntity::find_active()
         .filter(Column::TenantId.eq(login_user.tenant_id))
         .filter(Column::OrderId.eq(sale_id))
         .all(db).await?;
