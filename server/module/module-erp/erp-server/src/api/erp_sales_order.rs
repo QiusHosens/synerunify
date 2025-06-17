@@ -21,6 +21,13 @@ pub async fn erp_sales_order_router(state: AppState) -> OpenApiRouter {
         .routes(routes!(get_by_id))
         .routes(routes!(list))
         .routes(routes!(page))
+        .routes(routes!(ship_out))
+        .routes(routes!(awaiting_signature))
+        .routes(routes!(signed))
+        .routes(routes!(completed))
+        .routes(routes!(cancel))
+        .routes(routes!(return_processing))
+        .routes(routes!(return_completed))
         .with_state(state)
 }
 
@@ -188,6 +195,195 @@ async fn list(
 ) -> CommonResult<Vec<ErpSalesOrderResponse>> {
     match service::erp_sales_order::list(&state.db, login_user).await {
         Ok(data) => {CommonResult::with_data(data)}
+        Err(e) => {CommonResult::with_err(&e.to_string())}
+    }
+}
+
+#[utoipa::path(
+    post,
+    path = "/ship_out/{id}",
+    operation_id = "erp_sales_order_ship_out",
+    params(
+        ("id" = i64, Path, description = "id")
+    ),
+    responses(
+        (status = 204, description = "ship out")
+    ),
+    tag = "erp_sales_order",
+    security(
+        ("bearerAuth" = [])
+    )
+)]
+#[require_authorize(operation_id = "erp_sales_order_ship_out", authorize = "")]
+async fn ship_out(
+    State(state): State<AppState>,
+    Extension(login_user): Extension<LoginUserContext>,
+    Path(id): Path<i64>,
+) -> CommonResult<()> {
+    match service::erp_sales_order::ship_out(&state.db, login_user, id).await {
+        Ok(_) => {CommonResult::with_none()}
+        Err(e) => {CommonResult::with_err(&e.to_string())}
+    }
+}
+
+#[utoipa::path(
+    post,
+    path = "/awaiting_signature/{id}",
+    operation_id = "erp_sales_order_awaiting_signature",
+    params(
+        ("id" = i64, Path, description = "id")
+    ),
+    responses(
+        (status = 204, description = "awaiting signature")
+    ),
+    tag = "erp_sales_order",
+    security(
+        ("bearerAuth" = [])
+    )
+)]
+#[require_authorize(operation_id = "erp_sales_order_awaiting_signature", authorize = "")]
+async fn awaiting_signature(
+    State(state): State<AppState>,
+    Extension(login_user): Extension<LoginUserContext>,
+    Path(id): Path<i64>,
+) -> CommonResult<()> {
+    match service::erp_sales_order::awaiting_signature(&state.db, login_user, id).await {
+        Ok(_) => {CommonResult::with_none()}
+        Err(e) => {CommonResult::with_err(&e.to_string())}
+    }
+}
+
+#[utoipa::path(
+    post,
+    path = "/signed/{id}",
+    operation_id = "erp_sales_order_signed",
+    params(
+        ("id" = i64, Path, description = "id")
+    ),
+    responses(
+        (status = 204, description = "signed")
+    ),
+    tag = "erp_sales_order",
+    security(
+        ("bearerAuth" = [])
+    )
+)]
+#[require_authorize(operation_id = "erp_sales_order_signed", authorize = "")]
+async fn signed(
+    State(state): State<AppState>,
+    Extension(login_user): Extension<LoginUserContext>,
+    Path(id): Path<i64>,
+) -> CommonResult<()> {
+    match service::erp_sales_order::signed(&state.db, login_user, id).await {
+        Ok(_) => {CommonResult::with_none()}
+        Err(e) => {CommonResult::with_err(&e.to_string())}
+    }
+}
+
+#[utoipa::path(
+    post,
+    path = "/completed/{id}",
+    operation_id = "erp_sales_order_completed",
+    params(
+        ("id" = i64, Path, description = "id")
+    ),
+    responses(
+        (status = 204, description = "completed")
+    ),
+    tag = "erp_sales_order",
+    security(
+        ("bearerAuth" = [])
+    )
+)]
+#[require_authorize(operation_id = "erp_sales_order_completed", authorize = "")]
+async fn completed(
+    State(state): State<AppState>,
+    Extension(login_user): Extension<LoginUserContext>,
+    Path(id): Path<i64>,
+) -> CommonResult<()> {
+    match service::erp_sales_order::completed(&state.db, login_user, id).await {
+        Ok(_) => {CommonResult::with_none()}
+        Err(e) => {CommonResult::with_err(&e.to_string())}
+    }
+}
+
+#[utoipa::path(
+    post,
+    path = "/cancel/{id}",
+    operation_id = "erp_sales_order_cancel",
+    params(
+        ("id" = i64, Path, description = "id")
+    ),
+    responses(
+        (status = 204, description = "cancel")
+    ),
+    tag = "erp_sales_order",
+    security(
+        ("bearerAuth" = [])
+    )
+)]
+#[require_authorize(operation_id = "erp_sales_order_cancel", authorize = "")]
+async fn cancel(
+    State(state): State<AppState>,
+    Extension(login_user): Extension<LoginUserContext>,
+    Path(id): Path<i64>,
+) -> CommonResult<()> {
+    match service::erp_sales_order::cancel(&state.db, login_user, id).await {
+        Ok(_) => {CommonResult::with_none()}
+        Err(e) => {CommonResult::with_err(&e.to_string())}
+    }
+}
+
+#[utoipa::path(
+    post,
+    path = "/return_processing/{id}",
+    operation_id = "erp_sales_order_return_processing",
+    params(
+        ("id" = i64, Path, description = "id")
+    ),
+    responses(
+        (status = 204, description = "return processing")
+    ),
+    tag = "erp_sales_order",
+    security(
+        ("bearerAuth" = [])
+    )
+)]
+#[require_authorize(operation_id = "erp_sales_order_return_processing", authorize = "")]
+async fn return_processing(
+    State(state): State<AppState>,
+    Extension(login_user): Extension<LoginUserContext>,
+    Path(id): Path<i64>,
+) -> CommonResult<()> {
+    match service::erp_sales_order::return_processing(&state.db, login_user, id).await {
+        Ok(_) => {CommonResult::with_none()}
+        Err(e) => {CommonResult::with_err(&e.to_string())}
+    }
+}
+
+#[utoipa::path(
+    post,
+    path = "/return_completed/{id}",
+    operation_id = "erp_sales_order_return_completed",
+    params(
+        ("id" = i64, Path, description = "id")
+    ),
+    responses(
+        (status = 204, description = "return completed")
+    ),
+    tag = "erp_sales_order",
+    security(
+        ("bearerAuth" = [])
+    )
+)]
+#[require_authorize(operation_id = "erp_sales_order_return_completed", authorize = "")]
+async fn return_completed(
+    State(state): State<AppState>,
+    Extension(login_user): Extension<LoginUserContext>,
+    Path(id): Path<i64>,
+) -> CommonResult<()> {
+    match service::erp_sales_order::return_completed(&state.db, login_user, id).await {
+        Ok(_) => {CommonResult::with_none()}
         Err(e) => {CommonResult::with_err(&e.to_string())}
     }
 }

@@ -12,7 +12,7 @@ use erp_model::response::erp_sales_order::{ErpSalesOrderPageResponse, ErpSalesOr
 use crate::convert::erp_sales_order::{create_request_to_model, model_to_page_response, model_to_response, update_request_to_model};
 use anyhow::{anyhow, Context, Result};
 use sea_orm::ActiveValue::Set;
-use common::constants::enum_constants::{SALE_ORDER_STATUS_COMPLETE, SALE_ORDER_STATUS_PLACED, STATUS_DISABLE, STATUS_ENABLE};
+use common::constants::enum_constants::{SALE_ORDER_STATUS_AWAITING_SIGNATURE, SALE_ORDER_STATUS_CANCEL, SALE_ORDER_STATUS_COMPLETE, SALE_ORDER_STATUS_PLACED, SALE_ORDER_STATUS_RETURN_COMPLETE, SALE_ORDER_STATUS_RETURN_PROCESSING, SALE_ORDER_STATUS_SHIP_OUT, SALE_ORDER_STATUS_SIGNED};
 use common::base::page::PaginatedResponse;
 use common::context::context::LoginUserContext;
 use common::interceptor::orm::active_filter::ActiveFilterEntityTrait;
@@ -131,4 +131,88 @@ pub async fn list(db: &DatabaseConnection, login_user: LoginUserContext) -> Resu
     let condition = Condition::all().add(Column::TenantId.eq(login_user.tenant_id));let list = ErpSalesOrderEntity::find_active_with_condition(condition)
         .all(db).await?;
     Ok(list.into_iter().map(model_to_response).collect())
+}
+
+/// 订单待出库
+pub async fn ship_out(db: &DatabaseConnection, login_user: LoginUserContext, id: i64) -> Result<()> {
+    let erp_sales_order = ErpSalesOrderActiveModel {
+        id: Set(id),
+        updater: Set(Some(login_user.id)),
+        order_status: Set(SALE_ORDER_STATUS_SHIP_OUT),
+        ..Default::default()
+    };
+    erp_sales_order.update(db).await?;
+    Ok(())
+}
+
+/// 订单已出库,待签收
+pub async fn awaiting_signature(db: &DatabaseConnection, login_user: LoginUserContext, id: i64) -> Result<()> {
+    let erp_sales_order = ErpSalesOrderActiveModel {
+        id: Set(id),
+        updater: Set(Some(login_user.id)),
+        order_status: Set(SALE_ORDER_STATUS_AWAITING_SIGNATURE),
+        ..Default::default()
+    };
+    erp_sales_order.update(db).await?;
+    Ok(())
+}
+
+/// 订单已签收
+pub async fn signed(db: &DatabaseConnection, login_user: LoginUserContext, id: i64) -> Result<()> {
+    let erp_sales_order = ErpSalesOrderActiveModel {
+        id: Set(id),
+        updater: Set(Some(login_user.id)),
+        order_status: Set(SALE_ORDER_STATUS_SIGNED),
+        ..Default::default()
+    };
+    erp_sales_order.update(db).await?;
+    Ok(())
+}
+
+/// 订单已完成
+pub async fn completed(db: &DatabaseConnection, login_user: LoginUserContext, id: i64) -> Result<()> {
+    let erp_sales_order = ErpSalesOrderActiveModel {
+        id: Set(id),
+        updater: Set(Some(login_user.id)),
+        order_status: Set(SALE_ORDER_STATUS_COMPLETE),
+        ..Default::default()
+    };
+    erp_sales_order.update(db).await?;
+    Ok(())
+}
+
+/// 订单已取消
+pub async fn cancel(db: &DatabaseConnection, login_user: LoginUserContext, id: i64) -> Result<()> {
+    let erp_sales_order = ErpSalesOrderActiveModel {
+        id: Set(id),
+        updater: Set(Some(login_user.id)),
+        order_status: Set(SALE_ORDER_STATUS_CANCEL),
+        ..Default::default()
+    };
+    erp_sales_order.update(db).await?;
+    Ok(())
+}
+
+/// 订单退货处理中
+pub async fn return_processing(db: &DatabaseConnection, login_user: LoginUserContext, id: i64) -> Result<()> {
+    let erp_sales_order = ErpSalesOrderActiveModel {
+        id: Set(id),
+        updater: Set(Some(login_user.id)),
+        order_status: Set(SALE_ORDER_STATUS_RETURN_PROCESSING),
+        ..Default::default()
+    };
+    erp_sales_order.update(db).await?;
+    Ok(())
+}
+
+/// 订单退货完成
+pub async fn return_completed(db: &DatabaseConnection, login_user: LoginUserContext, id: i64) -> Result<()> {
+    let erp_sales_order = ErpSalesOrderActiveModel {
+        id: Set(id),
+        updater: Set(Some(login_user.id)),
+        order_status: Set(SALE_ORDER_STATUS_RETURN_COMPLETE),
+        ..Default::default()
+    };
+    erp_sales_order.update(db).await?;
+    Ok(())
 }
