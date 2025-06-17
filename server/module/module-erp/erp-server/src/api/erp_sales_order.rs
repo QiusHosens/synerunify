@@ -6,7 +6,7 @@ use ctor;
 use macros::require_authorize;
 use axum::{routing::{get, post}, Router, extract::{State, Path, Json, Query}, response::IntoResponse, Extension};
 use common::base::page::PaginatedResponse;
-use erp_model::request::erp_sales_order::{CreateErpSalesOrderRequest, UpdateErpSalesOrderRequest, PaginatedKeywordRequest};
+use erp_model::{request::erp_sales_order::{CreateErpSalesOrderRequest, PaginatedKeywordRequest, UpdateErpSalesOrderRequest}, response::erp_sales_order::ErpSalesOrderPageResponse};
 use erp_model::response::erp_sales_order::ErpSalesOrderResponse;
 use common::base::response::CommonResult;
 use common::context::context::LoginUserContext;
@@ -150,7 +150,7 @@ async fn get_by_id(
         ("keyword" = Option<String>, Query, description = "keyword")
     ),
     responses(
-        (status = 200, description = "get page", body = CommonResult<PaginatedResponse<ErpSalesOrderResponse>>)
+        (status = 200, description = "get page", body = CommonResult<PaginatedResponse<ErpSalesOrderPageResponse>>)
     ),
     tag = "erp_sales_order",
     security(
@@ -162,7 +162,7 @@ async fn page(
     State(state): State<AppState>,
     Extension(login_user): Extension<LoginUserContext>,
     Query(params): Query<PaginatedKeywordRequest>,
-) -> CommonResult<PaginatedResponse<ErpSalesOrderResponse>> {
+) -> CommonResult<PaginatedResponse<ErpSalesOrderPageResponse>> {
     match service::erp_sales_order::get_paginated(&state.db, login_user, params).await {
         Ok(data) => {CommonResult::with_data(data)}
         Err(e) => {CommonResult::with_err(&e.to_string())}

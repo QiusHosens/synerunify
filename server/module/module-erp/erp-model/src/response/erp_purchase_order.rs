@@ -24,7 +24,7 @@ pub struct ErpPurchaseOrderResponse {
     
     pub total_amount: i64, // 总金额
     
-    pub order_status: i8, // 订单状态 (0=pending, 1=completed, 2=cancelled)
+    pub order_status: i8, // 订单状态
     
     pub discount_rate: Option<i64>, // 优惠率（百分比，1000表示10.00%）
     

@@ -102,7 +102,6 @@ pub async fn get_by_id(db: &DatabaseConnection, login_user: LoginUserContext, id
 }
 
 pub async fn get_paginated(db: &DatabaseConnection, login_user: LoginUserContext, params: PaginatedKeywordRequest) -> Result<PaginatedResponse<ErpPurchaseOrderPageResponse>> {
-    let condition = Condition::all().add(Column::TenantId.eq(login_user.tenant_id));
     let paginator = ErpPurchaseOrderEntity::find_active_with_data_permission(login_user.clone())
         .filter(Column::TenantId.eq(login_user.tenant_id))
         .select_also(ErpSupplierEntity)

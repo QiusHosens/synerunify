@@ -1,12 +1,15 @@
+use common::interceptor::orm::simple_support::SimpleSupport;
 use common::utils::snowflake_generator::SnowflakeGenerator;
-use sea_orm::{ActiveModelTrait, ColumnTrait, Condition, DatabaseConnection, EntityTrait, PaginatorTrait, QueryFilter, QueryOrder, TransactionTrait};
-use crate::model::erp_sales_order::{Model as ErpSalesOrderModel, ActiveModel as ErpSalesOrderActiveModel, Entity as ErpSalesOrderEntity, Column};
+use sea_orm::{ActiveModelTrait, ColumnTrait, Condition, DatabaseConnection, EntityTrait, JoinType, Order, PaginatorTrait, QueryFilter, QueryOrder, QuerySelect, RelationTrait, TransactionTrait};
+use crate::model::erp_sales_order::{Model as ErpSalesOrderModel, ActiveModel as ErpSalesOrderActiveModel, Entity as ErpSalesOrderEntity, Column, Relation};
+use crate::model::erp_customer::{Model as ErpCustomerModel, ActiveModel as ErpCustomerActiveModel, Entity as ErpCustomerEntity};
+use crate::model::erp_settlement_account::{Model as ErpSettlementAccountModel, ActiveModel as ErpSettlementAccountActiveModel, Entity as ErpSettlementAccountEntity};
 use crate::model::erp_sales_order_detail::{Model as ErpSalesOrderDetailModel, ActiveModel as ErpSalesOrderDetailActiveModel, Entity as ErpSalesOrderDetailEntity};
 use crate::model::erp_sales_order_attachment::{Model as ErpSalesOrderAttachmentModel, ActiveModel as ErpSalesOrderAttachmentActiveModel, Entity as ErpSalesOrderAttachmentEntity};
 use crate::service::{erp_sales_order_attachment, erp_sales_order_detail};
 use erp_model::request::erp_sales_order::{CreateErpSalesOrderRequest, UpdateErpSalesOrderRequest, PaginatedKeywordRequest};
-use erp_model::response::erp_sales_order::ErpSalesOrderResponse;
-use crate::convert::erp_sales_order::{create_request_to_model, update_request_to_model, model_to_response};
+use erp_model::response::erp_sales_order::{ErpSalesOrderPageResponse, ErpSalesOrderResponse};
+use crate::convert::erp_sales_order::{create_request_to_model, model_to_page_response, model_to_response, update_request_to_model};
 use anyhow::{anyhow, Context, Result};
 use sea_orm::ActiveValue::Set;
 use common::constants::enum_constants::{SALE_ORDER_STATUS_COMPLETE, SALE_ORDER_STATUS_PLACED, STATUS_DISABLE, STATUS_ENABLE};
@@ -95,9 +98,15 @@ pub async fn get_by_id(db: &DatabaseConnection, login_user: LoginUserContext, id
     Ok(erp_sales_order.map(model_to_response))
 }
 
-pub async fn get_paginated(db: &DatabaseConnection, login_user: LoginUserContext, params: PaginatedKeywordRequest) -> Result<PaginatedResponse<ErpSalesOrderResponse>> {
-    let condition = Condition::all().add(Column::TenantId.eq(login_user.tenant_id));let paginator = ErpSalesOrderEntity::find_active_with_condition(condition)
-        .order_by_desc(Column::UpdateTime)
+pub async fn get_paginated(db: &DatabaseConnection, login_user: LoginUserContext, params: PaginatedKeywordRequest) -> Result<PaginatedResponse<ErpSalesOrderPageResponse>> {
+    let paginator = ErpSalesOrderEntity::find_active_with_data_permission(login_user.clone())
+        .filter(Column::TenantId.eq(login_user.tenant_id))
+        .select_also(ErpCustomerEntity)
+        .select_also(ErpSettlementAccountEntity)
+        .join(JoinType::LeftJoin, Relation::SaleOrderCustomer.def())
+        .join(JoinType::LeftJoin, Relation::SaleOrderSettlementAccount.def())
+        .support_filter(params.base.filter_field, params.base.filter_operator, params.base.filter_value)
+        .support_order(params.base.sort_field, params.base.sort, Some(vec![(Column::Id, Order::Desc)]))
         .paginate(db, params.base.size);
 
     let total = paginator.num_items().await?;
@@ -106,7 +115,7 @@ pub async fn get_paginated(db: &DatabaseConnection, login_user: LoginUserContext
         .fetch_page(params.base.page - 1) // SeaORM 页码从 0 开始，所以减 1
         .await?
         .into_iter()
-        .map(model_to_response)
+        .map(|(data, customer_data, settlement_account_data)|model_to_page_response(data, customer_data, settlement_account_data))
         .collect();
 
     Ok(PaginatedResponse {

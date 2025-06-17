@@ -54,9 +54,6 @@ pub async fn create_batch(db: &DatabaseConnection, txn: &DatabaseTransaction, lo
 }
 
 pub async fn update_batch(db: &DatabaseConnection, txn: &DatabaseTransaction, login_user: LoginUserContext, sale_order: ErpSalesOrderModel, requests: Vec<UpdateErpSalesOrderAttachmentRequest>) -> Result<()> {
-    // 启用文件id列表
-    let enable_file_ids: Vec<i64> = requests.iter().clone().map(|request| request.file_id).collect();
-
     // 查询已存在订单附件
     let existing_attachments = ErpSalesOrderAttachmentEntity::find()
         .filter(Column::OrderId.eq(sale_order.id))
@@ -80,11 +77,15 @@ pub async fn update_batch(db: &DatabaseConnection, txn: &DatabaseTransaction, lo
         .copied()
         .collect();
 
+    // 启用文件id列表
+    let mut enable_file_ids: Vec<i64> = Vec::new();
     // 禁用文件id列表
-    let disable_file_ids: Vec<i64> = existing_attachments.iter().filter(|a|to_mark_deleted.contains(&a.id)).map(|a|a.file_id).collect();
+    let mut disable_file_ids: Vec<i64> = existing_attachments.iter().filter(|a|to_mark_deleted.contains(&a.id)).map(|a|a.file_id).collect();
 
     // 批量新增
     if !to_add.is_empty() {
+        // 所有新增的都启用
+        enable_file_ids = to_add.iter().map(|a|a.file_id).collect();
         let models: Vec<ErpSalesOrderAttachmentActiveModel> = to_add
             .into_iter()
             .map(|request| {
@@ -121,9 +122,15 @@ pub async fn update_batch(db: &DatabaseConnection, txn: &DatabaseTransaction, lo
         for request in to_update {
             if let Some(id) = request.id {
                 if let Some(existing) = existing_map.get(&id) {
+                    // 编辑的文件id不一致,则禁用之前的
+                    if !existing.file_id.eq(&request.file_id) {
+                        disable_file_ids.push(existing.file_id);
+                    }
                     let mut model = update_request_to_model(&request, existing.clone());
                     model.updater = Set(Some(login_user.id));
                     model.update(txn).await?;
+                    // 编辑的已存在则启用
+                    enable_file_ids.push(request.file_id);
                 }
             }
         }
