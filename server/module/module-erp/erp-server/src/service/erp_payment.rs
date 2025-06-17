@@ -1,4 +1,5 @@
-use sea_orm::{DatabaseConnection, EntityTrait, ColumnTrait, ActiveModelTrait, PaginatorTrait, QueryOrder, QueryFilter, Condition};
+use common::interceptor::orm::simple_support::SimpleSupport;
+use sea_orm::{DatabaseConnection, EntityTrait, Order, ColumnTrait, ActiveModelTrait, PaginatorTrait, QueryOrder, QueryFilter, Condition};
 use crate::model::erp_payment::{Model as ErpPaymentModel, ActiveModel as ErpPaymentActiveModel, Entity as ErpPaymentEntity, Column};
 use erp_model::request::erp_payment::{CreateErpPaymentRequest, UpdateErpPaymentRequest, PaginatedKeywordRequest};
 use erp_model::response::erp_payment::ErpPaymentResponse;
@@ -21,6 +22,7 @@ pub async fn create(db: &DatabaseConnection, login_user: LoginUserContext, reque
 
 pub async fn update(db: &DatabaseConnection, login_user: LoginUserContext, request: UpdateErpPaymentRequest) -> Result<()> {
     let erp_payment = ErpPaymentEntity::find_by_id(request.id)
+        .filter(Column::TenantId.eq(login_user.tenant_id))
         .one(db)
         .await?
         .ok_or_else(|| anyhow!("记录未找到"))?;
@@ -54,7 +56,8 @@ pub async fn get_by_id(db: &DatabaseConnection, login_user: LoginUserContext, id
 
 pub async fn get_paginated(db: &DatabaseConnection, login_user: LoginUserContext, params: PaginatedKeywordRequest) -> Result<PaginatedResponse<ErpPaymentResponse>> {
     let condition = Condition::all().add(Column::TenantId.eq(login_user.tenant_id));let paginator = ErpPaymentEntity::find_active_with_condition(condition)
-        .order_by_desc(Column::UpdateTime)
+        .support_filter(params.base.filter_field, params.base.filter_operator, params.base.filter_value)
+        .support_order(params.base.sort_field, params.base.sort, Some(vec![(Column::Id, Order::Asc)]))
         .paginate(db, params.base.size);
 
     let total = paginator.num_items().await?;

@@ -5,9 +5,8 @@ use erp_model::response::erp_receipt::ErpReceiptResponse;
 
 pub fn create_request_to_model(request: &CreateErpReceiptRequest) -> ErpReceiptActiveModel {
     ErpReceiptActiveModel {
-        sales_order_id: request.sales_order_id.as_ref().map_or(NotSet, |sales_order_id| Set(Some(sales_order_id.clone()))),
-        customer_id: request.customer_id.as_ref().map_or(NotSet, |customer_id| Set(Some(customer_id.clone()))),
-        user_id: request.user_id.as_ref().map_or(NotSet, |user_id| Set(Some(user_id.clone()))),
+        customer_id: Set(request.customer_id.clone()),
+        user_id: Set(request.user_id.clone()),
         settlement_account_id: request.settlement_account_id.as_ref().map_or(NotSet, |settlement_account_id| Set(Some(settlement_account_id.clone()))),
         amount: Set(request.amount.clone()),
         discount_amount: request.discount_amount.as_ref().map_or(NotSet, |discount_amount| Set(Some(discount_amount.clone()))),
@@ -24,14 +23,11 @@ pub fn create_request_to_model(request: &CreateErpReceiptRequest) -> ErpReceiptA
 
 pub fn update_request_to_model(request: &UpdateErpReceiptRequest, existing: ErpReceipt) -> ErpReceiptActiveModel {
     let mut active_model: ErpReceiptActiveModel = existing.into();
-    if let Some(sales_order_id) = &request.sales_order_id { 
-        active_model.sales_order_id = Set(Some(sales_order_id.clone()));
-    }
     if let Some(customer_id) = &request.customer_id { 
-        active_model.customer_id = Set(Some(customer_id.clone()));
+        active_model.customer_id = Set(customer_id.clone());
     }
     if let Some(user_id) = &request.user_id { 
-        active_model.user_id = Set(Some(user_id.clone()));
+        active_model.user_id = Set(user_id.clone());
     }
     if let Some(settlement_account_id) = &request.settlement_account_id { 
         active_model.settlement_account_id = Set(Some(settlement_account_id.clone()));
@@ -69,7 +65,6 @@ pub fn update_request_to_model(request: &UpdateErpReceiptRequest, existing: ErpR
 pub fn model_to_response(model: ErpReceipt) -> ErpReceiptResponse {
     ErpReceiptResponse { 
         id: model.id,
-        sales_order_id: model.sales_order_id,
         customer_id: model.customer_id,
         user_id: model.user_id,
         settlement_account_id: model.settlement_account_id,

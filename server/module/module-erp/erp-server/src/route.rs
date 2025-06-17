@@ -13,7 +13,6 @@ use crate::api::erp_inbound_record::{ erp_inbound_record_route, erp_inbound_reco
 use crate::api::erp_inventory_check::{ erp_inventory_check_route, erp_inventory_check_router };
 use crate::api::erp_inventory_record::{ erp_inventory_record_route, erp_inventory_record_router };
 use crate::api::erp_inventory_transfer::{ erp_inventory_transfer_route, erp_inventory_transfer_router };
-use crate::api::erp_outbound_record::{ erp_outbound_record_route, erp_outbound_record_router };
 use crate::api::erp_payment::{ erp_payment_route, erp_payment_router };
 use crate::api::erp_payment_attachment::{ erp_payment_attachment_route, erp_payment_attachment_router };
 use crate::api::erp_payment_detail::{ erp_payment_detail_route, erp_payment_detail_router };
@@ -34,6 +33,13 @@ use crate::api::erp_sales_return::{ erp_sales_return_route, erp_sales_return_rou
 use crate::api::erp_settlement_account::{ erp_settlement_account_route, erp_settlement_account_router };
 use crate::api::erp_supplier::{ erp_supplier_route, erp_supplier_router };
 use crate::api::erp_warehouse::{ erp_warehouse_route, erp_warehouse_router };
+use crate::api::erp_inbound_order::{ erp_inbound_order_route, erp_inbound_order_router };
+use crate::api::erp_inbound_order_attachment::{ erp_inbound_order_attachment_route, erp_inbound_order_attachment_router };
+use crate::api::erp_inbound_order_detail::{ erp_inbound_order_detail_route, erp_inbound_order_detail_router };
+use crate::api::erp_outbound_order::{ erp_outbound_order_route, erp_outbound_order_router };
+use crate::api::erp_outbound_order_attachment::{ erp_outbound_order_attachment_route, erp_outbound_order_attachment_router };
+use crate::api::erp_outbound_order_detail::{ erp_outbound_order_detail_route, erp_outbound_order_detail_router };
+use crate::api::erp_product_inventory::{ erp_product_inventory_route, erp_product_inventory_router };
 use crate::AppState;
 
 // openapi document
@@ -72,6 +78,13 @@ use crate::AppState;
         (name = "erp_settlement_account", description = "结算账户"),
         (name = "erp_supplier", description = "供应商信息"),
         (name = "erp_warehouse", description = "仓库信息"),
+        (name = "erp_inbound_order", description = "入库订单"),
+        (name = "erp_inbound_order_attachment", description = "入库订单附件"),
+        (name = "erp_inbound_order_detail", description = "入库详情"),
+        (name = "erp_outbound_order", description = "出库订单"),
+        (name = "erp_outbound_order_attachment", description = "出库订单附件"),
+        (name = "erp_outbound_order_detail", description = "出库详情"),
+        (name = "erp_product_inventory", description = "产品库存"),
     ),
     modifiers(&SecurityAddon)
 )]
@@ -96,7 +109,6 @@ pub async fn auth_router(state: AppState) -> OpenApiRouter {
         .nest("/erp_inventory_check", erp_inventory_check_router(state.clone()).await)
         .nest("/erp_inventory_record", erp_inventory_record_router(state.clone()).await)
         .nest("/erp_inventory_transfer", erp_inventory_transfer_router(state.clone()).await)
-        .nest("/erp_outbound_record", erp_outbound_record_router(state.clone()).await)
         .nest("/erp_payment", erp_payment_router(state.clone()).await)
         .nest("/erp_payment_attachment", erp_payment_attachment_router(state.clone()).await)
         .nest("/erp_payment_detail", erp_payment_detail_router(state.clone()).await)
@@ -117,6 +129,13 @@ pub async fn auth_router(state: AppState) -> OpenApiRouter {
         .nest("/erp_settlement_account", erp_settlement_account_router(state.clone()).await)
         .nest("/erp_supplier", erp_supplier_router(state.clone()).await)
         .nest("/erp_warehouse", erp_warehouse_router(state.clone()).await)
+        .nest("/erp_inbound_order", erp_inbound_order_router(state.clone()).await)
+        .nest("/erp_inbound_order_attachment", erp_inbound_order_attachment_router(state.clone()).await)
+        .nest("/erp_inbound_order_detail", erp_inbound_order_detail_router(state.clone()).await)
+        .nest("/erp_outbound_order", erp_outbound_order_router(state.clone()).await)
+        .nest("/erp_outbound_order_attachment", erp_outbound_order_attachment_router(state.clone()).await)
+        .nest("/erp_outbound_order_detail", erp_outbound_order_detail_router(state.clone()).await)
+        .nest("/erp_product_inventory", erp_product_inventory_router(state.clone()).await)
         .layer(axum::middleware::from_fn(authorize_handler))
         .layer(axum::middleware::from_fn(operation_logger_handler))
         .layer(axum::middleware::from_fn_with_state(state.clone(), request_context_handler))

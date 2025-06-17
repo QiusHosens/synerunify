@@ -5,9 +5,8 @@ use erp_model::response::erp_payment::ErpPaymentResponse;
 
 pub fn create_request_to_model(request: &CreateErpPaymentRequest) -> ErpPaymentActiveModel {
     ErpPaymentActiveModel {
-        purchase_order_id: request.purchase_order_id.as_ref().map_or(NotSet, |purchase_order_id| Set(Some(purchase_order_id.clone()))),
-        supplier_id: request.supplier_id.as_ref().map_or(NotSet, |supplier_id| Set(Some(supplier_id.clone()))),
-        user_id: request.user_id.as_ref().map_or(NotSet, |user_id| Set(Some(user_id.clone()))),
+        supplier_id: Set(request.supplier_id.clone()),
+        user_id: Set(request.user_id.clone()),
         settlement_account_id: request.settlement_account_id.as_ref().map_or(NotSet, |settlement_account_id| Set(Some(settlement_account_id.clone()))),
         amount: Set(request.amount.clone()),
         discount_amount: request.discount_amount.as_ref().map_or(NotSet, |discount_amount| Set(Some(discount_amount.clone()))),
@@ -24,14 +23,11 @@ pub fn create_request_to_model(request: &CreateErpPaymentRequest) -> ErpPaymentA
 
 pub fn update_request_to_model(request: &UpdateErpPaymentRequest, existing: ErpPayment) -> ErpPaymentActiveModel {
     let mut active_model: ErpPaymentActiveModel = existing.into();
-    if let Some(purchase_order_id) = &request.purchase_order_id { 
-        active_model.purchase_order_id = Set(Some(purchase_order_id.clone()));
-    }
     if let Some(supplier_id) = &request.supplier_id { 
-        active_model.supplier_id = Set(Some(supplier_id.clone()));
+        active_model.supplier_id = Set(supplier_id.clone());
     }
     if let Some(user_id) = &request.user_id { 
-        active_model.user_id = Set(Some(user_id.clone()));
+        active_model.user_id = Set(user_id.clone());
     }
     if let Some(settlement_account_id) = &request.settlement_account_id { 
         active_model.settlement_account_id = Set(Some(settlement_account_id.clone()));
@@ -69,7 +65,6 @@ pub fn update_request_to_model(request: &UpdateErpPaymentRequest, existing: ErpP
 pub fn model_to_response(model: ErpPayment) -> ErpPaymentResponse {
     ErpPaymentResponse { 
         id: model.id,
-        purchase_order_id: model.purchase_order_id,
         supplier_id: model.supplier_id,
         user_id: model.user_id,
         settlement_account_id: model.settlement_account_id,

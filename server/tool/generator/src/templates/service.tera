@@ -22,6 +22,7 @@ pub async fn create(db: &DatabaseConnection, login_user: LoginUserContext, reque
 
 pub async fn update(db: &DatabaseConnection, login_user: LoginUserContext, request: Update{{ request_model_name }}) -> Result<()> {
     let {{ table_name }} = {{ model_name }}Entity::find_by_id(request.id)
+        {% if has_tenant_field  %}.filter(Column::TenantId.eq(login_user.tenant_id)){% endif %}
         .one(db)
         .await?
         .ok_or_else(|| anyhow!("记录未找到"))?;
