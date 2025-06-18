@@ -34,6 +34,14 @@ export interface ErpPurchaseOrderAttachmentResponse {
   update_time: string; // 更新时间
 }
 
+export interface ErpPurchaseOrderAttachmentBaseResponse {
+  id: number; // 附件ID
+  purchase_id: number; // 采购订单ID
+  file_id: number; // 文件ID
+  file_name: string; // 文件名
+  remarks?: string; // 备注
+}
+
 export interface ErpPurchaseOrderAttachmentQueryCondition extends PaginatedRequest {
 
 }

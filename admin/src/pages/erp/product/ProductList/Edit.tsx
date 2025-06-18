@@ -45,7 +45,6 @@ const ErpProductEdit = forwardRef(({ onSubmit }: ErpProductEditProps, ref) => {
     purchase_price: 0,
     sale_price: 0,
     min_price: 0,
-    stock_quantity: 0,
     min_stock: 0,
     remarks: '',
   });
@@ -104,10 +103,6 @@ const ErpProductEdit = forwardRef(({ onSubmit }: ErpProductEditProps, ref) => {
 
     if (!erpProduct.name.trim()) {
       newErrors.name = t('page.erp.product.list.error.name');
-    }
-
-    if (!erpProduct.stock_quantity && erpProduct.stock_quantity != 0) {
-      newErrors.stock_quantity = t('page.erp.product.list.error.stock.quantity');
     }
 
     if (!erpProduct.min_stock && erpProduct.min_stock != 0) {
@@ -352,19 +347,6 @@ const ErpProductEdit = forwardRef(({ onSubmit }: ErpProductEditProps, ref) => {
                 name='min_price'
                 value={erpProduct.min_price}
                 onChange={handleInputChange}
-              />
-            </Grid>
-            <Grid size={{ xs: 12, md: 6 }}>
-              <TextField
-                required
-                size="small"
-                type="number"
-                label={t("page.erp.product.list.title.stock.quantity")}
-                name='stock_quantity'
-                value={erpProduct.stock_quantity}
-                onChange={handleInputChange}
-                error={!!errors.stock_quantity}
-                helperText={errors.stock_quantity}
               />
             </Grid>
             <Grid size={{ xs: 12, md: 6 }}>

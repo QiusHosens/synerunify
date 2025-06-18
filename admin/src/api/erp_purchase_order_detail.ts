@@ -52,6 +52,19 @@ export interface ErpPurchaseOrderDetailResponse {
   update_time: string; // 更新时间
 }
 
+export interface ErpPurchaseOrderDetailBaseResponse {
+  id: number; // 采购订单详情ID
+  purchase_id: number; // 采购订单ID
+  product_id: number; // 产品ID
+  quantity: number; // 数量
+  unit_price: number; // 单价
+  subtotal: number; // 小计
+  tax_rate: number; // 税率,精确到万分位
+  remarks?: string; // 备注
+
+  product?: ErpProductResponse;
+}
+
 export interface ErpPurchaseOrderDetailQueryCondition extends PaginatedRequest {
 
 }

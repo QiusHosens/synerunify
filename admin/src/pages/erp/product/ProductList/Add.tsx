@@ -19,7 +19,6 @@ interface FormValues {
   purchase_price: number; // 采购价格
   sale_price: number; // 销售价格
   min_price: number; // 最低价格
-  stock_quantity: number; // 库存数量
   min_stock: number; // 最低库存
   remarks: string; // 备注
 }
@@ -62,7 +61,6 @@ const ErpProductAdd = forwardRef(({ onSubmit }: ErpProductAddProps, ref) => {
     purchase_price: 0,
     sale_price: 0,
     min_price: 0,
-    stock_quantity: 0,
     min_stock: 0,
     remarks: '',
   });
@@ -121,10 +119,6 @@ const ErpProductAdd = forwardRef(({ onSubmit }: ErpProductAddProps, ref) => {
       newErrors.name = t('page.erp.product.list.error.name');
     }
 
-    if (!formValues.stock_quantity && formValues.stock_quantity != 0) {
-      newErrors.stock_quantity = t('page.erp.product.list.error.stock.quantity');
-    }
-
     if (!formValues.min_stock && formValues.min_stock != 0) {
       newErrors.min_stock = t('page.erp.product.list.error.min.stock');
     }
@@ -155,7 +149,6 @@ const ErpProductAdd = forwardRef(({ onSubmit }: ErpProductAddProps, ref) => {
       purchase_price: 0,
       sale_price: 0,
       min_price: 0,
-      stock_quantity: 0,
       min_stock: 0,
       remarks: '',
     });
@@ -389,19 +382,6 @@ const ErpProductAdd = forwardRef(({ onSubmit }: ErpProductAddProps, ref) => {
                 name='min_price'
                 value={formValues.min_price}
                 onChange={handleInputChange}
-              />
-            </Grid>
-            <Grid size={{ xs: 12, md: 6 }}>
-              <TextField
-                required
-                size="small"
-                type="number"
-                label={t("page.erp.product.list.title.stock.quantity")}
-                name='stock_quantity'
-                value={formValues.stock_quantity}
-                onChange={handleInputChange}
-                error={!!errors.stock_quantity}
-                helperText={errors.stock_quantity}
               />
             </Grid>
             <Grid size={{ xs: 12, md: 6 }}>

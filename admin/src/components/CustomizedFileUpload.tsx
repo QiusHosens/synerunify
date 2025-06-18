@@ -65,6 +65,14 @@ const DeleteButton = styled(IconButton)(({ theme }) => ({
     },
 }));
 
+// Download属性
+export interface DownloadProps {
+    filename?: string; // 名字
+    previewUrl?: string; // 图片地址
+    status: 'downloading' | 'done' | 'error';
+    progress?: number; // 下载进度
+}
+
 // Upload 组件属性
 interface UploadProps {
     id?: string;
@@ -74,7 +82,8 @@ interface UploadProps {
     file?: UploadFile | null; // 外部控制的单个文件
     width?: string | number; // 宽度
     height?: string | number; // 高度
-    children?: React.ReactNode; // 上传完成后的内容（例如远程图片）
+    // 查看已有图片时的属性
+    download?: DownloadProps,
 }
 
 const CustomizedFileUpload: React.FC<UploadProps> = ({
@@ -85,7 +94,7 @@ const CustomizedFileUpload: React.FC<UploadProps> = ({
     file = null,
     width,
     height,
-    children,
+    download,
 }) => {
     const { t } = useTranslation();
     const { showMessage } = useMessage();
@@ -183,7 +192,36 @@ const CustomizedFileUpload: React.FC<UploadProps> = ({
                     id={id}
                     onChange={(e) => handleFileChange(e.target.files)}
                 />
-                {file?.status === 'uploading' && file?.previewUrl ? (
+                {(download && download?.status === 'downloading') ? (
+                    <>
+                        <Box sx={{ width: '100%', position: 'absolute', top: 0, left: 0 }}>
+                            <LinearProgress variant="determinate" value={download.progress || 0} />
+                        </Box>
+
+                        <Typography
+                            variant="caption"
+                            color="textPrimary"
+                            sx={{ position: 'absolute', bottom: 8, maxWidth: '90%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+                        >
+                            {download.filename}
+                        </Typography>
+                    </>
+                ) : (download && download?.status === 'done') ? (
+                    <>
+                        <PreviewImage src={download.previewUrl} />
+                        <DeleteButton className='file-upload-delete' sx={{ display: 'none' }} onClick={(e) => { e.stopPropagation(); handleRemove(); }}>
+                            <DeleteIcon fontSize="small" />
+                        </DeleteButton>
+
+                        <Typography
+                            variant="caption"
+                            color="textPrimary"
+                            sx={{ position: 'absolute', bottom: 8, maxWidth: '90%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+                        >
+                            {download.filename}
+                        </Typography>
+                    </>
+                ) : file?.status === 'uploading' && file?.previewUrl ? (
                     <>
                         <PreviewImage src={file.previewUrl} />
                         <Box sx={{ width: '100%', position: 'absolute', top: 0, left: 0 }}>

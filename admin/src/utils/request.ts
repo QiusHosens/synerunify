@@ -68,6 +68,19 @@ request.interceptors.request.use(
 // 响应拦截器
 request.interceptors.response.use(
   (response: AxiosResponse) => {
+    // 判断是否为文件数据（基于 responseType 或 Content-Type）
+    const isFileResponse =
+      response.config.responseType === 'blob' ||
+      response.headers['content-type']?.includes('application/octet-stream') ||
+      response.headers['content-type']?.includes('application/pdf') ||
+      response.headers['content-type']?.startsWith('image/');
+
+    if (isFileResponse) {
+      // 文件数据直接返回 response 或 response.data（Blob）
+      return response.data; // Blob 数据
+    }
+
+    // 处理 JSON 响应
     const { data } = response;
     if (data.code === 200) {
       // showMessage('成功', 'success');

@@ -42,6 +42,8 @@ pub struct ErpPurchaseOrderAttachmentBaseResponse {
     pub purchase_id: i64, // 采购订单ID
     
     pub file_id: i64, // 文件ID
+
+    pub file_name: Option<String>, // 文件名
     
     pub remarks: Option<String>, // 备注
     

@@ -1,7 +1,7 @@
 import { PaginatedRequest, PaginatedResponse } from '@/base/page';
 import { api } from '@/utils/request';
-import { ErpPurchaseOrderDetailRequest } from './erp_purchase_order_detail';
-import { ErpPurchaseOrderAttachmentRequest } from './erp_purchase_order_attachment';
+import { ErpPurchaseOrderDetailBaseResponse, ErpPurchaseOrderDetailRequest } from './erp_purchase_order_detail';
+import { ErpPurchaseOrderAttachmentBaseResponse, ErpPurchaseOrderAttachmentRequest } from './erp_purchase_order_attachment';
 
 const apis = {
   create: '/erp/erp_purchase_order/create', // 新增
@@ -10,6 +10,7 @@ const apis = {
   get: '/erp/erp_purchase_order/get', // 单条查询
   list: '/erp/erp_purchase_order/list', // 列表查询
   page: '/erp/erp_purchase_order/page', // 分页查询
+  get_detail: '/erp/erp_purchase_order/get_detail', // 单条查询订单详情
 }
 
 export interface ErpPurchaseOrderRequest {
@@ -17,7 +18,6 @@ export interface ErpPurchaseOrderRequest {
   supplier_id: number; // 供应商ID
   purchase_date: string; // 采购日期
   total_amount: number; // 总金额
-  order_status?: number; // 订单状态 (0=pending, 1=completed, 2=cancelled)
   discount_rate?: number; // 优惠率（百分比，1000表示10.00%）
   settlement_account_id?: number; // 结算账户ID
   deposit?: number; // 定金
@@ -50,6 +50,23 @@ export interface ErpPurchaseOrderResponse {
   settlement_account_name: string; // 结算账户名
 }
 
+export interface ErpPurchaseOrderBaseResponse {
+  id: number; // 采购订单ID
+  order_number: string; // 订单编号
+  supplier_id: number; // 供应商ID
+  user_id: number; // 用户ID
+  purchase_date: string; // 采购日期
+  total_amount: number; // 总金额
+  order_status: number; // 订单状态 (0=pending, 1=completed, 2=cancelled)
+  discount_rate: number; // 优惠率（百分比，1000表示10.00%）
+  settlement_account_id: number; // 结算账户ID
+  deposit: number; // 定金
+  remarks: string; // 备注
+
+  purchase_products: ErpPurchaseOrderDetailBaseResponse[]; // 采购的产品列表
+  purchase_attachment: ErpPurchaseOrderAttachmentBaseResponse[]; // 采购的附件列表
+}
+
 export interface ErpPurchaseOrderQueryCondition extends PaginatedRequest {
 
 }
@@ -76,4 +93,8 @@ export const listErpPurchaseOrder = (): Promise<Array<ErpPurchaseOrderResponse>>
 
 export const pageErpPurchaseOrder = (condition: ErpPurchaseOrderQueryCondition): Promise<PaginatedResponse<ErpPurchaseOrderResponse>> => {
   return api.get<PaginatedResponse<ErpPurchaseOrderResponse>>(apis.page, condition);
+}
+
+export const getErpPurchaseOrderBase = (id: number): Promise<ErpPurchaseOrderBaseResponse> => {
+  return api.get<ErpPurchaseOrderBaseResponse>(`${apis.get_detail}/${id}`);
 }

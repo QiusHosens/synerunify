@@ -123,6 +123,14 @@ pub async fn disable_outer(_db: &DatabaseConnection, txn: &DatabaseTransaction, 
     Ok(())
 }
 
+pub async fn list_by_ids(db: &DatabaseConnection, login_user: LoginUserContext, ids: Vec<i64>) -> Result<Vec<SystemFileModel>> {
+    let list = SystemFileEntity::find_active()
+        .filter(Column::Id.is_in(ids))
+        .filter(Column::TenantId.eq(login_user.tenant_id))
+        .all(db).await?;
+    Ok(list)
+}
+
 pub async fn upload(db: &DatabaseConnection, login_user: LoginUserContext, minio: Option<MinioClient>, mut multipart: Multipart) -> Result<Option<i64>> {
     if minio.is_none() {
         return Err(anyhow!("客户端初始化失败"));

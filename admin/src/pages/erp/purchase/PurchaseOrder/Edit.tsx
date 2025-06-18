@@ -2,7 +2,7 @@ import { Box, Button, Card, FormControl, FormHelperText, Grid, InputLabel, MenuI
 import { useTranslation } from 'react-i18next';
 import { forwardRef, useCallback, useImperativeHandle, useState } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
-import { ErpProductResponse, ErpPurchaseOrderAttachmentRequest, ErpPurchaseOrderDetailRequest, ErpPurchaseOrderRequest, ErpPurchaseOrderResponse, ErpSettlementAccountResponse, ErpSupplierResponse, listErpProduct, listErpPurchaseOrderAttachmentByPurchase, listErpPurchaseOrderDetailByPurchase, listErpSettlementAccount, listErpSupplier, updateErpPurchaseOrder } from '@/api';
+import { ErpProductResponse, ErpPurchaseOrderAttachmentRequest, ErpPurchaseOrderDetailRequest, ErpPurchaseOrderRequest, ErpPurchaseOrderResponse, ErpSettlementAccountResponse, ErpSupplierResponse, getErpPurchaseOrderBase, listErpProduct, listErpSettlementAccount, listErpSupplier, updateErpPurchaseOrder } from '@/api';
 import CustomizedDialog from '@/components/CustomizedDialog';
 import CustomizedTag from '@/components/CustomizedTag';
 import { Dayjs } from 'dayjs';
@@ -10,8 +10,8 @@ import AddCircleSharpIcon from '@mui/icons-material/AddCircleSharp';
 import DeleteIcon from '@/assets/image/svg/delete.svg';
 import { PickerValue } from '@mui/x-date-pickers/internals';
 import { useMessage } from '@/components/GlobalMessage';
-import CustomizedFileUpload, { UploadFile } from '@/components/CustomizedFileUpload';
-import { uploadSystemFile } from '@/api/system_file';
+import CustomizedFileUpload, { DownloadProps, UploadFile } from '@/components/CustomizedFileUpload';
+import { downloadSystemFile, uploadSystemFile } from '@/api/system_file';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers';
 
@@ -47,7 +47,6 @@ const ErpPurchaseOrderEdit = forwardRef(({ onSubmit }: ErpPurchaseOrderEditProps
     supplier_id: 0,
     purchase_date: '',
     total_amount: 0,
-    order_status: 0,
     discount_rate: 0,
     settlement_account_id: 0,
     deposit: 0,
@@ -61,37 +60,13 @@ const ErpPurchaseOrderEdit = forwardRef(({ onSubmit }: ErpPurchaseOrderEditProps
   });
   const [fileWidth] = useState<number>(420);
   const [fileHeight] = useState<number>(245);
-
-  const TableContainer = styled(Box)({
-    display: 'table',
-    width: '100%',
-  });
-
-  const TableRow = styled(Box)({
-    display: 'table-row',
-  });
-
-  const TableCell = styled(Box)(({ theme }) => ({
-    display: 'table-cell',
-    padding: theme.spacing(1),
-    textAlign: 'center',
-  }));
-
-  const PreviewImage = styled('img')({
-    width: '100%',
-    height: '100%',
-    objectFit: 'contain',
-    position: 'absolute',
-    top: 0,
-    left: 0,
-  });
+  const [downloadImages, setDownloadImages] = useState<Map<number, DownloadProps>>(new Map<number, DownloadProps>());
 
   useImperativeHandle(ref, () => ({
     show(erpPurchaseOrderRequest: ErpPurchaseOrderResponse) {
       initForm(erpPurchaseOrderRequest);
       initSuppliers();
       initSettlementAccounts();
-      initProducts();
       setOpen(true);
     },
     hide() {
@@ -107,11 +82,6 @@ const ErpPurchaseOrderEdit = forwardRef(({ onSubmit }: ErpPurchaseOrderEditProps
   const initSettlementAccounts = useCallback(async () => {
     const result = await listErpSettlementAccount();
     setSettlementAccounts(result);
-  }, []);
-
-  const initProducts = useCallback(async () => {
-    const result = await listErpProduct();
-    setProducts(result);
   }, []);
 
   const validateForm = useCallback((): boolean => {
@@ -172,18 +142,50 @@ const ErpPurchaseOrderEdit = forwardRef(({ onSubmit }: ErpPurchaseOrderEditProps
   }, []);
 
   const initForm = async (erpPurchaseOrder: ErpPurchaseOrderResponse) => {
-    // 查询订单详情
-    const purchase_products = await listErpPurchaseOrderDetailByPurchase(erpPurchaseOrder.id);
-    // 查询订单文件
-    const purchase_attachment = await listErpPurchaseOrderAttachmentByPurchase(erpPurchaseOrder.id);
+    const products = await listErpProduct();
+    setProducts(products);
+    const result = await getErpPurchaseOrderBase(erpPurchaseOrder.id);
+    const purchase_products = result.purchase_products;
+    for (const purchase_product of purchase_products) {
+      for (const product of products) {
+        if (product.id === purchase_product.product_id) {
+          purchase_product.product = product;
+        }
+      }
+    }
     setErpPurchaseOrderRequest({
-      ...erpPurchaseOrder,
+      ...result,
       purchase_products,
-      purchase_attachment,
     })
     setErpPurchaseOrder(erpPurchaseOrder)
+    setPurchaseDate(new AdapterDayjs().dayjs(result.purchase_date));
+    // 设置图片
+    for (const attachment of result.purchase_attachment) {
+      const result = await downloadSystemFile(attachment.file_id, (progress) => {
+        setDownloadImages(prev => {
+          const data: DownloadProps = {
+            filename: attachment.file_name,
+            status: 'downloading',
+            progress
+          };
+          const newMap = new Map(prev);
+          newMap.set(attachment.file_id, data);
+          return newMap;
+        })
+      })
+
+      setDownloadImages(prev => {
+        const data: DownloadProps = {
+          previewUrl: window.URL.createObjectURL(result),
+          filename: attachment.file_name,
+          status: 'done',
+        };
+        const newMap = new Map(prev);
+        newMap.set(attachment.file_id, data);
+        return newMap;
+      })
+    }
     setErrors({ purchase_products: [] });
-    setPurchaseDate(null);
   }
 
   const handleSubmit = useCallback(async () => {
@@ -518,26 +520,26 @@ const ErpPurchaseOrderEdit = forwardRef(({ onSubmit }: ErpPurchaseOrderEditProps
           {t('page.erp.purchase.order.title.check.list')}
         </Typography>
         <Card variant="outlined" sx={{ width: '100%', mt: 1, p: 2 }}>
-          <TableContainer>
-            <TableRow>
-              <TableCell sx={{ width: 50 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.no')}</Typography></TableCell>
-              <TableCell sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.product')}</Typography></TableCell>
-              <TableCell sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.stock')}</Typography></TableCell>
-              <TableCell sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.barcode')}</Typography></TableCell>
-              <TableCell sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.unit')}</Typography></TableCell>
-              <TableCell sx={{ width: 200 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.remarks')}</Typography></TableCell>
-              <TableCell sx={{ width: 150 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.quantity')}</Typography></TableCell>
-              <TableCell sx={{ width: 150 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.unit.price')}</Typography></TableCell>
-              <TableCell sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.subtotal')}</Typography></TableCell>
-              <TableCell sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.tax.rate')}</Typography></TableCell>
-              <TableCell sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.tax')}</Typography></TableCell>
-              <TableCell sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.tax.total')}</Typography></TableCell>
-              <TableCell sx={{ width: 50 }}><Typography variant="body1">{t('global.operate.actions')}</Typography></TableCell>
-            </TableRow>
+          <Box sx={{ display: 'table', width: '100%', "& .table-row": { display: 'table-row', "& .table-cell": { display: 'table-cell', padding: 1, textAlign: 'center', } } }}>
+            <Box className='table-row'>
+              <Box className='table-cell' sx={{ width: 50 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.no')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.product')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.stock')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.barcode')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.unit')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 200 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.remarks')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 150 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.quantity')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 150 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.unit.price')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.subtotal')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.tax.rate')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.tax')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.tax.total')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 50 }}><Typography variant="body1">{t('global.operate.actions')}</Typography></Box>
+            </Box>
             {erpPurchaseOrderRequest.purchase_products.map((item, index) => (
-              <TableRow key={index}>
-                <TableCell sx={{ width: 50, verticalAlign: 'middle' }}><Typography variant="body1">{index + 1}</Typography></TableCell>
-                <TableCell sx={{ width: 100 }}>
+              <Box className='table-row' key={index}>
+                <Box className='table-cell' sx={{ width: 50, verticalAlign: 'middle' }}><Typography variant="body1">{index + 1}</Typography></Box>
+                <Box className='table-cell' sx={{ width: 100 }}>
                   <FormControl sx={{ minWidth: 120, width: '100%' }}>
                     <Select
                       size="small"
@@ -554,25 +556,25 @@ const ErpPurchaseOrderEdit = forwardRef(({ onSubmit }: ErpPurchaseOrderEditProps
                     </Select>
                     <FormHelperText sx={{ color: 'error.main' }}>{errors.purchase_products[index]?.product_id}</FormHelperText>
                   </FormControl>
-                </TableCell>
-                <TableCell sx={{ width: 50 }}>
+                </Box>
+                <Box className='table-cell' sx={{ width: 50 }}>
                   <TextField size="small" value={item.product?.stock_quantity ?? ''} disabled />
-                </TableCell>
-                <TableCell sx={{ width: 50 }}>
+                </Box>
+                <Box className='table-cell' sx={{ width: 50 }}>
                   <TextField size="small" value={item.product?.barcode ?? ''} disabled />
-                </TableCell>
-                <TableCell sx={{ width: 50 }}>
+                </Box>
+                <Box className='table-cell' sx={{ width: 50 }}>
                   <TextField size="small" value={item.product?.unit_name ?? ''} disabled />
-                </TableCell>
-                <TableCell sx={{ width: 50 }}>
+                </Box>
+                <Box className='table-cell' sx={{ width: 50 }}>
                   <TextField
                     size="small"
                     name="remarks"
-                    value={item.remarks}
+                    defaultValue={item.remarks}
                     onChange={(e) => handleProductInputChange(e as React.ChangeEvent<HTMLInputElement>, index)}
                   />
-                </TableCell>
-                <TableCell sx={{ width: 50 }}>
+                </Box>
+                <Box className='table-cell' sx={{ width: 50 }}>
                   <TextField
                     size="small"
                     type="number"
@@ -582,8 +584,8 @@ const ErpPurchaseOrderEdit = forwardRef(({ onSubmit }: ErpPurchaseOrderEditProps
                     error={!!(errors.purchase_products[index]?.quantity)}
                     helperText={errors.purchase_products[index]?.quantity}
                   />
-                </TableCell>
-                <TableCell sx={{ width: 50 }}>
+                </Box>
+                <Box className='table-cell' sx={{ width: 50 }}>
                   <TextField
                     size="small"
                     type="number"
@@ -593,11 +595,11 @@ const ErpPurchaseOrderEdit = forwardRef(({ onSubmit }: ErpPurchaseOrderEditProps
                     error={!!(errors.purchase_products[index]?.unit_price)}
                     helperText={errors.purchase_products[index]?.unit_price}
                   />
-                </TableCell>
-                <TableCell sx={{ width: 50 }}>
+                </Box>
+                <Box className='table-cell' sx={{ width: 50 }}>
                   <TextField size="small" value={item.subtotal} disabled />
-                </TableCell>
-                <TableCell sx={{ width: 50 }}>
+                </Box>
+                <Box className='table-cell' sx={{ width: 50 }}>
                   <TextField
                     size="small"
                     type="number"
@@ -607,14 +609,14 @@ const ErpPurchaseOrderEdit = forwardRef(({ onSubmit }: ErpPurchaseOrderEditProps
                     error={!!(errors.purchase_products[index]?.tax_rate)}
                     helperText={errors.purchase_products[index]?.tax_rate}
                   />
-                </TableCell>
-                <TableCell sx={{ width: 50 }}>
+                </Box>
+                <Box className='table-cell' sx={{ width: 50 }}>
                   <TextField size="small" value={(item.quantity * item.unit_price * item.tax_rate) / 100} disabled />
-                </TableCell>
-                <TableCell sx={{ width: 50 }}>
+                </Box>
+                <Box className='table-cell' sx={{ width: 50 }}>
                   <TextField size="small" value={item.quantity * item.unit_price * (1 + item.tax_rate / 100)} disabled />
-                </TableCell>
-                <TableCell sx={{ width: 50, verticalAlign: 'middle' }}>
+                </Box>
+                <Box className='table-cell' sx={{ width: 50, verticalAlign: 'middle' }}>
                   <Button
                     sx={{ color: 'error.main' }}
                     size="small"
@@ -623,10 +625,10 @@ const ErpPurchaseOrderEdit = forwardRef(({ onSubmit }: ErpPurchaseOrderEditProps
                     startIcon={<DeleteIcon />}
                     onClick={() => handleClickProductDelete(index)}
                   />
-                </TableCell>
-              </TableRow>
+                </Box>
+              </Box>
             ))}
-          </TableContainer>
+          </Box>
           <Box sx={{ mt: 2, display: 'flex', justifyContent: 'center' }}>
             <Button variant="outlined" startIcon={<AddCircleSharpIcon />} onClick={handleAddPurchaseProduct}>
               {t('page.erp.purchase.order.title.operate.add')}
@@ -649,8 +651,8 @@ const ErpPurchaseOrderEdit = forwardRef(({ onSubmit }: ErpPurchaseOrderEditProps
                   file={item.file}
                   width={fileWidth}
                   height={fileHeight}
+                  download={downloadImages?.get(item.file_id!)}
                 >
-                  <PreviewImage src='' />
                 </CustomizedFileUpload>
               </Grid>
             ))}
@@ -663,7 +665,6 @@ const ErpPurchaseOrderEdit = forwardRef(({ onSubmit }: ErpPurchaseOrderEditProps
                 width={fileWidth}
                 height={fileHeight}
               >
-                <Box></Box>
               </CustomizedFileUpload>
             </Grid>
           </Grid>

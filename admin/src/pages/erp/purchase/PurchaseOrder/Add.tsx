@@ -85,15 +85,6 @@ const ErpPurchaseOrderAdd = forwardRef(({ onSubmit }: ErpPurchaseOrderAddProps, 
   const [fileWidth] = useState<number>(420);
   const [fileHeight] = useState<number>(245);
 
-  const PreviewImage = styled('img')({
-    width: '100%',
-    height: '100%',
-    objectFit: 'contain',
-    position: 'absolute',
-    top: 0,
-    left: 0,
-  });
-
   useImperativeHandle(ref, () => ({
     show() {
       initSuppliers();
@@ -329,7 +320,7 @@ const ErpPurchaseOrderAdd = forwardRef(({ onSubmit }: ErpPurchaseOrderAddProps, 
   }, []);
 
   const handleFileChange = useCallback(async (file: UploadFile | null, action: 'upload' | 'remove', index: number) => {
-    console.log(`Upload ${index} file updated:`, file, `Action: ${action}`);
+    // console.log(`Upload ${index} file updated:`, file, `Action: ${action}`);
 
     if (action === 'upload' && file) {
       // 更新文件列表,增加一个附件,等待上传完成后在写入信息
@@ -645,7 +636,6 @@ const ErpPurchaseOrderAdd = forwardRef(({ onSubmit }: ErpPurchaseOrderAddProps, 
                   width={fileWidth}
                   height={fileHeight}
                 >
-                  <PreviewImage src='' />
                 </CustomizedFileUpload>
               </Grid>
             ))}
@@ -658,7 +648,6 @@ const ErpPurchaseOrderAdd = forwardRef(({ onSubmit }: ErpPurchaseOrderAddProps, 
                 width={fileWidth}
                 height={fileHeight}
               >
-                <Box></Box>
               </CustomizedFileUpload>
             </Grid>
           </Grid>

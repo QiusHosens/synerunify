@@ -43,11 +43,13 @@ pub fn model_to_response(model: ErpPurchaseOrderAttachment) -> ErpPurchaseOrderA
     }
 }
 
-pub fn model_to_base_response(model: ErpPurchaseOrderAttachment) -> ErpPurchaseOrderAttachmentBaseResponse {
+pub fn model_to_base_response(model: ErpPurchaseOrderAttachment, file_name: Option<String>) -> ErpPurchaseOrderAttachmentBaseResponse {
     ErpPurchaseOrderAttachmentBaseResponse { 
         id: model.id,
         purchase_id: model.purchase_id,
         file_id: model.file_id,
         remarks: model.remarks,
+
+        file_name
     }
 }

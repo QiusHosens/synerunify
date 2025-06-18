@@ -26,7 +26,6 @@ export interface ErpProductRequest {
   purchase_price: number; // 采购价格
   sale_price: number; // 销售价格
   min_price: number; // 最低价格
-  stock_quantity: number; // 库存数量
   min_stock: number; // 最低库存
   remarks: string; // 备注
 }

@@ -96,3 +96,20 @@ export const uploadSystemFile = (
       return data;
     });
 };
+
+export const downloadSystemFile = (id: number, onProgress: (progress: number) => void): Promise<Blob> => {
+  return request.get<Blob>(`${apis.download}/${id}`, {
+    responseType: 'blob',  
+    onDownloadProgress: (progressEvent: AxiosProgressEvent) => {
+        if (progressEvent.total) {
+          const percentCompleted = Math.round(
+            (progressEvent.loaded * 100) / progressEvent.total
+          );
+          console.debug("download file percent", percentCompleted);
+          onProgress(percentCompleted);
+        }
+      },
+    }).then((response: AxiosResponse<Blob> | Blob) => {
+      return response as Blob;
+    });
+}
