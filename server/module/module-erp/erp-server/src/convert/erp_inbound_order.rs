@@ -1,6 +1,6 @@
 use sea_orm::{Set, NotSet};
 use crate::model::erp_inbound_order::{self, Model as ErpInboundOrder, ActiveModel as ErpInboundOrderActiveModel};
-use erp_model::request::erp_inbound_order::{CreateErpInboundOrderPurchaseRequest, CreateErpInboundOrderRequest, UpdateErpInboundOrderPurchaseRequest, UpdateErpInboundOrderRequest};
+use erp_model::request::erp_inbound_order::{CreateErpInboundOrderOtherRequest, CreateErpInboundOrderPurchaseRequest, CreateErpInboundOrderRequest, UpdateErpInboundOrderPurchaseRequest, UpdateErpInboundOrderRequest};
 use erp_model::response::erp_inbound_order::ErpInboundOrderResponse;
 
 pub fn create_request_to_model(request: &CreateErpInboundOrderRequest) -> ErpInboundOrderActiveModel {
@@ -21,6 +21,18 @@ pub fn create_request_to_model(request: &CreateErpInboundOrderRequest) -> ErpInb
 pub fn create_purchase_request_to_model(request: &CreateErpInboundOrderPurchaseRequest) -> ErpInboundOrderActiveModel {
     ErpInboundOrderActiveModel {
         purchase_id: Set(Some(request.purchase_id.clone())),
+        inbound_date: Set(request.inbound_date.clone()),
+        remarks: request.remarks.as_ref().map_or(NotSet, |remarks| Set(Some(remarks.clone()))),
+        discount_rate: request.discount_rate.as_ref().map_or(NotSet, |discount_rate| Set(Some(discount_rate.clone()))),
+        other_cost: request.other_cost.as_ref().map_or(NotSet, |other_cost| Set(Some(other_cost.clone()))),
+        settlement_account_id: request.settlement_account_id.as_ref().map_or(NotSet, |settlement_account_id| Set(Some(settlement_account_id.clone()))),
+        ..Default::default()
+    }
+}
+
+pub fn create_other_request_to_model(request: &CreateErpInboundOrderOtherRequest) -> ErpInboundOrderActiveModel {
+    ErpInboundOrderActiveModel {
+        supplier_id: Set(request.supplier_id.clone()),
         inbound_date: Set(request.inbound_date.clone()),
         remarks: request.remarks.as_ref().map_or(NotSet, |remarks| Set(Some(remarks.clone()))),
         discount_rate: request.discount_rate.as_ref().map_or(NotSet, |discount_rate| Set(Some(discount_rate.clone()))),

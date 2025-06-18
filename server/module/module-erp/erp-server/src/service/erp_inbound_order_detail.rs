@@ -9,7 +9,7 @@ use crate::model::erp_inbound_order_detail::{Model as ErpInboundOrderDetailModel
 use crate::model::erp_inbound_order::{Model as ErpInboundOrderModel};
 use crate::model::erp_purchase_order_detail::{Model as ErpPurchaseOrderDetailModel};
 use crate::service::{erp_inventory_record, erp_product_inventory, erp_purchase_order_detail};
-use erp_model::request::erp_inbound_order_detail::{CreateErpInboundOrderDetailPurchaseRequest, CreateErpInboundOrderDetailRequest, PaginatedKeywordRequest, UpdateErpInboundOrderDetailPurchaseRequest, UpdateErpInboundOrderDetailRequest};
+use erp_model::request::erp_inbound_order_detail::{CreateErpInboundOrderDetailOtherRequest, CreateErpInboundOrderDetailPurchaseRequest, CreateErpInboundOrderDetailRequest, PaginatedKeywordRequest, UpdateErpInboundOrderDetailPurchaseRequest, UpdateErpInboundOrderDetailRequest};
 use erp_model::response::erp_inbound_order_detail::ErpInboundOrderDetailResponse;
 use crate::convert::erp_inbound_order_detail::{create_request_to_model, update_request_to_model, model_to_response};
 use anyhow::{anyhow, Context, Result};
@@ -81,6 +81,64 @@ pub async fn create_batch_purchase(db: &DatabaseConnection, txn: &DatabaseTransa
             };
             inbound_inventories.push(inbound_inventory);
         }
+    }
+
+    if !models.is_empty() {
+        ErpInboundOrderDetailEntity::insert_many(models)
+            .exec(txn)
+            .await
+            .with_context(|| "Failed to save detail")?;
+
+        // 修改产品库存
+        erp_product_inventory::inbound(&db, txn, login_user.clone(), product_inventories).await?;
+        // 增加库存记录
+        erp_inventory_record::inbound(&db, txn, login_user, inbound_inventories).await?;
+    }
+    Ok(())
+}
+
+pub async fn create_batch_other(db: &DatabaseConnection, txn: &DatabaseTransaction, login_user: LoginUserContext, order: ErpInboundOrderModel, requests: Vec<CreateErpInboundOrderDetailOtherRequest>) -> Result<()> {
+    let purchase_id = order.purchase_id.ok_or_else(|| anyhow!("订单产品不匹配"))?;
+
+    let mut models: Vec<ErpInboundOrderDetailActiveModel> = Vec::new();
+    let mut product_inventories: Vec<ErpProductInventoryInOutRequest> = Vec::new();
+    let mut inbound_inventories: Vec<ErpInventoryRecordInRequest> = Vec::new();
+    for request in requests {
+        let model = ErpInboundOrderDetailActiveModel {
+            order_id: Set(order.id),
+            warehouse_id: Set(request.warehouse_id.clone()),
+            product_id: Set(request.product_id.clone()),
+            quantity: Set(request.quantity.clone()),
+            unit_price: Set(request.unit_price.clone()),
+            subtotal: Set(request.subtotal.clone()),
+            tax_rate: request.tax_rate.as_ref().map_or(NotSet, |tax_rate| Set(Some(tax_rate.clone()))),
+            remarks: request.remarks.as_ref().map_or(NotSet, |remarks| Set(Some(remarks.clone()))),
+            department_id: Set(login_user.department_id.clone()),
+            department_code: Set(login_user.department_code.clone()),
+            creator: Set(Some(login_user.id)),
+            updater: Set(Some(login_user.id)),
+            tenant_id: Set(login_user.tenant_id),
+            ..Default::default()
+        };
+        models.push(model);
+
+        // 产品库存
+        let product_inventory = ErpProductInventoryInOutRequest {
+            product_id: request.product_id.clone(),
+            warehouse_id: request.warehouse_id.clone(),
+            quantity: request.quantity.clone(),
+        };
+        product_inventories.push(product_inventory);
+
+        // 入库记录
+        let inbound_inventory = ErpInventoryRecordInRequest {
+            product_id: request.product_id.clone(),
+            warehouse_id: request.warehouse_id.clone(),
+            quantity: request.quantity.clone(),
+            record_date: order.inbound_date.clone(),
+            remarks: request.remarks.clone(),
+        };
+        inbound_inventories.push(inbound_inventory);
     }
 
     if !models.is_empty() {
