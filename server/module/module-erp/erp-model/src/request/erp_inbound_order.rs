@@ -3,7 +3,7 @@ use serde::{Serialize, Deserialize};
 use utoipa::ToSchema;
 use common::base::page::PaginatedRequest;
 
-use crate::request::{erp_inbound_order_attachment::{CreateErpInboundOrderAttachmentRequest, UpdateErpInboundOrderAttachmentRequest}, erp_inbound_order_detail::CreateErpInboundOrderDetailPurchaseRequest};
+use crate::request::{erp_inbound_order_attachment::{CreateErpInboundOrderAttachmentRequest, UpdateErpInboundOrderAttachmentRequest}, erp_inbound_order_detail::{CreateErpInboundOrderDetailPurchaseRequest, UpdateErpInboundOrderDetailPurchaseRequest}};
 
 #[derive(Serialize, Deserialize, Debug, ToSchema)]
 pub struct CreateErpInboundOrderRequest {
@@ -101,7 +101,7 @@ pub struct UpdateErpInboundOrderPurchaseRequest {
     
     pub settlement_account_id: Option<i64>, // 结算账户ID
 
-    pub details: Vec<CreateErpInboundOrderDetailPurchaseRequest>, // 入库采购产品仓库列表
+    pub details: Vec<UpdateErpInboundOrderDetailPurchaseRequest>, // 入库采购产品仓库列表
 
     pub attachments: Vec<UpdateErpInboundOrderAttachmentRequest>, // 入库附件列表
     

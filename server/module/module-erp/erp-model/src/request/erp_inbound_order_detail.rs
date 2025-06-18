@@ -69,6 +69,15 @@ pub struct UpdateErpInboundOrderDetailRequest {
 }
 
 #[derive(Serialize, Deserialize, Debug, ToSchema)]
+pub struct UpdateErpInboundOrderDetailPurchaseRequest {
+    
+    pub purchase_detail_id: i64, // 采购订单详情ID
+    
+    pub warehouse_id: i64, // 仓库ID
+    
+}
+
+#[derive(Serialize, Deserialize, Debug, ToSchema)]
 pub struct PaginatedKeywordRequest {
     #[serde(flatten)]
     pub base: PaginatedRequest,

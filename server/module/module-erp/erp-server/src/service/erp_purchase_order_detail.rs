@@ -179,3 +179,11 @@ pub async fn list_by_purchase_id(db: &DatabaseConnection, login_user: LoginUserC
         .all(db).await?;
     Ok(list.into_iter().map(model_to_base_response).collect())
 }
+
+pub async fn find_by_purchase_id(db: &DatabaseConnection, login_user: LoginUserContext, purchase_id: i64) -> Result<Vec<ErpPurchaseOrderDetailModel>> {
+    let list = ErpPurchaseOrderDetailEntity::find_active()
+        .filter(Column::TenantId.eq(login_user.tenant_id))
+        .filter(Column::PurchaseId.eq(purchase_id))
+        .all(db).await?;
+    Ok(list)
+}

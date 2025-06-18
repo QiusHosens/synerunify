@@ -1,11 +1,17 @@
+use std::collections::{HashMap, HashSet};
+
+use axum::http::request;
 use common::interceptor::orm::simple_support::SimpleSupport;
-use sea_orm::{DatabaseConnection, EntityTrait, Order, ColumnTrait, ActiveModelTrait, PaginatorTrait, QueryOrder, QueryFilter, Condition};
+use sea_orm::{ActiveModelTrait, ColumnTrait, Condition, DatabaseConnection, DatabaseTransaction, EntityTrait, Order, PaginatorTrait, QueryFilter, QueryOrder};
 use crate::model::erp_inbound_order_detail::{Model as ErpInboundOrderDetailModel, ActiveModel as ErpInboundOrderDetailActiveModel, Entity as ErpInboundOrderDetailEntity, Column};
-use erp_model::request::erp_inbound_order_detail::{CreateErpInboundOrderDetailRequest, UpdateErpInboundOrderDetailRequest, PaginatedKeywordRequest};
+use crate::model::erp_inbound_order::{Model as ErpInboundOrderModel};
+use crate::model::erp_purchase_order_detail::{Model as ErpPurchaseOrderDetailModel};
+use crate::service::erp_purchase_order_detail;
+use erp_model::request::erp_inbound_order_detail::{CreateErpInboundOrderDetailPurchaseRequest, CreateErpInboundOrderDetailRequest, PaginatedKeywordRequest, UpdateErpInboundOrderDetailPurchaseRequest, UpdateErpInboundOrderDetailRequest};
 use erp_model::response::erp_inbound_order_detail::ErpInboundOrderDetailResponse;
 use crate::convert::erp_inbound_order_detail::{create_request_to_model, update_request_to_model, model_to_response};
-use anyhow::{Result, anyhow};
-use sea_orm::ActiveValue::Set;
+use anyhow::{anyhow, Context, Result};
+use sea_orm::ActiveValue::{NotSet, Set};
 use common::constants::enum_constants::{STATUS_DISABLE, STATUS_ENABLE};
 use common::base::page::PaginatedResponse;
 use common::context::context::LoginUserContext;
@@ -20,16 +26,97 @@ pub async fn create(db: &DatabaseConnection, login_user: LoginUserContext, reque
     Ok(erp_inbound_order_detail.id)
 }
 
-pub async fn update(db: &DatabaseConnection, login_user: LoginUserContext, request: UpdateErpInboundOrderDetailRequest) -> Result<()> {
-    let erp_inbound_order_detail = ErpInboundOrderDetailEntity::find_by_id(request.id)
-        .filter(Column::TenantId.eq(login_user.tenant_id))
-        .one(db)
-        .await?
-        .ok_or_else(|| anyhow!("记录未找到"))?;
+pub async fn create_batch_purchase(db: &DatabaseConnection, txn: &DatabaseTransaction, login_user: LoginUserContext, order_id: i64, purchase_id: i64, requests: Vec<CreateErpInboundOrderDetailPurchaseRequest>) -> Result<()> {
+    // 查询采购订单产品详情与入库订单详情是否符合,不符合报错
+    let purchase_details = erp_purchase_order_detail::find_by_purchase_id(&db, login_user.clone(), purchase_id).await?;
+    let request_detail_ids: HashSet<i64> = requests.iter().map(|d|d.purchase_detail_id).collect();
+    let purchase_detail_ids: HashSet<i64> = purchase_details.iter().map(|d|d.id).collect();
+    if request_detail_ids != purchase_detail_ids {
+        return Err(anyhow!("订单产品不匹配"));
+    }
+    let purchase_detail_map: HashMap<i64, ErpPurchaseOrderDetailModel> =
+        purchase_details.iter().map(|d| (d.id, d.clone())).collect();
+    let mut models: Vec<ErpInboundOrderDetailActiveModel> = Vec::new();
+    for request in requests {
+        if let Some(purchase_detail) = purchase_detail_map.get(&request.purchase_detail_id) {
+            let model: ErpInboundOrderDetailActiveModel = ErpInboundOrderDetailActiveModel {
+                order_id: Set(order_id),
+                purchase_detail_id: Set(Some((request.purchase_detail_id))),
+                warehouse_id: Set(request.warehouse_id.clone()),
+                product_id: Set(purchase_detail.product_id.clone()),
+                quantity: Set(purchase_detail.quantity.clone()),
+                unit_price: Set(purchase_detail.unit_price.clone()),
+                subtotal: Set(purchase_detail.subtotal.clone()),
+                tax_rate: purchase_detail.tax_rate.as_ref().map_or(NotSet, |tax_rate| Set(Some(tax_rate.clone()))),
+                remarks: purchase_detail.remarks.as_ref().map_or(NotSet, |remarks| Set(Some(remarks.clone()))),
+                department_id: Set(login_user.department_id.clone()),
+                department_code: Set(login_user.department_code.clone()),
+                creator: Set(Some(login_user.id)),
+                updater: Set(Some(login_user.id)),
+                tenant_id: Set(login_user.tenant_id),
+                ..Default::default()
+            };
+            models.push(model);
+        }
+    }
 
-    let mut erp_inbound_order_detail = update_request_to_model(&request, erp_inbound_order_detail);
-    erp_inbound_order_detail.updater = Set(Some(login_user.id));
-    erp_inbound_order_detail.update(db).await?;
+    if !models.is_empty() {
+        ErpInboundOrderDetailEntity::insert_many(models)
+            .exec(txn)
+            .await
+            .with_context(|| "Failed to save detail")?;
+    }
+    Ok(())
+}
+
+pub async fn update_batch_purchase(db: &DatabaseConnection, txn: &DatabaseTransaction, login_user: LoginUserContext, order: ErpInboundOrderModel, requests: Vec<UpdateErpInboundOrderDetailPurchaseRequest>) -> Result<()> {
+    let purchase_id = order.purchase_id.ok_or_else(|| anyhow!("订单产品不匹配"))?;
+    // 查询采购订单产品详情与入库订单详情是否符合,不符合报错
+    let purchase_details = erp_purchase_order_detail::find_by_purchase_id(&db, login_user.clone(), purchase_id).await?;
+    
+    let request_map: HashMap<i64, &UpdateErpInboundOrderDetailPurchaseRequest> = requests.iter().map(|d| (d.purchase_detail_id, d)).collect();
+    let purchase_detail_map: HashMap<i64, &ErpPurchaseOrderDetailModel> = purchase_details.iter().map(|d| (d.id, d)).collect();
+
+    if request_map.keys().collect::<HashSet<_>>() != purchase_detail_map.keys().collect::<HashSet<_>>() {
+        return Err(anyhow!("订单产品不匹配"));
+    }
+
+    // 查询已存在订单详情
+    let existing_details = ErpInboundOrderDetailEntity::find()
+        .filter(Column::TenantId.eq(login_user.tenant_id))
+        .filter(Column::OrderId.eq(order.id))
+        .all(db)
+        .await?;
+
+    // 更新
+    for existing_detail in existing_details {
+        if let Some(purchase_detail_id) = existing_detail.purchase_detail_id {
+            let mut active_model: ErpInboundOrderDetailActiveModel = existing_detail.into();
+            if let Some(request) = request_map.get(&purchase_detail_id) {
+                active_model.purchase_detail_id = Set(Some((request.purchase_detail_id)));
+                active_model.warehouse_id = Set(request.warehouse_id.clone())
+            }
+            if let Some(purchase_detail) = purchase_detail_map.get(&purchase_detail_id) {
+                active_model.product_id = Set(purchase_detail.product_id.clone());
+                active_model.quantity = Set(purchase_detail.quantity.clone());
+                active_model.unit_price = Set(purchase_detail.unit_price.clone());
+                active_model.subtotal = Set(purchase_detail.subtotal.clone());
+                if let Some(tax_rate) = &purchase_detail.tax_rate { 
+                    active_model.tax_rate = Set(Some(tax_rate.clone()));
+                }
+                if let Some(remarks) = &purchase_detail.remarks { 
+                    active_model.remarks = Set(Some(remarks.clone()));
+                }
+            }
+
+            active_model.department_id = Set(order.department_id.clone());
+            active_model.department_code = Set(order.department_code.clone());
+            active_model.updater = Set(Some(login_user.id));
+            active_model.tenant_id = Set(order.tenant_id);
+            active_model.update(txn).await?;
+        }
+    }
+
     Ok(())
 }
 
