@@ -25,7 +25,7 @@ pub async fn create(db: &DatabaseConnection, login_user: LoginUserContext, reque
 }
 
 pub async fn update(db: &DatabaseConnection, login_user: LoginUserContext, request: UpdateSystemTenantPackageRequest) -> Result<()> {
-    let system_tenant_package = SystemTenantPackageEntity::find_by_id(request.id)
+    let system_tenant_package = SystemTenantPackageEntity::find_active_by_id(request.id)
         .one(db)
         .await?
         .ok_or_else(|| anyhow!("记录未找到"))?;

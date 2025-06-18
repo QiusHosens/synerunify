@@ -22,7 +22,7 @@ pub async fn create(db: &DatabaseConnection, login_user: LoginUserContext, reque
 }
 
 pub async fn update(db: &DatabaseConnection, login_user: LoginUserContext, request: UpdateSystemMenuRequest) -> Result<()> {
-    let system_menu = SystemMenuEntity::find_by_id(request.id)
+    let system_menu = SystemMenuEntity::find_active_by_id(request.id)
         .one(db)
         .await?
         .ok_or_else(|| anyhow!("记录未找到"))?;

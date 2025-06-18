@@ -21,7 +21,7 @@ pub async fn create(db: &DatabaseConnection, login_user: LoginUserContext, reque
 }
 
 pub async fn update(db: &DatabaseConnection, login_user: LoginUserContext, request: UpdateSystemDictTypeRequest) -> Result<()> {
-    let system_dict_type = SystemDictTypeEntity::find_by_id(request.id)
+    let system_dict_type = SystemDictTypeEntity::find_active_by_id(request.id)
         .one(db)
         .await?
         .ok_or_else(|| anyhow!("记录未找到"))?;

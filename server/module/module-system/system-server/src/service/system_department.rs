@@ -16,7 +16,8 @@ use super::system_user;
 
 pub async fn create(db: &DatabaseConnection, login_user: LoginUserContext, request: CreateSystemDepartmentRequest) -> Result<i64> {
     // 查询父级编码
-    let parent_department = SystemDepartmentEntity::find_by_id(request.parent_id.clone())
+    let parent_department = SystemDepartmentEntity::find_active_by_id(request.parent_id.clone())
+        .filter(Column::TenantId.eq(login_user.tenant_id))
         .one(db)
         .await?
         .ok_or_else(|| anyhow!("父级部门未找到"))?;
@@ -43,7 +44,7 @@ pub async fn create(db: &DatabaseConnection, login_user: LoginUserContext, reque
 /// 创建租户根部门
 pub async fn create_tenant_root(db: &DatabaseConnection, txn: &DatabaseTransaction, login_user: LoginUserContext, name: String, tenant_id: i64) -> Result<SystemDepartmentModel> {
     // 查询code
-    let max_department = SystemDepartmentEntity::find()
+    let max_department = SystemDepartmentEntity::find_active()
         .filter(Column::ParentId.eq(DEPARTMENT_ROOT_ID))
         .order_by_desc(Column::Id)
         .limit(1)
@@ -68,7 +69,8 @@ pub async fn create_tenant_root(db: &DatabaseConnection, txn: &DatabaseTransacti
 }
 
 pub async fn update(db: &DatabaseConnection, login_user: LoginUserContext, request: UpdateSystemDepartmentRequest) -> Result<()> {
-    let system_department = SystemDepartmentEntity::find_by_id(request.id)
+    let system_department = SystemDepartmentEntity::find_active_by_id(request.id)
+        .filter(Column::TenantId.eq(login_user.tenant_id))
         .one(db)
         .await?
         .ok_or_else(|| anyhow!("记录未找到"))?;

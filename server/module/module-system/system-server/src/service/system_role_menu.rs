@@ -22,7 +22,8 @@ pub async fn update(
     request: UpdateSystemRoleMenuRequest,
 ) -> Result<()> {
     // Query existing role-menu relationships
-    let existing_menus = SystemRoleMenuEntity::find()
+    let existing_menus = SystemRoleMenuEntity::find_active()
+        .filter(Column::TenantId.eq(login_user.tenant_id))
         .filter(Column::RoleId.eq(request.role_id))
         .all(db)
         .await?;

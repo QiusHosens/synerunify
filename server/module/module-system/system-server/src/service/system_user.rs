@@ -81,7 +81,8 @@ pub async fn create_tenant_admin(db: &DatabaseConnection, txn: &DatabaseTransact
 }
 
 pub async fn update(db: &DatabaseConnection, login_user: LoginUserContext, request: UpdateSystemUserRequest) -> Result<()> {
-    let system_user = SystemUserEntity::find_by_id(request.id)
+    let system_user = SystemUserEntity::find_active_by_id(request.id)
+        .filter(Column::TenantId.eq(login_user.tenant_id))
         .one(db)
         .await?
         .ok_or_else(|| anyhow!("记录未找到"))?;
