@@ -15,6 +15,17 @@ pub struct CreateErpProductInventoryRequest {
 }
 
 #[derive(Serialize, Deserialize, Debug, ToSchema)]
+pub struct ErpProductInventoryInOutRequest {
+    
+    pub product_id: i64, // 产品ID
+    
+    pub warehouse_id: i64, // 仓库ID
+    
+    pub quantity: i32, // 数量
+    
+}
+
+#[derive(Serialize, Deserialize, Debug, ToSchema)]
 pub struct UpdateErpProductInventoryRequest {
     
     pub id: i64, // 产品库存ID

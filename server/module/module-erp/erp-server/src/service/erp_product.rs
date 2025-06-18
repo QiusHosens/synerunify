@@ -2,8 +2,9 @@ use std::collections::HashMap;
 
 use common::interceptor::orm::simple_support::SimpleSupport;
 use sea_orm::prelude::Expr;
-use sea_orm::{ActiveModelTrait, ColumnTrait, Condition, DatabaseConnection, DatabaseTransaction, EntityTrait, Order, PaginatorTrait, QueryFilter, QueryOrder};
+use sea_orm::{ActiveModelTrait, ColumnTrait, Condition, DatabaseConnection, DatabaseTransaction, EntityTrait, Order, PaginatorTrait, QueryFilter, QueryOrder, TransactionTrait};
 use crate::model::erp_product::{Model as ErpProductModel, ActiveModel as ErpProductActiveModel, Entity as ErpProductEntity, Column};
+use crate::service::erp_product_inventory;
 use erp_model::request::erp_product::{CreateErpProductRequest, UpdateErpProductRequest, PaginatedKeywordRequest};
 use erp_model::response::erp_product::ErpProductResponse;
 use crate::convert::erp_product::{create_request_to_model, update_request_to_model, model_to_response};
@@ -25,7 +26,6 @@ pub async fn create(db: &DatabaseConnection, login_user: LoginUserContext, reque
 
 pub async fn update(db: &DatabaseConnection, login_user: LoginUserContext, request: UpdateErpProductRequest) -> Result<()> {
     let erp_product = ErpProductEntity::find_by_id(request.id)
-        .filter(Column::TenantId.eq(login_user.tenant_id))
         .filter(Column::TenantId.eq(login_user.tenant_id))
         .one(db)
         .await?
@@ -109,26 +109,5 @@ pub async fn disable(db: &DatabaseConnection, login_user: LoginUserContext, id: 
         ..Default::default()
     };
     erp_product.update(db).await?;
-    Ok(())
-}
-
-/// 入库加库存
-pub async fn inbound(db: &DatabaseConnection, txn: &DatabaseTransaction, login_user: LoginUserContext, product_count: HashMap<i64, i32>) -> Result<()> {
-    if product_count.is_empty() {
-        return Ok(());
-    }
-
-    for (product_id, count_to_add) in product_count {
-        ErpProductEntity::update_many()
-            .col_expr(
-                Column::StockQuantity,
-                Expr::col(Column::StockQuantity).add(count_to_add),
-            )
-            .filter(Column::Id.eq(product_id))
-            .filter(Column::TenantId.eq(login_user.tenant_id))
-            .exec(txn)
-            .await?;
-    }
-
     Ok(())
 }

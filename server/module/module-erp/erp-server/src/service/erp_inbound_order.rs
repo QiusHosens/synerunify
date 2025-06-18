@@ -38,9 +38,11 @@ pub async fn create_purchase(db: &DatabaseConnection, login_user: LoginUserConte
     // 创建订单
     let erp_inbound_order = erp_inbound_order.insert(&txn).await?;
     // 创建订单详情
-    erp_inbound_order_detail::create_batch_purchase(&db, &txn, login_user.clone(), erp_inbound_order.id, request.purchase_id.clone(), request.details).await?;
+    erp_inbound_order_detail::create_batch_purchase(&db, &txn, login_user.clone(), erp_inbound_order.clone(), request.details).await?;
     // 创建订单文件
     erp_inbound_order_attachment::create_batch(&db, &txn, login_user.clone(), erp_inbound_order.id, request.attachments).await?;
+    // 修改采购订单状态到完成
+    erp_purchase_order::completed(&db, &txn, login_user.clone(), request.purchase_id);
     // 提交事务
     txn.commit().await.with_context(|| "Failed to commit transaction")?;
     Ok(erp_inbound_order.id)

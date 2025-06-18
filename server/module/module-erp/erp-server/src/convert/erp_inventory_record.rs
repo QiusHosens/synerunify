@@ -1,12 +1,12 @@
 use sea_orm::{Set, NotSet};
 use crate::model::erp_inventory_record::{self, Model as ErpInventoryRecord, ActiveModel as ErpInventoryRecordActiveModel};
-use erp_model::request::erp_inventory_record::{CreateErpInventoryRecordRequest, UpdateErpInventoryRecordRequest};
+use erp_model::request::erp_inventory_record::{CreateErpInventoryRecordRequest, ErpInventoryRecordInRequest, ErpInventoryRecordOutRequest, UpdateErpInventoryRecordRequest};
 use erp_model::response::erp_inventory_record::ErpInventoryRecordResponse;
 
 pub fn create_request_to_model(request: &CreateErpInventoryRecordRequest) -> ErpInventoryRecordActiveModel {
     ErpInventoryRecordActiveModel {
-        product_id: request.product_id.as_ref().map_or(NotSet, |product_id| Set(Some(product_id.clone()))),
-        warehouse_id: request.warehouse_id.as_ref().map_or(NotSet, |warehouse_id| Set(Some(warehouse_id.clone()))),
+        product_id: Set(request.product_id.clone()),
+        warehouse_id: Set(request.warehouse_id.clone()),
         quantity: Set(request.quantity.clone()),
         record_type: Set(request.record_type.clone()),
         record_date: Set(request.record_date.clone()),
@@ -17,13 +17,35 @@ pub fn create_request_to_model(request: &CreateErpInventoryRecordRequest) -> Erp
     }
 }
 
+pub fn create_in_request_to_model(request: &ErpInventoryRecordInRequest) -> ErpInventoryRecordActiveModel {
+    ErpInventoryRecordActiveModel {
+        product_id: Set(request.product_id.clone()),
+        warehouse_id: Set(request.warehouse_id.clone()),
+        quantity: Set(request.quantity.clone()),
+        record_date: Set(request.record_date.clone()),
+        remarks: request.remarks.as_ref().map_or(NotSet, |remarks| Set(Some(remarks.clone()))),
+        ..Default::default()
+    }
+}
+
+pub fn create_out_request_to_model(request: &ErpInventoryRecordOutRequest) -> ErpInventoryRecordActiveModel {
+    ErpInventoryRecordActiveModel {
+        product_id: Set(request.product_id.clone()),
+        warehouse_id: Set(request.warehouse_id.clone()),
+        quantity: Set(request.quantity.clone()),
+        record_date: Set(request.record_date.clone()),
+        remarks: request.remarks.as_ref().map_or(NotSet, |remarks| Set(Some(remarks.clone()))),
+        ..Default::default()
+    }
+}
+
 pub fn update_request_to_model(request: &UpdateErpInventoryRecordRequest, existing: ErpInventoryRecord) -> ErpInventoryRecordActiveModel {
     let mut active_model: ErpInventoryRecordActiveModel = existing.into();
     if let Some(product_id) = &request.product_id { 
-        active_model.product_id = Set(Some(product_id.clone()));
+        active_model.product_id = Set(product_id.clone());
     }
     if let Some(warehouse_id) = &request.warehouse_id { 
-        active_model.warehouse_id = Set(Some(warehouse_id.clone()));
+        active_model.warehouse_id = Set(warehouse_id.clone());
     }
     if let Some(quantity) = &request.quantity { 
         active_model.quantity = Set(quantity.clone());

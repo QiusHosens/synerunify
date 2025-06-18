@@ -30,8 +30,6 @@ pub struct CreateErpProductRequest {
     
     pub min_price: Option<i64>, // 最低价格
     
-    pub stock_quantity: i32, // 库存数量
-    
     pub min_stock: i32, // 最低库存
     
     pub remarks: Option<String>, // 备注
@@ -66,8 +64,6 @@ pub struct UpdateErpProductRequest {
     pub sale_price: Option<i64>, // 销售价格
     
     pub min_price: Option<i64>, // 最低价格
-    
-    pub stock_quantity: Option<i32>, // 库存数量
     
     pub min_stock: Option<i32>, // 最低库存
     

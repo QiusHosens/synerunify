@@ -34,8 +34,6 @@ pub struct Model {
     
     pub min_price: Option<i64>, // 最低价格
     
-    pub stock_quantity: i32, // 库存数量
-    
     pub min_stock: i32, // 最低库存
     
     pub remarks: Option<String>, // 备注

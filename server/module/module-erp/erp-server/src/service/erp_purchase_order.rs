@@ -1,6 +1,6 @@
 use common::interceptor::orm::simple_support::SimpleSupport;
 use common::utils::snowflake_generator::SnowflakeGenerator;
-use sea_orm::{ActiveModelTrait, ColumnTrait, Condition, DatabaseConnection, EntityTrait, JoinType, Order, PaginatorTrait, QueryFilter, QueryOrder, QuerySelect, RelationTrait, TransactionTrait};
+use sea_orm::{ActiveModelTrait, ColumnTrait, Condition, DatabaseConnection, DatabaseTransaction, EntityTrait, JoinType, Order, PaginatorTrait, QueryFilter, QueryOrder, QuerySelect, RelationTrait, TransactionTrait};
 use tracing::info;
 use crate::model::erp_purchase_order::{Model as ErpPurchaseOrderModel, ActiveModel as ErpPurchaseOrderActiveModel, Entity as ErpPurchaseOrderEntity, Column, Relation};
 use crate::model::erp_supplier::{Model as ErpSupplierModel, ActiveModel as ErpSupplierActiveModel, Entity as ErpSupplierEntity};
@@ -175,6 +175,18 @@ pub async fn cancel(db: &DatabaseConnection, login_user: LoginUserContext, id: i
         ..Default::default()
     };
     erp_purchase_order.update(db).await?;
+    Ok(())
+}
+
+/// 完成订单
+pub async fn completed(db: &DatabaseConnection, txn: &DatabaseTransaction, login_user: LoginUserContext, id: i64) -> Result<()> {
+    let erp_purchase_order = ErpPurchaseOrderActiveModel {
+        id: Set(id),
+        updater: Set(Some(login_user.id)),
+        order_status: Set(PURCHASE_ORDER_STATUS_COMPLETE),
+        ..Default::default()
+    };
+    erp_purchase_order.update(txn).await?;
     Ok(())
 }
 

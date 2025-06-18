@@ -9,9 +9,9 @@ pub struct ErpInventoryRecordResponse {
     
     pub id: i64, // 库存记录ID
     
-    pub product_id: Option<i64>, // 产品ID
+    pub product_id: i64, // 产品ID
     
-    pub warehouse_id: Option<i64>, // 仓库ID
+    pub warehouse_id: i64, // 仓库ID
     
     pub quantity: i32, // 数量
     

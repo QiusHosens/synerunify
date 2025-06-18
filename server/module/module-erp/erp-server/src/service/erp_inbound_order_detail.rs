@@ -2,11 +2,13 @@ use std::collections::{HashMap, HashSet};
 
 use axum::http::request;
 use common::interceptor::orm::simple_support::SimpleSupport;
+use erp_model::request::erp_inventory_record::ErpInventoryRecordInRequest;
+use erp_model::request::erp_product_inventory::{CreateErpProductInventoryRequest, ErpProductInventoryInOutRequest};
 use sea_orm::{ActiveModelTrait, ColumnTrait, Condition, DatabaseConnection, DatabaseTransaction, EntityTrait, Order, PaginatorTrait, QueryFilter, QueryOrder};
 use crate::model::erp_inbound_order_detail::{Model as ErpInboundOrderDetailModel, ActiveModel as ErpInboundOrderDetailActiveModel, Entity as ErpInboundOrderDetailEntity, Column};
 use crate::model::erp_inbound_order::{Model as ErpInboundOrderModel};
 use crate::model::erp_purchase_order_detail::{Model as ErpPurchaseOrderDetailModel};
-use crate::service::erp_purchase_order_detail;
+use crate::service::{erp_inventory_record, erp_product_inventory, erp_purchase_order_detail};
 use erp_model::request::erp_inbound_order_detail::{CreateErpInboundOrderDetailPurchaseRequest, CreateErpInboundOrderDetailRequest, PaginatedKeywordRequest, UpdateErpInboundOrderDetailPurchaseRequest, UpdateErpInboundOrderDetailRequest};
 use erp_model::response::erp_inbound_order_detail::ErpInboundOrderDetailResponse;
 use crate::convert::erp_inbound_order_detail::{create_request_to_model, update_request_to_model, model_to_response};
@@ -26,7 +28,8 @@ pub async fn create(db: &DatabaseConnection, login_user: LoginUserContext, reque
     Ok(erp_inbound_order_detail.id)
 }
 
-pub async fn create_batch_purchase(db: &DatabaseConnection, txn: &DatabaseTransaction, login_user: LoginUserContext, order_id: i64, purchase_id: i64, requests: Vec<CreateErpInboundOrderDetailPurchaseRequest>) -> Result<()> {
+pub async fn create_batch_purchase(db: &DatabaseConnection, txn: &DatabaseTransaction, login_user: LoginUserContext, order: ErpInboundOrderModel, requests: Vec<CreateErpInboundOrderDetailPurchaseRequest>) -> Result<()> {
+    let purchase_id = order.purchase_id.ok_or_else(|| anyhow!("订单产品不匹配"))?;
     // 查询采购订单产品详情与入库订单详情是否符合,不符合报错
     let purchase_details = erp_purchase_order_detail::find_by_purchase_id(&db, login_user.clone(), purchase_id).await?;
     let request_detail_ids: HashSet<i64> = requests.iter().map(|d|d.purchase_detail_id).collect();
@@ -37,10 +40,12 @@ pub async fn create_batch_purchase(db: &DatabaseConnection, txn: &DatabaseTransa
     let purchase_detail_map: HashMap<i64, ErpPurchaseOrderDetailModel> =
         purchase_details.iter().map(|d| (d.id, d.clone())).collect();
     let mut models: Vec<ErpInboundOrderDetailActiveModel> = Vec::new();
+    let mut product_inventories: Vec<ErpProductInventoryInOutRequest> = Vec::new();
+    let mut inbound_inventories: Vec<ErpInventoryRecordInRequest> = Vec::new();
     for request in requests {
         if let Some(purchase_detail) = purchase_detail_map.get(&request.purchase_detail_id) {
-            let model: ErpInboundOrderDetailActiveModel = ErpInboundOrderDetailActiveModel {
-                order_id: Set(order_id),
+            let model = ErpInboundOrderDetailActiveModel {
+                order_id: Set(order.id),
                 purchase_detail_id: Set(Some((request.purchase_detail_id))),
                 warehouse_id: Set(request.warehouse_id.clone()),
                 product_id: Set(purchase_detail.product_id.clone()),
@@ -57,6 +62,24 @@ pub async fn create_batch_purchase(db: &DatabaseConnection, txn: &DatabaseTransa
                 ..Default::default()
             };
             models.push(model);
+
+            // 产品库存
+            let product_inventory = ErpProductInventoryInOutRequest {
+                product_id: purchase_detail.product_id.clone(),
+                warehouse_id: request.warehouse_id.clone(),
+                quantity: purchase_detail.quantity.clone(),
+            };
+            product_inventories.push(product_inventory);
+
+            // 入库记录
+            let inbound_inventory = ErpInventoryRecordInRequest {
+                product_id: purchase_detail.product_id.clone(),
+                warehouse_id: request.warehouse_id.clone(),
+                quantity: purchase_detail.quantity.clone(),
+                record_date: order.inbound_date.clone(),
+                remarks: purchase_detail.remarks.clone(),
+            };
+            inbound_inventories.push(inbound_inventory);
         }
     }
 
@@ -65,6 +88,11 @@ pub async fn create_batch_purchase(db: &DatabaseConnection, txn: &DatabaseTransa
             .exec(txn)
             .await
             .with_context(|| "Failed to save detail")?;
+
+        // 修改产品库存
+        erp_product_inventory::inbound(&db, txn, login_user.clone(), product_inventories).await?;
+        // 增加库存记录
+        erp_inventory_record::inbound(&db, txn, login_user, inbound_inventories).await?;
     }
     Ok(())
 }

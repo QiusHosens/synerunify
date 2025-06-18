@@ -17,7 +17,6 @@ pub fn create_request_to_model(request: &CreateErpProductRequest) -> ErpProductA
         purchase_price: request.purchase_price.as_ref().map_or(NotSet, |purchase_price| Set(Some(purchase_price.clone()))),
         sale_price: request.sale_price.as_ref().map_or(NotSet, |sale_price| Set(Some(sale_price.clone()))),
         min_price: request.min_price.as_ref().map_or(NotSet, |min_price| Set(Some(min_price.clone()))),
-        stock_quantity: Set(request.stock_quantity.clone()),
         min_stock: Set(request.min_stock.clone()),
         remarks: request.remarks.as_ref().map_or(NotSet, |remarks| Set(Some(remarks.clone()))),
         ..Default::default()
@@ -62,9 +61,6 @@ pub fn update_request_to_model(request: &UpdateErpProductRequest, existing: ErpP
     if let Some(min_price) = &request.min_price { 
         active_model.min_price = Set(Some(min_price.clone()));
     }
-    if let Some(stock_quantity) = &request.stock_quantity { 
-        active_model.stock_quantity = Set(stock_quantity.clone());
-    }
     if let Some(min_stock) = &request.min_stock { 
         active_model.min_stock = Set(min_stock.clone());
     }
@@ -89,7 +85,7 @@ pub fn model_to_response(model: ErpProduct) -> ErpProductResponse {
         purchase_price: model.purchase_price,
         sale_price: model.sale_price,
         min_price: model.min_price,
-        stock_quantity: model.stock_quantity,
+        stock_quantity: 0,
         min_stock: model.min_stock,
         remarks: model.remarks,
         creator: model.creator,

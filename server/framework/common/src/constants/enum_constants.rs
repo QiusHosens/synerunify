@@ -21,3 +21,6 @@ pub const SALE_ORDER_STATUS_COMPLETE: i8 = 4; // 销售订单状态-已完成
 pub const SALE_ORDER_STATUS_CANCEL: i8 = 5; // 销售订单状态-已取消
 pub const SALE_ORDER_STATUS_RETURN_PROCESSING: i8 = 6; // 销售订单状态-退货处理中
 pub const SALE_ORDER_STATUS_RETURN_COMPLETE: i8 = 7; // 销售订单状态-退货完成
+
+pub const RECORD_TYPE_INBOUND: i8 = 0; // 记录类型-入库
+pub const RECORD_TYPE_OUTBOUND: i8 = 1; // 记录类型-出库

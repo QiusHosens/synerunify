@@ -6,9 +6,9 @@ use common::base::page::PaginatedRequest;
 #[derive(Serialize, Deserialize, Debug, ToSchema)]
 pub struct CreateErpInventoryRecordRequest {
     
-    pub product_id: Option<i64>, // 产品ID
+    pub product_id: i64, // 产品ID
     
-    pub warehouse_id: Option<i64>, // 仓库ID
+    pub warehouse_id: i64, // 仓库ID
     
     pub quantity: i32, // 数量
     
@@ -24,6 +24,42 @@ pub struct CreateErpInventoryRecordRequest {
     pub department_code: String, // 部门编码
     
     pub department_id: i64, // 部门ID
+    
+}
+
+#[derive(Serialize, Deserialize, Debug, ToSchema)]
+pub struct ErpInventoryRecordInRequest {
+    
+    pub product_id: i64, // 产品ID
+    
+    pub warehouse_id: i64, // 仓库ID
+    
+    pub quantity: i32, // 数量
+    
+    // #[serde_as(as = "DisplayFromStr")]
+    // #[serde(with = "serde_with::chrono::naive_datetime")]
+    #[schema(value_type = String, format = Date)]
+    pub record_date: NaiveDateTime, // 记录日期
+    
+    pub remarks: Option<String>, // 备注
+    
+}
+
+#[derive(Serialize, Deserialize, Debug, ToSchema)]
+pub struct ErpInventoryRecordOutRequest {
+    
+    pub product_id: i64, // 产品ID
+    
+    pub warehouse_id: i64, // 仓库ID
+    
+    pub quantity: i32, // 数量
+    
+    // #[serde_as(as = "DisplayFromStr")]
+    // #[serde(with = "serde_with::chrono::naive_datetime")]
+    #[schema(value_type = String, format = Date)]
+    pub record_date: NaiveDateTime, // 记录日期
+    
+    pub remarks: Option<String>, // 备注
     
 }
 
