@@ -22,7 +22,7 @@ pub struct ErpOutboundOrderResponse {
     // #[serde(with = "serde_with::chrono::naive_datetime")]
     #[serde_as(as = "StringDateTime")]
     #[schema(value_type = String, format = Date)]
-    pub inbound_date: NaiveDateTime, // 出库日期
+    pub outbound_date: NaiveDateTime, // 出库日期
     
     pub remarks: Option<String>, // 备注
     

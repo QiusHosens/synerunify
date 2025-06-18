@@ -178,3 +178,11 @@ pub async fn list_by_sale_id(db: &DatabaseConnection, login_user: LoginUserConte
         .all(db).await?;
     Ok(list.into_iter().map(model_to_base_response).collect())
 }
+
+pub async fn find_by_sale_id(db: &DatabaseConnection, login_user: LoginUserContext, sale_id: i64) -> Result<Vec<ErpSalesOrderDetailModel>> {
+    let list = ErpSalesOrderDetailEntity::find_active()
+        .filter(Column::TenantId.eq(login_user.tenant_id))
+        .filter(Column::OrderId.eq(sale_id))
+        .all(db).await?;
+    Ok(list)
+}

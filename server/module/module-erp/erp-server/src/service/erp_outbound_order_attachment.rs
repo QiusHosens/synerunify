@@ -1,10 +1,11 @@
 use common::interceptor::orm::simple_support::SimpleSupport;
-use sea_orm::{DatabaseConnection, EntityTrait, Order, ColumnTrait, ActiveModelTrait, PaginatorTrait, QueryOrder, QueryFilter, Condition};
+use file_common::service::system_file;
+use sea_orm::{ActiveModelTrait, ColumnTrait, Condition, DatabaseConnection, DatabaseTransaction, EntityTrait, Order, PaginatorTrait, QueryFilter, QueryOrder};
 use crate::model::erp_outbound_order_attachment::{Model as ErpOutboundOrderAttachmentModel, ActiveModel as ErpOutboundOrderAttachmentActiveModel, Entity as ErpOutboundOrderAttachmentEntity, Column};
 use erp_model::request::erp_outbound_order_attachment::{CreateErpOutboundOrderAttachmentRequest, UpdateErpOutboundOrderAttachmentRequest, PaginatedKeywordRequest};
 use erp_model::response::erp_outbound_order_attachment::ErpOutboundOrderAttachmentResponse;
 use crate::convert::erp_outbound_order_attachment::{create_request_to_model, update_request_to_model, model_to_response};
-use anyhow::{Result, anyhow};
+use anyhow::{anyhow, Context, Result};
 use sea_orm::ActiveValue::Set;
 use common::constants::enum_constants::{STATUS_DISABLE, STATUS_ENABLE};
 use common::base::page::PaginatedResponse;
@@ -18,6 +19,35 @@ pub async fn create(db: &DatabaseConnection, login_user: LoginUserContext, reque
     erp_outbound_order_attachment.tenant_id = Set(login_user.tenant_id);
     let erp_outbound_order_attachment = erp_outbound_order_attachment.insert(db).await?;
     Ok(erp_outbound_order_attachment.id)
+}
+
+pub async fn create_batch(db: &DatabaseConnection, txn: &DatabaseTransaction, login_user: LoginUserContext, order_id: i64, requests: Vec<CreateErpOutboundOrderAttachmentRequest>) -> Result<()> {
+    let file_ids: Vec<i64> = requests.iter().clone().map(|request| request.file_id).collect();
+
+    let models: Vec<ErpOutboundOrderAttachmentActiveModel> = requests
+        .into_iter()
+        .map(|request| {
+            let mut model = create_request_to_model(&request);
+            model.order_id = Set(order_id);
+            model.department_id = Set(login_user.department_id);
+            model.department_code = Set(login_user.department_code.clone());
+            model.creator = Set(Some(login_user.id));
+            model.updater = Set(Some(login_user.id));
+            model.tenant_id = Set(login_user.tenant_id);
+            model
+        })
+        .collect();
+
+    if !models.is_empty() {
+        ErpOutboundOrderAttachmentEntity::insert_many(models)
+            .exec(txn)
+            .await
+            .with_context(|| "Failed to save attachment")?;
+    }
+
+    // 启用文件
+    system_file::enable_outer(&db, &txn, login_user, file_ids).await?;
+    Ok(())
 }
 
 pub async fn update(db: &DatabaseConnection, login_user: LoginUserContext, request: UpdateErpOutboundOrderAttachmentRequest) -> Result<()> {

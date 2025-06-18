@@ -18,7 +18,7 @@ pub struct Model {
 
     pub user_id: i64, // 用户ID
     
-    pub inbound_date: NaiveDateTime, // 出库日期
+    pub outbound_date: NaiveDateTime, // 出库日期
     
     pub remarks: Option<String>, // 备注
     

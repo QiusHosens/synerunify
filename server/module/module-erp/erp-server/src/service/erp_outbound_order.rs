@@ -1,22 +1,78 @@
 use common::interceptor::orm::simple_support::SimpleSupport;
-use sea_orm::{DatabaseConnection, EntityTrait, Order, ColumnTrait, ActiveModelTrait, PaginatorTrait, QueryOrder, QueryFilter, Condition};
+use common::utils::snowflake_generator::SnowflakeGenerator;
+use sea_orm::{ActiveModelTrait, ColumnTrait, Condition, DatabaseConnection, EntityTrait, Order, PaginatorTrait, QueryFilter, QueryOrder, TransactionTrait};
 use crate::model::erp_outbound_order::{Model as ErpOutboundOrderModel, ActiveModel as ErpOutboundOrderActiveModel, Entity as ErpOutboundOrderEntity, Column};
-use erp_model::request::erp_outbound_order::{CreateErpOutboundOrderRequest, UpdateErpOutboundOrderRequest, PaginatedKeywordRequest};
+use crate::service::{erp_outbound_order_attachment, erp_outbound_order_detail, erp_sales_order};
+use erp_model::request::erp_outbound_order::{CreateErpOutboundOrderOtherRequest, CreateErpOutboundOrderRequest, CreateErpOutboundOrderSaleRequest, PaginatedKeywordRequest, UpdateErpOutboundOrderRequest};
 use erp_model::response::erp_outbound_order::ErpOutboundOrderResponse;
-use crate::convert::erp_outbound_order::{create_request_to_model, update_request_to_model, model_to_response};
-use anyhow::{Result, anyhow};
+use crate::convert::erp_outbound_order::{create_other_request_to_model, create_request_to_model, create_sale_request_to_model, model_to_response, update_request_to_model};
+use anyhow::{anyhow, Context, Result};
 use sea_orm::ActiveValue::Set;
 use common::constants::enum_constants::{STATUS_DISABLE, STATUS_ENABLE};
 use common::base::page::PaginatedResponse;
 use common::context::context::LoginUserContext;
 use common::interceptor::orm::active_filter::ActiveFilterEntityTrait;
 
-pub async fn create(db: &DatabaseConnection, login_user: LoginUserContext, request: CreateErpOutboundOrderRequest) -> Result<i64> {
-    let mut erp_outbound_order = create_request_to_model(&request);
-    erp_outbound_order.creator = Set(Some(login_user.id));
-    erp_outbound_order.updater = Set(Some(login_user.id));
-    erp_outbound_order.tenant_id = Set(login_user.tenant_id);
-    let erp_outbound_order = erp_outbound_order.insert(db).await?;
+pub async fn create_sale(db: &DatabaseConnection, login_user: LoginUserContext, request: CreateErpOutboundOrderSaleRequest) -> Result<i64> {
+    let mut erp_outbound_order = create_sale_request_to_model(&request);
+    // 查询采购订单
+    let sale_order = erp_sales_order::find_by_id(&db, login_user.clone(), request.sale_id.clone()).await?;
+    // 生成订单编号
+    let generator = SnowflakeGenerator::new();
+    match generator.generate() {
+        Ok(id) => erp_outbound_order.order_number = Set(id),
+        Err(e) => return Err(anyhow!("订单编号生成失败")),
+    }
+    
+    erp_outbound_order.customer_id = Set(sale_order.customer_id);
+    erp_outbound_order.user_id = Set(login_user.id.clone());
+    erp_outbound_order.department_id = Set(login_user.department_id.clone());
+    erp_outbound_order.department_code = Set(login_user.department_code.clone());
+    erp_outbound_order.creator = Set(Some(login_user.id.clone()));
+    erp_outbound_order.updater = Set(Some(login_user.id.clone()));
+    erp_outbound_order.tenant_id = Set(login_user.tenant_id.clone());
+
+    // 开启事务
+    let txn = db.begin().await?;
+    // 创建订单
+    let erp_outbound_order = erp_outbound_order.insert(&txn).await?;
+    // 创建订单详情
+    erp_outbound_order_detail::create_batch_sale(&db, &txn, login_user.clone(), erp_outbound_order.clone(), request.details).await?;
+    // 创建订单文件
+    erp_outbound_order_attachment::create_batch(&db, &txn, login_user.clone(), erp_outbound_order.id, request.attachments).await?;
+    // 修改采购订单状态到完成
+    erp_sales_order::awaiting_signature(&db, &txn, login_user.clone(), request.sale_id);
+    // 提交事务
+    txn.commit().await.with_context(|| "Failed to commit transaction")?;
+    Ok(erp_outbound_order.id)
+}
+
+pub async fn create_other(db: &DatabaseConnection, login_user: LoginUserContext, request: CreateErpOutboundOrderOtherRequest) -> Result<i64> {
+    let mut erp_outbound_order = create_other_request_to_model(&request);
+    // 生成订单编号
+    let generator = SnowflakeGenerator::new();
+    match generator.generate() {
+        Ok(id) => erp_outbound_order.order_number = Set(id),
+        Err(e) => return Err(anyhow!("订单编号生成失败")),
+    }
+    
+    erp_outbound_order.user_id = Set(login_user.id.clone());
+    erp_outbound_order.department_id = Set(login_user.department_id.clone());
+    erp_outbound_order.department_code = Set(login_user.department_code.clone());
+    erp_outbound_order.creator = Set(Some(login_user.id.clone()));
+    erp_outbound_order.updater = Set(Some(login_user.id.clone()));
+    erp_outbound_order.tenant_id = Set(login_user.tenant_id.clone());
+
+    // 开启事务
+    let txn = db.begin().await?;
+    // 创建订单
+    let erp_outbound_order = erp_outbound_order.insert(&txn).await?;
+    // 创建订单详情
+    erp_outbound_order_detail::create_batch_other(&db, &txn, login_user.clone(), erp_outbound_order.clone(), request.details).await?;
+    // 创建订单文件
+    erp_outbound_order_attachment::create_batch(&db, &txn, login_user.clone(), erp_outbound_order.id, request.attachments).await?;
+    // 提交事务
+    txn.commit().await.with_context(|| "Failed to commit transaction")?;
     Ok(erp_outbound_order.id)
 }
 

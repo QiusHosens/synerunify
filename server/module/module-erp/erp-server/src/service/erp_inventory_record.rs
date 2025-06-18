@@ -5,7 +5,7 @@ use erp_model::response::erp_inventory_record::ErpInventoryRecordResponse;
 use crate::convert::erp_inventory_record::{create_in_request_to_model, create_request_to_model, model_to_response, update_request_to_model};
 use anyhow::{Result, anyhow};
 use sea_orm::ActiveValue::Set;
-use common::constants::enum_constants::{RECORD_TYPE_INBOUND, STATUS_DISABLE, STATUS_ENABLE};
+use common::constants::enum_constants::{RECORD_TYPE_INBOUND, RECORD_TYPE_OUTBOUND, STATUS_DISABLE, STATUS_ENABLE};
 use common::base::page::PaginatedResponse;
 use common::context::context::LoginUserContext;
 use common::interceptor::orm::active_filter::ActiveFilterEntityTrait;
@@ -82,11 +82,26 @@ pub async fn list(db: &DatabaseConnection, login_user: LoginUserContext) -> Resu
     Ok(list.into_iter().map(model_to_response).collect())
 }
 
-/// 入库加库存
+/// 入库记录
 pub async fn inbound(db: &DatabaseConnection, txn: &DatabaseTransaction, login_user: LoginUserContext, requests: Vec<ErpInventoryRecordInRequest>) -> Result<()> {
     for request in requests {
         let mut erp_inventory_record = create_in_request_to_model(&request);
         erp_inventory_record.record_type = Set(RECORD_TYPE_INBOUND);
+        erp_inventory_record.department_id = Set(login_user.department_id);
+        erp_inventory_record.department_code = Set(login_user.department_code.clone());
+        erp_inventory_record.creator = Set(Some(login_user.id));
+        erp_inventory_record.updater = Set(Some(login_user.id));
+        erp_inventory_record.tenant_id = Set(login_user.tenant_id);
+        erp_inventory_record.insert(txn).await?;
+    }
+    Ok(())
+}
+
+/// 出库记录
+pub async fn outbound(db: &DatabaseConnection, txn: &DatabaseTransaction, login_user: LoginUserContext, requests: Vec<ErpInventoryRecordInRequest>) -> Result<()> {
+    for request in requests {
+        let mut erp_inventory_record = create_in_request_to_model(&request);
+        erp_inventory_record.record_type = Set(RECORD_TYPE_OUTBOUND);
         erp_inventory_record.department_id = Set(login_user.department_id);
         erp_inventory_record.department_code = Set(login_user.department_code.clone());
         erp_inventory_record.creator = Set(Some(login_user.id));

@@ -22,7 +22,6 @@ pub async fn erp_sales_order_router(state: AppState) -> OpenApiRouter {
         .routes(routes!(list))
         .routes(routes!(page))
         .routes(routes!(ship_out))
-        .routes(routes!(awaiting_signature))
         .routes(routes!(signed))
         .routes(routes!(completed))
         .routes(routes!(cancel))
@@ -249,33 +248,6 @@ async fn ship_out(
     Path(id): Path<i64>,
 ) -> CommonResult<()> {
     match service::erp_sales_order::ship_out(&state.db, login_user, id).await {
-        Ok(_) => {CommonResult::with_none()}
-        Err(e) => {CommonResult::with_err(&e.to_string())}
-    }
-}
-
-#[utoipa::path(
-    post,
-    path = "/awaiting_signature/{id}",
-    operation_id = "erp_sales_order_awaiting_signature",
-    params(
-        ("id" = i64, Path, description = "id")
-    ),
-    responses(
-        (status = 204, description = "awaiting signature")
-    ),
-    tag = "erp_sales_order",
-    security(
-        ("bearerAuth" = [])
-    )
-)]
-#[require_authorize(operation_id = "erp_sales_order_awaiting_signature", authorize = "")]
-async fn awaiting_signature(
-    State(state): State<AppState>,
-    Extension(login_user): Extension<LoginUserContext>,
-    Path(id): Path<i64>,
-) -> CommonResult<()> {
-    match service::erp_sales_order::awaiting_signature(&state.db, login_user, id).await {
         Ok(_) => {CommonResult::with_none()}
         Err(e) => {CommonResult::with_err(&e.to_string())}
     }

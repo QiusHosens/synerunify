@@ -11,7 +11,7 @@
  Target Server Version : 80100 (8.1.0)
  File Encoding         : 65001
 
- Date: 18/06/2025 11:34:46
+ Date: 18/06/2025 17:42:02
 */
 
 SET NAMES utf8mb4;
@@ -222,8 +222,8 @@ CREATE TABLE `erp_inventory_check`  (
 DROP TABLE IF EXISTS `erp_inventory_record`;
 CREATE TABLE `erp_inventory_record`  (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '库存记录ID',
-  `product_id` bigint NULL DEFAULT NULL COMMENT '产品ID',
-  `warehouse_id` bigint NULL DEFAULT NULL COMMENT '仓库ID',
+  `product_id` bigint NOT NULL COMMENT '产品ID',
+  `warehouse_id` bigint NOT NULL COMMENT '仓库ID',
   `quantity` int NOT NULL COMMENT '数量',
   `record_type` tinyint NOT NULL DEFAULT 0 COMMENT '记录类型 (0=in, 1=out)',
   `record_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '记录日期',
@@ -280,7 +280,7 @@ CREATE TABLE `erp_outbound_order`  (
   `sale_id` bigint NULL DEFAULT NULL COMMENT '销售订单ID',
   `customer_id` bigint NOT NULL COMMENT '客户ID',
   `user_id` bigint NOT NULL COMMENT '用户ID',
-  `inbound_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '出库日期',
+  `outbound_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '出库日期',
   `remarks` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
   `discount_rate` bigint NULL DEFAULT 0 COMMENT '优惠率（百分比，1000表示10.00%）',
   `other_cost` bigint NULL DEFAULT 0 COMMENT '其他费用',

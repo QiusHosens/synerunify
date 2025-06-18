@@ -6,7 +6,7 @@ use ctor;
 use macros::require_authorize;
 use axum::{routing::{get, post}, Router, extract::{State, Path, Json, Query}, response::IntoResponse, Extension};
 use common::base::page::PaginatedResponse;
-use erp_model::request::erp_inbound_order::{CreateErpInboundOrderPurchaseRequest, CreateErpInboundOrderRequest, PaginatedKeywordRequest, UpdateErpInboundOrderRequest};
+use erp_model::request::erp_inbound_order::{CreateErpInboundOrderOtherRequest, CreateErpInboundOrderPurchaseRequest, CreateErpInboundOrderRequest, PaginatedKeywordRequest, UpdateErpInboundOrderRequest};
 use erp_model::response::erp_inbound_order::ErpInboundOrderResponse;
 use common::base::response::CommonResult;
 use common::context::context::LoginUserContext;
@@ -16,6 +16,7 @@ use common::state::app_state::AppState;
 pub async fn erp_inbound_order_router(state: AppState) -> OpenApiRouter {
     OpenApiRouter::new()
         .routes(routes!(create_purchase))
+        .routes(routes!(create_other))
         .routes(routes!(update))
         .routes(routes!(delete))
         .routes(routes!(get_by_id))
@@ -55,6 +56,31 @@ async fn create_purchase(
     Json(payload): Json<CreateErpInboundOrderPurchaseRequest>,
 ) -> CommonResult<i64> {
     match service::erp_inbound_order::create_purchase(&state.db, login_user, payload).await {
+        Ok(id) => {CommonResult::with_data(id)}
+        Err(e) => {CommonResult::with_err(&e.to_string())}
+    }
+}
+
+#[utoipa::path(
+    post,
+    path = "/create_other",
+    operation_id = "erp_inbound_order_create_other",
+    request_body(content = CreateErpInboundOrderOtherRequest, description = "create other", content_type = "application/json"),
+    responses(
+        (status = 200, description = "id", body = CommonResult<i64>)
+    ),
+    tag = "erp_inbound_order",
+    security(
+        ("bearerAuth" = [])
+    )
+)]
+#[require_authorize(operation_id = "erp_inbound_order_create_other", authorize = "")]
+async fn create_other(
+    State(state): State<AppState>,
+    Extension(login_user): Extension<LoginUserContext>,
+    Json(payload): Json<CreateErpInboundOrderOtherRequest>,
+) -> CommonResult<i64> {
+    match service::erp_inbound_order::create_other(&state.db, login_user, payload).await {
         Ok(id) => {CommonResult::with_data(id)}
         Err(e) => {CommonResult::with_err(&e.to_string())}
     }

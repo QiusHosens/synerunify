@@ -6,7 +6,7 @@ use ctor;
 use macros::require_authorize;
 use axum::{routing::{get, post}, Router, extract::{State, Path, Json, Query}, response::IntoResponse, Extension};
 use common::base::page::PaginatedResponse;
-use erp_model::request::erp_outbound_order::{CreateErpOutboundOrderRequest, UpdateErpOutboundOrderRequest, PaginatedKeywordRequest};
+use erp_model::request::erp_outbound_order::{CreateErpOutboundOrderOtherRequest, CreateErpOutboundOrderRequest, CreateErpOutboundOrderSaleRequest, PaginatedKeywordRequest, UpdateErpOutboundOrderRequest};
 use erp_model::response::erp_outbound_order::ErpOutboundOrderResponse;
 use common::base::response::CommonResult;
 use common::context::context::LoginUserContext;
@@ -15,7 +15,8 @@ use common::state::app_state::AppState;
 
 pub async fn erp_outbound_order_router(state: AppState) -> OpenApiRouter {
     OpenApiRouter::new()
-        .routes(routes!(create))
+        .routes(routes!(create_sale))
+        .routes(routes!(create_other))
         .routes(routes!(update))
         .routes(routes!(delete))
         .routes(routes!(get_by_id))
@@ -26,7 +27,7 @@ pub async fn erp_outbound_order_router(state: AppState) -> OpenApiRouter {
 
 pub async fn erp_outbound_order_route(state: AppState) -> Router {
     Router::new()
-        .route("/create", post(create))
+        .route("/create", post(create_sale))
         .route("/update", post(update))
         .route("/delete/{id}", post(delete))
         .route("/get/{id}", get(get_by_id))
@@ -37,9 +38,9 @@ pub async fn erp_outbound_order_route(state: AppState) -> Router {
 
 #[utoipa::path(
     post,
-    path = "/create",
-    operation_id = "erp_outbound_order_create",
-    request_body(content = CreateErpOutboundOrderRequest, description = "create", content_type = "application/json"),
+    path = "/create_sale",
+    operation_id = "erp_outbound_order_create_sale",
+    request_body(content = CreateErpOutboundOrderSaleRequest, description = "create sale", content_type = "application/json"),
     responses(
         (status = 200, description = "id", body = CommonResult<i64>)
     ),
@@ -48,13 +49,38 @@ pub async fn erp_outbound_order_route(state: AppState) -> Router {
         ("bearerAuth" = [])
     )
 )]
-#[require_authorize(operation_id = "erp_outbound_order_create", authorize = "")]
-async fn create(
+#[require_authorize(operation_id = "erp_outbound_order_create_sale", authorize = "")]
+async fn create_sale(
     State(state): State<AppState>,
     Extension(login_user): Extension<LoginUserContext>,
-    Json(payload): Json<CreateErpOutboundOrderRequest>,
+    Json(payload): Json<CreateErpOutboundOrderSaleRequest>,
 ) -> CommonResult<i64> {
-    match service::erp_outbound_order::create(&state.db, login_user, payload).await {
+    match service::erp_outbound_order::create_sale(&state.db, login_user, payload).await {
+        Ok(id) => {CommonResult::with_data(id)}
+        Err(e) => {CommonResult::with_err(&e.to_string())}
+    }
+}
+
+#[utoipa::path(
+    post,
+    path = "/create_other",
+    operation_id = "erp_outbound_order_create_other",
+    request_body(content = CreateErpOutboundOrderOtherRequest, description = "create other", content_type = "application/json"),
+    responses(
+        (status = 200, description = "id", body = CommonResult<i64>)
+    ),
+    tag = "erp_outbound_order",
+    security(
+        ("bearerAuth" = [])
+    )
+)]
+#[require_authorize(operation_id = "erp_outbound_order_create_other", authorize = "")]
+async fn create_other(
+    State(state): State<AppState>,
+    Extension(login_user): Extension<LoginUserContext>,
+    Json(payload): Json<CreateErpOutboundOrderOtherRequest>,
+) -> CommonResult<i64> {
+    match service::erp_outbound_order::create_other(&state.db, login_user, payload).await {
         Ok(id) => {CommonResult::with_data(id)}
         Err(e) => {CommonResult::with_err(&e.to_string())}
     }

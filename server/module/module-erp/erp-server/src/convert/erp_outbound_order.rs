@@ -1,12 +1,12 @@
 use sea_orm::{Set, NotSet};
 use crate::model::erp_outbound_order::{self, Model as ErpOutboundOrder, ActiveModel as ErpOutboundOrderActiveModel};
-use erp_model::request::erp_outbound_order::{CreateErpOutboundOrderRequest, UpdateErpOutboundOrderRequest};
+use erp_model::request::erp_outbound_order::{CreateErpOutboundOrderOtherRequest, CreateErpOutboundOrderRequest, CreateErpOutboundOrderSaleRequest, UpdateErpOutboundOrderRequest};
 use erp_model::response::erp_outbound_order::ErpOutboundOrderResponse;
 
 pub fn create_request_to_model(request: &CreateErpOutboundOrderRequest) -> ErpOutboundOrderActiveModel {
     ErpOutboundOrderActiveModel {
         sale_id: request.sale_id.as_ref().map_or(NotSet, |sale_id| Set(Some(sale_id.clone()))),
-        inbound_date: Set(request.inbound_date.clone()),
+        outbound_date: Set(request.outbound_date.clone()),
         remarks: request.remarks.as_ref().map_or(NotSet, |remarks| Set(Some(remarks.clone()))),
         discount_rate: request.discount_rate.as_ref().map_or(NotSet, |discount_rate| Set(Some(discount_rate.clone()))),
         other_cost: request.other_cost.as_ref().map_or(NotSet, |other_cost| Set(Some(other_cost.clone()))),
@@ -17,13 +17,37 @@ pub fn create_request_to_model(request: &CreateErpOutboundOrderRequest) -> ErpOu
     }
 }
 
+pub fn create_sale_request_to_model(request: &CreateErpOutboundOrderSaleRequest) -> ErpOutboundOrderActiveModel {
+    ErpOutboundOrderActiveModel {
+        sale_id: Set(Some(request.sale_id.clone())),
+        outbound_date: Set(request.outbound_date.clone()),
+        remarks: request.remarks.as_ref().map_or(NotSet, |remarks| Set(Some(remarks.clone()))),
+        discount_rate: request.discount_rate.as_ref().map_or(NotSet, |discount_rate| Set(Some(discount_rate.clone()))),
+        other_cost: request.other_cost.as_ref().map_or(NotSet, |other_cost| Set(Some(other_cost.clone()))),
+        settlement_account_id: request.settlement_account_id.as_ref().map_or(NotSet, |settlement_account_id| Set(Some(settlement_account_id.clone()))),
+        ..Default::default()
+    }
+}
+
+pub fn create_other_request_to_model(request: &CreateErpOutboundOrderOtherRequest) -> ErpOutboundOrderActiveModel {
+    ErpOutboundOrderActiveModel {
+        customer_id: Set(request.customer_id.clone()),
+        outbound_date: Set(request.outbound_date.clone()),
+        remarks: request.remarks.as_ref().map_or(NotSet, |remarks| Set(Some(remarks.clone()))),
+        discount_rate: request.discount_rate.as_ref().map_or(NotSet, |discount_rate| Set(Some(discount_rate.clone()))),
+        other_cost: request.other_cost.as_ref().map_or(NotSet, |other_cost| Set(Some(other_cost.clone()))),
+        settlement_account_id: request.settlement_account_id.as_ref().map_or(NotSet, |settlement_account_id| Set(Some(settlement_account_id.clone()))),
+        ..Default::default()
+    }
+}
+
 pub fn update_request_to_model(request: &UpdateErpOutboundOrderRequest, existing: ErpOutboundOrder) -> ErpOutboundOrderActiveModel {
     let mut active_model: ErpOutboundOrderActiveModel = existing.into();
     if let Some(sale_id) = &request.sale_id { 
         active_model.sale_id = Set(Some(sale_id.clone()));
     }
-    if let Some(inbound_date) = &request.inbound_date { 
-        active_model.inbound_date = Set(inbound_date.clone());
+    if let Some(outbound_date) = &request.outbound_date { 
+        active_model.outbound_date = Set(outbound_date.clone());
     }
     if let Some(remarks) = &request.remarks { 
         active_model.remarks = Set(Some(remarks.clone()));
@@ -53,7 +77,7 @@ pub fn model_to_response(model: ErpOutboundOrder) -> ErpOutboundOrderResponse {
         sale_id: model.sale_id,
         customer_id: model.customer_id,
         user_id: model.user_id,
-        inbound_date: model.inbound_date,
+        outbound_date: model.outbound_date,
         remarks: model.remarks,
         discount_rate: model.discount_rate,
         other_cost: model.other_cost,

@@ -1,6 +1,6 @@
 use common::interceptor::orm::simple_support::SimpleSupport;
 use common::utils::snowflake_generator::SnowflakeGenerator;
-use sea_orm::{ActiveModelTrait, ColumnTrait, Condition, DatabaseConnection, EntityTrait, JoinType, Order, PaginatorTrait, QueryFilter, QueryOrder, QuerySelect, RelationTrait, TransactionTrait};
+use sea_orm::{ActiveModelTrait, ColumnTrait, Condition, DatabaseConnection, DatabaseTransaction, EntityTrait, JoinType, Order, PaginatorTrait, QueryFilter, QueryOrder, QuerySelect, RelationTrait, TransactionTrait};
 use crate::model::erp_sales_order::{Model as ErpSalesOrderModel, ActiveModel as ErpSalesOrderActiveModel, Entity as ErpSalesOrderEntity, Column, Relation};
 use crate::model::erp_customer::{Model as ErpCustomerModel, ActiveModel as ErpCustomerActiveModel, Entity as ErpCustomerEntity};
 use crate::model::erp_settlement_account::{Model as ErpSettlementAccountModel, ActiveModel as ErpSettlementAccountActiveModel, Entity as ErpSettlementAccountEntity};
@@ -164,14 +164,14 @@ pub async fn ship_out(db: &DatabaseConnection, login_user: LoginUserContext, id:
 }
 
 /// 订单已出库,待签收
-pub async fn awaiting_signature(db: &DatabaseConnection, login_user: LoginUserContext, id: i64) -> Result<()> {
+pub async fn awaiting_signature(db: &DatabaseConnection, txn: &DatabaseTransaction, login_user: LoginUserContext, id: i64) -> Result<()> {
     let erp_sales_order = ErpSalesOrderActiveModel {
         id: Set(id),
         updater: Set(Some(login_user.id)),
         order_status: Set(SALE_ORDER_STATUS_AWAITING_SIGNATURE),
         ..Default::default()
     };
-    erp_sales_order.update(db).await?;
+    erp_sales_order.update(txn).await?;
     Ok(())
 }
 
@@ -233,4 +233,14 @@ pub async fn return_completed(db: &DatabaseConnection, login_user: LoginUserCont
     };
     erp_sales_order.update(db).await?;
     Ok(())
+}
+
+pub async fn find_by_id(db: &DatabaseConnection, login_user: LoginUserContext, id: i64) -> Result<ErpSalesOrderModel> {
+    let erp_sales_order = ErpSalesOrderEntity::find_active_by_id(id)
+        .filter(Column::TenantId.eq(login_user.tenant_id))
+        .one(db)
+        .await?
+        .ok_or_else(|| anyhow!("记录未找到"))?;
+
+    Ok(erp_sales_order)
 }
