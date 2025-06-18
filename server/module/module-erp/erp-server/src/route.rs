@@ -9,7 +9,6 @@ use common::utils::jwt_utils::AccessClaims;
 use std::sync::Arc;
 use crate::api::erp_customer::{ erp_customer_route, erp_customer_router };
 use crate::api::erp_financial_record::{ erp_financial_record_route, erp_financial_record_router };
-use crate::api::erp_inbound_record::{ erp_inbound_record_route, erp_inbound_record_router };
 use crate::api::erp_inventory_check::{ erp_inventory_check_route, erp_inventory_check_router };
 use crate::api::erp_inventory_record::{ erp_inventory_record_route, erp_inventory_record_router };
 use crate::api::erp_inventory_transfer::{ erp_inventory_transfer_route, erp_inventory_transfer_router };
@@ -53,7 +52,6 @@ use crate::AppState;
     tags(
         (name = "erp_customer", description = "客户信息"),
         (name = "erp_financial_record", description = "财务记录"),
-        (name = "erp_inbound_record", description = "入库记录"),
         (name = "erp_inventory_check", description = "库存盘点"),
         (name = "erp_inventory_record", description = "库存记录"),
         (name = "erp_inventory_transfer", description = "库存调拨"),
@@ -105,7 +103,6 @@ pub async fn auth_router(state: AppState) -> OpenApiRouter {
     OpenApiRouter::new()
         .nest("/erp_customer", erp_customer_router(state.clone()).await)
         .nest("/erp_financial_record", erp_financial_record_router(state.clone()).await)
-        .nest("/erp_inbound_record", erp_inbound_record_router(state.clone()).await)
         .nest("/erp_inventory_check", erp_inventory_check_router(state.clone()).await)
         .nest("/erp_inventory_record", erp_inventory_record_router(state.clone()).await)
         .nest("/erp_inventory_transfer", erp_inventory_transfer_router(state.clone()).await)

@@ -1,6 +1,5 @@
 pub mod erp_customer;
 pub mod erp_financial_record;
-pub mod erp_inbound_record;
 pub mod erp_inventory_check;
 pub mod erp_inventory_record;
 pub mod erp_inventory_transfer;
