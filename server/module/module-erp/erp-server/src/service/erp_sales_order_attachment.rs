@@ -56,6 +56,7 @@ pub async fn create_batch(db: &DatabaseConnection, txn: &DatabaseTransaction, lo
 pub async fn update_batch(db: &DatabaseConnection, txn: &DatabaseTransaction, login_user: LoginUserContext, sale_order: ErpSalesOrderModel, requests: Vec<UpdateErpSalesOrderAttachmentRequest>) -> Result<()> {
     // 查询已存在订单附件
     let existing_attachments = ErpSalesOrderAttachmentEntity::find()
+        .filter(Column::TenantId.eq(login_user.tenant_id))
         .filter(Column::OrderId.eq(sale_order.id))
         .all(db)
         .await?;

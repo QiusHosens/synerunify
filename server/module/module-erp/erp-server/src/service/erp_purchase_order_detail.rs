@@ -51,6 +51,7 @@ pub async fn create_batch(db: &DatabaseConnection, txn: &DatabaseTransaction, lo
 pub async fn update_batch(db: &DatabaseConnection, txn: &DatabaseTransaction, login_user: LoginUserContext, purchase_order: ErpPurchaseOrderModel, requests: Vec<UpdateErpPurchaseOrderDetailRequest>) -> Result<()> {
     // 查询已存在订单详情
     let existing_details = ErpPurchaseOrderDetailEntity::find()
+        .filter(Column::TenantId.eq(login_user.tenant_id))
         .filter(Column::PurchaseId.eq(purchase_order.id))
         .all(db)
         .await?;

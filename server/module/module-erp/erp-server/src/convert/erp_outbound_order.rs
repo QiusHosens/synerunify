@@ -5,8 +5,7 @@ use erp_model::response::erp_outbound_order::ErpOutboundOrderResponse;
 
 pub fn create_request_to_model(request: &CreateErpOutboundOrderRequest) -> ErpOutboundOrderActiveModel {
     ErpOutboundOrderActiveModel {
-        purchase_id: request.purchase_id.as_ref().map_or(NotSet, |purchase_id| Set(Some(purchase_id.clone()))),
-        supplier_id: Set(request.supplier_id.clone()),
+        sale_id: request.sale_id.as_ref().map_or(NotSet, |sale_id| Set(Some(sale_id.clone()))),
         inbound_date: Set(request.inbound_date.clone()),
         remarks: request.remarks.as_ref().map_or(NotSet, |remarks| Set(Some(remarks.clone()))),
         discount_rate: request.discount_rate.as_ref().map_or(NotSet, |discount_rate| Set(Some(discount_rate.clone()))),
@@ -20,11 +19,8 @@ pub fn create_request_to_model(request: &CreateErpOutboundOrderRequest) -> ErpOu
 
 pub fn update_request_to_model(request: &UpdateErpOutboundOrderRequest, existing: ErpOutboundOrder) -> ErpOutboundOrderActiveModel {
     let mut active_model: ErpOutboundOrderActiveModel = existing.into();
-    if let Some(purchase_id) = &request.purchase_id { 
-        active_model.purchase_id = Set(Some(purchase_id.clone()));
-    }
-    if let Some(supplier_id) = &request.supplier_id { 
-        active_model.supplier_id = Set(supplier_id.clone());
+    if let Some(sale_id) = &request.sale_id { 
+        active_model.sale_id = Set(Some(sale_id.clone()));
     }
     if let Some(inbound_date) = &request.inbound_date { 
         active_model.inbound_date = Set(inbound_date.clone());
@@ -53,8 +49,10 @@ pub fn update_request_to_model(request: &UpdateErpOutboundOrderRequest, existing
 pub fn model_to_response(model: ErpOutboundOrder) -> ErpOutboundOrderResponse {
     ErpOutboundOrderResponse { 
         id: model.id,
-        purchase_id: model.purchase_id,
-        supplier_id: model.supplier_id,
+        order_number: model.order_number,
+        sale_id: model.sale_id,
+        customer_id: model.customer_id,
+        user_id: model.user_id,
         inbound_date: model.inbound_date,
         remarks: model.remarks,
         discount_rate: model.discount_rate,

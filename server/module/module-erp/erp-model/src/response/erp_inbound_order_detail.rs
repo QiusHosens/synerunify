@@ -11,6 +11,8 @@ pub struct ErpInboundOrderDetailResponse {
     pub id: i64, // 入库详情ID
     
     pub order_id: i64, // 入库订单ID
+
+    pub purchase_detail_id: Option<i64>, // 采购订单详情ID
     
     pub warehouse_id: i64, // 仓库ID
     

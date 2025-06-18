@@ -6,9 +6,7 @@ use common::base::page::PaginatedRequest;
 #[derive(Serialize, Deserialize, Debug, ToSchema)]
 pub struct CreateErpOutboundOrderRequest {
     
-    pub purchase_id: Option<i64>, // 采购订单ID
-    
-    pub supplier_id: i64, // 供应商ID
+    pub sale_id: Option<i64>, // 销售订单ID
     
     // #[serde_as(as = "DisplayFromStr")]
     // #[serde(with = "serde_with::chrono::naive_datetime")]
@@ -34,9 +32,7 @@ pub struct UpdateErpOutboundOrderRequest {
     
     pub id: i64, // 出库订单ID
     
-    pub purchase_id: Option<i64>, // 采购订单ID
-    
-    pub supplier_id: Option<i64>, // 供应商ID
+    pub sale_id: Option<i64>, // 销售订单ID
     
     // #[serde_as(as = "DisplayFromStr")]
     // #[serde(with = "serde_with::chrono::naive_datetime")]

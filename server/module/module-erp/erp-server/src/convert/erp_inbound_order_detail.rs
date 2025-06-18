@@ -6,6 +6,7 @@ use erp_model::response::erp_inbound_order_detail::ErpInboundOrderDetailResponse
 pub fn create_request_to_model(request: &CreateErpInboundOrderDetailRequest) -> ErpInboundOrderDetailActiveModel {
     ErpInboundOrderDetailActiveModel {
         order_id: Set(request.order_id.clone()),
+        purchase_detail_id: request.purchase_detail_id.as_ref().map_or(NotSet, |purchase_detail_id| Set(Some(purchase_detail_id.clone()))),
         warehouse_id: Set(request.warehouse_id.clone()),
         product_id: Set(request.product_id.clone()),
         quantity: Set(request.quantity.clone()),
@@ -23,6 +24,9 @@ pub fn update_request_to_model(request: &UpdateErpInboundOrderDetailRequest, exi
     let mut active_model: ErpInboundOrderDetailActiveModel = existing.into();
     if let Some(order_id) = &request.order_id { 
         active_model.order_id = Set(order_id.clone());
+    }
+    if let Some(purchase_detail_id) = &request.purchase_detail_id { 
+        active_model.purchase_detail_id = Set(Some(purchase_detail_id.clone()));
     }
     if let Some(warehouse_id) = &request.warehouse_id { 
         active_model.warehouse_id = Set(warehouse_id.clone());
@@ -58,6 +62,7 @@ pub fn model_to_response(model: ErpInboundOrderDetail) -> ErpInboundOrderDetailR
     ErpInboundOrderDetailResponse { 
         id: model.id,
         order_id: model.order_id,
+        purchase_detail_id: model.purchase_detail_id,
         warehouse_id: model.warehouse_id,
         product_id: model.product_id,
         quantity: model.quantity,

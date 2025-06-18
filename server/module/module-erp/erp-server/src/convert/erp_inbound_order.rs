@@ -1,6 +1,6 @@
 use sea_orm::{Set, NotSet};
 use crate::model::erp_inbound_order::{self, Model as ErpInboundOrder, ActiveModel as ErpInboundOrderActiveModel};
-use erp_model::request::erp_inbound_order::{CreateErpInboundOrderRequest, UpdateErpInboundOrderRequest};
+use erp_model::request::erp_inbound_order::{CreateErpInboundOrderPurchaseRequest, CreateErpInboundOrderRequest, UpdateErpInboundOrderPurchaseRequest, UpdateErpInboundOrderRequest};
 use erp_model::response::erp_inbound_order::ErpInboundOrderResponse;
 
 pub fn create_request_to_model(request: &CreateErpInboundOrderRequest) -> ErpInboundOrderActiveModel {
@@ -14,6 +14,18 @@ pub fn create_request_to_model(request: &CreateErpInboundOrderRequest) -> ErpInb
         settlement_account_id: request.settlement_account_id.as_ref().map_or(NotSet, |settlement_account_id| Set(Some(settlement_account_id.clone()))),
         department_code: Set(request.department_code.clone()),
         department_id: Set(request.department_id.clone()),
+        ..Default::default()
+    }
+}
+
+pub fn create_purchase_request_to_model(request: &CreateErpInboundOrderPurchaseRequest) -> ErpInboundOrderActiveModel {
+    ErpInboundOrderActiveModel {
+        purchase_id: Set(Some(request.purchase_id.clone())),
+        inbound_date: Set(request.inbound_date.clone()),
+        remarks: request.remarks.as_ref().map_or(NotSet, |remarks| Set(Some(remarks.clone()))),
+        discount_rate: request.discount_rate.as_ref().map_or(NotSet, |discount_rate| Set(Some(discount_rate.clone()))),
+        other_cost: request.other_cost.as_ref().map_or(NotSet, |other_cost| Set(Some(other_cost.clone()))),
+        settlement_account_id: request.settlement_account_id.as_ref().map_or(NotSet, |settlement_account_id| Set(Some(settlement_account_id.clone()))),
         ..Default::default()
     }
 }
@@ -50,11 +62,33 @@ pub fn update_request_to_model(request: &UpdateErpInboundOrderRequest, existing:
     active_model
 }
 
+pub fn update_purchase_request_to_model(request: &UpdateErpInboundOrderPurchaseRequest, existing: ErpInboundOrder) -> ErpInboundOrderActiveModel {
+    let mut active_model: ErpInboundOrderActiveModel = existing.into();
+    if let Some(inbound_date) = &request.inbound_date { 
+        active_model.inbound_date = Set(inbound_date.clone());
+    }
+    if let Some(remarks) = &request.remarks { 
+        active_model.remarks = Set(Some(remarks.clone()));
+    }
+    if let Some(discount_rate) = &request.discount_rate { 
+        active_model.discount_rate = Set(Some(discount_rate.clone()));
+    }
+    if let Some(other_cost) = &request.other_cost { 
+        active_model.other_cost = Set(Some(other_cost.clone()));
+    }
+    if let Some(settlement_account_id) = &request.settlement_account_id { 
+        active_model.settlement_account_id = Set(Some(settlement_account_id.clone()));
+    }
+    active_model
+}
+
 pub fn model_to_response(model: ErpInboundOrder) -> ErpInboundOrderResponse {
     ErpInboundOrderResponse { 
         id: model.id,
+        order_number: model.order_number,
         purchase_id: model.purchase_id,
         supplier_id: model.supplier_id,
+        user_id: model.user_id,
         inbound_date: model.inbound_date,
         remarks: model.remarks,
         discount_rate: model.discount_rate,

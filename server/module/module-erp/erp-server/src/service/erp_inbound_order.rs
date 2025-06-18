@@ -1,9 +1,10 @@
 use common::interceptor::orm::simple_support::SimpleSupport;
+use common::utils::snowflake_generator::SnowflakeGenerator;
 use sea_orm::{DatabaseConnection, EntityTrait, Order, ColumnTrait, ActiveModelTrait, PaginatorTrait, QueryOrder, QueryFilter, Condition};
 use crate::model::erp_inbound_order::{Model as ErpInboundOrderModel, ActiveModel as ErpInboundOrderActiveModel, Entity as ErpInboundOrderEntity, Column};
-use erp_model::request::erp_inbound_order::{CreateErpInboundOrderRequest, UpdateErpInboundOrderRequest, PaginatedKeywordRequest};
+use erp_model::request::erp_inbound_order::{CreateErpInboundOrderPurchaseRequest, CreateErpInboundOrderRequest, PaginatedKeywordRequest, UpdateErpInboundOrderRequest};
 use erp_model::response::erp_inbound_order::ErpInboundOrderResponse;
-use crate::convert::erp_inbound_order::{create_request_to_model, update_request_to_model, model_to_response};
+use crate::convert::erp_inbound_order::{create_purchase_request_to_model, create_request_to_model, model_to_response, update_request_to_model};
 use anyhow::{Result, anyhow};
 use sea_orm::ActiveValue::Set;
 use common::constants::enum_constants::{STATUS_DISABLE, STATUS_ENABLE};
@@ -11,7 +12,26 @@ use common::base::page::PaginatedResponse;
 use common::context::context::LoginUserContext;
 use common::interceptor::orm::active_filter::ActiveFilterEntityTrait;
 
-pub async fn create(db: &DatabaseConnection, login_user: LoginUserContext, request: CreateErpInboundOrderRequest) -> Result<i64> {
+/// 采购订单入库
+pub async fn create_purchase(db: &DatabaseConnection, login_user: LoginUserContext, request: CreateErpInboundOrderPurchaseRequest) -> Result<i64> {
+    let mut erp_inbound_order = create_purchase_request_to_model(&request);
+    // 查询采购订单
+    // 生成订单编号
+    let generator = SnowflakeGenerator::new();
+    match generator.generate() {
+        Ok(id) => erp_inbound_order.order_number = Set(id),
+        Err(e) => return Err(anyhow!("订单编号生成失败")),
+    }
+    
+    erp_inbound_order.creator = Set(Some(login_user.id));
+    erp_inbound_order.updater = Set(Some(login_user.id));
+    erp_inbound_order.tenant_id = Set(login_user.tenant_id);
+    let erp_inbound_order = erp_inbound_order.insert(db).await?;
+    Ok(erp_inbound_order.id)
+}
+
+/// 其他入库
+pub async fn create_other(db: &DatabaseConnection, login_user: LoginUserContext, request: CreateErpInboundOrderRequest) -> Result<i64> {
     let mut erp_inbound_order = create_request_to_model(&request);
     erp_inbound_order.creator = Set(Some(login_user.id));
     erp_inbound_order.updater = Set(Some(login_user.id));

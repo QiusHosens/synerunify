@@ -6,7 +6,7 @@ use ctor;
 use macros::require_authorize;
 use axum::{routing::{get, post}, Router, extract::{State, Path, Json, Query}, response::IntoResponse, Extension};
 use common::base::page::PaginatedResponse;
-use erp_model::request::erp_inbound_order::{CreateErpInboundOrderRequest, UpdateErpInboundOrderRequest, PaginatedKeywordRequest};
+use erp_model::request::erp_inbound_order::{CreateErpInboundOrderPurchaseRequest, CreateErpInboundOrderRequest, PaginatedKeywordRequest, UpdateErpInboundOrderRequest};
 use erp_model::response::erp_inbound_order::ErpInboundOrderResponse;
 use common::base::response::CommonResult;
 use common::context::context::LoginUserContext;
@@ -15,7 +15,7 @@ use common::state::app_state::AppState;
 
 pub async fn erp_inbound_order_router(state: AppState) -> OpenApiRouter {
     OpenApiRouter::new()
-        .routes(routes!(create))
+        .routes(routes!(create_purchase))
         .routes(routes!(update))
         .routes(routes!(delete))
         .routes(routes!(get_by_id))
@@ -26,7 +26,7 @@ pub async fn erp_inbound_order_router(state: AppState) -> OpenApiRouter {
 
 pub async fn erp_inbound_order_route(state: AppState) -> Router {
     Router::new()
-        .route("/create", post(create))
+        .route("/create", post(create_purchase))
         .route("/update", post(update))
         .route("/delete/{id}", post(delete))
         .route("/get/{id}", get(get_by_id))
@@ -37,9 +37,9 @@ pub async fn erp_inbound_order_route(state: AppState) -> Router {
 
 #[utoipa::path(
     post,
-    path = "/create",
-    operation_id = "erp_inbound_order_create",
-    request_body(content = CreateErpInboundOrderRequest, description = "create", content_type = "application/json"),
+    path = "/create_purchase",
+    operation_id = "erp_inbound_order_create_purchase",
+    request_body(content = CreateErpInboundOrderPurchaseRequest, description = "create purchase", content_type = "application/json"),
     responses(
         (status = 200, description = "id", body = CommonResult<i64>)
     ),
@@ -48,13 +48,13 @@ pub async fn erp_inbound_order_route(state: AppState) -> Router {
         ("bearerAuth" = [])
     )
 )]
-#[require_authorize(operation_id = "erp_inbound_order_create", authorize = "")]
-async fn create(
+#[require_authorize(operation_id = "erp_inbound_order_create_purchase", authorize = "")]
+async fn create_purchase(
     State(state): State<AppState>,
     Extension(login_user): Extension<LoginUserContext>,
-    Json(payload): Json<CreateErpInboundOrderRequest>,
+    Json(payload): Json<CreateErpInboundOrderPurchaseRequest>,
 ) -> CommonResult<i64> {
-    match service::erp_inbound_order::create(&state.db, login_user, payload).await {
+    match service::erp_inbound_order::create_purchase(&state.db, login_user, payload).await {
         Ok(id) => {CommonResult::with_data(id)}
         Err(e) => {CommonResult::with_err(&e.to_string())}
     }

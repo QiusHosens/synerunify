@@ -9,10 +9,14 @@ pub struct Model {
     
     #[sea_orm(primary_key)]
     pub id: i64, // 出库订单ID
+
+    pub order_number: i64, // 订单编号
     
-    pub purchase_id: Option<i64>, // 采购订单ID
+    pub sale_id: Option<i64>, // 销售订单ID
     
-    pub supplier_id: i64, // 供应商ID
+    pub customer_id: i64, // 客户ID
+
+    pub user_id: i64, // 用户ID
     
     pub inbound_date: NaiveDateTime, // 出库日期
     

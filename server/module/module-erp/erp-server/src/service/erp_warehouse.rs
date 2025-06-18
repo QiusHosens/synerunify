@@ -22,6 +22,7 @@ pub async fn create(db: &DatabaseConnection, login_user: LoginUserContext, reque
 
 pub async fn update(db: &DatabaseConnection, login_user: LoginUserContext, request: UpdateErpWarehouseRequest) -> Result<()> {
     let erp_warehouse = ErpWarehouseEntity::find_by_id(request.id)
+        .filter(Column::TenantId.eq(login_user.tenant_id))
         .one(db)
         .await?
         .ok_or_else(|| anyhow!("记录未找到"))?;

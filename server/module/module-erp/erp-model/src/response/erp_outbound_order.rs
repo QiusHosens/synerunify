@@ -9,10 +9,14 @@ use common::formatter::string_date_time::StringDateTime;
 pub struct ErpOutboundOrderResponse {
     
     pub id: i64, // 出库订单ID
+
+    pub order_number: i64, // 订单编号
     
-    pub purchase_id: Option<i64>, // 采购订单ID
+    pub sale_id: Option<i64>, // 销售订单ID
     
-    pub supplier_id: i64, // 供应商ID
+    pub customer_id: i64, // 客户ID
+
+    pub user_id: i64, // 用户ID
     
     // #[serde_as(as = "DisplayFromStr")]
     // #[serde(with = "serde_with::chrono::naive_datetime")]

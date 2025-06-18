@@ -7,6 +7,8 @@ use common::base::page::PaginatedRequest;
 pub struct CreateErpOutboundOrderDetailRequest {
     
     pub order_id: i64, // 出库订单ID
+
+    pub sale_detail_id: Option<i64>, // 销售订单详情ID
     
     pub warehouse_id: i64, // 仓库ID
     
@@ -34,6 +36,8 @@ pub struct UpdateErpOutboundOrderDetailRequest {
     pub id: i64, // 出库详情ID
     
     pub order_id: Option<i64>, // 出库订单ID
+
+    pub sale_detail_id: Option<i64>, // 销售订单详情ID
     
     pub warehouse_id: Option<i64>, // 仓库ID
     
