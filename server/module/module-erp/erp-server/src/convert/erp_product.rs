@@ -1,5 +1,6 @@
 use sea_orm::{Set, NotSet};
 use crate::model::erp_product::{self, Model as ErpProduct, ActiveModel as ErpProductActiveModel};
+use crate::model::erp_product_unit::{self, Model as ErpProductUnit};
 use erp_model::request::erp_product::{CreateErpProductRequest, UpdateErpProductRequest};
 use erp_model::response::erp_product::ErpProductResponse;
 
@@ -70,7 +71,9 @@ pub fn update_request_to_model(request: &UpdateErpProductRequest, existing: ErpP
     active_model
 }
 
-pub fn model_to_response(model: ErpProduct) -> ErpProductResponse {
+pub fn model_to_response(model: ErpProduct, model_unit: Option<ErpProductUnit>) -> ErpProductResponse {
+    let unit_name = model_unit.map(|unit| unit.name.clone());
+
     ErpProductResponse { 
         id: model.id,
         product_code: model.product_code,
@@ -92,5 +95,7 @@ pub fn model_to_response(model: ErpProduct) -> ErpProductResponse {
         create_time: model.create_time,
         updater: model.updater,
         update_time: model.update_time,
+
+        unit_name,
     }
 }

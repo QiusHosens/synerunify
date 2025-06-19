@@ -1,7 +1,7 @@
 use sea_orm::{Set, NotSet};
 use crate::model::erp_purchase_order_attachment::{self, Model as ErpPurchaseOrderAttachment, ActiveModel as ErpPurchaseOrderAttachmentActiveModel};
 use erp_model::request::erp_purchase_order_attachment::{CreateErpPurchaseOrderAttachmentRequest, UpdateErpPurchaseOrderAttachmentRequest};
-use erp_model::response::erp_purchase_order_attachment::{ErpPurchaseOrderAttachmentBaseResponse, ErpPurchaseOrderAttachmentResponse};
+use erp_model::response::erp_purchase_order_attachment::{ErpPurchaseOrderAttachmentBaseResponse, ErpPurchaseOrderAttachmentInfoResponse, ErpPurchaseOrderAttachmentResponse};
 
 pub fn create_request_to_model(request: &CreateErpPurchaseOrderAttachmentRequest) -> ErpPurchaseOrderAttachmentActiveModel {
     ErpPurchaseOrderAttachmentActiveModel {
@@ -45,6 +45,17 @@ pub fn model_to_response(model: ErpPurchaseOrderAttachment) -> ErpPurchaseOrderA
 
 pub fn model_to_base_response(model: ErpPurchaseOrderAttachment, file_name: Option<String>) -> ErpPurchaseOrderAttachmentBaseResponse {
     ErpPurchaseOrderAttachmentBaseResponse { 
+        id: model.id,
+        purchase_id: model.purchase_id,
+        file_id: model.file_id,
+        remarks: model.remarks,
+
+        file_name
+    }
+}
+
+pub fn model_to_info_response(model: ErpPurchaseOrderAttachment, file_name: Option<String>) -> ErpPurchaseOrderAttachmentInfoResponse {
+    ErpPurchaseOrderAttachmentInfoResponse { 
         id: model.id,
         purchase_id: model.purchase_id,
         file_id: model.file_id,

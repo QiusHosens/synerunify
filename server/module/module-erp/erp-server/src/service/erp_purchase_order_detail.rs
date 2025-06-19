@@ -1,13 +1,16 @@
 use std::collections::{HashMap, HashSet};
 
 use sea_orm::prelude::Expr;
-use sea_orm::{ActiveModelTrait, ColumnTrait, Condition, DatabaseConnection, DatabaseTransaction, EntityTrait, PaginatorTrait, QueryFilter, QueryOrder};
+use sea_orm::{ActiveModelTrait, ColumnTrait, Condition, DatabaseConnection, DatabaseTransaction, EntityTrait, JoinType, PaginatorTrait, QueryFilter, QueryOrder, QuerySelect, RelationTrait};
 use tracing::info;
-use crate::model::erp_purchase_order_detail::{Model as ErpPurchaseOrderDetailModel, ActiveModel as ErpPurchaseOrderDetailActiveModel, Entity as ErpPurchaseOrderDetailEntity, Column};
+use crate::model::erp_purchase_order_detail::{Model as ErpPurchaseOrderDetailModel, ActiveModel as ErpPurchaseOrderDetailActiveModel, Entity as ErpPurchaseOrderDetailEntity, Column, Relation};
 use crate::model::erp_purchase_order::{Model as ErpPurchaseOrderModel};
+use crate::model::erp_product::{Model as ErpProductModel, Entity as ErpProductEntity, Relation as ErpProductRelation};
+use crate::model::erp_product_unit::{Model as ErpProductUnitModel, ActiveModel as ErpProductUnitActiveModel, Entity as ErpProductUnitEntity};
+use crate::service::erp_product;
 use erp_model::request::erp_purchase_order_detail::{CreateErpPurchaseOrderDetailRequest, UpdateErpPurchaseOrderDetailRequest, PaginatedKeywordRequest};
-use erp_model::response::erp_purchase_order_detail::{ErpPurchaseOrderDetailBaseResponse, ErpPurchaseOrderDetailResponse};
-use crate::convert::erp_purchase_order_detail::{create_request_to_model, model_to_base_response, model_to_response, update_add_request_to_model, update_request_to_model};
+use erp_model::response::erp_purchase_order_detail::{ErpPurchaseOrderDetailBaseResponse, ErpPurchaseOrderDetailInfoResponse, ErpPurchaseOrderDetailResponse};
+use crate::convert::erp_purchase_order_detail::{create_request_to_model, model_to_base_response, model_to_info_response, model_to_response, update_add_request_to_model, update_request_to_model};
 use anyhow::{anyhow, Context, Ok, Result};
 use sea_orm::ActiveValue::Set;
 use common::constants::enum_constants::{STATUS_DISABLE, STATUS_ENABLE};
@@ -178,6 +181,19 @@ pub async fn list_by_purchase_id(db: &DatabaseConnection, login_user: LoginUserC
         .filter(Column::PurchaseId.eq(purchase_id))
         .all(db).await?;
     Ok(list.into_iter().map(model_to_base_response).collect())
+}
+
+pub async fn list_info_by_purchase_id(db: &DatabaseConnection, login_user: LoginUserContext, purchase_id: i64) -> Result<Vec<ErpPurchaseOrderDetailInfoResponse>> {
+    let list = ErpPurchaseOrderDetailEntity::find_active()
+        .filter(Column::TenantId.eq(login_user.tenant_id))
+        .filter(Column::PurchaseId.eq(purchase_id))
+        .select_also(ErpProductEntity)
+        .select_also(ErpProductUnitEntity)
+        .join(JoinType::LeftJoin, Relation::DetailProduct.def())
+        .join(JoinType::LeftJoin, ErpProductRelation::ProductUnit.def())
+        .all(db).await?;
+
+    Ok(list.into_iter().map(|(data, product_data, unit_data)|model_to_info_response(data, product_data, unit_data)).collect())
 }
 
 pub async fn find_by_purchase_id(db: &DatabaseConnection, login_user: LoginUserContext, purchase_id: i64) -> Result<Vec<ErpPurchaseOrderDetailModel>> {

@@ -3,7 +3,7 @@ import { Chip, styled } from '@mui/material';
 
 // 定义 props 类型
 interface CustomizedTagProps {
-  label: string;
+  label: string | number;
   color?: 'primary' | 'secondary' | 'default';
   onDelete?: () => void;
   [key: string]: any; // 允许其他 Chip 组件支持的 props

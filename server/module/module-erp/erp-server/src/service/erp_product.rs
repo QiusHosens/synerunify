@@ -2,8 +2,9 @@ use std::collections::HashMap;
 
 use common::interceptor::orm::simple_support::SimpleSupport;
 use sea_orm::prelude::Expr;
-use sea_orm::{ActiveModelTrait, ColumnTrait, Condition, DatabaseConnection, DatabaseTransaction, EntityTrait, Order, PaginatorTrait, QueryFilter, QueryOrder, TransactionTrait};
-use crate::model::erp_product::{Model as ErpProductModel, ActiveModel as ErpProductActiveModel, Entity as ErpProductEntity, Column};
+use sea_orm::{ActiveModelTrait, ColumnTrait, Condition, DatabaseConnection, DatabaseTransaction, EntityTrait, JoinType, Order, PaginatorTrait, QueryFilter, QueryOrder, QuerySelect, RelationTrait, TransactionTrait};
+use crate::model::erp_product::{Model as ErpProductModel, ActiveModel as ErpProductActiveModel, Entity as ErpProductEntity, Column, Relation};
+use crate::model::erp_product_unit::{Model as ErpProductUnitModel, ActiveModel as ErpProductUnitActiveModel, Entity as ErpProductUnitEntity};
 use crate::service::erp_product_inventory;
 use erp_model::request::erp_product::{CreateErpProductRequest, UpdateErpProductRequest, PaginatedKeywordRequest};
 use erp_model::response::erp_product::ErpProductResponse;
@@ -55,12 +56,14 @@ pub async fn get_by_id(db: &DatabaseConnection, login_user: LoginUserContext, id
             
     let erp_product = ErpProductEntity::find_active_with_condition(condition)
         .one(db).await?;
-    Ok(erp_product.map(model_to_response))
+    Ok(erp_product.map(|product|model_to_response(product, None)))
 }
 
 pub async fn get_paginated(db: &DatabaseConnection, login_user: LoginUserContext, params: PaginatedKeywordRequest) -> Result<PaginatedResponse<ErpProductResponse>> {
-    let condition = Condition::all().add(Column::TenantId.eq(login_user.tenant_id));
-    let paginator = ErpProductEntity::find_active_with_condition(condition)
+    let paginator = ErpProductEntity::find_active()
+        .filter(Column::TenantId.eq(login_user.tenant_id))
+        .select_also(ErpProductUnitEntity)
+        .join(JoinType::LeftJoin, Relation::ProductUnit.def())
         .support_filter(params.base.filter_field, params.base.filter_operator, params.base.filter_value)
         .support_order(params.base.sort_field, params.base.sort, Some(vec![(Column::Id, Order::Desc)]))
         .paginate(db, params.base.size);
@@ -71,7 +74,7 @@ pub async fn get_paginated(db: &DatabaseConnection, login_user: LoginUserContext
         .fetch_page(params.base.page - 1) // SeaORM 页码从 0 开始，所以减 1
         .await?
         .into_iter()
-        .map(model_to_response)
+        .map(|(data, unit_data)|model_to_response(data, unit_data))
         .collect();
 
     Ok(PaginatedResponse {
@@ -84,10 +87,12 @@ pub async fn get_paginated(db: &DatabaseConnection, login_user: LoginUserContext
 }
 
 pub async fn list(db: &DatabaseConnection, login_user: LoginUserContext) -> Result<Vec<ErpProductResponse>> {
-    let condition = Condition::all().add(Column::TenantId.eq(login_user.tenant_id));
-    let list = ErpProductEntity::find_active_with_condition(condition)
+    let list = ErpProductEntity::find_active()
+        .filter(Column::TenantId.eq(login_user.tenant_id))
+        .select_also(ErpProductUnitEntity)
+        .join(JoinType::LeftJoin, Relation::ProductUnit.def())
         .all(db).await?;
-    Ok(list.into_iter().map(model_to_response).collect())
+    Ok(list.into_iter().map(|(data, unit_data)|model_to_response(data, unit_data)).collect())
 }
 
 pub async fn enable(db: &DatabaseConnection, login_user: LoginUserContext, id: i64) -> Result<()> {
@@ -110,4 +115,12 @@ pub async fn disable(db: &DatabaseConnection, login_user: LoginUserContext, id: 
     };
     erp_product.update(db).await?;
     Ok(())
+}
+
+pub async fn list_by_ids(db: &DatabaseConnection, login_user: LoginUserContext, ids: Vec<i64>) -> Result<Vec<ErpProductModel>> {
+    let list = ErpProductEntity::find_active()
+        .filter(Column::Id.is_in(ids))
+        .filter(Column::TenantId.eq(login_user.tenant_id))
+        .all(db).await?;
+    Ok(list)
 }

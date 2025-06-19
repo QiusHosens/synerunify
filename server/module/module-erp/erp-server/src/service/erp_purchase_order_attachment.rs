@@ -8,8 +8,8 @@ use crate::model::erp_purchase_order_attachment::{Model as ErpPurchaseOrderAttac
 use crate::model::erp_purchase_order::{Model as ErpPurchaseOrderModel};
 use file_common::model::system_file::{Model as SystemFileModel};
 use erp_model::request::erp_purchase_order_attachment::{CreateErpPurchaseOrderAttachmentRequest, UpdateErpPurchaseOrderAttachmentRequest, PaginatedKeywordRequest};
-use erp_model::response::erp_purchase_order_attachment::{ErpPurchaseOrderAttachmentBaseResponse, ErpPurchaseOrderAttachmentResponse};
-use crate::convert::erp_purchase_order_attachment::{create_request_to_model, model_to_base_response, model_to_response, update_add_request_to_model, update_request_to_model};
+use erp_model::response::erp_purchase_order_attachment::{ErpPurchaseOrderAttachmentBaseResponse, ErpPurchaseOrderAttachmentInfoResponse, ErpPurchaseOrderAttachmentResponse};
+use crate::convert::erp_purchase_order_attachment::{create_request_to_model, model_to_base_response, model_to_info_response, model_to_response, update_add_request_to_model, update_request_to_model};
 use anyhow::{anyhow, Context, Result};
 use sea_orm::ActiveValue::Set;
 use common::constants::enum_constants::{STATUS_DISABLE, STATUS_ENABLE};
@@ -214,6 +214,27 @@ pub async fn list_by_purchase_id(db: &DatabaseConnection, login_user: LoginUserC
                 .get(&a.file_id)
                 .map(|f| f.file_name.clone());
             model_to_base_response(a, file_name)
+        })
+        .collect();
+    Ok(result)
+}
+
+pub async fn list_info_by_purchase_id(db: &DatabaseConnection, login_user: LoginUserContext, purchase_id: i64) -> Result<Vec<ErpPurchaseOrderAttachmentInfoResponse>> {
+    let list = ErpPurchaseOrderAttachmentEntity::find_active()
+        .filter(Column::TenantId.eq(login_user.tenant_id))
+        .filter(Column::PurchaseId.eq(purchase_id))
+        .all(db).await?;
+
+    let file_ids: Vec<i64> = list.iter().map(|a|a.file_id).collect();
+    let files = system_file::list_by_ids(&db, login_user, file_ids).await?;
+    let file_map: HashMap<i64, SystemFileModel> = files.iter().map(|f|(f.id, f.clone())).collect();
+    let result: Vec<ErpPurchaseOrderAttachmentInfoResponse> = list
+        .into_iter()
+        .map(|a| {
+            let file_name = file_map
+                .get(&a.file_id)
+                .map(|f| f.file_name.clone());
+            model_to_info_response(a, file_name)
         })
         .collect();
     Ok(result)

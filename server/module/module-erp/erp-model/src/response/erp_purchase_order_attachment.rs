@@ -48,3 +48,20 @@ pub struct ErpPurchaseOrderAttachmentBaseResponse {
     pub remarks: Option<String>, // 备注
     
 }
+
+#[derive(Deserialize, Serialize, Debug, Clone, ToSchema)]
+pub struct ErpPurchaseOrderAttachmentInfoResponse {
+    
+    pub id: i64, // 附件ID
+    
+    pub purchase_id: i64, // 采购订单ID
+    
+    pub file_id: i64, // 文件ID
+    
+    pub remarks: Option<String>, // 备注
+
+    /****************** 信息 ******************/
+
+    pub file_name: Option<String>, // 文件名
+    
+}

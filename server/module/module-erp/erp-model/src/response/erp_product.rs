@@ -55,5 +55,9 @@ pub struct ErpProductResponse {
     #[serde_as(as = "StringDateTime")]
     #[schema(value_type = String, format = Date)]
     pub update_time: NaiveDateTime, // 更新时间
+
+    /****************** 信息 ******************/
+
+    pub unit_name: Option<String>, // 产品单位名
     
 }

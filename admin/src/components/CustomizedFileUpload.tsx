@@ -75,6 +75,7 @@ export interface DownloadProps {
 
 // Upload 组件属性
 interface UploadProps {
+    canUpload?: boolean;
     id?: string;
     accept?: string;
     maxSize?: number; // 文件大小限制，单位 MB
@@ -87,6 +88,7 @@ interface UploadProps {
 }
 
 const CustomizedFileUpload: React.FC<UploadProps> = ({
+    canUpload = true,
     id = 'file-upload',
     accept = '*',
     maxSize = 10,
@@ -179,7 +181,7 @@ const CustomizedFileUpload: React.FC<UploadProps> = ({
                 width={width}
                 height={height}
                 onClick={() => {
-                    if (file?.status !== 'uploading') {
+                    if (canUpload && file?.status !== 'uploading') {
                         document.getElementById(id)?.click();
                     }
                 }}
