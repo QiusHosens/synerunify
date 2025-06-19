@@ -184,7 +184,7 @@ pub fn derive_extend_fields(input: TokenStream) -> TokenStream {
         let field_type = &field.ty;
         let is_option = is_option_type(field_type);
         for attr in &field.attrs {
-            eprintln!("field {:?} attr: {:?}", field_ident, attr);
+            // eprintln!("field {:?} attr: {:?}", field_ident, attr);
             // eprintln!("field attr path: {:?}", attr.path());
             if attr.path().is_ident("extend_fields") {
                 let args: ExtendFieldsArgs = attr.parse_args().unwrap_or_default();

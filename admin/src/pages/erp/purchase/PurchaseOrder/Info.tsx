@@ -2,10 +2,9 @@ import { Box, Card, FormControl, Grid, Stack, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { forwardRef, useCallback, useImperativeHandle, useState } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
-import { ErpPurchaseOrderInfoResponse, ErpPurchaseOrderRequest, ErpPurchaseOrderResponse, getErpPurchaseOrderInfo } from '@/api';
+import { ErpPurchaseOrderInfoResponse, ErpPurchaseOrderResponse, getErpPurchaseOrderInfo } from '@/api';
 import CustomizedDialog from '@/components/CustomizedDialog';
 import CustomizedTag from '@/components/CustomizedTag';
-import { useMessage } from '@/components/GlobalMessage';
 import CustomizedFileUpload, { DownloadProps } from '@/components/CustomizedFileUpload';
 import { downloadSystemFile } from '@/api/system_file';
 
@@ -27,10 +26,6 @@ const ErpPurchaseOrderInfo = forwardRef(({ }, ref) => {
       setOpen(false);
     },
   }));
-
-  const handleCancel = () => {
-    setOpen(false);
-  };
 
   const handleClose = useCallback(() => {
     setOpen(false);
@@ -73,12 +68,12 @@ const ErpPurchaseOrderInfo = forwardRef(({ }, ref) => {
     <CustomizedDialog
       open={open}
       onClose={handleClose}
-      title={t('global.operate.edit') + t('global.page.erp.purchase.order')}
+      title={t('global.operate.view') + t('global.page.erp.purchase.order')}
       maxWidth={maxWidth}
     >
       <Box noValidate component="form" sx={{ display: 'flex', flexDirection: 'column', m: 'auto', width: 'fit-content' }}>
         <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '100%' } }}>
-          <Grid container rowSpacing={2} columnSpacing={4} sx={{ '& .MuiGrid-root': { display: 'flex', justifyContent: 'center', alignItems: 'center' } }}>
+          <Grid container rowSpacing={2} columnSpacing={4} sx={{ '& .MuiGrid-root': { display: 'flex', justifyContent: 'start', alignItems: 'center' } }}>
             <Grid size={{ xs: 12, md: 12 / 5 }}>
               <Stack direction="row" spacing={2}>
                 <Box>{t('page.erp.purchase.order.title.order.number')}</Box>

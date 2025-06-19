@@ -64,6 +64,7 @@
   "global.operate.cancel": "取消",
 
   "global.operate.actions": "操作",
+  "global.operate.view": "查看",
   "global.operate.edit": "编辑",
   "global.operate.delete": "删除",
   "global.operate.more": "更多操作",

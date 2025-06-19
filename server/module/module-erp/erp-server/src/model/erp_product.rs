@@ -2,7 +2,7 @@ use chrono::NaiveDateTime;
 use sea_orm::Condition;
 use sea_orm::entity::prelude::*;
 use common::interceptor::orm::active_filter::ActiveFilterEntityTrait;
-use crate::model::erp_product_unit;
+use crate::model::{erp_product_unit, erp_product_inventory};
 
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel)]
 #[sea_orm(table_name = "erp_product")]
@@ -62,6 +62,13 @@ pub enum Relation {
         to = "erp_product_unit::Column::Id"
     )]
     ProductUnit,
+
+    #[sea_orm(
+        belongs_to = "super::erp_product_inventory::Entity",
+        from = "Column::Id",
+        to = "erp_product_inventory::Column::ProductId"
+    )]
+    ProductInventory,
 }
 
 impl Related<Entity> for Entity {

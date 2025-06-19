@@ -1,4 +1,4 @@
-import { Box, Button, Card, FormControl, FormHelperText, Grid, InputLabel, MenuItem, Select, SelectChangeEvent, Stack, styled, TextField, Typography } from '@mui/material';
+import { Box, Button, Card, FormControl, FormHelperText, Grid, InputLabel, MenuItem, Select, SelectChangeEvent, Stack, TextField, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { forwardRef, useCallback, useImperativeHandle, useState } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
@@ -86,8 +86,7 @@ const ErpPurchaseOrderEdit = forwardRef(({ onSubmit }: ErpPurchaseOrderEditProps
 
   const validateForm = useCallback((): boolean => {
     const newErrors: FormErrors = {
-      purchase_products: erpPurchaseOrderRequest.purchase_products.map((_, index) => ({
-        rowNumber: index + 1,
+      purchase_products: erpPurchaseOrderRequest.purchase_products.map(() => ({
         product_id: undefined,
         quantity: undefined,
         unit_price: undefined,

@@ -1,10 +1,13 @@
 use chrono::NaiveDateTime;
 use serde::{Serialize, Deserialize};
+use serde_with::serde_as;
 use utoipa::ToSchema;
 use common::base::page::PaginatedRequest;
+use common::formatter::string_date_time::StringDateTime;
 
 use crate::request::{erp_outbound_order_attachment::{CreateErpOutboundOrderAttachmentRequest, UpdateErpOutboundOrderAttachmentRequest}, erp_outbound_order_detail::{CreateErpOutboundOrderDetailOtherRequest, CreateErpOutboundOrderDetailSaleRequest}};
 
+#[serde_as]
 #[derive(Serialize, Deserialize, Debug, ToSchema)]
 pub struct CreateErpOutboundOrderRequest {
     
@@ -12,6 +15,7 @@ pub struct CreateErpOutboundOrderRequest {
     
     // #[serde_as(as = "DisplayFromStr")]
     // #[serde(with = "serde_with::chrono::naive_datetime")]
+    #[serde_as(as = "StringDateTime")]
     #[schema(value_type = String, format = Date)]
     pub outbound_date: NaiveDateTime, // 出库日期
     
@@ -29,6 +33,7 @@ pub struct CreateErpOutboundOrderRequest {
     
 }
 
+#[serde_as]
 #[derive(Serialize, Deserialize, Debug, ToSchema)]
 pub struct CreateErpOutboundOrderSaleRequest {
     
@@ -36,6 +41,7 @@ pub struct CreateErpOutboundOrderSaleRequest {
     
     // #[serde_as(as = "DisplayFromStr")]
     // #[serde(with = "serde_with::chrono::naive_datetime")]
+    #[serde_as(as = "StringDateTime")]
     #[schema(value_type = String, format = Date)]
     pub outbound_date: NaiveDateTime, // 出库日期
     
@@ -53,6 +59,7 @@ pub struct CreateErpOutboundOrderSaleRequest {
     
 }
 
+#[serde_as]
 #[derive(Serialize, Deserialize, Debug, ToSchema)]
 pub struct CreateErpOutboundOrderOtherRequest {
     
@@ -60,6 +67,7 @@ pub struct CreateErpOutboundOrderOtherRequest {
     
     // #[serde_as(as = "DisplayFromStr")]
     // #[serde(with = "serde_with::chrono::naive_datetime")]
+    #[serde_as(as = "StringDateTime")]
     #[schema(value_type = String, format = Date)]
     pub outbound_date: NaiveDateTime, // 出库日期
     
@@ -77,6 +85,7 @@ pub struct CreateErpOutboundOrderOtherRequest {
     
 }
 
+#[serde_as]
 #[derive(Serialize, Deserialize, Debug, ToSchema)]
 pub struct UpdateErpOutboundOrderRequest {
     
@@ -86,6 +95,7 @@ pub struct UpdateErpOutboundOrderRequest {
     
     // #[serde_as(as = "DisplayFromStr")]
     // #[serde(with = "serde_with::chrono::naive_datetime")]
+    #[serde_as(as = "Option<StringDateTime>")]
     #[schema(value_type = String, format = Date)]
     pub outbound_date: Option<NaiveDateTime>, // 出库日期
     
@@ -103,6 +113,7 @@ pub struct UpdateErpOutboundOrderRequest {
     
 }
 
+#[serde_as]
 #[derive(Serialize, Deserialize, Debug, ToSchema)]
 pub struct UpdateErpOutboundOrderSaleRequest {
     
@@ -110,6 +121,7 @@ pub struct UpdateErpOutboundOrderSaleRequest {
     
     // #[serde_as(as = "DisplayFromStr")]
     // #[serde(with = "serde_with::chrono::naive_datetime")]
+    #[serde_as(as = "Option<StringDateTime>")]
     #[schema(value_type = String, format = Date)]
     pub outbound_date: Option<NaiveDateTime>, // 出库日期
     
@@ -125,6 +137,7 @@ pub struct UpdateErpOutboundOrderSaleRequest {
     
 }
 
+#[serde_as]
 #[derive(Serialize, Deserialize, Debug, ToSchema)]
 pub struct UpdateErpOutboundOrderOtherRequest {
     
@@ -134,6 +147,7 @@ pub struct UpdateErpOutboundOrderOtherRequest {
     
     // #[serde_as(as = "DisplayFromStr")]
     // #[serde(with = "serde_with::chrono::naive_datetime")]
+    #[serde_as(as = "Option<StringDateTime>")]
     #[schema(value_type = String, format = Date)]
     pub outbound_date: Option<NaiveDateTime>, // 出库日期
     

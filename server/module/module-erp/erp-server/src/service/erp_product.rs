@@ -66,7 +66,7 @@ pub async fn get_paginated(db: &DatabaseConnection, login_user: LoginUserContext
         .select_also(ErpProductUnitEntity)
         .select_also(ErpProductInventoryEntity)
         .join(JoinType::LeftJoin, Relation::ProductUnit.def())
-        .join(JoinType::LeftJoin, ErpProductInventoryRelation::InventoryProduct.def())
+        .join(JoinType::LeftJoin, Relation::ProductInventory.def())
         .support_filter(params.base.filter_field, params.base.filter_operator, params.base.filter_value)
         .support_order(params.base.sort_field, params.base.sort, Some(vec![(Column::Id, Order::Desc)]))
         .paginate(db, params.base.size);
@@ -95,7 +95,7 @@ pub async fn list(db: &DatabaseConnection, login_user: LoginUserContext) -> Resu
         .select_also(ErpProductUnitEntity)
         .select_also(ErpProductInventoryEntity)
         .join(JoinType::LeftJoin, Relation::ProductUnit.def())
-        .join(JoinType::LeftJoin, ErpProductInventoryRelation::InventoryProduct.def())
+        .join(JoinType::LeftJoin, Relation::ProductInventory.def())
         .all(db).await?;
     Ok(list.into_iter().map(|(data, unit_data, inventory_data)|model_to_response(data, unit_data, inventory_data)).collect())
 }

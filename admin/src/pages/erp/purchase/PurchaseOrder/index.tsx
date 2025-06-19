@@ -2,6 +2,7 @@ import { Box, Button } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { DataGrid, GridCallbackDetails, GridColDef, GridFilterModel, GridRenderCellParams, GridSortModel } from '@mui/x-data-grid';
+import ViewIcon from '@/assets/image/svg/view.svg';
 import EditIcon from '@/assets/image/svg/edit.svg';
 import DeleteIcon from '@/assets/image/svg/delete.svg';
 import { pageErpPurchaseOrder, ErpPurchaseOrderQueryCondition, ErpPurchaseOrderResponse } from '@/api';
@@ -9,6 +10,7 @@ import ErpPurchaseOrderAdd from './Add';
 import ErpPurchaseOrderEdit from './Edit';
 import ErpPurchaseOrderDelete from './Delete';
 import { useHomeStore } from '@/store';
+import ErpPurchaseOrderInfo from './Info';
 
 export default function ErpPurchaseOrder() {
   const { t } = useTranslation();
@@ -24,6 +26,7 @@ export default function ErpPurchaseOrder() {
   const [sortModel, setSortModel] = useState<GridSortModel>([]);
   const [filterModel, setFilterModel] = useState<GridFilterModel>();
 
+  const viewErpPurchaseOrder = useRef(null);
   const addErpPurchaseOrder = useRef(null);
   const editErpPurchaseOrder = useRef(null);
   const deleteErpPurchaseOrder = useRef(null);
@@ -49,6 +52,13 @@ export default function ErpPurchaseOrder() {
         minWidth: 100,
         renderCell: (params: GridRenderCellParams) => (
           <Box sx={{ height: '100%', display: 'flex', gap: 1, alignItems: 'center' }}>
+            {hasOperatePermission('erp:purchase:order:get') && <Button
+              size="small"
+              variant='customOperate'
+              title={t('global.operate.view') + t('global.page.erp.purchase.order')}
+              startIcon={<ViewIcon />}
+              onClick={() => handleClickOpenView(params.row)}
+            />}
             {hasOperatePermission('erp:purchase:order:edit') && <Button
               size="small"
               variant='customOperate'
@@ -75,6 +85,10 @@ export default function ErpPurchaseOrder() {
     const result = await pageErpPurchaseOrder(condition);
     setRecords(result.list);
     setTotal(result.total);
+  };
+
+  const handleClickOpenView = (erpPurchaseOrder: ErpPurchaseOrderResponse) => {
+    (viewErpPurchaseOrder.current as any).show(erpPurchaseOrder);
   };
 
   const handleClickOpenAdd = () => {
@@ -141,6 +155,7 @@ export default function ErpPurchaseOrder() {
           }));
         }}
       />
+      <ErpPurchaseOrderInfo ref={viewErpPurchaseOrder} onSubmit={refreshData} />
       <ErpPurchaseOrderAdd ref={addErpPurchaseOrder} onSubmit={refreshData} />
       <ErpPurchaseOrderEdit ref={editErpPurchaseOrder} onSubmit={refreshData} />
       <ErpPurchaseOrderDelete ref={deleteErpPurchaseOrder} onSubmit={refreshData} />
