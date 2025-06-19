@@ -161,27 +161,29 @@ const ErpPurchaseOrderEdit = forwardRef(({ onSubmit }: ErpPurchaseOrderEditProps
     setPurchaseDate(new AdapterDayjs().dayjs(result.purchase_date));
     // 设置图片
     for (const attachment of result.purchase_attachment) {
-      const result = await downloadSystemFile(attachment.file_id, (progress) => {
+      const file_id = attachment.file_id;
+      const filename = attachment.file_name.indexOf('.') > 0 ? attachment.file_name.substring(0, attachment.file_name.lastIndexOf('.')) : attachment.file_name;
+      const result = await downloadSystemFile(file_id, (progress) => {
         setDownloadImages(prev => {
           const data: DownloadProps = {
-            filename: attachment.file_name,
+            filename,
             status: 'downloading',
             progress
           };
           const newMap = new Map(prev);
-          newMap.set(attachment.file_id, data);
+          newMap.set(file_id, data);
           return newMap;
         })
       })
 
       setDownloadImages(prev => {
         const data: DownloadProps = {
-          previewUrl: window.URL.createObjectURL(result),
-          filename: attachment.file_name,
+          filename,
           status: 'done',
+          previewUrl: window.URL.createObjectURL(result),
         };
         const newMap = new Map(prev);
-        newMap.set(attachment.file_id, data);
+        newMap.set(file_id, data);
         return newMap;
       })
     }

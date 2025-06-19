@@ -5,6 +5,7 @@ use sea_orm::prelude::Expr;
 use sea_orm::{ActiveModelTrait, ColumnTrait, Condition, DatabaseConnection, DatabaseTransaction, EntityTrait, PaginatorTrait, QueryFilter, QueryOrder};
 use crate::model::erp_sales_order_attachment::{Model as ErpSalesOrderAttachmentModel, ActiveModel as ErpSalesOrderAttachmentActiveModel, Entity as ErpSalesOrderAttachmentEntity, Column};
 use crate::model::erp_sales_order::{Model as ErpSalesOrderModel};
+use file_common::model::system_file::{Model as SystemFileModel};
 use erp_model::request::erp_sales_order_attachment::{CreateErpSalesOrderAttachmentRequest, UpdateErpSalesOrderAttachmentRequest, PaginatedKeywordRequest};
 use erp_model::response::erp_sales_order_attachment::{ErpSalesOrderAttachmentBaseResponse, ErpSalesOrderAttachmentResponse};
 use crate::convert::erp_sales_order_attachment::{create_request_to_model, model_to_base_response, model_to_response, update_add_request_to_model, update_request_to_model};
@@ -200,5 +201,18 @@ pub async fn list_by_sale_id(db: &DatabaseConnection, login_user: LoginUserConte
         .filter(Column::TenantId.eq(login_user.tenant_id))
         .filter(Column::OrderId.eq(sale_id))
         .all(db).await?;
-    Ok(list.into_iter().map(model_to_base_response).collect())
+
+    let file_ids: Vec<i64> = list.iter().map(|a|a.file_id).collect();
+    let files = system_file::list_by_ids(&db, login_user, file_ids).await?;
+    let file_map: HashMap<i64, SystemFileModel> = files.iter().map(|f|(f.id, f.clone())).collect();
+    let result: Vec<ErpSalesOrderAttachmentBaseResponse> = list
+        .into_iter()
+        .map(|a| {
+            let file_name = file_map
+                .get(&a.file_id)
+                .map(|f| f.file_name.clone());
+            model_to_base_response(a, file_name)
+        })
+        .collect();
+    Ok(result)
 }
