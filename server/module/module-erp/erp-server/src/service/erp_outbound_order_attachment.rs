@@ -1,10 +1,14 @@
+use std::collections::{HashMap, HashSet};
+
 use common::interceptor::orm::simple_support::SimpleSupport;
 use file_common::service::system_file;
+use sea_orm::prelude::Expr;
 use sea_orm::{ActiveModelTrait, ColumnTrait, Condition, DatabaseConnection, DatabaseTransaction, EntityTrait, Order, PaginatorTrait, QueryFilter, QueryOrder};
 use crate::model::erp_outbound_order_attachment::{Model as ErpOutboundOrderAttachmentModel, ActiveModel as ErpOutboundOrderAttachmentActiveModel, Entity as ErpOutboundOrderAttachmentEntity, Column};
+use crate::model::erp_outbound_order::{Model as ErpOutboundOrderModel};
 use erp_model::request::erp_outbound_order_attachment::{CreateErpOutboundOrderAttachmentRequest, UpdateErpOutboundOrderAttachmentRequest, PaginatedKeywordRequest};
 use erp_model::response::erp_outbound_order_attachment::ErpOutboundOrderAttachmentResponse;
-use crate::convert::erp_outbound_order_attachment::{create_request_to_model, update_request_to_model, model_to_response};
+use crate::convert::erp_outbound_order_attachment::{create_request_to_model, model_to_response, update_add_request_to_model, update_request_to_model};
 use anyhow::{anyhow, Context, Result};
 use sea_orm::ActiveValue::Set;
 use common::constants::enum_constants::{STATUS_DISABLE, STATUS_ENABLE};
@@ -50,17 +54,96 @@ pub async fn create_batch(db: &DatabaseConnection, txn: &DatabaseTransaction, lo
     Ok(())
 }
 
-pub async fn update(db: &DatabaseConnection, login_user: LoginUserContext, request: UpdateErpOutboundOrderAttachmentRequest) -> Result<()> {
-    let erp_outbound_order_attachment = ErpOutboundOrderAttachmentEntity::find_by_id(request.id)
+pub async fn update_batch(db: &DatabaseConnection, txn: &DatabaseTransaction, login_user: LoginUserContext, order: ErpOutboundOrderModel, requests: Vec<UpdateErpOutboundOrderAttachmentRequest>) -> Result<()> {
+    // 查询已存在订单附件
+    let existing_attachments = ErpOutboundOrderAttachmentEntity::find()
         .filter(Column::TenantId.eq(login_user.tenant_id))
-        .filter(Column::TenantId.eq(login_user.tenant_id))
-        .one(db)
-        .await?
-        .ok_or_else(|| anyhow!("记录未找到"))?;
+        .filter(Column::OrderId.eq(order.id))
+        .all(db)
+        .await?;
 
-    let mut erp_outbound_order_attachment = update_request_to_model(&request, erp_outbound_order_attachment);
-    erp_outbound_order_attachment.updater = Set(Some(login_user.id));
-    erp_outbound_order_attachment.update(db).await?;
+    // 构造 HashMap 加速查询
+    let existing_map: HashMap<i64, ErpOutboundOrderAttachmentModel> =
+        existing_attachments.iter().map(|a| (a.id, a.clone())).collect();
+
+    // 拆分请求为新增 / 更新两类
+    let (to_add, to_update): (Vec<_>, Vec<_>) = requests.into_iter().partition(|r| r.id.is_none());
+
+    // 所有 id
+    let request_attachment_ids: HashSet<i64> = to_update.iter().filter_map(|a| a.id).collect();
+    let existing_attachment_ids: HashSet<i64> = existing_map.keys().copied().collect();
+
+    // 删除的 detail id = 旧的 - 新的
+    let to_mark_deleted: Vec<i64> = existing_attachment_ids
+        .difference(&request_attachment_ids)
+        .copied()
+        .collect();
+
+    // 启用文件id列表
+    let mut enable_file_ids: Vec<i64> = Vec::new();
+    // 禁用文件id列表
+    let mut disable_file_ids: Vec<i64> = existing_attachments.iter().filter(|a|to_mark_deleted.contains(&a.id)).map(|a|a.file_id).collect();
+
+    // 批量新增
+    if !to_add.is_empty() {
+        // 所有新增的都启用
+        enable_file_ids = to_add.iter().map(|a|a.file_id).collect();
+        let models: Vec<ErpOutboundOrderAttachmentActiveModel> = to_add
+            .into_iter()
+            .map(|request| {
+                let mut model = update_add_request_to_model(&request);
+                model.order_id = Set(order.id);
+                model.department_id = Set(order.department_id);
+                model.department_code = Set(order.department_code.clone());
+                model.creator = Set(Some(login_user.id));
+                model.updater = Set(Some(login_user.id));
+                model.tenant_id = Set(order.tenant_id);
+                model
+            })
+            .collect();
+
+        ErpOutboundOrderAttachmentEntity::insert_many(models)
+            .exec(txn)
+            .await
+            .with_context(|| "Failed to insert details")?;
+    }
+
+    // 批量逻辑删除
+    if !to_mark_deleted.is_empty() {
+        ErpOutboundOrderAttachmentEntity::update_many()
+            .col_expr(Column::Deleted, Expr::value(1))
+            .col_expr(Column::Updater, Expr::value(login_user.id))
+            .filter(Column::OrderId.eq(order.id))
+            .filter(Column::Id.is_in(to_mark_deleted))
+            .exec(txn)
+            .await?;
+    }
+
+    // 批量更新（逐条更新，因内容不一致）
+    if !to_update.is_empty() {
+        for request in to_update {
+            if let Some(id) = request.id {
+                if let Some(existing) = existing_map.get(&id) {
+                    // 编辑的文件id不一致,则禁用之前的
+                    if !existing.file_id.eq(&request.file_id) {
+                        disable_file_ids.push(existing.file_id);
+                    }
+                    let mut model = update_request_to_model(&request, existing.clone());
+                    model.updater = Set(Some(login_user.id));
+                    model.update(txn).await?;
+
+                    // 编辑的已存在则启用
+                    enable_file_ids.push(request.file_id);
+                }
+            }
+        }
+    }
+
+    // 启用文件
+    system_file::enable_outer(&db, &txn, login_user.clone(), enable_file_ids).await?;
+    // 禁用文件
+    system_file::disable_outer(&db, &txn, login_user, disable_file_ids).await?;
+
     Ok(())
 }
 

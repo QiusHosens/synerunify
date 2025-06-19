@@ -3,9 +3,9 @@ use common::utils::snowflake_generator::SnowflakeGenerator;
 use sea_orm::{ActiveModelTrait, ColumnTrait, Condition, DatabaseConnection, EntityTrait, Order, PaginatorTrait, QueryFilter, QueryOrder, TransactionTrait};
 use crate::model::erp_outbound_order::{Model as ErpOutboundOrderModel, ActiveModel as ErpOutboundOrderActiveModel, Entity as ErpOutboundOrderEntity, Column};
 use crate::service::{erp_outbound_order_attachment, erp_outbound_order_detail, erp_sales_order};
-use erp_model::request::erp_outbound_order::{CreateErpOutboundOrderOtherRequest, CreateErpOutboundOrderRequest, CreateErpOutboundOrderSaleRequest, PaginatedKeywordRequest, UpdateErpOutboundOrderRequest};
+use erp_model::request::erp_outbound_order::{CreateErpOutboundOrderOtherRequest, CreateErpOutboundOrderRequest, CreateErpOutboundOrderSaleRequest, PaginatedKeywordRequest, UpdateErpOutboundOrderOtherRequest, UpdateErpOutboundOrderRequest, UpdateErpOutboundOrderSaleRequest};
 use erp_model::response::erp_outbound_order::ErpOutboundOrderResponse;
-use crate::convert::erp_outbound_order::{create_other_request_to_model, create_request_to_model, create_sale_request_to_model, model_to_response, update_request_to_model};
+use crate::convert::erp_outbound_order::{create_other_request_to_model, create_request_to_model, create_sale_request_to_model, model_to_response, update_other_request_to_model, update_request_to_model, update_sale_request_to_model};
 use anyhow::{anyhow, Context, Result};
 use sea_orm::ActiveValue::Set;
 use common::constants::enum_constants::{STATUS_DISABLE, STATUS_ENABLE};
@@ -76,17 +76,47 @@ pub async fn create_other(db: &DatabaseConnection, login_user: LoginUserContext,
     Ok(erp_outbound_order.id)
 }
 
-pub async fn update(db: &DatabaseConnection, login_user: LoginUserContext, request: UpdateErpOutboundOrderRequest) -> Result<()> {
-    let erp_outbound_order = ErpOutboundOrderEntity::find_by_id(request.id)
-        .filter(Column::TenantId.eq(login_user.tenant_id))
+pub async fn update_sale(db: &DatabaseConnection, login_user: LoginUserContext, request: UpdateErpOutboundOrderSaleRequest) -> Result<()> {
+    let erp_outbound_order = ErpOutboundOrderEntity::find_active_by_id(request.id)
         .filter(Column::TenantId.eq(login_user.tenant_id))
         .one(db)
         .await?
         .ok_or_else(|| anyhow!("记录未找到"))?;
 
-    let mut erp_outbound_order = update_request_to_model(&request, erp_outbound_order);
+    let outbound_order = erp_outbound_order.clone();
+
+    let mut erp_outbound_order = update_sale_request_to_model(&request, erp_outbound_order);
     erp_outbound_order.updater = Set(Some(login_user.id));
-    erp_outbound_order.update(db).await?;
+    // 开启事务
+    let txn = db.begin().await?;
+    // 修改订单
+    erp_outbound_order.update(&txn).await?;
+    // 更新订单文件
+    erp_outbound_order_attachment::update_batch(&db, &txn, login_user.clone(), outbound_order, request.attachments).await?;
+    // 提交事务
+    txn.commit().await.with_context(|| "Failed to commit transaction")?;
+    Ok(())
+}
+
+pub async fn update_other(db: &DatabaseConnection, login_user: LoginUserContext, request: UpdateErpOutboundOrderOtherRequest) -> Result<()> {
+    let erp_outbound_order = ErpOutboundOrderEntity::find_active_by_id(request.id)
+        .filter(Column::TenantId.eq(login_user.tenant_id))
+        .one(db)
+        .await?
+        .ok_or_else(|| anyhow!("记录未找到"))?;
+
+    let outbound_order = erp_outbound_order.clone();
+
+    let mut erp_outbound_order = update_other_request_to_model(&request, erp_outbound_order);
+    erp_outbound_order.updater = Set(Some(login_user.id));
+    // 开启事务
+    let txn = db.begin().await?;
+    // 修改订单
+    erp_outbound_order.update(&txn).await?;
+    // 更新订单文件
+    erp_outbound_order_attachment::update_batch(&db, &txn, login_user.clone(), outbound_order, request.attachments).await?;
+    // 提交事务
+    txn.commit().await.with_context(|| "Failed to commit transaction")?;
     Ok(())
 }
 

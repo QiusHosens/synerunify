@@ -1,6 +1,7 @@
 use std::collections::{HashMap, HashSet};
 
 use axum::http::request;
+use chrono::NaiveDateTime;
 use common::interceptor::orm::simple_support::SimpleSupport;
 use erp_model::request::erp_inventory_record::ErpInventoryRecordInRequest;
 use erp_model::request::erp_product_inventory::{CreateErpProductInventoryRequest, ErpProductInventoryInOutRequest};
@@ -53,7 +54,7 @@ pub async fn create_batch_purchase(db: &DatabaseConnection, txn: &DatabaseTransa
                 unit_price: Set(purchase_detail.unit_price.clone()),
                 subtotal: Set(purchase_detail.subtotal.clone()),
                 tax_rate: purchase_detail.tax_rate.as_ref().map_or(NotSet, |tax_rate| Set(Some(tax_rate.clone()))),
-                remarks: purchase_detail.remarks.as_ref().map_or(NotSet, |remarks| Set(Some(remarks.clone()))),
+                remarks: request.remarks.as_ref().map_or(NotSet, |remarks| Set(Some(remarks.clone()))),
                 department_id: Set(login_user.department_id.clone()),
                 department_code: Set(login_user.department_code.clone()),
                 creator: Set(Some(login_user.id)),
@@ -77,7 +78,7 @@ pub async fn create_batch_purchase(db: &DatabaseConnection, txn: &DatabaseTransa
                 warehouse_id: request.warehouse_id.clone(),
                 quantity: purchase_detail.quantity.clone(),
                 record_date: order.inbound_date.clone(),
-                remarks: purchase_detail.remarks.clone(),
+                remarks: request.remarks.clone(),
             };
             inbound_inventories.push(inbound_inventory);
         }
@@ -174,26 +175,51 @@ pub async fn update_batch_purchase(db: &DatabaseConnection, txn: &DatabaseTransa
         .all(db)
         .await?;
 
+    let mut product_inventories: Vec<ErpProductInventoryInOutRequest> = Vec::new();
+    let mut inbound_inventories: Vec<ErpInventoryRecordInRequest> = Vec::new();
+
     // 更新
     for existing_detail in existing_details {
         if let Some(purchase_detail_id) = existing_detail.purchase_detail_id {
-            let mut active_model: ErpInboundOrderDetailActiveModel = existing_detail.into();
-            if let Some(request) = request_map.get(&purchase_detail_id) {
-                active_model.purchase_detail_id = Set(Some((request.purchase_detail_id)));
-                active_model.warehouse_id = Set(request.warehouse_id.clone())
+            let request = request_map.get(&purchase_detail_id).ok_or_else(|| anyhow!("订单产品不匹配"))?;
+            let purchase_detail = purchase_detail_map.get(&purchase_detail_id).ok_or_else(|| anyhow!("订单产品不匹配"))?;
+            // 校验
+            // 1、不能修改仓库,应该走库存调拨
+            // 2、采购订单入库不能修改数量,采购订单已入库也不能修改,应该走出库来平
+            // TODO 暂时不能修改入库产品详情
+            let mut active_model: ErpInboundOrderDetailActiveModel = existing_detail.clone().into();
+
+            active_model.purchase_detail_id = Set(Some((request.purchase_detail_id)));
+            active_model.warehouse_id = Set(request.warehouse_id.clone());
+            if let Some(remarks) = &request.remarks { 
+                active_model.remarks = Set(Some(remarks.clone()));
             }
-            if let Some(purchase_detail) = purchase_detail_map.get(&purchase_detail_id) {
-                active_model.product_id = Set(purchase_detail.product_id.clone());
-                active_model.quantity = Set(purchase_detail.quantity.clone());
-                active_model.unit_price = Set(purchase_detail.unit_price.clone());
-                active_model.subtotal = Set(purchase_detail.subtotal.clone());
-                if let Some(tax_rate) = &purchase_detail.tax_rate { 
-                    active_model.tax_rate = Set(Some(tax_rate.clone()));
-                }
-                if let Some(remarks) = &purchase_detail.remarks { 
-                    active_model.remarks = Set(Some(remarks.clone()));
-                }
+
+            active_model.product_id = Set(purchase_detail.product_id.clone());
+            active_model.quantity = Set(purchase_detail.quantity.clone());
+            active_model.unit_price = Set(purchase_detail.unit_price.clone());
+            active_model.subtotal = Set(purchase_detail.subtotal.clone());
+            if let Some(tax_rate) = &purchase_detail.tax_rate { 
+                active_model.tax_rate = Set(Some(tax_rate.clone()));
             }
+
+            // 产品库存
+            let product_inventory = ErpProductInventoryInOutRequest {
+                product_id: purchase_detail.product_id.clone(),
+                warehouse_id: request.warehouse_id.clone(),
+                quantity: purchase_detail.quantity.clone() - existing_detail.quantity.clone(), // 修改数量 - 已存数量
+            };
+            product_inventories.push(product_inventory);
+
+            // 入库记录
+            let inbound_inventory = ErpInventoryRecordInRequest {
+                product_id: purchase_detail.product_id.clone(),
+                warehouse_id: request.warehouse_id.clone(),
+                quantity: purchase_detail.quantity.clone(),
+                record_date: order.inbound_date.clone(),
+                remarks: purchase_detail.remarks.clone(),
+            };
+            inbound_inventories.push(inbound_inventory);
 
             active_model.department_id = Set(order.department_id.clone());
             active_model.department_code = Set(order.department_code.clone());
@@ -202,6 +228,11 @@ pub async fn update_batch_purchase(db: &DatabaseConnection, txn: &DatabaseTransa
             active_model.update(txn).await?;
         }
     }
+
+    // 修改产品库存
+    erp_product_inventory::inbound(&db, txn, login_user.clone(), product_inventories).await?;
+    // 增加库存记录
+    erp_inventory_record::inbound(&db, txn, login_user, inbound_inventories).await?;
 
     Ok(())
 }

@@ -1,6 +1,6 @@
 use sea_orm::{Set, NotSet};
 use crate::model::erp_inbound_order::{self, Model as ErpInboundOrder, ActiveModel as ErpInboundOrderActiveModel};
-use erp_model::request::erp_inbound_order::{CreateErpInboundOrderOtherRequest, CreateErpInboundOrderPurchaseRequest, CreateErpInboundOrderRequest, UpdateErpInboundOrderPurchaseRequest, UpdateErpInboundOrderRequest};
+use erp_model::request::erp_inbound_order::{CreateErpInboundOrderOtherRequest, CreateErpInboundOrderPurchaseRequest, CreateErpInboundOrderRequest, UpdateErpInboundOrderOtherRequest, UpdateErpInboundOrderPurchaseRequest, UpdateErpInboundOrderRequest};
 use erp_model::response::erp_inbound_order::ErpInboundOrderResponse;
 
 pub fn create_request_to_model(request: &CreateErpInboundOrderRequest) -> ErpInboundOrderActiveModel {
@@ -76,6 +76,29 @@ pub fn update_request_to_model(request: &UpdateErpInboundOrderRequest, existing:
 
 pub fn update_purchase_request_to_model(request: &UpdateErpInboundOrderPurchaseRequest, existing: ErpInboundOrder) -> ErpInboundOrderActiveModel {
     let mut active_model: ErpInboundOrderActiveModel = existing.into();
+    if let Some(inbound_date) = &request.inbound_date { 
+        active_model.inbound_date = Set(inbound_date.clone());
+    }
+    if let Some(remarks) = &request.remarks { 
+        active_model.remarks = Set(Some(remarks.clone()));
+    }
+    if let Some(discount_rate) = &request.discount_rate { 
+        active_model.discount_rate = Set(Some(discount_rate.clone()));
+    }
+    if let Some(other_cost) = &request.other_cost { 
+        active_model.other_cost = Set(Some(other_cost.clone()));
+    }
+    if let Some(settlement_account_id) = &request.settlement_account_id { 
+        active_model.settlement_account_id = Set(Some(settlement_account_id.clone()));
+    }
+    active_model
+}
+
+pub fn update_other_request_to_model(request: &UpdateErpInboundOrderOtherRequest, existing: ErpInboundOrder) -> ErpInboundOrderActiveModel {
+    let mut active_model: ErpInboundOrderActiveModel = existing.into();
+    if let Some(supplier_id) = &request.supplier_id { 
+        active_model.supplier_id = Set(supplier_id.clone());
+    }
     if let Some(inbound_date) = &request.inbound_date { 
         active_model.inbound_date = Set(inbound_date.clone());
     }

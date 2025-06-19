@@ -1,6 +1,6 @@
 use sea_orm::{Set, NotSet};
 use crate::model::erp_outbound_order::{self, Model as ErpOutboundOrder, ActiveModel as ErpOutboundOrderActiveModel};
-use erp_model::request::erp_outbound_order::{CreateErpOutboundOrderOtherRequest, CreateErpOutboundOrderRequest, CreateErpOutboundOrderSaleRequest, UpdateErpOutboundOrderRequest};
+use erp_model::request::erp_outbound_order::{CreateErpOutboundOrderOtherRequest, CreateErpOutboundOrderRequest, CreateErpOutboundOrderSaleRequest, UpdateErpOutboundOrderOtherRequest, UpdateErpOutboundOrderRequest, UpdateErpOutboundOrderSaleRequest};
 use erp_model::response::erp_outbound_order::ErpOutboundOrderResponse;
 
 pub fn create_request_to_model(request: &CreateErpOutboundOrderRequest) -> ErpOutboundOrderActiveModel {
@@ -66,6 +66,49 @@ pub fn update_request_to_model(request: &UpdateErpOutboundOrderRequest, existing
     }
     if let Some(department_id) = &request.department_id { 
         active_model.department_id = Set(department_id.clone());
+    }
+    active_model
+}
+
+pub fn update_sale_request_to_model(request: &UpdateErpOutboundOrderSaleRequest, existing: ErpOutboundOrder) -> ErpOutboundOrderActiveModel {
+    let mut active_model: ErpOutboundOrderActiveModel = existing.into();
+    if let Some(outbound_date) = &request.outbound_date { 
+        active_model.outbound_date = Set(outbound_date.clone());
+    }
+    if let Some(remarks) = &request.remarks { 
+        active_model.remarks = Set(Some(remarks.clone()));
+    }
+    if let Some(discount_rate) = &request.discount_rate { 
+        active_model.discount_rate = Set(Some(discount_rate.clone()));
+    }
+    if let Some(other_cost) = &request.other_cost { 
+        active_model.other_cost = Set(Some(other_cost.clone()));
+    }
+    if let Some(settlement_account_id) = &request.settlement_account_id { 
+        active_model.settlement_account_id = Set(Some(settlement_account_id.clone()));
+    }
+    active_model
+}
+
+pub fn update_other_request_to_model(request: &UpdateErpOutboundOrderOtherRequest, existing: ErpOutboundOrder) -> ErpOutboundOrderActiveModel {
+    let mut active_model: ErpOutboundOrderActiveModel = existing.into();
+    if let customer_id = &request.customer_id { 
+        active_model.customer_id = Set(customer_id.clone());
+    }
+    if let Some(outbound_date) = &request.outbound_date { 
+        active_model.outbound_date = Set(outbound_date.clone());
+    }
+    if let Some(remarks) = &request.remarks { 
+        active_model.remarks = Set(Some(remarks.clone()));
+    }
+    if let Some(discount_rate) = &request.discount_rate { 
+        active_model.discount_rate = Set(Some(discount_rate.clone()));
+    }
+    if let Some(other_cost) = &request.other_cost { 
+        active_model.other_cost = Set(Some(other_cost.clone()));
+    }
+    if let Some(settlement_account_id) = &request.settlement_account_id { 
+        active_model.settlement_account_id = Set(Some(settlement_account_id.clone()));
     }
     active_model
 }

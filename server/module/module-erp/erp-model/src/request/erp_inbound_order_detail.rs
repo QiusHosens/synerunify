@@ -36,6 +36,8 @@ pub struct CreateErpInboundOrderDetailPurchaseRequest {
     pub purchase_detail_id: i64, // 采购订单详情ID
     
     pub warehouse_id: i64, // 仓库ID
+
+    pub remarks: Option<String>, // 备注
     
 }
 
@@ -93,6 +95,8 @@ pub struct UpdateErpInboundOrderDetailPurchaseRequest {
     pub purchase_detail_id: i64, // 采购订单详情ID
     
     pub warehouse_id: i64, // 仓库ID
+
+    pub remarks: Option<String>, // 备注
     
 }
 

@@ -11,9 +11,17 @@ pub fn create_request_to_model(request: &CreateErpOutboundOrderAttachmentRequest
     }
 }
 
+pub fn update_add_request_to_model(request: &UpdateErpOutboundOrderAttachmentRequest) -> ErpOutboundOrderAttachmentActiveModel {
+    ErpOutboundOrderAttachmentActiveModel {
+        file_id: Set(request.file_id.clone()),
+        remarks: request.remarks.as_ref().map_or(NotSet, |remarks| Set(Some(remarks.clone()))),
+        ..Default::default()
+    }
+}
+
 pub fn update_request_to_model(request: &UpdateErpOutboundOrderAttachmentRequest, existing: ErpOutboundOrderAttachment) -> ErpOutboundOrderAttachmentActiveModel {
     let mut active_model: ErpOutboundOrderAttachmentActiveModel = existing.into();
-    if let Some(file_id) = &request.file_id { 
+    if let file_id = &request.file_id { 
         active_model.file_id = Set(file_id.clone());
     }
     if let Some(remarks) = &request.remarks { 

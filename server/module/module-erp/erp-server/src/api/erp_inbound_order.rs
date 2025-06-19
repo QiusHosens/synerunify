@@ -6,7 +6,7 @@ use ctor;
 use macros::require_authorize;
 use axum::{routing::{get, post}, Router, extract::{State, Path, Json, Query}, response::IntoResponse, Extension};
 use common::base::page::PaginatedResponse;
-use erp_model::request::erp_inbound_order::{CreateErpInboundOrderOtherRequest, CreateErpInboundOrderPurchaseRequest, CreateErpInboundOrderRequest, PaginatedKeywordRequest, UpdateErpInboundOrderRequest};
+use erp_model::request::erp_inbound_order::{CreateErpInboundOrderOtherRequest, CreateErpInboundOrderPurchaseRequest, CreateErpInboundOrderRequest, PaginatedKeywordRequest, UpdateErpInboundOrderOtherRequest, UpdateErpInboundOrderPurchaseRequest, UpdateErpInboundOrderRequest};
 use erp_model::response::erp_inbound_order::ErpInboundOrderResponse;
 use common::base::response::CommonResult;
 use common::context::context::LoginUserContext;
@@ -17,7 +17,8 @@ pub async fn erp_inbound_order_router(state: AppState) -> OpenApiRouter {
     OpenApiRouter::new()
         .routes(routes!(create_purchase))
         .routes(routes!(create_other))
-        .routes(routes!(update))
+        .routes(routes!(update_purchase))
+        .routes(routes!(update_other))
         .routes(routes!(delete))
         .routes(routes!(get_by_id))
         .routes(routes!(list))
@@ -27,8 +28,10 @@ pub async fn erp_inbound_order_router(state: AppState) -> OpenApiRouter {
 
 pub async fn erp_inbound_order_route(state: AppState) -> Router {
     Router::new()
-        .route("/create", post(create_purchase))
-        .route("/update", post(update))
+        .route("/create_purchase", post(create_purchase))
+        .route("/create_other", post(create_other))
+        .route("/update_purchase", post(update_purchase))
+        .route("/update_other", post(update_other))
         .route("/delete/{id}", post(delete))
         .route("/get/{id}", get(get_by_id))
         .route("/list", get(list))
@@ -88,24 +91,49 @@ async fn create_other(
 
 #[utoipa::path(
     post,
-    path = "/update",
-    operation_id = "erp_inbound_order_update",
-    request_body(content = UpdateErpInboundOrderRequest, description = "update", content_type = "application/json"),
+    path = "/update_purchase",
+    operation_id = "erp_inbound_order_update_purchase",
+    request_body(content = UpdateErpInboundOrderPurchaseRequest, description = "update purchase", content_type = "application/json"),
     responses(
-        (status = 204, description = "update")
+        (status = 204, description = "update purchase")
     ),
     tag = "erp_inbound_order",
     security(
         ("bearerAuth" = [])
     )
 )]
-#[require_authorize(operation_id = "erp_inbound_order_update", authorize = "")]
-async fn update(
+#[require_authorize(operation_id = "erp_inbound_order_update_purchase", authorize = "")]
+async fn update_purchase(
     State(state): State<AppState>,
     Extension(login_user): Extension<LoginUserContext>,
-    Json(payload): Json<UpdateErpInboundOrderRequest>,
+    Json(payload): Json<UpdateErpInboundOrderPurchaseRequest>,
 ) -> CommonResult<()> {
-    match service::erp_inbound_order::update(&state.db, login_user, payload).await {
+    match service::erp_inbound_order::update_purchase(&state.db, login_user, payload).await {
+        Ok(_) => {CommonResult::with_none()}
+        Err(e) => {CommonResult::with_err(&e.to_string())}
+    }
+}
+
+#[utoipa::path(
+    post,
+    path = "/update_other",
+    operation_id = "erp_inbound_order_update_other",
+    request_body(content = UpdateErpInboundOrderOtherRequest, description = "update other", content_type = "application/json"),
+    responses(
+        (status = 204, description = "update other")
+    ),
+    tag = "erp_inbound_order",
+    security(
+        ("bearerAuth" = [])
+    )
+)]
+#[require_authorize(operation_id = "erp_inbound_order_update_other", authorize = "")]
+async fn update_other(
+    State(state): State<AppState>,
+    Extension(login_user): Extension<LoginUserContext>,
+    Json(payload): Json<UpdateErpInboundOrderOtherRequest>,
+) -> CommonResult<()> {
+    match service::erp_inbound_order::update_other(&state.db, login_user, payload).await {
         Ok(_) => {CommonResult::with_none()}
         Err(e) => {CommonResult::with_err(&e.to_string())}
     }

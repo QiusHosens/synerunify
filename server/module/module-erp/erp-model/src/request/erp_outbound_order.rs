@@ -3,7 +3,7 @@ use serde::{Serialize, Deserialize};
 use utoipa::ToSchema;
 use common::base::page::PaginatedRequest;
 
-use crate::request::{erp_outbound_order_attachment::CreateErpOutboundOrderAttachmentRequest, erp_outbound_order_detail::{CreateErpOutboundOrderDetailOtherRequest, CreateErpOutboundOrderDetailSaleRequest}};
+use crate::request::{erp_outbound_order_attachment::{CreateErpOutboundOrderAttachmentRequest, UpdateErpOutboundOrderAttachmentRequest}, erp_outbound_order_detail::{CreateErpOutboundOrderDetailOtherRequest, CreateErpOutboundOrderDetailSaleRequest}};
 
 #[derive(Serialize, Deserialize, Debug, ToSchema)]
 pub struct CreateErpOutboundOrderRequest {
@@ -100,6 +100,52 @@ pub struct UpdateErpOutboundOrderRequest {
     pub department_code: Option<String>, // 部门编码
     
     pub department_id: Option<i64>, // 部门ID
+    
+}
+
+#[derive(Serialize, Deserialize, Debug, ToSchema)]
+pub struct UpdateErpOutboundOrderSaleRequest {
+    
+    pub id: i64, // 出库订单ID
+    
+    // #[serde_as(as = "DisplayFromStr")]
+    // #[serde(with = "serde_with::chrono::naive_datetime")]
+    #[schema(value_type = String, format = Date)]
+    pub outbound_date: Option<NaiveDateTime>, // 出库日期
+    
+    pub remarks: Option<String>, // 备注
+    
+    pub discount_rate: Option<i64>, // 优惠率（百分比，1000表示10.00%）
+    
+    pub other_cost: Option<i64>, // 其他费用
+    
+    pub settlement_account_id: Option<i64>, // 结算账户ID
+
+    pub attachments: Vec<UpdateErpOutboundOrderAttachmentRequest>, // 入库附件列表
+    
+}
+
+#[derive(Serialize, Deserialize, Debug, ToSchema)]
+pub struct UpdateErpOutboundOrderOtherRequest {
+    
+    pub id: i64, // 出库订单ID
+
+    pub customer_id: i64, // 客户ID
+    
+    // #[serde_as(as = "DisplayFromStr")]
+    // #[serde(with = "serde_with::chrono::naive_datetime")]
+    #[schema(value_type = String, format = Date)]
+    pub outbound_date: Option<NaiveDateTime>, // 出库日期
+    
+    pub remarks: Option<String>, // 备注
+    
+    pub discount_rate: Option<i64>, // 优惠率（百分比，1000表示10.00%）
+    
+    pub other_cost: Option<i64>, // 其他费用
+    
+    pub settlement_account_id: Option<i64>, // 结算账户ID
+
+    pub attachments: Vec<UpdateErpOutboundOrderAttachmentRequest>, // 入库附件列表
     
 }
 
