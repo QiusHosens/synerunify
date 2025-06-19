@@ -1,6 +1,7 @@
 use sea_orm::{Set, NotSet};
 use crate::model::erp_product::{self, Model as ErpProduct, ActiveModel as ErpProductActiveModel};
 use crate::model::erp_product_unit::{self, Model as ErpProductUnit};
+use crate::model::erp_product_inventory::{self, Model as ErpProductInventory};
 use erp_model::request::erp_product::{CreateErpProductRequest, UpdateErpProductRequest};
 use erp_model::response::erp_product::ErpProductResponse;
 
@@ -71,8 +72,9 @@ pub fn update_request_to_model(request: &UpdateErpProductRequest, existing: ErpP
     active_model
 }
 
-pub fn model_to_response(model: ErpProduct, model_unit: Option<ErpProductUnit>) -> ErpProductResponse {
+pub fn model_to_response(model: ErpProduct, model_unit: Option<ErpProductUnit>, model_inventory: Option<ErpProductInventory>) -> ErpProductResponse {
     let unit_name = model_unit.map(|unit| unit.name.clone());
+    let stock_quantity = model_inventory.map(|inventory| inventory.stock_quantity).unwrap_or(0);
 
     ErpProductResponse { 
         id: model.id,
@@ -88,7 +90,6 @@ pub fn model_to_response(model: ErpProduct, model_unit: Option<ErpProductUnit>) 
         purchase_price: model.purchase_price,
         sale_price: model.sale_price,
         min_price: model.min_price,
-        stock_quantity: 0,
         min_stock: model.min_stock,
         remarks: model.remarks,
         creator: model.creator,
@@ -96,6 +97,7 @@ pub fn model_to_response(model: ErpProduct, model_unit: Option<ErpProductUnit>) 
         updater: model.updater,
         update_time: model.update_time,
 
+        stock_quantity,
         unit_name,
     }
 }
