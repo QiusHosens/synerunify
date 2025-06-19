@@ -9,6 +9,7 @@ import ErpSettlementAccountAdd from './Add';
 import ErpSettlementAccountEdit from './Edit';
 import ErpSettlementAccountDelete from './Delete';
 import { useHomeStore } from '@/store';
+import CustomizedAutoMore from '@/components/CustomizedAutoMore';
 
 export default function ErpSettlementAccount() {
   const { t } = useTranslation();
@@ -78,7 +79,7 @@ export default function ErpSettlementAccount() {
         flex: 1,
         minWidth: 100,
         renderCell: (params: GridRenderCellParams) => (
-          <Box sx={{ height: '100%', display: 'flex', gap: 1, alignItems: 'center' }}>
+          <CustomizedAutoMore>
             {hasOperatePermission('erp:financial:account:edit') && <Button
               size="small"
               variant='customOperate'
@@ -94,7 +95,7 @@ export default function ErpSettlementAccount() {
               startIcon={<DeleteIcon />}
               onClick={() => handleClickOpenDelete(params.row)}
             />}
-          </Box>
+          </CustomizedAutoMore>
         ),
       },
     ],

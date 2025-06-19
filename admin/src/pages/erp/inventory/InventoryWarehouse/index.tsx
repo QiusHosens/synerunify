@@ -9,6 +9,7 @@ import ErpWarehouseAdd from './Add';
 import ErpWarehouseEdit from './Edit';
 import ErpWarehouseDelete from './Delete';
 import { useHomeStore } from '@/store';
+import CustomizedAutoMore from '@/components/CustomizedAutoMore';
 
 export default function ErpWarehouse() {
   const { t } = useTranslation();
@@ -78,7 +79,7 @@ export default function ErpWarehouse() {
         flex: 1,
         minWidth: 100,
         renderCell: (params: GridRenderCellParams) => (
-          <Box sx={ { height: '100%', display: 'flex', gap: 1, alignItems: 'center' } }>
+          <CustomizedAutoMore>
             {hasOperatePermission('erp:inventory:warehouse:edit') && <Button
               size="small"
               variant='customOperate'
@@ -94,7 +95,7 @@ export default function ErpWarehouse() {
               startIcon={<DeleteIcon />}
               onClick={() => handleClickOpenDelete(params.row)}
             />}
-          </Box>
+          </CustomizedAutoMore>
         ),
       },
     ],

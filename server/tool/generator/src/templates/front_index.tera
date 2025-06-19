@@ -9,6 +9,7 @@ import {{ model_name }}Add from './Add';
 import {{ model_name }}Edit from './Edit';
 import {{ model_name }}Delete from './Delete';
 import { useHomeStore } from '@/store';
+import CustomizedAutoMore from '@/components/CustomizedAutoMore';
 
 export default function {{ model_name }}() {
   const { t } = useTranslation();
@@ -77,8 +78,7 @@ export default function {{ model_name }}() {
         flex: 1,
         minWidth: 100,
         renderCell: (params: GridRenderCellParams) => (
-          {% set box_sx = "{ height: '100%', display: 'flex', gap: 1, alignItems: 'center' }" -%}
-          <Box sx={ {{ box_sx | safe }} }>
+          <CustomizedAutoMore>
             {hasOperatePermission('mark_permission:edit') && <Button
               size="small"
               variant='customOperate'
@@ -95,7 +95,7 @@ export default function {{ model_name }}() {
               startIcon={<DeleteIcon />}
               onClick={() => handleClickOpenDelete(params.row)}
             />}
-          </Box>
+          </CustomizedAutoMore>
         ),
       },
     ],

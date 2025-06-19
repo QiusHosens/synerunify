@@ -11,6 +11,7 @@ import ErpPurchaseOrderEdit from './Edit';
 import ErpPurchaseOrderDelete from './Delete';
 import { useHomeStore } from '@/store';
 import ErpPurchaseOrderInfo from './Info';
+import CustomizedAutoMore from '@/components/CustomizedAutoMore';
 
 export default function ErpPurchaseOrder() {
   const { t } = useTranslation();
@@ -51,7 +52,7 @@ export default function ErpPurchaseOrder() {
         flex: 1,
         minWidth: 100,
         renderCell: (params: GridRenderCellParams) => (
-          <Box sx={{ height: '100%', display: 'flex', gap: 1, alignItems: 'center' }}>
+          <CustomizedAutoMore>
             {hasOperatePermission('erp:purchase:order:get') && <Button
               size="small"
               variant='customOperate'
@@ -74,7 +75,7 @@ export default function ErpPurchaseOrder() {
               startIcon={<DeleteIcon />}
               onClick={() => handleClickOpenDelete(params.row)}
             />}
-          </Box>
+          </CustomizedAutoMore>
         ),
       },
     ],

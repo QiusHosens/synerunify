@@ -9,6 +9,7 @@ import ErpSupplierAdd from './Add';
 import ErpSupplierEdit from './Edit';
 import ErpSupplierDelete from './Delete';
 import { useHomeStore } from '@/store';
+import CustomizedAutoMore from '@/components/CustomizedAutoMore';
 
 export default function ErpSupplier() {
   const { t } = useTranslation();
@@ -79,7 +80,7 @@ export default function ErpSupplier() {
         flex: 1,
         minWidth: 100,
         renderCell: (params: GridRenderCellParams) => (
-          <Box sx={{ height: '100%', display: 'flex', gap: 1, alignItems: 'center' }}>
+          <CustomizedAutoMore>
             {hasOperatePermission('erp:purchase:supplier:edit') && <Button
               size="small"
               variant='customOperate'
@@ -95,7 +96,7 @@ export default function ErpSupplier() {
               startIcon={<DeleteIcon />}
               onClick={() => handleClickOpenDelete(params.row)}
             />}
-          </Box>
+          </CustomizedAutoMore>
         ),
       },
     ],

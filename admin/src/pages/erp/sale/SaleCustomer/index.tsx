@@ -9,6 +9,7 @@ import ErpCustomerAdd from './Add';
 import ErpCustomerEdit from './Edit';
 import ErpCustomerDelete from './Delete';
 import { useHomeStore } from '@/store';
+import CustomizedAutoMore from '@/components/CustomizedAutoMore';
 
 export default function ErpCustomer() {
   const { t } = useTranslation();
@@ -79,7 +80,7 @@ export default function ErpCustomer() {
         flex: 1,
         minWidth: 100,
         renderCell: (params: GridRenderCellParams) => (
-          <Box sx={{ height: '100%', display: 'flex', gap: 1, alignItems: 'center' }}>
+          <CustomizedAutoMore>
             {hasOperatePermission('erp:sale:customer:edit') && <Button
               size="small"
               variant='customOperate'
@@ -95,7 +96,7 @@ export default function ErpCustomer() {
               startIcon={<DeleteIcon />}
               onClick={() => handleClickOpenDelete(params.row)}
             />}
-          </Box>
+          </CustomizedAutoMore>
         ),
       },
     ],

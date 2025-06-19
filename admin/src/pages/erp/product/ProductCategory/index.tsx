@@ -11,6 +11,7 @@ import ErpProductCategoryDelete from './Delete';
 import { useHomeStore } from '@/store';
 import CustomizedDataGridPro from '@/components/CustomizedDataGridPro';
 import { getParentNodeLists, Node } from '@/utils/treeUtils';
+import CustomizedAutoMore from '@/components/CustomizedAutoMore';
 
 export default function ErpProductCategory() {
   const { t } = useTranslation();
@@ -72,7 +73,7 @@ export default function ErpProductCategory() {
         flex: 1,
         minWidth: 100,
         renderCell: (params: GridRenderCellParams) => (
-          <Box sx={{ height: '100%', display: 'flex', gap: 1, alignItems: 'center' }}>
+          <CustomizedAutoMore>
             {hasOperatePermission('erp:product:category:edit') && <Button
               size="small"
               variant='customOperate'
@@ -88,7 +89,7 @@ export default function ErpProductCategory() {
               startIcon={<DeleteIcon />}
               onClick={() => handleClickOpenDelete(params.row)}
             />}
-          </Box>
+          </CustomizedAutoMore>
         ),
       },
     ],
