@@ -379,6 +379,10 @@
   "page.erp.purchase.order.error.supplier": "请选择供应商",
   "page.erp.purchase.order.error.purchase.date": "请选择采购日期",
   "page.erp.purchase.order.error.total.amount": "请输入总金额",
+  "page.erp.purchase.order.operate.received": "已收货",
+  "page.erp.purchase.order.operate.cancel": "取消订单",
+  "page.erp.purchase.order.description.received": "确定订单【{{name}}】已收货?",
+  "page.erp.purchase.order.description.cancel": "确定取消订单【{{name}}】?",
 
   "page.erp.purchase.order.title.check.list": "订单产品清单",
   "page.erp.purchase.order.title.attachment": "订单附件",

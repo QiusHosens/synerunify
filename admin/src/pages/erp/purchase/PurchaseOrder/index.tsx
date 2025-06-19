@@ -12,6 +12,11 @@ import ErpPurchaseOrderDelete from './Delete';
 import { useHomeStore } from '@/store';
 import ErpPurchaseOrderInfo from './Info';
 import CustomizedAutoMore from '@/components/CustomizedAutoMore';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import CancelIcon from '@mui/icons-material/Cancel';
+import ErpPurchaseOrderCancel from './Cancel';
+import ErpPurchaseOrderReceived from './Received';
+import CustomizedDictTag from '@/components/CustomizedDictTag';
 
 export default function ErpPurchaseOrder() {
   const { t } = useTranslation();
@@ -31,6 +36,8 @@ export default function ErpPurchaseOrder() {
   const addErpPurchaseOrder = useRef(null);
   const editErpPurchaseOrder = useRef(null);
   const deleteErpPurchaseOrder = useRef(null);
+  const receivedErpPurchaseOrder = useRef(null);
+  const cancelErpPurchaseOrder = useRef(null);
 
   const columns: GridColDef[] = useMemo(
     () => [
@@ -42,7 +49,17 @@ export default function ErpPurchaseOrder() {
       { field: 'settlement_account_name', headerName: t("page.erp.purchase.order.title.settlement.account"), flex: 1, minWidth: 100 },
       { field: 'deposit', headerName: t("page.erp.purchase.order.title.deposit"), flex: 1, minWidth: 100 },
       { field: 'remarks', headerName: t("page.erp.purchase.order.title.remarks"), flex: 1, minWidth: 100 },
-      { field: 'order_status', headerName: t("page.erp.purchase.order.title.order.status"), flex: 1, minWidth: 100 },
+      {
+        field: 'order_status', 
+        headerName: t("page.erp.purchase.order.title.order.status"), 
+        flex: 1, 
+        minWidth: 100, 
+        renderCell: (params: GridRenderCellParams) => (
+          <>
+            <CustomizedDictTag type='purchase_order_status' value={params.row.order_status} />
+          </>
+        )
+      },
       { field: 'create_time', headerName: t("global.title.create.time"), flex: 1.4, minWidth: 180 },
       {
         field: 'actions',
@@ -75,6 +92,21 @@ export default function ErpPurchaseOrder() {
               startIcon={<DeleteIcon />}
               onClick={() => handleClickOpenDelete(params.row)}
             />}
+            {hasOperatePermission('erp:purchase:order:received') && params.row.order_status == 0 && <Button
+              size="small"
+              variant='customOperate'
+              title={t('page.erp.purchase.order.operate.received')}
+              startIcon={<CheckCircleIcon />}
+              onClick={() => handleClickOpenReceived(params.row)}
+            />}
+            {hasOperatePermission('erp:purchase:order:edit') && (params.row.order_status == 0 || params.row.order_status == 1) && <Button
+              sx={{ color: 'error.main' }}
+              size="small"
+              variant='customOperate'
+              title={t('page.erp.purchase.order.operate.cancel')}
+              startIcon={<CancelIcon />}
+              onClick={() => handleClickOpenCancel(params.row)}
+            />}
           </CustomizedAutoMore>
         ),
       },
@@ -102,6 +134,14 @@ export default function ErpPurchaseOrder() {
 
   const handleClickOpenDelete = (erpPurchaseOrder: ErpPurchaseOrderResponse) => {
     (deleteErpPurchaseOrder.current as any).show(erpPurchaseOrder);
+  };
+
+  const handleClickOpenReceived = (erpPurchaseOrder: ErpPurchaseOrderResponse) => {
+    (receivedErpPurchaseOrder.current as any).show(erpPurchaseOrder);
+  };
+
+  const handleClickOpenCancel = (erpPurchaseOrder: ErpPurchaseOrderResponse) => {
+    (cancelErpPurchaseOrder.current as any).show(erpPurchaseOrder);
   };
 
   useEffect(() => {
@@ -156,10 +196,12 @@ export default function ErpPurchaseOrder() {
           }));
         }}
       />
-      <ErpPurchaseOrderInfo ref={viewErpPurchaseOrder} onSubmit={refreshData} />
+      <ErpPurchaseOrderInfo ref={viewErpPurchaseOrder} />
       <ErpPurchaseOrderAdd ref={addErpPurchaseOrder} onSubmit={refreshData} />
       <ErpPurchaseOrderEdit ref={editErpPurchaseOrder} onSubmit={refreshData} />
       <ErpPurchaseOrderDelete ref={deleteErpPurchaseOrder} onSubmit={refreshData} />
+      <ErpPurchaseOrderReceived ref={receivedErpPurchaseOrder} onSubmit={refreshData} />
+      <ErpPurchaseOrderCancel ref={cancelErpPurchaseOrder} onSubmit={refreshData} />
     </Box>
   );
 }

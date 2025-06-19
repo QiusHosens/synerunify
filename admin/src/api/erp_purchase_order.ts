@@ -12,6 +12,8 @@ const apis = {
   page: '/erp/erp_purchase_order/page', // 分页查询
   get_detail: '/erp/erp_purchase_order/get_detail', // 单条查询订单详情
   get_info: '/erp/erp_purchase_order/get_info', // 单条查询订单所有信息
+  received: '/erp/erp_purchase_order/received', // 已收货
+  cancel: '/erp/erp_purchase_order/cancel', // 取消订单
 }
 
 export interface ErpPurchaseOrderRequest {
@@ -127,4 +129,12 @@ export const getErpPurchaseOrderBase = (id: number): Promise<ErpPurchaseOrderBas
 
 export const getErpPurchaseOrderInfo = (id: number): Promise<ErpPurchaseOrderInfoResponse> => {
   return api.get<ErpPurchaseOrderInfoResponse>(`${apis.get_info}/${id}`);
+}
+
+export const receivedErpPurchaseOrder = (id: number): Promise<void> => {
+  return api.post<void>(`${apis.received}/${id}`);
+}
+
+export const cancelErpPurchaseOrder = (id: number): Promise<void> => {
+  return api.post<void>(`${apis.cancel}/${id}`);
 }
