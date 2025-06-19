@@ -21,7 +21,7 @@ use once_cell::sync::Lazy;
 use ctor;
 use dashmap::DashMap;
 use system_common::service::system::get_user_name;
-use serde_with::{serde_as, DisplayFromStr};
+use serde_with::{serde_as, DisplayFromStr, SerializeAs};
 use common::formatter::string_date_time::StringDateTime;
 // use serde_with::{serde_as, chrono::NaiveDateTime as ChronoNaiveDateTime, formats::Strftime};
 
@@ -305,6 +305,13 @@ async fn main() -> Result<(), anyhow::Error> {
     //     serde_json::to_string_pretty(&byte_struct)
     // }).await??;
     println!("\nByteStruct JSON:\n{}", json);
+
+    // map.serialize_entry(
+    //     "date",
+    //     &serde_with::As::<common::formatter::string_date_time::StringDateTime>::
+    // )?;
+
+    // common::formatter::string_date_time::StringDateTime::serialize_as(source, serializer)
 
     // let user = User {
     //     id: 1,
