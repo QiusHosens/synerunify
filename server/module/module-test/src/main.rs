@@ -210,7 +210,7 @@ struct ByteStruct {
     #[extend_fields(field = "byte_name", fill_type = "byte", invocation = "common_local::get_user")]
     code: i8,
     flag: bool,
-    #[serde_as(as = "StringDateTime")]
+    #[serde_as(as = "common::formatter::string_date_time::StringDateTime")]
     date: NaiveDateTime,
 }
 

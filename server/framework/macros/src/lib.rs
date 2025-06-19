@@ -1,9 +1,9 @@
 extern crate proc_macro;
 
 use proc_macro::TokenStream;
-use quote::quote;
+use quote::{quote, ToTokens};
 use syn::parse::{Parse, ParseStream};
-use syn::{parse_macro_input, Data, DeriveInput, Expr, Fields, ItemFn, Lit, LitStr, Meta, MetaNameValue, Path, Token, Type};
+use syn::{parse_macro_input, parse_str, Data, DeriveInput, Expr, Fields, Ident, ItemFn, Lit, LitStr, Meta, MetaNameValue, Path, Token, Type};
 use syn::punctuated::Punctuated;
 use syn::token::Comma;
 
@@ -86,6 +86,21 @@ struct ExtendFieldsArgs {
     field: Option<String>,
     fill_type: Option<String>,
     invocation: Option<Path>,
+}
+
+#[derive(Debug)]
+struct SerdeAsArg {
+    key: Ident,
+    value: LitStr,
+}
+
+impl Parse for SerdeAsArg {
+    fn parse(input: ParseStream) -> syn::Result<Self> {
+        let key: Ident = input.parse()?;
+        let _eq: Token![=] = input.parse()?;
+        let value: LitStr = input.parse()?;
+        Ok(SerdeAsArg { key, value })
+    }
 }
 
 impl Parse for ExtendFieldsArgs {
@@ -177,11 +192,15 @@ pub fn derive_extend_fields(input: TokenStream) -> TokenStream {
 
     // 收集需要添加额外字段的字段及其参数
     let mut extend_field_info = Vec::new();
+    // 收集serde_as
+    let mut serde_as_field_info = Vec::new();
     for field in fields.iter() {
         let field_ident = field.ident.as_ref().expect("Expected named field");
         let field_type = &field.ty;
         let is_option = is_option_type(field_type);
         for attr in &field.attrs {
+            eprintln!("field {:?} attr: {:?}", field_ident, attr);
+            // eprintln!("field attr path: {:?}", attr.path());
             if attr.path().is_ident("extend_fields") {
                 let args: ExtendFieldsArgs = attr.parse_args().unwrap_or_default();
                 let field_str = field_ident.to_string();
@@ -195,6 +214,29 @@ pub fn derive_extend_fields(input: TokenStream) -> TokenStream {
                 let fill_type = args.fill_type.unwrap_or_else(|| "String".to_string());
                 let invocation = args.invocation;
                 extend_field_info.push((field_ident, field_name, fill_type, invocation, is_option));
+            } else if attr.path().is_ident("serde_as") {
+                // eprintln!("serde as meta {:?}", attr.meta);
+                if let Meta::List(meta_list) = &attr.meta {
+                    // eprintln!("serde as meta list {:?}", meta_list);
+                    // 检查路径是否是 "serde_as"
+                    if meta_list.path.is_ident("serde_as") {
+                        // 解析 tokens，期望格式为 `as = "some::path"`
+                        let tokens = &meta_list.tokens;
+                        // eprintln!("serde as tokens {:?}", tokens);
+                        // 解析为 SerdeAsArg
+                        let parsed: Option<SerdeAsArg> = syn::parse2(tokens.clone()).ok();
+                        // eprintln!("serde as parsed {:?}", parsed);
+                        if parsed.is_some() {
+                            let parsed = parsed.unwrap();
+                            if parsed.key == "r#as" {
+                                if let Some(value) = Some(parsed.value.value()) {
+                                    // eprintln!("serde as value {:?}", value);
+                                    serde_as_field_info.push((field_ident, value));
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     }
@@ -217,6 +259,13 @@ pub fn derive_extend_fields(input: TokenStream) -> TokenStream {
             quote! {
                 map.serialize_entry(#field_name, &self.#ident)?;
             }
+        }
+    });
+
+    let serialize_serde_as = serde_as_field_info.iter().map(|(ident, symbol)| {
+        let path: Path = parse_str(symbol).expect("Invalid path string");
+        quote! {
+            let _x = #path::new();
         }
     });
 
