@@ -104,6 +104,7 @@
   "global.page.erp.purchase.supplier": "供应商",
   "global.page.erp.sale.customer": "客户",
   "global.page.erp.purchase.order": "采购订单",
+  "global.page.erp.purchase.inbound": "采购入库",
 
   "page.login.title.username": "用户名",
   "page.login.title.password": "密码",
@@ -403,5 +404,21 @@
   "page.erp.purchase.order.detail.error.quantity": "请输入数量",
   "page.erp.purchase.order.detail.error.unit.price": "请输入单价",
   "page.erp.purchase.order.detail.error.tax.rate": "请输入税率",
-  "page.erp.purchase.order.detail.error.product.empty": "产品为空,请先添加产品"
+  "page.erp.purchase.order.detail.error.product.empty": "产品为空,请先添加产品",
+
+  "page.erp.purchase.inbound.title.order.number": "订单编号",
+  "page.erp.purchase.inbound.title.purchase": "采购订单",
+  "page.erp.purchase.inbound.title.supplier": "供应商",
+  "page.erp.purchase.inbound.title.user": "用户",
+  "page.erp.purchase.inbound.title.inbound.date": "入库日期",
+  "page.erp.purchase.inbound.title.remarks": "备注",
+  "page.erp.purchase.inbound.title.discount.rate": "优惠率",
+  "page.erp.purchase.inbound.title.other.cost": "其他费用",
+  "page.erp.purchase.inbound.title.settlement.account": "结算账户ID",
+  "page.erp.purchase.inbound.error.supplier": "请输入供应商ID",
+  "page.erp.purchase.inbound.error.user": "请输入用户ID",
+  "page.erp.purchase.inbound.error.inbound.date": "请输入入库日期",
+
+  "page.erp.purchase.inbound.title.check.list": "入库产品清单",
+  "page.erp.purchase.inbound.title.attachment": "入库附件"
 }

@@ -13,11 +13,15 @@ export * from './captcha';
 
 export * from './erp_customer';
 export * from './erp_financial_record';
-export * from './erp_inbound_record';
+export * from './erp_inbound_order';
+export * from './erp_inbound_order_attachment';
+export * from './erp_inbound_order_detail';
 export * from './erp_inventory_check';
 export * from './erp_inventory_record';
 export * from './erp_inventory_transfer';
-export * from './erp_outbound_record';
+export * from './erp_outbound_order';
+export * from './erp_outbound_order_attachment';
+export * from './erp_outbound_order_detail';
 export * from './erp_payment_attachment';
 export * from './erp_payment_detail';
 export * from './erp_payment';

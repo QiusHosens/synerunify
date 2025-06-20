@@ -1,17 +1,17 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : 192.168.0.99_synerunify
+ Source Server         : 192.168.1.18_synerunify
  Source Server Type    : MySQL
- Source Server Version : 80100 (8.1.0)
- Source Host           : 192.168.0.99:30010
+ Source Server Version : 80200 (8.2.0)
+ Source Host           : 192.168.1.18:3306
  Source Schema         : synerunify
 
  Target Server Type    : MySQL
- Target Server Version : 80100 (8.1.0)
+ Target Server Version : 80200 (8.2.0)
  File Encoding         : 65001
 
- Date: 18/06/2025 17:42:02
+ Date: 20/06/2025 20:41:27
 */
 
 SET NAMES utf8mb4;
@@ -161,33 +161,6 @@ CREATE TABLE `erp_inbound_order_detail`  (
 
 -- ----------------------------
 -- Records of erp_inbound_order_detail
--- ----------------------------
-
--- ----------------------------
--- Table structure for erp_inbound_record
--- ----------------------------
-DROP TABLE IF EXISTS `erp_inbound_record`;
-CREATE TABLE `erp_inbound_record`  (
-  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '入库记录ID',
-  `purchase_id` bigint NULL DEFAULT NULL COMMENT '采购订单ID',
-  `warehouse_id` bigint NOT NULL COMMENT '仓库ID',
-  `product_id` bigint NOT NULL COMMENT '产品ID',
-  `quantity` int NOT NULL COMMENT '入库数量',
-  `inbound_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '入库日期',
-  `remarks` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
-  `department_code` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '部门编码',
-  `department_id` bigint NOT NULL COMMENT '部门ID',
-  `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
-  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `updater` bigint NULL DEFAULT NULL COMMENT '更新者ID',
-  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-  `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
-  `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '入库记录表' ROW_FORMAT = DYNAMIC;
-
--- ----------------------------
--- Records of erp_inbound_record
 -- ----------------------------
 
 -- ----------------------------
@@ -352,33 +325,6 @@ CREATE TABLE `erp_outbound_order_detail`  (
 
 -- ----------------------------
 -- Records of erp_outbound_order_detail
--- ----------------------------
-
--- ----------------------------
--- Table structure for erp_outbound_record
--- ----------------------------
-DROP TABLE IF EXISTS `erp_outbound_record`;
-CREATE TABLE `erp_outbound_record`  (
-  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '出库记录ID',
-  `order_id` bigint NULL DEFAULT NULL COMMENT '销售订单ID',
-  `warehouse_id` bigint NULL DEFAULT NULL COMMENT '仓库ID',
-  `product_id` bigint NULL DEFAULT NULL COMMENT '产品ID',
-  `quantity` int NOT NULL COMMENT '出库数量',
-  `outbound_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '出库日期',
-  `remarks` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
-  `department_code` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '部门编码',
-  `department_id` bigint NOT NULL COMMENT '部门ID',
-  `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
-  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `updater` bigint NULL DEFAULT NULL COMMENT '更新者ID',
-  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-  `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
-  `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '出库记录表' ROW_FORMAT = DYNAMIC;
-
--- ----------------------------
--- Records of erp_outbound_record
 -- ----------------------------
 
 -- ----------------------------
@@ -603,11 +549,11 @@ CREATE TABLE `erp_purchase_order`  (
 -- ----------------------------
 -- Records of erp_purchase_order
 -- ----------------------------
-INSERT INTO `erp_purchase_order` VALUES (1, 59962819939930112, 1, 1, '2025-06-15 00:00:00', 100, 0, 1, 1, 10, '测试', '0000', 1, 1, '2025-06-15 11:10:53', 1, '2025-06-15 11:10:53', b'0', 1);
-INSERT INTO `erp_purchase_order` VALUES (2, 59964807209553920, 1, 1, '2025-06-16 00:00:00', 100, 0, 1, 1, 5, '测试', '0000', 1, 1, '2025-06-15 11:18:47', 1, '2025-06-15 11:18:47', b'0', 1);
-INSERT INTO `erp_purchase_order` VALUES (3, 59965337910644736, 1, 1, '2025-06-16 00:00:00', 1000, 0, 1, 1, 1000, '测试', '0000', 1, 1, '2025-06-15 11:20:53', 1, '2025-06-15 11:20:53', b'0', 1);
-INSERT INTO `erp_purchase_order` VALUES (4, 59966267620069376, 1, 1, '2025-06-15 00:00:00', 16643, 0, 1, 1, 12, '1', '0000', 1, 1, '2025-06-15 11:24:35', 1, '2025-06-15 11:24:35', b'0', 1);
-INSERT INTO `erp_purchase_order` VALUES (6, 59969975170895872, 1, 1, '2025-06-16 00:00:00', 1232, 0, 1, 1, 123, '测试', '0000', 1, 1, '2025-06-15 11:39:19', 1, '2025-06-15 11:39:19', b'0', 1);
+INSERT INTO `erp_purchase_order` VALUES (1, 59962819939930112, 1, 1, '2025-06-15 00:00:00', 100, 0, 1, 1, 10, '测试', '0000', 1, 1, '2025-06-15 11:10:53', 1, '2025-06-19 13:58:41', b'1', 1);
+INSERT INTO `erp_purchase_order` VALUES (2, 59964807209553920, 1, 1, '2025-06-16 00:00:00', 100, 0, 1, 1, 5, '测试', '0000', 1, 1, '2025-06-15 11:18:47', 1, '2025-06-19 13:58:45', b'1', 1);
+INSERT INTO `erp_purchase_order` VALUES (3, 59965337910644736, 1, 1, '2025-06-16 00:00:00', 1000, 0, 1, 1, 1000, '测试', '0000', 1, 1, '2025-06-15 11:20:53', 1, '2025-06-19 13:58:48', b'1', 1);
+INSERT INTO `erp_purchase_order` VALUES (4, 59966267620069376, 1, 1, '2025-06-15 00:00:00', 16643, 3, 1, 1, 12, '1', '0000', 1, 1, '2025-06-15 11:24:35', 1, '2025-06-19 14:30:48', b'0', 1);
+INSERT INTO `erp_purchase_order` VALUES (6, 59969975170895872, 1, 1, '2025-06-16 00:00:00', 1232, 1, 1, 1, 1234, '测试', '0000', 1, 1, '2025-06-15 11:39:19', 1, '2025-06-19 14:30:43', b'0', 1);
 
 -- ----------------------------
 -- Table structure for erp_purchase_order_attachment
@@ -656,12 +602,13 @@ CREATE TABLE `erp_purchase_order_detail`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '采购订单详情表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '采购订单详情表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of erp_purchase_order_detail
 -- ----------------------------
-INSERT INTO `erp_purchase_order_detail` VALUES (2, 6, 1, 2, 60, 120, 1, '测试', '0000', 1, 1, '2025-06-15 11:39:19', 1, '2025-06-15 11:39:19', b'0', 1);
+INSERT INTO `erp_purchase_order_detail` VALUES (2, 6, 1, 3, 60, 180, 1, '测试2', '0000', 1, 1, '2025-06-15 11:39:19', 1, '2025-06-19 13:57:15', b'0', 1);
+INSERT INTO `erp_purchase_order_detail` VALUES (3, 6, 1, 20, 50, 1000, 2, '测试1', '0000', 1, 1, '2025-06-19 13:57:15', 1, '2025-06-19 13:57:15', b'0', 1);
 
 -- ----------------------------
 -- Table structure for erp_purchase_return
