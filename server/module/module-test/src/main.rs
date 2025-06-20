@@ -230,11 +230,11 @@ mod common_local {
 #[serde_as]
 #[derive(Deserialize, ExtendFields, Clone)]
 struct User {
-    #[extend_fields(invocation = "system_common::service::system::get_user_name")]
+    #[extend_fields(invocation = "system_common::service::system::get_user_names_batch")]
     id: i64,
-    #[extend_fields(invocation = "system_common::service::system::get_user_name")]
+    #[extend_fields(invocation = "system_common::service::system::get_user_names_batch")]
     user_id: i64,
-    #[extend_fields(invocation = "system_common::service::system::get_user_name")]
+    #[extend_fields(invocation = "system_common::service::system::get_user_names_batch")]
     creator: Option<i64>,
     value: String,
     #[serde_as(as = "common::formatter::string_date_time::StringDateTime")]
@@ -310,8 +310,8 @@ async fn main() -> Result<(), anyhow::Error> {
 
     let user = User {
         id: 1,
-        user_id: 1,
-        creator: None,
+        user_id: 2,
+        creator: Some(3),
         value: "user".to_string(),
         date: Local::now().naive_utc()
     };

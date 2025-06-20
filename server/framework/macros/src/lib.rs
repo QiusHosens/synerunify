@@ -1,5 +1,7 @@
 extern crate proc_macro;
 
+use std::collections::BTreeMap;
+
 use proc_macro::TokenStream;
 use quote::{quote, ToTokens};
 use syn::parse::{Parse, ParseStream};
@@ -214,7 +216,7 @@ pub fn derive_extend_fields(input: TokenStream) -> TokenStream {
                         field_str.clone() + "_name"
                     }
                 });
-                let fill_type = args.fill_type.unwrap_or_else(|| "String".to_string());
+                let fill_type = args.fill_type.unwrap_or_else(|| "".to_string());
                 let invocation = args.invocation;
                 extend_field_info.push((field_ident, field_name, fill_type, invocation, is_option));
             } else if attr.path().is_ident("serde_as") {
@@ -245,26 +247,99 @@ pub fn derive_extend_fields(input: TokenStream) -> TokenStream {
     }
 
     // 生成序列化逻辑
-    let serialize_extend_fields = extend_field_info.iter().map(|(ident, field_name, fill_type, invocation, is_option)| {
+    // let serialize_extend_fields = extend_field_info.iter().map(|(ident, field_name, fill_type, invocation, is_option)| {
+    //     if let Some(invocation) = invocation {
+    //         if *is_option {
+    //             quote! {
+    //                 let value = self.#ident.as_ref().map(|v| #invocation(v, #fill_type)).unwrap_or_default();
+    //                 map.serialize_entry(#field_name, &value)?;
+    //             }
+    //         } else {
+    //             quote! {
+    //                 let value = #invocation(&self.#ident, #fill_type);
+    //                 map.serialize_entry(#field_name, &value)?;
+    //             }
+    //         }
+    //     } else {
+    //         quote! {
+    //             map.serialize_entry(#field_name, &self.#ident)?;
+    //         }
+    //     }
+    // });
+
+    // 按 fill_type 分组字段
+    let mut grouped_fields: BTreeMap<String, Vec<(&Ident, &String, &Path, bool)>> = BTreeMap::new();
+    let mut normal_fields = Vec::new();
+
+    for (ident, field_name, fill_type, invocation, is_option) in &extend_field_info {
         if let Some(invocation) = invocation {
+            grouped_fields
+                .entry(fill_type.clone())
+                .or_default()
+                .push((ident, field_name, invocation, *is_option));
+        } else {
+            normal_fields.push((ident, field_name));
+        }
+    }
+
+    let mut serialize_extend_fields = quote! {};
+    for (fill_type, fields) in grouped_fields {
+        let invocation = fields[0].2; // 同一组使用同一个 invocation
+
+        let collect_ids = fields.iter().map(|(ident, _, _, is_option)| {
             if *is_option {
                 quote! {
-                    let value = self.#ident.as_ref().map(|v| #invocation(v, #fill_type)).unwrap_or_default();
-                    map.serialize_entry(#field_name, &value)?;
+                    if let Some(v) = &self.#ident {
+                        __ids.push(v.clone());
+                    }
                 }
             } else {
                 quote! {
-                    let value = #invocation(&self.#ident, #fill_type);
-                    map.serialize_entry(#field_name, &value)?;
+                    __ids.push(self.#ident.clone());
                 }
             }
-        } else {
-            quote! {
-                map.serialize_entry(#field_name, &self.#ident)?;
+        });
+
+        let insert_results = fields.iter().map(|(ident, field_name, _, is_option)| {
+            if *is_option {
+                quote! {
+                    if let Some(v) = &self.#ident {
+                        if let Some(val) = __map.get(v) {
+                            map.serialize_entry(#field_name, val)?;
+                        }
+                    }
+                }
+            } else {
+                quote! {
+                    if let Some(val) = __map.get(&self.#ident) {
+                        map.serialize_entry(#field_name, val)?;
+                    }
+                }
             }
+        });
+
+        serialize_extend_fields.extend(quote! {
+            {
+                let mut __ids = vec![];
+                #(#collect_ids)*
+                let __map = #invocation(__ids);
+                #(#insert_results)*
+            }
+        });
+    }
+
+    // 处理无 invocation 的字段
+    let normal_field_serializers = normal_fields.iter().map(|(ident, field_name)| {
+        quote! {
+            map.serialize_entry(#field_name, &self.#ident)?;
         }
     });
 
+    serialize_extend_fields.extend(quote! {
+        #(#normal_field_serializers)*
+    });
+
+    // 处理serde_as序列化
     let serialize_serde_as = serde_as_field_info.iter().map(|(ident, field_name_str, path_to_serializer_as_type)| {
         quote! {
             let __temp_value_result: Result<serde_json::Value, S::Error> = {
@@ -352,7 +427,8 @@ pub fn derive_extend_fields(input: TokenStream) -> TokenStream {
                 #(#serialize_serde_as)*
 
                 // 序列化额外字段
-                #(#serialize_extend_fields)*
+                // #(#serialize_extend_fields)*
+                #serialize_extend_fields
 
                 map.end()
             }
