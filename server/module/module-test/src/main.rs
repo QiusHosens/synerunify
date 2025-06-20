@@ -227,19 +227,19 @@ struct ByteStruct {
 //     date: NaiveDateTime,
 // }
 
-// #[serde_as]
-// #[derive(Deserialize, Serialize, ExtendFields, Clone, Copy)]
-// struct User {
-//     #[extend_fields(invocation = "system_common::service::system::get_user_name")]
-//     id: i64,
-//     #[extend_fields(invocation = "system_common::service::system::get_user_name")]
-//     user_id: i64,
-//     #[extend_fields(invocation = "system_common::service::system::get_user_name")]
-//     creator: Option<i64>,
-//     // value: String,
-//     // #[serde_as(as = "StringDateTime")]
-//     date: NaiveDateTime,
-// }
+#[serde_as]
+#[derive(Deserialize, ExtendFields)]
+struct User {
+    #[extend_fields(invocation = "system_common::service::system::get_user_name")]
+    id: i64,
+    #[extend_fields(invocation = "system_common::service::system::get_user_name")]
+    user_id: i64,
+    #[extend_fields(invocation = "system_common::service::system::get_user_name")]
+    creator: Option<i64>,
+    value: String,
+    #[serde_as(as = "common::formatter::string_date_time::StringDateTime")]
+    date: NaiveDateTime,
+}
 
 #[tokio::main]
 async fn main() -> Result<(), anyhow::Error> {
@@ -306,25 +306,48 @@ async fn main() -> Result<(), anyhow::Error> {
     // }).await??;
     println!("\nByteStruct JSON:\n{}", json);
 
-    // map.serialize_entry(
-    //     "date",
-    //     &serde_with::As::<common::formatter::string_date_time::StringDateTime>::
-    // )?;
-
     // common::formatter::string_date_time::StringDateTime::serialize_as(source, serializer)
 
-    // let user = User {
-    //     id: 1,
-    //     user_id: 1,
-    //     creator: None,
-    //     // value: "user".to_string(),
-    //     date: Local::now().naive_utc()
-    // };
-    // let json = serde_json::to_string_pretty(&user).unwrap();
-    // // let json = task::spawn_blocking(move || {
-    // //     serde_json::to_string_pretty(&user)
-    // // }).await??;
-    // println!("\nUser JSON:\n{}", json);
+    let user = User {
+        id: 1,
+        user_id: 1,
+        creator: None,
+        value: "user".to_string(),
+        date: Local::now().naive_utc()
+    };
+    let json = serde_json::to_string_pretty(&user).unwrap();
+    // let json = task::spawn_blocking(move || {
+    //     serde_json::to_string_pretty(&user)
+    // }).await??;
+    println!("\nUser JSON:\n{}", json);
+
+    // // 1. 准备要序列化的 NaiveDateTime 实例
+    // let current_time = NaiveDateTime::parse_from_str("2025-06-20 09:15:30", "%Y-%m-%d %H:%M:%S")
+    //     .expect("解析日期时间失败");
+
+    // // --- 手动调用 serialize_as 方法 ---
+    // println!("\n--- 序列化 ---");
+
+    // // 2. 创建一个 serde_json 序列化器实例
+    // // serde_json::Serializer::new(Vec::new()) 创建了一个将数据写入到 Vec<u8> 的序列化器。
+    // // 这使得我们可以在序列化完成后获取到序列化结果。
+    // let mut json_serializer = serde_json::Serializer::new(Vec::new());
+
+    // // 3. 直接调用 StringDateTime::serialize_as 方法
+    // // 我们将 NaiveDateTime 引用和可变的 json_serializer 引用传递进去。
+    // // StringDateTime::serialize_as 知道如何将 NaiveDateTime 转换为特定字符串，
+    // // 并通过 json_serializer 将其写入。
+    // StringDateTime::serialize_as(&current_time, &mut json_serializer)
+    //     .expect("调用 StringDateTime::serialize_as 失败");
+
+    // // 4. 从序列化器中提取结果
+    // // into_inner() 方法会返回序列化器内部的数据（这里是 Vec<u8>）。
+    // let serialized_bytes = json_serializer.into_inner();
+    // let serialized_string = String::from_utf8(serialized_bytes)
+    //     .expect("将序列化字节转换为 UTF-8 字符串失败");
+
+    // println!("手动调用 serialize_as 的结果 (JSON 字符串): {}", serialized_string);
+    // // 预期输出： "2025-06-20 09:15:30" (注意，这是一个带引号的 JSON 字符串)
 
     Ok(())
 }
