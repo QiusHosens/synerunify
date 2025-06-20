@@ -1,5 +1,5 @@
-import React, { useEffect, useCallback, useRef } from 'react';
-import { Box, Typography, Paper, LinearProgress, IconButton } from '@mui/material';
+import React, { useEffect, useCallback, useRef, useState } from 'react';
+import { Box, Typography, Paper, LinearProgress, IconButton, Modal, Backdrop, Fade } from '@mui/material';
 import { alpha, styled } from '@mui/material/styles';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import DeleteIcon from '@/assets/image/svg/delete.svg';
@@ -10,11 +10,11 @@ import { useMessage } from './GlobalMessage';
 export interface UploadFile {
     uid: string;
     name: string;
-    filename: string; // 去掉扩展名的文件名字
+    filename: string;
     status: 'uploading' | 'done' | 'error' | 'removed';
     file: File;
-    previewUrl?: string; // 用于本地图片预览
-    progress?: number; // 上传进度
+    previewUrl?: string;
+    progress?: number;
 }
 
 // 样式定义
@@ -54,6 +54,13 @@ const PreviewImage = styled('img')({
     left: 0,
 });
 
+const EnlargedImage = styled('img')({
+    maxWidth: 'none',
+    maxHeight: 'none',
+    objectFit: 'contain',
+    userSelect: 'none',
+});
+
 const DeleteButton = styled(IconButton)(({ theme }) => ({
     position: 'absolute',
     top: theme.spacing(1),
@@ -67,10 +74,10 @@ const DeleteButton = styled(IconButton)(({ theme }) => ({
 
 // Download属性
 export interface DownloadProps {
-    filename?: string; // 名字
-    previewUrl?: string; // 图片地址
+    filename?: string;
+    previewUrl?: string;
     status: 'downloading' | 'done' | 'error';
-    progress?: number; // 下载进度
+    progress?: number;
 }
 
 // Upload 组件属性
@@ -78,13 +85,12 @@ interface UploadProps {
     canUpload?: boolean;
     id?: string;
     accept?: string;
-    maxSize?: number; // 文件大小限制，单位 MB
+    maxSize?: number;
     onChange?: (file: UploadFile | null, action: 'upload' | 'remove') => void;
-    file?: UploadFile | null; // 外部控制的单个文件
-    width?: string | number; // 宽度
-    height?: string | number; // 高度
-    // 查看已有图片时的属性
-    download?: DownloadProps,
+    file?: UploadFile | null;
+    width?: string | number;
+    height?: string | number;
+    download?: DownloadProps;
 }
 
 const CustomizedFileUpload: React.FC<UploadProps> = ({
@@ -100,8 +106,13 @@ const CustomizedFileUpload: React.FC<UploadProps> = ({
 }) => {
     const { t } = useTranslation();
     const { showMessage } = useMessage();
-    // 使用 useRef 跟踪当前 blob URL
     const blobUrlRef = useRef<string | null>(null);
+    const [openModal, setOpenModal] = useState(false);
+    const [zoom, setZoom] = useState(1);
+    const [position, setPosition] = useState({ x: 0, y: 0 });
+    const [isDragging, setIsDragging] = useState(false);
+    const dragStartRef = useRef({ x: 0, y: 0 });
+    const imageRef = useRef<HTMLImageElement | null>(null);
 
     // 处理文件选择
     const handleFileChange = useCallback(
@@ -111,12 +122,10 @@ const CustomizedFileUpload: React.FC<UploadProps> = ({
             const selectedFile = files[0];
             const fileSizeMB = selectedFile.size / 1024 / 1024;
             if (fileSizeMB > maxSize) {
-                // alert(`文件 ${selectedFile.name} 超过大小限制 (${maxSize}MB)`);
                 showMessage(t('global.helper.file.limit', { name: selectedFile.name, size: maxSize }));
                 return;
             }
 
-            // 释放旧的 blob URL
             if (blobUrlRef.current) {
                 URL.revokeObjectURL(blobUrlRef.current);
                 blobUrlRef.current = null;
@@ -134,7 +143,6 @@ const CustomizedFileUpload: React.FC<UploadProps> = ({
                 previewUrl: selectedFile.type.startsWith('image/') ? URL.createObjectURL(selectedFile) : undefined,
             };
 
-            // 保存新的 blob URL
             if (newFile.previewUrl) {
                 blobUrlRef.current = newFile.previewUrl;
             }
@@ -162,6 +170,59 @@ const CustomizedFileUpload: React.FC<UploadProps> = ({
         onChange?.(null, 'remove');
     }, [onChange]);
 
+    // 处理双击放大图片
+    const handleDoubleClick = useCallback(() => {
+        if ((file?.status === 'done' && file?.previewUrl) || (download?.status === 'done' && download?.previewUrl)) {
+            setOpenModal(true);
+            setZoom(1); // 重置缩放
+            setPosition({ x: 0, y: 0 }); // 重置位置
+        }
+    }, [file, download]);
+
+    // 关闭模态框
+    const handleCloseModal = useCallback(() => {
+        setOpenModal(false);
+        setZoom(1); // 重置缩放
+        setPosition({ x: 0, y: 0 }); // 重置位置
+    }, []);
+
+    // 处理鼠标滚轮缩放
+    const handleWheel = useCallback((e: React.WheelEvent) => {
+        // e.preventDefault();
+        const zoomStep = 0.1;
+        const minZoom = 0.5;
+        const maxZoom = 3;
+        setZoom((prevZoom) => {
+            const newZoom = prevZoom - (e.deltaY > 0 ? zoomStep : -zoomStep);
+            return Math.min(Math.max(newZoom, minZoom), maxZoom);
+        });
+    }, []);
+
+    // 开始拖动
+    const handleMouseDown = useCallback((e: React.MouseEvent) => {
+        if (zoom > 1) { // 只有在放大时允许拖动
+            setIsDragging(true);
+            dragStartRef.current = { x: e.clientX - position.x, y: e.clientY - position.y };
+        }
+    }, [zoom, position]);
+
+    // 拖动中
+    const handleMouseMove = useCallback((e: React.MouseEvent) => {
+        console.log("is dragging", isDragging);
+        if (isDragging) {
+            setPosition({
+                x: e.clientX - dragStartRef.current.x,
+                y: e.clientY - dragStartRef.current.y,
+            });
+        }
+    }, [isDragging]);
+
+    // 结束拖动
+    const handleMouseUp = useCallback(() => {
+        console.log("mouse up");
+        setIsDragging(false);
+    }, []);
+
     // 清理 blob URL
     useEffect(() => {
         return () => {
@@ -185,6 +246,7 @@ const CustomizedFileUpload: React.FC<UploadProps> = ({
                         document.getElementById(id)?.click();
                     }
                 }}
+                onDoubleClick={handleDoubleClick}
             >
                 <input
                     type="file"
@@ -199,7 +261,6 @@ const CustomizedFileUpload: React.FC<UploadProps> = ({
                         <Box sx={{ width: '100%', position: 'absolute', top: 0, left: 0 }}>
                             <LinearProgress variant="determinate" value={download.progress || 0} />
                         </Box>
-
                         <Typography
                             variant="caption"
                             color="textPrimary"
@@ -214,7 +275,6 @@ const CustomizedFileUpload: React.FC<UploadProps> = ({
                         <DeleteButton className='file-upload-delete' sx={{ display: 'none' }} onClick={(e) => { e.stopPropagation(); handleRemove(); }}>
                             <DeleteIcon fontSize="small" />
                         </DeleteButton>
-
                         <Typography
                             variant="caption"
                             color="textPrimary"
@@ -239,12 +299,10 @@ const CustomizedFileUpload: React.FC<UploadProps> = ({
                     </>
                 ) : file?.status === 'done' ? (
                     <>
-                        {/* {children} */}
                         <PreviewImage src={file.previewUrl} />
-                        <DeleteButton className='file-upload-delete' sx={{ display: 'none' }} onClick={(e) => { e.stopPropagation(); handleRemove(); }}>
+                        <DeleteButton className='file-upload-delete' sx={{ display: 'none' }} onClick={(e) => { e.stopPropagation(); }}>
                             <DeleteIcon fontSize="small" />
                         </DeleteButton>
-
                         <Typography
                             variant="caption"
                             color="textPrimary"
@@ -265,7 +323,56 @@ const CustomizedFileUpload: React.FC<UploadProps> = ({
                     </>
                 )}
             </UploadArea>
-        </Box>
+            <Modal
+                open={openModal}
+                onClose={handleCloseModal}
+                closeAfterTransition
+                slots={{ backdrop: Backdrop }}
+                slotProps={{
+                    backdrop: {
+                        timeout: 500,
+                    },
+                }}
+            >
+                <Fade in={openModal}>
+                    <Box
+                        sx={{
+                            position: 'absolute',
+                            top: '50%',
+                            left: '50%',
+                            transform: 'translate(-50%, -50%)',
+                            bgcolor: 'background.paper',
+                            boxShadow: 24,
+                            p: 4,
+                            borderRadius: 2,
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            maxWidth: '90vw',
+                            maxHeight: '90vh',
+                            overflow: 'hidden',
+                            cursor: isDragging ? 'grabbing' : zoom > 1 ? 'grab' : 'default',
+                        }}
+                        onWheel={handleWheel}
+                        onMouseDown={handleMouseDown}
+                        onMouseMove={handleMouseMove}
+                        onMouseUp={handleMouseUp}
+                        onMouseLeave={handleMouseUp}
+                    >
+                        <EnlargedImage
+                            onMouseUp={handleMouseUp}
+                            onMouseLeave={handleMouseUp}
+                            ref={imageRef}
+                            src={file?.previewUrl || download?.previewUrl}
+                            sx={{
+                                transform: `scale(${zoom}) translate(${position.x / zoom}px, ${position.y / zoom}px)`,
+                                transition: isDragging ? 'none' : 'transform 0.2s',
+                            }}
+                        />
+                    </Box>
+                </Fade>
+            </Modal>
+        </Box >
     );
 };
 

@@ -6,8 +6,8 @@ use serde_with::{serde_as, DisplayFromStr};
 use common::formatter::string_date_time::StringDateTime;
 
 #[serde_as]
-// #[derive(Deserialize, Serialize, Debug, Clone, ToSchema, ExtendFields)]
-#[derive(Deserialize, ExtendFields, Debug, Clone, ToSchema)]
+#[derive(Deserialize, Serialize, Debug, Clone, ToSchema)]
+// #[derive(Deserialize, ExtendFields, Debug, Clone, ToSchema)]
 pub struct ErpWarehouseResponse {
     
     pub id: i64, // 仓库ID
@@ -28,7 +28,7 @@ pub struct ErpWarehouseResponse {
     
     pub remarks: Option<String>, // 备注
     
-    #[extend_fields(invocation = "system_common::service::system::get_user_name")]
+    // #[extend_fields(fill_type = "user", invocation = "system_common::service::system::get_user_names_batch")]
     pub creator: Option<i64>, // 创建者ID
     
     // #[serde_as(as = "DisplayFromStr")]
