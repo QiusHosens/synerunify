@@ -202,17 +202,17 @@ mod common_local {
 //     count: i32,
 // }
 
-#[serde_as]
-// #[extend_fields]
-#[derive(Deserialize, ExtendFields)]
-// #[derive(Deserialize, Serialize)]
-struct ByteStruct {
-    #[extend_fields(field = "byte_name", fill_type = "byte", invocation = "common_local::get_user")]
-    code: i8,
-    flag: bool,
-    #[serde_as(as = "common::formatter::string_date_time::StringDateTime")]
-    date: NaiveDateTime,
-}
+// #[serde_as]
+// // #[extend_fields]
+// #[derive(Deserialize, ExtendFields)]
+// // #[derive(Deserialize, Serialize)]
+// struct ByteStruct {
+//     #[extend_fields(field = "byte_name", fill_type = "byte", invocation = "common_local::get_user")]
+//     code: i8,
+//     flag: bool,
+//     #[serde_as(as = "common::formatter::string_date_time::StringDateTime")]
+//     date: NaiveDateTime,
+// }
 
 // #[serde_as]
 // #[derive(Deserialize, Serialize, ExtendFields, Clone, Copy)]
@@ -228,7 +228,7 @@ struct ByteStruct {
 // }
 
 #[serde_as]
-#[derive(Deserialize, ExtendFields)]
+#[derive(Deserialize, ExtendFields, Clone)]
 struct User {
     #[extend_fields(invocation = "system_common::service::system::get_user_name")]
     id: i64,
@@ -295,16 +295,16 @@ async fn main() -> Result<(), anyhow::Error> {
     // let json = serde_json::to_string_pretty(&number_struct).unwrap();
     // println!("\nNumberStruct JSON:\n{}", json);
 
-    let byte_struct = ByteStruct {
-        code: 42,
-        flag: true,
-        date: Local::now().naive_utc()
-    };
-    let json = serde_json::to_string_pretty(&byte_struct).unwrap();
-    // let json = task::spawn_blocking(move || {
-    //     serde_json::to_string_pretty(&byte_struct)
-    // }).await??;
-    println!("\nByteStruct JSON:\n{}", json);
+    // let byte_struct = ByteStruct {
+    //     code: 42,
+    //     flag: true,
+    //     date: Local::now().naive_utc()
+    // };
+    // let json = serde_json::to_string_pretty(&byte_struct).unwrap();
+    // // let json = task::spawn_blocking(move || {
+    // //     serde_json::to_string_pretty(&byte_struct)
+    // // }).await??;
+    // println!("\nByteStruct JSON:\n{}", json);
 
     // common::formatter::string_date_time::StringDateTime::serialize_as(source, serializer)
 
@@ -320,6 +320,14 @@ async fn main() -> Result<(), anyhow::Error> {
     //     serde_json::to_string_pretty(&user)
     // }).await??;
     println!("\nUser JSON:\n{}", json);
+
+    // 批量序列化
+    let mut users: Vec<User> = Vec::with_capacity(10);
+    for index in 0..10 {
+        users.push(user.clone());
+    }
+    let json = serde_json::to_string_pretty(&users).unwrap();
+    println!("\nUsers JSON:\n{}", json);
 
     // // 1. 准备要序列化的 NaiveDateTime 实例
     // let current_time = NaiveDateTime::parse_from_str("2025-06-20 09:15:30", "%Y-%m-%d %H:%M:%S")
