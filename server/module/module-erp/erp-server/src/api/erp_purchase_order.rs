@@ -20,6 +20,7 @@ pub async fn erp_purchase_order_router(state: AppState) -> OpenApiRouter {
         .routes(routes!(delete))
         .routes(routes!(get_by_id))
         .routes(routes!(list))
+        .routes(routes!(list_received))
         .routes(routes!(page))
         .routes(routes!(received))
         .routes(routes!(cancel))
@@ -191,6 +192,29 @@ async fn list(
     Extension(login_user): Extension<LoginUserContext>,
 ) -> CommonResult<Vec<ErpPurchaseOrderResponse>> {
     match service::erp_purchase_order::list(&state.db, login_user).await {
+        Ok(data) => {CommonResult::with_data(data)}
+        Err(e) => {CommonResult::with_err(&e.to_string())}
+    }
+}
+
+#[utoipa::path(
+    get,
+    path = "/list_received",
+    operation_id = "erp_purchase_order_list_received",
+    responses(
+        (status = 200, description = "list received", body = CommonResult<Vec<ErpPurchaseOrderResponse>>)
+    ),
+    tag = "erp_purchase_order",
+    security(
+        ("bearerAuth" = [])
+    )
+)]
+#[require_authorize(operation_id = "erp_purchase_order_list_received", authorize = "")]
+async fn list_received(
+    State(state): State<AppState>,
+    Extension(login_user): Extension<LoginUserContext>,
+) -> CommonResult<Vec<ErpPurchaseOrderResponse>> {
+    match service::erp_purchase_order::list_received(&state.db, login_user).await {
         Ok(data) => {CommonResult::with_data(data)}
         Err(e) => {CommonResult::with_err(&e.to_string())}
     }

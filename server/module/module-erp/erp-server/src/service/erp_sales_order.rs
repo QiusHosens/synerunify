@@ -151,6 +151,15 @@ pub async fn list(db: &DatabaseConnection, login_user: LoginUserContext) -> Resu
     Ok(list.into_iter().map(model_to_response).collect())
 }
 
+/// 查询待出库订单
+pub async fn list_ship_out(db: &DatabaseConnection, login_user: LoginUserContext) -> Result<Vec<ErpSalesOrderResponse>> {
+    let list = ErpSalesOrderEntity::find_active()
+        .filter(Column::TenantId.eq(login_user.tenant_id))
+        .filter(Column::OrderStatus.eq(SALE_ORDER_STATUS_SHIP_OUT))
+        .all(db).await?;
+    Ok(list.into_iter().map(model_to_response).collect())
+}
+
 /// 订单待出库
 pub async fn ship_out(db: &DatabaseConnection, login_user: LoginUserContext, id: i64) -> Result<()> {
     let erp_sales_order = ErpSalesOrderActiveModel {

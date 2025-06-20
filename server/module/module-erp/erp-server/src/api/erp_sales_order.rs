@@ -20,6 +20,7 @@ pub async fn erp_sales_order_router(state: AppState) -> OpenApiRouter {
         .routes(routes!(delete))
         .routes(routes!(get_by_id))
         .routes(routes!(list))
+        .routes(routes!(list_ship_out))
         .routes(routes!(page))
         .routes(routes!(ship_out))
         .routes(routes!(signed))
@@ -193,6 +194,29 @@ async fn list(
     Extension(login_user): Extension<LoginUserContext>,
 ) -> CommonResult<Vec<ErpSalesOrderResponse>> {
     match service::erp_sales_order::list(&state.db, login_user).await {
+        Ok(data) => {CommonResult::with_data(data)}
+        Err(e) => {CommonResult::with_err(&e.to_string())}
+    }
+}
+
+#[utoipa::path(
+    get,
+    path = "/list_ship_out",
+    operation_id = "erp_sales_order_list_ship_out",
+    responses(
+        (status = 200, description = "list ship out", body = CommonResult<Vec<ErpSalesOrderResponse>>)
+    ),
+    tag = "erp_sales_order",
+    security(
+        ("bearerAuth" = [])
+    )
+)]
+#[require_authorize(operation_id = "erp_sales_order_list_ship_out", authorize = "")]
+async fn list_ship_out(
+    State(state): State<AppState>,
+    Extension(login_user): Extension<LoginUserContext>,
+) -> CommonResult<Vec<ErpSalesOrderResponse>> {
+    match service::erp_sales_order::list_ship_out(&state.db, login_user).await {
         Ok(data) => {CommonResult::with_data(data)}
         Err(e) => {CommonResult::with_err(&e.to_string())}
     }

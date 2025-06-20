@@ -175,6 +175,15 @@ pub async fn list(db: &DatabaseConnection, login_user: LoginUserContext) -> Resu
     Ok(list.into_iter().map(model_to_response).collect())
 }
 
+/// 查询待入库订单
+pub async fn list_received(db: &DatabaseConnection, login_user: LoginUserContext) -> Result<Vec<ErpPurchaseOrderResponse>> {
+    let list = ErpPurchaseOrderEntity::find_active()
+        .filter(Column::TenantId.eq(login_user.tenant_id))
+        .filter(Column::OrderStatus.eq(PURCHASE_ORDER_STATUS_RECEIVED))
+        .all(db).await?;
+    Ok(list.into_iter().map(model_to_response).collect())
+}
+
 /// 订单已收货
 pub async fn received(db: &DatabaseConnection, login_user: LoginUserContext, id: i64) -> Result<()> {
     let erp_purchase_order = ErpPurchaseOrderActiveModel {
