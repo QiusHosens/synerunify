@@ -415,9 +415,11 @@
   "page.erp.purchase.inbound.title.discount.rate": "优惠率",
   "page.erp.purchase.inbound.title.other.cost": "其他费用",
   "page.erp.purchase.inbound.title.settlement.account": "结算账户ID",
+  "page.erp.purchase.inbound.placeholder.order.number": "订单编号,由系统自动生成",
   "page.erp.purchase.inbound.error.supplier": "请输入供应商ID",
   "page.erp.purchase.inbound.error.user": "请输入用户ID",
   "page.erp.purchase.inbound.error.inbound.date": "请输入入库日期",
+  "page.erp.purchase.inbound.operate.select": "选择",
 
   "page.erp.purchase.inbound.title.check.list": "入库产品清单",
   "page.erp.purchase.inbound.title.attachment": "入库附件"

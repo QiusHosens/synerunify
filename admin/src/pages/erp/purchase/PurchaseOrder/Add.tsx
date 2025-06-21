@@ -1,4 +1,4 @@
-import { Box, Button, Card, FormControl, FormHelperText, Grid, InputLabel, MenuItem, Select, SelectChangeEvent, styled, TextField, Typography } from '@mui/material';
+import { Box, Button, Card, FormControl, FormHelperText, Grid, InputLabel, MenuItem, Select, SelectChangeEvent, TextField, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { forwardRef, useImperativeHandle, useState, useCallback } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
@@ -82,6 +82,7 @@ const ErpPurchaseOrderAdd = forwardRef(({ onSubmit }: ErpPurchaseOrderAddProps, 
   const [errors, setErrors] = useState<FormErrors>({
     purchase_products: [],
   });
+  const [size] = useState({ xs: 12, md: 3 });
   const [fileWidth] = useState<number>(420);
   const [fileHeight] = useState<number>(245);
 
@@ -387,10 +388,10 @@ const ErpPurchaseOrderAdd = forwardRef(({ onSubmit }: ErpPurchaseOrderAddProps, 
       <Box noValidate component="form" sx={{ display: 'flex', flexDirection: 'column', m: 'auto', width: 'fit-content' }}>
         <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '100%' } }}>
           <Grid container rowSpacing={2} columnSpacing={4} sx={{ '& .MuiGrid-root': { display: 'flex', justifyContent: 'center', alignItems: 'center' } }}>
-            <Grid size={{ xs: 12, md: 12 / 5 }}>
+            <Grid size={size}>
               <TextField size="small" label={t('page.erp.purchase.order.placeholder.order.number')} disabled />
             </Grid>
-            <Grid size={{ xs: 12, md: 12 / 5 }}>
+            <Grid size={size}>
               <FormControl sx={{ mt: 2, minWidth: 120, width: '100%' }}>
                 <InputLabel required size="small" id="supplier-select-label">{t('page.erp.purchase.order.title.supplier')}</InputLabel>
                 <Select
@@ -413,7 +414,7 @@ const ErpPurchaseOrderAdd = forwardRef(({ onSubmit }: ErpPurchaseOrderAddProps, 
                 <FormHelperText sx={{ color: 'error.main' }}>{errors.supplier_id}</FormHelperText>
               </FormControl>
             </Grid>
-            <Grid size={{ xs: 12, md: 12 / 5 }}>
+            <Grid size={size}>
               <FormControl sx={{ mt: 2, minWidth: 120, width: '100%' }}>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <DateTimePicker
@@ -436,7 +437,7 @@ const ErpPurchaseOrderAdd = forwardRef(({ onSubmit }: ErpPurchaseOrderAddProps, 
                 </LocalizationProvider>
               </FormControl>
             </Grid>
-            <Grid size={{ xs: 12, md: 12 / 5 }}>
+            <Grid size={size}>
               <TextField
                 required
                 size="small"
@@ -449,7 +450,7 @@ const ErpPurchaseOrderAdd = forwardRef(({ onSubmit }: ErpPurchaseOrderAddProps, 
                 helperText={errors.total_amount}
               />
             </Grid>
-            <Grid size={{ xs: 12, md: 12 / 5 }}>
+            <Grid size={size}>
               <TextField
                 size="small"
                 type="number"
@@ -459,7 +460,7 @@ const ErpPurchaseOrderAdd = forwardRef(({ onSubmit }: ErpPurchaseOrderAddProps, 
                 onChange={handleInputChange}
               />
             </Grid>
-            <Grid size={{ xs: 12, md: 12 / 5 }}>
+            <Grid size={size}>
               <FormControl sx={{ mt: 2, minWidth: 120, width: '100%' }}>
                 <InputLabel size="small" id="settlement-account-select-label">{t('page.erp.purchase.order.title.settlement.account')}</InputLabel>
                 <Select
@@ -478,7 +479,7 @@ const ErpPurchaseOrderAdd = forwardRef(({ onSubmit }: ErpPurchaseOrderAddProps, 
                 </Select>
               </FormControl>
             </Grid>
-            <Grid size={{ xs: 12, md: 12 / 5 }}>
+            <Grid size={size}>
               <TextField
                 size="small"
                 type="number"
@@ -488,7 +489,7 @@ const ErpPurchaseOrderAdd = forwardRef(({ onSubmit }: ErpPurchaseOrderAddProps, 
                 onChange={handleInputChange}
               />
             </Grid>
-            <Grid size={{ xs: 12, md: 12 / 5 }}>
+            <Grid size={size}>
               <TextField
                 size="small"
                 label={t('page.erp.purchase.order.title.remarks')}

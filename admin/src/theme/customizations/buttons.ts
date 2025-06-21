@@ -26,23 +26,23 @@ export const buttonsCustomizations: Components<Theme> = {
         borderRadius: theme.shape.borderRadius,
         textTransform: "none",
         variants: [
-          // {
-          //   props: {
-          //     size: 'small',
-          //   },
-          //   style: {
-          //     height: '2.25rem',
-          //     padding: '8px 12px',
-          //   },
-          // },
-          // {
-          //   props: {
-          //     size: 'medium',
-          //   },
-          //   style: {
-          //     height: '2.5rem', // 40px
-          //   },
-          // },
+          {
+            props: {
+              size: 'small',
+            },
+            style: {
+              height: '2.25rem',
+              padding: '8px 12px',
+            },
+          },
+          {
+            props: {
+              size: 'medium',
+            },
+            style: {
+              height: '2.5rem', // 40px
+            },
+          },
           {
             props: {
               color: "primary",
