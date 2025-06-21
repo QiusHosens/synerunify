@@ -14,6 +14,7 @@ const apis = {
   get_info: '/erp/erp_purchase_order/get_info', // 单条查询订单所有信息
   received: '/erp/erp_purchase_order/received', // 已收货
   cancel: '/erp/erp_purchase_order/cancel', // 取消订单
+  page_received: '/erp/erp_purchase_order/page_received', // 分页查询待入库
 }
 
 export interface ErpPurchaseOrderRequest {
@@ -137,4 +138,8 @@ export const receivedErpPurchaseOrder = (id: number): Promise<void> => {
 
 export const cancelErpPurchaseOrder = (id: number): Promise<void> => {
   return api.post<void>(`${apis.cancel}/${id}`);
+}
+
+export const pageReceivedErpPurchaseOrder = (condition: ErpPurchaseOrderQueryCondition): Promise<PaginatedResponse<ErpPurchaseOrderResponse>> => {
+  return api.get<PaginatedResponse<ErpPurchaseOrderResponse>>(apis.page_received, condition);
 }

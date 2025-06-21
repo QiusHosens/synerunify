@@ -1,8 +1,8 @@
 import { Box, Button, Card, FormControl, FormHelperText, Grid, InputAdornment, InputLabel, MenuItem, OutlinedInput, Select, SelectChangeEvent, TextField, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { forwardRef, useCallback, useImperativeHandle, useState } from 'react';
+import { forwardRef, useCallback, useImperativeHandle, useRef, useState } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
-import { createErpInboundOrder, ErpInboundOrderAttachmentRequest, ErpInboundOrderDetailRequest, ErpInboundOrderRequest, ErpPurchaseOrderInfoResponse, ErpSettlementAccountResponse, ErpWarehouseResponse, listErpSettlementAccount, listErpWarehouse } from '@/api';
+import { createErpInboundOrder, ErpInboundOrderAttachmentRequest, ErpInboundOrderDetailRequest, ErpInboundOrderRequest, ErpPurchaseOrderInfoResponse, ErpSettlementAccountResponse, ErpWarehouseResponse, getErpPurchaseOrderInfo, listErpSettlementAccount, listErpWarehouse } from '@/api';
 import CustomizedDialog from '@/components/CustomizedDialog';
 import { Dayjs } from 'dayjs';
 import CustomizedFileUpload, { UploadFile } from '@/components/CustomizedFileUpload';
@@ -11,6 +11,7 @@ import { uploadSystemFile } from '@/api/system_file';
 import { DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import SearchIcon from '@/assets/image/svg/search.svg';
+import PurchaseOrderSelect from './PurchaseOrderSelect';
 
 interface FormAttachmentValues {
   file_id?: number; // 文件ID
@@ -21,7 +22,7 @@ interface FormAttachmentValues {
 
 interface FormDetailValues {
   purchase_detail_id: number; // 采购订单详情ID
-  warehouse_id: number; // 仓库ID
+  warehouse_id?: number; // 仓库ID
   remarks: string; // 备注
 }
 
@@ -75,10 +76,11 @@ const ErpInboundOrderAdd = forwardRef(({ onSubmit }: ErpInboundOrderAddProps, re
   const [fileWidth] = useState<number>(420);
   const [fileHeight] = useState<number>(245);
 
+  const selectErpPurchaseOrder = useRef(null);
+
   useImperativeHandle(ref, () => ({
     show() {
       initSettlementAccounts();
-      initWarehouses();
       setOpen(true);
     },
     hide() {
@@ -91,9 +93,35 @@ const ErpInboundOrderAdd = forwardRef(({ onSubmit }: ErpInboundOrderAddProps, re
     setSettlementAccounts(result);
   }, []);
 
-  const initWarehouses = useCallback(async () => {
-    const result = await listErpWarehouse();
-    setWarehouses(result);
+  const selectedErpPurchaseOrder = useCallback(async (id: number) => {
+    const result = await getErpPurchaseOrderInfo(id);
+    const warehouses = await listErpWarehouse();
+    setWarehouses(warehouses);
+    // 根据产品数量设置仓库
+    let defaultWarehouse = undefined;
+    if (warehouses.length > 0) {
+      defaultWarehouse = warehouses[0].id;
+    }
+    const details: FormDetailValues[] = [];
+    for (const purchase_product of result.purchase_products) {
+      const detail: FormDetailValues = {
+        purchase_detail_id: purchase_product.id,
+        remarks: ''
+      };
+      if (defaultWarehouse) {
+        detail.warehouse_id = defaultWarehouse;
+      }
+      details.push(detail);
+    }
+    setFormValues(prev => ({
+      ...prev,
+      details
+    }))
+    setErpPurchaseOrder(result);
+  }, []);
+
+  const handleClickOpenPurchaseOrderSelect = useCallback(async () => {
+    (selectErpPurchaseOrder.current as any).show();
   }, []);
 
   const validateForm = (): boolean => {
@@ -230,6 +258,23 @@ const ErpInboundOrderAdd = forwardRef(({ onSubmit }: ErpInboundOrderAddProps, re
     }));
   }, [warehouses]);
 
+  const handleDetailInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>, index: number) => {
+    const { name, value, type } = e.target;
+    const numberValue = type === 'number' ? Number(value) : value;
+    setFormValues((prev) => ({
+      ...prev,
+      details: prev.details.map((item, idx) =>
+        idx === index ? { ...item, [name]: numberValue } : item
+      ),
+    }));
+    setErrors((prev) => ({
+      ...prev,
+      details: prev.details.map((item, idx) =>
+        idx === index ? { ...item, [name]: undefined } : item
+      ),
+    }));
+  }, []);
+
   const handleFileChange = useCallback(async (file: UploadFile | null, action: 'upload' | 'remove', index: number) => {
     // console.log(`Upload ${index} file updated:`, file, `Action: ${action}`);
 
@@ -319,18 +364,16 @@ const ErpInboundOrderAdd = forwardRef(({ onSubmit }: ErpInboundOrderAddProps, re
                   id="inbound-purchase-id"
                   type='text'
                   label={t("page.erp.purchase.inbound.title.purchase")}
-                  name="password"
                   value={formValues.purchase_id}
                   onChange={handleInputChange}
                   error={!!errors.purchase_id}
-                  // autoComplete="new-password"
                   endAdornment={
                     <InputAdornment position="end">
                       <Button
                         size="small"
                         variant='customContained'
                         startIcon={<SearchIcon />}
-                      // onClick={() => handleClickOpenEdit(params.row)}
+                        onClick={() => handleClickOpenPurchaseOrderSelect()}
                       >
                         {t('page.erp.purchase.inbound.operate.select')}
                       </Button>
@@ -430,8 +473,9 @@ const ErpInboundOrderAdd = forwardRef(({ onSubmit }: ErpInboundOrderAddProps, re
           <Box sx={{ display: 'table', width: '100%', "& .table-row": { display: 'table-row', "& .table-cell": { display: 'table-cell', padding: 1, textAlign: 'center', } } }}>
             <Box className='table-row'>
               <Box className='table-cell' sx={{ width: 50 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.no')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.inbound.detail.title.warehouse')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.remarks')}</Typography></Box>
               <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.product')}</Typography></Box>
-              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.stock')}</Typography></Box>
               <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.barcode')}</Typography></Box>
               <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.unit')}</Typography></Box>
               <Box className='table-cell' sx={{ width: 200 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.remarks')}</Typography></Box>
@@ -441,7 +485,6 @@ const ErpInboundOrderAdd = forwardRef(({ onSubmit }: ErpInboundOrderAddProps, re
               <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.tax.rate')}</Typography></Box>
               <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.tax')}</Typography></Box>
               <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.tax.total')}</Typography></Box>
-              <Box className='table-cell' sx={{ width: 50 }}><Typography variant="body1">{t('global.operate.actions')}</Typography></Box>
             </Box>
             {erpPurchaseOrder && erpPurchaseOrder.purchase_products.map((item, index) => (
               <Box className='table-row' key={index}>
@@ -465,13 +508,21 @@ const ErpInboundOrderAdd = forwardRef(({ onSubmit }: ErpInboundOrderAddProps, re
                   </FormControl>
                 </Box>
                 <Box className='table-cell' sx={{ width: 50 }}>
+                  <TextField
+                    size="small"
+                    name="remarks"
+                    defaultValue={formValues.details[index].remarks}
+                    onChange={(e) => handleDetailInputChange(e as React.ChangeEvent<HTMLInputElement>, index)}
+                  />
+                </Box>
+                <Box className='table-cell' sx={{ width: 50 }}>
                   <TextField size="small" value={item.product_name} disabled />
                 </Box>
                 <Box className='table-cell' sx={{ width: 50 }}>
-                  <TextField size="small" value={item.product_barcode} disabled />
+                  <TextField size="small" value={item.product_barcode ?? ''} disabled />
                 </Box>
                 <Box className='table-cell' sx={{ width: 50 }}>
-                  <TextField size="small" value={item.product_unit_name} disabled />
+                  <TextField size="small" value={item.product_unit_name ?? ''} disabled />
                 </Box>
                 <Box className='table-cell' sx={{ width: 50 }}>
                   <TextField size="small" value={item.remarks} disabled />
@@ -532,6 +583,7 @@ const ErpInboundOrderAdd = forwardRef(({ onSubmit }: ErpInboundOrderAddProps, re
           </Grid>
         </Card>
       </Box>
+      <PurchaseOrderSelect ref={selectErpPurchaseOrder} onSubmit={selectedErpPurchaseOrder} />
     </CustomizedDialog >
   )
 });

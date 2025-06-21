@@ -176,12 +176,34 @@ pub async fn list(db: &DatabaseConnection, login_user: LoginUserContext) -> Resu
 }
 
 /// 查询待入库订单
-pub async fn list_received(db: &DatabaseConnection, login_user: LoginUserContext) -> Result<Vec<ErpPurchaseOrderResponse>> {
-    let list = ErpPurchaseOrderEntity::find_active()
+pub async fn get_received_paginated(db: &DatabaseConnection, login_user: LoginUserContext, params: PaginatedKeywordRequest) -> Result<PaginatedResponse<ErpPurchaseOrderPageResponse>> {
+    let paginator = ErpPurchaseOrderEntity::find_active_with_data_permission(login_user.clone())
         .filter(Column::TenantId.eq(login_user.tenant_id))
         .filter(Column::OrderStatus.eq(PURCHASE_ORDER_STATUS_RECEIVED))
-        .all(db).await?;
-    Ok(list.into_iter().map(model_to_response).collect())
+        .select_also(ErpSupplierEntity)
+        .select_also(ErpSettlementAccountEntity)
+        .join(JoinType::LeftJoin, Relation::PurchaseOrderSupplier.def())
+        .join(JoinType::LeftJoin, Relation::PurchaseOrderSettlementAccount.def())
+        .support_filter(params.base.filter_field, params.base.filter_operator, params.base.filter_value)
+        .support_order(params.base.sort_field, params.base.sort, Some(vec![(Column::Id, Order::Desc)]))
+        .paginate(db, params.base.size);
+
+    let total = paginator.num_items().await?;
+    let total_pages = (total + params.base.size - 1) / params.base.size; // 向上取整
+    let list = paginator
+        .fetch_page(params.base.page - 1) // SeaORM 页码从 0 开始，所以减 1
+        .await?
+        .into_iter()
+        .map(|(data, supplier_data, settlement_account_data)|model_to_page_response(data, supplier_data, settlement_account_data))
+        .collect();
+
+    Ok(PaginatedResponse {
+        list,
+        total_pages,
+        page: params.base.page,
+        size: params.base.size,
+        total,
+    })
 }
 
 /// 订单已收货

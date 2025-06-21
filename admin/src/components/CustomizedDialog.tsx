@@ -7,7 +7,7 @@ import CloseIcon from '@mui/icons-material/Close';
 // 定义Props接口
 interface CustomizedDialogProps extends Omit<DialogProps, 'title'> {
   open: boolean;
-  onClose: () => void;
+  onClose?: () => void;
   title: string;
   children: React.ReactNode;
   actions?: React.ReactNode;

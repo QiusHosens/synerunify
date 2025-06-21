@@ -420,7 +420,10 @@
   "page.erp.purchase.inbound.error.user": "请输入用户ID",
   "page.erp.purchase.inbound.error.inbound.date": "请输入入库日期",
   "page.erp.purchase.inbound.operate.select": "选择",
+  "page.erp.purchase.inbound.title.purchase.list": "采购订单列表",
 
   "page.erp.purchase.inbound.title.check.list": "入库产品清单",
-  "page.erp.purchase.inbound.title.attachment": "入库附件"
+  "page.erp.purchase.inbound.title.attachment": "入库附件",
+  "page.erp.purchase.inbound.detail.title.warehouse": "仓库",
+  "page.erp.purchase.inbound.detail.error.warehouse": "请输入仓库ID"
 }
