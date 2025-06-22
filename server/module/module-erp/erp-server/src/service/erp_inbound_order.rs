@@ -1,11 +1,14 @@
 use common::interceptor::orm::simple_support::SimpleSupport;
 use common::utils::snowflake_generator::SnowflakeGenerator;
-use sea_orm::{ActiveModelTrait, ColumnTrait, Condition, DatabaseConnection, EntityTrait, Order, PaginatorTrait, QueryFilter, QueryOrder, TransactionTrait};
-use crate::model::erp_inbound_order::{Model as ErpInboundOrderModel, ActiveModel as ErpInboundOrderActiveModel, Entity as ErpInboundOrderEntity, Column};
+use sea_orm::{ActiveModelTrait, ColumnTrait, Condition, DatabaseConnection, EntityTrait, JoinType, Order, PaginatorTrait, QueryFilter, QueryOrder, QuerySelect, RelationTrait, TransactionTrait};
+use crate::model::erp_inbound_order::{Model as ErpInboundOrderModel, ActiveModel as ErpInboundOrderActiveModel, Entity as ErpInboundOrderEntity, Column, Relation};
+use crate::model::erp_purchase_order::{Model as ErpPurchaseOrderModel, ActiveModel as ErpPurchaseOrderActiveModel, Entity as ErpPurchaseOrderEntity};
+use crate::model::erp_supplier::{Model as ErpSupplierModel, ActiveModel as ErpSupplierActiveModel, Entity as ErpSupplierEntity};
+use crate::model::erp_settlement_account::{Model as ErpSettlementAccountModel, ActiveModel as ErpSettlementAccountActiveModel, Entity as ErpSettlementAccountEntity};
 use crate::service::{erp_inbound_order_attachment, erp_inbound_order_detail, erp_purchase_order};
 use erp_model::request::erp_inbound_order::{CreateErpInboundOrderOtherRequest, CreateErpInboundOrderPurchaseRequest, CreateErpInboundOrderRequest, PaginatedKeywordRequest, UpdateErpInboundOrderOtherRequest, UpdateErpInboundOrderPurchaseRequest, UpdateErpInboundOrderRequest};
-use erp_model::response::erp_inbound_order::ErpInboundOrderResponse;
-use crate::convert::erp_inbound_order::{create_other_request_to_model, create_purchase_request_to_model, create_request_to_model, model_to_response, update_other_request_to_model, update_purchase_request_to_model, update_request_to_model};
+use erp_model::response::erp_inbound_order::{ErpInboundOrderPageOtherResponse, ErpInboundOrderPagePurchaseResponse, ErpInboundOrderResponse};
+use crate::convert::erp_inbound_order::{create_other_request_to_model, create_purchase_request_to_model, create_request_to_model, model_to_page_other_response, model_to_page_purchase_response, model_to_response, update_other_request_to_model, update_purchase_request_to_model, update_request_to_model};
 use anyhow::{anyhow, Context, Result};
 use sea_orm::ActiveValue::Set;
 use common::constants::enum_constants::{STATUS_DISABLE, STATUS_ENABLE};
@@ -143,8 +146,13 @@ pub async fn get_by_id(db: &DatabaseConnection, login_user: LoginUserContext, id
     Ok(erp_inbound_order.map(model_to_response))
 }
 
-pub async fn get_paginated(db: &DatabaseConnection, login_user: LoginUserContext, params: PaginatedKeywordRequest) -> Result<PaginatedResponse<ErpInboundOrderResponse>> {
-    let condition = Condition::all().add(Column::TenantId.eq(login_user.tenant_id));let paginator = ErpInboundOrderEntity::find_active_with_condition(condition)
+pub async fn get_paginated_purchase(db: &DatabaseConnection, login_user: LoginUserContext, params: PaginatedKeywordRequest) -> Result<PaginatedResponse<ErpInboundOrderPagePurchaseResponse>> {
+    let paginator = ErpInboundOrderEntity::find_active_with_data_permission(login_user.clone())
+        .filter(Column::TenantId.eq(login_user.tenant_id))
+        .select_also(ErpPurchaseOrderEntity)
+        .select_also(ErpSettlementAccountEntity)
+        .join(JoinType::LeftJoin, Relation::InboundPurchase.def())
+        .join(JoinType::LeftJoin, Relation::InboundSettlementAccount.def())
         .support_filter(params.base.filter_field, params.base.filter_operator, params.base.filter_value)
         .support_order(params.base.sort_field, params.base.sort, Some(vec![(Column::Id, Order::Asc)]))
         .paginate(db, params.base.size);
@@ -155,7 +163,36 @@ pub async fn get_paginated(db: &DatabaseConnection, login_user: LoginUserContext
         .fetch_page(params.base.page - 1) // SeaORM 页码从 0 开始，所以减 1
         .await?
         .into_iter()
-        .map(model_to_response)
+        .map(|(data, purchase_data, settlement_account_data)|model_to_page_purchase_response(data, purchase_data, settlement_account_data))
+        .collect();
+
+    Ok(PaginatedResponse {
+        list,
+        total_pages,
+        page: params.base.page,
+        size: params.base.size,
+        total,
+    })
+}
+
+pub async fn get_paginated_other(db: &DatabaseConnection, login_user: LoginUserContext, params: PaginatedKeywordRequest) -> Result<PaginatedResponse<ErpInboundOrderPageOtherResponse>> {
+    let paginator = ErpInboundOrderEntity::find_active_with_data_permission(login_user.clone())
+        .filter(Column::TenantId.eq(login_user.tenant_id))
+        .select_also(ErpSupplierEntity)
+        .select_also(ErpSettlementAccountEntity)
+        .join(JoinType::LeftJoin, Relation::InboundSupplier.def())
+        .join(JoinType::LeftJoin, Relation::InboundSettlementAccount.def())
+        .support_filter(params.base.filter_field, params.base.filter_operator, params.base.filter_value)
+        .support_order(params.base.sort_field, params.base.sort, Some(vec![(Column::Id, Order::Asc)]))
+        .paginate(db, params.base.size);
+
+    let total = paginator.num_items().await?;
+    let total_pages = (total + params.base.size - 1) / params.base.size; // 向上取整
+    let list = paginator
+        .fetch_page(params.base.page - 1) // SeaORM 页码从 0 开始，所以减 1
+        .await?
+        .into_iter()
+        .map(|(data, supplier_data, settlement_account_data)|model_to_page_other_response(data, supplier_data, settlement_account_data))
         .collect();
 
     Ok(PaginatedResponse {

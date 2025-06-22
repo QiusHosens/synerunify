@@ -6,7 +6,7 @@ use ctor;
 use macros::require_authorize;
 use axum::{routing::{get, post}, Router, extract::{State, Path, Json, Query}, response::IntoResponse, Extension};
 use common::base::page::PaginatedResponse;
-use erp_model::request::erp_inbound_order::{CreateErpInboundOrderOtherRequest, CreateErpInboundOrderPurchaseRequest, CreateErpInboundOrderRequest, PaginatedKeywordRequest, UpdateErpInboundOrderOtherRequest, UpdateErpInboundOrderPurchaseRequest, UpdateErpInboundOrderRequest};
+use erp_model::{request::erp_inbound_order::{CreateErpInboundOrderOtherRequest, CreateErpInboundOrderPurchaseRequest, CreateErpInboundOrderRequest, PaginatedKeywordRequest, UpdateErpInboundOrderOtherRequest, UpdateErpInboundOrderPurchaseRequest, UpdateErpInboundOrderRequest}, response::erp_inbound_order::{ErpInboundOrderPageOtherResponse, ErpInboundOrderPagePurchaseResponse}};
 use erp_model::response::erp_inbound_order::ErpInboundOrderResponse;
 use common::base::response::CommonResult;
 use common::context::context::LoginUserContext;
@@ -22,7 +22,8 @@ pub async fn erp_inbound_order_router(state: AppState) -> OpenApiRouter {
         .routes(routes!(delete))
         .routes(routes!(get_by_id))
         .routes(routes!(list))
-        .routes(routes!(page))
+        .routes(routes!(paginated_purchase))
+        .routes(routes!(paginated_other))
         .with_state(state)
 }
 
@@ -35,7 +36,7 @@ pub async fn erp_inbound_order_route(state: AppState) -> Router {
         .route("/delete/{id}", post(delete))
         .route("/get/{id}", get(get_by_id))
         .route("/list", get(list))
-        .route("/page", get(page))
+        .route("/page", get(paginated_purchase))
         .with_state(state)
 }
 
@@ -196,28 +197,57 @@ async fn get_by_id(
 
 #[utoipa::path(
     get,
-    path = "/page",
-    operation_id = "erp_inbound_order_page",
+    path = "/page_purchase",
+    operation_id = "erp_inbound_order_paginated_purchase",
     params(
         ("page" = u64, Query, description = "page number"),
         ("size" = u64, Query, description = "page size"),
         ("keyword" = Option<String>, Query, description = "keyword")
     ),
     responses(
-        (status = 200, description = "get page", body = CommonResult<PaginatedResponse<ErpInboundOrderResponse>>)
+        (status = 200, description = "get page purchase", body = CommonResult<PaginatedResponse<ErpInboundOrderPagePurchaseResponse>>)
     ),
     tag = "erp_inbound_order",
     security(
         ("bearerAuth" = [])
     )
 )]
-#[require_authorize(operation_id = "erp_inbound_order_page", authorize = "")]
-async fn page(
+#[require_authorize(operation_id = "erp_inbound_order_paginated_purchase", authorize = "")]
+async fn paginated_purchase(
     State(state): State<AppState>,
     Extension(login_user): Extension<LoginUserContext>,
     Query(params): Query<PaginatedKeywordRequest>,
-) -> CommonResult<PaginatedResponse<ErpInboundOrderResponse>> {
-    match service::erp_inbound_order::get_paginated(&state.db, login_user, params).await {
+) -> CommonResult<PaginatedResponse<ErpInboundOrderPagePurchaseResponse>> {
+    match service::erp_inbound_order::get_paginated_purchase(&state.db, login_user, params).await {
+        Ok(data) => {CommonResult::with_data(data)}
+        Err(e) => {CommonResult::with_err(&e.to_string())}
+    }
+}
+
+#[utoipa::path(
+    get,
+    path = "/page_other",
+    operation_id = "erp_inbound_order_paginated_other",
+    params(
+        ("page" = u64, Query, description = "page number"),
+        ("size" = u64, Query, description = "page size"),
+        ("keyword" = Option<String>, Query, description = "keyword")
+    ),
+    responses(
+        (status = 200, description = "get page other", body = CommonResult<PaginatedResponse<ErpInboundOrderPageOtherResponse>>)
+    ),
+    tag = "erp_inbound_order",
+    security(
+        ("bearerAuth" = [])
+    )
+)]
+#[require_authorize(operation_id = "erp_inbound_order_paginated_other", authorize = "")]
+async fn paginated_other(
+    State(state): State<AppState>,
+    Extension(login_user): Extension<LoginUserContext>,
+    Query(params): Query<PaginatedKeywordRequest>,
+) -> CommonResult<PaginatedResponse<ErpInboundOrderPageOtherResponse>> {
+    match service::erp_inbound_order::get_paginated_other(&state.db, login_user, params).await {
         Ok(data) => {CommonResult::with_data(data)}
         Err(e) => {CommonResult::with_err(&e.to_string())}
     }

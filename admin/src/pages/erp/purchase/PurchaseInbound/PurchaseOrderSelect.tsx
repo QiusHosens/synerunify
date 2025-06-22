@@ -47,7 +47,7 @@ const PurchaseOrderSelect = forwardRef(({ onSubmit }: PurchaseOrderSelectProps, 
                         <Button
                             size="small"
                             variant='customOperate'
-                            title={t('global.operate.view') + t('global.page.erp.purchase.order')}
+                            title={t('global.operate.select') + t('global.page.erp.purchase.order')}
                             startIcon={<CheckIcon />}
                             onClick={() => handleClickSelect(params.row)}
                         />
@@ -107,6 +107,7 @@ const PurchaseOrderSelect = forwardRef(({ onSubmit }: PurchaseOrderSelectProps, 
     return (
         <CustomizedDialog
             open={open}
+            onClose={handleClose}
             title={t('page.erp.purchase.inbound.title.purchase.list')}
             maxWidth={maxWidth}
         >

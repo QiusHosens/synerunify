@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { DataGrid, GridCallbackDetails, GridColDef, GridFilterModel, GridRenderCellParams, GridSortModel } from '@mui/x-data-grid';
 import EditIcon from '@/assets/image/svg/edit.svg';
 import DeleteIcon from '@/assets/image/svg/delete.svg';
-import { pageErpInboundOrder, ErpInboundOrderQueryCondition, ErpInboundOrderResponse } from '@/api';
+import { ErpInboundOrderQueryCondition, ErpInboundOrderResponse, pagePurchaseErpInboundOrder } from '@/api';
 import ErpInboundOrderAdd from './Add';
 import ErpInboundOrderEdit from './Edit';
 import ErpInboundOrderDelete from './Delete';
@@ -31,15 +31,13 @@ export default function ErpInboundOrder() {
 
   const columns: GridColDef[] = useMemo(
     () => [
-      { field: 'order_number', headerName: t("page.erp.purchase.inbound.title.order.number"), flex: 1, minWidth: 100 },
-      { field: 'purchase_id', headerName: t("page.erp.purchase.inbound.title.purchase"), flex: 1, minWidth: 100 },
-      { field: 'supplier_id', headerName: t("page.erp.purchase.inbound.title.supplier"), flex: 1, minWidth: 100 },
-      { field: 'user_id', headerName: t("page.erp.purchase.inbound.title.user"), flex: 1, minWidth: 100 },
+      { field: 'order_number', headerName: t("page.erp.purchase.inbound.title.order.number"), flex: 1.4, minWidth: 100 },
+      { field: 'purchase_order_number', headerName: t("page.erp.purchase.inbound.title.purchase"), flex: 1.4, minWidth: 100 },
       { field: 'inbound_date', headerName: t("page.erp.purchase.inbound.title.inbound.date"), flex: 1, minWidth: 100 },
-      { field: 'remarks', headerName: t("page.erp.purchase.inbound.title.remarks"), flex: 1, minWidth: 100 },
+      { field: 'settlement_account_name', headerName: t("page.erp.purchase.inbound.title.settlement.account"), flex: 1, minWidth: 100 },
       { field: 'discount_rate', headerName: t("page.erp.purchase.inbound.title.discount.rate"), flex: 1, minWidth: 100 },
       { field: 'other_cost', headerName: t("page.erp.purchase.inbound.title.other.cost"), flex: 1, minWidth: 100 },
-      { field: 'settlement_account_id', headerName: t("page.erp.purchase.inbound.title.settlement.account"), flex: 1, minWidth: 100 },
+      { field: 'remarks', headerName: t("page.erp.purchase.inbound.title.remarks"), flex: 1, minWidth: 100 },
       { field: 'create_time', headerName: t("global.title.create.time"), flex: 1, minWidth: 180 },
       {
         field: 'actions',
@@ -73,7 +71,7 @@ export default function ErpInboundOrder() {
   );
 
   const queryRecords = async (condition: ErpInboundOrderQueryCondition) => {
-    const result = await pageErpInboundOrder(condition);
+    const result = await pagePurchaseErpInboundOrder(condition);
     setRecords(result.list);
     setTotal(result.total);
   };

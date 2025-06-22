@@ -2,7 +2,7 @@ import { Box, Button, Card, FormControl, FormHelperText, Grid, InputAdornment, I
 import { useTranslation } from 'react-i18next';
 import { forwardRef, useCallback, useImperativeHandle, useRef, useState } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
-import { createErpInboundOrder, ErpInboundOrderAttachmentRequest, ErpInboundOrderDetailRequest, ErpInboundOrderRequest, ErpPurchaseOrderInfoResponse, ErpSettlementAccountResponse, ErpWarehouseResponse, getErpPurchaseOrderInfo, listErpSettlementAccount, listErpWarehouse } from '@/api';
+import { createPurchaseErpInboundOrder, ErpInboundOrderAttachmentRequest, ErpInboundOrderDetailRequest, ErpInboundOrderRequest, ErpPurchaseOrderInfoResponse, ErpSettlementAccountResponse, ErpWarehouseResponse, getErpPurchaseOrderInfo, listErpSettlementAccount, listErpWarehouse } from '@/api';
 import CustomizedDialog from '@/components/CustomizedDialog';
 import { Dayjs } from 'dayjs';
 import CustomizedFileUpload, { UploadFile } from '@/components/CustomizedFileUpload';
@@ -115,8 +115,10 @@ const ErpInboundOrderAdd = forwardRef(({ onSubmit }: ErpInboundOrderAddProps, re
     }
     setFormValues(prev => ({
       ...prev,
+      purchase_id: id,
       details
     }))
+    setErrors((prev) => ({ ...prev, purchase_id: undefined }));
     setErpPurchaseOrder(result);
   }, []);
 
@@ -167,6 +169,7 @@ const ErpInboundOrderAdd = forwardRef(({ onSubmit }: ErpInboundOrderAddProps, re
   };
 
   const reset = () => {
+    setErpPurchaseOrder(undefined);
     setFormValues({
       inbound_date: '',
       remarks: '',
@@ -207,7 +210,7 @@ const ErpInboundOrderAdd = forwardRef(({ onSubmit }: ErpInboundOrderAddProps, re
         details,
         attachments
       }
-      await createErpInboundOrder(request);
+      await createPurchaseErpInboundOrder(request);
       handleClose();
       onSubmit();
     }
@@ -231,8 +234,8 @@ const ErpInboundOrderAdd = forwardRef(({ onSubmit }: ErpInboundOrderAddProps, re
   const handleDateTimeChange = useCallback((value: PickerValue) => {
     setInboundDate(value);
     if (value) {
-      setFormValues((prev) => ({ ...prev, purchase_date: value.format('YYYY-MM-DD HH:mm:ss') }));
-      setErrors((prev) => ({ ...prev, purchase_date: undefined }));
+      setFormValues((prev) => ({ ...prev, inbound_date: value.format('YYYY-MM-DD HH:mm:ss') }));
+      setErrors((prev) => ({ ...prev, inbound_date: undefined }));
     }
   }, []);
 
@@ -357,16 +360,18 @@ const ErpInboundOrderAdd = forwardRef(({ onSubmit }: ErpInboundOrderAddProps, re
             </Grid>
             <Grid size={size}>
               <FormControl sx={{ mt: 2, minWidth: 120, width: '100%', '& .MuiOutlinedInput-root': { width: '100%', pr: 0 } }} variant="outlined" error={!!errors.purchase_id}>
-                <InputLabel required size="small" htmlFor="inbound-purchase-id">{t("page.erp.purchase.inbound.title.purchase")}</InputLabel>
+                <InputLabel required size="small" shrink={erpPurchaseOrder ? true : false} htmlFor="inbound-purchase-id">{t("page.erp.purchase.inbound.title.purchase")}</InputLabel>
                 <OutlinedInput
                   required
                   size="small"
                   id="inbound-purchase-id"
                   type='text'
                   label={t("page.erp.purchase.inbound.title.purchase")}
-                  value={formValues.purchase_id}
+                  value={erpPurchaseOrder && erpPurchaseOrder.order_number}
                   onChange={handleInputChange}
                   error={!!errors.purchase_id}
+                  disabled
+                  notched={!!erpPurchaseOrder}
                   endAdornment={
                     <InputAdornment position="end">
                       <Button
@@ -380,7 +385,7 @@ const ErpInboundOrderAdd = forwardRef(({ onSubmit }: ErpInboundOrderAddProps, re
                     </InputAdornment>
                   }
                 />
-                {/* <FormHelperText sx={{ color: 'error.main' }} id="inbound-purchase-id">{errors.purchase_id}</FormHelperText> */}
+                <FormHelperText sx={{ color: 'error.main' }} id="inbound-purchase-id">{errors.purchase_id}</FormHelperText>
               </FormControl>
             </Grid>
             <Grid size={size}>
@@ -390,6 +395,13 @@ const ErpInboundOrderAdd = forwardRef(({ onSubmit }: ErpInboundOrderAddProps, re
                 label={t("page.erp.purchase.inbound.title.supplier")}
                 value={erpPurchaseOrder && erpPurchaseOrder.supplier_name}
                 disabled
+                slotProps={erpPurchaseOrder ?
+                  {
+                    inputLabel: {
+                      shrink: true,
+                    }
+                  } : undefined
+                }
               />
             </Grid>
             <Grid size={size}>
@@ -416,13 +428,23 @@ const ErpInboundOrderAdd = forwardRef(({ onSubmit }: ErpInboundOrderAddProps, re
               </FormControl>
             </Grid>
             <Grid size={size}>
-              <TextField
-                size="small"
-                label={t("page.erp.purchase.inbound.title.remarks")}
-                name='remarks'
-                value={formValues.remarks}
-                onChange={handleInputChange}
-              />
+              <FormControl sx={{ mt: 2, minWidth: 120, width: '100%' }}>
+                <InputLabel size="small" id="settlement-account-select-label">{t('page.erp.purchase.inbound.title.settlement.account')}</InputLabel>
+                <Select
+                  size="small"
+                  labelId="settlement-account-select-label"
+                  name="settlement_account_id"
+                  value={formValues.settlement_account_id ?? ''}
+                  onChange={handleSelectChange}
+                  label={t('page.erp.purchase.inbound.title.settlement.account')}
+                >
+                  {settlementAccounts.map((item) => (
+                    <MenuItem key={item.id} value={item.id}>
+                      {item.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
             </Grid>
             <Grid size={size}>
               <TextField
@@ -445,23 +467,13 @@ const ErpInboundOrderAdd = forwardRef(({ onSubmit }: ErpInboundOrderAddProps, re
               />
             </Grid>
             <Grid size={size}>
-              <FormControl sx={{ mt: 2, minWidth: 120, width: '100%' }}>
-                <InputLabel size="small" id="settlement-account-select-label">{t('page.erp.purchase.inbound.title.settlement.account')}</InputLabel>
-                <Select
-                  size="small"
-                  labelId="settlement-account-select-label"
-                  name="settlement_account_id"
-                  value={formValues.settlement_account_id ?? ''}
-                  onChange={handleSelectChange}
-                  label={t('page.erp.purchase.inbound.title.settlement.account')}
-                >
-                  {settlementAccounts.map((item) => (
-                    <MenuItem key={item.id} value={item.id}>
-                      {item.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+              <TextField
+                size="small"
+                label={t("page.erp.purchase.inbound.title.remarks")}
+                name='remarks'
+                value={formValues.remarks}
+                onChange={handleInputChange}
+              />
             </Grid>
           </Grid>
         </FormControl>

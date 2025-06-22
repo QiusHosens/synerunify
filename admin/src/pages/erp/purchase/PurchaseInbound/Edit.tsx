@@ -1,8 +1,8 @@
-import { Box, Button, FormControl, Switch, TextField, Typography } from '@mui/material';
+import { Box, Button, FormControl, TextField, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
-import { ErpInboundOrderRequest, ErpInboundOrderResponse, updateErpInboundOrder } from '@/api';
+import { ErpInboundOrderRequest, ErpInboundOrderResponse, updatePurchaseErpInboundOrder } from '@/api';
 import CustomizedDialog from '@/components/CustomizedDialog';
 
 interface FormErrors {
@@ -25,7 +25,6 @@ const ErpInboundOrderEdit = forwardRef(({ onSubmit }: ErpInboundOrderEditProps, 
   const [maxWidth] = useState<DialogProps['maxWidth']>('sm');
   const [erpInboundOrder, setErpInboundOrder] = useState<ErpInboundOrderRequest>({
     id: 0,
-    order_number: 0,
     purchase_id: 0,
     supplier_id: 0,
     user_id: 0,
@@ -51,10 +50,6 @@ const ErpInboundOrderEdit = forwardRef(({ onSubmit }: ErpInboundOrderEditProps, 
 
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
-
-    if (!erpInboundOrder.order_number && erpInboundOrder.order_number != 0) {
-      newErrors.order_number = t('page.erp.purchase.inbound.error.order.number');
-    }
 
     if (!erpInboundOrder.supplier_id && erpInboundOrder.supplier_id != 0) {
       newErrors.supplier_id = t('page.erp.purchase.inbound.error.supplier');
@@ -85,7 +80,7 @@ const ErpInboundOrderEdit = forwardRef(({ onSubmit }: ErpInboundOrderEditProps, 
 
   const handleSubmit = async () => {
     if (validateForm()) {
-      await updateErpInboundOrder(erpInboundOrder);
+      await updatePurchaseErpInboundOrder(erpInboundOrder);
       handleClose();
       onSubmit();
     }
