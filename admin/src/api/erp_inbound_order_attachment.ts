@@ -14,9 +14,9 @@ const apis = {
 export interface ErpInboundOrderAttachmentRequest {
   id?: number; // 入库订单附件ID
   order_id?: number; // 入库订单ID
-  file_id: number; // 文件ID
+  file_id?: number; // 文件ID
   remarks?: string; // 备注
-  
+
   file?: UploadFile | null;
 }
 
@@ -31,6 +31,15 @@ export interface ErpInboundOrderAttachmentResponse {
   create_time: string; // 创建时间
   updater: number; // 更新者ID
   update_time: string; // 更新时间
+}
+
+export interface ErpInboundOrderAttachmentBaseResponse {
+  id: number; // 入库订单附件ID
+  order_id: number; // 入库订单ID
+  file_id: number; // 文件ID
+  remarks: string; // 备注
+
+  file_name: string; // 文件名
 }
 
 export interface ErpInboundOrderAttachmentQueryCondition

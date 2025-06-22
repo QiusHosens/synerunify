@@ -1,7 +1,7 @@
 use sea_orm::{Set, NotSet};
 use crate::model::erp_inbound_order_attachment::{self, Model as ErpInboundOrderAttachment, ActiveModel as ErpInboundOrderAttachmentActiveModel};
 use erp_model::request::erp_inbound_order_attachment::{CreateErpInboundOrderAttachmentRequest, UpdateErpInboundOrderAttachmentRequest};
-use erp_model::response::erp_inbound_order_attachment::ErpInboundOrderAttachmentResponse;
+use erp_model::response::erp_inbound_order_attachment::{ErpInboundOrderAttachmentBaseResponse, ErpInboundOrderAttachmentResponse};
 
 pub fn create_request_to_model(request: &CreateErpInboundOrderAttachmentRequest) -> ErpInboundOrderAttachmentActiveModel {
     ErpInboundOrderAttachmentActiveModel {
@@ -42,5 +42,15 @@ pub fn model_to_response(model: ErpInboundOrderAttachment) -> ErpInboundOrderAtt
         create_time: model.create_time,
         updater: model.updater,
         update_time: model.update_time,
+    }
+}
+
+pub fn model_to_base_response(model: ErpInboundOrderAttachment, file_name: Option<String>) -> ErpInboundOrderAttachmentBaseResponse {
+    ErpInboundOrderAttachmentBaseResponse { 
+        id: model.id,
+        file_id: model.file_id,
+        remarks: model.remarks,
+
+        file_name,
     }
 }

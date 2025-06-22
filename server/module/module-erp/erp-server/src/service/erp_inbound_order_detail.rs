@@ -11,8 +11,8 @@ use crate::model::erp_inbound_order::{Model as ErpInboundOrderModel};
 use crate::model::erp_purchase_order_detail::{Model as ErpPurchaseOrderDetailModel};
 use crate::service::{erp_inventory_record, erp_product_inventory, erp_purchase_order_detail};
 use erp_model::request::erp_inbound_order_detail::{CreateErpInboundOrderDetailOtherRequest, CreateErpInboundOrderDetailPurchaseRequest, CreateErpInboundOrderDetailRequest, PaginatedKeywordRequest, UpdateErpInboundOrderDetailPurchaseRequest, UpdateErpInboundOrderDetailRequest};
-use erp_model::response::erp_inbound_order_detail::ErpInboundOrderDetailResponse;
-use crate::convert::erp_inbound_order_detail::{create_request_to_model, update_request_to_model, model_to_response};
+use erp_model::response::erp_inbound_order_detail::{ErpInboundOrderDetailBaseOtherResponse, ErpInboundOrderDetailBasePurchaseResponse, ErpInboundOrderDetailResponse};
+use crate::convert::erp_inbound_order_detail::{create_request_to_model, model_to_base_other_response, model_to_base_purchase_response, model_to_response, update_request_to_model};
 use anyhow::{anyhow, Context, Result};
 use sea_orm::ActiveValue::{NotSet, Set};
 use common::constants::enum_constants::{STATUS_DISABLE, STATUS_ENABLE};
@@ -286,4 +286,20 @@ pub async fn list(db: &DatabaseConnection, login_user: LoginUserContext) -> Resu
     let condition = Condition::all().add(Column::TenantId.eq(login_user.tenant_id));let list = ErpInboundOrderDetailEntity::find_active_with_condition(condition)
         .all(db).await?;
     Ok(list.into_iter().map(model_to_response).collect())
+}
+
+pub async fn list_purchase_by_inbound_id(db: &DatabaseConnection, login_user: LoginUserContext, inbound_id: i64) -> Result<Vec<ErpInboundOrderDetailBasePurchaseResponse>> {
+    let list = ErpInboundOrderDetailEntity::find_active()
+        .filter(Column::TenantId.eq(login_user.tenant_id))
+        .filter(Column::OrderId.eq(inbound_id))
+        .all(db).await?;
+    Ok(list.into_iter().map(model_to_base_purchase_response).collect())
+}
+
+pub async fn list_other_by_inbound_id(db: &DatabaseConnection, login_user: LoginUserContext, inbound_id: i64) -> Result<Vec<ErpInboundOrderDetailBaseOtherResponse>> {
+    let list = ErpInboundOrderDetailEntity::find_active()
+        .filter(Column::TenantId.eq(login_user.tenant_id))
+        .filter(Column::OrderId.eq(inbound_id))
+        .all(db).await?;
+    Ok(list.into_iter().map(model_to_base_other_response).collect())
 }

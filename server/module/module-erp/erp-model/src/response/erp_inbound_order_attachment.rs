@@ -37,3 +37,17 @@ pub struct ErpInboundOrderAttachmentResponse {
     pub update_time: NaiveDateTime, // 更新时间
     
 }
+
+#[serde_as]
+#[derive(Deserialize, Serialize, Debug, Clone, ToSchema)]
+pub struct ErpInboundOrderAttachmentBaseResponse {
+    
+    pub id: i64, // 入库订单附件ID
+    
+    pub file_id: i64, // 文件ID
+    
+    pub remarks: Option<String>, // 备注
+
+    pub file_name: Option<String>, // 文件名
+    
+}

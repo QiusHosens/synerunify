@@ -1,21 +1,22 @@
 import React, { useState } from 'react';
-import { Box, IconButton, SvgIcon, Tooltip, Typography } from '@mui/material';
+import { Box, IconButton, SvgIcon, SxProps, Theme, Tooltip, Typography } from '@mui/material';
 import CopyableIcon from '@/assets/image/svg/copyable.svg';
 import CheckIcon from '@mui/icons-material/Check';
 import { useTranslation } from 'react-i18next';
 
 interface CustomizedCopyableTextProps {
-    text: string;
-    label?: string;
+    text: string | number;
+    label?: string | number;
+    sx?: SxProps<Theme>;
 }
 
-const CustomizedCopyableText: React.FC<CustomizedCopyableTextProps> = ({ text, label }) => {
+const CustomizedCopyableText: React.FC<CustomizedCopyableTextProps> = ({ text, label, sx }) => {
     const { t } = useTranslation();
     const [copied, setCopied] = useState(false);
 
     const handleCopy = async () => {
         try {
-            await navigator.clipboard.writeText(text);
+            await navigator.clipboard.writeText(String(text));
             setCopied(true);
             setTimeout(() => setCopied(false), 2000);
         } catch (err) {
@@ -53,10 +54,11 @@ const CustomizedCopyableText: React.FC<CustomizedCopyableTextProps> = ({ text, l
                     // variant="body2"
                     sx={{
                         flex: 1,
-                        // overflow: 'hidden',
-                        // textOverflow: 'ellipsis',
-                        // whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap',
                         // fontFamily: 'monospace',
+                        ...sx
                     }}
                 >
                     {text}

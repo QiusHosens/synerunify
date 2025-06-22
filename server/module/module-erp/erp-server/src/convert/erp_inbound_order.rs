@@ -1,10 +1,12 @@
+use erp_model::response::erp_inbound_order_attachment::ErpInboundOrderAttachmentBaseResponse;
+use erp_model::response::erp_inbound_order_detail::{ErpInboundOrderDetailBaseOtherResponse, ErpInboundOrderDetailBasePurchaseResponse};
 use sea_orm::{Set, NotSet};
 use crate::model::erp_inbound_order::{self, Model as ErpInboundOrder, ActiveModel as ErpInboundOrderActiveModel};
 use crate::model::erp_purchase_order::{self, Model as ErpPurchaseOrder};
 use crate::model::erp_supplier::{self, Model as ErpSupplier};
 use crate::model::erp_settlement_account::{self, Model as ErpSettlementAccount};
 use erp_model::request::erp_inbound_order::{CreateErpInboundOrderOtherRequest, CreateErpInboundOrderPurchaseRequest, CreateErpInboundOrderRequest, UpdateErpInboundOrderOtherRequest, UpdateErpInboundOrderPurchaseRequest, UpdateErpInboundOrderRequest};
-use erp_model::response::erp_inbound_order::{ErpInboundOrderPageOtherResponse, ErpInboundOrderPagePurchaseResponse, ErpInboundOrderResponse};
+use erp_model::response::erp_inbound_order::{ErpInboundOrderBaseOtherResponse, ErpInboundOrderBasePurchaseResponse, ErpInboundOrderPageOtherResponse, ErpInboundOrderPagePurchaseResponse, ErpInboundOrderResponse};
 
 pub fn create_request_to_model(request: &CreateErpInboundOrderRequest) -> ErpInboundOrderActiveModel {
     ErpInboundOrderActiveModel {
@@ -193,5 +195,41 @@ pub fn model_to_page_other_response(model: ErpInboundOrder, model_supplier: Opti
 
         supplier_name,
         settlement_account_name
+    }
+}
+
+pub fn model_to_base_purchase_response(model: ErpInboundOrder, details: Vec<ErpInboundOrderDetailBasePurchaseResponse>, attachments: Vec<ErpInboundOrderAttachmentBaseResponse>) -> ErpInboundOrderBasePurchaseResponse {
+    ErpInboundOrderBasePurchaseResponse { 
+        id: model.id,
+        order_number: model.order_number,
+        purchase_id: model.purchase_id,
+        supplier_id: model.supplier_id,
+        user_id: model.user_id,
+        inbound_date: model.inbound_date,
+        remarks: model.remarks,
+        discount_rate: model.discount_rate,
+        other_cost: model.other_cost,
+        settlement_account_id: model.settlement_account_id,
+
+        details,
+        attachments,
+    }
+}
+
+pub fn model_to_base_other_response(model: ErpInboundOrder, details: Vec<ErpInboundOrderDetailBaseOtherResponse>, attachments: Vec<ErpInboundOrderAttachmentBaseResponse>) -> ErpInboundOrderBaseOtherResponse {
+    ErpInboundOrderBaseOtherResponse { 
+        id: model.id,
+        order_number: model.order_number,
+        purchase_id: model.purchase_id,
+        supplier_id: model.supplier_id,
+        user_id: model.user_id,
+        inbound_date: model.inbound_date,
+        remarks: model.remarks,
+        discount_rate: model.discount_rate,
+        other_cost: model.other_cost,
+        settlement_account_id: model.settlement_account_id,
+
+        details,
+        attachments,
     }
 }

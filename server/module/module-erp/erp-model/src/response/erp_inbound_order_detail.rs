@@ -49,3 +49,35 @@ pub struct ErpInboundOrderDetailResponse {
     pub update_time: NaiveDateTime, // 更新时间
     
 }
+
+#[serde_as]
+#[derive(Deserialize, Serialize, Debug, Clone, ToSchema)]
+pub struct ErpInboundOrderDetailBasePurchaseResponse {
+
+    pub purchase_detail_id: Option<i64>, // 采购订单详情ID
+    
+    pub warehouse_id: i64, // 仓库ID
+    
+    pub remarks: Option<String>, // 备注
+    
+}
+
+#[serde_as]
+#[derive(Deserialize, Serialize, Debug, Clone, ToSchema)]
+pub struct ErpInboundOrderDetailBaseOtherResponse {
+    
+    pub warehouse_id: i64, // 仓库ID
+    
+    pub product_id: i64, // 产品ID
+    
+    pub quantity: i32, // 数量
+    
+    pub unit_price: i64, // 单价
+    
+    pub subtotal: i64, // 小计
+    
+    pub tax_rate: Option<i32>, // 税率,精确到万分位
+    
+    pub remarks: Option<String>, // 备注
+    
+}

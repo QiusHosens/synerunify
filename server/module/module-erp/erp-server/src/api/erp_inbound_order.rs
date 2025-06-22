@@ -6,7 +6,7 @@ use ctor;
 use macros::require_authorize;
 use axum::{routing::{get, post}, Router, extract::{State, Path, Json, Query}, response::IntoResponse, Extension};
 use common::base::page::PaginatedResponse;
-use erp_model::{request::erp_inbound_order::{CreateErpInboundOrderOtherRequest, CreateErpInboundOrderPurchaseRequest, CreateErpInboundOrderRequest, PaginatedKeywordRequest, UpdateErpInboundOrderOtherRequest, UpdateErpInboundOrderPurchaseRequest, UpdateErpInboundOrderRequest}, response::erp_inbound_order::{ErpInboundOrderPageOtherResponse, ErpInboundOrderPagePurchaseResponse}};
+use erp_model::{request::erp_inbound_order::{CreateErpInboundOrderOtherRequest, CreateErpInboundOrderPurchaseRequest, CreateErpInboundOrderRequest, PaginatedKeywordRequest, UpdateErpInboundOrderOtherRequest, UpdateErpInboundOrderPurchaseRequest, UpdateErpInboundOrderRequest}, response::erp_inbound_order::{ErpInboundOrderBaseOtherResponse, ErpInboundOrderBasePurchaseResponse, ErpInboundOrderPageOtherResponse, ErpInboundOrderPagePurchaseResponse}};
 use erp_model::response::erp_inbound_order::ErpInboundOrderResponse;
 use common::base::response::CommonResult;
 use common::context::context::LoginUserContext;
@@ -21,6 +21,8 @@ pub async fn erp_inbound_order_router(state: AppState) -> OpenApiRouter {
         .routes(routes!(update_other))
         .routes(routes!(delete))
         .routes(routes!(get_by_id))
+        .routes(routes!(get_base_purchase_by_id))
+        .routes(routes!(get_base_other_by_id))
         .routes(routes!(list))
         .routes(routes!(paginated_purchase))
         .routes(routes!(paginated_other))
@@ -189,6 +191,62 @@ async fn get_by_id(
     Path(id): Path<i64>,
 ) -> CommonResult<ErpInboundOrderResponse> {
     match service::erp_inbound_order::get_by_id(&state.db, login_user, id).await {
+        Ok(Some(data)) => {CommonResult::with_data(data)}
+        Ok(None) => {CommonResult::with_none()}
+        Err(e) => {CommonResult::with_err(&e.to_string())}
+    }
+}
+
+#[utoipa::path(
+    get,
+    path = "/get_base_purchase/{id}",
+    operation_id = "erp_inbound_order_get_base_purchase_by_id",
+    params(
+        ("id" = i64, Path, description = "id")
+    ),
+    responses(
+        (status = 200, description = "get base purchase by id", body = CommonResult<ErpInboundOrderBasePurchaseResponse>)
+    ),
+    tag = "erp_inbound_order",
+    security(
+        ("bearerAuth" = [])
+    )
+)]
+#[require_authorize(operation_id = "erp_inbound_order_get_base_purchase_by_id", authorize = "")]
+async fn get_base_purchase_by_id(
+    State(state): State<AppState>,
+    Extension(login_user): Extension<LoginUserContext>,
+    Path(id): Path<i64>,
+) -> CommonResult<ErpInboundOrderBasePurchaseResponse> {
+    match service::erp_inbound_order::get_base_purchase_by_id(&state.db, login_user, id).await {
+        Ok(Some(data)) => {CommonResult::with_data(data)}
+        Ok(None) => {CommonResult::with_none()}
+        Err(e) => {CommonResult::with_err(&e.to_string())}
+    }
+}
+
+#[utoipa::path(
+    get,
+    path = "/get_base_other/{id}",
+    operation_id = "erp_inbound_order_get_base_other_by_id",
+    params(
+        ("id" = i64, Path, description = "id")
+    ),
+    responses(
+        (status = 200, description = "get base other by id", body = CommonResult<ErpInboundOrderBaseOtherResponse>)
+    ),
+    tag = "erp_inbound_order",
+    security(
+        ("bearerAuth" = [])
+    )
+)]
+#[require_authorize(operation_id = "erp_inbound_order_get_base_other_by_id", authorize = "")]
+async fn get_base_other_by_id(
+    State(state): State<AppState>,
+    Extension(login_user): Extension<LoginUserContext>,
+    Path(id): Path<i64>,
+) -> CommonResult<ErpInboundOrderBaseOtherResponse> {
+    match service::erp_inbound_order::get_base_other_by_id(&state.db, login_user, id).await {
         Ok(Some(data)) => {CommonResult::with_data(data)}
         Ok(None) => {CommonResult::with_none()}
         Err(e) => {CommonResult::with_err(&e.to_string())}

@@ -1,17 +1,20 @@
-import { Box, Button, FormControl, TextField, Typography } from '@mui/material';
+import { Box, Button, Card, FormControl, Grid, InputLabel, MenuItem, Select, SelectChangeEvent, Stack, TextField, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { forwardRef, useImperativeHandle, useState } from 'react';
+import { forwardRef, useCallback, useImperativeHandle, useState } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
-import { ErpInboundOrderRequest, ErpInboundOrderResponse, updatePurchaseErpInboundOrder } from '@/api';
+import { ErpInboundOrderAttachmentRequest, ErpInboundOrderBaseResponse, ErpInboundOrderRequest, ErpInboundOrderResponse, ErpPurchaseOrderDetailInfoResponse, ErpPurchaseOrderInfoResponse, ErpSettlementAccountResponse, ErpWarehouseResponse, getBasePurchaseErpInboundOrder, getErpPurchaseOrderInfo, listErpSettlementAccount, listErpWarehouse, updatePurchaseErpInboundOrder } from '@/api';
 import CustomizedDialog from '@/components/CustomizedDialog';
+import { Dayjs } from 'dayjs';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import CustomizedFileUpload, { DownloadProps, UploadFile } from '@/components/CustomizedFileUpload';
+import { downloadSystemFile, uploadSystemFile } from '@/api/system_file';
+import { PickerValue } from '@mui/x-date-pickers/internals';
+import CustomizedTag from '@/components/CustomizedTag';
+import { DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers';
+import CustomizedCopyableText from '@/components/CustomizedCopyableText';
 
 interface FormErrors {
-  order_number?: string; // 订单编号
-  supplier_id?: string; // 供应商ID
-  user_id?: string; // 用户ID
   inbound_date?: string; // 入库日期
-  department_code?: string; // 部门编码
-  department_id?: string; // 部门ID
 }
 
 interface ErpInboundOrderEditProps {
@@ -22,25 +25,34 @@ const ErpInboundOrderEdit = forwardRef(({ onSubmit }: ErpInboundOrderEditProps, 
   const { t } = useTranslation();
 
   const [open, setOpen] = useState(false);
-  const [maxWidth] = useState<DialogProps['maxWidth']>('sm');
-  const [erpInboundOrder, setErpInboundOrder] = useState<ErpInboundOrderRequest>({
+  const [maxWidth] = useState<DialogProps['maxWidth']>('xl');
+  const [erpPurchaseOrder, setErpPurchaseOrder] = useState<ErpPurchaseOrderInfoResponse>();
+  const [erpPurchaseOrderDetailMap, setErpPurchaseOrderDetailMap] = useState<Map<number, ErpPurchaseOrderDetailInfoResponse>>();
+  const [erpInboundOrder, setErpInboundOrder] = useState<ErpInboundOrderBaseResponse>();
+  const [warehouses, setWarehouses] = useState<ErpWarehouseResponse[]>([]);
+  const [settlementAccounts, setSettlementAccounts] = useState<ErpSettlementAccountResponse[]>([]);
+  const [inboundDate, setInboundDate] = useState<Dayjs | null>(null);
+  const [erpInboundOrderRequest, setErpInboundOrderRequest] = useState<ErpInboundOrderRequest>({
     id: 0,
-    purchase_id: 0,
-    supplier_id: 0,
-    user_id: 0,
     inbound_date: '',
     remarks: '',
     discount_rate: 0,
     other_cost: 0,
     settlement_account_id: 0,
-    department_code: '',
-    department_id: 0,
+    details: [],
+    attachments: []
   });
   const [errors, setErrors] = useState<FormErrors>({});
+  const [size] = useState({ xs: 12, md: 3 });
+  const [fileWidth] = useState<number>(420);
+  const [fileHeight] = useState<number>(245);
+  const [downloadImages, setDownloadImages] = useState<Map<number, DownloadProps>>(new Map<number, DownloadProps>());
 
   useImperativeHandle(ref, () => ({
-    show(erpInboundOrder: ErpInboundOrderResponse) {
-      initForm(erpInboundOrder);
+    show(erpInboundOrderRequest: ErpInboundOrderResponse) {
+      initForm(erpInboundOrderRequest);
+      initWarehouses();
+      initSettlementAccounts();
       setOpen(true);
     },
     hide() {
@@ -48,15 +60,21 @@ const ErpInboundOrderEdit = forwardRef(({ onSubmit }: ErpInboundOrderEditProps, 
     },
   }));
 
+  const initWarehouses = useCallback(async () => {
+    const warehouses = await listErpWarehouse();
+    setWarehouses(warehouses);
+  }, []);
+
+  const initSettlementAccounts = useCallback(async () => {
+    const result = await listErpSettlementAccount();
+    setSettlementAccounts(result);
+  }, []);
+
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
 
-    if (!erpInboundOrder.supplier_id && erpInboundOrder.supplier_id != 0) {
-      newErrors.supplier_id = t('page.erp.purchase.inbound.error.supplier');
-    }
-
-    if (!erpInboundOrder.inbound_date.trim()) {
-      newErrors.inbound_date = t('page.erp.purchase.inbound.error.inbound。date');
+    if (!erpInboundOrderRequest.inbound_date.trim()) {
+      newErrors.inbound_date = t('page.erp.purchase.inbound.error.inbound.date');
     }
 
     setErrors(newErrors);
@@ -71,16 +89,72 @@ const ErpInboundOrderEdit = forwardRef(({ onSubmit }: ErpInboundOrderEditProps, 
     setOpen(false);
   };
 
-  const initForm = (erpInboundOrder: ErpInboundOrderResponse) => {
-    setErpInboundOrder({
-      ...erpInboundOrder,
+  const initForm = async (erpInboundOrderRequest: ErpInboundOrderResponse) => {
+    // 查询入库订单
+    const result = await getBasePurchaseErpInboundOrder(erpInboundOrderRequest.id);
+    // 查询采购订单
+    const purchaseOrder = await getErpPurchaseOrderInfo(erpInboundOrderRequest.purchase_id);
+
+    const purchaseOrderDetailMap: Map<number, ErpPurchaseOrderDetailInfoResponse> = new Map();
+    for (const purchaseDetail of purchaseOrder.purchase_products) {
+      purchaseOrderDetailMap.set(purchaseDetail.id, purchaseDetail);
+    }
+    setErpPurchaseOrderDetailMap(purchaseOrderDetailMap);
+    setErpPurchaseOrder(purchaseOrder);
+    setErpInboundOrder(result);
+    setErpInboundOrderRequest({
+      ...result,
     })
+    setInboundDate(new AdapterDayjs().dayjs(result.inbound_date));
+    // 设置图片
+    for (const attachment of result.attachments) {
+      const file_id = attachment.file_id;
+      const filename = attachment.file_name.indexOf('.') > 0 ? attachment.file_name.substring(0, attachment.file_name.lastIndexOf('.')) : attachment.file_name;
+      const result = await downloadSystemFile(file_id, (progress) => {
+        setDownloadImages(prev => {
+          const data: DownloadProps = {
+            filename,
+            status: 'downloading',
+            progress
+          };
+          const newMap = new Map(prev);
+          newMap.set(file_id, data);
+          return newMap;
+        })
+      })
+
+      setDownloadImages(prev => {
+        const data: DownloadProps = {
+          filename,
+          status: 'done',
+          previewUrl: window.URL.createObjectURL(result),
+        };
+        const newMap = new Map(prev);
+        newMap.set(file_id, data);
+        return newMap;
+      })
+    }
     setErrors({});
   }
 
   const handleSubmit = async () => {
     if (validateForm()) {
-      await updatePurchaseErpInboundOrder(erpInboundOrder);
+      const attachments: ErpInboundOrderAttachmentRequest[] = [];
+      for (const attachment of erpInboundOrderRequest.attachments) {
+        attachments.push({
+          file_id: attachment.file_id!
+        } as ErpInboundOrderAttachmentRequest);
+      }
+      const request: ErpInboundOrderRequest = {
+        id: erpInboundOrderRequest.id,
+        inbound_date: erpInboundOrderRequest.inbound_date,
+        discount_rate: erpInboundOrderRequest.discount_rate,
+        settlement_account_id: erpInboundOrderRequest.settlement_account_id,
+        other_cost: erpInboundOrderRequest.other_cost,
+        remarks: erpInboundOrderRequest.remarks,
+        attachments
+      }
+      await updatePurchaseErpInboundOrder(request);
       handleClose();
       onSubmit();
     }
@@ -88,18 +162,11 @@ const ErpInboundOrderEdit = forwardRef(({ onSubmit }: ErpInboundOrderEditProps, 
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type } = e.target;
-    if (type == 'number') {
-      const numberValue = Number(value);
-      setErpInboundOrder(prev => ({
-        ...prev,
-        [name]: numberValue
-      }));
-    } else {
-      setErpInboundOrder(prev => ({
-        ...prev,
-        [name]: value
-      }));
-    }
+
+    setErpInboundOrderRequest((prev) => ({
+      ...prev,
+      [name]: type === 'number' ? Number(value) : value,
+    }));
 
     if (errors[name as keyof FormErrors]) {
       setErrors(prev => ({
@@ -108,6 +175,72 @@ const ErpInboundOrderEdit = forwardRef(({ onSubmit }: ErpInboundOrderEditProps, 
       }));
     }
   };
+
+  const handleDateTimeChange = useCallback((value: PickerValue) => {
+    setInboundDate(value);
+    if (value) {
+      setErpInboundOrderRequest((prev) => ({ ...prev, inbound_date: value.format('YYYY-MM-DD HH:mm:ss') }));
+      setErrors((prev) => ({ ...prev, inbound_date: undefined }));
+    }
+  }, []);
+
+  const handleSelectChange = useCallback((e: SelectChangeEvent<number>) => {
+    const { name, value } = e.target;
+    setErpInboundOrderRequest((prev) => ({ ...prev, [name]: value }));
+    setErrors((prev) => ({ ...prev, [name]: undefined }));
+  }, []);
+
+  const handleFileChange = useCallback(async (file: UploadFile | null, action: 'upload' | 'remove', index: number) => {
+    // console.log(`Upload ${index} file updated:`, file, `Action: ${action}`);
+
+    if (action === 'upload' && file) {
+      // 更新文件列表,增加一个附件,等待上传完成后在写入信息
+      setErpInboundOrderRequest((prev) => {
+        return { ...prev, attachments: [...prev.attachments, { file }] };
+      })
+
+      // 上传文件
+      try {
+        const result = await uploadSystemFile(file.file, (progress) => {
+          setErpInboundOrderRequest((prev) => {
+            const updatedAttachments = prev.attachments.map((item, idx) => {
+              if (idx !== index) return item;
+              const updatedItem = { ...item, file: { ...item.file!, progress } };
+              return updatedItem;
+            })
+            return { ...prev, attachments: updatedAttachments };
+          });
+        });
+
+        // 上传完成
+        setErpInboundOrderRequest((prev) => {
+          const updatedAttachments = prev.attachments.map((item, idx) => {
+            if (idx !== index) return item;
+            const updatedItem = { ...item, file_id: result, file: { ...item.file!, status: 'done' as const } };
+            return updatedItem;
+          })
+          return { ...prev, attachments: updatedAttachments };
+        });
+      } catch (error) {
+        console.error('upload file error', error);
+        // 上传失败
+        setErpInboundOrderRequest((prev) => {
+          const updatedAttachments = prev.attachments.map((item, idx) => {
+            if (idx !== index) return item;
+            const updatedItem = { ...item, file: { ...item.file!, status: 'error' as const } };
+            return updatedItem;
+          })
+          return { ...prev, attachments: updatedAttachments };
+        });
+      }
+    } else if (action === 'remove') {
+      // 删除文件并移除上传框
+      setErpInboundOrderRequest((prev) => {
+        const updatedAttachments = prev.attachments.filter((_, idx) => idx !== index);
+        return { ...prev, attachments: updatedAttachments };
+      });
+    }
+  }, []);
 
   return (
     <CustomizedDialog
@@ -132,79 +265,227 @@ const ErpInboundOrderEdit = forwardRef(({ onSubmit }: ErpInboundOrderEditProps, 
           width: 'fit-content',
         }}
       >
-        <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' } }}>
-          <TextField
-            required
-            size="small"
-            type="number"
-            label={t("page.erp.purchase.inbound.title.order.number")}
-            name='order_number'
-            value={erpInboundOrder.order_number}
-            onChange={handleInputChange}
-            error={!!errors.order_number}
-            helperText={errors.order_number}
-          />
-          <TextField
-            size="small"
-            type="number"
-            label={t("page.erp.purchase.inbound.title.purchase")}
-            name='purchase_id'
-            value={erpInboundOrder.purchase_id}
-            onChange={handleInputChange}
-          />
-          <TextField
-            required
-            size="small"
-            type="number"
-            label={t("page.erp.purchase.inbound.title.supplier")}
-            name='supplier_id'
-            value={erpInboundOrder.supplier_id}
-            onChange={handleInputChange}
-            error={!!errors.supplier_id}
-            helperText={errors.supplier_id}
-          />
-          <TextField
-            required
-            size="small"
-            label={t("page.erp.purchase.inbound.title.inbound.date")}
-            name='inbound_date'
-            value={erpInboundOrder.inbound_date}
-            onChange={handleInputChange}
-            error={!!errors.inbound_date}
-            helperText={errors.inbound_date}
-          />
-          <TextField
-            size="small"
-            label={t("page.erp.purchase.inbound.title.remarks")}
-            name='remarks'
-            value={erpInboundOrder.remarks}
-            onChange={handleInputChange}
-          />
-          <TextField
-            size="small"
-            type="number"
-            label={t("page.erp.purchase.inbound.title.discount.rate")}
-            name='discount_rate'
-            value={erpInboundOrder.discount_rate}
-            onChange={handleInputChange}
-          />
-          <TextField
-            size="small"
-            type="number"
-            label={t("page.erp.purchase.inbound.title.other.cost")}
-            name='other_cost'
-            value={erpInboundOrder.other_cost}
-            onChange={handleInputChange}
-          />
-          <TextField
-            size="small"
-            type="number"
-            label={t("page.erp.purchase.inbound.title.settlement.account")}
-            name='settlement_account_id'
-            value={erpInboundOrder.settlement_account_id}
-            onChange={handleInputChange}
-          />
+        <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '100%' } }}>
+          <Grid container rowSpacing={2} columnSpacing={4} sx={{ '& .MuiGrid-root': { display: 'flex', justifyContent: 'start', alignItems: 'center' } }}>
+            <Grid size={size}>
+              <Stack direction="row" spacing={2} sx={{ display: "flex", alignItems: "center" }}>
+                <Box>{t('page.erp.purchase.order.title.order.number')}</Box>
+                <Box>{erpInboundOrder && <CustomizedCopyableText text={erpInboundOrder.order_number} sx={{
+                  fontSize: '0.75rem',
+                  fontWeight: 500,
+                }} />}</Box>
+              </Stack>
+            </Grid>
+            <Grid size={size}>
+              <Stack direction="row" spacing={2} sx={{ display: "flex", alignItems: "center" }}>
+                <Box>{t('page.erp.purchase.inbound.title.purchase')}</Box>
+                <Box>{erpPurchaseOrder && <CustomizedCopyableText text={erpPurchaseOrder.order_number} sx={{
+                  fontSize: '0.75rem',
+                  fontWeight: 500,
+                }} />}</Box>
+              </Stack>
+            </Grid>
+            <Grid size={size}>
+              <Stack direction="row" spacing={2} sx={{ display: "flex", alignItems: "center" }}>
+                <Box>{t('page.erp.purchase.order.title.order.number')}</Box>
+                <Box>{erpPurchaseOrder && <CustomizedTag label={erpPurchaseOrder.supplier_name} />}</Box>
+              </Stack>
+            </Grid>
+            <Grid size={size}>
+              <FormControl sx={{ mt: 2, minWidth: 120, width: '100%' }}>
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <DateTimePicker
+                    name="inbound_date"
+                    label={t('page.erp.purchase.inbound.title.inbound.date')}
+                    value={inboundDate}
+                    onChange={handleDateTimeChange}
+                    slotProps={{
+                      textField: {
+                        size: 'small',
+                        required: true,
+                        error: !!errors.inbound_date,
+                        helperText: errors.inbound_date,
+                      },
+                      openPickerButton: {
+                        sx: { mr: -1, '& .MuiSvgIcon-root': { fontSize: '1rem' } },
+                      },
+                    }}
+                  />
+                </LocalizationProvider>
+              </FormControl>
+            </Grid>
+            <Grid size={size}>
+              <FormControl sx={{ mt: 2, minWidth: 120, width: '100%' }}>
+                <InputLabel size="small" id="settlement-account-select-label">{t('page.erp.purchase.inbound.title.settlement.account')}</InputLabel>
+                <Select
+                  size="small"
+                  labelId="settlement-account-select-label"
+                  name="settlement_account_id"
+                  value={erpInboundOrderRequest.settlement_account_id ?? ''}
+                  onChange={handleSelectChange}
+                  label={t('page.erp.purchase.inbound.title.settlement.account')}
+                >
+                  {settlementAccounts.map((item) => (
+                    <MenuItem key={item.id} value={item.id}>
+                      {item.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid size={size}>
+              <TextField
+                size="small"
+                type="number"
+                label={t("page.erp.purchase.inbound.title.discount.rate")}
+                name='discount_rate'
+                value={erpInboundOrderRequest.discount_rate}
+                onChange={handleInputChange}
+              />
+            </Grid>
+            <Grid size={size}>
+              <TextField
+                size="small"
+                type="number"
+                label={t("page.erp.purchase.inbound.title.other.cost")}
+                name='other_cost'
+                value={erpInboundOrderRequest.other_cost}
+                onChange={handleInputChange}
+              />
+            </Grid>
+            <Grid size={size}>
+              <TextField
+                size="small"
+                label={t("page.erp.purchase.inbound.title.remarks")}
+                name='remarks'
+                value={erpInboundOrderRequest.remarks}
+                onChange={handleInputChange}
+              />
+            </Grid>
+          </Grid>
         </FormControl>
+
+        <Typography variant="body1" sx={{ mt: 3, fontSize: '1rem', fontWeight: 500 }}>
+          {t('page.erp.purchase.order.title.check.list')}
+        </Typography>
+        <Card variant="outlined" sx={{ width: '100%', mt: 1, p: 2 }}>
+          <Box sx={{ display: 'table', width: '100%', "& .table-row": { display: 'table-row', "& .table-cell": { display: 'table-cell', padding: 1, textAlign: 'center', } } }}>
+            <Box className='table-row'>
+              <Box className='table-cell' sx={{ width: 50 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.no')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.inbound.detail.title.warehouse')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.remarks')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.product')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.barcode')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.unit')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 200 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.remarks')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 150 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.quantity')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 150 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.unit.price')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.subtotal')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.tax.rate')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.tax')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.tax.total')}</Typography></Box>
+            </Box>
+            {erpInboundOrderRequest && erpInboundOrderRequest.details && erpInboundOrderRequest.details.map((item, index) => {
+              let purchaseDetail = undefined;
+              if (erpPurchaseOrderDetailMap && item.purchase_detail_id && erpPurchaseOrderDetailMap.get(item.purchase_detail_id) && erpPurchaseOrderDetailMap.get(item.purchase_detail_id)) {
+                purchaseDetail = erpPurchaseOrderDetailMap && item.purchase_detail_id && erpPurchaseOrderDetailMap.get(item.purchase_detail_id) && erpPurchaseOrderDetailMap.get(item.purchase_detail_id)
+              }
+              return (
+                <Box className='table-row' key={index}>
+                  <Box className='table-cell' sx={{ width: 50, verticalAlign: 'middle' }}><Typography variant="body1">{index + 1}</Typography></Box>
+                  <Box className='table-cell' sx={{ width: 100 }}>
+                    <FormControl sx={{ minWidth: 120, width: '100%' }}>
+                      <Select
+                        size="small"
+                        name="warehouse_id"
+                        value={item.warehouse_id}
+                        disabled
+                      >
+                        {warehouses.map((warehouse) => (
+                          <MenuItem key={warehouse.id} value={warehouse.id}>
+                            {warehouse.name}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  </Box>
+                  <Box className='table-cell' sx={{ width: 50 }}>
+                    <TextField
+                      size="small"
+                      name="remarks"
+                      defaultValue={item.remarks}
+                      disabled
+                    />
+                  </Box>
+                  <Box className='table-cell' sx={{ width: 50 }}>
+                    <TextField size="small" value={purchaseDetail && purchaseDetail.product_name} disabled />
+                  </Box>
+                  <Box className='table-cell' sx={{ width: 50 }}>
+                    <TextField size="small" value={purchaseDetail && purchaseDetail.product_barcode} disabled />
+                  </Box>
+                  <Box className='table-cell' sx={{ width: 50 }}>
+                    <TextField size="small" value={purchaseDetail && purchaseDetail.product_unit_name} disabled />
+                  </Box>
+                  <Box className='table-cell' sx={{ width: 50 }}>
+                    <TextField size="small" value={item.remarks} disabled />
+                  </Box>
+                  <Box className='table-cell' sx={{ width: 50 }}>
+                    <TextField size="small" value={purchaseDetail && purchaseDetail.quantity} disabled />
+                  </Box>
+                  <Box className='table-cell' sx={{ width: 50 }}>
+                    <TextField size="small" value={purchaseDetail && purchaseDetail.unit_price} disabled />
+                  </Box>
+                  <Box className='table-cell' sx={{ width: 50 }}>
+                    <TextField size="small" value={purchaseDetail && purchaseDetail.subtotal} disabled />
+                  </Box>
+                  <Box className='table-cell' sx={{ width: 50 }}>
+                    <TextField size="small" value={purchaseDetail && purchaseDetail.tax_rate} disabled />
+                  </Box>
+                  <Box className='table-cell' sx={{ width: 50 }}>
+                    <TextField size="small" value={purchaseDetail ? (purchaseDetail.quantity * purchaseDetail.unit_price * purchaseDetail.tax_rate / 100) : 0} disabled />
+                  </Box>
+                  <Box className='table-cell' sx={{ width: 50 }}>
+                    <TextField size="small" value={purchaseDetail ? purchaseDetail.quantity * purchaseDetail.unit_price * (1 + purchaseDetail.tax_rate / 100) : 0} disabled />
+                  </Box>
+                </Box>
+              )
+            })}
+          </Box>
+        </Card>
+
+        <Typography variant="body1" sx={{ mt: 3, fontSize: '1rem', fontWeight: 500 }}>
+          {t('page.erp.purchase.order.title.attachment')}
+        </Typography>
+        <Card variant="outlined" sx={{ width: '100%', mt: 1, p: 2 }}>
+          <Grid container rowSpacing={2} columnSpacing={4} sx={{ '& .MuiGrid-root': { display: 'flex', justifyContent: 'center', alignItems: 'center' } }}>
+            {erpInboundOrderRequest.attachments.map((item, index) => (
+              <Grid key={index} size={{ xs: 12, md: 4 }}>
+                <CustomizedFileUpload
+                  id={'file-upload-' + index}
+                  accept=".jpg,jpeg,.png"
+                  maxSize={100}
+                  onChange={(files, action) => handleFileChange(files, action, index)}
+                  file={item.file}
+                  width={fileWidth}
+                  height={fileHeight}
+                  download={downloadImages?.get(item.file_id!)}
+                >
+                </CustomizedFileUpload>
+              </Grid>
+            ))}
+            <Grid size={{ xs: 12, md: 4 }}>
+              <CustomizedFileUpload
+                id={'file-upload-' + erpInboundOrderRequest.attachments.length}
+                accept=".jpg,jpeg,.png"
+                maxSize={100}
+                onChange={(file, action) => handleFileChange(file, action, erpInboundOrderRequest.attachments.length)}
+                width={fileWidth}
+                height={fileHeight}
+              >
+              </CustomizedFileUpload>
+            </Grid>
+          </Grid>
+        </Card>
       </Box>
     </CustomizedDialog>
   )

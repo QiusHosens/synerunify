@@ -40,6 +40,19 @@ export interface ErpInboundOrderDetailResponse {
   create_time: string; // 创建时间
 }
 
+export interface ErpInboundOrderDetailBaseResponse {
+  id: number; // 入库详情ID
+  order_id: number; // 入库订单ID
+  purchase_detail_id: number; // 采购订单详情ID
+  warehouse_id: number; // 仓库ID
+  product_id: number; // 产品ID
+  quantity: number; // 数量
+  unit_price: number; // 单价
+  subtotal: number; // 小计
+  tax_rate: number; // 税率,精确到万分位
+  remarks: string; // 备注
+}
+
 export interface ErpInboundOrderDetailQueryCondition extends PaginatedRequest {}
 
 export const createErpInboundOrderDetail = (
