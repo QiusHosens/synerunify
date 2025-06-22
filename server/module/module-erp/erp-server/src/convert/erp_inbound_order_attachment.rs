@@ -1,7 +1,7 @@
 use sea_orm::{Set, NotSet};
 use crate::model::erp_inbound_order_attachment::{self, Model as ErpInboundOrderAttachment, ActiveModel as ErpInboundOrderAttachmentActiveModel};
 use erp_model::request::erp_inbound_order_attachment::{CreateErpInboundOrderAttachmentRequest, UpdateErpInboundOrderAttachmentRequest};
-use erp_model::response::erp_inbound_order_attachment::{ErpInboundOrderAttachmentBaseResponse, ErpInboundOrderAttachmentResponse};
+use erp_model::response::erp_inbound_order_attachment::{ErpInboundOrderAttachmentBaseResponse, ErpInboundOrderAttachmentInfoResponse, ErpInboundOrderAttachmentResponse};
 
 pub fn create_request_to_model(request: &CreateErpInboundOrderAttachmentRequest) -> ErpInboundOrderAttachmentActiveModel {
     ErpInboundOrderAttachmentActiveModel {
@@ -47,6 +47,16 @@ pub fn model_to_response(model: ErpInboundOrderAttachment) -> ErpInboundOrderAtt
 
 pub fn model_to_base_response(model: ErpInboundOrderAttachment, file_name: Option<String>) -> ErpInboundOrderAttachmentBaseResponse {
     ErpInboundOrderAttachmentBaseResponse { 
+        id: model.id,
+        file_id: model.file_id,
+        remarks: model.remarks,
+
+        file_name,
+    }
+}
+
+pub fn model_to_info_response(model: ErpInboundOrderAttachment, file_name: Option<String>) -> ErpInboundOrderAttachmentInfoResponse {
+    ErpInboundOrderAttachmentInfoResponse { 
         id: model.id,
         file_id: model.file_id,
         remarks: model.remarks,

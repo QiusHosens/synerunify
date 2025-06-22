@@ -2,6 +2,7 @@ import { Box, Button } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { DataGrid, GridCallbackDetails, GridColDef, GridFilterModel, GridRenderCellParams, GridSortModel } from '@mui/x-data-grid';
+import ViewIcon from '@/assets/image/svg/view.svg';
 import EditIcon from '@/assets/image/svg/edit.svg';
 import DeleteIcon from '@/assets/image/svg/delete.svg';
 import { ErpInboundOrderQueryCondition, ErpInboundOrderResponse, pagePurchaseErpInboundOrder } from '@/api';
@@ -11,6 +12,7 @@ import ErpInboundOrderDelete from './Delete';
 import { useHomeStore } from '@/store';
 import CustomizedAutoMore from '@/components/CustomizedAutoMore';
 import CustomizedCopyableText from '@/components/CustomizedCopyableText';
+import ErpInboundOrderInfo from './Info';
 
 export default function ErpInboundOrder() {
   const { t } = useTranslation();
@@ -26,6 +28,7 @@ export default function ErpInboundOrder() {
   const [sortModel, setSortModel] = useState<GridSortModel>([]);
   const [filterModel, setFilterModel] = useState<GridFilterModel>();
 
+  const viewErpInboundOrder = useRef(null);
   const addErpInboundOrder = useRef(null);
   const editErpInboundOrder = useRef(null);
   const deleteErpInboundOrder = useRef(null);
@@ -44,10 +47,10 @@ export default function ErpInboundOrder() {
         )
       },
       {
-        field: 'purchase_order_number', 
-        headerName: t("page.erp.purchase.inbound.title.purchase"), 
-        flex: 1.4, 
-        minWidth: 100, 
+        field: 'purchase_order_number',
+        headerName: t("page.erp.purchase.inbound.title.purchase"),
+        flex: 1.4,
+        minWidth: 100,
         renderCell: (params: GridRenderCellParams) => (
           <CustomizedCopyableText
             text={params.row.purchase_order_number}
@@ -69,6 +72,13 @@ export default function ErpInboundOrder() {
         minWidth: 100,
         renderCell: (params: GridRenderCellParams) => (
           <CustomizedAutoMore>
+            {hasOperatePermission('erp:purchase:inbound:get') && <Button
+              size="small"
+              variant='customOperate'
+              title={t('global.operate.view') + t('global.page.erp.purchase.order')}
+              startIcon={<ViewIcon />}
+              onClick={() => handleClickOpenView(params.row)}
+            />}
             {hasOperatePermission('erp:purchase:inbound:edit') && <Button
               size="small"
               variant='customOperate'
@@ -96,6 +106,10 @@ export default function ErpInboundOrder() {
     setRecords(result.list);
     setTotal(result.total);
   };
+
+  const handleClickOpenView = (erpInboundOrder: ErpInboundOrderResponse) => {
+    (viewErpInboundOrder.current as any).show(erpInboundOrder);
+  }
 
   const handleClickOpenAdd = () => {
     (addErpInboundOrder.current as any).show();
@@ -161,6 +175,7 @@ export default function ErpInboundOrder() {
           }));
         }}
       />
+      <ErpInboundOrderInfo ref={viewErpInboundOrder} />
       <ErpInboundOrderAdd ref={addErpInboundOrder} onSubmit={refreshData} />
       <ErpInboundOrderEdit ref={editErpInboundOrder} onSubmit={refreshData} />
       <ErpInboundOrderDelete ref={deleteErpInboundOrder} onSubmit={refreshData} />

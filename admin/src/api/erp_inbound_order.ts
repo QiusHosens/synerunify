@@ -11,6 +11,7 @@ const apis = {
   delete: "/erp/erp_inbound_order/delete", // 删除
   get_base_purchase: "/erp/erp_inbound_order/get_base_purchase", // 单条查询
   get_base_other: "/erp/erp_inbound_order/get_base_other", // 单条查询
+  get_info_purchase: "/erp/erp_inbound_order/get_info_purchase", // 单条查询
   list: "/erp/erp_inbound_order/list", // 列表查询
   page_purchase: "/erp/erp_inbound_order/page_purchase", // 分页查询采购入库
   page_other: "/erp/erp_inbound_order/page_other", // 分页查询其他入库
@@ -65,6 +66,8 @@ export interface ErpInboundOrderBaseResponse {
   other_cost: number; // 其他费用
   settlement_account_id: number; // 结算账户ID
 
+  settlement_account_name?: string; // 结算账户
+
   details: ErpInboundOrderDetailBaseResponse[]; // 入库采购产品仓库列表
   attachments: ErpInboundOrderAttachmentBaseResponse[]; // 入库附件列表
 }
@@ -109,6 +112,12 @@ export const getBaseOtherErpInboundOrder = (
   id: number
 ): Promise<ErpInboundOrderBaseResponse> => {
   return api.get<ErpInboundOrderBaseResponse>(`${apis.get_base_other}/${id}`);
+};
+
+export const getInfoPurchaseErpInboundOrder = (
+  id: number
+): Promise<ErpInboundOrderBaseResponse> => {
+  return api.get<ErpInboundOrderBaseResponse>(`${apis.get_info_purchase}/${id}`);
 };
 
 export const listErpInboundOrder = (): Promise<
