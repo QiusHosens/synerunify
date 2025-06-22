@@ -10,6 +10,7 @@ import ErpInboundOrderEdit from './Edit';
 import ErpInboundOrderDelete from './Delete';
 import { useHomeStore } from '@/store';
 import CustomizedAutoMore from '@/components/CustomizedAutoMore';
+import CustomizedCopyableText from '@/components/CustomizedCopyableText';
 
 export default function ErpInboundOrder() {
   const { t } = useTranslation();
@@ -31,8 +32,28 @@ export default function ErpInboundOrder() {
 
   const columns: GridColDef[] = useMemo(
     () => [
-      { field: 'order_number', headerName: t("page.erp.purchase.inbound.title.order.number"), flex: 1.4, minWidth: 100 },
-      { field: 'purchase_order_number', headerName: t("page.erp.purchase.inbound.title.purchase"), flex: 1.4, minWidth: 100 },
+      {
+        field: 'order_number',
+        headerName: t("page.erp.purchase.inbound.title.order.number"),
+        flex: 1.4,
+        minWidth: 100,
+        renderCell: (params: GridRenderCellParams) => (
+          <CustomizedCopyableText
+            text={params.row.order_number}
+          />
+        )
+      },
+      {
+        field: 'purchase_order_number', 
+        headerName: t("page.erp.purchase.inbound.title.purchase"), 
+        flex: 1.4, 
+        minWidth: 100, 
+        renderCell: (params: GridRenderCellParams) => (
+          <CustomizedCopyableText
+            text={params.row.purchase_order_number}
+          />
+        )
+      },
       { field: 'inbound_date', headerName: t("page.erp.purchase.inbound.title.inbound.date"), flex: 1, minWidth: 100 },
       { field: 'settlement_account_name', headerName: t("page.erp.purchase.inbound.title.settlement.account"), flex: 1, minWidth: 100 },
       { field: 'discount_rate', headerName: t("page.erp.purchase.inbound.title.discount.rate"), flex: 1, minWidth: 100 },

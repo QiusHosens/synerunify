@@ -69,6 +69,8 @@
   "global.operate.delete": "删除",
   "global.operate.more": "更多操作",
   "global.operate.select": "选择",
+  "global.operate.copy": "复制",
+  "global.operate.copied": "已复制",
 
   "global.title.status": "状态",
   "global.title.create.time": "创建时间",

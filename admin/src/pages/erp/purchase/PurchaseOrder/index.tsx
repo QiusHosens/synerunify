@@ -17,6 +17,7 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import ErpPurchaseOrderCancel from './Cancel';
 import ErpPurchaseOrderReceived from './Received';
 import CustomizedDictTag from '@/components/CustomizedDictTag';
+import CustomizedCopyableText from '@/components/CustomizedCopyableText';
 
 export default function ErpPurchaseOrder() {
   const { t } = useTranslation();
@@ -41,7 +42,17 @@ export default function ErpPurchaseOrder() {
 
   const columns: GridColDef[] = useMemo(
     () => [
-      { field: 'order_number', headerName: t("page.erp.purchase.order.title.order.number"), flex: 1.4, minWidth: 100 },
+      {
+        field: 'order_number',
+        headerName: t("page.erp.purchase.order.title.order.number"),
+        flex: 1.4,
+        minWidth: 100,
+        renderCell: (params: GridRenderCellParams) => (
+          <CustomizedCopyableText
+            text={params.row.order_number}
+          />
+        )
+      },
       { field: 'supplier_name', headerName: t("page.erp.purchase.order.title.supplier"), flex: 1, minWidth: 100 },
       { field: 'purchase_date', headerName: t("page.erp.purchase.order.title.purchase.date"), flex: 1.4, minWidth: 100 },
       { field: 'total_amount', headerName: t("page.erp.purchase.order.title.total.amount"), flex: 1, minWidth: 100 },
@@ -50,10 +61,10 @@ export default function ErpPurchaseOrder() {
       { field: 'deposit', headerName: t("page.erp.purchase.order.title.deposit"), flex: 1, minWidth: 100 },
       { field: 'remarks', headerName: t("page.erp.purchase.order.title.remarks"), flex: 1, minWidth: 100 },
       {
-        field: 'order_status', 
-        headerName: t("page.erp.purchase.order.title.order.status"), 
-        flex: 1, 
-        minWidth: 100, 
+        field: 'order_status',
+        headerName: t("page.erp.purchase.order.title.order.status"),
+        flex: 1,
+        minWidth: 100,
         renderCell: (params: GridRenderCellParams) => (
           <>
             <CustomizedDictTag type='purchase_order_status' value={params.row.order_status} />
