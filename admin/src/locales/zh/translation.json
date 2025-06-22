@@ -108,6 +108,9 @@
   "global.page.erp.sale.customer": "客户",
   "global.page.erp.purchase.order": "采购订单",
   "global.page.erp.purchase.inbound": "采购入库",
+  "global.page.erp.sale.order": "销售订单",
+
+  "global.order.placeholder.order.number": "订单编号,由系统自动生成",
 
   "page.login.title.username": "用户名",
   "page.login.title.password": "密码",
@@ -419,15 +422,28 @@
   "page.erp.purchase.inbound.title.other.cost": "其他费用",
   "page.erp.purchase.inbound.title.settlement.account": "结算账户",
   "page.erp.purchase.inbound.placeholder.order.number": "订单编号,由系统自动生成",
-  "page.erp.purchase.inbound.error.supplier": "请输入供应商",
-  "page.erp.purchase.inbound.error.purchase": "请输入采购订单",
+  "page.erp.purchase.inbound.error.supplier": "请选择供应商",
+  "page.erp.purchase.inbound.error.purchase": "请选择采购订单",
   "page.erp.purchase.inbound.error.user": "请输入用户ID",
-  "page.erp.purchase.inbound.error.inbound.date": "请输入入库日期",
+  "page.erp.purchase.inbound.error.inbound.date": "请选择入库日期",
   "page.erp.purchase.inbound.operate.select": "选择",
   "page.erp.purchase.inbound.title.purchase.list": "采购订单列表",
 
   "page.erp.purchase.inbound.title.check.list": "入库产品清单",
   "page.erp.purchase.inbound.title.attachment": "入库附件",
   "page.erp.purchase.inbound.detail.title.warehouse": "仓库",
-  "page.erp.purchase.inbound.detail.error.warehouse": "请输入仓库ID"
+  "page.erp.purchase.inbound.detail.error.warehouse": "请选择仓库",
+
+  "page.erp.sale.order.title.order.number": "订单编号",
+  "page.erp.sale.order.title.customer": "客户",
+  "page.erp.sale.order.title.order.date": "订单日期",
+  "page.erp.sale.order.title.total.amount": "总金额",
+  "page.erp.sale.order.title.order.status": "订单状态",
+  "page.erp.sale.order.title.discount.rate": "优惠率",
+  "page.erp.sale.order.title.settlement.account": "结算账户",
+  "page.erp.sale.order.title.deposit": "定金",
+  "page.erp.sale.order.title.remarks": "备注",
+  "page.erp.sale.order.error.customer.id": "请选择客户",
+  "page.erp.sale.order.error.order.date": "请选择订单日期",
+  "page.erp.sale.order.error.total.amount": "请输入总金额"
 }

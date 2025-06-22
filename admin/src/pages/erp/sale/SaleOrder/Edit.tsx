@@ -5,8 +5,10 @@ import { DialogProps } from '@mui/material/Dialog';
 import { ErpSalesOrderRequest, ErpSalesOrderResponse, updateErpSalesOrder } from '@/api';
 import CustomizedDialog from '@/components/CustomizedDialog';
 
-interface FormErrors { 
+interface FormErrors {
   order_number?: string; // 订单编号
+  customer_id?: string; // 客户ID
+  user_id?: string; // 用户ID
   order_date?: string; // 订单日期
   total_amount?: string; // 总金额
   order_status?: string; // 订单状态 (0=pending, 1=completed, 2=cancelled)
@@ -25,7 +27,7 @@ const ErpSalesOrderEdit = forwardRef(({ onSubmit }: ErpSalesOrderEditProps, ref)
   const [maxWidth] = useState<DialogProps['maxWidth']>('sm');
   const [erpSalesOrder, setErpSalesOrder] = useState<ErpSalesOrderRequest>({
     id: 0,
-    order_number: '',
+    order_number: 0,
     customer_id: 0,
     user_id: 0,
     order_date: '',
@@ -34,9 +36,10 @@ const ErpSalesOrderEdit = forwardRef(({ onSubmit }: ErpSalesOrderEditProps, ref)
     discount_rate: 0,
     settlement_account_id: 0,
     deposit: 0,
+    remarks: '',
     department_code: '',
     department_id: 0,
-    });
+  });
   const [errors, setErrors] = useState<FormErrors>({});
 
   useImperativeHandle(ref, () => ({
@@ -51,31 +54,39 @@ const ErpSalesOrderEdit = forwardRef(({ onSubmit }: ErpSalesOrderEditProps, ref)
 
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
-    
-    if (!formValues.order_number.trim()) {
-      newErrors.order_number = t('page.post.error.order_number');
+
+    if (!erpSalesOrder.order_number && erpSalesOrder.order_number != 0) {
+      newErrors.order_number = t('page.erp.sale.order.error.order_number');
     }
-    
-    if (!formValues.order_date.trim()) {
-      newErrors.order_date = t('page.post.error.order_date');
+
+    if (!erpSalesOrder.customer_id && erpSalesOrder.customer_id != 0) {
+      newErrors.customer_id = t('page.erp.sale.order.error.customer_id');
     }
-    
-    if (!formValues.total_amount && formValues.total_amount != 0) {
-      newErrors.total_amount = t('page.post.error.total_amount');
+
+    if (!erpSalesOrder.user_id && erpSalesOrder.user_id != 0) {
+      newErrors.user_id = t('page.erp.sale.order.error.user_id');
     }
-    
-    if (!formValues.order_status && formValues.order_status != 0) {
-      newErrors.order_status = t('page.post.error.order_status');
+
+    if (!erpSalesOrder.order_date.trim()) {
+      newErrors.order_date = t('page.erp.sale.order.error.order_date');
     }
-    
-    if (!formValues.department_code.trim()) {
-      newErrors.department_code = t('page.post.error.department_code');
+
+    if (!erpSalesOrder.total_amount && erpSalesOrder.total_amount != 0) {
+      newErrors.total_amount = t('page.erp.sale.order.error.total_amount');
     }
-    
-    if (!formValues.department_id && formValues.department_id != 0) {
-      newErrors.department_id = t('page.post.error.department_id');
+
+    if (!erpSalesOrder.order_status && erpSalesOrder.order_status != 0) {
+      newErrors.order_status = t('page.erp.sale.order.error.order_status');
     }
-    
+
+    if (!erpSalesOrder.department_code.trim()) {
+      newErrors.department_code = t('page.erp.sale.order.error.department_code');
+    }
+
+    if (!erpSalesOrder.department_id && erpSalesOrder.department_id != 0) {
+      newErrors.department_id = t('page.erp.sale.order.error.department_id');
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -146,7 +157,7 @@ const ErpSalesOrderEdit = forwardRef(({ onSubmit }: ErpSalesOrderEditProps, ref)
     <CustomizedDialog
       open={open}
       onClose={handleClose}
-      title={t('global.operate.edit') + t('global.page.post')}
+      title={t('global.operate.edit') + t('global.page.erp.sale.order')}
       maxWidth={maxWidth}
       actions={
         <>
@@ -158,44 +169,53 @@ const ErpSalesOrderEdit = forwardRef(({ onSubmit }: ErpSalesOrderEditProps, ref)
       <Box
         noValidate
         component="form"
-        sx={ {display: 'flex',
+        sx={{
+          display: 'flex',
           flexDirection: 'column',
           m: 'auto',
-          width: 'fit-content',} }
+          width: 'fit-content',
+        }}
       >
-        <FormControl sx={ {minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' }} }>
+        <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' } }}>
           <TextField
             required
             size="small"
-            label={t("page.post.title.order_number")}
+            type="number"
+            label={t("page.erp.sale.order.title.order_number")}
             name='order_number'
-            value={ erpSalesOrder.order_number}
+            value={erpSalesOrder.order_number}
             onChange={handleInputChange}
             error={!!errors.order_number}
             helperText={errors.order_number}
           />
           <TextField
+            required
             size="small"
             type="number"
-            label={t("page.post.title.customer_id")}
+            label={t("page.erp.sale.order.title.customer_id")}
             name='customer_id'
-            value={ erpSalesOrder.customer_id}
+            value={erpSalesOrder.customer_id}
             onChange={handleInputChange}
-          />
-          <TextField
-            size="small"
-            type="number"
-            label={t("page.post.title.user_id")}
-            name='user_id'
-            value={ erpSalesOrder.user_id}
-            onChange={handleInputChange}
+            error={!!errors.customer_id}
+            helperText={errors.customer_id}
           />
           <TextField
             required
             size="small"
-            label={t("page.post.title.order_date")}
+            type="number"
+            label={t("page.erp.sale.order.title.user_id")}
+            name='user_id'
+            value={erpSalesOrder.user_id}
+            onChange={handleInputChange}
+            error={!!errors.user_id}
+            helperText={errors.user_id}
+          />
+          <TextField
+            required
+            size="small"
+            label={t("page.erp.sale.order.title.order_date")}
             name='order_date'
-            value={ erpSalesOrder.order_date}
+            value={erpSalesOrder.order_date}
             onChange={handleInputChange}
             error={!!errors.order_date}
             helperText={errors.order_date}
@@ -204,9 +224,9 @@ const ErpSalesOrderEdit = forwardRef(({ onSubmit }: ErpSalesOrderEditProps, ref)
             required
             size="small"
             type="number"
-            label={t("page.post.title.total_amount")}
+            label={t("page.erp.sale.order.title.total_amount")}
             name='total_amount'
-            value={ erpSalesOrder.total_amount}
+            value={erpSalesOrder.total_amount}
             onChange={handleInputChange}
             error={!!errors.total_amount}
             helperText={errors.total_amount}
@@ -215,9 +235,9 @@ const ErpSalesOrderEdit = forwardRef(({ onSubmit }: ErpSalesOrderEditProps, ref)
             required
             size="small"
             type="number"
-            label={t("page.post.title.order_status")}
+            label={t("page.erp.sale.order.title.order_status")}
             name='order_status'
-            value={ erpSalesOrder.order_status}
+            value={erpSalesOrder.order_status}
             onChange={handleInputChange}
             error={!!errors.order_status}
             helperText={errors.order_status}
@@ -225,33 +245,40 @@ const ErpSalesOrderEdit = forwardRef(({ onSubmit }: ErpSalesOrderEditProps, ref)
           <TextField
             size="small"
             type="number"
-            label={t("page.post.title.discount_rate")}
+            label={t("page.erp.sale.order.title.discount_rate")}
             name='discount_rate'
-            value={ erpSalesOrder.discount_rate}
+            value={erpSalesOrder.discount_rate}
             onChange={handleInputChange}
           />
           <TextField
             size="small"
             type="number"
-            label={t("page.post.title.settlement_account_id")}
+            label={t("page.erp.sale.order.title.settlement_account_id")}
             name='settlement_account_id'
-            value={ erpSalesOrder.settlement_account_id}
+            value={erpSalesOrder.settlement_account_id}
             onChange={handleInputChange}
           />
           <TextField
             size="small"
             type="number"
-            label={t("page.post.title.deposit")}
+            label={t("page.erp.sale.order.title.deposit")}
             name='deposit'
-            value={ erpSalesOrder.deposit}
+            value={erpSalesOrder.deposit}
+            onChange={handleInputChange}
+          />
+          <TextField
+            size="small"
+            label={t("page.erp.sale.order.title.remarks")}
+            name='remarks'
+            value={erpSalesOrder.remarks}
             onChange={handleInputChange}
           />
           <TextField
             required
             size="small"
-            label={t("page.post.title.department_code")}
+            label={t("page.erp.sale.order.title.department_code")}
             name='department_code'
-            value={ erpSalesOrder.department_code}
+            value={erpSalesOrder.department_code}
             onChange={handleInputChange}
             error={!!errors.department_code}
             helperText={errors.department_code}
@@ -260,14 +287,14 @@ const ErpSalesOrderEdit = forwardRef(({ onSubmit }: ErpSalesOrderEditProps, ref)
             required
             size="small"
             type="number"
-            label={t("page.post.title.department_id")}
+            label={t("page.erp.sale.order.title.department_id")}
             name='department_id'
-            value={ erpSalesOrder.department_id}
+            value={erpSalesOrder.department_id}
             onChange={handleInputChange}
             error={!!errors.department_id}
             helperText={errors.department_id}
           />
-          </FormControl>
+        </FormControl>
       </Box>
     </CustomizedDialog>
   )

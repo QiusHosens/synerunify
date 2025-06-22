@@ -1,6 +1,6 @@
-import { Box, Button, Switch } from '@mui/material';
+import { Box, Button } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { DataGrid, GridCallbackDetails, GridColDef, GridFilterModel, GridRenderCellParams, GridSortModel } from '@mui/x-data-grid';
 import EditIcon from '@/assets/image/svg/edit.svg';
 import DeleteIcon from '@/assets/image/svg/delete.svg';
@@ -9,6 +9,9 @@ import ErpSalesOrderAdd from './Add';
 import ErpSalesOrderEdit from './Edit';
 import ErpSalesOrderDelete from './Delete';
 import { useHomeStore } from '@/store';
+import CustomizedAutoMore from '@/components/CustomizedAutoMore';
+import CustomizedCopyableText from '@/components/CustomizedCopyableText';
+import CustomizedDictTag from '@/components/CustomizedDictTag';
 
 export default function ErpSalesOrder() {
   const { t } = useTranslation();
@@ -30,19 +33,36 @@ export default function ErpSalesOrder() {
 
   const columns: GridColDef[] = useMemo(
     () => [
-      { field: 'order_number', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'customer_id', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'user_id', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'order_date', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'total_amount', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'order_status', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'discount_rate', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'settlement_account_id', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'deposit', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'department_code', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'department_id', headerName: t("page."), flex: 1, minWidth: 100 },
-      
-      { field: 'create_time', headerName: t("page.post.title.create.time"), flex: 1, minWidth: 180 },
+      {
+        field: 'order_number',
+        headerName: t("page.erp.sale.order.title.order.number"),
+        flex: 1.4,
+        minWidth: 100,
+        renderCell: (params: GridRenderCellParams) => (
+          <CustomizedCopyableText
+            text={params.row.order_number}
+          />
+        )
+      },
+      { field: 'customer_id', headerName: t("page.erp.sale.order.title.customer"), flex: 1, minWidth: 100 },
+      { field: 'order_date', headerName: t("page.erp.sale.order.title.order.date"), flex: 1.4, minWidth: 100 },
+      { field: 'total_amount', headerName: t("page.erp.sale.order.title.total.amount"), flex: 1, minWidth: 100 },
+      { field: 'discount_rate', headerName: t("page.erp.sale.order.title.discount.rate"), flex: 1, minWidth: 100 },
+      { field: 'settlement_account_id', headerName: t("page.erp.sale.order.title.settlement.account"), flex: 1, minWidth: 100 },
+      { field: 'deposit', headerName: t("page.erp.sale.order.title.deposit"), flex: 1, minWidth: 100 },
+      { field: 'remarks', headerName: t("page.erp.sale.order.title.remarks"), flex: 1, minWidth: 100 },
+      {
+        field: 'order_status',
+        headerName: t("page.erp.sale.order.title.order.status"),
+        flex: 1,
+        minWidth: 100,
+        renderCell: (params: GridRenderCellParams) => (
+          <>
+            <CustomizedDictTag type='sale_order_status' value={params.row.order_status} />
+          </>
+        )
+      },
+      { field: 'create_time', headerName: t("global.title.create.time"), flex: 1, minWidth: 180 },
       {
         field: 'actions',
         sortable: false,
@@ -51,23 +71,23 @@ export default function ErpSalesOrder() {
         flex: 1,
         minWidth: 100,
         renderCell: (params: GridRenderCellParams) => (
-          <Box sx={ { height: '100%', display: 'flex', gap: 1, alignItems: 'center' } }>
-            {hasOperatePermission('system:post:edit') && <Button
+          <CustomizedAutoMore>
+            {hasOperatePermission('erp:sale:order:edit') && <Button
               size="small"
               variant='customOperate'
-              title={t('page.post.operate.edit')}
+              title={t('global.operate.edit') + t('global.page.erp.sale.order')}
               startIcon={<EditIcon />}
               onClick={() => handleClickOpenEdit(params.row)}
             />}
-            {hasOperatePermission('system:post:delete') && <Button
-              sx={ {color: 'error.main'} }
+            {hasOperatePermission('erp:sale:order:delete') && <Button
+              sx={{ color: 'error.main' }}
               size="small"
               variant='customOperate'
-              title={t('page.post.operate.delete')}
+              title={t('global.operate.delete') + t('global.page.erp.sale.order')}
               startIcon={<DeleteIcon />}
               onClick={() => handleClickOpenDelete(params.row)}
             />}
-          </Box>
+          </CustomizedAutoMore>
         ),
       },
     ],
@@ -115,10 +135,10 @@ export default function ErpSalesOrder() {
   };
 
   return (
-    <Box sx={ {height: '100%', display: 'flex', flexDirection: 'column'} }>
-      <Box sx={ {mb: 2, display: 'flex', justifyContent: 'space-between'} }>
+    <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+      <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between' }}>
         <Box></Box>
-        {hasOperatePermission('system:post:add') && <Button variant="customContained" onClick={handleClickOpenAdd}>
+        {hasOperatePermission('erp:sale:order:add') && <Button variant="customContained" onClick={handleClickOpenAdd}>
           {t('global.operate.add')}
         </Button>}
       </Box>
@@ -135,7 +155,7 @@ export default function ErpSalesOrder() {
         filterModel={filterModel}
         onFilterModelChange={handleFilterModelChange}
         pageSizeOptions={[10, 20, 50, 100]}
-        paginationModel={ {page: condition.page - 1, pageSize: condition.size} }
+        paginationModel={{ page: condition.page - 1, pageSize: condition.size }}
         onPaginationModelChange={(model) => {
           setCondition((prev) => ({
             ...prev,

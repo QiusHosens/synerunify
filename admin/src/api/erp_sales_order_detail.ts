@@ -1,5 +1,6 @@
 import { PaginatedRequest, PaginatedResponse } from '@/base/page';
 import { api } from '@/utils/request';
+import { ErpProductResponse } from './erp_product';
 
 const apis = {
   create: '/erp/erp_sales_order_detail/create', // 新增
@@ -11,16 +12,16 @@ const apis = {
 }
 
 export interface ErpSalesOrderDetailRequest {
-  id: number; // 订单详情ID
-  order_id: number; // 订单ID
+  id?: number; // 订单详情ID
+  order_id?: number; // 订单ID
   product_id: number; // 产品ID
   quantity: number; // 数量
   unit_price: number; // 单价
   subtotal: number; // 小计
   tax_rate: number; // 税率,精确到万分位
   remarks: string; // 备注
-  department_code: string; // 部门编码
-  department_id: number; // 部门ID
+
+  product?: ErpProductResponse;
 }
 
 export interface ErpSalesOrderDetailResponse {
@@ -38,6 +39,25 @@ export interface ErpSalesOrderDetailResponse {
   create_time: string; // 创建时间
   updater: number; // 更新者ID
   update_time: string; // 更新时间
+}
+
+export interface ErpSalesOrderDetailBaseResponse {
+  id: number; // 订单详情ID
+  order_id: number; // 订单ID
+  product_id: number; // 产品ID
+  quantity: number; // 数量
+  unit_price: number; // 单价
+  subtotal: number; // 小计
+  tax_rate: number; // 税率,精确到万分位
+  remarks: string; // 备注
+  department_code: string; // 部门编码
+  department_id: number; // 部门ID
+  creator: number; // 创建者ID
+  create_time: string; // 创建时间
+  updater: number; // 更新者ID
+  update_time: string; // 更新时间
+
+  product?: ErpProductResponse;
 }
 
 export interface ErpSalesOrderDetailQueryCondition extends PaginatedRequest {

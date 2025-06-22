@@ -30,9 +30,9 @@ pub struct CreateErpSalesOrderRequest {
 
     pub remarks: Option<String>, // 备注
 
-    pub sale_products: Vec<CreateErpSalesOrderDetailRequest>, // 销售的产品列表
+    pub details: Vec<CreateErpSalesOrderDetailRequest>, // 销售的产品列表
 
-    pub sale_attachment: Vec<CreateErpSalesOrderAttachmentRequest>, // 销售的附件列表
+    pub attachments: Vec<CreateErpSalesOrderAttachmentRequest>, // 销售的附件列表
     
 }
 
@@ -58,9 +58,9 @@ pub struct UpdateErpSalesOrderRequest {
 
     pub remarks: Option<String>, // 备注
 
-    pub sale_products: Vec<UpdateErpSalesOrderDetailRequest>, // 销售的产品列表
+    pub details: Vec<UpdateErpSalesOrderDetailRequest>, // 销售的产品列表
 
-    pub sale_attachment: Vec<UpdateErpSalesOrderAttachmentRequest>, // 销售的附件列表
+    pub attachments: Vec<UpdateErpSalesOrderAttachmentRequest>, // 销售的附件列表
     
 }
 

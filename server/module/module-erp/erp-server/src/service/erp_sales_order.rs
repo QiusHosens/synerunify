@@ -39,9 +39,9 @@ pub async fn create(db: &DatabaseConnection, login_user: LoginUserContext, reque
     // 创建订单
     let erp_sales_order = erp_sales_order.insert(&txn).await?;
     // 创建订单商品详情
-    erp_sales_order_detail::create_batch(&db, &txn, login_user.clone(), erp_sales_order.id, request.sale_products).await?;
+    erp_sales_order_detail::create_batch(&db, &txn, login_user.clone(), erp_sales_order.id, request.details).await?;
     // 创建订单文件
-    erp_sales_order_attachment::create_batch(&db, &txn, login_user, erp_sales_order.id, request.sale_attachment).await?;
+    erp_sales_order_attachment::create_batch(&db, &txn, login_user, erp_sales_order.id, request.attachments).await?;
     // 提交事务
     txn.commit().await.with_context(|| "Failed to commit transaction")?;
     Ok(erp_sales_order.id)
@@ -70,9 +70,9 @@ pub async fn update(db: &DatabaseConnection, login_user: LoginUserContext, reque
     // 修改订单
     erp_sale_order.update(&txn).await?;
     // 修改订单商品详情
-    erp_sales_order_detail::update_batch(&db, &txn, login_user.clone(), sale_order.clone(), request.sale_products).await?;
+    erp_sales_order_detail::update_batch(&db, &txn, login_user.clone(), sale_order.clone(), request.details).await?;
     // 修改订单文件
-    erp_sales_order_attachment::update_batch(&db, &txn, login_user, sale_order, request.sale_attachment).await?;
+    erp_sales_order_attachment::update_batch(&db, &txn, login_user, sale_order, request.attachments).await?;
     // 提交事务
     txn.commit().await.with_context(|| "Failed to commit transaction")?;
     Ok(())
