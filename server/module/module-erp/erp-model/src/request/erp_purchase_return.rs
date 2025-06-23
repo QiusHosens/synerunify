@@ -1,25 +1,26 @@
 use chrono::NaiveDateTime;
 use serde::{Serialize, Deserialize};
+use serde_with::serde_as;
 use utoipa::ToSchema;
 use common::base::page::PaginatedRequest;
+use common::formatter::string_date_time::StringDateTime;
 
+use crate::request::erp_purchase_return_attachment::{CreateErpPurchaseReturnAttachmentRequest, UpdateErpPurchaseReturnAttachmentRequest};
+use crate::request::erp_purchase_return_detail::{CreateErpPurchaseReturnDetailRequest, UpdateErpPurchaseReturnDetailRequest};
+
+#[serde_as]
 #[derive(Serialize, Deserialize, Debug, ToSchema)]
 pub struct CreateErpPurchaseReturnRequest {
     
-    pub order_number: i64, // 订单编号
-    
     pub purchase_order_id: i64, // 采购订单ID
-    
-    pub supplier_id: i64, // 供应商ID
     
     // #[serde_as(as = "DisplayFromStr")]
     // #[serde(with = "serde_with::chrono::naive_datetime")]
+    #[serde_as(as = "StringDateTime")]
     #[schema(value_type = String, format = Date)]
     pub return_date: NaiveDateTime, // 退货日期
     
     pub total_amount: i64, // 总金额
-    
-    pub order_status: i8, // 订单状态
     
     pub discount_rate: Option<i64>, // 优惠率（百分比，1000表示10.00%）
     
@@ -28,26 +29,22 @@ pub struct CreateErpPurchaseReturnRequest {
     pub deposit: Option<i64>, // 定金
     
     pub remarks: Option<String>, // 备注
-    
-    pub department_code: String, // 部门编码
-    
-    pub department_id: i64, // 部门ID
+
+    pub details: Vec<CreateErpPurchaseReturnDetailRequest>, // 退货采购产品仓库列表
+
+    pub attachments: Vec<CreateErpPurchaseReturnAttachmentRequest>, // 退货附件列表
     
 }
 
+#[serde_as]
 #[derive(Serialize, Deserialize, Debug, ToSchema)]
 pub struct UpdateErpPurchaseReturnRequest {
     
     pub id: i64, // 退货ID
     
-    pub order_number: Option<i64>, // 订单编号
-    
-    pub purchase_order_id: Option<i64>, // 采购订单ID
-    
-    pub supplier_id: Option<i64>, // 供应商ID
-    
     // #[serde_as(as = "DisplayFromStr")]
     // #[serde(with = "serde_with::chrono::naive_datetime")]
+    #[serde_as(as = "Option<StringDateTime>")]
     #[schema(value_type = String, format = Date)]
     pub return_date: Option<NaiveDateTime>, // 退货日期
     
@@ -63,9 +60,9 @@ pub struct UpdateErpPurchaseReturnRequest {
     
     pub remarks: Option<String>, // 备注
     
-    pub department_code: Option<String>, // 部门编码
-    
-    pub department_id: Option<i64>, // 部门ID
+    pub details: Vec<UpdateErpPurchaseReturnDetailRequest>, // 退货采购产品仓库列表
+
+    pub attachments: Vec<UpdateErpPurchaseReturnAttachmentRequest>, // 退货附件列表
     
 }
 

@@ -1,19 +1,22 @@
 use chrono::NaiveDateTime;
 use serde::{Serialize, Deserialize};
+use serde_with::serde_as;
 use utoipa::ToSchema;
 use common::base::page::PaginatedRequest;
+use common::formatter::string_date_time::StringDateTime;
 
+use crate::request::erp_sales_return_attachment::{CreateErpSalesReturnAttachmentRequest, UpdateErpSalesReturnAttachmentRequest};
+use crate::request::erp_sales_return_detail::{CreateErpSalesReturnDetailRequest, UpdateErpSalesReturnDetailRequest};
+
+#[serde_as]
 #[derive(Serialize, Deserialize, Debug, ToSchema)]
 pub struct CreateErpSalesReturnRequest {
     
-    pub order_number: i64, // 订单编号
-    
     pub sales_order_id: i64, // 销售订单ID
-    
-    pub customer_id: i64, // 客户ID
     
     // #[serde_as(as = "DisplayFromStr")]
     // #[serde(with = "serde_with::chrono::naive_datetime")]
+    #[serde_as(as = "StringDateTime")]
     #[schema(value_type = String, format = Date)]
     pub return_date: NaiveDateTime, // 退货日期
     
@@ -28,26 +31,22 @@ pub struct CreateErpSalesReturnRequest {
     pub deposit: Option<i64>, // 定金
     
     pub remarks: Option<String>, // 备注
-    
-    pub department_code: String, // 部门编码
-    
-    pub department_id: i64, // 部门ID
+
+    pub details: Vec<CreateErpSalesReturnDetailRequest>, // 退货采购产品仓库列表
+
+    pub attachments: Vec<CreateErpSalesReturnAttachmentRequest>, // 退货附件列表
     
 }
 
+#[serde_as]
 #[derive(Serialize, Deserialize, Debug, ToSchema)]
 pub struct UpdateErpSalesReturnRequest {
     
     pub id: i64, // 退货ID
     
-    pub order_number: Option<i64>, // 订单编号
-    
-    pub sales_order_id: Option<i64>, // 销售订单ID
-    
-    pub customer_id: Option<i64>, // 客户ID
-    
     // #[serde_as(as = "DisplayFromStr")]
     // #[serde(with = "serde_with::chrono::naive_datetime")]
+    #[serde_as(as = "Option<StringDateTime>")]
     #[schema(value_type = String, format = Date)]
     pub return_date: Option<NaiveDateTime>, // 退货日期
     
@@ -63,9 +62,9 @@ pub struct UpdateErpSalesReturnRequest {
     
     pub remarks: Option<String>, // 备注
     
-    pub department_code: Option<String>, // 部门编码
-    
-    pub department_id: Option<i64>, // 部门ID
+    pub details: Vec<UpdateErpSalesReturnDetailRequest>, // 退货采购产品仓库列表
+
+    pub attachments: Vec<UpdateErpSalesReturnAttachmentRequest>, // 退货附件列表
     
 }
 
