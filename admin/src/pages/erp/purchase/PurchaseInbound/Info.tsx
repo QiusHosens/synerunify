@@ -107,7 +107,7 @@ const ErpInboundOrderInfo = forwardRef(({ }, ref) => {
           <Grid container rowSpacing={2} columnSpacing={4} sx={{ '& .MuiGrid-root': { display: 'flex', justifyContent: 'start', alignItems: 'center' } }}>
             <Grid size={size}>
               <Stack direction="row" spacing={2} sx={{ display: "flex", alignItems: "center" }}>
-                <Box>{t('page.erp.purchase.order.title.order.number')}</Box>
+                <Box>{t('page.erp.sale.order.title.order.number')}</Box>
                 <Box>{erpInboundOrder && <CustomizedCopyableText text={erpInboundOrder.order_number} sx={{
                   fontSize: '0.75rem',
                   fontWeight: 500,

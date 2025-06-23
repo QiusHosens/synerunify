@@ -14,6 +14,7 @@ import CustomizedFileUpload, { DownloadProps, UploadFile } from '@/components/Cu
 import { downloadSystemFile, uploadSystemFile } from '@/api/system_file';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers';
+import CustomizedCopyableText from '@/components/CustomizedCopyableText';
 
 interface FormProductErrors {
   product_id?: string;
@@ -58,6 +59,7 @@ const ErpPurchaseOrderEdit = forwardRef(({ onSubmit }: ErpPurchaseOrderEditProps
   const [errors, setErrors] = useState<FormErrors>({
     purchase_products: [],
   });
+  const [size] = useState({ xs: 12, md: 3 });
   const [fileWidth] = useState<number>(420);
   const [fileHeight] = useState<number>(245);
   const [downloadImages, setDownloadImages] = useState<Map<number, DownloadProps>>(new Map<number, DownloadProps>());
@@ -334,7 +336,7 @@ const ErpPurchaseOrderEdit = forwardRef(({ onSubmit }: ErpPurchaseOrderEditProps
   }, []);
 
   const handleFileChange = useCallback(async (file: UploadFile | null, action: 'upload' | 'remove', index: number) => {
-    console.log(`Upload ${index} file updated:`, file, `Action: ${action}`);
+    // console.log(`Upload ${index} file updated:`, file, `Action: ${action}`);
 
     if (action === 'upload' && file) {
       // 更新文件列表,增加一个附件,等待上传完成后在写入信息
@@ -400,14 +402,17 @@ const ErpPurchaseOrderEdit = forwardRef(({ onSubmit }: ErpPurchaseOrderEditProps
     >
       <Box noValidate component="form" sx={{ display: 'flex', flexDirection: 'column', m: 'auto', width: 'fit-content' }}>
         <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '100%' } }}>
-          <Grid container rowSpacing={2} columnSpacing={4} sx={{ '& .MuiGrid-root': { display: 'flex', justifyContent: 'center', alignItems: 'center' } }}>
-            <Grid size={{ xs: 12, md: 12 / 5 }}>
-              <Stack direction="row" spacing={2}>
-                <Box>{t('page.erp.purchase.order.title.order.number')}</Box>
-                <Box>{erpPurchaseOrder && <CustomizedTag label={erpPurchaseOrder.order_number} />}</Box>
+          <Grid container rowSpacing={2} columnSpacing={4} sx={{ '& .MuiGrid-root': { display: 'flex', justifyContent: 'start', alignItems: 'center' } }}>
+            <Grid size={size}>
+              <Stack direction="row" spacing={2} sx={{ display: "flex", alignItems: "center" }}>
+                <Box>{t('page.erp.sale.order.title.order.number')}</Box>
+                <Box>{erpPurchaseOrder && <CustomizedCopyableText text={erpPurchaseOrder.order_number} sx={{
+                  fontSize: '0.75rem',
+                  fontWeight: 500,
+                }} />}</Box>
               </Stack>
             </Grid>
-            <Grid size={{ xs: 12, md: 12 / 5 }}>
+            <Grid size={size}>
               <FormControl sx={{ mt: 2, minWidth: 120, width: '100%' }}>
                 <InputLabel required size="small" id="supplier-select-label">{t('page.erp.purchase.order.title.supplier')}</InputLabel>
                 <Select
@@ -430,7 +435,7 @@ const ErpPurchaseOrderEdit = forwardRef(({ onSubmit }: ErpPurchaseOrderEditProps
                 <FormHelperText sx={{ color: 'error.main' }}>{errors.supplier_id}</FormHelperText>
               </FormControl>
             </Grid>
-            <Grid size={{ xs: 12, md: 12 / 5 }}>
+            <Grid size={size}>
               <FormControl sx={{ mt: 2, minWidth: 120, width: '100%' }}>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <DateTimePicker
@@ -453,7 +458,7 @@ const ErpPurchaseOrderEdit = forwardRef(({ onSubmit }: ErpPurchaseOrderEditProps
                 </LocalizationProvider>
               </FormControl>
             </Grid>
-            <Grid size={{ xs: 12, md: 12 / 5 }}>
+            <Grid size={size}>
               <TextField
                 required
                 size="small"
@@ -466,7 +471,7 @@ const ErpPurchaseOrderEdit = forwardRef(({ onSubmit }: ErpPurchaseOrderEditProps
                 helperText={errors.total_amount}
               />
             </Grid>
-            <Grid size={{ xs: 12, md: 12 / 5 }}>
+            <Grid size={size}>
               <TextField
                 size="small"
                 type="number"
@@ -476,7 +481,7 @@ const ErpPurchaseOrderEdit = forwardRef(({ onSubmit }: ErpPurchaseOrderEditProps
                 onChange={handleInputChange}
               />
             </Grid>
-            <Grid size={{ xs: 12, md: 12 / 5 }}>
+            <Grid size={size}>
               <FormControl sx={{ mt: 2, minWidth: 120, width: '100%' }}>
                 <InputLabel size="small" id="settlement-account-select-label">{t('page.erp.purchase.order.title.settlement.account')}</InputLabel>
                 <Select
@@ -495,7 +500,7 @@ const ErpPurchaseOrderEdit = forwardRef(({ onSubmit }: ErpPurchaseOrderEditProps
                 </Select>
               </FormControl>
             </Grid>
-            <Grid size={{ xs: 12, md: 12 / 5 }}>
+            <Grid size={size}>
               <TextField
                 size="small"
                 type="number"
@@ -505,7 +510,7 @@ const ErpPurchaseOrderEdit = forwardRef(({ onSubmit }: ErpPurchaseOrderEditProps
                 onChange={handleInputChange}
               />
             </Grid>
-            <Grid size={{ xs: 12, md: 12 / 5 }}>
+            <Grid size={size}>
               <TextField
                 size="small"
                 label={t('page.erp.purchase.order.title.remarks')}

@@ -46,7 +46,7 @@ pub struct UpdateErpSalesReturnRequest {
     
     // #[serde_as(as = "DisplayFromStr")]
     // #[serde(with = "serde_with::chrono::naive_datetime")]
-    #[serde_as(as = "Option<StringDateTime>")]
+    #[serde_as(as = "Option<common::formatter::string_date_time::StringDateTime>")]
     #[schema(value_type = String, format = Date)]
     pub return_date: Option<NaiveDateTime>, // 退货日期
     

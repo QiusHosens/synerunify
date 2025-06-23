@@ -40,6 +40,9 @@ pub fn update_request_to_model(request: &UpdateErpSalesOrderRequest, existing: E
     if let Some(deposit) = &request.deposit { 
         active_model.deposit = Set(Some(deposit.clone()));
     }
+    if let Some(remarks) = &request.remarks { 
+        active_model.remarks = Set(Some(remarks.clone()));
+    }
     active_model
 }
 
@@ -55,6 +58,7 @@ pub fn model_to_response(model: ErpSalesOrder) -> ErpSalesOrderResponse {
         discount_rate: model.discount_rate,
         settlement_account_id: model.settlement_account_id,
         deposit: model.deposit,
+        remarks: model.remarks,
         department_code: model.department_code,
         department_id: model.department_id,
         creator: model.creator,
@@ -79,6 +83,7 @@ pub fn model_to_page_response(model: ErpSalesOrder, model_customer: Option<ErpCu
         discount_rate: model.discount_rate,
         settlement_account_id: model.settlement_account_id,
         deposit: model.deposit,
+        remarks: model.remarks,
         department_code: model.department_code,
         department_id: model.department_id,
         creator: model.creator,
@@ -103,8 +108,9 @@ pub fn model_to_base_response(model: ErpSalesOrder, details: Vec<ErpSalesOrderDe
         discount_rate: model.discount_rate,
         settlement_account_id: model.settlement_account_id,
         deposit: model.deposit,
+        remarks: model.remarks,
 
-        sale_products: details,
-        sale_attachment: attachments,
+        details,
+        attachments,
     }
 }

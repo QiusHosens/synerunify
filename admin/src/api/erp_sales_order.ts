@@ -1,13 +1,15 @@
 import { PaginatedRequest, PaginatedResponse } from "@/base/page";
 import { api } from "@/utils/request";
-import { ErpSalesOrderDetailRequest } from "./erp_sales_order_detail";
-import { ErpSalesOrderAttachmentRequest } from "./erp_sales_order_attachment";
+import { ErpSalesOrderDetailBaseResponse, ErpSalesOrderDetailRequest } from "./erp_sales_order_detail";
+import { ErpPurchaseOrderAttachmentBaseResponse, ErpSalesOrderAttachmentRequest } from "./erp_sales_order_attachment";
 
 const apis = {
   create: "/erp/erp_sales_order/create", // 新增
   update: "/erp/erp_sales_order/update", // 修改
   delete: "/erp/erp_sales_order/delete", // 删除
   get: "/erp/erp_sales_order/get", // 单条查询
+  get_detail: "/erp/erp_sales_order/get_detail", // 单条查询
+  get_info: "/erp/erp_sales_order/get_info", // 单条查询
   list: "/erp/erp_sales_order/list", // 列表查询
   page: "/erp/erp_sales_order/page", // 分页查询
 };
@@ -22,7 +24,7 @@ export interface ErpSalesOrderRequest {
   deposit: number; // 定金
   remarks: string;
 
-  details?: ErpSalesOrderDetailRequest[]; // 入库采购产品仓库列表
+  details: ErpSalesOrderDetailRequest[]; // 入库采购产品仓库列表
   attachments: ErpSalesOrderAttachmentRequest[]; // 入库附件列表
 }
 
@@ -60,15 +62,10 @@ export interface ErpSalesOrderBaseResponse {
   discount_rate: number; // 优惠率（百分比，1000表示10.00%）
   settlement_account_id: number; // 结算账户ID
   deposit: number; // 定金
-  department_code: string; // 部门编码
-  department_id: number; // 部门ID
-  creator: number; // 创建者ID
-  create_time: string; // 创建时间
-  updater: number; // 更新者ID
-  update_time: string; // 更新时间
+  remarks: string; // 备注
 
-  details?: ErpSalesOrderDetailRequest[]; // 入库采购产品仓库列表
-  attachments: ErpSalesOrderAttachmentRequest[]; // 入库附件列表
+  details: ErpSalesOrderDetailBaseResponse[]; // 入库采购产品仓库列表
+  attachments: ErpPurchaseOrderAttachmentBaseResponse[]; // 入库附件列表
 }
 
 export interface ErpSalesOrderInfoResponse {
@@ -82,6 +79,7 @@ export interface ErpSalesOrderInfoResponse {
   discount_rate: number; // 优惠率（百分比，1000表示10.00%）
   settlement_account_id: number; // 结算账户ID
   deposit: number; // 定金
+  remarks: string; // 备注
   department_code: string; // 部门编码
   department_id: number; // 部门ID
   creator: number; // 创建者ID
@@ -92,8 +90,8 @@ export interface ErpSalesOrderInfoResponse {
   customer_name: string; // 客户名
   settlement_account_name: string; // 结算账户名
 
-  details?: ErpSalesOrderDetailRequest[]; // 入库采购产品仓库列表
-  attachments: ErpSalesOrderAttachmentRequest[]; // 入库附件列表
+  details: ErpSalesOrderDetailBaseResponse[]; // 入库采购产品仓库列表
+  attachments: ErpPurchaseOrderAttachmentBaseResponse[]; // 入库附件列表
 }
 
 export interface ErpSalesOrderQueryCondition extends PaginatedRequest {}
@@ -118,6 +116,18 @@ export const getErpSalesOrder = (
   id: number
 ): Promise<ErpSalesOrderResponse> => {
   return api.get<ErpSalesOrderResponse>(`${apis.get}/${id}`);
+};
+
+export const getErpSalesOrderBase = (
+  id: number
+): Promise<ErpSalesOrderBaseResponse> => {
+  return api.get<ErpSalesOrderBaseResponse>(`${apis.get_detail}/${id}`);
+};
+
+export const getErpSalesOrderInfo = (
+  id: number
+): Promise<ErpSalesOrderInfoResponse> => {
+  return api.get<ErpSalesOrderInfoResponse>(`${apis.get_info}/${id}`);
 };
 
 export const listErpSalesOrder = (): Promise<Array<ErpSalesOrderResponse>> => {

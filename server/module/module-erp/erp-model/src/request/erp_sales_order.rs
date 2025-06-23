@@ -36,6 +36,7 @@ pub struct CreateErpSalesOrderRequest {
     
 }
 
+#[serde_as]
 #[derive(Serialize, Deserialize, Debug, ToSchema)]
 pub struct UpdateErpSalesOrderRequest {
     
@@ -45,6 +46,7 @@ pub struct UpdateErpSalesOrderRequest {
     
     // #[serde_as(as = "DisplayFromStr")]
     // #[serde(with = "serde_with::chrono::naive_datetime")]
+    #[serde_as(as = "Option<common::formatter::string_date_time::StringDateTime>")]
     #[schema(value_type = String, format = Date)]
     pub order_date: Option<NaiveDateTime>, // 订单日期
     

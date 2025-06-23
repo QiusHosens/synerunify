@@ -19,6 +19,7 @@ pub async fn erp_sales_order_router(state: AppState) -> OpenApiRouter {
         .routes(routes!(update))
         .routes(routes!(delete))
         .routes(routes!(get_by_id))
+        .routes(routes!(get_detail_by_id))
         .routes(routes!(list))
         .routes(routes!(list_ship_out))
         .routes(routes!(page))

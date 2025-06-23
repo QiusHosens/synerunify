@@ -32,6 +32,8 @@ pub struct ErpSalesOrderResponse {
     pub settlement_account_id: Option<i64>, // 结算账户ID
     
     pub deposit: Option<i64>, // 定金
+
+    pub remarks: Option<String>, // 备注
     
     pub department_code: String, // 部门编码
     
@@ -80,6 +82,8 @@ pub struct ErpSalesOrderPageResponse {
     pub settlement_account_id: Option<i64>, // 结算账户ID
     
     pub deposit: Option<i64>, // 定金
+
+    pub remarks: Option<String>, // 备注
     
     pub department_code: String, // 部门编码
     
@@ -137,8 +141,10 @@ pub struct ErpSalesOrderBaseResponse {
     
     pub deposit: Option<i64>, // 定金
 
-    pub sale_products: Vec<ErpSalesOrderDetailBaseResponse>, // 销售的产品列表
+    pub remarks: Option<String>, // 备注
 
-    pub sale_attachment: Vec<ErpSalesOrderAttachmentBaseResponse>, // 销售的附件列表
+    pub details: Vec<ErpSalesOrderDetailBaseResponse>, // 销售的产品列表
+
+    pub attachments: Vec<ErpSalesOrderAttachmentBaseResponse>, // 销售的附件列表
     
 }

@@ -13,6 +13,7 @@ const ErpPurchaseOrderInfo = forwardRef(({ }, ref) => {
   const [open, setOpen] = useState(false);
   const [maxWidth] = useState<DialogProps['maxWidth']>('xl');
   const [erpPurchaseOrder, setErpPurchaseOrder] = useState<ErpPurchaseOrderInfoResponse>();
+  const [size] = useState({ xs: 12, md: 3 });
   const [fileWidth] = useState<number>(420);
   const [fileHeight] = useState<number>(245);
   const [downloadImages, setDownloadImages] = useState<Map<number, DownloadProps>>(new Map<number, DownloadProps>());
@@ -74,49 +75,49 @@ const ErpPurchaseOrderInfo = forwardRef(({ }, ref) => {
       <Box noValidate component="form" sx={{ display: 'flex', flexDirection: 'column', m: 'auto', width: 'fit-content' }}>
         <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '100%' } }}>
           <Grid container rowSpacing={2} columnSpacing={4} sx={{ '& .MuiGrid-root': { display: 'flex', justifyContent: 'start', alignItems: 'center' } }}>
-            <Grid size={{ xs: 12, md: 12 / 5 }}>
+            <Grid size={size}>
               <Stack direction="row" spacing={2}>
                 <Box>{t('page.erp.purchase.order.title.order.number')}</Box>
                 <Box>{erpPurchaseOrder && <CustomizedTag label={erpPurchaseOrder.order_number} />}</Box>
               </Stack>
             </Grid>
-            <Grid size={{ xs: 12, md: 12 / 5 }}>
+            <Grid size={size}>
               <Stack direction="row" spacing={2}>
                 <Box>{t('page.erp.purchase.order.title.supplier')}</Box>
                 <Box>{erpPurchaseOrder && <CustomizedTag label={erpPurchaseOrder.supplier_name} />}</Box>
               </Stack>
             </Grid>
-            <Grid size={{ xs: 12, md: 12 / 5 }}>
+            <Grid size={size}>
               <Stack direction="row" spacing={2}>
                 <Box>{t('page.erp.purchase.order.title.purchase.date')}</Box>
                 <Box>{erpPurchaseOrder && <CustomizedTag label={erpPurchaseOrder.purchase_date} />}</Box>
               </Stack>
             </Grid>
-            <Grid size={{ xs: 12, md: 12 / 5 }}>
+            <Grid size={size}>
               <Stack direction="row" spacing={2}>
                 <Box>{t('page.erp.purchase.order.title.total.amount')}</Box>
                 <Box>{erpPurchaseOrder && <CustomizedTag label={erpPurchaseOrder.total_amount} />}</Box>
               </Stack>
             </Grid>
-            <Grid size={{ xs: 12, md: 12 / 5 }}>
+            <Grid size={size}>
               <Stack direction="row" spacing={2}>
                 <Box>{t('page.erp.purchase.order.title.discount.rate')}</Box>
                 <Box>{erpPurchaseOrder && <CustomizedTag label={erpPurchaseOrder.discount_rate + '%'} />}</Box>
               </Stack>
             </Grid>
-            <Grid size={{ xs: 12, md: 12 / 5 }}>
+            <Grid size={size}>
               <Stack direction="row" spacing={2}>
                 <Box>{t('page.erp.purchase.order.title.settlement.account')}</Box>
                 <Box>{erpPurchaseOrder && <CustomizedTag label={erpPurchaseOrder.settlement_account_name} />}</Box>
               </Stack>
             </Grid>
-            <Grid size={{ xs: 12, md: 12 / 5 }}>
+            <Grid size={size}>
               <Stack direction="row" spacing={2}>
                 <Box>{t('page.erp.purchase.order.title.deposit')}</Box>
                 <Box>{erpPurchaseOrder && <CustomizedTag label={erpPurchaseOrder.deposit} />}</Box>
               </Stack>
             </Grid>
-            <Grid size={{ xs: 12, md: 12 / 5 }}>
+            <Grid size={size}>
               <Stack direction="row" spacing={2}>
                 <Box>{t('page.erp.purchase.order.title.remarks')}</Box>
                 <Box>{erpPurchaseOrder && <CustomizedTag label={erpPurchaseOrder.remarks} />}</Box>

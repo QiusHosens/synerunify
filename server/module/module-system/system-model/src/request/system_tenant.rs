@@ -58,7 +58,7 @@ pub struct UpdateSystemTenantRequest {
     // #[serde_as(as = "DisplayFromStr")]
     // #[serde(with = "serde_with::chrono::naive_datetime")]
     // #[serde_as(as = "common::formatter::string_date_time::StringDateTime")]
-    #[serde_as(as = "Option<StringDateTime>")]
+    #[serde_as(as = "Option<common::formatter::string_date_time::StringDateTime>")]
     #[schema(value_type = String, format = Date)]
     pub expire_time: Option<NaiveDateTime>, // 过期时间
     

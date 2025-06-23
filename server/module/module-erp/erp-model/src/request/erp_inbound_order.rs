@@ -99,7 +99,7 @@ pub struct UpdateErpInboundOrderRequest {
     
     // #[serde_as(as = "DisplayFromStr")]
     // #[serde(with = "serde_with::chrono::naive_datetime")]
-    #[serde_as(as = "Option<StringDateTime>")]
+    #[serde_as(as = "Option<common::formatter::string_date_time::StringDateTime>")]
     #[schema(value_type = String, format = Date)]
     pub inbound_date: Option<NaiveDateTime>, // 入库日期
     
@@ -125,7 +125,7 @@ pub struct UpdateErpInboundOrderPurchaseRequest {
     
     // #[serde_as(as = "DisplayFromStr")]
     // #[serde(with = "serde_with::chrono::naive_datetime")]
-    #[serde_as(as = "Option<StringDateTime>")]
+    #[serde_as(as = "Option<common::formatter::string_date_time::StringDateTime>")]
     #[schema(value_type = String, format = Date)]
     pub inbound_date: Option<NaiveDateTime>, // 入库日期
     
@@ -151,7 +151,7 @@ pub struct UpdateErpInboundOrderOtherRequest {
     
     // #[serde_as(as = "DisplayFromStr")]
     // #[serde(with = "serde_with::chrono::naive_datetime")]
-    #[serde_as(as = "Option<StringDateTime>")]
+    #[serde_as(as = "Option<common::formatter::string_date_time::StringDateTime>")]
     #[schema(value_type = String, format = Date)]
     pub inbound_date: Option<NaiveDateTime>, // 入库日期
     
