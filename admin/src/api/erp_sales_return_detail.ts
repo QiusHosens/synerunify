@@ -13,6 +13,8 @@ const apis = {
 export interface ErpSalesReturnDetailRequest {
   id: number; // 退货详情ID
   order_id: number; // 退货订单ID
+  sale_detail_id: number; // 销售订单详情ID
+  warehouse_id: number; // 仓库ID
   product_id: number; // 产品ID
   quantity: number; // 数量
   unit_price: number; // 单价
@@ -26,6 +28,8 @@ export interface ErpSalesReturnDetailRequest {
 export interface ErpSalesReturnDetailResponse {
   id: number; // 退货详情ID
   order_id: number; // 退货订单ID
+  sale_detail_id: number; // 销售订单详情ID
+  warehouse_id: number; // 仓库ID
   product_id: number; // 产品ID
   quantity: number; // 数量
   unit_price: number; // 单价

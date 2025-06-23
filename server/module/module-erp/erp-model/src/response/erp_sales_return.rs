@@ -15,8 +15,6 @@ pub struct ErpSalesReturnResponse {
     
     pub customer_id: i64, // 客户ID
     
-    pub warehouse_id: i64, // 仓库ID
-    
     // #[serde_as(as = "DisplayFromStr")]
     // #[serde(with = "serde_with::chrono::naive_datetime")]
     #[serde_as(as = "common::formatter::string_date_time::StringDateTime")]

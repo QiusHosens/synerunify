@@ -8,7 +8,6 @@ pub fn create_request_to_model(request: &CreateErpPurchaseReturnRequest) -> ErpP
         order_number: Set(request.order_number.clone()),
         purchase_order_id: Set(request.purchase_order_id.clone()),
         supplier_id: Set(request.supplier_id.clone()),
-        warehouse_id: Set(request.warehouse_id.clone()),
         return_date: Set(request.return_date.clone()),
         total_amount: Set(request.total_amount.clone()),
         order_status: Set(request.order_status.clone()),
@@ -32,9 +31,6 @@ pub fn update_request_to_model(request: &UpdateErpPurchaseReturnRequest, existin
     }
     if let Some(supplier_id) = &request.supplier_id { 
         active_model.supplier_id = Set(supplier_id.clone());
-    }
-    if let Some(warehouse_id) = &request.warehouse_id { 
-        active_model.warehouse_id = Set(warehouse_id.clone());
     }
     if let Some(return_date) = &request.return_date { 
         active_model.return_date = Set(return_date.clone());
@@ -72,7 +68,6 @@ pub fn model_to_response(model: ErpPurchaseReturn) -> ErpPurchaseReturnResponse 
         order_number: model.order_number,
         purchase_order_id: model.purchase_order_id,
         supplier_id: model.supplier_id,
-        warehouse_id: model.warehouse_id,
         return_date: model.return_date,
         total_amount: model.total_amount,
         order_status: model.order_status,

@@ -12,8 +12,6 @@ pub struct CreateErpSalesReturnRequest {
     
     pub customer_id: i64, // 客户ID
     
-    pub warehouse_id: i64, // 仓库ID
-    
     // #[serde_as(as = "DisplayFromStr")]
     // #[serde(with = "serde_with::chrono::naive_datetime")]
     #[schema(value_type = String, format = Date)]
@@ -47,8 +45,6 @@ pub struct UpdateErpSalesReturnRequest {
     pub sales_order_id: Option<i64>, // 销售订单ID
     
     pub customer_id: Option<i64>, // 客户ID
-    
-    pub warehouse_id: Option<i64>, // 仓库ID
     
     // #[serde_as(as = "DisplayFromStr")]
     // #[serde(with = "serde_with::chrono::naive_datetime")]

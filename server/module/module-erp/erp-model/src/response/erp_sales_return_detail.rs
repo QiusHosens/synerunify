@@ -11,6 +11,10 @@ pub struct ErpSalesReturnDetailResponse {
     
     pub order_id: i64, // 退货订单ID
     
+    pub sale_detail_id: i64, // 销售订单详情ID
+    
+    pub warehouse_id: i64, // 仓库ID
+    
     pub product_id: i64, // 产品ID
     
     pub quantity: i32, // 数量

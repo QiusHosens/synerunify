@@ -15,7 +15,6 @@ export interface ErpPurchaseReturnRequest {
   order_number: number; // 订单编号
   purchase_order_id: number; // 采购订单ID
   supplier_id: number; // 供应商ID
-  warehouse_id: number; // 仓库ID
   return_date: string; // 退货日期
   total_amount: number; // 总金额
   order_status: number; // 订单状态
@@ -32,7 +31,6 @@ export interface ErpPurchaseReturnResponse {
   order_number: number; // 订单编号
   purchase_order_id: number; // 采购订单ID
   supplier_id: number; // 供应商ID
-  warehouse_id: number; // 仓库ID
   return_date: string; // 退货日期
   total_amount: number; // 总金额
   order_status: number; // 订单状态

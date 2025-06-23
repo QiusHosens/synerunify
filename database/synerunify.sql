@@ -11,7 +11,7 @@
  Target Server Version : 80100 (8.1.0)
  File Encoding         : 65001
 
- Date: 23/06/2025 09:57:36
+ Date: 23/06/2025 10:30:52
 */
 
 SET NAMES utf8mb4;
@@ -627,7 +627,6 @@ CREATE TABLE `erp_purchase_return`  (
   `order_number` bigint NOT NULL COMMENT '订单编号',
   `purchase_order_id` bigint NOT NULL COMMENT '采购订单ID',
   `supplier_id` bigint NOT NULL COMMENT '供应商ID',
-  `warehouse_id` bigint NOT NULL COMMENT '仓库ID',
   `return_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '退货日期',
   `total_amount` bigint NOT NULL COMMENT '总金额',
   `order_status` tinyint NOT NULL DEFAULT 0 COMMENT '订单状态',
@@ -682,6 +681,8 @@ DROP TABLE IF EXISTS `erp_purchase_return_detail`;
 CREATE TABLE `erp_purchase_return_detail`  (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '退货详情ID',
   `order_id` bigint NOT NULL COMMENT '退货订单ID',
+  `purchase_detail_id` bigint NOT NULL COMMENT '采购订单详情ID',
+  `warehouse_id` bigint NOT NULL COMMENT '仓库ID',
   `product_id` bigint NOT NULL COMMENT '产品ID',
   `quantity` int NOT NULL COMMENT '数量',
   `unit_price` bigint NOT NULL COMMENT '单价',
@@ -881,7 +882,6 @@ CREATE TABLE `erp_sales_return`  (
   `order_number` bigint NOT NULL COMMENT '订单编号',
   `sales_order_id` bigint NOT NULL COMMENT '销售订单ID',
   `customer_id` bigint NOT NULL COMMENT '客户ID',
-  `warehouse_id` bigint NOT NULL COMMENT '仓库ID',
   `return_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '退货日期',
   `total_amount` bigint NOT NULL COMMENT '总金额',
   `order_status` tinyint NOT NULL DEFAULT 0 COMMENT '订单状态',
@@ -936,6 +936,8 @@ DROP TABLE IF EXISTS `erp_sales_return_detail`;
 CREATE TABLE `erp_sales_return_detail`  (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '退货详情ID',
   `order_id` bigint NOT NULL COMMENT '退货订单ID',
+  `sale_detail_id` bigint NOT NULL COMMENT '销售订单详情ID',
+  `warehouse_id` bigint NOT NULL COMMENT '仓库ID',
   `product_id` bigint NOT NULL COMMENT '产品ID',
   `quantity` int NOT NULL COMMENT '数量',
   `unit_price` bigint NOT NULL COMMENT '单价',

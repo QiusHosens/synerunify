@@ -6,6 +6,8 @@ use erp_model::response::erp_sales_return_detail::ErpSalesReturnDetailResponse;
 pub fn create_request_to_model(request: &CreateErpSalesReturnDetailRequest) -> ErpSalesReturnDetailActiveModel {
     ErpSalesReturnDetailActiveModel {
         order_id: Set(request.order_id.clone()),
+        sale_detail_id: Set(request.sale_detail_id.clone()),
+        warehouse_id: Set(request.warehouse_id.clone()),
         product_id: Set(request.product_id.clone()),
         quantity: Set(request.quantity.clone()),
         unit_price: Set(request.unit_price.clone()),
@@ -22,6 +24,12 @@ pub fn update_request_to_model(request: &UpdateErpSalesReturnDetailRequest, exis
     let mut active_model: ErpSalesReturnDetailActiveModel = existing.into();
     if let Some(order_id) = &request.order_id { 
         active_model.order_id = Set(order_id.clone());
+    }
+    if let Some(sale_detail_id) = &request.sale_detail_id { 
+        active_model.sale_detail_id = Set(sale_detail_id.clone());
+    }
+    if let Some(warehouse_id) = &request.warehouse_id { 
+        active_model.warehouse_id = Set(warehouse_id.clone());
     }
     if let Some(product_id) = &request.product_id { 
         active_model.product_id = Set(product_id.clone());
@@ -54,6 +62,8 @@ pub fn model_to_response(model: ErpSalesReturnDetail) -> ErpSalesReturnDetailRes
     ErpSalesReturnDetailResponse { 
         id: model.id,
         order_id: model.order_id,
+        sale_detail_id: model.sale_detail_id,
+        warehouse_id: model.warehouse_id,
         product_id: model.product_id,
         quantity: model.quantity,
         unit_price: model.unit_price,

@@ -6,6 +6,8 @@ use erp_model::response::erp_purchase_return_detail::ErpPurchaseReturnDetailResp
 pub fn create_request_to_model(request: &CreateErpPurchaseReturnDetailRequest) -> ErpPurchaseReturnDetailActiveModel {
     ErpPurchaseReturnDetailActiveModel {
         order_id: Set(request.order_id.clone()),
+        purchase_detail_id: Set(request.purchase_detail_id.clone()),
+        warehouse_id: Set(request.warehouse_id.clone()),
         product_id: Set(request.product_id.clone()),
         quantity: Set(request.quantity.clone()),
         unit_price: Set(request.unit_price.clone()),
@@ -22,6 +24,12 @@ pub fn update_request_to_model(request: &UpdateErpPurchaseReturnDetailRequest, e
     let mut active_model: ErpPurchaseReturnDetailActiveModel = existing.into();
     if let Some(order_id) = &request.order_id { 
         active_model.order_id = Set(order_id.clone());
+    }
+    if let Some(purchase_detail_id) = &request.purchase_detail_id { 
+        active_model.purchase_detail_id = Set(purchase_detail_id.clone());
+    }
+    if let Some(warehouse_id) = &request.warehouse_id { 
+        active_model.warehouse_id = Set(warehouse_id.clone());
     }
     if let Some(product_id) = &request.product_id { 
         active_model.product_id = Set(product_id.clone());
@@ -54,6 +62,8 @@ pub fn model_to_response(model: ErpPurchaseReturnDetail) -> ErpPurchaseReturnDet
     ErpPurchaseReturnDetailResponse { 
         id: model.id,
         order_id: model.order_id,
+        purchase_detail_id: model.purchase_detail_id,
+        warehouse_id: model.warehouse_id,
         product_id: model.product_id,
         quantity: model.quantity,
         unit_price: model.unit_price,

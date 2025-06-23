@@ -8,7 +8,6 @@ pub fn create_request_to_model(request: &CreateErpSalesReturnRequest) -> ErpSale
         order_number: Set(request.order_number.clone()),
         sales_order_id: Set(request.sales_order_id.clone()),
         customer_id: Set(request.customer_id.clone()),
-        warehouse_id: Set(request.warehouse_id.clone()),
         return_date: Set(request.return_date.clone()),
         total_amount: Set(request.total_amount.clone()),
         order_status: Set(request.order_status.clone()),
@@ -32,9 +31,6 @@ pub fn update_request_to_model(request: &UpdateErpSalesReturnRequest, existing: 
     }
     if let Some(customer_id) = &request.customer_id { 
         active_model.customer_id = Set(customer_id.clone());
-    }
-    if let Some(warehouse_id) = &request.warehouse_id { 
-        active_model.warehouse_id = Set(warehouse_id.clone());
     }
     if let Some(return_date) = &request.return_date { 
         active_model.return_date = Set(return_date.clone());
@@ -72,7 +68,6 @@ pub fn model_to_response(model: ErpSalesReturn) -> ErpSalesReturnResponse {
         order_number: model.order_number,
         sales_order_id: model.sales_order_id,
         customer_id: model.customer_id,
-        warehouse_id: model.warehouse_id,
         return_date: model.return_date,
         total_amount: model.total_amount,
         order_status: model.order_status,

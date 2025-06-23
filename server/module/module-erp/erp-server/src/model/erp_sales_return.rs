@@ -16,8 +16,6 @@ pub struct Model {
     
     pub customer_id: i64, // 客户ID
     
-    pub warehouse_id: i64, // 仓库ID
-    
     pub return_date: NaiveDateTime, // 退货日期
     
     pub total_amount: i64, // 总金额
