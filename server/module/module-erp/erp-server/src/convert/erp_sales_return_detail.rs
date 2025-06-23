@@ -1,7 +1,7 @@
 use sea_orm::{Set, NotSet};
 use crate::model::erp_sales_return_detail::{self, Model as ErpSalesReturnDetail, ActiveModel as ErpSalesReturnDetailActiveModel};
 use erp_model::request::erp_sales_return_detail::{CreateErpSalesReturnDetailRequest, UpdateErpSalesReturnDetailRequest};
-use erp_model::response::erp_sales_return_detail::ErpSalesReturnDetailResponse;
+use erp_model::response::erp_sales_return_detail::{ErpSalesReturnDetailBaseResponse, ErpSalesReturnDetailResponse};
 
 pub fn create_request_to_model(request: &CreateErpSalesReturnDetailRequest) -> ErpSalesReturnDetailActiveModel {
     ErpSalesReturnDetailActiveModel {
@@ -44,5 +44,14 @@ pub fn model_to_response(model: ErpSalesReturnDetail) -> ErpSalesReturnDetailRes
         create_time: model.create_time,
         updater: model.updater,
         update_time: model.update_time,
+    }
+}
+
+pub fn model_to_base_response(model: ErpSalesReturnDetail) -> ErpSalesReturnDetailBaseResponse {
+    ErpSalesReturnDetailBaseResponse { 
+        id: model.id,
+        sale_detail_id: model.sale_detail_id,
+        warehouse_id: model.warehouse_id,
+        remarks: model.remarks,
     }
 }

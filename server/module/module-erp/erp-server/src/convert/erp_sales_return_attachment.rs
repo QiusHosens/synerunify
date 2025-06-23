@@ -1,7 +1,7 @@
 use sea_orm::{Set, NotSet};
 use crate::model::erp_sales_return_attachment::{self, Model as ErpSalesReturnAttachment, ActiveModel as ErpSalesReturnAttachmentActiveModel};
 use erp_model::request::erp_sales_return_attachment::{CreateErpSalesReturnAttachmentRequest, UpdateErpSalesReturnAttachmentRequest};
-use erp_model::response::erp_sales_return_attachment::ErpSalesReturnAttachmentResponse;
+use erp_model::response::erp_sales_return_attachment::{ErpSalesReturnAttachmentBaseResponse, ErpSalesReturnAttachmentResponse};
 
 pub fn create_request_to_model(request: &CreateErpSalesReturnAttachmentRequest) -> ErpSalesReturnAttachmentActiveModel {
     ErpSalesReturnAttachmentActiveModel {
@@ -34,5 +34,15 @@ pub fn model_to_response(model: ErpSalesReturnAttachment) -> ErpSalesReturnAttac
         create_time: model.create_time,
         updater: model.updater,
         update_time: model.update_time,
+    }
+}
+
+pub fn model_to_base_response(model: ErpSalesReturnAttachment, file_name: Option<String>) -> ErpSalesReturnAttachmentBaseResponse {
+    ErpSalesReturnAttachmentBaseResponse { 
+        id: model.id,
+        file_id: model.file_id,
+        remarks: model.remarks,
+
+        file_name,
     }
 }

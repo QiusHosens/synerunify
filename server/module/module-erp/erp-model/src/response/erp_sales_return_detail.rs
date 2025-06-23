@@ -48,3 +48,16 @@ pub struct ErpSalesReturnDetailResponse {
     pub update_time: NaiveDateTime, // 更新时间
     
 }
+
+#[derive(Deserialize, Serialize, Debug, Clone, ToSchema)]
+pub struct ErpSalesReturnDetailBaseResponse {
+    
+    pub id: i64, // 退货详情ID
+    
+    pub sale_detail_id: i64, // 销售订单详情ID
+    
+    pub warehouse_id: i64, // 仓库ID
+    
+    pub remarks: Option<String>, // 备注
+    
+}
