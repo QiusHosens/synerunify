@@ -17,7 +17,7 @@ pub struct UpdateErpSalesReturnAttachmentRequest {
     
     pub id: Option<i64>, // 附件ID,修改有,新增无
     
-    pub file_id: Option<i64>, // 文件ID
+    pub file_id: i64, // 文件ID
     
     pub remarks: Option<String>, // 备注
     

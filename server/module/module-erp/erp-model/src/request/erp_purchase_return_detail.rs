@@ -9,6 +9,8 @@ pub struct CreateErpPurchaseReturnDetailRequest {
     pub purchase_detail_id: i64, // 采购订单详情ID
     
     pub warehouse_id: i64, // 仓库ID
+
+    pub quantity: i32, // 数量
     
     pub remarks: Option<String>, // 备注
     
@@ -19,9 +21,11 @@ pub struct UpdateErpPurchaseReturnDetailRequest {
     
     pub id: Option<i64>, // 退货详情ID,修改有,新增无
     
-    pub purchase_detail_id: Option<i64>, // 采购订单详情ID
+    pub purchase_detail_id: i64, // 采购订单详情ID
     
-    pub warehouse_id: Option<i64>, // 仓库ID
+    pub warehouse_id: i64, // 仓库ID
+
+    pub quantity: i32, // 数量
     
     pub remarks: Option<String>, // 备注
     

@@ -7,6 +7,7 @@ pub fn create_request_to_model(request: &CreateErpSalesReturnDetailRequest) -> E
     ErpSalesReturnDetailActiveModel {
         sale_detail_id: Set(request.sale_detail_id.clone()),
         warehouse_id: Set(request.warehouse_id.clone()),
+        quantity: Set(request.quantity.clone()),
         remarks: request.remarks.as_ref().map_or(NotSet, |remarks| Set(Some(remarks.clone()))),
         ..Default::default()
     }
@@ -14,11 +15,14 @@ pub fn create_request_to_model(request: &CreateErpSalesReturnDetailRequest) -> E
 
 pub fn update_request_to_model(request: &UpdateErpSalesReturnDetailRequest, existing: ErpSalesReturnDetail) -> ErpSalesReturnDetailActiveModel {
     let mut active_model: ErpSalesReturnDetailActiveModel = existing.into();
-    if let Some(sale_detail_id) = &request.sale_detail_id { 
+    if let sale_detail_id = &request.sale_detail_id { 
         active_model.sale_detail_id = Set(sale_detail_id.clone());
     }
-    if let Some(warehouse_id) = &request.warehouse_id { 
+    if let warehouse_id = &request.warehouse_id { 
         active_model.warehouse_id = Set(warehouse_id.clone());
+    }
+    if let quantity = &request.quantity { 
+        active_model.quantity = Set(quantity.clone());
     }
     if let Some(remarks) = &request.remarks { 
         active_model.remarks = Set(Some(remarks.clone()));

@@ -42,17 +42,17 @@ pub async fn create_batch_sale(db: &DatabaseConnection, txn: &DatabaseTransactio
     let mut product_inventories: Vec<ErpProductInventoryInOutRequest> = Vec::new();
     let mut inbound_inventories: Vec<ErpInventoryRecordInRequest> = Vec::new();
     for request in requests {
-        if let Some(purchase_detail) = sale_detail_map.get(&request.sale_detail_id) {
+        if let Some(sale_detail) = sale_detail_map.get(&request.sale_detail_id) {
             let model = ErpOutboundOrderDetailActiveModel {
                 order_id: Set(order.id),
                 sale_detail_id: Set(Some((request.sale_detail_id))),
                 warehouse_id: Set(request.warehouse_id.clone()),
-                product_id: Set(purchase_detail.product_id.clone()),
-                quantity: Set(purchase_detail.quantity.clone()),
-                unit_price: Set(purchase_detail.unit_price.clone()),
-                subtotal: Set(purchase_detail.subtotal.clone()),
-                tax_rate: purchase_detail.tax_rate.as_ref().map_or(NotSet, |tax_rate| Set(Some(tax_rate.clone()))),
-                remarks: purchase_detail.remarks.as_ref().map_or(NotSet, |remarks| Set(Some(remarks.clone()))),
+                product_id: Set(sale_detail.product_id.clone()),
+                quantity: Set(sale_detail.quantity.clone()),
+                unit_price: Set(sale_detail.unit_price.clone()),
+                subtotal: Set(sale_detail.subtotal.clone()),
+                tax_rate: sale_detail.tax_rate.as_ref().map_or(NotSet, |tax_rate| Set(Some(tax_rate.clone()))),
+                remarks: sale_detail.remarks.as_ref().map_or(NotSet, |remarks| Set(Some(remarks.clone()))),
                 department_id: Set(login_user.department_id.clone()),
                 department_code: Set(login_user.department_code.clone()),
                 creator: Set(Some(login_user.id)),
@@ -64,19 +64,19 @@ pub async fn create_batch_sale(db: &DatabaseConnection, txn: &DatabaseTransactio
 
             // 产品库存
             let product_inventory = ErpProductInventoryInOutRequest {
-                product_id: purchase_detail.product_id.clone(),
+                product_id: sale_detail.product_id.clone(),
                 warehouse_id: request.warehouse_id.clone(),
-                quantity: purchase_detail.quantity.clone(),
+                quantity: sale_detail.quantity.clone(),
             };
             product_inventories.push(product_inventory);
 
             // 出库记录
             let inbound_inventory = ErpInventoryRecordInRequest {
-                product_id: purchase_detail.product_id.clone(),
+                product_id: sale_detail.product_id.clone(),
                 warehouse_id: request.warehouse_id.clone(),
-                quantity: purchase_detail.quantity.clone(),
+                quantity: sale_detail.quantity.clone(),
                 record_date: order.outbound_date.clone(),
-                remarks: purchase_detail.remarks.clone(),
+                remarks: sale_detail.remarks.clone(),
             };
             inbound_inventories.push(inbound_inventory);
         }

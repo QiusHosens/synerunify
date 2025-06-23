@@ -1,35 +1,81 @@
 use common::interceptor::orm::simple_support::SimpleSupport;
-use sea_orm::{DatabaseConnection, EntityTrait, Order, ColumnTrait, ActiveModelTrait, PaginatorTrait, QueryOrder, QueryFilter, Condition};
+use common::utils::snowflake_generator::SnowflakeGenerator;
+use sea_orm::{ActiveModelTrait, ColumnTrait, Condition, DatabaseConnection, EntityTrait, Order, PaginatorTrait, QueryFilter, QueryOrder, TransactionTrait};
 use crate::model::erp_sales_return::{Model as ErpSalesReturnModel, ActiveModel as ErpSalesReturnActiveModel, Entity as ErpSalesReturnEntity, Column};
+use crate::service::{erp_sales_order, erp_sales_return_attachment, erp_sales_return_detail};
 use erp_model::request::erp_sales_return::{CreateErpSalesReturnRequest, UpdateErpSalesReturnRequest, PaginatedKeywordRequest};
 use erp_model::response::erp_sales_return::ErpSalesReturnResponse;
-use crate::convert::erp_sales_return::{create_request_to_model, update_request_to_model, model_to_response};
-use anyhow::{Result, anyhow};
+use crate::convert::erp_sales_return::{create_request_to_model, model_to_base_response, model_to_response, update_request_to_model};
+use anyhow::{anyhow, Context, Result};
 use sea_orm::ActiveValue::Set;
-use common::constants::enum_constants::{STATUS_DISABLE, STATUS_ENABLE};
+use common::constants::enum_constants::{SALE_RETURN_STATUS_COMPLETE, SALE_RETURN_STATUS_PLACED, SALE_RETURN_STATUS_RECEIVED, STATUS_DISABLE, STATUS_ENABLE};
 use common::base::page::PaginatedResponse;
 use common::context::context::LoginUserContext;
 use common::interceptor::orm::active_filter::ActiveFilterEntityTrait;
 
 pub async fn create(db: &DatabaseConnection, login_user: LoginUserContext, request: CreateErpSalesReturnRequest) -> Result<i64> {
     let mut erp_sales_return = create_request_to_model(&request);
-    erp_sales_return.creator = Set(Some(login_user.id));
-    erp_sales_return.updater = Set(Some(login_user.id));
-    erp_sales_return.tenant_id = Set(login_user.tenant_id);
+    // 查询销售订单
+    let sales_order = erp_sales_order::find_by_id(&db, login_user.clone(), request.sales_order_id.clone()).await?;
+    // 生成订单编号
+    let generator = SnowflakeGenerator::new();
+    match generator.generate() {
+        Ok(id) => erp_sales_return.order_number = Set(id),
+        Err(e) => return Err(anyhow!("订单编号生成失败")),
+    }
+
+    erp_sales_return.customer_id = Set(sales_order.customer_id);
+    erp_sales_return.order_status = Set(SALE_RETURN_STATUS_PLACED);
+    erp_sales_return.department_id = Set(login_user.department_id.clone());
+    erp_sales_return.department_code = Set(login_user.department_code.clone());
+    erp_sales_return.creator = Set(Some(login_user.id.clone()));
+    erp_sales_return.updater = Set(Some(login_user.id.clone()));
+    erp_sales_return.tenant_id = Set(login_user.tenant_id.clone());
+
+    // 开启事务
+    let txn = db.begin().await?;
+    // 创建订单
     let erp_sales_return = erp_sales_return.insert(db).await?;
+    // 创建订单详情
+    erp_sales_return_detail::create_batch(&db, &txn, login_user.clone(), erp_sales_return.clone(), request.details).await?;
+    // 创建订单文件
+    erp_sales_return_attachment::create_batch(&db, &txn, login_user.clone(), erp_sales_return.id, request.attachments).await?;
+    // 提交事务
+    txn.commit().await.with_context(|| "Failed to commit transaction")?;
     Ok(erp_sales_return.id)
 }
 
 pub async fn update(db: &DatabaseConnection, login_user: LoginUserContext, request: UpdateErpSalesReturnRequest) -> Result<()> {
-    let erp_sales_return = ErpSalesReturnEntity::find_by_id(request.id)
+    let erp_sales_return = ErpSalesReturnEntity::find_active_by_id(request.id)
         .filter(Column::TenantId.eq(login_user.tenant_id))
         .one(db)
         .await?
         .ok_or_else(|| anyhow!("记录未找到"))?;
 
+    // 已收货/已完成状态订单不能修改
+    if SALE_RETURN_STATUS_RECEIVED.eq(&erp_sales_return.order_status) {
+        return Err(anyhow!("订单已收货,不能修改"));
+    }
+
+    if SALE_RETURN_STATUS_COMPLETE.eq(&erp_sales_return.order_status) {
+        return Err(anyhow!("订单已完成,不能修改"));
+    }
+
+    let sales_return = erp_sales_return.clone();
+
     let mut erp_sales_return = update_request_to_model(&request, erp_sales_return);
     erp_sales_return.updater = Set(Some(login_user.id));
+
+    // 开启事务
+    let txn = db.begin().await?;
+    // 修改订单
     erp_sales_return.update(db).await?;
+    // 修改订单商品详情
+    erp_sales_return_detail::update_batch(&db, &txn, login_user.clone(), sales_return.clone(), request.details).await?;
+    // 修改订单文件
+    erp_sales_return_attachment::update_batch(&db, &txn, login_user, sales_return.clone(), request.attachments).await?;
+    // 提交事务
+    txn.commit().await.with_context(|| "Failed to commit transaction")?;
     Ok(())
 }
 
@@ -52,6 +98,44 @@ pub async fn get_by_id(db: &DatabaseConnection, login_user: LoginUserContext, id
     let erp_sales_return = ErpSalesReturnEntity::find_active_with_condition(condition)
         .one(db).await?;
     Ok(erp_sales_return.map(model_to_response))
+}
+
+pub async fn get_base_by_id(db: &DatabaseConnection, login_user: LoginUserContext, id: i64) -> Result<Option<ErpSalesReturnBaseResponse>> {
+    let condition = Condition::all()
+            .add(Column::Id.eq(id))
+            .add(Column::TenantId.eq(login_user.tenant_id));
+            
+    let erp_sales_return = ErpSalesReturnEntity::find_active_with_data_permission(login_user.clone())
+        .filter(condition)
+        .one(db).await?;
+    
+    if erp_sales_return.is_none() {
+        return Ok(None);
+    }
+    let erp_sales_return = erp_sales_return.unwrap();
+    let details = erp_sales_return_detail::list_by_order_id(&db, login_user.clone(), id).await?;
+    let attachments = erp_sales_return_attachment::list_by_order_id(&db, login_user, id).await?;
+    Ok(Some(model_to_base_response(erp_sales_return, details, attachments)))
+}
+
+pub async fn get_info_by_id(db: &DatabaseConnection, login_user: LoginUserContext, id: i64) -> Result<Option<ErpSalesReturnBaseResponse>> {
+    let condition = Condition::all()
+            .add(Column::Id.eq(id))
+            .add(Column::TenantId.eq(login_user.tenant_id));
+            
+    let erp_sales_return = ErpSalesReturnEntity::find_active_with_data_permission(login_user.clone())
+        .filter(condition)
+        .select_also(ErpSettlementAccountEntity)
+        .join(JoinType::LeftJoin, Relation::ReturnSettlementAccount.def())
+        .one(db).await?;
+    
+    if erp_sales_return.is_none() {
+        return Ok(None);
+    }
+    let erp_sales_return = erp_sales_return.unwrap();
+    let details = erp_sales_return_detail::list_by_order_id(&db, login_user.clone(), id).await?;
+    let attachments = erp_sales_return_attachment::list_by_order_id(&db, login_user, id).await?;
+    Ok(Some(model_to_base_response(erp_sales_return, details, attachments)))
 }
 
 pub async fn get_paginated(db: &DatabaseConnection, login_user: LoginUserContext, params: PaginatedKeywordRequest) -> Result<PaginatedResponse<ErpSalesReturnResponse>> {

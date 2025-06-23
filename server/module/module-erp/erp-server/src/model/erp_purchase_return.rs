@@ -2,6 +2,7 @@ use chrono::NaiveDateTime;
 use sea_orm::Condition;
 use sea_orm::entity::prelude::*;
 use common::interceptor::orm::active_filter::ActiveFilterEntityTrait;
+use crate::model::{erp_purchase_order, erp_supplier, erp_settlement_account};
 
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel)]
 #[sea_orm(table_name = "erp_purchase_return")]
@@ -49,7 +50,29 @@ pub struct Model {
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
-pub enum Relation {}
+pub enum Relation {
+
+    #[sea_orm(
+        belongs_to = "super::erp_purchase_order::Entity",
+        from = "Column::PurchaseOrderId",
+        to = "erp_purchase_order::Column::Id"
+    )]
+    ReturnPurchase,
+
+    #[sea_orm(
+        belongs_to = "super::erp_supplier::Entity",
+        from = "Column::SupplierId",
+        to = "erp_supplier::Column::Id"
+    )]
+    ReturnSupplier,
+
+    #[sea_orm(
+        belongs_to = "super::erp_settlement_account::Entity",
+        from = "Column::SettlementAccountId",
+        to = "erp_settlement_account::Column::Id"
+    )]
+    ReturnSettlementAccount,
+}
 
 impl Related<Entity> for Entity {
     fn to() -> RelationDef {

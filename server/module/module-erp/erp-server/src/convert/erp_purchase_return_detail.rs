@@ -7,6 +7,16 @@ pub fn create_request_to_model(request: &CreateErpPurchaseReturnDetailRequest) -
     ErpPurchaseReturnDetailActiveModel {
         purchase_detail_id: Set(request.purchase_detail_id.clone()),
         warehouse_id: Set(request.warehouse_id.clone()),
+        quantity: Set(request.quantity.clone()),
+        remarks: request.remarks.as_ref().map_or(NotSet, |remarks| Set(Some(remarks.clone()))),
+        ..Default::default()
+    }
+}
+
+pub fn update_add_request_to_model(request: &UpdateErpPurchaseReturnDetailRequest) -> ErpPurchaseReturnDetailActiveModel {
+    ErpPurchaseReturnDetailActiveModel {
+        purchase_detail_id: Set(request.purchase_detail_id.clone()),
+        warehouse_id: Set(request.warehouse_id.clone()),
         remarks: request.remarks.as_ref().map_or(NotSet, |remarks| Set(Some(remarks.clone()))),
         ..Default::default()
     }
@@ -14,11 +24,14 @@ pub fn create_request_to_model(request: &CreateErpPurchaseReturnDetailRequest) -
 
 pub fn update_request_to_model(request: &UpdateErpPurchaseReturnDetailRequest, existing: ErpPurchaseReturnDetail) -> ErpPurchaseReturnDetailActiveModel {
     let mut active_model: ErpPurchaseReturnDetailActiveModel = existing.into();
-    if let Some(purchase_detail_id) = &request.purchase_detail_id { 
+    if let purchase_detail_id = &request.purchase_detail_id { 
         active_model.purchase_detail_id = Set(purchase_detail_id.clone());
     }
-    if let Some(warehouse_id) = &request.warehouse_id { 
+    if let warehouse_id = &request.warehouse_id { 
         active_model.warehouse_id = Set(warehouse_id.clone());
+    }
+    if let quantity = &request.quantity { 
+        active_model.quantity = Set(quantity.clone());
     }
     if let Some(remarks) = &request.remarks { 
         active_model.remarks = Set(Some(remarks.clone()));

@@ -22,5 +22,15 @@ pub const SALE_ORDER_STATUS_CANCEL: i8 = 5; // 销售订单状态-已取消
 pub const SALE_ORDER_STATUS_RETURN_PROCESSING: i8 = 6; // 销售订单状态-退货处理中
 pub const SALE_ORDER_STATUS_RETURN_COMPLETE: i8 = 7; // 销售订单状态-退货完成
 
+pub const PURCHASE_RETURN_STATUS_PLACED: i8 = 0; // 采购退货订单状态-已下单
+pub const PURCHASE_RETURN_STATUS_SHIP_OUT: i8 = 1; // 采购退货订单状态-待出库
+pub const PURCHASE_RETURN_STATUS_COMPLETE: i8 = 2; // 采购退货订单状态-已完成
+pub const PURCHASE_RETURN_STATUS_CANCEL: i8 = 3; // 采购退货订单状态-已取消
+
+pub const SALE_RETURN_STATUS_PLACED: i8 = 0; // 销售退货订单状态-已下单
+pub const SALE_RETURN_STATUS_RECEIVED: i8 = 1; // 销售退货订单状态-已收货
+pub const SALE_RETURN_STATUS_COMPLETE: i8 = 4; // 销售退货订单状态-已完成
+pub const SALE_RETURN_STATUS_CANCEL: i8 = 5; // 销售退货订单状态-已取消
+
 pub const RECORD_TYPE_INBOUND: i8 = 0; // 记录类型-入库
 pub const RECORD_TYPE_OUTBOUND: i8 = 1; // 记录类型-出库

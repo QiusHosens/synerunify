@@ -106,3 +106,12 @@ pub async fn disable(db: &DatabaseConnection, login_user: LoginUserContext, id: 
     erp_settlement_account.update(db).await?;
     Ok(())
 }
+
+pub async fn list_by_ids(db: &DatabaseConnection, login_user: LoginUserContext, ids: Vec<i64>) -> Result<Vec<ErpSettlementAccountModel>> {
+    let condition = Condition::all().add(Column::TenantId.eq(login_user.tenant_id));
+    let list = ErpSettlementAccountEntity::find_active_with_condition(condition)
+        .filter(Column::TenantId.eq(login_user.tenant_id))
+        .filter(Column::Id.is_in(ids))
+        .all(db).await?;
+    Ok(list)
+}

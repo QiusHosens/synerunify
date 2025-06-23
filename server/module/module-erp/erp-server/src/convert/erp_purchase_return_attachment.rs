@@ -11,9 +11,17 @@ pub fn create_request_to_model(request: &CreateErpPurchaseReturnAttachmentReques
     }
 }
 
+pub fn update_add_request_to_model(request: &UpdateErpPurchaseReturnAttachmentRequest) -> ErpPurchaseReturnAttachmentActiveModel {
+    ErpPurchaseReturnAttachmentActiveModel {
+        file_id: Set(request.file_id.clone()),
+        remarks: request.remarks.as_ref().map_or(NotSet, |remarks| Set(Some(remarks.clone()))),
+        ..Default::default()
+    }
+}
+
 pub fn update_request_to_model(request: &UpdateErpPurchaseReturnAttachmentRequest, existing: ErpPurchaseReturnAttachment) -> ErpPurchaseReturnAttachmentActiveModel {
     let mut active_model: ErpPurchaseReturnAttachmentActiveModel = existing.into();
-    if let Some(file_id) = &request.file_id { 
+    if let file_id = &request.file_id { 
         active_model.file_id = Set(file_id.clone());
     }
     if let Some(remarks) = &request.remarks { 
