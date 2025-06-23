@@ -1,11 +1,16 @@
+use std::collections::HashMap;
+
 use common::interceptor::orm::simple_support::SimpleSupport;
 use common::utils::snowflake_generator::SnowflakeGenerator;
-use sea_orm::{ActiveModelTrait, ColumnTrait, Condition, DatabaseConnection, EntityTrait, Order, PaginatorTrait, QueryFilter, QueryOrder, TransactionTrait};
-use crate::model::erp_sales_return::{Model as ErpSalesReturnModel, ActiveModel as ErpSalesReturnActiveModel, Entity as ErpSalesReturnEntity, Column};
-use crate::service::{erp_sales_order, erp_sales_return_attachment, erp_sales_return_detail};
+use sea_orm::{ActiveModelTrait, ColumnTrait, Condition, DatabaseConnection, EntityTrait, JoinType, Order, PaginatorTrait, QueryFilter, QueryOrder, QuerySelect, RelationTrait, TransactionTrait};
+use crate::model::erp_sales_return::{Model as ErpSalesReturnModel, ActiveModel as ErpSalesReturnActiveModel, Entity as ErpSalesReturnEntity, Column, Relation};
+use crate::model::erp_sales_order::{Model as ErpSalesOrderModel, ActiveModel as ErpSalesOrderActiveModel, Entity as ErpSalesOrderEntity};
+use crate::model::erp_customer::{Model as ErpCustomerModel, ActiveModel as ErpCustomerActiveModel, Entity as ErpCustomerEntity};
+use crate::model::erp_settlement_account::{Model as ErpSettlementAccountModel, ActiveModel as ErpSettlementAccountActiveModel, Entity as ErpSettlementAccountEntity};
+use crate::service::{erp_sales_order, erp_sales_return_attachment, erp_sales_return_detail, erp_settlement_account};
 use erp_model::request::erp_sales_return::{CreateErpSalesReturnRequest, UpdateErpSalesReturnRequest, PaginatedKeywordRequest};
-use erp_model::response::erp_sales_return::ErpSalesReturnResponse;
-use crate::convert::erp_sales_return::{create_request_to_model, model_to_base_response, model_to_response, update_request_to_model};
+use erp_model::response::erp_sales_return::{ErpSalesReturnBaseResponse, ErpSalesReturnInfoResponse, ErpSalesReturnPageResponse, ErpSalesReturnResponse};
+use crate::convert::erp_sales_return::{create_request_to_model, model_to_base_response, model_to_info_response, model_to_page_response, model_to_response, update_request_to_model};
 use anyhow::{anyhow, Context, Result};
 use sea_orm::ActiveValue::Set;
 use common::constants::enum_constants::{SALE_RETURN_STATUS_COMPLETE, SALE_RETURN_STATUS_PLACED, SALE_RETURN_STATUS_RECEIVED, STATUS_DISABLE, STATUS_ENABLE};
@@ -118,7 +123,7 @@ pub async fn get_base_by_id(db: &DatabaseConnection, login_user: LoginUserContex
     Ok(Some(model_to_base_response(erp_sales_return, details, attachments)))
 }
 
-pub async fn get_info_by_id(db: &DatabaseConnection, login_user: LoginUserContext, id: i64) -> Result<Option<ErpSalesReturnBaseResponse>> {
+pub async fn get_info_by_id(db: &DatabaseConnection, login_user: LoginUserContext, id: i64) -> Result<Option<ErpSalesReturnInfoResponse>> {
     let condition = Condition::all()
             .add(Column::Id.eq(id))
             .add(Column::TenantId.eq(login_user.tenant_id));
@@ -132,25 +137,41 @@ pub async fn get_info_by_id(db: &DatabaseConnection, login_user: LoginUserContex
     if erp_sales_return.is_none() {
         return Ok(None);
     }
-    let erp_sales_return = erp_sales_return.unwrap();
+    let (sales_return, settlement_account) = erp_sales_return.unwrap();
     let details = erp_sales_return_detail::list_by_order_id(&db, login_user.clone(), id).await?;
     let attachments = erp_sales_return_attachment::list_by_order_id(&db, login_user, id).await?;
-    Ok(Some(model_to_base_response(erp_sales_return, details, attachments)))
+    Ok(Some(model_to_info_response(sales_return, settlement_account, details, attachments)))
 }
 
-pub async fn get_paginated(db: &DatabaseConnection, login_user: LoginUserContext, params: PaginatedKeywordRequest) -> Result<PaginatedResponse<ErpSalesReturnResponse>> {
-    let condition = Condition::all().add(Column::TenantId.eq(login_user.tenant_id));let paginator = ErpSalesReturnEntity::find_active_with_condition(condition)
+pub async fn get_paginated(db: &DatabaseConnection, login_user: LoginUserContext, params: PaginatedKeywordRequest) -> Result<PaginatedResponse<ErpSalesReturnPageResponse>> {
+    let paginator = ErpSalesReturnEntity::find_active_with_data_permission(login_user.clone())
+        .filter(Column::TenantId.eq(login_user.tenant_id))
+        .select_also(ErpSalesOrderEntity)
+        .select_also(ErpCustomerEntity)
+        // .select_also(ErpSettlementAccountEntity)
+        .join(JoinType::LeftJoin, Relation::ReturnSale.def())
+        .join(JoinType::LeftJoin, Relation::ReturnCustomer.def())
+        // .join(JoinType::LeftJoin, Relation::ReturnSettlementAccount.def())
         .support_filter(params.base.filter_field, params.base.filter_operator, params.base.filter_value)
         .support_order(params.base.sort_field, params.base.sort, Some(vec![(Column::Id, Order::Asc)]))
         .paginate(db, params.base.size);
 
     let total = paginator.num_items().await?;
     let total_pages = (total + params.base.size - 1) / params.base.size; // 向上取整
-    let list = paginator
-        .fetch_page(params.base.page - 1) // SeaORM 页码从 0 开始，所以减 1
-        .await?
+
+    let list = paginator.fetch_page(params.base.page - 1).await?;
+
+    let settlement_ids: Vec<i64> = list.iter().filter_map(|(ret, _, _)| ret.settlement_account_id).collect();
+    let settlement_accounts: Vec<ErpSettlementAccountModel> = erp_settlement_account::list_by_ids(&db, login_user, settlement_ids).await?;
+    // 转为 HashMap 便于后续快速查找
+    let settlement_map: HashMap<i64, ErpSettlementAccountModel> = settlement_accounts.into_iter().map(|s| (s.id, s)).collect();
+
+    let list = list
         .into_iter()
-        .map(model_to_response)
+        .map(|(ret, order, customer)| {
+            let settlement = ret.settlement_account_id.and_then(|id| settlement_map.get(&id).cloned());
+            model_to_page_response(ret, order, customer, settlement)
+        })
         .collect();
 
     Ok(PaginatedResponse {

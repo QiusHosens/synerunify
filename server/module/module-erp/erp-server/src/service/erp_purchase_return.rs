@@ -156,6 +156,9 @@ pub async fn get_paginated(db: &DatabaseConnection, login_user: LoginUserContext
         .support_order(params.base.sort_field, params.base.sort, Some(vec![(Column::Id, Order::Asc)]))
         .paginate(db, params.base.size);
 
+    let total = paginator.num_items().await?;
+    let total_pages = (total + params.base.size - 1) / params.base.size; // 向上取整
+
     let list = paginator.fetch_page(params.base.page - 1).await?;
 
     let settlement_ids: Vec<i64> = list.iter().filter_map(|(ret, _, _)| ret.settlement_account_id).collect();
@@ -163,12 +166,7 @@ pub async fn get_paginated(db: &DatabaseConnection, login_user: LoginUserContext
     // 转为 HashMap 便于后续快速查找
     let settlement_map: HashMap<i64, ErpSettlementAccountModel> = settlement_accounts.into_iter().map(|s| (s.id, s)).collect();
 
-    let total = paginator.num_items().await?;
-    let total_pages = (total + params.base.size - 1) / params.base.size; // 向上取整
-    
-    let list = paginator
-        .fetch_page(params.base.page - 1) // SeaORM 页码从 0 开始，所以减 1
-        .await?
+    let list = list
         .into_iter()
         .map(|(ret, order, supplier)| {
             let settlement = ret.settlement_account_id.and_then(|id| settlement_map.get(&id).cloned());
