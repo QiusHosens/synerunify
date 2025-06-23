@@ -223,7 +223,7 @@ mod common_local {
 //     flag: bool,
 //     // #[serde_as(as = "ChronoNaiveDateTime<Strftime>")]
 //     // #[serde_with(format = "%Y-%m-%d %H:%M:%S")]
-//     // #[serde_as(as = "StringDateTime")]
+//     // #[serde_as(as = "common::formatter::string_date_time::StringDateTime")]
 //     date: NaiveDateTime,
 // }
 

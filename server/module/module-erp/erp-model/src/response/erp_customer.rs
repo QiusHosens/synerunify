@@ -40,7 +40,7 @@ pub struct ErpCustomerResponse {
     
     // #[serde_as(as = "DisplayFromStr")]
     // #[serde(with = "serde_with::chrono::naive_datetime")]
-    #[serde_as(as = "StringDateTime")]
+    #[serde_as(as = "common::formatter::string_date_time::StringDateTime")]
     #[schema(value_type = String, format = Date)]
     pub create_time: NaiveDateTime, // 创建时间
     
@@ -48,7 +48,7 @@ pub struct ErpCustomerResponse {
     
     // #[serde_as(as = "DisplayFromStr")]
     // #[serde(with = "serde_with::chrono::naive_datetime")]
-    #[serde_as(as = "StringDateTime")]
+    #[serde_as(as = "common::formatter::string_date_time::StringDateTime")]
     #[schema(value_type = String, format = Date)]
     pub update_time: NaiveDateTime, // 更新时间
     

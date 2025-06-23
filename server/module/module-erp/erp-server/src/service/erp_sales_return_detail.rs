@@ -20,19 +20,6 @@ pub async fn create(db: &DatabaseConnection, login_user: LoginUserContext, reque
     Ok(erp_sales_return_detail.id)
 }
 
-pub async fn update(db: &DatabaseConnection, login_user: LoginUserContext, request: UpdateErpSalesReturnDetailRequest) -> Result<()> {
-    let erp_sales_return_detail = ErpSalesReturnDetailEntity::find_by_id(request.id)
-        .filter(Column::TenantId.eq(login_user.tenant_id))
-        .one(db)
-        .await?
-        .ok_or_else(|| anyhow!("记录未找到"))?;
-
-    let mut erp_sales_return_detail = update_request_to_model(&request, erp_sales_return_detail);
-    erp_sales_return_detail.updater = Set(Some(login_user.id));
-    erp_sales_return_detail.update(db).await?;
-    Ok(())
-}
-
 pub async fn delete(db: &DatabaseConnection, login_user: LoginUserContext, id: i64) -> Result<()> {
     let erp_sales_return_detail = ErpSalesReturnDetailActiveModel {
         id: Set(id),

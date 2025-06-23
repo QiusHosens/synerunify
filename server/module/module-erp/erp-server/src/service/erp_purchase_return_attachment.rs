@@ -20,19 +20,6 @@ pub async fn create(db: &DatabaseConnection, login_user: LoginUserContext, reque
     Ok(erp_purchase_return_attachment.id)
 }
 
-pub async fn update(db: &DatabaseConnection, login_user: LoginUserContext, request: UpdateErpPurchaseReturnAttachmentRequest) -> Result<()> {
-    let erp_purchase_return_attachment = ErpPurchaseReturnAttachmentEntity::find_by_id(request.id)
-        .filter(Column::TenantId.eq(login_user.tenant_id))
-        .one(db)
-        .await?
-        .ok_or_else(|| anyhow!("记录未找到"))?;
-
-    let mut erp_purchase_return_attachment = update_request_to_model(&request, erp_purchase_return_attachment);
-    erp_purchase_return_attachment.updater = Set(Some(login_user.id));
-    erp_purchase_return_attachment.update(db).await?;
-    Ok(())
-}
-
 pub async fn delete(db: &DatabaseConnection, login_user: LoginUserContext, id: i64) -> Result<()> {
     let erp_purchase_return_attachment = ErpPurchaseReturnAttachmentActiveModel {
         id: Set(id),

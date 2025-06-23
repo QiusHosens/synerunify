@@ -22,7 +22,7 @@ pub struct ErpInboundOrderResponse {
     
     // #[serde_as(as = "DisplayFromStr")]
     // #[serde(with = "serde_with::chrono::naive_datetime")]
-    #[serde_as(as = "StringDateTime")]
+    #[serde_as(as = "common::formatter::string_date_time::StringDateTime")]
     #[schema(value_type = String, format = Date)]
     pub inbound_date: NaiveDateTime, // 入库日期
     
@@ -42,7 +42,7 @@ pub struct ErpInboundOrderResponse {
     
     // #[serde_as(as = "DisplayFromStr")]
     // #[serde(with = "serde_with::chrono::naive_datetime")]
-    #[serde_as(as = "StringDateTime")]
+    #[serde_as(as = "common::formatter::string_date_time::StringDateTime")]
     #[schema(value_type = String, format = Date)]
     pub create_time: NaiveDateTime, // 创建时间
     
@@ -50,7 +50,7 @@ pub struct ErpInboundOrderResponse {
     
     // #[serde_as(as = "DisplayFromStr")]
     // #[serde(with = "serde_with::chrono::naive_datetime")]
-    #[serde_as(as = "StringDateTime")]
+    #[serde_as(as = "common::formatter::string_date_time::StringDateTime")]
     #[schema(value_type = String, format = Date)]
     pub update_time: NaiveDateTime, // 更新时间
     
@@ -72,7 +72,7 @@ pub struct ErpInboundOrderPagePurchaseResponse {
     
     // #[serde_as(as = "DisplayFromStr")]
     // #[serde(with = "serde_with::chrono::naive_datetime")]
-    #[serde_as(as = "StringDateTime")]
+    #[serde_as(as = "common::formatter::string_date_time::StringDateTime")]
     #[schema(value_type = String, format = Date)]
     pub inbound_date: NaiveDateTime, // 入库日期
     
@@ -92,7 +92,7 @@ pub struct ErpInboundOrderPagePurchaseResponse {
     
     // #[serde_as(as = "DisplayFromStr")]
     // #[serde(with = "serde_with::chrono::naive_datetime")]
-    #[serde_as(as = "StringDateTime")]
+    #[serde_as(as = "common::formatter::string_date_time::StringDateTime")]
     #[schema(value_type = String, format = Date)]
     pub create_time: NaiveDateTime, // 创建时间
     
@@ -100,7 +100,7 @@ pub struct ErpInboundOrderPagePurchaseResponse {
     
     // #[serde_as(as = "DisplayFromStr")]
     // #[serde(with = "serde_with::chrono::naive_datetime")]
-    #[serde_as(as = "StringDateTime")]
+    #[serde_as(as = "common::formatter::string_date_time::StringDateTime")]
     #[schema(value_type = String, format = Date)]
     pub update_time: NaiveDateTime, // 更新时间
 
@@ -130,7 +130,7 @@ pub struct ErpInboundOrderPageOtherResponse {
     
     // #[serde_as(as = "DisplayFromStr")]
     // #[serde(with = "serde_with::chrono::naive_datetime")]
-    #[serde_as(as = "StringDateTime")]
+    #[serde_as(as = "common::formatter::string_date_time::StringDateTime")]
     #[schema(value_type = String, format = Date)]
     pub inbound_date: NaiveDateTime, // 入库日期
     
@@ -150,7 +150,7 @@ pub struct ErpInboundOrderPageOtherResponse {
     
     // #[serde_as(as = "DisplayFromStr")]
     // #[serde(with = "serde_with::chrono::naive_datetime")]
-    #[serde_as(as = "StringDateTime")]
+    #[serde_as(as = "common::formatter::string_date_time::StringDateTime")]
     #[schema(value_type = String, format = Date)]
     pub create_time: NaiveDateTime, // 创建时间
     
@@ -158,7 +158,7 @@ pub struct ErpInboundOrderPageOtherResponse {
     
     // #[serde_as(as = "DisplayFromStr")]
     // #[serde(with = "serde_with::chrono::naive_datetime")]
-    #[serde_as(as = "StringDateTime")]
+    #[serde_as(as = "common::formatter::string_date_time::StringDateTime")]
     #[schema(value_type = String, format = Date)]
     pub update_time: NaiveDateTime, // 更新时间
 
@@ -186,7 +186,7 @@ pub struct ErpInboundOrderBasePurchaseResponse {
     
     // #[serde_as(as = "DisplayFromStr")]
     // #[serde(with = "serde_with::chrono::naive_datetime")]
-    #[serde_as(as = "StringDateTime")]
+    #[serde_as(as = "common::formatter::string_date_time::StringDateTime")]
     #[schema(value_type = String, format = Date)]
     pub inbound_date: NaiveDateTime, // 入库日期
     
@@ -220,7 +220,7 @@ pub struct ErpInboundOrderBaseOtherResponse {
     
     // #[serde_as(as = "DisplayFromStr")]
     // #[serde(with = "serde_with::chrono::naive_datetime")]
-    #[serde_as(as = "StringDateTime")]
+    #[serde_as(as = "common::formatter::string_date_time::StringDateTime")]
     #[schema(value_type = String, format = Date)]
     pub inbound_date: NaiveDateTime, // 入库日期
     
@@ -254,7 +254,7 @@ pub struct ErpInboundOrderInfoPurchaseResponse {
     
     // #[serde_as(as = "DisplayFromStr")]
     // #[serde(with = "serde_with::chrono::naive_datetime")]
-    #[serde_as(as = "StringDateTime")]
+    #[serde_as(as = "common::formatter::string_date_time::StringDateTime")]
     #[schema(value_type = String, format = Date)]
     pub inbound_date: NaiveDateTime, // 入库日期
     

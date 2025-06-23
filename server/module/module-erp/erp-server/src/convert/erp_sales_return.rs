@@ -5,9 +5,7 @@ use erp_model::response::erp_sales_return::ErpSalesReturnResponse;
 
 pub fn create_request_to_model(request: &CreateErpSalesReturnRequest) -> ErpSalesReturnActiveModel {
     ErpSalesReturnActiveModel {
-        order_number: Set(request.order_number.clone()),
         sales_order_id: Set(request.sales_order_id.clone()),
-        customer_id: Set(request.customer_id.clone()),
         return_date: Set(request.return_date.clone()),
         total_amount: Set(request.total_amount.clone()),
         order_status: Set(request.order_status.clone()),
@@ -15,23 +13,12 @@ pub fn create_request_to_model(request: &CreateErpSalesReturnRequest) -> ErpSale
         settlement_account_id: request.settlement_account_id.as_ref().map_or(NotSet, |settlement_account_id| Set(Some(settlement_account_id.clone()))),
         deposit: request.deposit.as_ref().map_or(NotSet, |deposit| Set(Some(deposit.clone()))),
         remarks: request.remarks.as_ref().map_or(NotSet, |remarks| Set(Some(remarks.clone()))),
-        department_code: Set(request.department_code.clone()),
-        department_id: Set(request.department_id.clone()),
         ..Default::default()
     }
 }
 
 pub fn update_request_to_model(request: &UpdateErpSalesReturnRequest, existing: ErpSalesReturn) -> ErpSalesReturnActiveModel {
     let mut active_model: ErpSalesReturnActiveModel = existing.into();
-    if let Some(order_number) = &request.order_number { 
-        active_model.order_number = Set(order_number.clone());
-    }
-    if let Some(sales_order_id) = &request.sales_order_id { 
-        active_model.sales_order_id = Set(sales_order_id.clone());
-    }
-    if let Some(customer_id) = &request.customer_id { 
-        active_model.customer_id = Set(customer_id.clone());
-    }
     if let Some(return_date) = &request.return_date { 
         active_model.return_date = Set(return_date.clone());
     }
@@ -52,12 +39,6 @@ pub fn update_request_to_model(request: &UpdateErpSalesReturnRequest, existing: 
     }
     if let Some(remarks) = &request.remarks { 
         active_model.remarks = Set(Some(remarks.clone()));
-    }
-    if let Some(department_code) = &request.department_code { 
-        active_model.department_code = Set(department_code.clone());
-    }
-    if let Some(department_id) = &request.department_id { 
-        active_model.department_id = Set(department_id.clone());
     }
     active_model
 }
