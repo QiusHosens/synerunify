@@ -6,21 +6,27 @@ import { createErpPurchaseReturn, ErpPurchaseReturnRequest } from '@/api';
 import CustomizedDialog from '@/components/CustomizedDialog';
 
 interface FormValues {
+  order_number: number; // 订单编号
   purchase_order_id: number; // 采购订单ID
   supplier_id: number; // 供应商ID
-  warehouse_id: number; // 仓库ID
   return_date: string; // 退货日期
-  total_amount: number; // 退货总金额
-  return_status: number; // 状态 (0=pending, 1=completed, 2=cancelled)
+  total_amount: number; // 总金额
+  order_status: number; // 订单状态
+  discount_rate: number; // 优惠率（百分比，1000表示10.00%）
+  settlement_account_id: number; // 结算账户ID
+  deposit: number; // 定金
   remarks: string; // 备注
   department_code: string; // 部门编码
   department_id: number; // 部门ID
   }
 
 interface FormErrors { 
+  order_number?: string; // 订单编号
+  purchase_order_id?: string; // 采购订单ID
+  supplier_id?: string; // 供应商ID
   return_date?: string; // 退货日期
-  total_amount?: string; // 退货总金额
-  return_status?: string; // 状态 (0=pending, 1=completed, 2=cancelled)
+  total_amount?: string; // 总金额
+  order_status?: string; // 订单状态
   department_code?: string; // 部门编码
   department_id?: string; // 部门ID
 }
@@ -35,12 +41,15 @@ const ErpPurchaseReturnAdd = forwardRef(({ onSubmit }: ErpPurchaseReturnAddProps
   const [open, setOpen] = useState(false);
   const [maxWidth] = useState<DialogProps['maxWidth']>('sm');
   const [formValues, setFormValues] = useState<FormValues>({
+    order_number: 0,
     purchase_order_id: 0,
     supplier_id: 0,
-    warehouse_id: 0,
     return_date: '',
     total_amount: 0,
-    return_status: 0,
+    order_status: 0,
+    discount_rate: 0,
+    settlement_account_id: 0,
+    deposit: 0,
     remarks: '',
     department_code: '',
     department_id: 0,
@@ -59,24 +68,36 @@ const ErpPurchaseReturnAdd = forwardRef(({ onSubmit }: ErpPurchaseReturnAddProps
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
     
+    if (!formValues.order_number && formValues.order_number != 0) {
+      newErrors.order_number = t('page.erp.purchase.return.error.order_number');
+    }
+    
+    if (!formValues.purchase_order_id && formValues.purchase_order_id != 0) {
+      newErrors.purchase_order_id = t('page.erp.purchase.return.error.purchase_order_id');
+    }
+    
+    if (!formValues.supplier_id && formValues.supplier_id != 0) {
+      newErrors.supplier_id = t('page.erp.purchase.return.error.supplier_id');
+    }
+    
     if (!formValues.return_date.trim()) {
-      newErrors.return_date = t('page.post.error.return_date');
+      newErrors.return_date = t('page.erp.purchase.return.error.return_date');
     }
     
     if (!formValues.total_amount && formValues.total_amount != 0) {
-      newErrors.total_amount = t('page.post.error.total_amount');
+      newErrors.total_amount = t('page.erp.purchase.return.error.total_amount');
     }
     
-    if (!formValues.return_status && formValues.return_status != 0) {
-      newErrors.return_status = t('page.post.error.return_status');
+    if (!formValues.order_status && formValues.order_status != 0) {
+      newErrors.order_status = t('page.erp.purchase.return.error.order_status');
     }
     
     if (!formValues.department_code.trim()) {
-      newErrors.department_code = t('page.post.error.department_code');
+      newErrors.department_code = t('page.erp.purchase.return.error.department_code');
     }
     
     if (!formValues.department_id && formValues.department_id != 0) {
-      newErrors.department_id = t('page.post.error.department_id');
+      newErrors.department_id = t('page.erp.purchase.return.error.department_id');
     }
     
     setErrors(newErrors);
@@ -95,12 +116,15 @@ const ErpPurchaseReturnAdd = forwardRef(({ onSubmit }: ErpPurchaseReturnAddProps
 
   const reset = () => {
     setFormValues({
+      order_number: 0,
       purchase_order_id: 0,
       supplier_id: 0,
-      warehouse_id: 0,
       return_date: '',
       total_amount: 0,
-      return_status: 0,
+      order_status: 0,
+      discount_rate: 0,
+      settlement_account_id: 0,
+      deposit: 0,
       remarks: '',
       department_code: '',
       department_id: 0,
@@ -166,7 +190,7 @@ const ErpPurchaseReturnAdd = forwardRef(({ onSubmit }: ErpPurchaseReturnAddProps
     <CustomizedDialog
       open={open}
       onClose={handleClose}
-      title={t('global.operate.add') + t('global.page.post')}
+      title={t('global.operate.add') + t('global.page.erp.purchase.return')}
       maxWidth={maxWidth}
       actions={
         <>
@@ -186,33 +210,42 @@ const ErpPurchaseReturnAdd = forwardRef(({ onSubmit }: ErpPurchaseReturnAddProps
       >
         <FormControl sx={ {minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' }} }>
           <TextField
+            required
             size="small"
             type="number"
-            label={t("page.post.title.purchase_order_id")}
-            name='purchase_order_id'
-            value={formValues.purchase_order_id}
+            label={t("page.erp.purchase.return.title.order_number")}
+            name='order_number'
+            value={formValues.order_number}
             onChange={handleInputChange}
-          />
-          <TextField
-            size="small"
-            type="number"
-            label={t("page.post.title.supplier_id")}
-            name='supplier_id'
-            value={formValues.supplier_id}
-            onChange={handleInputChange}
-          />
-          <TextField
-            size="small"
-            type="number"
-            label={t("page.post.title.warehouse_id")}
-            name='warehouse_id'
-            value={formValues.warehouse_id}
-            onChange={handleInputChange}
+            error={!!errors.order_number}
+            helperText={errors.order_number}
           />
           <TextField
             required
             size="small"
-            label={t("page.post.title.return_date")}
+            type="number"
+            label={t("page.erp.purchase.return.title.purchase_order_id")}
+            name='purchase_order_id'
+            value={formValues.purchase_order_id}
+            onChange={handleInputChange}
+            error={!!errors.purchase_order_id}
+            helperText={errors.purchase_order_id}
+          />
+          <TextField
+            required
+            size="small"
+            type="number"
+            label={t("page.erp.purchase.return.title.supplier_id")}
+            name='supplier_id'
+            value={formValues.supplier_id}
+            onChange={handleInputChange}
+            error={!!errors.supplier_id}
+            helperText={errors.supplier_id}
+          />
+          <TextField
+            required
+            size="small"
+            label={t("page.erp.purchase.return.title.return_date")}
             name='return_date'
             value={formValues.return_date}
             onChange={handleInputChange}
@@ -223,7 +256,7 @@ const ErpPurchaseReturnAdd = forwardRef(({ onSubmit }: ErpPurchaseReturnAddProps
             required
             size="small"
             type="number"
-            label={t("page.post.title.total_amount")}
+            label={t("page.erp.purchase.return.title.total_amount")}
             name='total_amount'
             value={formValues.total_amount}
             onChange={handleInputChange}
@@ -234,16 +267,40 @@ const ErpPurchaseReturnAdd = forwardRef(({ onSubmit }: ErpPurchaseReturnAddProps
             required
             size="small"
             type="number"
-            label={t("page.post.title.return_status")}
-            name='return_status'
-            value={formValues.return_status}
+            label={t("page.erp.purchase.return.title.order_status")}
+            name='order_status'
+            value={formValues.order_status}
             onChange={handleInputChange}
-            error={!!errors.return_status}
-            helperText={errors.return_status}
+            error={!!errors.order_status}
+            helperText={errors.order_status}
           />
           <TextField
             size="small"
-            label={t("page.post.title.remarks")}
+            type="number"
+            label={t("page.erp.purchase.return.title.discount_rate")}
+            name='discount_rate'
+            value={formValues.discount_rate}
+            onChange={handleInputChange}
+          />
+          <TextField
+            size="small"
+            type="number"
+            label={t("page.erp.purchase.return.title.settlement_account_id")}
+            name='settlement_account_id'
+            value={formValues.settlement_account_id}
+            onChange={handleInputChange}
+          />
+          <TextField
+            size="small"
+            type="number"
+            label={t("page.erp.purchase.return.title.deposit")}
+            name='deposit'
+            value={formValues.deposit}
+            onChange={handleInputChange}
+          />
+          <TextField
+            size="small"
+            label={t("page.erp.purchase.return.title.remarks")}
             name='remarks'
             value={formValues.remarks}
             onChange={handleInputChange}
@@ -251,7 +308,7 @@ const ErpPurchaseReturnAdd = forwardRef(({ onSubmit }: ErpPurchaseReturnAddProps
           <TextField
             required
             size="small"
-            label={t("page.post.title.department_code")}
+            label={t("page.erp.purchase.return.title.department_code")}
             name='department_code'
             value={formValues.department_code}
             onChange={handleInputChange}
@@ -262,7 +319,7 @@ const ErpPurchaseReturnAdd = forwardRef(({ onSubmit }: ErpPurchaseReturnAddProps
             required
             size="small"
             type="number"
-            label={t("page.post.title.department_id")}
+            label={t("page.erp.purchase.return.title.department_id")}
             name='department_id'
             value={formValues.department_id}
             onChange={handleInputChange}
