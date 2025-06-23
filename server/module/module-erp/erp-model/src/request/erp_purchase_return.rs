@@ -6,20 +6,28 @@ use common::base::page::PaginatedRequest;
 #[derive(Serialize, Deserialize, Debug, ToSchema)]
 pub struct CreateErpPurchaseReturnRequest {
     
-    pub purchase_order_id: Option<i64>, // 采购订单ID
+    pub order_number: i64, // 订单编号
     
-    pub supplier_id: Option<i64>, // 供应商ID
+    pub purchase_order_id: i64, // 采购订单ID
     
-    pub warehouse_id: Option<i64>, // 仓库ID
+    pub supplier_id: i64, // 供应商ID
+    
+    pub warehouse_id: i64, // 仓库ID
     
     // #[serde_as(as = "DisplayFromStr")]
     // #[serde(with = "serde_with::chrono::naive_datetime")]
     #[schema(value_type = String, format = Date)]
     pub return_date: NaiveDateTime, // 退货日期
     
-    pub total_amount: i64, // 退货总金额
+    pub total_amount: i64, // 总金额
     
-    pub return_status: i8, // 状态 (0=pending, 1=completed, 2=cancelled)
+    pub order_status: i8, // 订单状态
+    
+    pub discount_rate: Option<i64>, // 优惠率（百分比，1000表示10.00%）
+    
+    pub settlement_account_id: Option<i64>, // 结算账户ID
+    
+    pub deposit: Option<i64>, // 定金
     
     pub remarks: Option<String>, // 备注
     
@@ -34,6 +42,8 @@ pub struct UpdateErpPurchaseReturnRequest {
     
     pub id: i64, // 退货ID
     
+    pub order_number: Option<i64>, // 订单编号
+    
     pub purchase_order_id: Option<i64>, // 采购订单ID
     
     pub supplier_id: Option<i64>, // 供应商ID
@@ -45,9 +55,15 @@ pub struct UpdateErpPurchaseReturnRequest {
     #[schema(value_type = String, format = Date)]
     pub return_date: Option<NaiveDateTime>, // 退货日期
     
-    pub total_amount: Option<i64>, // 退货总金额
+    pub total_amount: Option<i64>, // 总金额
     
-    pub return_status: Option<i8>, // 状态 (0=pending, 1=completed, 2=cancelled)
+    pub order_status: Option<i8>, // 订单状态
+    
+    pub discount_rate: Option<i64>, // 优惠率（百分比，1000表示10.00%）
+    
+    pub settlement_account_id: Option<i64>, // 结算账户ID
+    
+    pub deposit: Option<i64>, // 定金
     
     pub remarks: Option<String>, // 备注
     

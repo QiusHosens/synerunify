@@ -5,12 +5,16 @@ use erp_model::response::erp_purchase_return::ErpPurchaseReturnResponse;
 
 pub fn create_request_to_model(request: &CreateErpPurchaseReturnRequest) -> ErpPurchaseReturnActiveModel {
     ErpPurchaseReturnActiveModel {
-        purchase_order_id: request.purchase_order_id.as_ref().map_or(NotSet, |purchase_order_id| Set(Some(purchase_order_id.clone()))),
-        supplier_id: request.supplier_id.as_ref().map_or(NotSet, |supplier_id| Set(Some(supplier_id.clone()))),
-        warehouse_id: request.warehouse_id.as_ref().map_or(NotSet, |warehouse_id| Set(Some(warehouse_id.clone()))),
+        order_number: Set(request.order_number.clone()),
+        purchase_order_id: Set(request.purchase_order_id.clone()),
+        supplier_id: Set(request.supplier_id.clone()),
+        warehouse_id: Set(request.warehouse_id.clone()),
         return_date: Set(request.return_date.clone()),
         total_amount: Set(request.total_amount.clone()),
-        return_status: Set(request.return_status.clone()),
+        order_status: Set(request.order_status.clone()),
+        discount_rate: request.discount_rate.as_ref().map_or(NotSet, |discount_rate| Set(Some(discount_rate.clone()))),
+        settlement_account_id: request.settlement_account_id.as_ref().map_or(NotSet, |settlement_account_id| Set(Some(settlement_account_id.clone()))),
+        deposit: request.deposit.as_ref().map_or(NotSet, |deposit| Set(Some(deposit.clone()))),
         remarks: request.remarks.as_ref().map_or(NotSet, |remarks| Set(Some(remarks.clone()))),
         department_code: Set(request.department_code.clone()),
         department_id: Set(request.department_id.clone()),
@@ -20,14 +24,17 @@ pub fn create_request_to_model(request: &CreateErpPurchaseReturnRequest) -> ErpP
 
 pub fn update_request_to_model(request: &UpdateErpPurchaseReturnRequest, existing: ErpPurchaseReturn) -> ErpPurchaseReturnActiveModel {
     let mut active_model: ErpPurchaseReturnActiveModel = existing.into();
+    if let Some(order_number) = &request.order_number { 
+        active_model.order_number = Set(order_number.clone());
+    }
     if let Some(purchase_order_id) = &request.purchase_order_id { 
-        active_model.purchase_order_id = Set(Some(purchase_order_id.clone()));
+        active_model.purchase_order_id = Set(purchase_order_id.clone());
     }
     if let Some(supplier_id) = &request.supplier_id { 
-        active_model.supplier_id = Set(Some(supplier_id.clone()));
+        active_model.supplier_id = Set(supplier_id.clone());
     }
     if let Some(warehouse_id) = &request.warehouse_id { 
-        active_model.warehouse_id = Set(Some(warehouse_id.clone()));
+        active_model.warehouse_id = Set(warehouse_id.clone());
     }
     if let Some(return_date) = &request.return_date { 
         active_model.return_date = Set(return_date.clone());
@@ -35,8 +42,17 @@ pub fn update_request_to_model(request: &UpdateErpPurchaseReturnRequest, existin
     if let Some(total_amount) = &request.total_amount { 
         active_model.total_amount = Set(total_amount.clone());
     }
-    if let Some(return_status) = &request.return_status { 
-        active_model.return_status = Set(return_status.clone());
+    if let Some(order_status) = &request.order_status { 
+        active_model.order_status = Set(order_status.clone());
+    }
+    if let Some(discount_rate) = &request.discount_rate { 
+        active_model.discount_rate = Set(Some(discount_rate.clone()));
+    }
+    if let Some(settlement_account_id) = &request.settlement_account_id { 
+        active_model.settlement_account_id = Set(Some(settlement_account_id.clone()));
+    }
+    if let Some(deposit) = &request.deposit { 
+        active_model.deposit = Set(Some(deposit.clone()));
     }
     if let Some(remarks) = &request.remarks { 
         active_model.remarks = Set(Some(remarks.clone()));
@@ -53,12 +69,16 @@ pub fn update_request_to_model(request: &UpdateErpPurchaseReturnRequest, existin
 pub fn model_to_response(model: ErpPurchaseReturn) -> ErpPurchaseReturnResponse {
     ErpPurchaseReturnResponse { 
         id: model.id,
+        order_number: model.order_number,
         purchase_order_id: model.purchase_order_id,
         supplier_id: model.supplier_id,
         warehouse_id: model.warehouse_id,
         return_date: model.return_date,
         total_amount: model.total_amount,
-        return_status: model.return_status,
+        order_status: model.order_status,
+        discount_rate: model.discount_rate,
+        settlement_account_id: model.settlement_account_id,
+        deposit: model.deposit,
         remarks: model.remarks,
         department_code: model.department_code,
         department_id: model.department_id,

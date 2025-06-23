@@ -5,33 +5,21 @@ use serde_with::{serde_as, DisplayFromStr};
 
 #[serde_as]
 #[derive(Deserialize, Serialize, Debug, Clone, ToSchema)]
-pub struct ErpPurchaseReturnResponse {
+pub struct ErpPurchaseReturnDetailResponse {
     
-    pub id: i64, // 退货ID
+    pub id: i64, // 退货详情ID
     
-    pub order_number: i64, // 订单编号
+    pub order_id: i64, // 退货订单ID
     
-    pub purchase_order_id: i64, // 采购订单ID
+    pub product_id: i64, // 产品ID
     
-    pub supplier_id: i64, // 供应商ID
+    pub quantity: i32, // 数量
     
-    pub warehouse_id: i64, // 仓库ID
+    pub unit_price: i64, // 单价
     
-    // #[serde_as(as = "DisplayFromStr")]
-    // #[serde(with = "serde_with::chrono::naive_datetime")]
-    #[serde_as(as = "common::formatter::string_date_time::StringDateTime")]
-    #[schema(value_type = String, format = Date)]
-    pub return_date: NaiveDateTime, // 退货日期
+    pub subtotal: i64, // 小计
     
-    pub total_amount: i64, // 总金额
-    
-    pub order_status: i8, // 订单状态
-    
-    pub discount_rate: Option<i64>, // 优惠率（百分比，1000表示10.00%）
-    
-    pub settlement_account_id: Option<i64>, // 结算账户ID
-    
-    pub deposit: Option<i64>, // 定金
+    pub tax_rate: Option<i32>, // 税率,精确到万分位
     
     pub remarks: Option<String>, // 备注
     
