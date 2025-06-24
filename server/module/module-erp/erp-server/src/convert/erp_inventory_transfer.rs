@@ -14,8 +14,6 @@ pub fn create_request_to_model(request: &CreateErpInventoryTransferRequest) -> E
         quantity: Set(request.quantity.clone()),
         transfer_date: Set(request.transfer_date.clone()),
         remarks: request.remarks.as_ref().map_or(NotSet, |remarks| Set(Some(remarks.clone()))),
-        department_code: Set(request.department_code.clone()),
-        department_id: Set(request.department_id.clone()),
         ..Default::default()
     }
 }
@@ -39,12 +37,6 @@ pub fn update_request_to_model(request: &UpdateErpInventoryTransferRequest, exis
     }
     if let Some(remarks) = &request.remarks { 
         active_model.remarks = Set(Some(remarks.clone()));
-    }
-    if let Some(department_code) = &request.department_code { 
-        active_model.department_code = Set(department_code.clone());
-    }
-    if let Some(department_id) = &request.department_id { 
-        active_model.department_id = Set(department_id.clone());
     }
     active_model
 }

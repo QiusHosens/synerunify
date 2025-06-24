@@ -19,6 +19,8 @@ use common::interceptor::orm::active_filter::ActiveFilterEntityTrait;
 
 pub async fn create(db: &DatabaseConnection, login_user: LoginUserContext, request: CreateErpInventoryTransferRequest) -> Result<i64> {
     let mut erp_inventory_transfer = create_request_to_model(&request);
+    erp_inventory_transfer.department_id = Set(login_user.department_id);
+    erp_inventory_transfer.department_code = Set(login_user.department_code);
     erp_inventory_transfer.creator = Set(Some(login_user.id));
     erp_inventory_transfer.updater = Set(Some(login_user.id));
     erp_inventory_transfer.tenant_id = Set(login_user.tenant_id);
