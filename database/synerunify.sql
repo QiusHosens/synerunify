@@ -11,7 +11,7 @@
  Target Server Version : 80100 (8.1.0)
  File Encoding         : 65001
 
- Date: 23/06/2025 10:30:52
+ Date: 24/06/2025 13:49:45
 */
 
 SET NAMES utf8mb4;
@@ -1281,7 +1281,7 @@ CREATE TABLE `system_menu`  (
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 171 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '菜单权限表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 211 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '菜单权限表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of system_menu
@@ -1442,6 +1442,46 @@ INSERT INTO `system_menu` VALUES (167, '删除', 'erp:sale:order:delete', 3, 3, 
 INSERT INTO `system_menu` VALUES (168, '已签收', 'erp:sale:order:signed', 3, 4, 94, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:15:01', 1, '2025-06-16 08:39:45', b'0');
 INSERT INTO `system_menu` VALUES (169, '已完成', 'erp:sale:order:completed', 3, 4, 94, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:15:01', 1, '2025-06-16 08:39:45', b'0');
 INSERT INTO `system_menu` VALUES (170, '取消订单', 'erp:sale:order:cancel', 3, 5, 94, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:15:29', 1, '2025-06-16 08:39:50', b'0');
+INSERT INTO `system_menu` VALUES (171, '查看', 'erp:purchase:return:get', 3, 0, 92, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:12:20', 1, '2025-06-10 02:12:20', b'0');
+INSERT INTO `system_menu` VALUES (172, '新增', 'erp:purchase:return:add', 3, 1, 92, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:13:19', 1, '2025-06-10 02:13:19', b'0');
+INSERT INTO `system_menu` VALUES (173, '修改', 'erp:purchase:return:edit', 3, 2, 92, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:13:36', 1, '2025-06-10 02:13:36', b'0');
+INSERT INTO `system_menu` VALUES (174, '删除', 'erp:purchase:return:delete', 3, 3, 92, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:13:54', 1, '2025-06-10 02:13:54', b'0');
+INSERT INTO `system_menu` VALUES (175, '查看', 'erp:sale:outbound:get', 3, 0, 95, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:12:20', 1, '2025-06-10 02:12:20', b'0');
+INSERT INTO `system_menu` VALUES (176, '新增', 'erp:sale:outbound:add', 3, 1, 95, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:13:19', 1, '2025-06-10 02:13:19', b'0');
+INSERT INTO `system_menu` VALUES (177, '修改', 'erp:sale:outbound:edit', 3, 2, 95, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:13:36', 1, '2025-06-10 02:13:36', b'0');
+INSERT INTO `system_menu` VALUES (178, '删除', 'erp:sale:outbound:delete', 3, 3, 95, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:13:54', 1, '2025-06-10 02:13:54', b'0');
+INSERT INTO `system_menu` VALUES (179, '查看', 'erp:sale:return:get', 3, 0, 96, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:12:20', 1, '2025-06-10 02:12:20', b'0');
+INSERT INTO `system_menu` VALUES (180, '新增', 'erp:sale:return:add', 3, 1, 96, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:13:19', 1, '2025-06-10 02:13:19', b'0');
+INSERT INTO `system_menu` VALUES (181, '修改', 'erp:sale:return:edit', 3, 2, 96, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:13:36', 1, '2025-06-10 02:13:36', b'0');
+INSERT INTO `system_menu` VALUES (182, '删除', 'erp:sale:return:delete', 3, 3, 96, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:13:54', 1, '2025-06-10 02:13:54', b'0');
+INSERT INTO `system_menu` VALUES (183, '查看', 'erp:inventory:record:get', 3, 0, 100, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:12:20', 1, '2025-06-10 02:12:20', b'0');
+INSERT INTO `system_menu` VALUES (184, '新增', 'erp:inventory:record:add', 3, 1, 100, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:13:19', 1, '2025-06-10 02:13:19', b'0');
+INSERT INTO `system_menu` VALUES (185, '修改', 'erp:inventory:record:edit', 3, 2, 100, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:13:36', 1, '2025-06-10 02:13:36', b'0');
+INSERT INTO `system_menu` VALUES (186, '删除', 'erp:inventory:record:delete', 3, 3, 100, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:13:54', 1, '2025-06-10 02:13:54', b'0');
+INSERT INTO `system_menu` VALUES (187, '查看', 'erp:inventory:inbound:get', 3, 0, 101, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:12:20', 1, '2025-06-10 02:12:20', b'0');
+INSERT INTO `system_menu` VALUES (188, '新增', 'erp:inventory:inbound:add', 3, 1, 101, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:13:19', 1, '2025-06-10 02:13:19', b'0');
+INSERT INTO `system_menu` VALUES (189, '修改', 'erp:inventory:inbound:edit', 3, 2, 101, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:13:36', 1, '2025-06-10 02:13:36', b'0');
+INSERT INTO `system_menu` VALUES (190, '删除', 'erp:inventory:inbound:delete', 3, 3, 101, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:13:54', 1, '2025-06-10 02:13:54', b'0');
+INSERT INTO `system_menu` VALUES (191, '查看', 'erp:inventory:outbound:get', 3, 0, 103, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:12:20', 1, '2025-06-10 02:12:20', b'0');
+INSERT INTO `system_menu` VALUES (192, '新增', 'erp:inventory:outbound:add', 3, 1, 103, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:13:19', 1, '2025-06-10 02:13:19', b'0');
+INSERT INTO `system_menu` VALUES (193, '修改', 'erp:inventory:outbound:edit', 3, 2, 103, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:13:36', 1, '2025-06-10 02:13:36', b'0');
+INSERT INTO `system_menu` VALUES (194, '删除', 'erp:inventory:outbound:delete', 3, 3, 103, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:13:54', 1, '2025-06-10 02:13:54', b'0');
+INSERT INTO `system_menu` VALUES (195, '查看', 'erp:inventory:transfer:get', 3, 0, 104, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:12:20', 1, '2025-06-10 02:12:20', b'0');
+INSERT INTO `system_menu` VALUES (196, '新增', 'erp:inventory:transfer:add', 3, 1, 104, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:13:19', 1, '2025-06-10 02:13:19', b'0');
+INSERT INTO `system_menu` VALUES (197, '修改', 'erp:inventory:transfer:edit', 3, 2, 104, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:13:36', 1, '2025-06-10 02:13:36', b'0');
+INSERT INTO `system_menu` VALUES (198, '删除', 'erp:inventory:transfer:delete', 3, 3, 104, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:13:54', 1, '2025-06-10 02:13:54', b'0');
+INSERT INTO `system_menu` VALUES (199, '查看', 'erp:inventory:check:get', 3, 0, 105, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:12:20', 1, '2025-06-10 02:12:20', b'0');
+INSERT INTO `system_menu` VALUES (200, '新增', 'erp:inventory:check:add', 3, 1, 105, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:13:19', 1, '2025-06-10 02:13:19', b'0');
+INSERT INTO `system_menu` VALUES (201, '修改', 'erp:inventory:check:edit', 3, 2, 105, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:13:36', 1, '2025-06-10 02:13:36', b'0');
+INSERT INTO `system_menu` VALUES (202, '删除', 'erp:inventory:check:delete', 3, 3, 105, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:13:54', 1, '2025-06-10 02:13:54', b'0');
+INSERT INTO `system_menu` VALUES (203, '查看', 'erp:financial:payment:get', 3, 0, 109, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:12:20', 1, '2025-06-10 02:12:20', b'0');
+INSERT INTO `system_menu` VALUES (204, '新增', 'erp:financial:payment:add', 3, 1, 109, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:13:19', 1, '2025-06-10 02:13:19', b'0');
+INSERT INTO `system_menu` VALUES (205, '修改', 'erp:financial:payment:edit', 3, 2, 109, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:13:36', 1, '2025-06-10 02:13:36', b'0');
+INSERT INTO `system_menu` VALUES (206, '删除', 'erp:financial:payment:delete', 3, 3, 109, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:13:54', 1, '2025-06-10 02:13:54', b'0');
+INSERT INTO `system_menu` VALUES (207, '查看', 'erp:financial:receipt:get', 3, 0, 110, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:12:20', 1, '2025-06-10 02:12:20', b'0');
+INSERT INTO `system_menu` VALUES (208, '新增', 'erp:financial:receipt:add', 3, 1, 110, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:13:19', 1, '2025-06-10 02:13:19', b'0');
+INSERT INTO `system_menu` VALUES (209, '修改', 'erp:financial:receipt:edit', 3, 2, 110, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:13:36', 1, '2025-06-10 02:13:36', b'0');
+INSERT INTO `system_menu` VALUES (210, '删除', 'erp:financial:receipt:delete', 3, 3, 110, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:13:54', 1, '2025-06-10 02:13:54', b'0');
 
 -- ----------------------------
 -- Table structure for system_notice
@@ -1838,7 +1878,7 @@ CREATE TABLE `system_user`  (
 -- ----------------------------
 -- Records of system_user
 -- ----------------------------
-INSERT INTO `system_user` VALUES (1, 'admin', '$2b$06$Ohq86rDIvNuy/4ZvsTF4dOw.7I7QJj620LC25PwgYDmrKqKmKsJz6', '超级管理员', '超级管理员', '123@qq.com', '18888888888', 0, '', 0, '127.0.0.1', '2025-06-15 09:58:38', '0000', 1, 1, '2025-03-08 10:14:52', 1, '2025-06-15 09:58:40', b'0', 1);
+INSERT INTO `system_user` VALUES (1, 'admin', '$2b$06$Ohq86rDIvNuy/4ZvsTF4dOw.7I7QJj620LC25PwgYDmrKqKmKsJz6', '超级管理员', '超级管理员', '123@qq.com', '18888888888', 0, '', 0, '127.0.0.1', '2025-06-23 03:05:53', '0000', 1, 1, '2025-03-08 10:14:52', 1, '2025-06-23 03:05:36', b'0', 1);
 INSERT INTO `system_user` VALUES (11, 'test', '$2b$06$S2yMOy4Mp5gImLOEl8X3K.T8XAWrfXVwGXK/vOBL.30PGNnnGIDzy', '测试管理员', NULL, '', '15555555555', 0, '', 0, '127.0.0.1', '2025-05-23 08:16:27', '0000-0000', 7, 1, '2025-05-23 08:16:00', 1, '2025-05-23 08:16:25', b'0', 2);
 
 -- ----------------------------
