@@ -125,37 +125,37 @@ const ErpInboundOrderInfo = forwardRef(({ }, ref) => {
             </Grid>
             <Grid size={size}>
               <Stack direction="row" spacing={2} sx={{ display: "flex", alignItems: "center" }}>
-                <Box>{t('page.erp.purchase.order.title.order.number')}</Box>
+                <Box>{t('page.erp.purchase.inbound.title.supplier')}</Box>
                 <Box>{erpPurchaseOrder && <CustomizedTag label={erpPurchaseOrder.supplier_name} />}</Box>
               </Stack>
             </Grid>
             <Grid size={size}>
               <Stack direction="row" spacing={2} sx={{ display: "flex", alignItems: "center" }}>
-                <Box>{t('page.erp.purchase.order.title.order.number')}</Box>
+                <Box>{t('page.erp.purchase.inbound.title.inbound.date')}</Box>
                 <Box>{erpInboundOrder && <CustomizedTag label={erpInboundOrder.inbound_date} />}</Box>
               </Stack>
             </Grid>
             <Grid size={size}>
               <Stack direction="row" spacing={2} sx={{ display: "flex", alignItems: "center" }}>
-                <Box>{t('page.erp.purchase.order.title.order.number')}</Box>
+                <Box>{t('page.erp.purchase.inbound.title.settlement.account')}</Box>
                 <Box>{erpInboundOrder && <CustomizedTag label={erpInboundOrder.settlement_account_name ?? ''} />}</Box>
               </Stack>
             </Grid>
             <Grid size={size}>
               <Stack direction="row" spacing={2} sx={{ display: "flex", alignItems: "center" }}>
-                <Box>{t('page.erp.purchase.order.title.order.number')}</Box>
-                <Box>{erpInboundOrder && <CustomizedTag label={erpInboundOrder.discount_rate} />}</Box>
+                <Box>{t('page.erp.purchase.inbound.title.discount.rate')}</Box>
+                <Box>{erpInboundOrder && <CustomizedTag label={erpInboundOrder.discount_rate + '%'} />}</Box>
               </Stack>
             </Grid>
             <Grid size={size}>
               <Stack direction="row" spacing={2} sx={{ display: "flex", alignItems: "center" }}>
-                <Box>{t('page.erp.purchase.order.title.order.number')}</Box>
+                <Box>{t('page.erp.purchase.inbound.title.other.cost')}</Box>
                 <Box>{erpInboundOrder && <CustomizedTag label={erpInboundOrder.other_cost} />}</Box>
               </Stack>
             </Grid>
             <Grid size={size}>
               <Stack direction="row" spacing={2} sx={{ display: "flex", alignItems: "center" }}>
-                <Box>{t('page.erp.purchase.order.title.order.number')}</Box>
+                <Box>{t('page.erp.purchase.inbound.title.remarks')}</Box>
                 <Box>{erpInboundOrder && <CustomizedTag label={erpInboundOrder.remarks} />}</Box>
               </Stack>
             </Grid>

@@ -102,7 +102,7 @@ const ErpSalesOrderInfo = forwardRef(({}, ref) => {
             </Grid>
             <Grid size={size}>
               <Stack direction="row" spacing={2}>
-                <Box>{t('page.erp.sale.order.error.order.date')}</Box>
+                <Box>{t('page.erp.sale.order.title.order.date')}</Box>
                 <Box>{erpSalesOrder && <CustomizedTag label={erpSalesOrder.order_date} />}</Box>
               </Stack>
             </Grid>
