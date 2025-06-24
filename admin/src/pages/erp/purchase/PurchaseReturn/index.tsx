@@ -51,14 +51,14 @@ export default function ErpPurchaseReturn() {
         minWidth: 100,
         renderCell: (params: GridRenderCellParams) => (
           <CustomizedAutoMore>
-            {hasOperatePermission('mark_permission:edit') && <Button
+            {hasOperatePermission('erp:purchase:return:edit') && <Button
               size="small"
               variant='customOperate'
               title={t('global.operate.edit') + t('global.page.erp.purchase.return')}
               startIcon={<EditIcon />}
               onClick={() => handleClickOpenEdit(params.row)}
             />}
-            {hasOperatePermission('mark_permission:delete') && <Button
+            {hasOperatePermission('erp:purchase:return:delete') && <Button
               sx={{ color: 'error.main' }}
               size="small"
               variant='customOperate'
@@ -117,7 +117,7 @@ export default function ErpPurchaseReturn() {
     <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
       <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between' }}>
         <Box></Box>
-        {hasOperatePermission('mark_permission:add') && <Button variant="customContained" onClick={handleClickOpenAdd}>
+        {hasOperatePermission('erp:purchase:return:add') && <Button variant="customContained" onClick={handleClickOpenAdd}>
           {t('global.operate.add')}
         </Button>}
       </Box>

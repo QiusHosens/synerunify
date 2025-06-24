@@ -108,7 +108,7 @@
   "global.page.erp.sale.customer": "客户",
   "global.page.erp.purchase.order": "采购订单",
   "global.page.erp.purchase.inbound": "采购入库",
-  "global.page.erp.purchase.purchase": "采购退货",
+  "global.page.erp.purchase.return": "采购退货",
   "global.page.erp.sale.order": "销售订单",
 
   "global.order.placeholder.order.number": "订单编号,由系统自动生成",

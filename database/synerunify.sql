@@ -1,17 +1,17 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : 192.168.0.99_synerunify
+ Source Server         : 192.168.1.18_synerunify
  Source Server Type    : MySQL
- Source Server Version : 80100 (8.1.0)
- Source Host           : 192.168.0.99:30010
+ Source Server Version : 80200 (8.2.0)
+ Source Host           : 192.168.1.18:3306
  Source Schema         : synerunify
 
  Target Server Type    : MySQL
- Target Server Version : 80100 (8.1.0)
+ Target Server Version : 80200 (8.2.0)
  File Encoding         : 65001
 
- Date: 24/06/2025 17:35:09
+ Date: 24/06/2025 21:45:27
 */
 
 SET NAMES utf8mb4;
@@ -1578,7 +1578,7 @@ CREATE TABLE `system_role_menu`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 270 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '角色和菜单关联表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 310 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '角色和菜单关联表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of system_role_menu
@@ -1772,6 +1772,46 @@ INSERT INTO `system_role_menu` VALUES (266, 1, 169, 1, '2025-06-22 12:31:26', 1,
 INSERT INTO `system_role_menu` VALUES (267, 1, 170, 1, '2025-06-22 12:31:26', 1, '2025-06-22 12:31:26', b'0', 1);
 INSERT INTO `system_role_menu` VALUES (268, 1, 164, 1, '2025-06-22 12:31:26', 1, '2025-06-22 12:31:26', b'0', 1);
 INSERT INTO `system_role_menu` VALUES (269, 1, 168, 1, '2025-06-22 12:31:26', 1, '2025-06-22 12:31:26', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (270, 1, 196, 1, '2025-06-24 13:34:35', 1, '2025-06-24 13:34:35', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (271, 1, 193, 1, '2025-06-24 13:34:35', 1, '2025-06-24 13:34:35', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (272, 1, 206, 1, '2025-06-24 13:34:35', 1, '2025-06-24 13:34:35', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (273, 1, 207, 1, '2025-06-24 13:34:35', 1, '2025-06-24 13:34:35', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (274, 1, 188, 1, '2025-06-24 13:34:35', 1, '2025-06-24 13:34:35', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (275, 1, 184, 1, '2025-06-24 13:34:35', 1, '2025-06-24 13:34:35', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (276, 1, 200, 1, '2025-06-24 13:34:35', 1, '2025-06-24 13:34:35', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (277, 1, 210, 1, '2025-06-24 13:34:35', 1, '2025-06-24 13:34:35', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (278, 1, 182, 1, '2025-06-24 13:34:35', 1, '2025-06-24 13:34:35', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (279, 1, 204, 1, '2025-06-24 13:34:35', 1, '2025-06-24 13:34:35', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (280, 1, 195, 1, '2025-06-24 13:34:35', 1, '2025-06-24 13:34:35', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (281, 1, 205, 1, '2025-06-24 13:34:35', 1, '2025-06-24 13:34:35', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (282, 1, 175, 1, '2025-06-24 13:34:35', 1, '2025-06-24 13:34:35', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (283, 1, 187, 1, '2025-06-24 13:34:35', 1, '2025-06-24 13:34:35', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (284, 1, 178, 1, '2025-06-24 13:34:35', 1, '2025-06-24 13:34:35', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (285, 1, 186, 1, '2025-06-24 13:34:35', 1, '2025-06-24 13:34:35', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (286, 1, 185, 1, '2025-06-24 13:34:35', 1, '2025-06-24 13:34:35', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (287, 1, 192, 1, '2025-06-24 13:34:35', 1, '2025-06-24 13:34:35', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (288, 1, 171, 1, '2025-06-24 13:34:35', 1, '2025-06-24 13:34:35', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (289, 1, 208, 1, '2025-06-24 13:34:35', 1, '2025-06-24 13:34:35', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (290, 1, 173, 1, '2025-06-24 13:34:35', 1, '2025-06-24 13:34:35', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (291, 1, 189, 1, '2025-06-24 13:34:35', 1, '2025-06-24 13:34:35', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (292, 1, 191, 1, '2025-06-24 13:34:35', 1, '2025-06-24 13:34:35', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (293, 1, 180, 1, '2025-06-24 13:34:35', 1, '2025-06-24 13:34:35', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (294, 1, 181, 1, '2025-06-24 13:34:35', 1, '2025-06-24 13:34:35', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (295, 1, 194, 1, '2025-06-24 13:34:35', 1, '2025-06-24 13:34:35', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (296, 1, 202, 1, '2025-06-24 13:34:35', 1, '2025-06-24 13:34:35', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (297, 1, 172, 1, '2025-06-24 13:34:35', 1, '2025-06-24 13:34:35', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (298, 1, 176, 1, '2025-06-24 13:34:35', 1, '2025-06-24 13:34:35', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (299, 1, 190, 1, '2025-06-24 13:34:35', 1, '2025-06-24 13:34:35', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (300, 1, 209, 1, '2025-06-24 13:34:35', 1, '2025-06-24 13:34:35', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (301, 1, 197, 1, '2025-06-24 13:34:35', 1, '2025-06-24 13:34:35', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (302, 1, 203, 1, '2025-06-24 13:34:35', 1, '2025-06-24 13:34:35', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (303, 1, 179, 1, '2025-06-24 13:34:35', 1, '2025-06-24 13:34:35', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (304, 1, 201, 1, '2025-06-24 13:34:35', 1, '2025-06-24 13:34:35', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (305, 1, 198, 1, '2025-06-24 13:34:35', 1, '2025-06-24 13:34:35', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (306, 1, 183, 1, '2025-06-24 13:34:35', 1, '2025-06-24 13:34:35', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (307, 1, 199, 1, '2025-06-24 13:34:35', 1, '2025-06-24 13:34:35', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (308, 1, 174, 1, '2025-06-24 13:34:35', 1, '2025-06-24 13:34:35', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (309, 1, 177, 1, '2025-06-24 13:34:35', 1, '2025-06-24 13:34:35', b'0', 1);
 
 -- ----------------------------
 -- Table structure for system_role_menu_data_scope
