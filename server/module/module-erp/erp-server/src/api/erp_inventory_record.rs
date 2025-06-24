@@ -6,7 +6,7 @@ use ctor;
 use macros::require_authorize;
 use axum::{routing::{get, post}, Router, extract::{State, Path, Json, Query}, response::IntoResponse, Extension};
 use common::base::page::PaginatedResponse;
-use erp_model::request::erp_inventory_record::{CreateErpInventoryRecordRequest, UpdateErpInventoryRecordRequest, PaginatedKeywordRequest};
+use erp_model::{request::erp_inventory_record::{CreateErpInventoryRecordRequest, PaginatedKeywordRequest, PaginatedProductWarehouseRequest, UpdateErpInventoryRecordRequest}, response::erp_inventory_record::ErpInventoryRecordPageResponse};
 use erp_model::response::erp_inventory_record::ErpInventoryRecordResponse;
 use common::base::response::CommonResult;
 use common::context::context::LoginUserContext;
@@ -21,6 +21,7 @@ pub async fn erp_inventory_record_router(state: AppState) -> OpenApiRouter {
         .routes(routes!(get_by_id))
         .routes(routes!(list))
         .routes(routes!(page))
+        .routes(routes!(page_product_warehouse))
         .with_state(state)
 }
 
@@ -150,7 +151,7 @@ async fn get_by_id(
         ("keyword" = Option<String>, Query, description = "keyword")
     ),
     responses(
-        (status = 200, description = "get page", body = CommonResult<PaginatedResponse<ErpInventoryRecordResponse>>)
+        (status = 200, description = "get page", body = CommonResult<PaginatedResponse<ErpInventoryRecordPageResponse>>)
     ),
     tag = "erp_inventory_record",
     security(
@@ -162,8 +163,38 @@ async fn page(
     State(state): State<AppState>,
     Extension(login_user): Extension<LoginUserContext>,
     Query(params): Query<PaginatedKeywordRequest>,
-) -> CommonResult<PaginatedResponse<ErpInventoryRecordResponse>> {
+) -> CommonResult<PaginatedResponse<ErpInventoryRecordPageResponse>> {
     match service::erp_inventory_record::get_paginated(&state.db, login_user, params).await {
+        Ok(data) => {CommonResult::with_data(data)}
+        Err(e) => {CommonResult::with_err(&e.to_string())}
+    }
+}
+
+#[utoipa::path(
+    get,
+    path = "/page_product_warehouse",
+    operation_id = "erp_inventory_record_page_product_warehouse",
+    params(
+        ("page" = u64, Query, description = "page number"),
+        ("size" = u64, Query, description = "page size"),
+        ("product_id" = Option<i64>, Query, description = "product id"),
+        ("warehouse_id" = Option<i64>, Query, description = "warehouse id")
+    ),
+    responses(
+        (status = 200, description = "get page product warehouse", body = CommonResult<PaginatedResponse<ErpInventoryRecordPageResponse>>)
+    ),
+    tag = "erp_inventory_record",
+    security(
+        ("bearerAuth" = [])
+    )
+)]
+#[require_authorize(operation_id = "erp_inventory_record_page_product_warehouse", authorize = "")]
+async fn page_product_warehouse(
+    State(state): State<AppState>,
+    Extension(login_user): Extension<LoginUserContext>,
+    Query(params): Query<PaginatedProductWarehouseRequest>,
+) -> CommonResult<PaginatedResponse<ErpInventoryRecordPageResponse>> {
+    match service::erp_inventory_record::get_paginated_product_warehouse(&state.db, login_user, params).await {
         Ok(data) => {CommonResult::with_data(data)}
         Err(e) => {CommonResult::with_err(&e.to_string())}
     }

@@ -95,3 +95,11 @@ pub struct PaginatedKeywordRequest {
     pub base: PaginatedRequest,
     pub keyword: Option<String>,
 }
+
+#[derive(Serialize, Deserialize, Debug, ToSchema)]
+pub struct PaginatedProductWarehouseRequest {
+    #[serde(flatten)]
+    pub base: PaginatedRequest,
+    pub product_id: Option<i64>,
+    pub warehouse_id: Option<i64>,
+}

@@ -69,7 +69,7 @@ pub async fn get_paginated(db: &DatabaseConnection, login_user: LoginUserContext
         .join(JoinType::LeftJoin, Relation::InventoryProduct.def())
         .join(JoinType::LeftJoin, Relation::InventoryWarehouse.def())
         .support_filter(params.base.filter_field, params.base.filter_operator, params.base.filter_value)
-        .support_order(params.base.sort_field, params.base.sort, Some(vec![(Column::Id, Order::Asc)]))
+        .support_order(params.base.sort_field, params.base.sort, Some(vec![(Column::UpdateTime, Order::Asc)]))
         .paginate(db, params.base.size);
 
     let total = paginator.num_items().await?;
