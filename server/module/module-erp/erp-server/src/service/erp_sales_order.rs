@@ -8,8 +8,8 @@ use crate::model::erp_sales_order_detail::{Model as ErpSalesOrderDetailModel, Ac
 use crate::model::erp_sales_order_attachment::{Model as ErpSalesOrderAttachmentModel, ActiveModel as ErpSalesOrderAttachmentActiveModel, Entity as ErpSalesOrderAttachmentEntity};
 use crate::service::{erp_sales_order_attachment, erp_sales_order_detail};
 use erp_model::request::erp_sales_order::{CreateErpSalesOrderRequest, UpdateErpSalesOrderRequest, PaginatedKeywordRequest};
-use erp_model::response::erp_sales_order::{ErpSalesOrderBaseResponse, ErpSalesOrderPageResponse, ErpSalesOrderResponse};
-use crate::convert::erp_sales_order::{create_request_to_model, model_to_base_response, model_to_page_response, model_to_response, update_request_to_model};
+use erp_model::response::erp_sales_order::{ErpSalesOrderBaseResponse, ErpSalesOrderInfoResponse, ErpSalesOrderPageResponse, ErpSalesOrderResponse};
+use crate::convert::erp_sales_order::{create_request_to_model, model_to_base_response, model_to_info_response, model_to_page_response, model_to_response, update_request_to_model};
 use anyhow::{anyhow, Context, Result};
 use sea_orm::ActiveValue::Set;
 use common::constants::enum_constants::{SALE_ORDER_STATUS_AWAITING_SIGNATURE, SALE_ORDER_STATUS_CANCEL, SALE_ORDER_STATUS_COMPLETE, SALE_ORDER_STATUS_PLACED, SALE_ORDER_STATUS_RETURN_COMPLETE, SALE_ORDER_STATUS_RETURN_PROCESSING, SALE_ORDER_STATUS_SHIP_OUT, SALE_ORDER_STATUS_SIGNED};
@@ -114,6 +114,27 @@ pub async fn get_detail_by_id(db: &DatabaseConnection, login_user: LoginUserCont
     let details = erp_sales_order_detail::list_by_sale_id(&db, login_user.clone(), id).await?;
     let attachments = erp_sales_order_attachment::list_by_sale_id(&db, login_user, id).await?;
     Ok(Some(model_to_base_response(erp_sales_order, details, attachments)))
+}
+
+pub async fn get_info_by_id(db: &DatabaseConnection, login_user: LoginUserContext, id: i64) -> Result<Option<ErpSalesOrderInfoResponse>> {
+    let condition = Condition::all()
+            .add(Column::Id.eq(id))
+            .add(Column::TenantId.eq(login_user.tenant_id.clone()));
+            
+    let erp_sales_order = ErpSalesOrderEntity::find_active_with_data_permission(login_user.clone())
+        .filter(condition)
+        .select_also(ErpCustomerEntity)
+        .select_also(ErpSettlementAccountEntity)
+        .join(JoinType::LeftJoin, Relation::SaleOrderCustomer.def())
+        .join(JoinType::LeftJoin, Relation::SaleOrderSettlementAccount.def())
+        .one(db).await?;
+    if erp_sales_order.is_none() {
+        return Ok(None);
+    }
+    let (sales_order, customer, settlement_account) = erp_sales_order.unwrap();
+    let details = erp_sales_order_detail::list_by_sale_id(&db, login_user.clone(), id).await?;
+    let attachments = erp_sales_order_attachment::list_by_sale_id(&db, login_user, id).await?;
+    Ok(Some(model_to_info_response(sales_order, customer, settlement_account, details, attachments)))
 }
 
 pub async fn get_paginated(db: &DatabaseConnection, login_user: LoginUserContext, params: PaginatedKeywordRequest) -> Result<PaginatedResponse<ErpSalesOrderPageResponse>> {

@@ -6,7 +6,7 @@ use ctor;
 use macros::require_authorize;
 use axum::{routing::{get, post}, Router, extract::{State, Path, Json, Query}, response::IntoResponse, Extension};
 use common::base::page::PaginatedResponse;
-use erp_model::{request::erp_sales_order::{CreateErpSalesOrderRequest, PaginatedKeywordRequest, UpdateErpSalesOrderRequest}, response::erp_sales_order::{ErpSalesOrderBaseResponse, ErpSalesOrderPageResponse}};
+use erp_model::{request::erp_sales_order::{CreateErpSalesOrderRequest, PaginatedKeywordRequest, UpdateErpSalesOrderRequest}, response::erp_sales_order::{ErpSalesOrderBaseResponse, ErpSalesOrderInfoResponse, ErpSalesOrderPageResponse}};
 use erp_model::response::erp_sales_order::ErpSalesOrderResponse;
 use common::base::response::CommonResult;
 use common::context::context::LoginUserContext;
@@ -20,6 +20,7 @@ pub async fn erp_sales_order_router(state: AppState) -> OpenApiRouter {
         .routes(routes!(delete))
         .routes(routes!(get_by_id))
         .routes(routes!(get_detail_by_id))
+        .routes(routes!(get_info_by_id))
         .routes(routes!(list))
         .routes(routes!(list_ship_out))
         .routes(routes!(page))
@@ -245,6 +246,34 @@ async fn get_detail_by_id(
     Path(id): Path<i64>,
 ) -> CommonResult<ErpSalesOrderBaseResponse> {
     match service::erp_sales_order::get_detail_by_id(&state.db, login_user, id).await {
+        Ok(Some(data)) => {CommonResult::with_data(data)}
+        Ok(None) => {CommonResult::with_none()}
+        Err(e) => {CommonResult::with_err(&e.to_string())}
+    }
+}
+
+#[utoipa::path(
+    get,
+    path = "/get_info/{id}",
+    operation_id = "erp_sales_order_get_info_by_id",
+    params(
+        ("id" = i64, Path, description = "id")
+    ),
+    responses(
+        (status = 200, description = "get info by id", body = CommonResult<ErpSalesOrderInfoResponse>)
+    ),
+    tag = "erp_sales_order",
+    security(
+        ("bearerAuth" = [])
+    )
+)]
+#[require_authorize(operation_id = "erp_sales_order_get_info_by_id", authorize = "")]
+async fn get_info_by_id(
+    State(state): State<AppState>,
+    Extension(login_user): Extension<LoginUserContext>,
+    Path(id): Path<i64>,
+) -> CommonResult<ErpSalesOrderInfoResponse> {
+    match service::erp_sales_order::get_info_by_id(&state.db, login_user, id).await {
         Ok(Some(data)) => {CommonResult::with_data(data)}
         Ok(None) => {CommonResult::with_none()}
         Err(e) => {CommonResult::with_err(&e.to_string())}

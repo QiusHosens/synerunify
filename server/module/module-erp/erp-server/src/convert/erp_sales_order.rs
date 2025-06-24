@@ -5,7 +5,7 @@ use crate::model::erp_sales_order::{self, Model as ErpSalesOrder, ActiveModel as
 use crate::model::erp_customer::{Model as ErpCustomerModel};
 use crate::model::erp_settlement_account::{Model as ErpSettlementAccountModel};
 use erp_model::request::erp_sales_order::{CreateErpSalesOrderRequest, UpdateErpSalesOrderRequest};
-use erp_model::response::erp_sales_order::{ErpSalesOrderBaseResponse, ErpSalesOrderPageResponse, ErpSalesOrderResponse};
+use erp_model::response::erp_sales_order::{ErpSalesOrderBaseResponse, ErpSalesOrderInfoResponse, ErpSalesOrderPageResponse, ErpSalesOrderResponse};
 
 pub fn create_request_to_model(request: &CreateErpSalesOrderRequest) -> ErpSalesOrderActiveModel {
     ErpSalesOrderActiveModel {
@@ -110,6 +110,37 @@ pub fn model_to_base_response(model: ErpSalesOrder, details: Vec<ErpSalesOrderDe
         deposit: model.deposit,
         remarks: model.remarks,
 
+        details,
+        attachments,
+    }
+}
+
+pub fn model_to_info_response(model: ErpSalesOrder, model_customer: Option<ErpCustomerModel>, model_settlement_account: Option<ErpSettlementAccountModel>, details: Vec<ErpSalesOrderDetailBaseResponse>, attachments: Vec<ErpSalesOrderAttachmentBaseResponse>) -> ErpSalesOrderInfoResponse {
+    let customer_name = model_customer.map(|customer| customer.name.clone());
+    let settlement_account_name = model_settlement_account.map(|settlement_account| settlement_account.name.clone());
+
+    ErpSalesOrderInfoResponse { 
+        id: model.id,
+        order_number: model.order_number,
+        customer_id: model.customer_id,
+        user_id: model.user_id,
+        order_date: model.order_date,
+        total_amount: model.total_amount,
+        order_status: model.order_status,
+        discount_rate: model.discount_rate,
+        settlement_account_id: model.settlement_account_id,
+        deposit: model.deposit,
+        remarks: model.remarks,
+        department_code: model.department_code,
+        department_id: model.department_id,
+        creator: model.creator,
+        create_time: model.create_time,
+        updater: model.updater,
+        update_time: model.update_time,
+
+        customer_name,
+        settlement_account_name,
+        
         details,
         attachments,
     }

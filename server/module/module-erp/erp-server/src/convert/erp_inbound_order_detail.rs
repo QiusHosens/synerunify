@@ -81,6 +81,7 @@ pub fn model_to_response(model: ErpInboundOrderDetail) -> ErpInboundOrderDetailR
 
 pub fn model_to_base_purchase_response(model: ErpInboundOrderDetail) -> ErpInboundOrderDetailBasePurchaseResponse {
     ErpInboundOrderDetailBasePurchaseResponse { 
+        id: model.id,
         purchase_detail_id: model.purchase_detail_id,
         warehouse_id: model.warehouse_id,
         remarks: model.remarks,
@@ -89,6 +90,7 @@ pub fn model_to_base_purchase_response(model: ErpInboundOrderDetail) -> ErpInbou
 
 pub fn model_to_base_other_response(model: ErpInboundOrderDetail) -> ErpInboundOrderDetailBaseOtherResponse {
     ErpInboundOrderDetailBaseOtherResponse { 
+        id: model.id,
         warehouse_id: model.warehouse_id,
         product_id: model.product_id,
         quantity: model.quantity,

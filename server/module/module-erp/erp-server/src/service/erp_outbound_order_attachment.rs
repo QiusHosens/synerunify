@@ -6,9 +6,10 @@ use sea_orm::prelude::Expr;
 use sea_orm::{ActiveModelTrait, ColumnTrait, Condition, DatabaseConnection, DatabaseTransaction, EntityTrait, Order, PaginatorTrait, QueryFilter, QueryOrder};
 use crate::model::erp_outbound_order_attachment::{Model as ErpOutboundOrderAttachmentModel, ActiveModel as ErpOutboundOrderAttachmentActiveModel, Entity as ErpOutboundOrderAttachmentEntity, Column};
 use crate::model::erp_outbound_order::{Model as ErpOutboundOrderModel};
+use file_common::model::system_file::{Model as SystemFileModel};
 use erp_model::request::erp_outbound_order_attachment::{CreateErpOutboundOrderAttachmentRequest, UpdateErpOutboundOrderAttachmentRequest, PaginatedKeywordRequest};
-use erp_model::response::erp_outbound_order_attachment::ErpOutboundOrderAttachmentResponse;
-use crate::convert::erp_outbound_order_attachment::{create_request_to_model, model_to_response, update_add_request_to_model, update_request_to_model};
+use erp_model::response::erp_outbound_order_attachment::{ErpOutboundOrderAttachmentBaseResponse, ErpOutboundOrderAttachmentResponse};
+use crate::convert::erp_outbound_order_attachment::{create_request_to_model, model_to_base_response, model_to_response, update_add_request_to_model, update_request_to_model};
 use anyhow::{anyhow, Context, Result};
 use sea_orm::ActiveValue::Set;
 use common::constants::enum_constants::{STATUS_DISABLE, STATUS_ENABLE};
@@ -196,4 +197,25 @@ pub async fn list(db: &DatabaseConnection, login_user: LoginUserContext) -> Resu
     let condition = Condition::all().add(Column::TenantId.eq(login_user.tenant_id));let list = ErpOutboundOrderAttachmentEntity::find_active_with_condition(condition)
         .all(db).await?;
     Ok(list.into_iter().map(model_to_response).collect())
+}
+
+pub async fn list_by_outbound_id(db: &DatabaseConnection, login_user: LoginUserContext, outbound_id: i64) -> Result<Vec<ErpOutboundOrderAttachmentBaseResponse>> {
+    let list = ErpOutboundOrderAttachmentEntity::find_active()
+        .filter(Column::TenantId.eq(login_user.tenant_id))
+        .filter(Column::OrderId.eq(outbound_id))
+        .all(db).await?;
+   
+    let file_ids: Vec<i64> = list.iter().map(|a|a.file_id).collect();
+    let files = system_file::list_by_ids(&db, login_user, file_ids).await?;
+    let file_map: HashMap<i64, SystemFileModel> = files.iter().map(|f|(f.id, f.clone())).collect();
+    let result: Vec<ErpOutboundOrderAttachmentBaseResponse> = list
+        .into_iter()
+        .map(|a| {
+            let file_name = file_map
+                .get(&a.file_id)
+                .map(|f| f.file_name.clone());
+            model_to_base_response(a, file_name)
+        })
+        .collect();
+    Ok(result)
 }

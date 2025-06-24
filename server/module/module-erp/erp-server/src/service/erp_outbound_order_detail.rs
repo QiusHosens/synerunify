@@ -9,8 +9,8 @@ use crate::model::erp_sales_order_detail::{Model as ErpSalesOrderDetailModel};
 use crate::model::erp_outbound_order::{Model as ErpOutboundOrderModel};
 use crate::service::{erp_inventory_record, erp_product_inventory, erp_sales_order_detail};
 use erp_model::request::erp_outbound_order_detail::{CreateErpOutboundOrderDetailOtherRequest, CreateErpOutboundOrderDetailRequest, CreateErpOutboundOrderDetailSaleRequest, PaginatedKeywordRequest, UpdateErpOutboundOrderDetailRequest};
-use erp_model::response::erp_outbound_order_detail::ErpOutboundOrderDetailResponse;
-use crate::convert::erp_outbound_order_detail::{create_request_to_model, update_request_to_model, model_to_response};
+use erp_model::response::erp_outbound_order_detail::{ErpOutboundOrderDetailBaseOtherResponse, ErpOutboundOrderDetailBaseSalesResponse, ErpOutboundOrderDetailResponse};
+use crate::convert::erp_outbound_order_detail::{create_request_to_model, model_to_base_other_response, model_to_base_sales_response, model_to_response, update_request_to_model};
 use anyhow::{anyhow, Context, Result};
 use sea_orm::ActiveValue::{NotSet, Set};
 use common::constants::enum_constants::{STATUS_DISABLE, STATUS_ENABLE};
@@ -217,4 +217,20 @@ pub async fn list(db: &DatabaseConnection, login_user: LoginUserContext) -> Resu
     let condition = Condition::all().add(Column::TenantId.eq(login_user.tenant_id));let list = ErpOutboundOrderDetailEntity::find_active_with_condition(condition)
         .all(db).await?;
     Ok(list.into_iter().map(model_to_response).collect())
+}
+
+pub async fn list_sales_by_outbound_id(db: &DatabaseConnection, login_user: LoginUserContext, outbound_id: i64) -> Result<Vec<ErpOutboundOrderDetailBaseSalesResponse>> {
+    let list = ErpOutboundOrderDetailEntity::find_active()
+        .filter(Column::TenantId.eq(login_user.tenant_id))
+        .filter(Column::OrderId.eq(outbound_id))
+        .all(db).await?;
+    Ok(list.into_iter().map(model_to_base_sales_response).collect())
+}
+
+pub async fn list_other_by_outbound_id(db: &DatabaseConnection, login_user: LoginUserContext, outbound_id: i64) -> Result<Vec<ErpOutboundOrderDetailBaseOtherResponse>> {
+    let list = ErpOutboundOrderDetailEntity::find_active()
+        .filter(Column::TenantId.eq(login_user.tenant_id))
+        .filter(Column::OrderId.eq(outbound_id))
+        .all(db).await?;
+    Ok(list.into_iter().map(model_to_base_other_response).collect())
 }

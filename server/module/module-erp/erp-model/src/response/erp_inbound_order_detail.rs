@@ -54,6 +54,8 @@ pub struct ErpInboundOrderDetailResponse {
 #[derive(Deserialize, Serialize, Debug, Clone, ToSchema)]
 pub struct ErpInboundOrderDetailBasePurchaseResponse {
 
+    pub id: i64, // 入库详情ID
+
     pub purchase_detail_id: Option<i64>, // 采购订单详情ID
     
     pub warehouse_id: i64, // 仓库ID
@@ -65,6 +67,8 @@ pub struct ErpInboundOrderDetailBasePurchaseResponse {
 #[serde_as]
 #[derive(Deserialize, Serialize, Debug, Clone, ToSchema)]
 pub struct ErpInboundOrderDetailBaseOtherResponse {
+
+    pub id: i64, // 入库详情ID
     
     pub warehouse_id: i64, // 仓库ID
     

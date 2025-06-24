@@ -143,8 +143,9 @@ pub fn model_to_response(model: ErpInboundOrder) -> ErpInboundOrderResponse {
     }
 }
 
-pub fn model_to_page_purchase_response(model: ErpInboundOrder, model_purchase: Option<ErpPurchaseOrder>, model_settlement_account: Option<ErpSettlementAccount>) -> ErpInboundOrderPagePurchaseResponse {
+pub fn model_to_page_purchase_response(model: ErpInboundOrder, model_purchase: Option<ErpPurchaseOrder>, model_supplier: Option<ErpSupplier>, model_settlement_account: Option<ErpSettlementAccount>) -> ErpInboundOrderPagePurchaseResponse {
     let purchase_order_number = model_purchase.map(|purchase| purchase.order_number.clone());
+    let supplier_name = model_supplier.map(|supplier| supplier.name.clone());
     let settlement_account_name = model_settlement_account.map(|settlement_account| settlement_account.name.clone());
 
     ErpInboundOrderPagePurchaseResponse { 
@@ -166,7 +167,7 @@ pub fn model_to_page_purchase_response(model: ErpInboundOrder, model_purchase: O
         update_time: model.update_time,
 
         purchase_order_number,
-        supplier_name: None,
+        supplier_name,
         settlement_account_name
     }
 }

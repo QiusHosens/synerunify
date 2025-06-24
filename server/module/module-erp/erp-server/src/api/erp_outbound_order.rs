@@ -6,7 +6,7 @@ use ctor;
 use macros::require_authorize;
 use axum::{routing::{get, post}, Router, extract::{State, Path, Json, Query}, response::IntoResponse, Extension};
 use common::base::page::PaginatedResponse;
-use erp_model::request::erp_outbound_order::{CreateErpOutboundOrderOtherRequest, CreateErpOutboundOrderRequest, CreateErpOutboundOrderSaleRequest, PaginatedKeywordRequest, UpdateErpOutboundOrderOtherRequest, UpdateErpOutboundOrderRequest, UpdateErpOutboundOrderSaleRequest};
+use erp_model::{request::erp_outbound_order::{CreateErpOutboundOrderOtherRequest, CreateErpOutboundOrderRequest, CreateErpOutboundOrderSaleRequest, PaginatedKeywordRequest, UpdateErpOutboundOrderOtherRequest, UpdateErpOutboundOrderRequest, UpdateErpOutboundOrderSaleRequest}, response::erp_outbound_order::{ErpOutboundOrderBaseOtherResponse, ErpOutboundOrderBaseSalesResponse, ErpOutboundOrderInfoSalesResponse, ErpOutboundOrderPageOtherResponse, ErpOutboundOrderPageSalesResponse}};
 use erp_model::response::erp_outbound_order::ErpOutboundOrderResponse;
 use common::base::response::CommonResult;
 use common::context::context::LoginUserContext;
@@ -21,8 +21,12 @@ pub async fn erp_outbound_order_router(state: AppState) -> OpenApiRouter {
         .routes(routes!(update_other))
         .routes(routes!(delete))
         .routes(routes!(get_by_id))
+        .routes(routes!(get_base_sales_by_id))
+        .routes(routes!(get_base_other_by_id))
+        .routes(routes!(get_info_sales_by_id))
         .routes(routes!(list))
-        .routes(routes!(page))
+        .routes(routes!(page_sales))
+        .routes(routes!(page_other))
         .with_state(state)
 }
 
@@ -33,7 +37,7 @@ pub async fn erp_outbound_order_route(state: AppState) -> Router {
         .route("/delete/{id}", post(delete))
         .route("/get/{id}", get(get_by_id))
         .route("/list", get(list))
-        .route("/page", get(page))
+        .route("/page", get(page_other))
         .with_state(state)
 }
 
@@ -194,28 +198,141 @@ async fn get_by_id(
 
 #[utoipa::path(
     get,
-    path = "/page",
-    operation_id = "erp_outbound_order_page",
+    path = "/get_base_sales/{id}",
+    operation_id = "erp_outbound_order_get_base_sales_by_id",
     params(
-        ("page" = u64, Query, description = "page number"),
-        ("size" = u64, Query, description = "page size"),
-        ("keyword" = Option<String>, Query, description = "keyword")
+        ("id" = i64, Path, description = "id")
     ),
     responses(
-        (status = 200, description = "get page", body = CommonResult<PaginatedResponse<ErpOutboundOrderResponse>>)
+        (status = 200, description = "get base sales by id", body = CommonResult<ErpOutboundOrderBaseSalesResponse>)
     ),
     tag = "erp_outbound_order",
     security(
         ("bearerAuth" = [])
     )
 )]
-#[require_authorize(operation_id = "erp_outbound_order_page", authorize = "")]
-async fn page(
+#[require_authorize(operation_id = "erp_outbound_order_get_base_sales_by_id", authorize = "")]
+async fn get_base_sales_by_id(
+    State(state): State<AppState>,
+    Extension(login_user): Extension<LoginUserContext>,
+    Path(id): Path<i64>,
+) -> CommonResult<ErpOutboundOrderBaseSalesResponse> {
+    match service::erp_outbound_order::get_base_sales_by_id(&state.db, login_user, id).await {
+        Ok(Some(data)) => {CommonResult::with_data(data)}
+        Ok(None) => {CommonResult::with_none()}
+        Err(e) => {CommonResult::with_err(&e.to_string())}
+    }
+}
+
+#[utoipa::path(
+    get,
+    path = "/get_base_other/{id}",
+    operation_id = "erp_outbound_order_get_base_other_by_id",
+    params(
+        ("id" = i64, Path, description = "id")
+    ),
+    responses(
+        (status = 200, description = "get base other by id", body = CommonResult<ErpOutboundOrderBaseOtherResponse>)
+    ),
+    tag = "erp_outbound_order",
+    security(
+        ("bearerAuth" = [])
+    )
+)]
+#[require_authorize(operation_id = "erp_outbound_order_get_base_other_by_id", authorize = "")]
+async fn get_base_other_by_id(
+    State(state): State<AppState>,
+    Extension(login_user): Extension<LoginUserContext>,
+    Path(id): Path<i64>,
+) -> CommonResult<ErpOutboundOrderBaseOtherResponse> {
+    match service::erp_outbound_order::get_base_other_by_id(&state.db, login_user, id).await {
+        Ok(Some(data)) => {CommonResult::with_data(data)}
+        Ok(None) => {CommonResult::with_none()}
+        Err(e) => {CommonResult::with_err(&e.to_string())}
+    }
+}
+
+#[utoipa::path(
+    get,
+    path = "/get_info_sales/{id}",
+    operation_id = "erp_outbound_order_get_info_sales_by_id",
+    params(
+        ("id" = i64, Path, description = "id")
+    ),
+    responses(
+        (status = 200, description = "get info sales by id", body = CommonResult<ErpOutboundOrderInfoSalesResponse>)
+    ),
+    tag = "erp_outbound_order",
+    security(
+        ("bearerAuth" = [])
+    )
+)]
+#[require_authorize(operation_id = "erp_outbound_order_get_info_sales_by_id", authorize = "")]
+async fn get_info_sales_by_id(
+    State(state): State<AppState>,
+    Extension(login_user): Extension<LoginUserContext>,
+    Path(id): Path<i64>,
+) -> CommonResult<ErpOutboundOrderInfoSalesResponse> {
+    match service::erp_outbound_order::get_info_sales_by_id(&state.db, login_user, id).await {
+        Ok(Some(data)) => {CommonResult::with_data(data)}
+        Ok(None) => {CommonResult::with_none()}
+        Err(e) => {CommonResult::with_err(&e.to_string())}
+    }
+}
+
+#[utoipa::path(
+    get,
+    path = "/page_sales",
+    operation_id = "erp_outbound_order_page_sales",
+    params(
+        ("page" = u64, Query, description = "page number"),
+        ("size" = u64, Query, description = "page size"),
+        ("keyword" = Option<String>, Query, description = "keyword")
+    ),
+    responses(
+        (status = 200, description = "get page sales", body = CommonResult<PaginatedResponse<ErpOutboundOrderPageSalesResponse>>)
+    ),
+    tag = "erp_outbound_order",
+    security(
+        ("bearerAuth" = [])
+    )
+)]
+#[require_authorize(operation_id = "erp_outbound_order_page_sales", authorize = "")]
+async fn page_sales(
     State(state): State<AppState>,
     Extension(login_user): Extension<LoginUserContext>,
     Query(params): Query<PaginatedKeywordRequest>,
-) -> CommonResult<PaginatedResponse<ErpOutboundOrderResponse>> {
-    match service::erp_outbound_order::get_paginated(&state.db, login_user, params).await {
+) -> CommonResult<PaginatedResponse<ErpOutboundOrderPageSalesResponse>> {
+    match service::erp_outbound_order::get_paginated_sales(&state.db, login_user, params).await {
+        Ok(data) => {CommonResult::with_data(data)}
+        Err(e) => {CommonResult::with_err(&e.to_string())}
+    }
+}
+
+#[utoipa::path(
+    get,
+    path = "/page_other",
+    operation_id = "erp_outbound_order_page_other",
+    params(
+        ("page" = u64, Query, description = "page number"),
+        ("size" = u64, Query, description = "page size"),
+        ("keyword" = Option<String>, Query, description = "keyword")
+    ),
+    responses(
+        (status = 200, description = "get page other", body = CommonResult<PaginatedResponse<ErpOutboundOrderPageOtherResponse>>)
+    ),
+    tag = "erp_outbound_order",
+    security(
+        ("bearerAuth" = [])
+    )
+)]
+#[require_authorize(operation_id = "erp_outbound_order_page_other", authorize = "")]
+async fn page_other(
+    State(state): State<AppState>,
+    Extension(login_user): Extension<LoginUserContext>,
+    Query(params): Query<PaginatedKeywordRequest>,
+) -> CommonResult<PaginatedResponse<ErpOutboundOrderPageOtherResponse>> {
+    match service::erp_outbound_order::get_paginated_other(&state.db, login_user, params).await {
         Ok(data) => {CommonResult::with_data(data)}
         Err(e) => {CommonResult::with_err(&e.to_string())}
     }

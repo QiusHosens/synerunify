@@ -1,7 +1,7 @@
 use sea_orm::{Set, NotSet};
 use crate::model::erp_outbound_order_attachment::{self, Model as ErpOutboundOrderAttachment, ActiveModel as ErpOutboundOrderAttachmentActiveModel};
 use erp_model::request::erp_outbound_order_attachment::{CreateErpOutboundOrderAttachmentRequest, UpdateErpOutboundOrderAttachmentRequest};
-use erp_model::response::erp_outbound_order_attachment::ErpOutboundOrderAttachmentResponse;
+use erp_model::response::erp_outbound_order_attachment::{ErpOutboundOrderAttachmentBaseResponse, ErpOutboundOrderAttachmentResponse};
 
 pub fn create_request_to_model(request: &CreateErpOutboundOrderAttachmentRequest) -> ErpOutboundOrderAttachmentActiveModel {
     ErpOutboundOrderAttachmentActiveModel {
@@ -42,5 +42,15 @@ pub fn model_to_response(model: ErpOutboundOrderAttachment) -> ErpOutboundOrderA
         create_time: model.create_time,
         updater: model.updater,
         update_time: model.update_time,
+    }
+}
+
+pub fn model_to_base_response(model: ErpOutboundOrderAttachment, file_name: Option<String>) -> ErpOutboundOrderAttachmentBaseResponse {
+    ErpOutboundOrderAttachmentBaseResponse { 
+        id: model.id,
+        file_id: model.file_id,
+        remarks: model.remarks,
+
+        file_name,
     }
 }

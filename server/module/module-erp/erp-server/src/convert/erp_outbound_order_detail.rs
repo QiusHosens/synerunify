@@ -1,7 +1,7 @@
 use sea_orm::{Set, NotSet};
 use crate::model::erp_outbound_order_detail::{self, Model as ErpOutboundOrderDetail, ActiveModel as ErpOutboundOrderDetailActiveModel};
 use erp_model::request::erp_outbound_order_detail::{CreateErpOutboundOrderDetailRequest, UpdateErpOutboundOrderDetailRequest};
-use erp_model::response::erp_outbound_order_detail::ErpOutboundOrderDetailResponse;
+use erp_model::response::erp_outbound_order_detail::{ErpOutboundOrderDetailBaseOtherResponse, ErpOutboundOrderDetailBaseSalesResponse, ErpOutboundOrderDetailResponse};
 
 pub fn create_request_to_model(request: &CreateErpOutboundOrderDetailRequest) -> ErpOutboundOrderDetailActiveModel {
     ErpOutboundOrderDetailActiveModel {
@@ -76,5 +76,27 @@ pub fn model_to_response(model: ErpOutboundOrderDetail) -> ErpOutboundOrderDetai
         create_time: model.create_time,
         updater: model.updater,
         update_time: model.update_time,
+    }
+}
+
+pub fn model_to_base_sales_response(model: ErpOutboundOrderDetail) -> ErpOutboundOrderDetailBaseSalesResponse {
+    ErpOutboundOrderDetailBaseSalesResponse { 
+        id: model.id,
+        sale_detail_id: model.sale_detail_id,
+        warehouse_id: model.warehouse_id,
+        remarks: model.remarks,
+    }
+}
+
+pub fn model_to_base_other_response(model: ErpOutboundOrderDetail) -> ErpOutboundOrderDetailBaseOtherResponse {
+    ErpOutboundOrderDetailBaseOtherResponse { 
+        id: model.id,
+        warehouse_id: model.warehouse_id,
+        product_id: model.product_id,
+        quantity: model.quantity,
+        unit_price: model.unit_price,
+        subtotal: model.subtotal,
+        tax_rate: model.tax_rate,
+        remarks: model.remarks,
     }
 }
