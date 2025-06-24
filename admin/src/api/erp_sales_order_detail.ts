@@ -57,6 +57,9 @@ export interface ErpSalesOrderDetailBaseResponse {
   updater: number; // 更新者ID
   update_time: string; // 更新时间
 
+  product_name?: string; // 产品名
+  product_barcode?: string; // 条码
+  product_unit_name?: string; // 产品单位名
   product?: ErpProductResponse;
 }
 

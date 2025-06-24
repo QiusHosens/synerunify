@@ -1,7 +1,9 @@
 use sea_orm::{Set, NotSet};
 use crate::model::erp_sales_order_detail::{self, Model as ErpSalesOrderDetail, ActiveModel as ErpSalesOrderDetailActiveModel};
+use crate::model::erp_product::{self, Model as ErpProduct};
+use crate::model::erp_product_unit::{self, Model as ErpProductUnit};
 use erp_model::request::erp_sales_order_detail::{CreateErpSalesOrderDetailRequest, UpdateErpSalesOrderDetailRequest};
-use erp_model::response::erp_sales_order_detail::{ErpSalesOrderDetailBaseResponse, ErpSalesOrderDetailResponse};
+use erp_model::response::erp_sales_order_detail::{ErpSalesOrderDetailBaseResponse, ErpSalesOrderDetailInfoResponse, ErpSalesOrderDetailResponse};
 
 pub fn create_request_to_model(request: &CreateErpSalesOrderDetailRequest) -> ErpSalesOrderDetailActiveModel {
     ErpSalesOrderDetailActiveModel {
@@ -79,5 +81,32 @@ pub fn model_to_base_response(model: ErpSalesOrderDetail) -> ErpSalesOrderDetail
         subtotal: model.subtotal,
         tax_rate: model.tax_rate,
         remarks: model.remarks,
+    }
+}
+
+pub fn model_to_info_response(model: ErpSalesOrderDetail, model_product: Option<ErpProduct>, model_unit: Option<ErpProductUnit>) -> ErpSalesOrderDetailInfoResponse {
+    let (product_name, product_barcode) = match model_product {
+        Some(p) => (
+            Some(p.name.clone()),
+            p.barcode.clone(),
+        ),
+        None => (None, None),
+    };
+
+    let product_unit_name = model_unit.map(|unit| unit.name.clone());
+
+    ErpSalesOrderDetailInfoResponse { 
+        id: model.id,
+        order_id: model.order_id,
+        product_id: model.product_id,
+        quantity: model.quantity,
+        unit_price: model.unit_price,
+        subtotal: model.subtotal,
+        tax_rate: model.tax_rate,
+        remarks: model.remarks,
+
+        product_name,
+        product_barcode,
+        product_unit_name,
     }
 }

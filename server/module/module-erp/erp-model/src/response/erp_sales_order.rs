@@ -4,7 +4,7 @@ use utoipa::ToSchema;
 use serde_with::{serde_as, DisplayFromStr};
 use common::formatter::string_date_time::StringDateTime;
 
-use crate::response::{erp_sales_order_attachment::ErpSalesOrderAttachmentBaseResponse, erp_sales_order_detail::ErpSalesOrderDetailBaseResponse};
+use crate::response::{erp_sales_order_attachment::ErpSalesOrderAttachmentBaseResponse, erp_sales_order_detail::{ErpSalesOrderDetailBaseResponse, ErpSalesOrderDetailInfoResponse}};
 
 // #[serde_as]
 #[derive(Deserialize, Serialize, Debug, Clone, ToSchema)]
@@ -205,7 +205,7 @@ pub struct ErpSalesOrderInfoResponse {
 
     pub settlement_account_name: Option<String>, // 结算账户名
 
-    pub details: Vec<ErpSalesOrderDetailBaseResponse>, // 销售的产品列表
+    pub details: Vec<ErpSalesOrderDetailInfoResponse>, // 销售的产品列表
 
     pub attachments: Vec<ErpSalesOrderAttachmentBaseResponse>, // 销售的附件列表
     

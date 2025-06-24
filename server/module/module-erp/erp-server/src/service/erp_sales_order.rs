@@ -132,7 +132,7 @@ pub async fn get_info_by_id(db: &DatabaseConnection, login_user: LoginUserContex
         return Ok(None);
     }
     let (sales_order, customer, settlement_account) = erp_sales_order.unwrap();
-    let details = erp_sales_order_detail::list_by_sale_id(&db, login_user.clone(), id).await?;
+    let details = erp_sales_order_detail::list_info_by_sale_id(&db, login_user.clone(), id).await?;
     let attachments = erp_sales_order_attachment::list_by_sale_id(&db, login_user, id).await?;
     Ok(Some(model_to_info_response(sales_order, customer, settlement_account, details, attachments)))
 }

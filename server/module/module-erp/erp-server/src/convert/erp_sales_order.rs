@@ -1,5 +1,5 @@
 use erp_model::response::erp_sales_order_attachment::ErpSalesOrderAttachmentBaseResponse;
-use erp_model::response::erp_sales_order_detail::ErpSalesOrderDetailBaseResponse;
+use erp_model::response::erp_sales_order_detail::{ErpSalesOrderDetailBaseResponse, ErpSalesOrderDetailInfoResponse};
 use sea_orm::{Set, NotSet};
 use crate::model::erp_sales_order::{self, Model as ErpSalesOrder, ActiveModel as ErpSalesOrderActiveModel};
 use crate::model::erp_customer::{Model as ErpCustomerModel};
@@ -115,7 +115,7 @@ pub fn model_to_base_response(model: ErpSalesOrder, details: Vec<ErpSalesOrderDe
     }
 }
 
-pub fn model_to_info_response(model: ErpSalesOrder, model_customer: Option<ErpCustomerModel>, model_settlement_account: Option<ErpSettlementAccountModel>, details: Vec<ErpSalesOrderDetailBaseResponse>, attachments: Vec<ErpSalesOrderAttachmentBaseResponse>) -> ErpSalesOrderInfoResponse {
+pub fn model_to_info_response(model: ErpSalesOrder, model_customer: Option<ErpCustomerModel>, model_settlement_account: Option<ErpSettlementAccountModel>, details: Vec<ErpSalesOrderDetailInfoResponse>, attachments: Vec<ErpSalesOrderAttachmentBaseResponse>) -> ErpSalesOrderInfoResponse {
     let customer_name = model_customer.map(|customer| customer.name.clone());
     let settlement_account_name = model_settlement_account.map(|settlement_account| settlement_account.name.clone());
 
@@ -140,7 +140,7 @@ pub fn model_to_info_response(model: ErpSalesOrder, model_customer: Option<ErpCu
 
         customer_name,
         settlement_account_name,
-        
+
         details,
         attachments,
     }

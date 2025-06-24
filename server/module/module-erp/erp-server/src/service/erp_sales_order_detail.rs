@@ -1,12 +1,14 @@
 use std::collections::{HashMap, HashSet};
 
 use sea_orm::prelude::Expr;
-use sea_orm::{ActiveModelTrait, ColumnTrait, Condition, DatabaseConnection, DatabaseTransaction, EntityTrait, PaginatorTrait, QueryFilter, QueryOrder};
-use crate::model::erp_sales_order_detail::{Model as ErpSalesOrderDetailModel, ActiveModel as ErpSalesOrderDetailActiveModel, Entity as ErpSalesOrderDetailEntity, Column};
+use sea_orm::{ActiveModelTrait, ColumnTrait, Condition, DatabaseConnection, DatabaseTransaction, EntityTrait, JoinType, PaginatorTrait, QueryFilter, QueryOrder, QuerySelect, RelationTrait};
+use crate::model::erp_sales_order_detail::{Model as ErpSalesOrderDetailModel, ActiveModel as ErpSalesOrderDetailActiveModel, Entity as ErpSalesOrderDetailEntity, Column, Relation};
 use crate::model::erp_sales_order::{Model as ErpSalesOrderModel};
+use crate::model::erp_product::{Model as ErpProductModel, Entity as ErpProductEntity, Relation as ErpProductRelation};
+use crate::model::erp_product_unit::{Model as ErpProductUnitModel, ActiveModel as ErpProductUnitActiveModel, Entity as ErpProductUnitEntity};
 use erp_model::request::erp_sales_order_detail::{CreateErpSalesOrderDetailRequest, UpdateErpSalesOrderDetailRequest, PaginatedKeywordRequest};
-use erp_model::response::erp_sales_order_detail::{ErpSalesOrderDetailBaseResponse, ErpSalesOrderDetailResponse};
-use crate::convert::erp_sales_order_detail::{create_request_to_model, model_to_base_response, model_to_response, update_add_request_to_model, update_request_to_model};
+use erp_model::response::erp_sales_order_detail::{ErpSalesOrderDetailBaseResponse, ErpSalesOrderDetailInfoResponse, ErpSalesOrderDetailResponse};
+use crate::convert::erp_sales_order_detail::{create_request_to_model, model_to_base_response, model_to_info_response, model_to_response, update_add_request_to_model, update_request_to_model};
 use anyhow::{anyhow, Context, Result};
 use sea_orm::ActiveValue::Set;
 use common::constants::enum_constants::{STATUS_DISABLE, STATUS_ENABLE};
@@ -177,6 +179,18 @@ pub async fn list_by_sale_id(db: &DatabaseConnection, login_user: LoginUserConte
         .filter(Column::OrderId.eq(sale_id))
         .all(db).await?;
     Ok(list.into_iter().map(model_to_base_response).collect())
+}
+
+pub async fn list_info_by_sale_id(db: &DatabaseConnection, login_user: LoginUserContext, sale_id: i64) -> Result<Vec<ErpSalesOrderDetailInfoResponse>> {
+    let list = ErpSalesOrderDetailEntity::find_active()
+        .filter(Column::TenantId.eq(login_user.tenant_id))
+        .filter(Column::OrderId.eq(sale_id))
+        .select_also(ErpProductEntity)
+        .select_also(ErpProductUnitEntity)
+        .join(JoinType::LeftJoin, Relation::DetailProduct.def())
+        .join(JoinType::LeftJoin, ErpProductRelation::ProductUnit.def())
+        .all(db).await?;
+    Ok(list.into_iter().map(|(data, product_data, unit_data)|model_to_info_response(data, product_data, unit_data)).collect())
 }
 
 pub async fn find_by_sale_id(db: &DatabaseConnection, login_user: LoginUserContext, sale_id: i64) -> Result<Vec<ErpSalesOrderDetailModel>> {

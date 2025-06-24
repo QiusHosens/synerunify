@@ -13,7 +13,6 @@ import { useMessage } from '@/components/GlobalMessage';
 import { DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import AddCircleSharpIcon from '@mui/icons-material/AddCircleSharp';
 import DeleteIcon from '@/assets/image/svg/delete.svg';
-import CustomizedTag from '@/components/CustomizedTag';
 import CustomizedCopyableText from '@/components/CustomizedCopyableText';
 
 interface FormDetailErrors {

@@ -2,6 +2,7 @@ import { Box, Button } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { DataGrid, GridCallbackDetails, GridColDef, GridFilterModel, GridRenderCellParams, GridSortModel } from '@mui/x-data-grid';
+import ViewIcon from '@/assets/image/svg/view.svg';
 import EditIcon from '@/assets/image/svg/edit.svg';
 import DeleteIcon from '@/assets/image/svg/delete.svg';
 import { pageErpSalesOrder, ErpSalesOrderQueryCondition, ErpSalesOrderResponse } from '@/api';
@@ -12,6 +13,7 @@ import { useHomeStore } from '@/store';
 import CustomizedAutoMore from '@/components/CustomizedAutoMore';
 import CustomizedCopyableText from '@/components/CustomizedCopyableText';
 import CustomizedDictTag from '@/components/CustomizedDictTag';
+import ErpSalesOrderInfo from './Info';
 
 export default function ErpSalesOrder() {
   const { t } = useTranslation();
@@ -27,6 +29,7 @@ export default function ErpSalesOrder() {
   const [sortModel, setSortModel] = useState<GridSortModel>([]);
   const [filterModel, setFilterModel] = useState<GridFilterModel>();
 
+  const viewErpSalesOrder = useRef(null);
   const addErpSalesOrder = useRef(null);
   const editErpSalesOrder = useRef(null);
   const deleteErpSalesOrder = useRef(null);
@@ -72,6 +75,13 @@ export default function ErpSalesOrder() {
         minWidth: 100,
         renderCell: (params: GridRenderCellParams) => (
           <CustomizedAutoMore>
+            {hasOperatePermission('erp:sale:order:get') && <Button
+              size="small"
+              variant='customOperate'
+              title={t('global.operate.view') + t('global.page.erp.sale.order')}
+              startIcon={<ViewIcon />}
+              onClick={() => handleClickOpenView(params.row)}
+            />}
             {hasOperatePermission('erp:sale:order:edit') && <Button
               size="small"
               variant='customOperate'
@@ -98,6 +108,10 @@ export default function ErpSalesOrder() {
     const result = await pageErpSalesOrder(condition);
     setRecords(result.list);
     setTotal(result.total);
+  };
+
+  const handleClickOpenView = (erpSalesOrder: ErpSalesOrderResponse) => {
+    (viewErpSalesOrder.current as any).show(erpSalesOrder);
   };
 
   const handleClickOpenAdd = () => {
@@ -164,6 +178,7 @@ export default function ErpSalesOrder() {
           }));
         }}
       />
+      <ErpSalesOrderInfo ref={viewErpSalesOrder} />
       <ErpSalesOrderAdd ref={addErpSalesOrder} onSubmit={refreshData} />
       <ErpSalesOrderEdit ref={editErpSalesOrder} onSubmit={refreshData} />
       <ErpSalesOrderDelete ref={deleteErpSalesOrder} onSubmit={refreshData} />
