@@ -6,11 +6,11 @@ use common::base::page::PaginatedRequest;
 #[derive(Serialize, Deserialize, Debug, ToSchema)]
 pub struct CreateErpInventoryTransferRequest {
     
-    pub from_warehouse_id: Option<i64>, // 调出仓库ID
+    pub from_warehouse_id: i64, // 调出仓库ID
     
-    pub to_warehouse_id: Option<i64>, // 调入仓库ID
+    pub to_warehouse_id: i64, // 调入仓库ID
     
-    pub product_id: Option<i64>, // 产品ID
+    pub product_id: i64, // 产品ID
     
     pub quantity: i32, // 调拨数量
     

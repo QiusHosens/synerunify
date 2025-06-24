@@ -11,7 +11,7 @@
  Target Server Version : 80100 (8.1.0)
  File Encoding         : 65001
 
- Date: 24/06/2025 13:49:45
+ Date: 24/06/2025 15:21:28
 */
 
 SET NAMES utf8mb4;
@@ -229,9 +229,9 @@ INSERT INTO `erp_inventory_record` VALUES (2, 1, 1, 20, 0, '2025-06-22 00:00:00'
 DROP TABLE IF EXISTS `erp_inventory_transfer`;
 CREATE TABLE `erp_inventory_transfer`  (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '调拨记录ID',
-  `from_warehouse_id` bigint NULL DEFAULT NULL COMMENT '调出仓库ID',
-  `to_warehouse_id` bigint NULL DEFAULT NULL COMMENT '调入仓库ID',
-  `product_id` bigint NULL DEFAULT NULL COMMENT '产品ID',
+  `from_warehouse_id` bigint NOT NULL COMMENT '调出仓库ID',
+  `to_warehouse_id` bigint NOT NULL COMMENT '调入仓库ID',
+  `product_id` bigint NOT NULL COMMENT '产品ID',
   `quantity` int NOT NULL COMMENT '调拨数量',
   `transfer_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '调拨日期',
   `remarks` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',

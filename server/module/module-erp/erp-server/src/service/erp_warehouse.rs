@@ -106,3 +106,14 @@ pub async fn disable(db: &DatabaseConnection, login_user: LoginUserContext, id: 
     erp_warehouse.update(db).await?;
     Ok(())
 }
+
+pub async fn list_by_ids(db: &DatabaseConnection, login_user: LoginUserContext, ids: Vec<i64>) -> Result<Vec<ErpWarehouseModel>> {
+    if ids.is_empty() {
+        return Ok(Vec::new());
+    }
+    let list = ErpWarehouseEntity::find_active()
+        .filter(Column::TenantId.eq(login_user.tenant_id))
+        .filter(Column::Id.is_in(ids))
+        .all(db).await?;
+    Ok(list)
+}
