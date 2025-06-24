@@ -6,9 +6,9 @@ use common::base::page::PaginatedRequest;
 #[derive(Serialize, Deserialize, Debug, ToSchema)]
 pub struct CreateErpInventoryCheckRequest {
     
-    pub warehouse_id: Option<i64>, // 仓库ID
+    pub warehouse_id: i64, // 仓库ID
     
-    pub product_id: Option<i64>, // 产品ID
+    pub product_id: i64, // 产品ID
     
     pub checked_quantity: i32, // 盘点数量
     
@@ -18,10 +18,6 @@ pub struct CreateErpInventoryCheckRequest {
     pub check_date: NaiveDateTime, // 盘点日期
     
     pub remarks: Option<String>, // 备注
-    
-    pub department_code: String, // 部门编码
-    
-    pub department_id: i64, // 部门ID
     
 }
 
@@ -42,10 +38,6 @@ pub struct UpdateErpInventoryCheckRequest {
     pub check_date: Option<NaiveDateTime>, // 盘点日期
     
     pub remarks: Option<String>, // 备注
-    
-    pub department_code: Option<String>, // 部门编码
-    
-    pub department_id: Option<i64>, // 部门ID
     
 }
 

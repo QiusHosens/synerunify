@@ -6,7 +6,7 @@ use ctor;
 use macros::require_authorize;
 use axum::{routing::{get, post}, Router, extract::{State, Path, Json, Query}, response::IntoResponse, Extension};
 use common::base::page::PaginatedResponse;
-use erp_model::request::erp_inventory_check::{CreateErpInventoryCheckRequest, UpdateErpInventoryCheckRequest, PaginatedKeywordRequest};
+use erp_model::{request::erp_inventory_check::{CreateErpInventoryCheckRequest, PaginatedKeywordRequest, UpdateErpInventoryCheckRequest}, response::erp_inventory_check::ErpInventoryCheckPageResponse};
 use erp_model::response::erp_inventory_check::ErpInventoryCheckResponse;
 use common::base::response::CommonResult;
 use common::context::context::LoginUserContext;
@@ -150,7 +150,7 @@ async fn get_by_id(
         ("keyword" = Option<String>, Query, description = "keyword")
     ),
     responses(
-        (status = 200, description = "get page", body = CommonResult<PaginatedResponse<ErpInventoryCheckResponse>>)
+        (status = 200, description = "get page", body = CommonResult<PaginatedResponse<ErpInventoryCheckPageResponse>>)
     ),
     tag = "erp_inventory_check",
     security(
@@ -162,7 +162,7 @@ async fn page(
     State(state): State<AppState>,
     Extension(login_user): Extension<LoginUserContext>,
     Query(params): Query<PaginatedKeywordRequest>,
-) -> CommonResult<PaginatedResponse<ErpInventoryCheckResponse>> {
+) -> CommonResult<PaginatedResponse<ErpInventoryCheckPageResponse>> {
     match service::erp_inventory_check::get_paginated(&state.db, login_user, params).await {
         Ok(data) => {CommonResult::with_data(data)}
         Err(e) => {CommonResult::with_err(&e.to_string())}

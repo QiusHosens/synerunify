@@ -2,6 +2,7 @@ use chrono::NaiveDateTime;
 use sea_orm::Condition;
 use sea_orm::entity::prelude::*;
 use common::interceptor::orm::active_filter::ActiveFilterEntityTrait;
+use crate::model::{erp_product, erp_warehouse};
 
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel)]
 #[sea_orm(table_name = "erp_inventory_check")]
@@ -10,9 +11,9 @@ pub struct Model {
     #[sea_orm(primary_key)]
     pub id: i64, // 盘点记录ID
     
-    pub warehouse_id: Option<i64>, // 仓库ID
+    pub warehouse_id: i64, // 仓库ID
     
-    pub product_id: Option<i64>, // 产品ID
+    pub product_id: i64, // 产品ID
     
     pub checked_quantity: i32, // 盘点数量
     
@@ -39,7 +40,22 @@ pub struct Model {
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
-pub enum Relation {}
+pub enum Relation {
+
+    #[sea_orm(
+        belongs_to = "super::erp_product::Entity",
+        from = "Column::ProductId",
+        to = "erp_product::Column::Id"
+    )]
+    InventoryProduct,
+
+    #[sea_orm(
+        belongs_to = "super::erp_warehouse::Entity",
+        from = "Column::WarehouseId",
+        to = "erp_warehouse::Column::Id"
+    )]
+    InventoryWarehouse,
+}
 
 impl Related<Entity> for Entity {
     fn to() -> RelationDef {
