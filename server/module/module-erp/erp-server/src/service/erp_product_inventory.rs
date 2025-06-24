@@ -2,11 +2,15 @@ use std::collections::HashMap;
 
 use common::interceptor::orm::simple_support::SimpleSupport;
 use sea_orm::prelude::Expr;
-use sea_orm::{ActiveModelTrait, ColumnTrait, Condition, DatabaseConnection, DatabaseTransaction, EntityTrait, Order, PaginatorTrait, QueryFilter, QueryOrder};
-use crate::model::erp_product_inventory::{Model as ErpProductInventoryModel, ActiveModel as ErpProductInventoryActiveModel, Entity as ErpProductInventoryEntity, Column};
+use sea_orm::{ActiveModelTrait, ColumnTrait, Condition, DatabaseConnection, DatabaseTransaction, EntityTrait, JoinType, Order, PaginatorTrait, QueryFilter, QueryOrder, QuerySelect, RelationTrait};
+use crate::model::erp_product_inventory::{Model as ErpProductInventoryModel, ActiveModel as ErpProductInventoryActiveModel, Entity as ErpProductInventoryEntity, Column, Relation};
+use crate::model::erp_product::{Model as ErpProductModel, ActiveModel as ErpProductActiveModel, Entity as ErpProductEntity};
+use crate::model::erp_warehouse::{Model as ErpWarehouseModel, ActiveModel as ErpWarehouseActiveModel, Entity as ErpWarehouseEntity};
+use crate::model::erp_product_unit::{Model as ErpProductUnitModel, ActiveModel as ErpProductUnitActiveModel, Entity as ErpProductUnitEntity};
+use crate::service::erp_product_unit;
 use erp_model::request::erp_product_inventory::{CreateErpProductInventoryRequest, ErpProductInventoryInOutRequest, PaginatedKeywordRequest, UpdateErpProductInventoryRequest};
-use erp_model::response::erp_product_inventory::ErpProductInventoryResponse;
-use crate::convert::erp_product_inventory::{create_request_to_model, update_request_to_model, model_to_response};
+use erp_model::response::erp_product_inventory::{ErpProductInventoryPageResponse, ErpProductInventoryResponse};
+use crate::convert::erp_product_inventory::{create_request_to_model, model_to_page_response, model_to_response, update_request_to_model};
 use anyhow::{Result, anyhow};
 use sea_orm::ActiveValue::Set;
 use common::constants::enum_constants::{STATUS_DISABLE, STATUS_ENABLE};
@@ -57,19 +61,33 @@ pub async fn get_by_id(db: &DatabaseConnection, login_user: LoginUserContext, id
     Ok(erp_product_inventory.map(model_to_response))
 }
 
-pub async fn get_paginated(db: &DatabaseConnection, login_user: LoginUserContext, params: PaginatedKeywordRequest) -> Result<PaginatedResponse<ErpProductInventoryResponse>> {
-    let condition = Condition::all().add(Column::TenantId.eq(login_user.tenant_id));let paginator = ErpProductInventoryEntity::find_active_with_condition(condition)
+pub async fn get_paginated(db: &DatabaseConnection, login_user: LoginUserContext, params: PaginatedKeywordRequest) -> Result<PaginatedResponse<ErpProductInventoryPageResponse>> {
+    let paginator = ErpProductInventoryEntity::find_active()
+        .filter(Column::TenantId.eq(login_user.tenant_id))
+        .select_also(ErpProductEntity)
+        .select_also(ErpWarehouseEntity)
+        .join(JoinType::LeftJoin, Relation::InventoryProduct.def())
+        .join(JoinType::LeftJoin, Relation::InventoryWarehouse.def())
         .support_filter(params.base.filter_field, params.base.filter_operator, params.base.filter_value)
         .support_order(params.base.sort_field, params.base.sort, Some(vec![(Column::Id, Order::Asc)]))
         .paginate(db, params.base.size);
 
     let total = paginator.num_items().await?;
     let total_pages = (total + params.base.size - 1) / params.base.size; // 向上取整
-    let list = paginator
-        .fetch_page(params.base.page - 1) // SeaORM 页码从 0 开始，所以减 1
-        .await?
+
+    let list = paginator.fetch_page(params.base.page - 1).await?;
+
+    let unit_ids: Vec<i64> = list.iter().filter_map(|(_, product, _)| product.as_ref().and_then(|p| p.unit_id)).collect();
+    let units: Vec<ErpProductUnitModel> = erp_product_unit::list_by_ids(&db, login_user, unit_ids).await?;
+    // 转为 HashMap 便于后续快速查找
+    let unit_map: HashMap<i64, ErpProductUnitModel> = units.into_iter().map(|s| (s.id, s)).collect();
+
+    let list = list
         .into_iter()
-        .map(model_to_response)
+        .map(|(ret, product, warehouse)| {
+            let unit = product.as_ref().and_then(|p| p.unit_id).and_then(|id| unit_map.get(&id).cloned());
+            model_to_page_response(ret, product, warehouse, unit)
+        })
         .collect();
 
     Ok(PaginatedResponse {
