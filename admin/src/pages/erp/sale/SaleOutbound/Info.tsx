@@ -1,31 +1,35 @@
-import { Box, Card, FormControl, Grid, MenuItem, Select, Stack, Typography } from '@mui/material';
+import { Box, Button, Card, FormControl, Grid, InputLabel, MenuItem, Select, SelectChangeEvent, Stack, Switch, TextField, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { forwardRef, useCallback, useImperativeHandle, useState } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
-import { ErpSalesOrderDetailBaseResponse, ErpSalesOrderInfoResponse, ErpSalesReturnResponse, ErpSettlementAccountResponse, ErpWarehouseResponse, getBaseErpSalesReturn, getErpSalesOrderInfo, listErpWarehouse } from '@/api';
+import { ErpOutboundOrderAttachmentRequest, ErpOutboundOrderRequest, ErpOutboundOrderResponse, ErpSalesOrderDetailBaseResponse, ErpSalesOrderInfoResponse, ErpSettlementAccountResponse, ErpWarehouseResponse, getBaseSaleErpOutboundOrder, getErpSalesOrderInfo, listErpSettlementAccount, listErpWarehouse, updateSaleErpOutboundOrder } from '@/api';
 import CustomizedDialog from '@/components/CustomizedDialog';
-import CustomizedFileUpload, { DownloadProps } from '@/components/CustomizedFileUpload';
-import { downloadSystemFile } from '@/api/system_file';
+import { Dayjs } from 'dayjs';
+import CustomizedFileUpload, { DownloadProps, UploadFile } from '@/components/CustomizedFileUpload';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { downloadSystemFile, uploadSystemFile } from '@/api/system_file';
+import { PickerValue } from '@mui/x-date-pickers/internals';
 import CustomizedCopyableText from '@/components/CustomizedCopyableText';
 import CustomizedTag from '@/components/CustomizedTag';
+import { DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers';
 
-const ErpSalesReturnEdit = forwardRef(({ }, ref) => {
+const ErpOutboundOrderInfo = forwardRef(({ }, ref) => {
   const { t } = useTranslation();
 
   const [open, setOpen] = useState(false);
-  const [maxWidth] = useState<DialogProps['maxWidth']>('sm');
+  const [maxWidth] = useState<DialogProps['maxWidth']>('xl');
   const [erpSalesOrder, setErpSalesOrder] = useState<ErpSalesOrderInfoResponse>();
   const [erpSalesOrderDetailMap, setErpSalesOrderDetailMap] = useState<Map<number, ErpSalesOrderDetailBaseResponse>>();
   const [warehouses, setWarehouses] = useState<ErpWarehouseResponse[]>([]);
-  const [erpSalesReturn, setErpSalesReturn] = useState<ErpSalesReturnResponse>();
+  const [erpOutboundOrder, setErpOutboundOrder] = useState<ErpOutboundOrderResponse>();
   const [size] = useState({ xs: 12, md: 3 });
   const [fileWidth] = useState<number>(420);
   const [fileHeight] = useState<number>(245);
   const [downloadImages, setDownloadImages] = useState<Map<number, DownloadProps>>(new Map<number, DownloadProps>());
 
   useImperativeHandle(ref, () => ({
-    show(erpSalesReturnRequest: ErpSalesReturnResponse) {
-      initForm(erpSalesReturnRequest);
+    show(erpOutboundOrderRequest: ErpOutboundOrderResponse) {
+      initForm(erpOutboundOrderRequest);
       initWarehouses();
       setOpen(true);
     },
@@ -43,11 +47,11 @@ const ErpSalesReturnEdit = forwardRef(({ }, ref) => {
     setOpen(false);
   };
 
-  const initForm = async (erpSalesReturnRequest: ErpSalesReturnResponse) => {
-    // 查询退货订单
-    const result = await getBaseErpSalesReturn(erpSalesReturnRequest.id);
+  const initForm = async (erpOutboundOrderRequest: ErpOutboundOrderResponse) => {
+    // 查询出库订单
+    const result = await getBaseSaleErpOutboundOrder(erpOutboundOrderRequest.id);
     // 查询销售订单
-    const salesOrder = await getErpSalesOrderInfo(erpSalesReturnRequest.sales_order_id);
+    const salesOrder = await getErpSalesOrderInfo(erpOutboundOrderRequest.sale_id);
 
     const salesOrderDetailMap: Map<number, ErpSalesOrderDetailBaseResponse> = new Map();
     for (const salesDetail of salesOrder.details) {
@@ -55,7 +59,7 @@ const ErpSalesReturnEdit = forwardRef(({ }, ref) => {
     }
     setErpSalesOrderDetailMap(salesOrderDetailMap);
     setErpSalesOrder(salesOrder);
-    setErpSalesReturn(result);
+    setErpOutboundOrder(result);
     // 设置图片
     for (const attachment of result.attachments) {
       const file_id = attachment.file_id;
@@ -90,7 +94,7 @@ const ErpSalesReturnEdit = forwardRef(({ }, ref) => {
     <CustomizedDialog
       open={open}
       onClose={handleClose}
-      title={t('global.operate.view') + t('global.page.erp.sales.return')}
+      title={t('global.operate.edit') + t('global.page.erp.sale.outbound')}
       maxWidth={maxWidth}
     >
       <Box
@@ -103,12 +107,12 @@ const ErpSalesReturnEdit = forwardRef(({ }, ref) => {
           width: 'fit-content',
         }}
       >
-        <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' } }}>
-          <Grid container rowSpacing={2} columnSpacing={4} sx={{ '& .MuiGrid-root': { display: 'flex', justifyContent: 'start', alignItems: 'center' } }}>
+        <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '100%' } }}>
+          <Grid container rowSpacing={2} columnSpacing={4} sx={{ '& .MuiGrid-root': { display: 'flex', justifyContent: 'center', alignItems: 'center' } }}>
             <Grid size={size}>
               <Stack direction="row" spacing={2} sx={{ display: "flex", alignItems: "center" }}>
-                <Box>{t('page.erp.sale.order.title.order.number')}</Box>
-                <Box>{erpSalesReturn && <CustomizedCopyableText text={erpSalesReturn.order_number} sx={{
+                <Box>{t('page.erp.sale.outbound.title.order.number')}</Box>
+                <Box>{erpOutboundOrder && <CustomizedCopyableText text={erpOutboundOrder.order_number} sx={{
                   fontSize: '0.75rem',
                   fontWeight: 500,
                 }} />}</Box>
@@ -116,7 +120,7 @@ const ErpSalesReturnEdit = forwardRef(({ }, ref) => {
             </Grid>
             <Grid size={size}>
               <Stack direction="row" spacing={2} sx={{ display: "flex", alignItems: "center" }}>
-                <Box>{t('page.erp.sales.return.title.sales.order')}</Box>
+                <Box>{t('page.erp.sales.outbound.title.sales')}</Box>
                 <Box>{erpSalesOrder && <CustomizedCopyableText text={erpSalesOrder.order_number} sx={{
                   fontSize: '0.75rem',
                   fontWeight: 500,
@@ -125,38 +129,38 @@ const ErpSalesReturnEdit = forwardRef(({ }, ref) => {
             </Grid>
             <Grid size={size}>
               <Stack direction="row" spacing={2} sx={{ display: "flex", alignItems: "center" }}>
-                <Box>{t('page.erp.sales.return.title.customer')}</Box>
+                <Box>{t('page.erp.sale.outbound.title.customer')}</Box>
                 <Box>{erpSalesOrder && <CustomizedTag label={erpSalesOrder.customer_name} />}</Box>
               </Stack>
             </Grid>
             <Grid size={size}>
               <Stack direction="row" spacing={2} sx={{ display: "flex", alignItems: "center" }}>
-                <Box>{t('page.erp.sales.return.title.return.date')}</Box>
-                <Box>{erpSalesReturn && <CustomizedTag label={erpSalesReturn.return_date} />}</Box>
+                <Box>{t('page.erp.sale.outbound.title.outbound.date')}</Box>
+                <Box>{erpOutboundOrder && <CustomizedTag label={erpOutboundOrder.outbound_date} />}</Box>
               </Stack>
             </Grid>
             <Grid size={size}>
               <Stack direction="row" spacing={2} sx={{ display: "flex", alignItems: "center" }}>
-                <Box>{t('page.erp.sales.return.title.settlement.account')}</Box>
-                <Box>{erpSalesReturn && <CustomizedTag label={erpSalesReturn.settlement_account_name} />}</Box>
+                <Box>{t('page.erp.sale.outbound.title.settlement.account')}</Box>
+                <Box>{erpOutboundOrder && <CustomizedTag label={erpOutboundOrder.settlement_account_name} />}</Box>
               </Stack>
             </Grid>
             <Grid size={size}>
               <Stack direction="row" spacing={2} sx={{ display: "flex", alignItems: "center" }}>
-                <Box>{t('page.erp.sales.return.title.total.amount')}</Box>
-                <Box>{erpSalesReturn && <CustomizedTag label={erpSalesReturn.total_amount} />}</Box>
+                <Box>{t('page.erp.sale.outbound.title.discount.rate')}</Box>
+                <Box>{erpOutboundOrder && <CustomizedTag label={erpOutboundOrder.discount_rate + '%'} />}</Box>
               </Stack>
             </Grid>
             <Grid size={size}>
               <Stack direction="row" spacing={2} sx={{ display: "flex", alignItems: "center" }}>
-                <Box>{t('page.erp.sales.return.title.discount.rate')}</Box>
-                <Box>{erpSalesReturn && <CustomizedTag label={erpSalesReturn.discount_rate} />}</Box>
+                <Box>{t('page.erp.sale.outbound.title.other.cost')}</Box>
+                <Box>{erpOutboundOrder && <CustomizedTag label={erpOutboundOrder.other_cost} />}</Box>
               </Stack>
             </Grid>
             <Grid size={size}>
               <Stack direction="row" spacing={2} sx={{ display: "flex", alignItems: "center" }}>
-                <Box>{t('page.erp.sales.return.title.remarks')}</Box>
-                <Box>{erpSalesReturn && <CustomizedTag label={erpSalesReturn.remarks} />}</Box>
+                <Box>{t('page.erp.sale.outbound.title.remarks')}</Box>
+                <Box>{erpOutboundOrder && <CustomizedTag label={erpOutboundOrder.remarks} />}</Box>
               </Stack>
             </Grid>
           </Grid>
@@ -170,19 +174,19 @@ const ErpSalesReturnEdit = forwardRef(({ }, ref) => {
             <Box className='table-row'>
               <Box className='table-cell' sx={{ width: 50 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.no')}</Typography></Box>
               <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.inbound.detail.title.warehouse')}</Typography></Box>
-              <Box className='table-cell' sx={{ width: 150 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.quantity')}</Typography></Box>
               <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.remarks')}</Typography></Box>
               <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.product')}</Typography></Box>
               <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.barcode')}</Typography></Box>
               <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.unit')}</Typography></Box>
               <Box className='table-cell' sx={{ width: 200 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.remarks')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 150 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.quantity')}</Typography></Box>
               <Box className='table-cell' sx={{ width: 150 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.unit.price')}</Typography></Box>
               <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.subtotal')}</Typography></Box>
               <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.tax.rate')}</Typography></Box>
               <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.tax')}</Typography></Box>
               <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.tax.total')}</Typography></Box>
             </Box>
-            {erpSalesReturn && erpSalesReturn.details.map((item, index) => {
+            {erpOutboundOrder && erpOutboundOrder.details && erpOutboundOrder.details.map((item, index) => {
               let salesDetail = undefined;
               if (erpSalesOrderDetailMap && item.sale_detail_id && erpSalesOrderDetailMap.get(item.sale_detail_id)) {
                 salesDetail = erpSalesOrderDetailMap && item.sale_detail_id && erpSalesOrderDetailMap.get(item.sale_detail_id);
@@ -196,6 +200,7 @@ const ErpSalesReturnEdit = forwardRef(({ }, ref) => {
                         size="small"
                         name="warehouse_id"
                         value={item.warehouse_id}
+                        disabled
                       >
                         {warehouses.map((warehouse) => (
                           <MenuItem key={warehouse.id} value={warehouse.id}>
@@ -204,9 +209,6 @@ const ErpSalesReturnEdit = forwardRef(({ }, ref) => {
                         ))}
                       </Select>
                     </FormControl>
-                  </Box>
-                  <Box className='table-cell' sx={{ width: 50 }}>
-                    <Typography variant="body1">{item.quantity}</Typography>
                   </Box>
                   <Box className='table-cell' sx={{ width: 50 }}>
                     <Typography variant="body1">{item.remarks}</Typography>
@@ -221,10 +223,16 @@ const ErpSalesReturnEdit = forwardRef(({ }, ref) => {
                     <Typography variant="body1">{salesDetail && salesDetail.product_unit_name}</Typography>
                   </Box>
                   <Box className='table-cell' sx={{ width: 50 }}>
+                    <Typography variant="body1">{salesDetail && salesDetail.remarks}</Typography>
+                  </Box>
+                  <Box className='table-cell' sx={{ width: 50 }}>
+                    <Typography variant="body1">{salesDetail && salesDetail.quantity}</Typography>
+                  </Box>
+                  <Box className='table-cell' sx={{ width: 50 }}>
                     <Typography variant="body1">{salesDetail && salesDetail.unit_price}</Typography>
                   </Box>
                   <Box className='table-cell' sx={{ width: 50 }}>
-                    <Typography variant="body1">{item.subtotal}</Typography>
+                    <Typography variant="body1">{salesDetail && salesDetail.subtotal}</Typography>
                   </Box>
                   <Box className='table-cell' sx={{ width: 50 }}>
                     <Typography variant="body1">{salesDetail && salesDetail.tax_rate}</Typography>
@@ -246,7 +254,7 @@ const ErpSalesReturnEdit = forwardRef(({ }, ref) => {
         </Typography>
         <Card variant="outlined" sx={{ width: '100%', mt: 1, p: 2 }}>
           <Grid container rowSpacing={2} columnSpacing={4} sx={{ '& .MuiGrid-root': { display: 'flex', justifyContent: 'center', alignItems: 'center' } }}>
-            {erpSalesReturn && erpSalesReturn.attachments.map((item, index) => (
+            {erpOutboundOrder && erpOutboundOrder.attachments.map((item, index) => (
               <Grid key={index} size={{ xs: 12, md: 4 }}>
                 <CustomizedFileUpload
                   canUpload={false}
@@ -267,4 +275,4 @@ const ErpSalesReturnEdit = forwardRef(({ }, ref) => {
   )
 });
 
-export default ErpSalesReturnEdit;
+export default ErpOutboundOrderInfo;

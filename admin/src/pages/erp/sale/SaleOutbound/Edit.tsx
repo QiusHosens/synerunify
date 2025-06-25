@@ -1,35 +1,27 @@
-import { Box, Button, Card, FormControl, FormHelperText, Grid, InputLabel, MenuItem, Select, SelectChangeEvent, Stack, TextField, Typography } from '@mui/material';
+import { Box, Button, Card, FormControl, Grid, InputLabel, MenuItem, Select, SelectChangeEvent, Stack, Switch, TextField, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { forwardRef, useCallback, useImperativeHandle, useState } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
-import { ErpSalesOrderDetailBaseResponse, ErpSalesOrderInfoResponse, ErpSalesReturnAttachmentRequest, ErpSalesReturnDetailRequest, ErpSalesReturnRequest, ErpSalesReturnResponse, ErpSettlementAccountResponse, ErpWarehouseResponse, getBaseErpSalesReturn, getErpSalesOrderInfo, listErpSettlementAccount, listErpWarehouse, updateErpSalesReturn } from '@/api';
+import { ErpOutboundOrderAttachmentRequest, ErpOutboundOrderRequest, ErpOutboundOrderResponse, ErpSalesOrderDetailBaseResponse, ErpSalesOrderInfoResponse, ErpSettlementAccountResponse, ErpWarehouseResponse, getBaseSaleErpOutboundOrder, getErpSalesOrderInfo, listErpSettlementAccount, listErpWarehouse, updateSaleErpOutboundOrder } from '@/api';
 import CustomizedDialog from '@/components/CustomizedDialog';
 import { Dayjs } from 'dayjs';
 import CustomizedFileUpload, { DownloadProps, UploadFile } from '@/components/CustomizedFileUpload';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { downloadSystemFile, uploadSystemFile } from '@/api/system_file';
 import { PickerValue } from '@mui/x-date-pickers/internals';
-import { DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import CustomizedCopyableText from '@/components/CustomizedCopyableText';
 import CustomizedTag from '@/components/CustomizedTag';
-
-interface FormDetailErrors {
-  warehouse_id?: string; // 仓库ID
-  quantity?: string; // 退货数量
-}
+import { DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers';
 
 interface FormErrors {
-  return_date?: string; // 退货日期
-  total_amount?: string; // 总金额
-
-  details: FormDetailErrors[];
+  outbound_date?: string; // 出库日期
 }
 
-interface ErpSalesReturnEditProps {
+interface ErpOutboundOrderEditProps {
   onSubmit: () => void;
 }
 
-const ErpSalesReturnEdit = forwardRef(({ onSubmit }: ErpSalesReturnEditProps, ref) => {
+const ErpOutboundOrderEdit = forwardRef(({ onSubmit }: ErpOutboundOrderEditProps, ref) => {
   const { t } = useTranslation();
 
   const [open, setOpen] = useState(false);
@@ -38,31 +30,27 @@ const ErpSalesReturnEdit = forwardRef(({ onSubmit }: ErpSalesReturnEditProps, re
   const [erpSalesOrderDetailMap, setErpSalesOrderDetailMap] = useState<Map<number, ErpSalesOrderDetailBaseResponse>>();
   const [warehouses, setWarehouses] = useState<ErpWarehouseResponse[]>([]);
   const [settlementAccounts, setSettlementAccounts] = useState<ErpSettlementAccountResponse[]>([]);
-  const [returnDate, setReturnDate] = useState<Dayjs | null>(null);
-  const [erpSalesReturn, setErpSalesReturn] = useState<ErpSalesReturnResponse>();
-  const [erpSalesReturnRequest, setErpSalesReturnRequest] = useState<ErpSalesReturnRequest>({
+  const [outboundDate, setOutboundDate] = useState<Dayjs | null>(null);
+  const [erpOutboundOrder, setErpOutboundOrder] = useState<ErpOutboundOrderResponse>();
+  const [erpOutboundOrderRequest, setErpOutboundOrderRequest] = useState<ErpOutboundOrderRequest>({
     id: 0,
-    sales_order_id: 0,
-    return_date: '',
-    total_amount: 0,
-    discount_rate: 0,
-    settlement_account_id: 0,
-    deposit: 0,
+    outbound_date: '',
     remarks: '',
+    discount_rate: 0,
+    other_cost: 0,
+    settlement_account_id: 0,
     details: [],
     attachments: []
   });
-  const [errors, setErrors] = useState<FormErrors>({
-    details: [],
-  });
+  const [errors, setErrors] = useState<FormErrors>({});
   const [size] = useState({ xs: 12, md: 3 });
   const [fileWidth] = useState<number>(420);
   const [fileHeight] = useState<number>(245);
   const [downloadImages, setDownloadImages] = useState<Map<number, DownloadProps>>(new Map<number, DownloadProps>());
 
   useImperativeHandle(ref, () => ({
-    show(erpSalesReturnRequest: ErpSalesReturnResponse) {
-      initForm(erpSalesReturnRequest);
+    show(erpOutboundOrderRequest: ErpOutboundOrderResponse) {
+      initForm(erpOutboundOrderRequest);
       initWarehouses();
       initSettlementAccounts();
       setOpen(true);
@@ -83,40 +71,14 @@ const ErpSalesReturnEdit = forwardRef(({ onSubmit }: ErpSalesReturnEditProps, re
   }, []);
 
   const validateForm = (): boolean => {
-    const newErrors: FormErrors = {
-      details: erpSalesReturnRequest.details.map(() => ({
-        warehouse_id: undefined,
-        quantity: undefined,
-      })),
-    };
+    const newErrors: FormErrors = {};
 
-    if (!erpSalesReturnRequest.return_date.trim()) {
-      newErrors.return_date = t('page.erp.sales.return.error.return.date');
+    if (!erpOutboundOrderRequest.outbound_date.trim()) {
+      newErrors.outbound_date = t('page.erp.sale.outbound.error.outbound_date');
     }
-
-    if (!erpSalesReturnRequest.total_amount && erpSalesReturnRequest.total_amount != 0) {
-      newErrors.total_amount = t('page.erp.sales.return.error.total.amount');
-    }
-
-    erpSalesReturnRequest.details.forEach((product, index) => {
-      if (!product.warehouse_id) {
-        newErrors.details[index].warehouse_id = t('page.erp.sales.return.detail.error.warehouse');
-      }
-
-      if (!product.quantity) {
-        newErrors.details[index].quantity = t('page.erp.sales.return.detail.error.quantity');
-      }
-    });
 
     setErrors(newErrors);
-    return !Object.keys(newErrors).some((key) => {
-      if (key === 'details') {
-        return newErrors.details.some((err) =>
-          Object.values(err).some((value) => value !== undefined)
-        );
-      }
-      return newErrors[key as keyof FormErrors];
-    });
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleCancel = () => {
@@ -127,11 +89,11 @@ const ErpSalesReturnEdit = forwardRef(({ onSubmit }: ErpSalesReturnEditProps, re
     setOpen(false);
   };
 
-  const initForm = async (erpSalesReturnRequest: ErpSalesReturnResponse) => {
-    // 查询退货订单
-    const result = await getBaseErpSalesReturn(erpSalesReturnRequest.id);
+  const initForm = async (erpOutboundOrderRequest: ErpOutboundOrderResponse) => {
+    // 查询出库订单
+    const result = await getBaseSaleErpOutboundOrder(erpOutboundOrderRequest.id);
     // 查询销售订单
-    const salesOrder = await getErpSalesOrderInfo(erpSalesReturnRequest.sales_order_id);
+    const salesOrder = await getErpSalesOrderInfo(erpOutboundOrderRequest.sale_id);
 
     const salesOrderDetailMap: Map<number, ErpSalesOrderDetailBaseResponse> = new Map();
     for (const salesDetail of salesOrder.details) {
@@ -139,11 +101,11 @@ const ErpSalesReturnEdit = forwardRef(({ onSubmit }: ErpSalesReturnEditProps, re
     }
     setErpSalesOrderDetailMap(salesOrderDetailMap);
     setErpSalesOrder(salesOrder);
-    setErpSalesReturn(result);
-    setErpSalesReturnRequest({
+    setErpOutboundOrder(result);
+    setErpOutboundOrderRequest({
       ...result,
     })
-    setReturnDate(new AdapterDayjs().dayjs(result.return_date));
+    setOutboundDate(new AdapterDayjs().dayjs(result.outbound_date));
     // 设置图片
     for (const attachment of result.attachments) {
       const file_id = attachment.file_id;
@@ -172,48 +134,32 @@ const ErpSalesReturnEdit = forwardRef(({ onSubmit }: ErpSalesReturnEditProps, re
         return newMap;
       })
     }
-    setErrors({
-      details: [],
-    });
+    setErrors({});
   }
 
   const handleSubmit = async () => {
     if (validateForm()) {
-      const details: ErpSalesReturnDetailRequest[] = [];
-      for (const product of erpSalesReturnRequest.details) {
-        let detail: ErpSalesReturnDetailRequest = {
-          sale_detail_id: product.sale_detail_id!,
-          warehouse_id: product.warehouse_id,
-          quantity: product.quantity,
-          remarks: product.remarks,
-        } as ErpSalesReturnDetailRequest;
-        if (product.id) {
-          detail.id = product.id;
-        }
-        details.push(detail);
-      }
-      const attachments: ErpSalesReturnAttachmentRequest[] = [];
-      for (const attachment of erpSalesReturnRequest.attachments) {
-        let attach: ErpSalesReturnAttachmentRequest = {
+      const attachments: ErpOutboundOrderAttachmentRequest[] = [];
+      for (const attachment of erpOutboundOrderRequest.attachments) {
+        let attach: ErpOutboundOrderAttachmentRequest = {
           file_id: attachment.file_id!
-        } as ErpSalesReturnAttachmentRequest;
+        } as ErpOutboundOrderAttachmentRequest
         if (attachment.id) {
           attach.id = attachment.id;
         }
         attachments.push(attach);
       }
-      const request: ErpSalesReturnRequest = {
-        id: erpSalesReturnRequest.id,
-        sales_order_id: erpSalesReturnRequest.sales_order_id!,
-        return_date: erpSalesReturnRequest.return_date,
-        total_amount: erpSalesReturnRequest.total_amount,
-        discount_rate: erpSalesReturnRequest.discount_rate,
-        settlement_account_id: erpSalesReturnRequest.settlement_account_id!,
-        remarks: erpSalesReturnRequest.remarks,
-        details,
+      const request: ErpOutboundOrderRequest = {
+        id: erpOutboundOrderRequest.id,
+        sale_id: erpOutboundOrderRequest.sale_id!,
+        outbound_date: erpOutboundOrderRequest.outbound_date,
+        discount_rate: erpOutboundOrderRequest.discount_rate,
+        settlement_account_id: erpOutboundOrderRequest.settlement_account_id,
+        other_cost: erpOutboundOrderRequest.other_cost,
+        remarks: erpOutboundOrderRequest.remarks,
         attachments
       }
-      await updateErpSalesReturn(request);
+      await updateSaleErpOutboundOrder(request);
       handleClose();
       onSubmit();
     }
@@ -221,7 +167,7 @@ const ErpSalesReturnEdit = forwardRef(({ onSubmit }: ErpSalesReturnEditProps, re
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type } = e.target;
-    setErpSalesReturnRequest((prev) => ({
+    setErpOutboundOrderRequest((prev) => ({
       ...prev,
       [name]: type === 'number' ? Number(value) : value,
     }));
@@ -235,50 +181,17 @@ const ErpSalesReturnEdit = forwardRef(({ onSubmit }: ErpSalesReturnEditProps, re
   };
 
   const handleDateTimeChange = useCallback((value: PickerValue) => {
-    setReturnDate(value);
+    setOutboundDate(value);
     if (value) {
-      setErpSalesReturnRequest((prev) => ({ ...prev, return_date: value.format('YYYY-MM-DD HH:mm:ss') }));
-      setErrors((prev) => ({ ...prev, return_date: undefined }));
+      setErpOutboundOrderRequest((prev) => ({ ...prev, outbound_date: value.format('YYYY-MM-DD HH:mm:ss') }));
+      setErrors((prev) => ({ ...prev, outbound_date: undefined }));
     }
   }, []);
 
   const handleSelectChange = useCallback((e: SelectChangeEvent<number>) => {
     const { name, value } = e.target;
-    setErpSalesReturnRequest((prev) => ({ ...prev, [name]: value }));
+    setErpOutboundOrderRequest((prev) => ({ ...prev, [name]: value }));
     setErrors((prev) => ({ ...prev, [name]: undefined }));
-  }, []);
-
-  const handleWarehouseSelectChange = useCallback((e: SelectChangeEvent<number>, index: number) => {
-    const { value } = e.target;
-    setErpSalesReturnRequest((prev) => ({
-      ...prev,
-      details: prev.details.map((item, idx) =>
-        idx === index ? { ...item, warehouse_id: value } : item
-      ),
-    }));
-    setErrors((prev) => ({
-      ...prev,
-      details: prev.details.map((item, idx) =>
-        idx === index ? { ...item, warehouse_id: undefined } : item
-      ),
-    }));
-  }, [warehouses]);
-
-  const handleDetailInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>, index: number) => {
-    const { name, value, type } = e.target;
-    const numberValue = type === 'number' ? Number(value) : value;
-    setErpSalesReturnRequest((prev) => ({
-      ...prev,
-      details: prev.details.map((item, idx) =>
-        idx === index ? { ...item, [name]: numberValue } : item
-      ),
-    }));
-    setErrors((prev) => ({
-      ...prev,
-      details: prev.details.map((item, idx) =>
-        idx === index ? { ...item, [name]: undefined } : item
-      ),
-    }));
   }, []);
 
   const handleFileChange = useCallback(async (file: UploadFile | null, action: 'upload' | 'remove', index: number) => {
@@ -286,14 +199,14 @@ const ErpSalesReturnEdit = forwardRef(({ onSubmit }: ErpSalesReturnEditProps, re
 
     if (action === 'upload' && file) {
       // 更新文件列表,增加一个附件,等待上传完成后在写入信息
-      setErpSalesReturnRequest((prev) => {
+      setErpOutboundOrderRequest((prev) => {
         return { ...prev, attachments: [...prev.attachments, { file }] };
       })
 
       // 上传文件
       try {
         const result = await uploadSystemFile(file.file, (progress) => {
-          setErpSalesReturnRequest((prev) => {
+          setErpOutboundOrderRequest((prev) => {
             const updatedAttachments = prev.attachments.map((item, idx) => {
               if (idx !== index) return item;
               const updatedItem = { ...item, file: { ...item.file!, progress } };
@@ -304,7 +217,7 @@ const ErpSalesReturnEdit = forwardRef(({ onSubmit }: ErpSalesReturnEditProps, re
         });
 
         // 上传完成
-        setErpSalesReturnRequest((prev) => {
+        setErpOutboundOrderRequest((prev) => {
           const updatedAttachments = prev.attachments.map((item, idx) => {
             if (idx !== index) return item;
             const updatedItem = { ...item, file_id: result, file: { ...item.file!, status: 'done' as const } };
@@ -315,7 +228,7 @@ const ErpSalesReturnEdit = forwardRef(({ onSubmit }: ErpSalesReturnEditProps, re
       } catch (error) {
         console.error('upload file error', error);
         // 上传失败
-        setErpSalesReturnRequest((prev) => {
+        setErpOutboundOrderRequest((prev) => {
           const updatedAttachments = prev.attachments.map((item, idx) => {
             if (idx !== index) return item;
             const updatedItem = { ...item, file: { ...item.file!, status: 'error' as const } };
@@ -326,7 +239,7 @@ const ErpSalesReturnEdit = forwardRef(({ onSubmit }: ErpSalesReturnEditProps, re
       }
     } else if (action === 'remove') {
       // 删除文件并移除上传框
-      setErpSalesReturnRequest((prev) => {
+      setErpOutboundOrderRequest((prev) => {
         const updatedAttachments = prev.attachments.filter((_, idx) => idx !== index);
         return { ...prev, attachments: updatedAttachments };
       });
@@ -337,7 +250,7 @@ const ErpSalesReturnEdit = forwardRef(({ onSubmit }: ErpSalesReturnEditProps, re
     <CustomizedDialog
       open={open}
       onClose={handleClose}
-      title={t('global.operate.edit') + t('global.page.erp.sales.return')}
+      title={t('global.operate.edit') + t('global.page.erp.sale.outbound')}
       maxWidth={maxWidth}
       actions={
         <>
@@ -356,12 +269,12 @@ const ErpSalesReturnEdit = forwardRef(({ onSubmit }: ErpSalesReturnEditProps, re
           width: 'fit-content',
         }}
       >
-        <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' } }}>
-          <Grid container rowSpacing={2} columnSpacing={4} sx={{ '& .MuiGrid-root': { display: 'flex', justifyContent: 'start', alignItems: 'center' } }}>
+        <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '100%' } }}>
+          <Grid container rowSpacing={2} columnSpacing={4} sx={{ '& .MuiGrid-root': { display: 'flex', justifyContent: 'center', alignItems: 'center' } }}>
             <Grid size={size}>
               <Stack direction="row" spacing={2} sx={{ display: "flex", alignItems: "center" }}>
-                <Box>{t('page.erp.sale.order.title.order.number')}</Box>
-                <Box>{erpSalesReturn && <CustomizedCopyableText text={erpSalesReturn.order_number} sx={{
+                <Box>{t('page.erp.sale.outbound.title.order.number')}</Box>
+                <Box>{erpOutboundOrder && <CustomizedCopyableText text={erpOutboundOrder.order_number} sx={{
                   fontSize: '0.75rem',
                   fontWeight: 500,
                 }} />}</Box>
@@ -369,7 +282,7 @@ const ErpSalesReturnEdit = forwardRef(({ onSubmit }: ErpSalesReturnEditProps, re
             </Grid>
             <Grid size={size}>
               <Stack direction="row" spacing={2} sx={{ display: "flex", alignItems: "center" }}>
-                <Box>{t('page.erp.sales.return.title.sales.order')}</Box>
+                <Box>{t('page.erp.sales.outbound.title.sales')}</Box>
                 <Box>{erpSalesOrder && <CustomizedCopyableText text={erpSalesOrder.order_number} sx={{
                   fontSize: '0.75rem',
                   fontWeight: 500,
@@ -378,7 +291,7 @@ const ErpSalesReturnEdit = forwardRef(({ onSubmit }: ErpSalesReturnEditProps, re
             </Grid>
             <Grid size={size}>
               <Stack direction="row" spacing={2} sx={{ display: "flex", alignItems: "center" }}>
-                <Box>{t('page.erp.sales.return.title.customer')}</Box>
+                <Box>{t('page.erp.sale.outbound.title.customer')}</Box>
                 <Box>{erpSalesOrder && <CustomizedTag label={erpSalesOrder.customer_name} />}</Box>
               </Stack>
             </Grid>
@@ -387,15 +300,15 @@ const ErpSalesReturnEdit = forwardRef(({ onSubmit }: ErpSalesReturnEditProps, re
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <DateTimePicker
                     name="return_date"
-                    label={t('page.erp.sales.return.title.return.date')}
-                    value={returnDate}
+                    label={t('page.erp.sale.outbound.title.outbound.date')}
+                    value={outboundDate}
                     onChange={handleDateTimeChange}
                     slotProps={{
                       textField: {
                         size: 'small',
                         required: true,
-                        error: !!errors.return_date,
-                        helperText: errors.return_date,
+                        error: !!errors.outbound_date,
+                        helperText: errors.outbound_date,
                       },
                       openPickerButton: {
                         sx: { mr: -1, '& .MuiSvgIcon-root': { fontSize: '1rem' } },
@@ -407,14 +320,14 @@ const ErpSalesReturnEdit = forwardRef(({ onSubmit }: ErpSalesReturnEditProps, re
             </Grid>
             <Grid size={size}>
               <FormControl sx={{ mt: 2, minWidth: 120, width: '100%' }}>
-                <InputLabel size="small" id="settlement-account-select-label">{t('page.erp.sales.return.title.settlement.account')}</InputLabel>
+                <InputLabel size="small" id="settlement-account-select-label">{t('page.erp.sale.outbound.title.settlement.account')}</InputLabel>
                 <Select
                   size="small"
                   labelId="settlement-account-select-label"
                   name="settlement_account_id"
-                  value={erpSalesReturnRequest.settlement_account_id ?? ''}
+                  value={erpOutboundOrderRequest.settlement_account_id ?? ''}
                   onChange={handleSelectChange}
-                  label={t('page.erp.sales.return.title.settlement.account')}
+                  label={t('page.erp.sale.outbound.title.settlement.account')}
                 >
                   {settlementAccounts.map((item) => (
                     <MenuItem key={item.id} value={item.id}>
@@ -426,33 +339,30 @@ const ErpSalesReturnEdit = forwardRef(({ onSubmit }: ErpSalesReturnEditProps, re
             </Grid>
             <Grid size={size}>
               <TextField
-                required
                 size="small"
                 type="number"
-                label={t("page.erp.sales.return.title.total.amount")}
-                name='total_amount'
-                value={erpSalesReturnRequest.total_amount}
-                onChange={handleInputChange}
-                error={!!errors.total_amount}
-                helperText={errors.total_amount}
-              />
-            </Grid>
-            <Grid size={size}>
-              <TextField
-                size="small"
-                type="number"
-                label={t("page.erp.sales.return.title.discount.rate")}
+                label={t("page.erp.sale.outbound.title.discount.rate")}
                 name='discount_rate'
-                value={erpSalesReturnRequest.discount_rate}
+                value={erpOutboundOrderRequest.discount_rate}
                 onChange={handleInputChange}
               />
             </Grid>
             <Grid size={size}>
               <TextField
                 size="small"
-                label={t("page.erp.sales.return.title.remarks")}
+                type="number"
+                label={t("page.erp.sale.outbound.title.other.cost")}
+                name='other_cost'
+                value={erpOutboundOrderRequest.other_cost}
+                onChange={handleInputChange}
+              />
+            </Grid>
+            <Grid size={size}>
+              <TextField
+                size="small"
+                label={t("page.erp.sale.outbound.title.remarks")}
                 name='remarks'
-                value={erpSalesReturnRequest.remarks}
+                value={erpOutboundOrderRequest.remarks}
                 onChange={handleInputChange}
               />
             </Grid>
@@ -467,19 +377,19 @@ const ErpSalesReturnEdit = forwardRef(({ onSubmit }: ErpSalesReturnEditProps, re
             <Box className='table-row'>
               <Box className='table-cell' sx={{ width: 50 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.no')}</Typography></Box>
               <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.inbound.detail.title.warehouse')}</Typography></Box>
-              <Box className='table-cell' sx={{ width: 150 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.quantity')}</Typography></Box>
               <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.remarks')}</Typography></Box>
               <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.product')}</Typography></Box>
               <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.barcode')}</Typography></Box>
               <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.unit')}</Typography></Box>
               <Box className='table-cell' sx={{ width: 200 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.remarks')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 150 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.quantity')}</Typography></Box>
               <Box className='table-cell' sx={{ width: 150 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.unit.price')}</Typography></Box>
               <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.subtotal')}</Typography></Box>
               <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.tax.rate')}</Typography></Box>
               <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.tax')}</Typography></Box>
               <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.tax.total')}</Typography></Box>
             </Box>
-            {erpSalesReturnRequest && erpSalesReturnRequest.details.map((item, index) => {
+            {erpOutboundOrderRequest && erpOutboundOrderRequest.details && erpOutboundOrderRequest.details.map((item, index) => {
               let salesDetail = undefined;
               if (erpSalesOrderDetailMap && item.sale_detail_id && erpSalesOrderDetailMap.get(item.sale_detail_id)) {
                 salesDetail = erpSalesOrderDetailMap && item.sale_detail_id && erpSalesOrderDetailMap.get(item.sale_detail_id);
@@ -492,9 +402,8 @@ const ErpSalesReturnEdit = forwardRef(({ onSubmit }: ErpSalesReturnEditProps, re
                       <Select
                         size="small"
                         name="warehouse_id"
-                        value={erpSalesReturnRequest.details[index].warehouse_id}
-                        onChange={(e) => handleWarehouseSelectChange(e, index)}
-                        error={!!(errors.details[index]?.warehouse_id)}
+                        value={item.warehouse_id}
+                        disabled
                       >
                         {warehouses.map((warehouse) => (
                           <MenuItem key={warehouse.id} value={warehouse.id}>
@@ -502,26 +411,14 @@ const ErpSalesReturnEdit = forwardRef(({ onSubmit }: ErpSalesReturnEditProps, re
                           </MenuItem>
                         ))}
                       </Select>
-                      <FormHelperText sx={{ color: 'error.main' }}>{errors.details[index]?.warehouse_id}</FormHelperText>
                     </FormControl>
                   </Box>
                   <Box className='table-cell' sx={{ width: 50 }}>
                     <TextField
                       size="small"
-                      type="number"
-                      name="quantity"
-                      value={item.quantity}
-                      onChange={(e) => handleDetailInputChange(e as React.ChangeEvent<HTMLInputElement>, index)}
-                      error={!!(errors.details[index]?.quantity)}
-                      helperText={errors.details[index]?.quantity}
-                    />
-                  </Box>
-                  <Box className='table-cell' sx={{ width: 50 }}>
-                    <TextField
-                      size="small"
                       name="remarks"
-                      defaultValue={erpSalesReturnRequest.details[index].remarks}
-                      onChange={(e) => handleDetailInputChange(e as React.ChangeEvent<HTMLInputElement>, index)}
+                      defaultValue={item.remarks}
+                      disabled
                     />
                   </Box>
                   <Box className='table-cell' sx={{ width: 50 }}>
@@ -534,19 +431,25 @@ const ErpSalesReturnEdit = forwardRef(({ onSubmit }: ErpSalesReturnEditProps, re
                     <TextField size="small" value={salesDetail && salesDetail.product_unit_name} disabled />
                   </Box>
                   <Box className='table-cell' sx={{ width: 50 }}>
+                    <TextField size="small" value={salesDetail && salesDetail.remarks} disabled />
+                  </Box>
+                  <Box className='table-cell' sx={{ width: 50 }}>
+                    <TextField size="small" value={salesDetail && salesDetail.quantity} disabled />
+                  </Box>
+                  <Box className='table-cell' sx={{ width: 50 }}>
                     <TextField size="small" value={salesDetail && salesDetail.unit_price} disabled />
                   </Box>
                   <Box className='table-cell' sx={{ width: 50 }}>
-                    <TextField size="small" value={item.subtotal} disabled />
+                    <TextField size="small" value={salesDetail && salesDetail.subtotal} disabled />
                   </Box>
                   <Box className='table-cell' sx={{ width: 50 }}>
                     <TextField size="small" value={salesDetail && salesDetail.tax_rate} disabled />
                   </Box>
                   <Box className='table-cell' sx={{ width: 50 }}>
-                    <TextField size="small" value={salesDetail ? (item.quantity * salesDetail.unit_price * salesDetail.tax_rate) / 100 : 0} disabled />
+                    <TextField size="small" value={salesDetail ? (salesDetail.quantity * salesDetail.unit_price * salesDetail.tax_rate) / 100 : 0} disabled />
                   </Box>
                   <Box className='table-cell' sx={{ width: 50 }}>
-                    <TextField size="small" value={salesDetail ? item.quantity * salesDetail.unit_price * (1 + salesDetail.tax_rate / 100) : 0} disabled />
+                    <TextField size="small" value={salesDetail ? salesDetail.quantity * salesDetail.unit_price * (1 + salesDetail.tax_rate / 100) : 0} disabled />
                   </Box>
                 </Box>
               )
@@ -559,7 +462,7 @@ const ErpSalesReturnEdit = forwardRef(({ onSubmit }: ErpSalesReturnEditProps, re
         </Typography>
         <Card variant="outlined" sx={{ width: '100%', mt: 1, p: 2 }}>
           <Grid container rowSpacing={2} columnSpacing={4} sx={{ '& .MuiGrid-root': { display: 'flex', justifyContent: 'center', alignItems: 'center' } }}>
-            {erpSalesReturnRequest.attachments.map((item, index) => (
+            {erpOutboundOrderRequest.attachments.map((item, index) => (
               <Grid key={index} size={{ xs: 12, md: 4 }}>
                 <CustomizedFileUpload
                   id={'file-upload-' + index}
@@ -576,10 +479,10 @@ const ErpSalesReturnEdit = forwardRef(({ onSubmit }: ErpSalesReturnEditProps, re
             ))}
             <Grid size={{ xs: 12, md: 4 }}>
               <CustomizedFileUpload
-                id={'file-upload-' + erpSalesReturnRequest.attachments.length}
+                id={'file-upload-' + erpOutboundOrderRequest.attachments.length}
                 accept=".jpg,jpeg,.png"
                 maxSize={100}
-                onChange={(file, action) => handleFileChange(file, action, erpSalesReturnRequest.attachments.length)}
+                onChange={(file, action) => handleFileChange(file, action, erpOutboundOrderRequest.attachments.length)}
                 width={fileWidth}
                 height={fileHeight}
               >
@@ -592,4 +495,4 @@ const ErpSalesReturnEdit = forwardRef(({ onSubmit }: ErpSalesReturnEditProps, re
   )
 });
 
-export default ErpSalesReturnEdit;
+export default ErpOutboundOrderEdit;

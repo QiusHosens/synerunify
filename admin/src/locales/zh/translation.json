@@ -110,6 +110,8 @@
   "global.page.erp.purchase.inbound": "采购入库",
   "global.page.erp.purchase.return": "采购退货",
   "global.page.erp.sale.order": "销售订单",
+  "global.page.erp.sale.outbound": "销售出库",
+  "global.page.erp.sales.return": "销售退货",
 
   "global.order.placeholder.order.number": "订单编号,由系统自动生成",
   "global.title.erp.purchase.list": "采购订单列表",
@@ -497,5 +499,16 @@
   "page.erp.sales.return.detail.error.product_id": "请输入产品",
   "page.erp.sales.return.detail.error.quantity": "请输入数量",
   "page.erp.sales.return.detail.error.unit_price": "请输入单价",
-  "page.erp.sales.return.detail.error.subtotal": "请输入小计"
+  "page.erp.sales.return.detail.error.subtotal": "请输入小计",
+
+  "page.erp.sale.outbound.title.order.number": "订单编号",
+  "page.erp.sale.outbound.title.sale": "销售订单",
+  "page.erp.sale.outbound.title.customer": "客户",
+  "page.erp.sale.outbound.title.outbound.date": "出库日期",
+  "page.erp.sale.outbound.title.remarks": "备注",
+  "page.erp.sale.outbound.title.discount.rate": "优惠率",
+  "page.erp.sale.outbound.title.other.cost": "其他费用",
+  "page.erp.sale.outbound.title.settlement.account": "结算账户ID",
+  "page.erp.sale.outbound.error.customer.id": "请输入客户ID",
+  "page.erp.sale.outbound.error.outbound_date": "请输入出库日期"
 }

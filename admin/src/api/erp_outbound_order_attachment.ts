@@ -1,4 +1,5 @@
 import { PaginatedRequest, PaginatedResponse } from '@/base/page';
+import { UploadFile } from '@/components/CustomizedFileUpload';
 import { api } from '@/utils/request';
 
 const apis = {
@@ -11,13 +12,12 @@ const apis = {
 }
 
 export interface ErpOutboundOrderAttachmentRequest {
-  id: number; // 出库订单附件ID
-  order_id: number; // 出库订单ID
-  file_id: number; // 文件ID
-  remarks: string; // 备注
-  department_code: string; // 部门编码
-  department_id: number; // 部门ID
-  }
+  id?: number; // 出库订单附件ID
+  file_id?: number; // 文件ID
+  remarks?: string; // 备注
+
+  file?: UploadFile | null;
+}
 
 export interface ErpOutboundOrderAttachmentResponse {
   id: number; // 出库订单附件ID
@@ -30,10 +30,18 @@ export interface ErpOutboundOrderAttachmentResponse {
   create_time: string; // 创建时间
   updater: number; // 更新者ID
   update_time: string; // 更新时间
-  }
+}
+
+export interface ErpOutboundOrderAttachmentBaseResponse {
+  id: number; // 出库订单附件ID
+  file_id: number; // 文件ID
+  remarks: string; // 备注
+
+  file_name: string; // 文件名
+}
 
 export interface ErpOutboundOrderAttachmentQueryCondition extends PaginatedRequest {
-  
+
 }
 
 export const createErpOutboundOrderAttachment = (erp_outbound_order_attachment: ErpOutboundOrderAttachmentRequest): Promise<number> => {
