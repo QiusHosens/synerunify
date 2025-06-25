@@ -1,17 +1,13 @@
-import { Box, Button, Card, FormControl, Grid, InputLabel, MenuItem, Select, SelectChangeEvent, Stack, Switch, TextField, Typography } from '@mui/material';
+import { Box, Card, FormControl, Grid, MenuItem, Select, Stack, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { forwardRef, useCallback, useImperativeHandle, useState } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
-import { ErpOutboundOrderAttachmentRequest, ErpOutboundOrderRequest, ErpOutboundOrderResponse, ErpSalesOrderDetailBaseResponse, ErpSalesOrderInfoResponse, ErpSettlementAccountResponse, ErpWarehouseResponse, getBaseSaleErpOutboundOrder, getErpSalesOrderInfo, listErpSettlementAccount, listErpWarehouse, updateSaleErpOutboundOrder } from '@/api';
+import { ErpOutboundOrderResponse, ErpSalesOrderDetailBaseResponse, ErpSalesOrderInfoResponse, ErpWarehouseResponse, getBaseSaleErpOutboundOrder, getErpSalesOrderInfo, listErpWarehouse } from '@/api';
 import CustomizedDialog from '@/components/CustomizedDialog';
-import { Dayjs } from 'dayjs';
-import CustomizedFileUpload, { DownloadProps, UploadFile } from '@/components/CustomizedFileUpload';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { downloadSystemFile, uploadSystemFile } from '@/api/system_file';
-import { PickerValue } from '@mui/x-date-pickers/internals';
+import CustomizedFileUpload, { DownloadProps } from '@/components/CustomizedFileUpload';
+import { downloadSystemFile } from '@/api/system_file';
 import CustomizedCopyableText from '@/components/CustomizedCopyableText';
 import CustomizedTag from '@/components/CustomizedTag';
-import { DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers';
 
 const ErpOutboundOrderInfo = forwardRef(({ }, ref) => {
   const { t } = useTranslation();
@@ -108,7 +104,7 @@ const ErpOutboundOrderInfo = forwardRef(({ }, ref) => {
         }}
       >
         <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '100%' } }}>
-          <Grid container rowSpacing={2} columnSpacing={4} sx={{ '& .MuiGrid-root': { display: 'flex', justifyContent: 'center', alignItems: 'center' } }}>
+          <Grid container rowSpacing={2} columnSpacing={4} sx={{ '& .MuiGrid-root': { display: 'flex', justifyContent: 'start', alignItems: 'center' } }}>
             <Grid size={size}>
               <Stack direction="row" spacing={2} sx={{ display: "flex", alignItems: "center" }}>
                 <Box>{t('page.erp.sale.outbound.title.order.number')}</Box>
@@ -120,7 +116,7 @@ const ErpOutboundOrderInfo = forwardRef(({ }, ref) => {
             </Grid>
             <Grid size={size}>
               <Stack direction="row" spacing={2} sx={{ display: "flex", alignItems: "center" }}>
-                <Box>{t('page.erp.sales.outbound.title.sales')}</Box>
+                <Box>{t('page.erp.sale.outbound.title.sale')}</Box>
                 <Box>{erpSalesOrder && <CustomizedCopyableText text={erpSalesOrder.order_number} sx={{
                   fontSize: '0.75rem',
                   fontWeight: 500,

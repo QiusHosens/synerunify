@@ -22,8 +22,6 @@ pub struct CreateErpSalesReturnRequest {
     
     pub total_amount: i64, // 总金额
     
-    pub order_status: i8, // 订单状态
-    
     pub discount_rate: Option<i64>, // 优惠率（百分比，1000表示10.00%）
     
     pub settlement_account_id: Option<i64>, // 结算账户ID
@@ -51,8 +49,6 @@ pub struct UpdateErpSalesReturnRequest {
     pub return_date: Option<NaiveDateTime>, // 退货日期
     
     pub total_amount: Option<i64>, // 总金额
-    
-    pub order_status: Option<i8>, // 订单状态
     
     pub discount_rate: Option<i64>, // 优惠率（百分比，1000表示10.00%）
     

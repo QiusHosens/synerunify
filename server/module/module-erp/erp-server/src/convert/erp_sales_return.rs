@@ -13,7 +13,6 @@ pub fn create_request_to_model(request: &CreateErpSalesReturnRequest) -> ErpSale
         sales_order_id: Set(request.sales_order_id.clone()),
         return_date: Set(request.return_date.clone()),
         total_amount: Set(request.total_amount.clone()),
-        order_status: Set(request.order_status.clone()),
         discount_rate: request.discount_rate.as_ref().map_or(NotSet, |discount_rate| Set(Some(discount_rate.clone()))),
         settlement_account_id: request.settlement_account_id.as_ref().map_or(NotSet, |settlement_account_id| Set(Some(settlement_account_id.clone()))),
         deposit: request.deposit.as_ref().map_or(NotSet, |deposit| Set(Some(deposit.clone()))),
@@ -29,9 +28,6 @@ pub fn update_request_to_model(request: &UpdateErpSalesReturnRequest, existing: 
     }
     if let Some(total_amount) = &request.total_amount { 
         active_model.total_amount = Set(total_amount.clone());
-    }
-    if let Some(order_status) = &request.order_status { 
-        active_model.order_status = Set(order_status.clone());
     }
     if let Some(discount_rate) = &request.discount_rate { 
         active_model.discount_rate = Set(Some(discount_rate.clone()));

@@ -141,7 +141,7 @@ const ErpOutboundOrderEdit = forwardRef(({ onSubmit }: ErpOutboundOrderEditProps
     if (validateForm()) {
       const attachments: ErpOutboundOrderAttachmentRequest[] = [];
       for (const attachment of erpOutboundOrderRequest.attachments) {
-        let attach: ErpOutboundOrderAttachmentRequest = {
+        const attach: ErpOutboundOrderAttachmentRequest = {
           file_id: attachment.file_id!
         } as ErpOutboundOrderAttachmentRequest
         if (attachment.id) {
@@ -270,7 +270,7 @@ const ErpOutboundOrderEdit = forwardRef(({ onSubmit }: ErpOutboundOrderEditProps
         }}
       >
         <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '100%' } }}>
-          <Grid container rowSpacing={2} columnSpacing={4} sx={{ '& .MuiGrid-root': { display: 'flex', justifyContent: 'center', alignItems: 'center' } }}>
+          <Grid container rowSpacing={2} columnSpacing={4} sx={{ '& .MuiGrid-root': { display: 'flex', justifyContent: 'start', alignItems: 'center' } }}>
             <Grid size={size}>
               <Stack direction="row" spacing={2} sx={{ display: "flex", alignItems: "center" }}>
                 <Box>{t('page.erp.sale.outbound.title.order.number')}</Box>
@@ -282,7 +282,7 @@ const ErpOutboundOrderEdit = forwardRef(({ onSubmit }: ErpOutboundOrderEditProps
             </Grid>
             <Grid size={size}>
               <Stack direction="row" spacing={2} sx={{ display: "flex", alignItems: "center" }}>
-                <Box>{t('page.erp.sales.outbound.title.sales')}</Box>
+                <Box>{t('page.erp.sale.outbound.title.sale')}</Box>
                 <Box>{erpSalesOrder && <CustomizedCopyableText text={erpSalesOrder.order_number} sx={{
                   fontSize: '0.75rem',
                   fontWeight: 500,

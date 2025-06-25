@@ -61,7 +61,7 @@ const ErpSalesReturnAdd = forwardRef(({ onSubmit }: ErpSalesReturnAddProps, ref)
   const { t } = useTranslation();
 
   const [open, setOpen] = useState(false);
-  const [maxWidth] = useState<DialogProps['maxWidth']>('sm');
+  const [maxWidth] = useState<DialogProps['maxWidth']>('xl');
   const [erpSalesOrder, setErpSalesOrder] = useState<ErpSalesOrderInfoResponse>();
   const [warehouses, setWarehouses] = useState<ErpWarehouseResponse[]>([]);
   const [settlementAccounts, setSettlementAccounts] = useState<ErpSettlementAccountResponse[]>([]);
@@ -121,10 +121,10 @@ const ErpSalesReturnAdd = forwardRef(({ onSubmit }: ErpSalesReturnAddProps, ref)
     }
     setFormValues(prev => ({
       ...prev,
-      purchase_id: id,
+      sales_order_id: id,
       details
     }))
-    setErrors((prev) => ({ ...prev, purchase_id: undefined }));
+    setErrors((prev) => ({ ...prev, sales_order_id: undefined }));
     setErpSalesOrder(result);
   }, []);
 
@@ -196,6 +196,7 @@ const ErpSalesReturnAdd = forwardRef(({ onSubmit }: ErpSalesReturnAddProps, ref)
     setErrors({
       details: [],
     });
+    setErpSalesOrder(undefined);
   }
 
   const handleSubmit = async () => {
@@ -368,7 +369,7 @@ const ErpSalesReturnAdd = forwardRef(({ onSubmit }: ErpSalesReturnAddProps, ref)
           width: 'fit-content',
         }}
       >
-        <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' } }}>
+        <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '100%' } }}>
           <Grid container rowSpacing={2} columnSpacing={4} sx={{ '& .MuiGrid-root': { display: 'flex', justifyContent: 'center', alignItems: 'center' } }}>
             <Grid size={size}>
               <TextField size="small" label={t('global.order.placeholder.order.number')} disabled />
@@ -525,7 +526,7 @@ const ErpSalesReturnAdd = forwardRef(({ onSubmit }: ErpSalesReturnAddProps, ref)
                     <Select
                       size="small"
                       name="warehouse_id"
-                      value={formValues.details[index].warehouse_id}
+                      value={formValues.details[index] && formValues.details[index].warehouse_id}
                       onChange={(e) => handleWarehouseSelectChange(e, index)}
                       error={!!(errors.details[index]?.warehouse_id)}
                     >
@@ -542,7 +543,7 @@ const ErpSalesReturnAdd = forwardRef(({ onSubmit }: ErpSalesReturnAddProps, ref)
                   <TextField
                     size="small"
                     name="remarks"
-                    defaultValue={formValues.details[index].remarks}
+                    defaultValue={formValues.details[index] && formValues.details[index].remarks}
                     onChange={(e) => handleDetailInputChange(e as React.ChangeEvent<HTMLInputElement>, index)}
                   />
                 </Box>

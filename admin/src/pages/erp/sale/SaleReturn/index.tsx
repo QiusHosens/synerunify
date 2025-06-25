@@ -10,6 +10,8 @@ import ErpSalesReturnEdit from './Edit';
 import ErpSalesReturnDelete from './Delete';
 import { useHomeStore } from '@/store';
 import CustomizedAutoMore from '@/components/CustomizedAutoMore';
+import CustomizedCopyableText from '@/components/CustomizedCopyableText';
+import CustomizedDictTag from '@/components/CustomizedDictTag';
 
 export default function ErpSalesReturn() {
   const { t } = useTranslation();
@@ -31,19 +33,45 @@ export default function ErpSalesReturn() {
 
   const columns: GridColDef[] = useMemo(
     () => [
-      { field: 'order_number', headerName: t("page.erp.sales.return.title.order_number"), flex: 1, minWidth: 100 },
-      { field: 'sales_order_id', headerName: t("page.erp.sales.return.title.sales_order_id"), flex: 1, minWidth: 100 },
-      { field: 'customer_id', headerName: t("page.erp.sales.return.title.customer_id"), flex: 1, minWidth: 100 },
-      { field: 'return_date', headerName: t("page.erp.sales.return.title.return_date"), flex: 1, minWidth: 100 },
-      { field: 'total_amount', headerName: t("page.erp.sales.return.title.total_amount"), flex: 1, minWidth: 100 },
-      { field: 'order_status', headerName: t("page.erp.sales.return.title.order_status"), flex: 1, minWidth: 100 },
-      { field: 'discount_rate', headerName: t("page.erp.sales.return.title.discount_rate"), flex: 1, minWidth: 100 },
-      { field: 'settlement_account_id', headerName: t("page.erp.sales.return.title.settlement_account_id"), flex: 1, minWidth: 100 },
-      { field: 'deposit', headerName: t("page.erp.sales.return.title.deposit"), flex: 1, minWidth: 100 },
+      {
+        field: 'order_number',
+        headerName: t("page.erp.sales.return.title.order.number"),
+        flex: 1.4,
+        minWidth: 100,
+        renderCell: (params: GridRenderCellParams) => (
+          <CustomizedCopyableText
+            text={params.row.order_number}
+          />
+        )
+      },
+      {
+        field: 'sales_order_number',
+        headerName: t("page.erp.sales.return.title.sales.order"),
+        flex: 1.4,
+        minWidth: 100,
+        renderCell: (params: GridRenderCellParams) => (
+          <CustomizedCopyableText
+            text={params.row.sales_order_number}
+          />
+        )
+      },
+      { field: 'customer_name', headerName: t("page.erp.sales.return.title.customer"), flex: 1, minWidth: 100 },
+      { field: 'return_date', headerName: t("page.erp.sales.return.title.return.date"), flex: 1, minWidth: 100 },
+      { field: 'total_amount', headerName: t("page.erp.sales.return.title.total.amount"), flex: 1, minWidth: 100 },
+      { field: 'discount_rate', headerName: t("page.erp.sales.return.title.discount.rate"), flex: 1, minWidth: 100 },
+      { field: 'settlement_account_name', headerName: t("page.erp.sales.return.title.settlement.account"), flex: 1, minWidth: 100 },
       { field: 'remarks', headerName: t("page.erp.sales.return.title.remarks"), flex: 1, minWidth: 100 },
-      { field: 'department_code', headerName: t("page.erp.sales.return.title.department_code"), flex: 1, minWidth: 100 },
-      { field: 'department_id', headerName: t("page.erp.sales.return.title.department_id"), flex: 1, minWidth: 100 },
-      
+      {
+        field: 'order_status',
+        headerName: t("page.erp.sales.return.title.order.status"),
+        flex: 1,
+        minWidth: 100,
+        renderCell: (params: GridRenderCellParams) => (
+          <>
+            <CustomizedDictTag type='sale_return_order_status' value={params.row.order_status} />
+          </>
+        )
+      },
       { field: 'create_time', headerName: t("global.title.create.time"), flex: 1, minWidth: 180 },
       {
         field: 'actions',
@@ -62,7 +90,7 @@ export default function ErpSalesReturn() {
               onClick={() => handleClickOpenEdit(params.row)}
             />}
             {hasOperatePermission('erp:sale:return:delete') && <Button
-              sx={ {color: 'error.main'} }
+              sx={{ color: 'error.main' }}
               size="small"
               variant='customOperate'
               title={t('global.operate.delete') + t('global.page.erp.sales.return')}
@@ -117,8 +145,8 @@ export default function ErpSalesReturn() {
   };
 
   return (
-    <Box sx={ {height: '100%', display: 'flex', flexDirection: 'column'} }>
-      <Box sx={ {mb: 2, display: 'flex', justifyContent: 'space-between'} }>
+    <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+      <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between' }}>
         <Box></Box>
         {hasOperatePermission('erp:sale:return:add') && <Button variant="customContained" onClick={handleClickOpenAdd}>
           {t('global.operate.add')}
@@ -137,7 +165,7 @@ export default function ErpSalesReturn() {
         filterModel={filterModel}
         onFilterModelChange={handleFilterModelChange}
         pageSizeOptions={[10, 20, 50, 100]}
-        paginationModel={ {page: condition.page - 1, pageSize: condition.size} }
+        paginationModel={{ page: condition.page - 1, pageSize: condition.size }}
         onPaginationModelChange={(model) => {
           setCondition((prev) => ({
             ...prev,

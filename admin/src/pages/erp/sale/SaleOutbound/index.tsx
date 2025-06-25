@@ -2,6 +2,7 @@ import { Box, Button } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { DataGrid, GridCallbackDetails, GridColDef, GridFilterModel, GridRenderCellParams, GridSortModel } from '@mui/x-data-grid';
+import ViewIcon from '@/assets/image/svg/view.svg';
 import EditIcon from '@/assets/image/svg/edit.svg';
 import DeleteIcon from '@/assets/image/svg/delete.svg';
 import { ErpOutboundOrderQueryCondition, ErpOutboundOrderResponse, pageSaleErpOutboundOrder } from '@/api';
@@ -10,6 +11,7 @@ import ErpOutboundOrderEdit from './Edit';
 import ErpOutboundOrderDelete from './Delete';
 import { useHomeStore } from '@/store';
 import CustomizedAutoMore from '@/components/CustomizedAutoMore';
+import ErpOutboundOrderInfo from './Info';
 
 export default function ErpOutboundOrder() {
   const { t } = useTranslation();
@@ -25,6 +27,7 @@ export default function ErpOutboundOrder() {
   const [sortModel, setSortModel] = useState<GridSortModel>([]);
   const [filterModel, setFilterModel] = useState<GridFilterModel>();
 
+  const viewErpOutboundOrder = useRef(null);
   const addErpOutboundOrder = useRef(null);
   const editErpOutboundOrder = useRef(null);
   const deleteErpOutboundOrder = useRef(null);
@@ -49,14 +52,21 @@ export default function ErpOutboundOrder() {
         minWidth: 100,
         renderCell: (params: GridRenderCellParams) => (
           <CustomizedAutoMore>
-            {hasOperatePermission('mark_permission:edit') && <Button
+            {hasOperatePermission('erp:sale:outbound:get') && <Button
+              size="small"
+              variant='customOperate'
+              title={t('global.operate.view') + t('global.page.erp.sale.outbound')}
+              startIcon={<ViewIcon />}
+              onClick={() => handleClickOpenView(params.row)}
+            />}
+            {hasOperatePermission('erp:sale:outbound:edit') && <Button
               size="small"
               variant='customOperate'
               title={t('global.operate.edit') + t('global.page.erp.sale.outbound')}
               startIcon={<EditIcon />}
               onClick={() => handleClickOpenEdit(params.row)}
             />}
-            {hasOperatePermission('mark_permission:delete') && <Button
+            {hasOperatePermission('erp:sale:outbound:delete') && <Button
               sx={{ color: 'error.main' }}
               size="small"
               variant='customOperate'
@@ -80,6 +90,10 @@ export default function ErpOutboundOrder() {
   const handleClickOpenAdd = () => {
     (addErpOutboundOrder.current as any).show();
   }
+
+  const handleClickOpenView = (erpOutboundOrder: ErpOutboundOrderResponse) => {
+    (viewErpOutboundOrder.current as any).show(erpOutboundOrder);
+  };
 
   const handleClickOpenEdit = (erpOutboundOrder: ErpOutboundOrderResponse) => {
     (editErpOutboundOrder.current as any).show(erpOutboundOrder);
@@ -115,7 +129,7 @@ export default function ErpOutboundOrder() {
     <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
       <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between' }}>
         <Box></Box>
-        {hasOperatePermission('mark_permission:add') && <Button variant="customContained" onClick={handleClickOpenAdd}>
+        {hasOperatePermission('erp:sale:outbound:add') && <Button variant="customContained" onClick={handleClickOpenAdd}>
           {t('global.operate.add')}
         </Button>}
       </Box>
@@ -141,6 +155,7 @@ export default function ErpOutboundOrder() {
           }));
         }}
       />
+      <ErpOutboundOrderInfo ref={viewErpOutboundOrder} />
       <ErpOutboundOrderAdd ref={addErpOutboundOrder} onSubmit={refreshData} />
       <ErpOutboundOrderEdit ref={editErpOutboundOrder} onSubmit={refreshData} />
       <ErpOutboundOrderDelete ref={deleteErpOutboundOrder} onSubmit={refreshData} />

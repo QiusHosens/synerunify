@@ -115,10 +115,10 @@ const ErpOutboundOrderAdd = forwardRef(({ onSubmit }: ErpOutboundOrderAddProps, 
     }
     setFormValues(prev => ({
       ...prev,
-      purchase_id: id,
+      sale_id: id,
       details
     }))
-    setErrors((prev) => ({ ...prev, purchase_id: undefined }));
+    setErrors((prev) => ({ ...prev, sale_id: undefined }));
     setErpSalesOrder(result);
   }, []);
 
@@ -181,6 +181,7 @@ const ErpOutboundOrderAdd = forwardRef(({ onSubmit }: ErpOutboundOrderAddProps, 
     setErrors({
       details: [],
     });
+    setErpSalesOrder(undefined);
   }
 
   const handleSubmit = async () => {
