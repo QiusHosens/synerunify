@@ -12,6 +12,8 @@ import ErpPurchaseReturnDelete from './Delete';
 import { useHomeStore } from '@/store';
 import CustomizedAutoMore from '@/components/CustomizedAutoMore';
 import ErpPurchaseReturnInfo from './Info';
+import CustomizedCopyableText from '@/components/CustomizedCopyableText';
+import CustomizedDictTag from '@/components/CustomizedDictTag';
 
 export default function ErpPurchaseReturn() {
   const { t } = useTranslation();
@@ -34,16 +36,45 @@ export default function ErpPurchaseReturn() {
 
   const columns: GridColDef[] = useMemo(
     () => [
-      { field: 'order_number', headerName: t("page.erp.purchase.return.title.order.number"), flex: 1.4, minWidth: 100 },
-      { field: 'purchase_order_id', headerName: t("page.erp.purchase.return.title.purchase.order"), flex: 1.4, minWidth: 100 },
-      { field: 'supplier_id', headerName: t("page.erp.purchase.return.title.supplier"), flex: 1, minWidth: 100 },
+      {
+        field: 'order_number',
+        headerName: t("page.erp.purchase.return.title.order.number"),
+        flex: 1.4,
+        minWidth: 100,
+        renderCell: (params: GridRenderCellParams) => (
+          <CustomizedCopyableText
+            text={params.row.order_number}
+          />
+        )
+      },
+      {
+        field: 'purchase_order_number',
+        headerName: t("page.erp.purchase.return.title.purchase.order"),
+        flex: 1.4,
+        minWidth: 100,
+        renderCell: (params: GridRenderCellParams) => (
+          <CustomizedCopyableText
+            text={params.row.purchase_order_number}
+          />
+        )
+      },
+      { field: 'supplier_name', headerName: t("page.erp.purchase.return.title.supplier"), flex: 1, minWidth: 100 },
       { field: 'return_date', headerName: t("page.erp.purchase.return.title.return.date"), flex: 1, minWidth: 100 },
       { field: 'total_amount', headerName: t("page.erp.purchase.return.title.total.amount"), flex: 1, minWidth: 100 },
       { field: 'discount_rate', headerName: t("page.erp.purchase.return.title.discount.rate"), flex: 1, minWidth: 100 },
-      { field: 'settlement_account_id', headerName: t("page.erp.purchase.return.title.settlement.account"), flex: 1, minWidth: 100 },
-      { field: 'deposit', headerName: t("page.erp.purchase.return.title.deposit"), flex: 1, minWidth: 100 },
+      { field: 'settlement_account_name', headerName: t("page.erp.purchase.return.title.settlement.account"), flex: 1, minWidth: 100 },
       { field: 'remarks', headerName: t("page.erp.purchase.return.title.remarks"), flex: 1, minWidth: 100 },
-      { field: 'order_status', headerName: t("page.erp.purchase.return.title.order.status"), flex: 1, minWidth: 100 },
+      {
+        field: 'order_status',
+        headerName: t("page.erp.purchase.return.title.order.status"),
+        flex: 1,
+        minWidth: 100,
+        renderCell: (params: GridRenderCellParams) => (
+          <>
+            <CustomizedDictTag type='purchase_return_order_status' value={params.row.order_status} />
+          </>
+        )
+      },
       { field: 'create_time', headerName: t("global.title.create.time"), flex: 1, minWidth: 180 },
       {
         field: 'actions',

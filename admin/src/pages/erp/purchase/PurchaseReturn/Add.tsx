@@ -121,10 +121,10 @@ const ErpPurchaseReturnAdd = forwardRef(({ onSubmit }: ErpPurchaseReturnAddProps
     }
     setFormValues(prev => ({
       ...prev,
-      purchase_id: id,
+      purchase_order_id: id,
       details
     }))
-    setErrors((prev) => ({ ...prev, purchase_id: undefined }));
+    setErrors((prev) => ({ ...prev, purchase_order_id: undefined }));
     setErpPurchaseOrder(result);
   }, []);
 
@@ -196,6 +196,7 @@ const ErpPurchaseReturnAdd = forwardRef(({ onSubmit }: ErpPurchaseReturnAddProps
     setErrors({
       details: [],
     });
+    setErpPurchaseOrder(undefined);
   }
 
   const handleSubmit = async () => {
@@ -524,7 +525,7 @@ const ErpPurchaseReturnAdd = forwardRef(({ onSubmit }: ErpPurchaseReturnAddProps
                     <Select
                       size="small"
                       name="warehouse_id"
-                      value={formValues.details[index].warehouse_id}
+                      value={formValues.details[index] && formValues.details[index].warehouse_id}
                       onChange={(e) => handleWarehouseSelectChange(e, index)}
                       error={!!(errors.details[index]?.warehouse_id)}
                     >
@@ -541,7 +542,7 @@ const ErpPurchaseReturnAdd = forwardRef(({ onSubmit }: ErpPurchaseReturnAddProps
                   <TextField
                     size="small"
                     name="remarks"
-                    defaultValue={formValues.details[index].remarks}
+                    defaultValue={formValues.details[index] && formValues.details[index].remarks}
                     onChange={(e) => handleDetailInputChange(e as React.ChangeEvent<HTMLInputElement>, index)}
                   />
                 </Box>

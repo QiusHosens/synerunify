@@ -2,10 +2,11 @@ import { Box, Button, DialogProps } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useState } from 'react';
 import { DataGrid, GridCallbackDetails, GridColDef, GridFilterModel, GridRenderCellParams, GridSortModel } from '@mui/x-data-grid';
-import { ErpPurchaseOrderQueryCondition, ErpPurchaseOrderResponse, pageReceivedErpPurchaseOrder } from '@/api';
+import { ErpPurchaseOrderQueryCondition, ErpPurchaseOrderResponse, pageErpPurchaseOrder } from '@/api';
 import CustomizedAutoMore from '@/components/CustomizedAutoMore';
 import CheckIcon from '@mui/icons-material/Check';
 import CustomizedDialog from '@/components/CustomizedDialog';
+import CustomizedDictTag from '@/components/CustomizedDictTag';
 
 interface PurchaseOrderSelectProps {
     onSubmit: (id: number) => void;
@@ -33,6 +34,17 @@ const PurchaseOrderSelect = forwardRef(({ onSubmit }: PurchaseOrderSelectProps, 
             { field: 'purchase_date', headerName: t("page.erp.purchase.order.title.purchase.date"), flex: 1.4, minWidth: 100 },
             { field: 'total_amount', headerName: t("page.erp.purchase.order.title.total.amount"), flex: 1, minWidth: 100 },
             { field: 'discount_rate', headerName: t("page.erp.purchase.order.title.discount.rate"), flex: 1, minWidth: 100 },
+            {
+                field: 'order_status',
+                headerName: t("page.erp.purchase.order.title.order.status"),
+                flex: 1,
+                minWidth: 100,
+                renderCell: (params: GridRenderCellParams) => (
+                    <>
+                        <CustomizedDictTag type='purchase_order_status' value={params.row.order_status} />
+                    </>
+                )
+            },
             { field: 'create_time', headerName: t("global.title.create.time"), flex: 1.4, minWidth: 180 },
             {
                 field: 'actions',
@@ -71,7 +83,7 @@ const PurchaseOrderSelect = forwardRef(({ onSubmit }: PurchaseOrderSelectProps, 
     };
 
     const queryRecords = async (condition: ErpPurchaseOrderQueryCondition) => {
-        const result = await pageReceivedErpPurchaseOrder(condition);
+        const result = await pageErpPurchaseOrder(condition);
         setRecords(result.list);
         setTotal(result.total);
     };

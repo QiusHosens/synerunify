@@ -11,7 +11,7 @@
  Target Server Version : 80200 (8.2.0)
  File Encoding         : 65001
 
- Date: 24/06/2025 21:45:27
+ Date: 25/06/2025 20:58:45
 */
 
 SET NAMES utf8mb4;
@@ -644,11 +644,12 @@ CREATE TABLE `erp_purchase_return`  (
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `order_number`(`order_number` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '采购退货表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '采购退货表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of erp_purchase_return
 -- ----------------------------
+INSERT INTO `erp_purchase_return` VALUES (1, 63611174519836672, 6, 1, '2025-06-26 00:00:00', 100, 0, 1, 1, 0, '测试退货', '0000', 1, 1, '2025-06-25 12:48:10', 1, '2025-06-25 12:48:10', b'0', 1);
 
 -- ----------------------------
 -- Table structure for erp_purchase_return_attachment
@@ -668,11 +669,13 @@ CREATE TABLE `erp_purchase_return_attachment`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '采购订单附件表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '采购订单附件表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of erp_purchase_return_attachment
 -- ----------------------------
+INSERT INTO `erp_purchase_return_attachment` VALUES (1, 1, 51, NULL, '0000', 1, 1, '2025-06-25 12:48:10', 1, '2025-06-25 12:48:10', b'0', 1);
+INSERT INTO `erp_purchase_return_attachment` VALUES (2, 1, 52, NULL, '0000', 1, 1, '2025-06-25 12:48:10', 1, '2025-06-25 12:48:10', b'0', 1);
 
 -- ----------------------------
 -- Table structure for erp_purchase_return_detail
@@ -698,11 +701,13 @@ CREATE TABLE `erp_purchase_return_detail`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '采购订单详情表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '采购订单详情表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of erp_purchase_return_detail
 -- ----------------------------
+INSERT INTO `erp_purchase_return_detail` VALUES (1, 1, 2, 1, 1, 3, 60, 180, 1, '', '0000', 1, 1, '2025-06-25 12:48:10', 1, '2025-06-25 12:48:10', b'0', 1);
+INSERT INTO `erp_purchase_return_detail` VALUES (2, 1, 3, 1, 1, 20, 50, 1000, 2, '', '0000', 1, 1, '2025-06-25 12:48:10', 1, '2025-06-25 12:48:10', b'0', 1);
 
 -- ----------------------------
 -- Table structure for erp_receipt
@@ -1124,7 +1129,7 @@ CREATE TABLE `system_dict_data`  (
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 25 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '字典数据表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 33 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '字典数据表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of system_dict_data
@@ -1152,6 +1157,14 @@ INSERT INTO `system_dict_data` VALUES (21, 4, '已完成', '4', 'sale_order_stat
 INSERT INTO `system_dict_data` VALUES (22, 5, '已取消', '5', 'sale_order_status', 0, '', '', '已取消', 1, '2025-06-12 02:41:21', 1, '2025-06-12 02:41:21', b'0');
 INSERT INTO `system_dict_data` VALUES (23, 6, '退货处理中', '6', 'sale_order_status', 0, '', '', '退货处理中', 1, '2025-06-12 02:41:33', 1, '2025-06-12 02:41:33', b'0');
 INSERT INTO `system_dict_data` VALUES (24, 7, '退货完成', '7', 'sale_order_status', 0, '', '', '退货完成', 1, '2025-06-12 02:41:43', 1, '2025-06-12 02:41:43', b'0');
+INSERT INTO `system_dict_data` VALUES (25, 0, '已下单', '0', 'purchase_return_order_status', 0, '', '', '已下单', 1, '2025-06-25 12:55:59', 1, '2025-06-25 12:55:59', b'0');
+INSERT INTO `system_dict_data` VALUES (26, 1, '待出库', '1', 'purchase_return_order_status', 0, '', '', '待出库', 1, '2025-06-25 12:56:20', 1, '2025-06-25 12:56:20', b'0');
+INSERT INTO `system_dict_data` VALUES (27, 2, '已完成', '2', 'purchase_return_order_status', 0, '', '', '已完成', 1, '2025-06-25 12:56:30', 1, '2025-06-25 12:56:30', b'0');
+INSERT INTO `system_dict_data` VALUES (28, 3, '已取消', '3', 'purchase_return_order_status', 0, '', '', '已取消', 1, '2025-06-25 12:56:36', 1, '2025-06-25 12:56:36', b'0');
+INSERT INTO `system_dict_data` VALUES (29, 0, '已下单', '0', 'sale_return_order_status', 0, '', '', '已下单', 1, '2025-06-25 12:56:56', 1, '2025-06-25 12:56:56', b'0');
+INSERT INTO `system_dict_data` VALUES (30, 1, '已收货', '1', 'sale_return_order_status', 0, '', '', '已收货', 1, '2025-06-25 12:57:06', 1, '2025-06-25 12:57:06', b'0');
+INSERT INTO `system_dict_data` VALUES (31, 2, '已完成', '2', 'sale_return_order_status', 0, '', '', '已完成', 1, '2025-06-25 12:57:19', 1, '2025-06-25 12:57:19', b'0');
+INSERT INTO `system_dict_data` VALUES (32, 3, '已取消', '3', 'sale_return_order_status', 0, '', '', '已取消', 1, '2025-06-25 12:57:29', 1, '2025-06-25 12:57:29', b'0');
 
 -- ----------------------------
 -- Table structure for system_dict_type
@@ -1169,7 +1182,7 @@ CREATE TABLE `system_dict_type`  (
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '字典类型表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 10 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '字典类型表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of system_dict_type
@@ -1181,6 +1194,8 @@ INSERT INTO `system_dict_type` VALUES (4, '是否删除', 'deleted', 0, '是否�
 INSERT INTO `system_dict_type` VALUES (5, '角色类型', 'role_type', 0, '角色类型', 1, '2025-05-14 09:29:30', 1, '2025-05-14 09:29:30', b'0');
 INSERT INTO `system_dict_type` VALUES (6, '采购订单状态', 'purchase_order_status', 0, '采购订单状态', 1, '2025-06-12 02:21:28', 1, '2025-06-12 02:30:59', b'0');
 INSERT INTO `system_dict_type` VALUES (7, '销售订单状态', 'sale_order_status', 0, '销售订单状态', 1, '2025-06-12 02:36:31', 1, '2025-06-12 02:36:31', b'0');
+INSERT INTO `system_dict_type` VALUES (8, '采购退货订单状态', 'purchase_return_order_status', 0, '采购退货订单状态', 1, '2025-06-25 12:53:47', 1, '2025-06-25 12:53:47', b'0');
+INSERT INTO `system_dict_type` VALUES (9, '销售退货订单状态', 'sale_return_order_status', 0, '销售退货订单状态', 1, '2025-06-25 12:54:19', 1, '2025-06-25 12:54:19', b'0');
 
 -- ----------------------------
 -- Table structure for system_file
@@ -1202,7 +1217,7 @@ CREATE TABLE `system_file`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 48 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '文件信息表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 53 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '文件信息表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of system_file
@@ -1254,6 +1269,11 @@ INSERT INTO `system_file` VALUES (44, '增值税发票.jpg', 'image/jpeg', 84093
 INSERT INTO `system_file` VALUES (45, '增值税发票.jpg', 'image/jpeg', 84093, '2025/06/22/62344510075572224_增值税发票.jpg', 0, '0000', 1, 1, '2025-06-22 00:54:52', 1, '2025-06-22 01:14:45', b'0', 1);
 INSERT INTO `system_file` VALUES (46, '增值税发票1.jpg', 'image/jpeg', 84093, '2025/06/22/62349331084087296_增值税发票1.jpg', 0, '0000', 1, 1, '2025-06-22 01:14:01', 1, '2025-06-22 01:14:45', b'0', 1);
 INSERT INTO `system_file` VALUES (47, '增值税发票.jpg', 'image/jpeg', 84093, '2025/06/22/62551699352457216_增值税发票.jpg', 0, '0000', 1, 1, '2025-06-22 14:38:11', 1, '2025-06-22 14:44:01', b'0', 1);
+INSERT INTO `system_file` VALUES (48, '增值税发票.jpg', 'image/jpeg', 84093, '2025/06/24/63273769384284160_增值税发票.jpg', 1, '0000', 1, 1, '2025-06-24 14:27:26', 1, '2025-06-24 14:27:26', b'0', 1);
+INSERT INTO `system_file` VALUES (49, '增值税发票.jpg', 'image/jpeg', 84093, '2025/06/25/63609267004903424_增值税发票.jpg', 1, '0000', 1, 1, '2025-06-25 12:40:35', 1, '2025-06-25 12:40:35', b'0', 1);
+INSERT INTO `system_file` VALUES (50, '增值税发票1.jpg', 'image/jpeg', 84093, '2025/06/25/63609290979545088_增值税发票1.jpg', 1, '0000', 1, 1, '2025-06-25 12:40:41', 1, '2025-06-25 12:40:41', b'0', 1);
+INSERT INTO `system_file` VALUES (51, '增值税发票.jpg', 'image/jpeg', 84093, '2025/06/25/63611132027342848_增值税发票.jpg', 0, '0000', 1, 1, '2025-06-25 12:48:00', 1, '2025-06-25 12:48:10', b'0', 1);
+INSERT INTO `system_file` VALUES (52, '增值税发票1.jpg', 'image/jpeg', 84093, '2025/06/25/63611140470476800_增值税发票1.jpg', 0, '0000', 1, 1, '2025-06-25 12:48:02', 1, '2025-06-25 12:48:10', b'0', 1);
 
 -- ----------------------------
 -- Table structure for system_menu
@@ -1861,7 +1881,7 @@ CREATE TABLE `system_tenant`  (
 -- Records of system_tenant
 -- ----------------------------
 INSERT INTO `system_tenant` VALUES (1, '管理租户', 1, '管理员', '18888888888', 0, '', 1, '2039-12-31 18:15:40', 1, 1, '2025-03-08 10:16:18', 1, '2025-05-17 01:11:29', b'0');
-INSERT INTO `system_tenant` VALUES (2, '测试租户', 11, '测试管理员', '15555555555', 0, 'www.test.com', 1, '2025-06-23 16:15:34', 5, 1, '2025-05-23 08:16:00', 1, '2025-05-23 08:16:00', b'0');
+INSERT INTO `system_tenant` VALUES (2, '测试租户', 11, '测试管理员', '15555555555', 1, 'www.test.com', 1, '2025-06-23 16:15:34', 5, 1, '2025-05-23 08:16:00', 1, '2025-06-25 00:05:00', b'0');
 
 -- ----------------------------
 -- Table structure for system_tenant_package
