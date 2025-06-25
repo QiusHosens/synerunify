@@ -2,6 +2,7 @@ import { Box, Button } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { DataGrid, GridCallbackDetails, GridColDef, GridFilterModel, GridRenderCellParams, GridSortModel } from '@mui/x-data-grid';
+import ViewIcon from '@/assets/image/svg/view.svg';
 import EditIcon from '@/assets/image/svg/edit.svg';
 import DeleteIcon from '@/assets/image/svg/delete.svg';
 import { pageErpPurchaseReturn, ErpPurchaseReturnQueryCondition, ErpPurchaseReturnResponse } from '@/api';
@@ -10,6 +11,7 @@ import ErpPurchaseReturnEdit from './Edit';
 import ErpPurchaseReturnDelete from './Delete';
 import { useHomeStore } from '@/store';
 import CustomizedAutoMore from '@/components/CustomizedAutoMore';
+import ErpPurchaseReturnInfo from './Info';
 
 export default function ErpPurchaseReturn() {
   const { t } = useTranslation();
@@ -25,6 +27,7 @@ export default function ErpPurchaseReturn() {
   const [sortModel, setSortModel] = useState<GridSortModel>([]);
   const [filterModel, setFilterModel] = useState<GridFilterModel>();
 
+  const viewErpPurchaseReturn = useRef(null);
   const addErpPurchaseReturn = useRef(null);
   const editErpPurchaseReturn = useRef(null);
   const deleteErpPurchaseReturn = useRef(null);
@@ -51,6 +54,13 @@ export default function ErpPurchaseReturn() {
         minWidth: 100,
         renderCell: (params: GridRenderCellParams) => (
           <CustomizedAutoMore>
+            {hasOperatePermission('erp:purchase:return:get') && <Button
+              size="small"
+              variant='customOperate'
+              title={t('global.operate.view') + t('global.page.erp.purchase.return')}
+              startIcon={<ViewIcon />}
+              onClick={() => handleClickOpenView(params.row)}
+            />}
             {hasOperatePermission('erp:purchase:return:edit') && <Button
               size="small"
               variant='customOperate'
@@ -82,6 +92,10 @@ export default function ErpPurchaseReturn() {
   const handleClickOpenAdd = () => {
     (addErpPurchaseReturn.current as any).show();
   }
+
+  const handleClickOpenView = (erpPurchaseReturn: ErpPurchaseReturnResponse) => {
+    (viewErpPurchaseReturn.current as any).show(erpPurchaseReturn);
+  };
 
   const handleClickOpenEdit = (erpPurchaseReturn: ErpPurchaseReturnResponse) => {
     (editErpPurchaseReturn.current as any).show(erpPurchaseReturn);
@@ -143,6 +157,7 @@ export default function ErpPurchaseReturn() {
           }));
         }}
       />
+      <ErpPurchaseReturnInfo ref={viewErpPurchaseReturn} />
       <ErpPurchaseReturnAdd ref={addErpPurchaseReturn} onSubmit={refreshData} />
       <ErpPurchaseReturnEdit ref={editErpPurchaseReturn} onSubmit={refreshData} />
       <ErpPurchaseReturnDelete ref={deleteErpPurchaseReturn} onSubmit={refreshData} />

@@ -12,9 +12,9 @@ const apis = {
 };
 
 export interface ErpPurchaseReturnAttachmentRequest {
-  id: number; // 附件ID
-  file_id: number; // 文件ID
-  remarks: string; // 备注
+  id?: number; // 附件ID
+  file_id?: number; // 文件ID
+  remarks?: string; // 备注
 
   file?: UploadFile | null;
 }

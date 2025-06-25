@@ -141,9 +141,13 @@ const ErpInboundOrderEdit = forwardRef(({ onSubmit }: ErpInboundOrderEditProps, 
     if (validateForm()) {
       const attachments: ErpInboundOrderAttachmentRequest[] = [];
       for (const attachment of erpInboundOrderRequest.attachments) {
-        attachments.push({
+        let attach: ErpInboundOrderAttachmentRequest = {
           file_id: attachment.file_id!
-        } as ErpInboundOrderAttachmentRequest);
+        } as ErpInboundOrderAttachmentRequest
+        if (attachment.id) {
+          attach.id = attachment.id;
+        }
+        attachments.push(attach);
       }
       const request: ErpInboundOrderRequest = {
         id: erpInboundOrderRequest.id,
@@ -287,7 +291,7 @@ const ErpInboundOrderEdit = forwardRef(({ onSubmit }: ErpInboundOrderEditProps, 
             </Grid>
             <Grid size={size}>
               <Stack direction="row" spacing={2} sx={{ display: "flex", alignItems: "center" }}>
-                <Box>{t('page.erp.purchase.order.title.order.number')}</Box>
+                <Box>{t('page.erp.purchase.order.title.supplier')}</Box>
                 <Box>{erpPurchaseOrder && <CustomizedTag label={erpPurchaseOrder.supplier_name} />}</Box>
               </Stack>
             </Grid>

@@ -1,20 +1,22 @@
 import { PaginatedRequest, PaginatedResponse } from "@/base/page";
 import { api } from "@/utils/request";
-import { ErpPurchaseReturnDetailRequest } from "./erp_purchase_return_detail";
-import { ErpPurchaseReturnAttachmentRequest } from "./erp_purchase_return_attachment";
+import { ErpPurchaseReturnDetailBaseResponse, ErpPurchaseReturnDetailRequest } from "./erp_purchase_return_detail";
+import { ErpPurchaseReturnAttachmentBaseResponse, ErpPurchaseReturnAttachmentRequest } from "./erp_purchase_return_attachment";
 
 const apis = {
   create: "/erp/erp_purchase_return/create", // 新增
   update: "/erp/erp_purchase_return/update", // 修改
   delete: "/erp/erp_purchase_return/delete", // 删除
   get: "/erp/erp_purchase_return/get", // 单条查询
+  get_base: "/erp/erp_purchase_return/get_base", // 单条查询
+  get_info: "/erp/erp_purchase_return/get_info", // 单条查询
   list: "/erp/erp_purchase_return/list", // 列表查询
   page: "/erp/erp_purchase_return/page", // 分页查询
 };
 
 export interface ErpPurchaseReturnRequest {
   id?: number; // 退货ID
-  purchase_order_id: number; // 采购订单ID
+  purchase_order_id?: number; // 采购订单ID
   return_date: string; // 退货日期
   total_amount: number; // 总金额
   discount_rate: number; // 优惠率（百分比，1000表示10.00%）
@@ -48,6 +50,9 @@ export interface ErpPurchaseReturnResponse {
   purchase_order_number: number; // 采购订单编号
   supplier_name: string; // 供应商
   settlement_account_name: string; // 结算账户
+
+  details: ErpPurchaseReturnDetailBaseResponse[]; // 入库采购产品仓库列表
+  attachments: ErpPurchaseReturnAttachmentBaseResponse[]; // 入库附件列表
 }
 
 export interface ErpPurchaseReturnQueryCondition extends PaginatedRequest {}
@@ -72,6 +77,18 @@ export const getErpPurchaseReturn = (
   id: number
 ): Promise<ErpPurchaseReturnResponse> => {
   return api.get<ErpPurchaseReturnResponse>(`${apis.get}/${id}`);
+};
+
+export const getBaseErpPurchaseReturn = (
+  id: number
+): Promise<ErpPurchaseReturnResponse> => {
+  return api.get<ErpPurchaseReturnResponse>(`${apis.get_base}/${id}`);
+};
+
+export const getInfoErpPurchaseReturn = (
+  id: number
+): Promise<ErpPurchaseReturnResponse> => {
+  return api.get<ErpPurchaseReturnResponse>(`${apis.get_info}/${id}`);
 };
 
 export const listErpPurchaseReturn = (): Promise<

@@ -195,22 +195,28 @@ const ErpPurchaseOrderEdit = forwardRef(({ onSubmit }: ErpPurchaseOrderEditProps
     if (validateForm()) {
       const purchase_products: ErpPurchaseOrderDetailRequest[] = [];
       for (const product of erpPurchaseOrderRequest.purchase_products) {
-        purchase_products.push({
-          id: product.id,
+        let detail: ErpPurchaseOrderDetailRequest = {
           product_id: product.product_id!,
           quantity: product.quantity,
           unit_price: product.unit_price,
           subtotal: product.subtotal,
           tax_rate: product.tax_rate,
           remarks: product.remarks,
-        } as ErpPurchaseOrderDetailRequest);
+        } as ErpPurchaseOrderDetailRequest;
+        if (product.id) {
+          detail.id = product.id;
+        }
+        purchase_products.push(detail);
       }
       const purchase_attachment: ErpPurchaseOrderAttachmentRequest[] = [];
       for (const attachment of erpPurchaseOrderRequest.purchase_attachment) {
-        purchase_attachment.push({
-          id: attachment.id,
+        let attach: ErpPurchaseOrderAttachmentRequest = {
           file_id: attachment.file_id!
-        } as ErpPurchaseOrderAttachmentRequest);
+        } as ErpPurchaseOrderAttachmentRequest;
+        if (attachment.id) {
+          attach.id = attachment.id;
+        }
+        purchase_attachment.push(attach);
       }
       const request: ErpPurchaseOrderRequest = {
         id: erpPurchaseOrderRequest.id,

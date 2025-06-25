@@ -152,6 +152,16 @@ const ErpPurchaseReturnAdd = forwardRef(({ onSubmit }: ErpPurchaseReturnAddProps
       newErrors.total_amount = t('page.erp.purchase.return.error.total.amount');
     }
 
+    formValues.details.forEach((product, index) => {
+      if (!product.warehouse_id) {
+        newErrors.details[index].warehouse_id = t('page.erp.purchase.return.detail.error.warehouse');
+      }
+
+      if (!product.quantity) {
+        newErrors.details[index].quantity = t('page.erp.purchase.inbound.detail.error.quantity');
+      }
+    });
+
     setErrors(newErrors);
     return !Object.keys(newErrors).some((key) => {
       if (key === 'details') {
@@ -195,6 +205,7 @@ const ErpPurchaseReturnAdd = forwardRef(({ onSubmit }: ErpPurchaseReturnAddProps
         details.push({
           purchase_detail_id: product.purchase_detail_id!,
           warehouse_id: product.warehouse_id,
+          quantity: product.quantity,
           remarks: product.remarks,
         } as ErpPurchaseReturnDetailRequest);
       }
@@ -238,8 +249,8 @@ const ErpPurchaseReturnAdd = forwardRef(({ onSubmit }: ErpPurchaseReturnAddProps
   const handleDateTimeChange = useCallback((value: PickerValue) => {
     setReturnDate(value);
     if (value) {
-      setFormValues((prev) => ({ ...prev, inbound_date: value.format('YYYY-MM-DD HH:mm:ss') }));
-      setErrors((prev) => ({ ...prev, inbound_date: undefined }));
+      setFormValues((prev) => ({ ...prev, return_date: value.format('YYYY-MM-DD HH:mm:ss') }));
+      setErrors((prev) => ({ ...prev, return_date: undefined }));
     }
   }, []);
 
@@ -360,7 +371,7 @@ const ErpPurchaseReturnAdd = forwardRef(({ onSubmit }: ErpPurchaseReturnAddProps
         <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '100%' } }}>
           <Grid container rowSpacing={2} columnSpacing={4} sx={{ '& .MuiGrid-root': { display: 'flex', justifyContent: 'center', alignItems: 'center' } }}>
             <Grid size={size}>
-              <TextField size="small" label={t('page.erp.purchase.inbound.placeholder.order.number')} disabled />
+              <TextField size="small" label={t('global.order.placeholder.order.number')} disabled />
             </Grid>
             <Grid size={size}>
               <FormControl sx={{ mt: 2, minWidth: 120, width: '100%', '& .MuiOutlinedInput-root': { width: '100%', pr: 0 } }} variant="outlined" error={!!errors.purchase_order_id}>

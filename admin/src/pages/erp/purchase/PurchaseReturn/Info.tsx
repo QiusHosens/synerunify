@@ -1,31 +1,31 @@
-import { Box, Card, FormControl, Grid, InputLabel, MenuItem, Select, Stack, TextField, Typography } from '@mui/material';
+import { Box, Card, FormControl, Grid, MenuItem, Select, Stack, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { forwardRef, useCallback, useImperativeHandle, useState } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
-import { ErpInboundOrderBaseResponse, ErpInboundOrderResponse, ErpPurchaseOrderDetailInfoResponse, ErpPurchaseOrderInfoResponse, ErpSettlementAccountResponse, ErpWarehouseResponse, getErpPurchaseOrderInfo, getInfoPurchaseErpInboundOrder, listErpSettlementAccount, listErpWarehouse } from '@/api';
+import { ErpPurchaseOrderDetailInfoResponse, ErpPurchaseOrderInfoResponse, ErpPurchaseReturnResponse, ErpWarehouseResponse, getErpPurchaseOrderInfo, getInfoErpPurchaseReturn, listErpWarehouse } from '@/api';
 import CustomizedDialog from '@/components/CustomizedDialog';
 import CustomizedFileUpload, { DownloadProps } from '@/components/CustomizedFileUpload';
 import { downloadSystemFile } from '@/api/system_file';
-import CustomizedTag from '@/components/CustomizedTag';
 import CustomizedCopyableText from '@/components/CustomizedCopyableText';
+import CustomizedTag from '@/components/CustomizedTag';
 
-const ErpInboundOrderInfo = forwardRef(({ }, ref) => {
+const ErpPurchaseReturnInfo = forwardRef(({ }, ref) => {
   const { t } = useTranslation();
 
   const [open, setOpen] = useState(false);
   const [maxWidth] = useState<DialogProps['maxWidth']>('xl');
   const [erpPurchaseOrder, setErpPurchaseOrder] = useState<ErpPurchaseOrderInfoResponse>();
   const [erpPurchaseOrderDetailMap, setErpPurchaseOrderDetailMap] = useState<Map<number, ErpPurchaseOrderDetailInfoResponse>>();
-  const [erpInboundOrder, setErpInboundOrder] = useState<ErpInboundOrderBaseResponse>();
   const [warehouses, setWarehouses] = useState<ErpWarehouseResponse[]>([]);
+  const [erpPurchaseReturn, setErpPurchaseReturn] = useState<ErpPurchaseReturnResponse>();
   const [size] = useState({ xs: 12, md: 3 });
   const [fileWidth] = useState<number>(420);
   const [fileHeight] = useState<number>(245);
   const [downloadImages, setDownloadImages] = useState<Map<number, DownloadProps>>(new Map<number, DownloadProps>());
 
   useImperativeHandle(ref, () => ({
-    show(erpInboundOrderRequest: ErpInboundOrderResponse) {
-      initForm(erpInboundOrderRequest);
+    show(erpPurchaseReturnRequest: ErpPurchaseReturnResponse) {
+      initForm(erpPurchaseReturnRequest);
       initWarehouses();
       setOpen(true);
     },
@@ -43,11 +43,11 @@ const ErpInboundOrderInfo = forwardRef(({ }, ref) => {
     setOpen(false);
   };
 
-  const initForm = async (erpInboundOrderRequest: ErpInboundOrderResponse) => {
-    // 查询入库订单
-    const result = await getInfoPurchaseErpInboundOrder(erpInboundOrderRequest.id);
+  const initForm = async (erpPurchaseReturnRequest: ErpPurchaseReturnResponse) => {
+    // 查询退货订单
+    const result = await getInfoErpPurchaseReturn(erpPurchaseReturnRequest.id);
     // 查询采购订单
-    const purchaseOrder = await getErpPurchaseOrderInfo(erpInboundOrderRequest.purchase_id);
+    const purchaseOrder = await getErpPurchaseOrderInfo(erpPurchaseReturnRequest.purchase_order_id);
 
     const purchaseOrderDetailMap: Map<number, ErpPurchaseOrderDetailInfoResponse> = new Map();
     for (const purchaseDetail of purchaseOrder.purchase_products) {
@@ -55,7 +55,7 @@ const ErpInboundOrderInfo = forwardRef(({ }, ref) => {
     }
     setErpPurchaseOrderDetailMap(purchaseOrderDetailMap);
     setErpPurchaseOrder(purchaseOrder);
-    setErpInboundOrder(result);
+    setErpPurchaseReturn(result);
     // 设置图片
     for (const attachment of result.attachments) {
       const file_id = attachment.file_id;
@@ -90,7 +90,7 @@ const ErpInboundOrderInfo = forwardRef(({ }, ref) => {
     <CustomizedDialog
       open={open}
       onClose={handleClose}
-      title={t('global.operate.view') + t('global.page.erp.purchase.inbound')}
+      title={t('global.operate.view') + t('global.page.erp.purchase.return')}
       maxWidth={maxWidth}
     >
       <Box
@@ -108,7 +108,7 @@ const ErpInboundOrderInfo = forwardRef(({ }, ref) => {
             <Grid size={size}>
               <Stack direction="row" spacing={2} sx={{ display: "flex", alignItems: "center" }}>
                 <Box>{t('page.erp.sale.order.title.order.number')}</Box>
-                <Box>{erpInboundOrder && <CustomizedCopyableText text={erpInboundOrder.order_number} sx={{
+                <Box>{erpPurchaseReturn && <CustomizedCopyableText text={erpPurchaseReturn.order_number} sx={{
                   fontSize: '0.75rem',
                   fontWeight: 500,
                 }} />}</Box>
@@ -116,7 +116,7 @@ const ErpInboundOrderInfo = forwardRef(({ }, ref) => {
             </Grid>
             <Grid size={size}>
               <Stack direction="row" spacing={2} sx={{ display: "flex", alignItems: "center" }}>
-                <Box>{t('page.erp.purchase.inbound.title.purchase')}</Box>
+                <Box>{t('page.erp.purchase.return.title.purchase.order')}</Box>
                 <Box>{erpPurchaseOrder && <CustomizedCopyableText text={erpPurchaseOrder.order_number} sx={{
                   fontSize: '0.75rem',
                   fontWeight: 500,
@@ -125,38 +125,38 @@ const ErpInboundOrderInfo = forwardRef(({ }, ref) => {
             </Grid>
             <Grid size={size}>
               <Stack direction="row" spacing={2} sx={{ display: "flex", alignItems: "center" }}>
-                <Box>{t('page.erp.purchase.inbound.title.supplier')}</Box>
+                <Box>{t('page.erp.purchase.return.title.supplier')}</Box>
                 <Box>{erpPurchaseOrder && <CustomizedTag label={erpPurchaseOrder.supplier_name} />}</Box>
               </Stack>
             </Grid>
             <Grid size={size}>
               <Stack direction="row" spacing={2} sx={{ display: "flex", alignItems: "center" }}>
-                <Box>{t('page.erp.purchase.inbound.title.inbound.date')}</Box>
-                <Box>{erpInboundOrder && <CustomizedTag label={erpInboundOrder.inbound_date} />}</Box>
+                <Box>{t('page.erp.purchase.return.title.return.date')}</Box>
+                <Box>{erpPurchaseReturn && <CustomizedTag label={erpPurchaseReturn.return_date} />}</Box>
               </Stack>
             </Grid>
             <Grid size={size}>
               <Stack direction="row" spacing={2} sx={{ display: "flex", alignItems: "center" }}>
-                <Box>{t('page.erp.purchase.inbound.title.settlement.account')}</Box>
-                <Box>{erpInboundOrder && <CustomizedTag label={erpInboundOrder.settlement_account_name ?? ''} />}</Box>
+                <Box>{t('page.erp.purchase.return.title.settlement.account')}</Box>
+                <Box>{erpPurchaseReturn && <CustomizedTag label={erpPurchaseReturn.settlement_account_name} />}</Box>
               </Stack>
             </Grid>
             <Grid size={size}>
               <Stack direction="row" spacing={2} sx={{ display: "flex", alignItems: "center" }}>
-                <Box>{t('page.erp.purchase.inbound.title.discount.rate')}</Box>
-                <Box>{erpInboundOrder && <CustomizedTag label={erpInboundOrder.discount_rate + '%'} />}</Box>
+                <Box>{t('page.erp.purchase.return.title.total.amount')}</Box>
+                <Box>{erpPurchaseReturn && <CustomizedTag label={erpPurchaseReturn.total_amount} />}</Box>
               </Stack>
             </Grid>
             <Grid size={size}>
               <Stack direction="row" spacing={2} sx={{ display: "flex", alignItems: "center" }}>
-                <Box>{t('page.erp.purchase.inbound.title.other.cost')}</Box>
-                <Box>{erpInboundOrder && <CustomizedTag label={erpInboundOrder.other_cost} />}</Box>
+                <Box>{t('page.erp.purchase.return.title.discount.rate')}</Box>
+                <Box>{erpPurchaseReturn && <CustomizedTag label={erpPurchaseReturn.discount_rate} />}</Box>
               </Stack>
             </Grid>
             <Grid size={size}>
               <Stack direction="row" spacing={2} sx={{ display: "flex", alignItems: "center" }}>
-                <Box>{t('page.erp.purchase.inbound.title.remarks')}</Box>
-                <Box>{erpInboundOrder && <CustomizedTag label={erpInboundOrder.remarks} />}</Box>
+                <Box>{t('page.erp.purchase.return.title.remarks')}</Box>
+                <Box>{erpPurchaseReturn && <CustomizedTag label={erpPurchaseReturn.remarks} />}</Box>
               </Stack>
             </Grid>
           </Grid>
@@ -170,19 +170,19 @@ const ErpInboundOrderInfo = forwardRef(({ }, ref) => {
             <Box className='table-row'>
               <Box className='table-cell' sx={{ width: 50 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.no')}</Typography></Box>
               <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.inbound.detail.title.warehouse')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 150 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.quantity')}</Typography></Box>
               <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.remarks')}</Typography></Box>
               <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.product')}</Typography></Box>
               <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.barcode')}</Typography></Box>
               <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.unit')}</Typography></Box>
               <Box className='table-cell' sx={{ width: 200 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.remarks')}</Typography></Box>
-              <Box className='table-cell' sx={{ width: 150 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.quantity')}</Typography></Box>
               <Box className='table-cell' sx={{ width: 150 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.unit.price')}</Typography></Box>
               <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.subtotal')}</Typography></Box>
               <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.tax.rate')}</Typography></Box>
               <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.tax')}</Typography></Box>
               <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.tax.total')}</Typography></Box>
             </Box>
-            {erpInboundOrder && erpInboundOrder.details && erpInboundOrder.details.map((item, index) => {
+            {erpPurchaseReturn && erpPurchaseReturn.details.map((item, index) => {
               let purchaseDetail = undefined;
               if (erpPurchaseOrderDetailMap && item.purchase_detail_id && erpPurchaseOrderDetailMap.get(item.purchase_detail_id) && erpPurchaseOrderDetailMap.get(item.purchase_detail_id)) {
                 purchaseDetail = erpPurchaseOrderDetailMap && item.purchase_detail_id && erpPurchaseOrderDetailMap.get(item.purchase_detail_id) && erpPurchaseOrderDetailMap.get(item.purchase_detail_id)
@@ -196,7 +196,6 @@ const ErpInboundOrderInfo = forwardRef(({ }, ref) => {
                         size="small"
                         name="warehouse_id"
                         value={item.warehouse_id}
-                        disabled
                       >
                         {warehouses.map((warehouse) => (
                           <MenuItem key={warehouse.id} value={warehouse.id}>
@@ -207,42 +206,34 @@ const ErpInboundOrderInfo = forwardRef(({ }, ref) => {
                     </FormControl>
                   </Box>
                   <Box className='table-cell' sx={{ width: 50 }}>
-                    <TextField
-                      size="small"
-                      name="remarks"
-                      defaultValue={item.remarks}
-                      disabled
-                    />
+                    <Typography variant="body1">{item.quantity}</Typography>
                   </Box>
                   <Box className='table-cell' sx={{ width: 50 }}>
-                    <TextField size="small" value={purchaseDetail && purchaseDetail.product_name} disabled />
+                    <Typography variant="body1">{item.remarks}</Typography>
                   </Box>
                   <Box className='table-cell' sx={{ width: 50 }}>
-                    <TextField size="small" value={purchaseDetail && purchaseDetail.product_barcode} disabled />
+                    <Typography variant="body1">{purchaseDetail && purchaseDetail.product_name}</Typography>
                   </Box>
                   <Box className='table-cell' sx={{ width: 50 }}>
-                    <TextField size="small" value={purchaseDetail && purchaseDetail.product_unit_name} disabled />
+                    <Typography variant="body1">{purchaseDetail && purchaseDetail.product_barcode}</Typography>
                   </Box>
                   <Box className='table-cell' sx={{ width: 50 }}>
-                    <TextField size="small" value={item.remarks} disabled />
+                    <Typography variant="body1">{purchaseDetail && purchaseDetail.product_unit_name}</Typography>
                   </Box>
                   <Box className='table-cell' sx={{ width: 50 }}>
-                    <TextField size="small" value={purchaseDetail && purchaseDetail.quantity} disabled />
+                    <Typography variant="body1">{purchaseDetail && purchaseDetail.unit_price}</Typography>
                   </Box>
                   <Box className='table-cell' sx={{ width: 50 }}>
-                    <TextField size="small" value={purchaseDetail && purchaseDetail.unit_price} disabled />
+                    <Typography variant="body1">{item.subtotal}</Typography>
                   </Box>
                   <Box className='table-cell' sx={{ width: 50 }}>
-                    <TextField size="small" value={purchaseDetail && purchaseDetail.subtotal} disabled />
+                    <Typography variant="body1">{purchaseDetail && purchaseDetail.tax_rate}</Typography>
                   </Box>
                   <Box className='table-cell' sx={{ width: 50 }}>
-                    <TextField size="small" value={purchaseDetail && purchaseDetail.tax_rate} disabled />
+                    <Typography variant="body1">{purchaseDetail ? (item.quantity * purchaseDetail.unit_price * purchaseDetail.tax_rate) / 100 : 0}</Typography>
                   </Box>
                   <Box className='table-cell' sx={{ width: 50 }}>
-                    <TextField size="small" value={purchaseDetail ? (purchaseDetail.quantity * purchaseDetail.unit_price * purchaseDetail.tax_rate / 100) : 0} disabled />
-                  </Box>
-                  <Box className='table-cell' sx={{ width: 50 }}>
-                    <TextField size="small" value={purchaseDetail ? purchaseDetail.quantity * purchaseDetail.unit_price * (1 + purchaseDetail.tax_rate / 100) : 0} disabled />
+                    <Typography variant="body1">{purchaseDetail ? item.quantity * purchaseDetail.unit_price * (1 + purchaseDetail.tax_rate / 100) : 0}</Typography>
                   </Box>
                 </Box>
               )
@@ -255,7 +246,7 @@ const ErpInboundOrderInfo = forwardRef(({ }, ref) => {
         </Typography>
         <Card variant="outlined" sx={{ width: '100%', mt: 1, p: 2 }}>
           <Grid container rowSpacing={2} columnSpacing={4} sx={{ '& .MuiGrid-root': { display: 'flex', justifyContent: 'center', alignItems: 'center' } }}>
-            {erpInboundOrder && erpInboundOrder.attachments.map((item, index) => (
+            {erpPurchaseReturn && erpPurchaseReturn.attachments.map((item, index) => (
               <Grid key={index} size={{ xs: 12, md: 4 }}>
                 <CustomizedFileUpload
                   canUpload={false}
@@ -276,4 +267,4 @@ const ErpInboundOrderInfo = forwardRef(({ }, ref) => {
   )
 });
 
-export default ErpInboundOrderInfo;
+export default ErpPurchaseReturnInfo;

@@ -356,7 +356,7 @@ const ErpInboundOrderAdd = forwardRef(({ onSubmit }: ErpInboundOrderAddProps, re
         <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '100%' } }}>
           <Grid container rowSpacing={2} columnSpacing={4} sx={{ '& .MuiGrid-root': { display: 'flex', justifyContent: 'center', alignItems: 'center' } }}>
             <Grid size={size}>
-              <TextField size="small" label={t('page.erp.purchase.inbound.placeholder.order.number')} disabled />
+              <TextField size="small" label={t('global.order.placeholder.order.number')} disabled />
             </Grid>
             <Grid size={size}>
               <FormControl sx={{ mt: 2, minWidth: 120, width: '100%', '& .MuiOutlinedInput-root': { width: '100%', pr: 0 } }} variant="outlined" error={!!errors.purchase_id}>
