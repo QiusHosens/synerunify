@@ -1,6 +1,6 @@
-import { Box, Button, Switch } from '@mui/material';
+import { Box, Button } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { DataGrid, GridCallbackDetails, GridColDef, GridFilterModel, GridRenderCellParams, GridSortModel } from '@mui/x-data-grid';
 import EditIcon from '@/assets/image/svg/edit.svg';
 import DeleteIcon from '@/assets/image/svg/delete.svg';
@@ -9,6 +9,7 @@ import ErpSalesReturnAdd from './Add';
 import ErpSalesReturnEdit from './Edit';
 import ErpSalesReturnDelete from './Delete';
 import { useHomeStore } from '@/store';
+import CustomizedAutoMore from '@/components/CustomizedAutoMore';
 
 export default function ErpSalesReturn() {
   const { t } = useTranslation();
@@ -30,17 +31,20 @@ export default function ErpSalesReturn() {
 
   const columns: GridColDef[] = useMemo(
     () => [
-      { field: 'sales_order_id', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'customer_id', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'warehouse_id', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'return_date', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'total_amount', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'return_status', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'remarks', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'department_code', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'department_id', headerName: t("page."), flex: 1, minWidth: 100 },
+      { field: 'order_number', headerName: t("page.erp.sales.return.title.order_number"), flex: 1, minWidth: 100 },
+      { field: 'sales_order_id', headerName: t("page.erp.sales.return.title.sales_order_id"), flex: 1, minWidth: 100 },
+      { field: 'customer_id', headerName: t("page.erp.sales.return.title.customer_id"), flex: 1, minWidth: 100 },
+      { field: 'return_date', headerName: t("page.erp.sales.return.title.return_date"), flex: 1, minWidth: 100 },
+      { field: 'total_amount', headerName: t("page.erp.sales.return.title.total_amount"), flex: 1, minWidth: 100 },
+      { field: 'order_status', headerName: t("page.erp.sales.return.title.order_status"), flex: 1, minWidth: 100 },
+      { field: 'discount_rate', headerName: t("page.erp.sales.return.title.discount_rate"), flex: 1, minWidth: 100 },
+      { field: 'settlement_account_id', headerName: t("page.erp.sales.return.title.settlement_account_id"), flex: 1, minWidth: 100 },
+      { field: 'deposit', headerName: t("page.erp.sales.return.title.deposit"), flex: 1, minWidth: 100 },
+      { field: 'remarks', headerName: t("page.erp.sales.return.title.remarks"), flex: 1, minWidth: 100 },
+      { field: 'department_code', headerName: t("page.erp.sales.return.title.department_code"), flex: 1, minWidth: 100 },
+      { field: 'department_id', headerName: t("page.erp.sales.return.title.department_id"), flex: 1, minWidth: 100 },
       
-      { field: 'create_time', headerName: t("page.post.title.create.time"), flex: 1, minWidth: 180 },
+      { field: 'create_time', headerName: t("global.title.create.time"), flex: 1, minWidth: 180 },
       {
         field: 'actions',
         sortable: false,
@@ -49,23 +53,23 @@ export default function ErpSalesReturn() {
         flex: 1,
         minWidth: 100,
         renderCell: (params: GridRenderCellParams) => (
-          <Box sx={ { height: '100%', display: 'flex', gap: 1, alignItems: 'center' } }>
-            {hasOperatePermission('system:post:edit') && <Button
+          <CustomizedAutoMore>
+            {hasOperatePermission('erp:sale:return:edit') && <Button
               size="small"
               variant='customOperate'
-              title={t('page.post.operate.edit')}
+              title={t('global.operate.edit') + t('global.page.erp.sales.return')}
               startIcon={<EditIcon />}
               onClick={() => handleClickOpenEdit(params.row)}
             />}
-            {hasOperatePermission('system:post:delete') && <Button
+            {hasOperatePermission('erp:sale:return:delete') && <Button
               sx={ {color: 'error.main'} }
               size="small"
               variant='customOperate'
-              title={t('page.post.operate.delete')}
+              title={t('global.operate.delete') + t('global.page.erp.sales.return')}
               startIcon={<DeleteIcon />}
               onClick={() => handleClickOpenDelete(params.row)}
             />}
-          </Box>
+          </CustomizedAutoMore>
         ),
       },
     ],
@@ -116,7 +120,7 @@ export default function ErpSalesReturn() {
     <Box sx={ {height: '100%', display: 'flex', flexDirection: 'column'} }>
       <Box sx={ {mb: 2, display: 'flex', justifyContent: 'space-between'} }>
         <Box></Box>
-        {hasOperatePermission('system:post:add') && <Button variant="customContained" onClick={handleClickOpenAdd}>
+        {hasOperatePermission('erp:sale:return:add') && <Button variant="customContained" onClick={handleClickOpenAdd}>
           {t('global.operate.add')}
         </Button>}
       </Box>

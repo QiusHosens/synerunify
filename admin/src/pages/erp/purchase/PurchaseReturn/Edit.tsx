@@ -481,8 +481,8 @@ const ErpPurchaseReturnEdit = forwardRef(({ onSubmit }: ErpPurchaseReturnEditPro
             </Box>
             {erpPurchaseReturnRequest && erpPurchaseReturnRequest.details.map((item, index) => {
               let purchaseDetail = undefined;
-              if (erpPurchaseOrderDetailMap && item.purchase_detail_id && erpPurchaseOrderDetailMap.get(item.purchase_detail_id) && erpPurchaseOrderDetailMap.get(item.purchase_detail_id)) {
-                purchaseDetail = erpPurchaseOrderDetailMap && item.purchase_detail_id && erpPurchaseOrderDetailMap.get(item.purchase_detail_id) && erpPurchaseOrderDetailMap.get(item.purchase_detail_id)
+              if (erpPurchaseOrderDetailMap && item.purchase_detail_id && erpPurchaseOrderDetailMap.get(item.purchase_detail_id)) {
+                purchaseDetail = erpPurchaseOrderDetailMap && item.purchase_detail_id && erpPurchaseOrderDetailMap.get(item.purchase_detail_id)
               }
               return (
                 <Box className='table-row' key={index}>

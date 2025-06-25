@@ -1,28 +1,56 @@
-import { Box, Button, FormControl, Switch, TextField, Typography } from '@mui/material';
+import { Box, Button, Card, FormControl, FormHelperText, Grid, InputAdornment, InputLabel, MenuItem, OutlinedInput, Select, SelectChangeEvent, Switch, TextField, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { forwardRef, useImperativeHandle, useState } from 'react';
+import { forwardRef, useCallback, useImperativeHandle, useRef, useState } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
-import { createErpSalesReturn, ErpSalesReturnRequest } from '@/api';
+import { createErpSalesReturn, ErpSalesOrderInfoResponse, ErpSalesReturnAttachmentRequest, ErpSalesReturnDetailRequest, ErpSalesReturnRequest, ErpSettlementAccountResponse, ErpWarehouseResponse, getErpSalesOrderInfo, listErpSettlementAccount, listErpWarehouse } from '@/api';
 import CustomizedDialog from '@/components/CustomizedDialog';
+import CustomizedFileUpload, { UploadFile } from '@/components/CustomizedFileUpload';
+import { Dayjs } from 'dayjs';
+import SalesOrderSelect from './SalesOrderSelect';
+import { uploadSystemFile } from '@/api/system_file';
+import { PickerValue } from '@mui/x-date-pickers/internals';
+import { DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import SearchIcon from '@/assets/image/svg/search.svg';
+
+interface FormAttachmentValues {
+  file_id?: number; // 文件ID
+  remarks?: string; // 备注
+
+  file?: UploadFile | null;
+}
+
+interface FormDetailValues {
+  sale_detail_id: number; // 采购订单详情ID
+  warehouse_id?: number; // 仓库ID
+  quantity: number; // 退货数量
+  remarks: string; // 备注
+}
 
 interface FormValues {
-  sales_order_id: number; // 销售订单ID
-  customer_id: number; // 客户ID
-  warehouse_id: number; // 仓库ID
+  sales_order_id?: number; // 销售订单ID
+  customer_id?: number; // 客户ID
   return_date: string; // 退货日期
-  total_amount: number; // 退货总金额
-  return_status: number; // 状态 (0=pending, 1=completed, 2=cancelled)
+  total_amount: number; // 总金额
+  discount_rate: number; // 优惠率（百分比，1000表示10.00%）
+  settlement_account_id?: number; // 结算账户ID
   remarks: string; // 备注
-  department_code: string; // 部门编码
-  department_id: number; // 部门ID
-  }
 
-interface FormErrors { 
+  details: FormDetailValues[];
+  attachments: FormAttachmentValues[];
+}
+
+interface FormDetailErrors {
+  warehouse_id?: string; // 仓库ID
+  quantity?: string; // 退货数量
+}
+
+interface FormErrors {
+  sales_order_id?: string; // 销售订单ID
   return_date?: string; // 退货日期
-  total_amount?: string; // 退货总金额
-  return_status?: string; // 状态 (0=pending, 1=completed, 2=cancelled)
-  department_code?: string; // 部门编码
-  department_id?: string; // 部门ID
+  total_amount?: string; // 总金额
+
+  details: FormDetailErrors[];
 }
 
 interface ErpSalesReturnAddProps {
@@ -34,21 +62,30 @@ const ErpSalesReturnAdd = forwardRef(({ onSubmit }: ErpSalesReturnAddProps, ref)
 
   const [open, setOpen] = useState(false);
   const [maxWidth] = useState<DialogProps['maxWidth']>('sm');
+  const [erpSalesOrder, setErpSalesOrder] = useState<ErpSalesOrderInfoResponse>();
+  const [warehouses, setWarehouses] = useState<ErpWarehouseResponse[]>([]);
+  const [settlementAccounts, setSettlementAccounts] = useState<ErpSettlementAccountResponse[]>([]);
+  const [returnDate, setReturnDate] = useState<Dayjs | null>(null);
   const [formValues, setFormValues] = useState<FormValues>({
-    sales_order_id: 0,
-    customer_id: 0,
-    warehouse_id: 0,
     return_date: '',
     total_amount: 0,
-    return_status: 0,
+    discount_rate: 0,
     remarks: '',
-    department_code: '',
-    department_id: 0,
-    });
-  const [errors, setErrors] = useState<FormErrors>({});
+    details: [],
+    attachments: []
+  });
+  const [errors, setErrors] = useState<FormErrors>({
+    details: [],
+  });
+  const [size] = useState({ xs: 12, md: 3 });
+  const [fileWidth] = useState<number>(420);
+  const [fileHeight] = useState<number>(245);
+
+  const selectErpSalesOrder = useRef(null);
 
   useImperativeHandle(ref, () => ({
     show() {
+      initSettlementAccounts();
       setOpen(true);
     },
     hide() {
@@ -56,31 +93,84 @@ const ErpSalesReturnAdd = forwardRef(({ onSubmit }: ErpSalesReturnAddProps, ref)
     },
   }));
 
+  const initSettlementAccounts = useCallback(async () => {
+    const result = await listErpSettlementAccount();
+    setSettlementAccounts(result);
+  }, []);
+
+  const selectedErpSalesOrder = useCallback(async (id: number) => {
+    const result = await getErpSalesOrderInfo(id);
+    const warehouses = await listErpWarehouse();
+    setWarehouses(warehouses);
+    // 根据产品数量设置仓库
+    let defaultWarehouse = undefined;
+    if (warehouses.length > 0) {
+      defaultWarehouse = warehouses[0].id;
+    }
+    const details: FormDetailValues[] = [];
+    for (const product of result.details) {
+      const detail: FormDetailValues = {
+        sale_detail_id: product.id,
+        quantity: product.quantity,
+        remarks: ''
+      };
+      if (defaultWarehouse) {
+        detail.warehouse_id = defaultWarehouse;
+      }
+      details.push(detail);
+    }
+    setFormValues(prev => ({
+      ...prev,
+      purchase_id: id,
+      details
+    }))
+    setErrors((prev) => ({ ...prev, purchase_id: undefined }));
+    setErpSalesOrder(result);
+  }, []);
+
+  const handleClickOpenSalesOrderSelect = useCallback(async () => {
+    (selectErpSalesOrder.current as any).show();
+  }, []);
+
   const validateForm = (): boolean => {
-    const newErrors: FormErrors = {};
-    
+    const newErrors: FormErrors = {
+      details: formValues.details.map(() => ({
+        warehouse_id: undefined,
+        quantity: undefined,
+      })),
+    };
+
+    if (!formValues.sales_order_id && formValues.sales_order_id != 0) {
+      newErrors.sales_order_id = t('page.erp.sales.return.error.sales.order');
+    }
+
     if (!formValues.return_date.trim()) {
-      newErrors.return_date = t('page.post.error.return_date');
+      newErrors.return_date = t('page.erp.sales.return.error.return.date');
     }
-    
+
     if (!formValues.total_amount && formValues.total_amount != 0) {
-      newErrors.total_amount = t('page.post.error.total_amount');
+      newErrors.total_amount = t('page.erp.sales.return.error.total.amount');
     }
-    
-    if (!formValues.return_status && formValues.return_status != 0) {
-      newErrors.return_status = t('page.post.error.return_status');
-    }
-    
-    if (!formValues.department_code.trim()) {
-      newErrors.department_code = t('page.post.error.department_code');
-    }
-    
-    if (!formValues.department_id && formValues.department_id != 0) {
-      newErrors.department_id = t('page.post.error.department_id');
-    }
-    
+
+    formValues.details.forEach((product, index) => {
+      if (!product.warehouse_id) {
+        newErrors.details[index].warehouse_id = t('page.erp.sales.return.detail.error.warehouse');
+      }
+
+      if (!product.quantity) {
+        newErrors.details[index].quantity = t('page.erp.sales.return.detail.error.quantity');
+      }
+    });
+
     setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    return !Object.keys(newErrors).some((key) => {
+      if (key === 'details') {
+        return newErrors.details.some((err) =>
+          Object.values(err).some((value) => value !== undefined)
+        );
+      }
+      return newErrors[key as keyof FormErrors];
+    });
   };
 
   const handleCancel = () => {
@@ -95,63 +185,57 @@ const ErpSalesReturnAdd = forwardRef(({ onSubmit }: ErpSalesReturnAddProps, ref)
 
   const reset = () => {
     setFormValues({
-      sales_order_id: 0,
-      customer_id: 0,
-      warehouse_id: 0,
       return_date: '',
       total_amount: 0,
-      return_status: 0,
+      discount_rate: 0,
       remarks: '',
-      department_code: '',
-      department_id: 0,
-      });
-    setErrors({});
+      details: [],
+      attachments: []
+    });
+    setReturnDate(null);
+    setErrors({
+      details: [],
+    });
   }
 
   const handleSubmit = async () => {
     if (validateForm()) {
-      await createErpSalesReturn(formValues as ErpSalesReturnRequest);
+      const details: ErpSalesReturnDetailRequest[] = [];
+      for (const product of formValues.details) {
+        details.push({
+          sale_detail_id: product.sale_detail_id!,
+          warehouse_id: product.warehouse_id,
+          quantity: product.quantity,
+          remarks: product.remarks,
+        } as ErpSalesReturnDetailRequest);
+      }
+      const attachments: ErpSalesReturnAttachmentRequest[] = [];
+      for (const attachment of formValues.attachments) {
+        attachments.push({
+          file_id: attachment.file_id!
+        } as ErpSalesReturnAttachmentRequest);
+      }
+      const request: ErpSalesReturnRequest = {
+        sales_order_id: formValues.sales_order_id!,
+        return_date: formValues.return_date,
+        total_amount: formValues.total_amount,
+        discount_rate: formValues.discount_rate,
+        settlement_account_id: formValues.settlement_account_id!,
+        remarks: formValues.remarks,
+        details,
+        attachments
+      }
+      await createErpSalesReturn(request);
       handleClose();
-      onSubmit();
-    }
-  };
-
-  const handleSubmitAndContinue = async () => {
-    if (validateForm()) {
-      await createErpSalesReturn(formValues as ErpSalesReturnRequest);
       onSubmit();
     }
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type } = e.target;
-    if (type == 'number') {
-      const numberValue = Number(value);
-      setFormValues(prev => ({
-        ...prev,
-        [name]: numberValue
-      }));
-    } else {
-      setFormValues(prev => ({
-        ...prev,
-        [name]: value
-      }));
-    }
-
-    if (errors[name as keyof FormErrors]) {
-      setErrors(prev => ({
-        ...prev,
-        [name]: undefined
-      }));
-    }
-  };
-
-  const handleStatusChange = (e: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
-    const { name } = e.target;
-
-    setFormValues(prev => ({
+    setFormValues((prev) => ({
       ...prev,
-      [name]: checked ? 0 : 1
+      [name]: type === 'number' ? Number(value) : value,
     }));
 
     if (errors[name as keyof FormErrors]) {
@@ -162,15 +246,113 @@ const ErpSalesReturnAdd = forwardRef(({ onSubmit }: ErpSalesReturnAddProps, ref)
     }
   };
 
+  const handleDateTimeChange = useCallback((value: PickerValue) => {
+    setReturnDate(value);
+    if (value) {
+      setFormValues((prev) => ({ ...prev, return_date: value.format('YYYY-MM-DD HH:mm:ss') }));
+      setErrors((prev) => ({ ...prev, return_date: undefined }));
+    }
+  }, []);
+
+  const handleSelectChange = useCallback((e: SelectChangeEvent<number>) => {
+    const { name, value } = e.target;
+    setFormValues((prev) => ({ ...prev, [name]: value }));
+    setErrors((prev) => ({ ...prev, [name]: undefined }));
+  }, []);
+
+  const handleWarehouseSelectChange = useCallback((e: SelectChangeEvent<number>, index: number) => {
+    const { value } = e.target;
+    setFormValues((prev) => ({
+      ...prev,
+      details: prev.details.map((item, idx) =>
+        idx === index ? { ...item, warehouse_id: value } : item
+      ),
+    }));
+    setErrors((prev) => ({
+      ...prev,
+      details: prev.details.map((item, idx) =>
+        idx === index ? { ...item, warehouse_id: undefined } : item
+      ),
+    }));
+  }, [warehouses]);
+
+  const handleDetailInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>, index: number) => {
+    const { name, value, type } = e.target;
+    const numberValue = type === 'number' ? Number(value) : value;
+    setFormValues((prev) => ({
+      ...prev,
+      details: prev.details.map((item, idx) =>
+        idx === index ? { ...item, [name]: numberValue } : item
+      ),
+    }));
+    setErrors((prev) => ({
+      ...prev,
+      details: prev.details.map((item, idx) =>
+        idx === index ? { ...item, [name]: undefined } : item
+      ),
+    }));
+  }, []);
+
+  const handleFileChange = useCallback(async (file: UploadFile | null, action: 'upload' | 'remove', index: number) => {
+    // console.log(`Upload ${index} file updated:`, file, `Action: ${action}`);
+
+    if (action === 'upload' && file) {
+      // 更新文件列表,增加一个附件,等待上传完成后在写入信息
+      setFormValues((prev) => {
+        return { ...prev, attachments: [...prev.attachments, { file }] };
+      })
+
+      // 上传文件
+      try {
+        const result = await uploadSystemFile(file.file, (progress) => {
+          setFormValues((prev) => {
+            const updatedAttachments = prev.attachments.map((item, idx) => {
+              if (idx !== index) return item;
+              const updatedItem = { ...item, file: { ...item.file!, progress } };
+              return updatedItem;
+            })
+            return { ...prev, attachments: updatedAttachments };
+          });
+        });
+
+        // 上传完成
+        setFormValues((prev) => {
+          const updatedAttachments = prev.attachments.map((item, idx) => {
+            if (idx !== index) return item;
+            const updatedItem = { ...item, file_id: result, file: { ...item.file!, status: 'done' as const } };
+            return updatedItem;
+          })
+          return { ...prev, attachments: updatedAttachments };
+        });
+      } catch (error) {
+        console.error('upload file error', error);
+        // 上传失败
+        setFormValues((prev) => {
+          const updatedAttachments = prev.attachments.map((item, idx) => {
+            if (idx !== index) return item;
+            const updatedItem = { ...item, file: { ...item.file!, status: 'error' as const } };
+            return updatedItem;
+          })
+          return { ...prev, attachments: updatedAttachments };
+        });
+      }
+    } else if (action === 'remove') {
+      // 删除文件并移除上传框
+      setFormValues((prev) => {
+        const updatedAttachments = prev.attachments.filter((_, idx) => idx !== index);
+        return { ...prev, attachments: updatedAttachments };
+      });
+    }
+  }, []);
+
   return (
     <CustomizedDialog
       open={open}
       onClose={handleClose}
-      title={t('global.operate.add') + t('global.page.post')}
+      title={t('global.operate.add') + t('global.page.erp.sales.return')}
       maxWidth={maxWidth}
       actions={
         <>
-          <Button onClick={handleSubmitAndContinue}>{t('global.operate.confirm.continue')}</Button>
           <Button onClick={handleSubmit}>{t('global.operate.confirm')}</Button>
           <Button onClick={handleCancel}>{t('global.operate.cancel')}</Button>
         </>
@@ -179,99 +361,261 @@ const ErpSalesReturnAdd = forwardRef(({ onSubmit }: ErpSalesReturnAddProps, ref)
       <Box
         noValidate
         component="form"
-        sx={ {display: 'flex',
+        sx={{
+          display: 'flex',
           flexDirection: 'column',
           m: 'auto',
-          width: 'fit-content',} }
+          width: 'fit-content',
+        }}
       >
-        <FormControl sx={ {minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' }} }>
-          <TextField
-            size="small"
-            type="number"
-            label={t("page.post.title.sales_order_id")}
-            name='sales_order_id'
-            value={formValues.sales_order_id}
-            onChange={handleInputChange}
-          />
-          <TextField
-            size="small"
-            type="number"
-            label={t("page.post.title.customer_id")}
-            name='customer_id'
-            value={formValues.customer_id}
-            onChange={handleInputChange}
-          />
-          <TextField
-            size="small"
-            type="number"
-            label={t("page.post.title.warehouse_id")}
-            name='warehouse_id'
-            value={formValues.warehouse_id}
-            onChange={handleInputChange}
-          />
-          <TextField
-            required
-            size="small"
-            label={t("page.post.title.return_date")}
-            name='return_date'
-            value={formValues.return_date}
-            onChange={handleInputChange}
-            error={!!errors.return_date}
-            helperText={errors.return_date}
-          />
-          <TextField
-            required
-            size="small"
-            type="number"
-            label={t("page.post.title.total_amount")}
-            name='total_amount'
-            value={formValues.total_amount}
-            onChange={handleInputChange}
-            error={!!errors.total_amount}
-            helperText={errors.total_amount}
-          />
-          <TextField
-            required
-            size="small"
-            type="number"
-            label={t("page.post.title.return_status")}
-            name='return_status'
-            value={formValues.return_status}
-            onChange={handleInputChange}
-            error={!!errors.return_status}
-            helperText={errors.return_status}
-          />
-          <TextField
-            size="small"
-            label={t("page.post.title.remarks")}
-            name='remarks'
-            value={formValues.remarks}
-            onChange={handleInputChange}
-          />
-          <TextField
-            required
-            size="small"
-            label={t("page.post.title.department_code")}
-            name='department_code'
-            value={formValues.department_code}
-            onChange={handleInputChange}
-            error={!!errors.department_code}
-            helperText={errors.department_code}
-          />
-          <TextField
-            required
-            size="small"
-            type="number"
-            label={t("page.post.title.department_id")}
-            name='department_id'
-            value={formValues.department_id}
-            onChange={handleInputChange}
-            error={!!errors.department_id}
-            helperText={errors.department_id}
-          />
-          </FormControl>
+        <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' } }}>
+          <Grid container rowSpacing={2} columnSpacing={4} sx={{ '& .MuiGrid-root': { display: 'flex', justifyContent: 'center', alignItems: 'center' } }}>
+            <Grid size={size}>
+              <TextField size="small" label={t('global.order.placeholder.order.number')} disabled />
+            </Grid>
+            <Grid size={size}>
+              <FormControl sx={{ mt: 2, minWidth: 120, width: '100%', '& .MuiOutlinedInput-root': { width: '100%', pr: 0 } }} variant="outlined" error={!!errors.sales_order_id}>
+                <InputLabel required size="small" shrink={erpSalesOrder ? true : false} htmlFor="return-sales-id">{t("page.erp.sales.return.title.sales.order")}</InputLabel>
+                <OutlinedInput
+                  required
+                  size="small"
+                  id="return-sales-id"
+                  type='text'
+                  label={t("page.erp.sales.return.title.sales.order")}
+                  value={erpSalesOrder && erpSalesOrder.order_number}
+                  onChange={handleInputChange}
+                  error={!!errors.sales_order_id}
+                  disabled
+                  notched={!!erpSalesOrder}
+                  endAdornment={
+                    <InputAdornment position="end">
+                      <Button
+                        size="small"
+                        variant='customContained'
+                        startIcon={<SearchIcon />}
+                        onClick={() => handleClickOpenSalesOrderSelect()}
+                      >
+                        {t('global.operate.select')}
+                      </Button>
+                    </InputAdornment>
+                  }
+                />
+                <FormHelperText sx={{ color: 'error.main' }} id="return-sales-id">{errors.sales_order_id}</FormHelperText>
+              </FormControl>
+            </Grid>
+            <Grid size={size}>
+              <TextField
+                required
+                size="small"
+                label={t("page.erp.sales.return.title.customer")}
+                value={erpSalesOrder && erpSalesOrder.customer_name}
+                onChange={handleInputChange}
+                disabled
+                slotProps={erpSalesOrder ?
+                  {
+                    inputLabel: {
+                      shrink: true,
+                    }
+                  } : undefined
+                }
+              />
+            </Grid>
+            <Grid size={size}>
+              <FormControl sx={{ mt: 2, minWidth: 120, width: '100%' }}>
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <DateTimePicker
+                    name="return_date"
+                    label={t('page.erp.sales.return.title.return.date')}
+                    value={returnDate}
+                    onChange={handleDateTimeChange}
+                    slotProps={{
+                      textField: {
+                        size: 'small',
+                        required: true,
+                        error: !!errors.return_date,
+                        helperText: errors.return_date,
+                      },
+                      openPickerButton: {
+                        sx: { mr: -1, '& .MuiSvgIcon-root': { fontSize: '1rem' } },
+                      },
+                    }}
+                  />
+                </LocalizationProvider>
+              </FormControl>
+            </Grid>
+            <Grid size={size}>
+              <FormControl sx={{ mt: 2, minWidth: 120, width: '100%' }}>
+                <InputLabel size="small" id="settlement-account-select-label">{t('page.erp.sales.return.title.settlement.account')}</InputLabel>
+                <Select
+                  size="small"
+                  labelId="settlement-account-select-label"
+                  name="settlement_account_id"
+                  value={formValues.settlement_account_id ?? ''}
+                  onChange={handleSelectChange}
+                  label={t('page.erp.sales.return.title.settlement.account')}
+                >
+                  {settlementAccounts.map((item) => (
+                    <MenuItem key={item.id} value={item.id}>
+                      {item.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid size={size}>
+              <TextField
+                required
+                size="small"
+                type="number"
+                label={t("page.erp.sales.return.title.total.amount")}
+                name='total_amount'
+                value={formValues.total_amount}
+                onChange={handleInputChange}
+                error={!!errors.total_amount}
+                helperText={errors.total_amount}
+              />
+            </Grid>
+            <Grid size={size}>
+              <TextField
+                size="small"
+                type="number"
+                label={t("page.erp.sales.return.title.discount.rate")}
+                name='discount_rate'
+                value={formValues.discount_rate}
+                onChange={handleInputChange}
+              />
+            </Grid>
+            <Grid size={size}>
+              <TextField
+                size="small"
+                label={t("page.erp.sales.return.title.remarks")}
+                name='remarks'
+                value={formValues.remarks}
+                onChange={handleInputChange}
+              />
+            </Grid>
+          </Grid>
+        </FormControl>
+
+        <Typography variant="body1" sx={{ mt: 3, fontSize: '1rem', fontWeight: 500 }}>
+          {t('page.erp.purchase.order.title.check.list')}
+        </Typography>
+        <Card variant="outlined" sx={{ width: '100%', mt: 1, p: 2 }}>
+          <Box sx={{ display: 'table', width: '100%', "& .table-row": { display: 'table-row', "& .table-cell": { display: 'table-cell', padding: 1, textAlign: 'center', } } }}>
+            <Box className='table-row'>
+              <Box className='table-cell' sx={{ width: 50 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.no')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.inbound.detail.title.warehouse')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.remarks')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.product')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.barcode')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.unit')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 200 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.remarks')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 150 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.quantity')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 150 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.unit.price')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.subtotal')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.tax.rate')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.tax')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.tax.total')}</Typography></Box>
+            </Box>
+            {erpSalesOrder && erpSalesOrder.details.map((item, index) => (
+              <Box className='table-row' key={index}>
+                <Box className='table-cell' sx={{ width: 50, verticalAlign: 'middle' }}><Typography variant="body1">{index + 1}</Typography></Box>
+                <Box className='table-cell' sx={{ width: 100 }}>
+                  <FormControl sx={{ minWidth: 120, width: '100%' }}>
+                    <Select
+                      size="small"
+                      name="warehouse_id"
+                      value={formValues.details[index].warehouse_id}
+                      onChange={(e) => handleWarehouseSelectChange(e, index)}
+                      error={!!(errors.details[index]?.warehouse_id)}
+                    >
+                      {warehouses.map((warehouse) => (
+                        <MenuItem key={warehouse.id} value={warehouse.id}>
+                          {warehouse.name}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                    <FormHelperText sx={{ color: 'error.main' }}>{errors.details[index]?.warehouse_id}</FormHelperText>
+                  </FormControl>
+                </Box>
+                <Box className='table-cell' sx={{ width: 50 }}>
+                  <TextField
+                    size="small"
+                    name="remarks"
+                    defaultValue={formValues.details[index].remarks}
+                    onChange={(e) => handleDetailInputChange(e as React.ChangeEvent<HTMLInputElement>, index)}
+                  />
+                </Box>
+                <Box className='table-cell' sx={{ width: 50 }}>
+                  <TextField size="small" value={item.product_name} disabled />
+                </Box>
+                <Box className='table-cell' sx={{ width: 50 }}>
+                  <TextField size="small" value={item.product_barcode ?? ''} disabled />
+                </Box>
+                <Box className='table-cell' sx={{ width: 50 }}>
+                  <TextField size="small" value={item.product_unit_name ?? ''} disabled />
+                </Box>
+                <Box className='table-cell' sx={{ width: 50 }}>
+                  <TextField size="small" value={item.remarks} disabled />
+                </Box>
+                <Box className='table-cell' sx={{ width: 50 }}>
+                  <TextField size="small" value={item.quantity} disabled />
+                </Box>
+                <Box className='table-cell' sx={{ width: 50 }}>
+                  <TextField size="small" value={item.unit_price} disabled />
+                </Box>
+                <Box className='table-cell' sx={{ width: 50 }}>
+                  <TextField size="small" value={item.subtotal} disabled />
+                </Box>
+                <Box className='table-cell' sx={{ width: 50 }}>
+                  <TextField size="small" value={item.tax_rate} disabled />
+                </Box>
+                <Box className='table-cell' sx={{ width: 50 }}>
+                  <TextField size="small" value={(item.quantity * item.unit_price * item.tax_rate) / 100} disabled />
+                </Box>
+                <Box className='table-cell' sx={{ width: 50 }}>
+                  <TextField size="small" value={item.quantity * item.unit_price * (1 + item.tax_rate / 100)} disabled />
+                </Box>
+              </Box>
+            ))}
+          </Box>
+        </Card>
+
+        <Typography variant="body1" sx={{ mt: 3, fontSize: '1rem', fontWeight: 500 }}>
+          {t('page.erp.purchase.order.title.attachment')}
+        </Typography>
+        <Card variant="outlined" sx={{ width: '100%', mt: 1, p: 2 }}>
+          <Grid container rowSpacing={2} columnSpacing={4} sx={{ '& .MuiGrid-root': { display: 'flex', justifyContent: 'center', alignItems: 'center' } }}>
+            {formValues.attachments.map((item, index) => (
+              <Grid key={index} size={{ xs: 12, md: 4 }}>
+                <CustomizedFileUpload
+                  id={'file-upload-' + index}
+                  accept=".jpg,jpeg,.png"
+                  maxSize={100}
+                  onChange={(files, action) => handleFileChange(files, action, index)}
+                  file={item.file}
+                  width={fileWidth}
+                  height={fileHeight}
+                >
+                </CustomizedFileUpload>
+              </Grid>
+            ))}
+            <Grid size={{ xs: 12, md: 4 }}>
+              <CustomizedFileUpload
+                id={'file-upload-' + formValues.attachments.length}
+                accept=".jpg,jpeg,.png"
+                maxSize={100}
+                onChange={(file, action) => handleFileChange(file, action, formValues.attachments.length)}
+                width={fileWidth}
+                height={fileHeight}
+              >
+              </CustomizedFileUpload>
+            </Grid>
+          </Grid>
+        </Card>
       </Box>
-    </CustomizedDialog>
+      <SalesOrderSelect ref={selectErpSalesOrder} onSubmit={selectedErpSalesOrder} />
+    </CustomizedDialog >
   )
 });
 

@@ -158,7 +158,7 @@ const ErpPurchaseReturnAdd = forwardRef(({ onSubmit }: ErpPurchaseReturnAddProps
       }
 
       if (!product.quantity) {
-        newErrors.details[index].quantity = t('page.erp.purchase.inbound.detail.error.quantity');
+        newErrors.details[index].quantity = t('page.erp.purchase.return.detail.error.quantity');
       }
     });
 

@@ -57,7 +57,7 @@ const ErpSalesOrderDelete = forwardRef(({ onSubmit }: ErpSalesOrderDeleteProps, 
       }
     >
       <DialogContentText>
-        {t('global.description.delete', { name: erpSalesOrder && erpSalesOrder.name })}
+        {t('global.description.delete', { name: erpSalesOrder && erpSalesOrder.order_number })}
       </DialogContentText>
     </CustomizedDialog>
   )

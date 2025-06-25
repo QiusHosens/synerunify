@@ -57,7 +57,7 @@ const ErpPurchaseReturnDelete = forwardRef(({ onSubmit }: ErpPurchaseReturnDelet
       }
     >
       <DialogContentText>
-        {t('global.description.delete', { name: erpPurchaseReturn && erpPurchaseReturn.name })}
+        {t('global.description.delete', { name: erpPurchaseReturn && erpPurchaseReturn.order_number })}
       </DialogContentText>
     </CustomizedDialog>
   )

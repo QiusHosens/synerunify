@@ -24,6 +24,7 @@ pub async fn erp_sales_order_router(state: AppState) -> OpenApiRouter {
         .routes(routes!(list))
         .routes(routes!(list_ship_out))
         .routes(routes!(page))
+        .routes(routes!(page_ship_out))
         .routes(routes!(ship_out))
         .routes(routes!(signed))
         .routes(routes!(completed))
@@ -173,6 +174,35 @@ async fn page(
     Query(params): Query<PaginatedKeywordRequest>,
 ) -> CommonResult<PaginatedResponse<ErpSalesOrderPageResponse>> {
     match service::erp_sales_order::get_paginated(&state.db, login_user, params).await {
+        Ok(data) => {CommonResult::with_data(data)}
+        Err(e) => {CommonResult::with_err(&e.to_string())}
+    }
+}
+
+#[utoipa::path(
+    get,
+    path = "/page_ship_out",
+    operation_id = "erp_sales_order_page_ship_out",
+    params(
+        ("page" = u64, Query, description = "page number"),
+        ("size" = u64, Query, description = "page size"),
+        ("keyword" = Option<String>, Query, description = "keyword")
+    ),
+    responses(
+        (status = 200, description = "get page ship out", body = CommonResult<PaginatedResponse<ErpSalesOrderPageResponse>>)
+    ),
+    tag = "erp_sales_order",
+    security(
+        ("bearerAuth" = [])
+    )
+)]
+#[require_authorize(operation_id = "erp_sales_order_page_ship_out", authorize = "")]
+async fn page_ship_out(
+    State(state): State<AppState>,
+    Extension(login_user): Extension<LoginUserContext>,
+    Query(params): Query<PaginatedKeywordRequest>,
+) -> CommonResult<PaginatedResponse<ErpSalesOrderPageResponse>> {
+    match service::erp_sales_order::get_ship_out_paginated(&state.db, login_user, params).await {
         Ok(data) => {CommonResult::with_data(data)}
         Err(e) => {CommonResult::with_err(&e.to_string())}
     }

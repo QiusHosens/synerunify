@@ -47,7 +47,7 @@ const ErpSalesReturnDelete = forwardRef(({ onSubmit }: ErpSalesReturnDeleteProps
     <CustomizedDialog
       open={open}
       onClose={handleClose}
-      title={t('global.operate.delete') + t('global.page.post')}
+      title={t('global.operate.delete') + t('global.page.erp.sales.return')}
       maxWidth={maxWidth}
       actions={
         <>
@@ -57,7 +57,7 @@ const ErpSalesReturnDelete = forwardRef(({ onSubmit }: ErpSalesReturnDeleteProps
       }
     >
       <DialogContentText>
-        {t('global.description.delete', { name: erpSalesReturn && erpSalesReturn.name })}
+        {t('global.description.delete', { name: erpSalesReturn && erpSalesReturn.order_number })}
       </DialogContentText>
     </CustomizedDialog>
   )

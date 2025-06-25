@@ -12,6 +12,7 @@ const apis = {
   get_info: "/erp/erp_sales_order/get_info", // 单条查询
   list: "/erp/erp_sales_order/list", // 列表查询
   page: "/erp/erp_sales_order/page", // 分页查询
+  page_ship_out: "/erp/erp_sales_order/page_ship_out", // 分页查询
 };
 
 export interface ErpSalesOrderRequest {
@@ -139,6 +140,15 @@ export const pageErpSalesOrder = (
 ): Promise<PaginatedResponse<ErpSalesOrderResponse>> => {
   return api.get<PaginatedResponse<ErpSalesOrderResponse>>(
     apis.page,
+    condition
+  );
+};
+
+export const pageShipOutErpSalesOrder = (
+  condition: ErpSalesOrderQueryCondition
+): Promise<PaginatedResponse<ErpSalesOrderResponse>> => {
+  return api.get<PaginatedResponse<ErpSalesOrderResponse>>(
+    apis.page_ship_out,
     condition
   );
 };

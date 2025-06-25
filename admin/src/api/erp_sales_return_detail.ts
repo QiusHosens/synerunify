@@ -12,18 +12,15 @@ const apis = {
 
 export interface ErpSalesReturnDetailRequest {
   id: number; // 退货详情ID
-  order_id: number; // 退货订单ID
   sale_detail_id: number; // 销售订单详情ID
   warehouse_id: number; // 仓库ID
-  product_id: number; // 产品ID
+  product_id?: number; // 产品ID
   quantity: number; // 数量
-  unit_price: number; // 单价
-  subtotal: number; // 小计
-  tax_rate: number; // 税率,精确到万分位
-  remarks: string; // 备注
-  department_code: string; // 部门编码
-  department_id: number; // 部门ID
-  }
+  unit_price?: number; // 单价
+  subtotal?: number; // 小计
+  tax_rate?: number; // 税率,精确到万分位
+  remarks?: string; // 备注
+}
 
 export interface ErpSalesReturnDetailResponse {
   id: number; // 退货详情ID
@@ -42,10 +39,22 @@ export interface ErpSalesReturnDetailResponse {
   create_time: string; // 创建时间
   updater: number; // 更新者ID
   update_time: string; // 更新时间
-  }
+}
+
+export interface ErpSalesReturnDetailBaseResponse {
+  id: number; // 退货详情ID
+  sale_detail_id: number; // 销售订单详情ID
+  warehouse_id: number; // 仓库ID
+  product_id: number; // 产品ID
+  quantity: number; // 数量
+  unit_price: number; // 单价
+  subtotal: number; // 小计
+  tax_rate: number; // 税率,精确到万分位
+  remarks: string; // 备注
+}
 
 export interface ErpSalesReturnDetailQueryCondition extends PaginatedRequest {
-  
+
 }
 
 export const createErpSalesReturnDetail = (erp_sales_return_detail: ErpSalesReturnDetailRequest): Promise<number> => {

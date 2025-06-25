@@ -112,6 +112,8 @@
   "global.page.erp.sale.order": "销售订单",
 
   "global.order.placeholder.order.number": "订单编号,由系统自动生成",
+  "global.title.erp.purchase.list": "采购订单列表",
+  "global.title.erp.sales.list": "销售订单列表",
 
   "page.login.title.username": "用户名",
   "page.login.title.password": "密码",
@@ -462,5 +464,38 @@
   "page.erp.sale.order.title.remarks": "备注",
   "page.erp.sale.order.error.customer.id": "请选择客户",
   "page.erp.sale.order.error.order.date": "请选择订单日期",
-  "page.erp.sale.order.error.total.amount": "请输入总金额"
+  "page.erp.sale.order.error.total.amount": "请输入总金额",
+
+  "page.erp.sales.return.title.order.number": "订单编号",
+  "page.erp.sales.return.title.sales.order": "销售订单",
+  "page.erp.sales.return.title.customer": "客户",
+  "page.erp.sales.return.title.return.date": "退货日期",
+  "page.erp.sales.return.title.total.amount": "总金额",
+  "page.erp.sales.return.title.order.status": "订单状态",
+  "page.erp.sales.return.title.discount.rate": "",
+  "page.erp.sales.return.title.settlement.account": "结算账户",
+  "page.erp.sales.return.title.deposit": "定金",
+  "page.erp.sales.return.title.remarks": "备注",
+  "page.erp.sales.return.error.order.number": "请输入订单编号",
+  "page.erp.sales.return.error.sales.order": "请选择销售订单",
+  "page.erp.sales.return.error.customer": "请选择客户",
+  "page.erp.sales.return.error.return.date": "请选择退货日期",
+  "page.erp.sales.return.error.total.amount": "请输入总金额",
+
+  "page.erp.sales.return.detail.title.order_id": "退货订单ID",
+  "page.erp.sales.return.detail.title.sale_detail_id": "销售订单详情",
+  "page.erp.sales.return.detail.title.warehouse_id": "仓库",
+  "page.erp.sales.return.detail.title.product_id": "产品",
+  "page.erp.sales.return.detail.title.quantity": "数量",
+  "page.erp.sales.return.detail.title.unit_price": "单价",
+  "page.erp.sales.return.detail.title.subtotal": "小计",
+  "page.erp.sales.return.detail.title.tax_rate": "税率",
+  "page.erp.sales.return.detail.title.remarks": "备注",
+  "page.erp.sales.return.detail.error.order_id": "请输入退货订单",
+  "page.erp.sales.return.detail.error.sale_detail_id": "请输入销售订单详情",
+  "page.erp.sales.return.detail.error.warehouse_id": "请输入仓库",
+  "page.erp.sales.return.detail.error.product_id": "请输入产品",
+  "page.erp.sales.return.detail.error.quantity": "请输入数量",
+  "page.erp.sales.return.detail.error.unit_price": "请输入单价",
+  "page.erp.sales.return.detail.error.subtotal": "请输入小计"
 }
