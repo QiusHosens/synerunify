@@ -9,14 +9,57 @@ metadata:
 data:
   my.cnf: |-
     [client]
-    default-character-set=utf8mb4
+    default-character-set=utf8mb4  # 设置客户端默认字符集为 utf8mb4，支持多语言字符
+
     [mysql]
-    default-character-set=utf8mb4
-    [mysqld] 
-    skip-name-resolve
-    max_connections = 2000
-    secure_file_priv=/var/lib/mysql
-    sql_mode=STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION
+    default-character-set=utf8mb4  # 设置 MySQL 命令行客户端默认字符集为 utf8mb4
+
+    [mysqld]
+    skip-name-resolve              # 禁用 DNS 解析，使用 IP 地址连接，减少连接延迟
+    max_connections=2000           # 最大连接数，支持高并发，需确保内存足够
+    secure_file_priv=/var/lib/mysql # 限制 LOAD DATA/FILE 操作的目录，增强安全性
+    sql_mode=STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION # 严格模式，禁止无效日期和除零，保持数据完整性
+
+    # 性能监控
+    slow_query_log=ON              # 启用慢查询日志，记录执行时间超阈值的查询
+    slow_query_log_file=/var/log/mysql/mysql-slow.log # 慢查询日志路径，需确保目录可写
+    long_query_time=2              # 慢查询阈值（秒），记录超过 2 秒的查询
+    log_queries_not_using_indexes=ON # 记录未使用索引的查询，帮助优化索引
+    log_slow_admin_statements=ON   # 记录慢的管理语句（如 ALTER TABLE），便于排查
+    performance_schema=ON          # 启用性能模式，收集详细性能指标
+    performance_schema_instrument='%=ON' # 启用所有性能监控，可能略增开销，生产环境可精简
+
+    # 内存优化
+    innodb_buffer_pool_size=12G    # InnoDB 缓冲池大小，设为内存的 75%（16GB 内存），缓存数据和索引
+    innodb_buffer_pool_instances=8 # 缓冲池实例数，适配 8 核 CPU，提高并发
+    table_open_cache=2000          # 缓存打开的表，减少表打开/关闭开销
+    table_open_cache_instances=16  # 表缓存实例数，提高并发访问效率
+    tmp_table_size=64M             # 临时表大小，减少磁盘临时表使用
+    max_heap_table_size=64M        # 内存表最大大小，与 tmp_table_size 保持一致
+    key_buffer_size=256M           # MyISAM 索引缓存，若不用 MyISAM 可设为 16M
+
+    # 并发优化
+    thread_cache_size=50           # 缓存线程数，减少连接创建开销
+    innodb_thread_concurrency=16   # InnoDB 并发线程数，设为 CPU 核心数的 2 倍（8 核）
+    innodb_read_io_threads=8       # InnoDB 读线程数，适配多核 CPU 和 SSD
+    innodb_write_io_threads=8      # InnoDB 写线程数，适配多核 CPU 和 SSD
+
+    # I/O 优化
+    innodb_flush_log_at_trx_commit=2 # 每秒写事务日志，降低写盘开销，适合非严格事务场景
+    innodb_io_capacity=1000        # I/O 容量，适配 SSD 磁盘，提高吞吐量
+    innodb_flush_method=O_DIRECT   # 使用直接 I/O，避免操作系统缓存干扰
+
+    # 日志与错误
+    log_error=/var/log/mysql/error.log # 错误日志路径，记录 MySQL 错误信息
+    general_log=OFF                # 禁用通用日志，避免性能开销
+    log_bin=/var/log/mysql/mysql-bin # 启用二进制日志，支持备份和复制（可禁用）
+    expire_logs_days=7             # 二进制日志保留 7 天，节省磁盘空间
+
+    # InnoDB 优化
+    innodb_log_file_size=512M      # InnoDB 日志文件大小，适配大事务，减少切换
+    innodb_log_buffer_size=16M     # 日志缓冲区大小，减少写盘频率
+    innodb_autoinc_lock_mode=2     # 优化自增列插入性能，适合高并发
+    innodb_stats_on_metadata=OFF   # 禁用元数据统计，减少 DESCRIBE 等操作开销
 ...
 ---
 kind: Deployment
@@ -47,7 +90,7 @@ spec:
           hostPath:
             path: /data/volume/mysql
             type: ''
-        - name: volume-oac5aw
+        - name: mysql-cnf
           configMap:
             name: mysql-config
             defaultMode: 420
@@ -71,7 +114,7 @@ spec:
               mountPath: /etc/localtime
             - name: mysql-volume
               mountPath: /var/lib/mysql
-            - name: volume-oac5aw
+            - name: mysql-cnf
               readOnly: true
               mountPath: /etc/mysql/conf.d/my.cnf
           terminationMessagePath: /dev/termination-log
