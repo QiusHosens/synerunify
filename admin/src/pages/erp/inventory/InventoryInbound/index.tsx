@@ -1,45 +1,57 @@
-import { Box, Button, Switch } from '@mui/material';
+import { Box, Button } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { DataGrid, GridCallbackDetails, GridColDef, GridFilterModel, GridRenderCellParams, GridSortModel } from '@mui/x-data-grid';
+import ViewIcon from '@/assets/image/svg/view.svg';
 import EditIcon from '@/assets/image/svg/edit.svg';
 import DeleteIcon from '@/assets/image/svg/delete.svg';
-import { pageErpInboundRecord, ErpInboundRecordQueryCondition, ErpInboundRecordResponse } from '@/api';
-import ErpInboundRecordAdd from './Add';
-import ErpInboundRecordEdit from './Edit';
-import ErpInboundRecordDelete from './Delete';
+import { ErpInboundOrderQueryCondition, ErpInboundOrderResponse, pageOtherErpInboundOrder } from '@/api';
+import ErpInboundOrderAdd from './Add';
+import ErpInboundOrderEdit from './Edit';
+import ErpInboundOrderDelete from './Delete';
 import { useHomeStore } from '@/store';
+import CustomizedAutoMore from '@/components/CustomizedAutoMore';
+import CustomizedCopyableText from '@/components/CustomizedCopyableText';
+import ErpInboundOrderInfo from './Info';
 
-export default function ErpInboundRecord() {
+export default function ErpInboundOrder() {
   const { t } = useTranslation();
   const { hasOperatePermission } = useHomeStore();
 
   const [total, setTotal] = useState<number>(0);
-  const [condition, setCondition] = useState<ErpInboundRecordQueryCondition>({
+  const [condition, setCondition] = useState<ErpInboundOrderQueryCondition>({
     page: 1,
     size: 20,
   });
 
-  const [records, setRecords] = useState<Array<ErpInboundRecordResponse>>([]);
+  const [records, setRecords] = useState<Array<ErpInboundOrderResponse>>([]);
   const [sortModel, setSortModel] = useState<GridSortModel>([]);
   const [filterModel, setFilterModel] = useState<GridFilterModel>();
 
-  const addErpInboundRecord = useRef(null);
-  const editErpInboundRecord = useRef(null);
-  const deleteErpInboundRecord = useRef(null);
+  const viewErpInboundOrder = useRef(null);
+  const addErpInboundOrder = useRef(null);
+  const editErpInboundOrder = useRef(null);
+  const deleteErpInboundOrder = useRef(null);
 
   const columns: GridColDef[] = useMemo(
     () => [
-      { field: 'purchase_id', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'warehouse_id', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'product_id', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'quantity', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'inbound_date', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'remarks', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'department_code', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'department_id', headerName: t("page."), flex: 1, minWidth: 100 },
-
-      { field: 'create_time', headerName: t("page.post.title.create.time"), flex: 1, minWidth: 180 },
+      {
+        field: 'order_number',
+        headerName: t("page.erp.purchase.inbound.title.order.number"),
+        flex: 1.4,
+        minWidth: 100,
+        renderCell: (params: GridRenderCellParams) => (
+          <CustomizedCopyableText
+            text={params.row.order_number}
+          />
+        )
+      },
+      { field: 'inbound_date', headerName: t("page.erp.purchase.inbound.title.inbound.date"), flex: 1, minWidth: 100 },
+      { field: 'settlement_account_name', headerName: t("page.erp.purchase.inbound.title.settlement.account"), flex: 1, minWidth: 100 },
+      { field: 'discount_rate', headerName: t("page.erp.purchase.inbound.title.discount.rate"), flex: 1, minWidth: 100 },
+      { field: 'other_cost', headerName: t("page.erp.purchase.inbound.title.other.cost"), flex: 1, minWidth: 100 },
+      { field: 'remarks', headerName: t("page.erp.purchase.inbound.title.remarks"), flex: 1, minWidth: 100 },
+      { field: 'create_time', headerName: t("global.title.create.time"), flex: 1, minWidth: 180 },
       {
         field: 'actions',
         sortable: false,
@@ -48,45 +60,56 @@ export default function ErpInboundRecord() {
         flex: 1,
         minWidth: 100,
         renderCell: (params: GridRenderCellParams) => (
-          <Box sx={{ height: '100%', display: 'flex', gap: 1, alignItems: 'center' }}>
-            {hasOperatePermission('system:post:edit') && <Button
+          <CustomizedAutoMore>
+            {hasOperatePermission('erp:purchase:inbound:get') && <Button
               size="small"
               variant='customOperate'
-              title={t('page.post.operate.edit')}
+              title={t('global.operate.view') + t('global.page.erp.purchase.order')}
+              startIcon={<ViewIcon />}
+              onClick={() => handleClickOpenView(params.row)}
+            />}
+            {hasOperatePermission('erp:purchase:inbound:edit') && <Button
+              size="small"
+              variant='customOperate'
+              title={t('global.operate.edit') + t('global.page.erp.purchase.inbound')}
               startIcon={<EditIcon />}
               onClick={() => handleClickOpenEdit(params.row)}
             />}
-            {hasOperatePermission('system:post:delete') && <Button
+            {hasOperatePermission('erp:purchase:inbound:delete') && <Button
               sx={{ color: 'error.main' }}
               size="small"
               variant='customOperate'
-              title={t('page.post.operate.delete')}
+              title={t('global.operate.delete') + t('global.page.erp.purchase.inbound')}
               startIcon={<DeleteIcon />}
               onClick={() => handleClickOpenDelete(params.row)}
             />}
-          </Box>
+          </CustomizedAutoMore>
         ),
       },
     ],
     [t]
   );
 
-  const queryRecords = async (condition: ErpInboundRecordQueryCondition) => {
-    const result = await pageErpInboundRecord(condition);
+  const queryRecords = async (condition: ErpInboundOrderQueryCondition) => {
+    const result = await pageOtherErpInboundOrder(condition);
     setRecords(result.list);
     setTotal(result.total);
   };
 
-  const handleClickOpenAdd = () => {
-    (addErpInboundRecord.current as any).show();
+  const handleClickOpenView = (erpInboundOrder: ErpInboundOrderResponse) => {
+    (viewErpInboundOrder.current as any).show(erpInboundOrder);
   }
 
-  const handleClickOpenEdit = (erpInboundRecord: ErpInboundRecordResponse) => {
-    (editErpInboundRecord.current as any).show(erpInboundRecord);
+  const handleClickOpenAdd = () => {
+    (addErpInboundOrder.current as any).show();
+  }
+
+  const handleClickOpenEdit = (erpInboundOrder: ErpInboundOrderResponse) => {
+    (editErpInboundOrder.current as any).show(erpInboundOrder);
   };
 
-  const handleClickOpenDelete = (erpInboundRecord: ErpInboundRecordResponse) => {
-    (deleteErpInboundRecord.current as any).show(erpInboundRecord);
+  const handleClickOpenDelete = (erpInboundOrder: ErpInboundOrderResponse) => {
+    (deleteErpInboundOrder.current as any).show(erpInboundOrder);
   };
 
   useEffect(() => {
@@ -96,14 +119,14 @@ export default function ErpInboundRecord() {
   const handleSortModelChange = (model: GridSortModel, details: GridCallbackDetails) => {
     setSortModel(model);
     if (model.length > 0) {
-      setCondition((prev) => ({ ...prev, ...{ sort_field: model[0].field, sort: model[0].sort } } as ErpInboundRecordQueryCondition));
+      setCondition((prev) => ({ ...prev, ...{ sort_field: model[0].field, sort: model[0].sort } } as ErpInboundOrderQueryCondition));
     }
   };
 
   const handleFilterModelChange = (model: GridFilterModel, _details: GridCallbackDetails) => {
     setFilterModel(model);
     if (model.items.length > 0) {
-      setCondition((prev) => ({ ...prev, ...{ filter_field: model.items[0].field, filter_operator: model.items[0].operator, filter_value: model.items[0].value } } as ErpInboundRecordQueryCondition));
+      setCondition((prev) => ({ ...prev, ...{ filter_field: model.items[0].field, filter_operator: model.items[0].operator, filter_value: model.items[0].value } } as ErpInboundOrderQueryCondition));
     }
   }
 
@@ -115,7 +138,7 @@ export default function ErpInboundRecord() {
     <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
       <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between' }}>
         <Box></Box>
-        {hasOperatePermission('system:post:add') && <Button variant="customContained" onClick={handleClickOpenAdd}>
+        {hasOperatePermission('erp:purchase:inbound:add') && <Button variant="customContained" onClick={handleClickOpenAdd}>
           {t('global.operate.add')}
         </Button>}
       </Box>
@@ -141,9 +164,10 @@ export default function ErpInboundRecord() {
           }));
         }}
       />
-      <ErpInboundRecordAdd ref={addErpInboundRecord} onSubmit={refreshData} />
-      <ErpInboundRecordEdit ref={editErpInboundRecord} onSubmit={refreshData} />
-      <ErpInboundRecordDelete ref={deleteErpInboundRecord} onSubmit={refreshData} />
+      <ErpInboundOrderInfo ref={viewErpInboundOrder} />
+      <ErpInboundOrderAdd ref={addErpInboundOrder} onSubmit={refreshData} />
+      <ErpInboundOrderEdit ref={editErpInboundOrder} onSubmit={refreshData} />
+      <ErpInboundOrderDelete ref={deleteErpInboundOrder} onSubmit={refreshData} />
     </Box>
   );
 }

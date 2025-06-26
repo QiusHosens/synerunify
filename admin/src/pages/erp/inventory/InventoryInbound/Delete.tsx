@@ -2,24 +2,24 @@ import { Button, DialogContentText } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
-import { deleteErpInboundRecord, ErpInboundRecordResponse } from '@/api';
+import { deleteErpInboundOrder, ErpInboundOrderResponse } from '@/api';
 import CustomizedDialog from '@/components/CustomizedDialog';
 
-interface ErpInboundRecordDeleteProps {
+interface ErpInboundOrderDeleteProps {
   onSubmit: () => void;
 }
 
-const ErpInboundRecordDelete = forwardRef(({ onSubmit }: ErpInboundRecordDeleteProps, ref) => {
+const ErpInboundOrderDelete = forwardRef(({ onSubmit }: ErpInboundOrderDeleteProps, ref) => {
   const { t } = useTranslation();
 
   const [open, setOpen] = useState(false);
   const [maxWidth] = useState<DialogProps['maxWidth']>('sm');
 
-  const [erpInboundRecord, setErpInboundRecord] = useState<ErpInboundRecordResponse>();
+  const [erpInboundOrder, setErpInboundOrder] = useState<ErpInboundOrderResponse>();
 
   useImperativeHandle(ref, () => ({
-    show(erpInboundRecord: ErpInboundRecordResponse) {
-      setErpInboundRecord(erpInboundRecord);
+    show(erpInboundOrder: ErpInboundOrderResponse) {
+      setErpInboundOrder(erpInboundOrder);
       setOpen(true);
     },
     hide() {
@@ -36,8 +36,8 @@ const ErpInboundRecordDelete = forwardRef(({ onSubmit }: ErpInboundRecordDeleteP
   };
 
   const handleSubmit = async () => {
-    if (erpInboundRecord) {
-      await deleteErpInboundRecord(erpInboundRecord.id);
+    if (erpInboundOrder) {
+      await deleteErpInboundOrder(erpInboundOrder.id);
     }
     handleClose();
     onSubmit();
@@ -47,7 +47,7 @@ const ErpInboundRecordDelete = forwardRef(({ onSubmit }: ErpInboundRecordDeleteP
     <CustomizedDialog
       open={open}
       onClose={handleClose}
-      title={t('global.operate.delete') + t('global.page.post')}
+      title={t('global.operate.delete') + t('global.page.erp.purchase.inbound')}
       maxWidth={maxWidth}
       actions={
         <>
@@ -57,10 +57,10 @@ const ErpInboundRecordDelete = forwardRef(({ onSubmit }: ErpInboundRecordDeleteP
       }
     >
       <DialogContentText>
-        {t('global.description.delete', { name: erpInboundRecord && erpInboundRecord.name })}
+        {t('global.description.delete', { name: erpInboundOrder && erpInboundOrder.order_number })}
       </DialogContentText>
     </CustomizedDialog>
   )
 });
 
-export default ErpInboundRecordDelete;
+export default ErpInboundOrderDelete;

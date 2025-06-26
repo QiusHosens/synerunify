@@ -66,6 +66,7 @@ export interface ErpInboundOrderBaseResponse {
   other_cost: number; // 其他费用
   settlement_account_id: number; // 结算账户ID
 
+  supplier_name: string; // 供应商
   settlement_account_name?: string; // 结算账户
 
   details: ErpInboundOrderDetailBaseResponse[]; // 入库采购产品仓库列表

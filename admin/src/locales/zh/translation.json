@@ -112,10 +112,14 @@
   "global.page.erp.sale.order": "销售订单",
   "global.page.erp.sale.outbound": "销售出库",
   "global.page.erp.sales.return": "销售退货",
+  "global.page.erp.other.inbound": "其他入库",
+  "global.page.erp.other.outbound": "其他出库",
 
   "global.order.placeholder.order.number": "订单编号,由系统自动生成",
   "global.title.erp.purchase.list": "采购订单列表",
   "global.title.erp.sales.list": "销售订单列表",
+  "global.error.product.empty": "产品为空,请先添加产品",
+  "global.error.warehouse.empty": "仓库为空,请先添加仓库",
 
   "page.login.title.username": "用户名",
   "page.login.title.password": "密码",
