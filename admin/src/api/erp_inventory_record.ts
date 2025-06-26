@@ -36,6 +36,10 @@ export interface ErpInventoryRecordResponse {
   create_time: string; // 创建时间
   updater: number; // 更新者ID
   update_time: string; // 更新时间
+
+  product_name: string;
+  warehouse_name: string;
+  unit_name: string;
 }
 
 export interface ErpInventoryRecordQueryCondition extends PaginatedRequest {
