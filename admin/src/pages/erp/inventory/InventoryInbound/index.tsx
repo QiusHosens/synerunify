@@ -61,21 +61,21 @@ export default function ErpInboundOrder() {
         minWidth: 100,
         renderCell: (params: GridRenderCellParams) => (
           <CustomizedAutoMore>
-            {hasOperatePermission('erp:purchase:inbound:get') && <Button
+            {hasOperatePermission('erp:inventory:inbound:get') && <Button
               size="small"
               variant='customOperate'
               title={t('global.operate.view') + t('global.page.erp.purchase.order')}
               startIcon={<ViewIcon />}
               onClick={() => handleClickOpenView(params.row)}
             />}
-            {hasOperatePermission('erp:purchase:inbound:edit') && <Button
+            {hasOperatePermission('erp:inventory:inbound:edit') && <Button
               size="small"
               variant='customOperate'
               title={t('global.operate.edit') + t('global.page.erp.purchase.inbound')}
               startIcon={<EditIcon />}
               onClick={() => handleClickOpenEdit(params.row)}
             />}
-            {hasOperatePermission('erp:purchase:inbound:delete') && <Button
+            {hasOperatePermission('erp:inventory:inbound:delete') && <Button
               sx={{ color: 'error.main' }}
               size="small"
               variant='customOperate'
@@ -138,7 +138,7 @@ export default function ErpInboundOrder() {
     <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
       <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between' }}>
         <Box></Box>
-        {hasOperatePermission('erp:purchase:inbound:add') && <Button variant="customContained" onClick={handleClickOpenAdd}>
+        {hasOperatePermission('erp:inventory:inbound:add') && <Button variant="customContained" onClick={handleClickOpenAdd}>
           {t('global.operate.add')}
         </Button>}
       </Box>
