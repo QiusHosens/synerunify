@@ -207,6 +207,7 @@ pub async fn get_base_other_by_id(db: &DatabaseConnection, login_user: LoginUser
 pub async fn get_paginated_purchase(db: &DatabaseConnection, login_user: LoginUserContext, params: PaginatedKeywordRequest) -> Result<PaginatedResponse<ErpInboundOrderPagePurchaseResponse>> {
     let paginator = ErpInboundOrderEntity::find_active_with_data_permission(login_user.clone())
         .filter(Column::TenantId.eq(login_user.tenant_id))
+        .filter(Column::PurchaseId.is_not_null())
         .select_also(ErpPurchaseOrderEntity)
         .select_also(ErpSupplierEntity)
         // .select_also(ErpSettlementAccountEntity)
@@ -247,6 +248,7 @@ pub async fn get_paginated_purchase(db: &DatabaseConnection, login_user: LoginUs
 pub async fn get_paginated_other(db: &DatabaseConnection, login_user: LoginUserContext, params: PaginatedKeywordRequest) -> Result<PaginatedResponse<ErpInboundOrderPageOtherResponse>> {
     let paginator = ErpInboundOrderEntity::find_active_with_data_permission(login_user.clone())
         .filter(Column::TenantId.eq(login_user.tenant_id))
+        .filter(Column::PurchaseId.is_null())
         .select_also(ErpSupplierEntity)
         .select_also(ErpSettlementAccountEntity)
         .join(JoinType::LeftJoin, Relation::InboundSupplier.def())

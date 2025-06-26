@@ -2,14 +2,13 @@ import { Box, Button, Card, FormControl, FormHelperText, Grid, InputLabel, MenuI
 import { useTranslation } from 'react-i18next';
 import { forwardRef, useCallback, useImperativeHandle, useState } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
-import { ErpInboundOrderAttachmentRequest, ErpInboundOrderBaseResponse, ErpInboundOrderRequest, ErpInboundOrderResponse, ErpProductResponse, ErpPurchaseOrderDetailInfoResponse, ErpPurchaseOrderInfoResponse, ErpSettlementAccountResponse, ErpSupplierResponse, ErpWarehouseResponse, getBaseOtherErpInboundOrder, getBasePurchaseErpInboundOrder, getErpPurchaseOrderInfo, listErpProduct, listErpSettlementAccount, listErpSupplier, listErpWarehouse, updateOtherErpInboundOrder, updatePurchaseErpInboundOrder } from '@/api';
+import { ErpInboundOrderAttachmentRequest, ErpInboundOrderBaseResponse, ErpInboundOrderRequest, ErpInboundOrderResponse, ErpProductResponse, ErpSettlementAccountResponse, ErpSupplierResponse, ErpWarehouseResponse, getBaseOtherErpInboundOrder, listErpProduct, listErpSettlementAccount, listErpSupplier, listErpWarehouse, updateOtherErpInboundOrder } from '@/api';
 import CustomizedDialog from '@/components/CustomizedDialog';
 import { Dayjs } from 'dayjs';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import CustomizedFileUpload, { DownloadProps, UploadFile } from '@/components/CustomizedFileUpload';
 import { downloadSystemFile, uploadSystemFile } from '@/api/system_file';
 import { PickerValue } from '@mui/x-date-pickers/internals';
-import CustomizedTag from '@/components/CustomizedTag';
 import { DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import CustomizedCopyableText from '@/components/CustomizedCopyableText';
 
@@ -108,15 +107,18 @@ const ErpInboundOrderEdit = forwardRef(({ onSubmit }: ErpInboundOrderEditProps, 
     const result = await getBaseOtherErpInboundOrder(erpInboundOrderRequest.id);
     setErpInboundOrder(result);
     const details = result.details;
-    for (const detail of details) {
-      for (const product of products) {
-        if (product.id === detail.product_id) {
-          detail.product = product;
+    if (details) {
+      for (const detail of details) {
+        for (const product of products) {
+          if (product.id === detail.product_id) {
+            detail.product = product;
+          }
         }
       }
     }
     setErpInboundOrderRequest({
       ...result,
+      details,
     })
     setInboundDate(new AdapterDayjs().dayjs(result.inbound_date));
     // 设置图片
@@ -459,7 +461,6 @@ const ErpInboundOrderEdit = forwardRef(({ onSubmit }: ErpInboundOrderEditProps, 
                   <TextField
                     size="small"
                     name="remarks"
-                    defaultValue={item.remarks}
                     disabled
                   />
                 </Box>

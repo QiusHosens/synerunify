@@ -204,6 +204,8 @@ pub async fn get_info_sales_by_id(db: &DatabaseConnection, login_user: LoginUser
 
 pub async fn get_paginated_sales(db: &DatabaseConnection, login_user: LoginUserContext, params: PaginatedKeywordRequest) -> Result<PaginatedResponse<ErpOutboundOrderPageSalesResponse>> {
     let paginator = ErpOutboundOrderEntity::find_active_with_data_permission(login_user.clone())
+        .filter(Column::TenantId.eq(login_user.tenant_id))
+        .filter(Column::SaleId.is_not_null())
         .select_also(ErpSalesOrderEntity)
         .select_also(ErpCustomerEntity)
         // .select_also(ErpSettlementAccountEntity)
@@ -243,6 +245,8 @@ pub async fn get_paginated_sales(db: &DatabaseConnection, login_user: LoginUserC
 
 pub async fn get_paginated_other(db: &DatabaseConnection, login_user: LoginUserContext, params: PaginatedKeywordRequest) -> Result<PaginatedResponse<ErpOutboundOrderPageOtherResponse>> {
     let paginator = ErpOutboundOrderEntity::find_active_with_data_permission(login_user.clone())
+        .filter(Column::TenantId.eq(login_user.tenant_id))
+        .filter(Column::SaleId.is_null())
         .select_also(ErpCustomerEntity)
         .select_also(ErpSettlementAccountEntity)
         .join(JoinType::LeftJoin, Relation::OutboundCustomer.def())

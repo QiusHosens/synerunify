@@ -1,5 +1,6 @@
 import { PaginatedRequest, PaginatedResponse } from '@/base/page';
 import { api } from '@/utils/request';
+import { ErpProductResponse } from './erp_product';
 
 const apis = {
   create: '/erp/erp_outbound_order_detail/create', // 新增
@@ -20,6 +21,8 @@ export interface ErpOutboundOrderDetailRequest {
   subtotal?: number; // 小计
   tax_rate?: number; // 税率,精确到万分位
   remarks?: string; // 备注
+
+  product?: ErpProductResponse;
 }
 
 export interface ErpOutboundOrderDetailResponse {
@@ -52,6 +55,8 @@ export interface ErpOutboundOrderDetailBaseResponse {
   subtotal: number; // 小计
   tax_rate: number; // 税率,精确到万分位
   remarks: string; // 备注
+
+  product?: ErpProductResponse;
 }
 
 export interface ErpOutboundOrderDetailQueryCondition extends PaginatedRequest {
