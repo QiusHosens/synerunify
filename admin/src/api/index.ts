@@ -26,6 +26,7 @@ export * from './erp_payment_attachment';
 export * from './erp_payment_detail';
 export * from './erp_payment';
 export * from './erp_product_category';
+export * from './erp_product_inventory';
 export * from './erp_product_unit';
 export * from './erp_product';
 export * from './erp_purchase_order_attachment';

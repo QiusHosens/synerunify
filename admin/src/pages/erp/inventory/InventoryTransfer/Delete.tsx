@@ -47,7 +47,7 @@ const ErpInventoryTransferDelete = forwardRef(({ onSubmit }: ErpInventoryTransfe
     <CustomizedDialog
       open={open}
       onClose={handleClose}
-      title={t('global.operate.delete') + t('global.page.post')}
+      title={t('global.operate.delete') + t('global.page.mark_translation')}
       maxWidth={maxWidth}
       actions={
         <>

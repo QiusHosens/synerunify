@@ -19,10 +19,10 @@ export default function ErpInventoryRecord() {
 
   const columns: GridColDef[] = useMemo(
     () => [
-      { field: 'product_name', headerName: t("page.mark_translation.title.product"), flex: 1, minWidth: 100 },
-      { field: 'warehouse_name', headerName: t("page.mark_translation.title.warehouse"), flex: 1, minWidth: 100 },
-      { field: 'unit_name', headerName: t("page.mark_translation.title.unit"), flex: 1, minWidth: 100 },
+      { field: 'product_name', headerName: t("page.erp.product.list.title.name"), flex: 1, minWidth: 100 },
+      { field: 'warehouse_name', headerName: t("page.erp.inventory.warehouse.title.name"), flex: 1, minWidth: 100 },
       { field: 'quantity', headerName: t("page.mark_translation.title.quantity"), flex: 1, minWidth: 100 },
+      { field: 'unit_name', headerName: t("page.erp.product.unit.title.name"), flex: 1, minWidth: 100 },
       { field: 'record_type', headerName: t("page.mark_translation.title.record_type"), flex: 1, minWidth: 100 },
       { field: 'record_date', headerName: t("page.mark_translation.title.record_date"), flex: 1, minWidth: 100 },
       { field: 'remarks', headerName: t("page.mark_translation.title.remarks"), flex: 1, minWidth: 100 },

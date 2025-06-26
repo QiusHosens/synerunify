@@ -17,6 +17,9 @@ interface FormValues {
   }
 
 interface FormErrors { 
+  from_warehouse_id?: string; // 调出仓库ID
+  to_warehouse_id?: string; // 调入仓库ID
+  product_id?: string; // 产品ID
   quantity?: string; // 调拨数量
   transfer_date?: string; // 调拨日期
   department_code?: string; // 部门编码
@@ -56,20 +59,32 @@ const ErpInventoryTransferAdd = forwardRef(({ onSubmit }: ErpInventoryTransferAd
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
     
+    if (!formValues.from_warehouse_id && formValues.from_warehouse_id != 0) {
+      newErrors.from_warehouse_id = t('page.mark_translation.error.from_warehouse_id');
+    }
+    
+    if (!formValues.to_warehouse_id && formValues.to_warehouse_id != 0) {
+      newErrors.to_warehouse_id = t('page.mark_translation.error.to_warehouse_id');
+    }
+    
+    if (!formValues.product_id && formValues.product_id != 0) {
+      newErrors.product_id = t('page.mark_translation.error.product_id');
+    }
+    
     if (!formValues.quantity && formValues.quantity != 0) {
-      newErrors.quantity = t('page.post.error.quantity');
+      newErrors.quantity = t('page.mark_translation.error.quantity');
     }
     
     if (!formValues.transfer_date.trim()) {
-      newErrors.transfer_date = t('page.post.error.transfer_date');
+      newErrors.transfer_date = t('page.mark_translation.error.transfer_date');
     }
     
     if (!formValues.department_code.trim()) {
-      newErrors.department_code = t('page.post.error.department_code');
+      newErrors.department_code = t('page.mark_translation.error.department_code');
     }
     
     if (!formValues.department_id && formValues.department_id != 0) {
-      newErrors.department_id = t('page.post.error.department_id');
+      newErrors.department_id = t('page.mark_translation.error.department_id');
     }
     
     setErrors(newErrors);
@@ -158,7 +173,7 @@ const ErpInventoryTransferAdd = forwardRef(({ onSubmit }: ErpInventoryTransferAd
     <CustomizedDialog
       open={open}
       onClose={handleClose}
-      title={t('global.operate.add') + t('global.page.post')}
+      title={t('global.operate.add') + t('global.page.mark_translation')}
       maxWidth={maxWidth}
       actions={
         <>
@@ -178,34 +193,43 @@ const ErpInventoryTransferAdd = forwardRef(({ onSubmit }: ErpInventoryTransferAd
       >
         <FormControl sx={ {minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' }} }>
           <TextField
+            required
             size="small"
             type="number"
-            label={t("page.post.title.from_warehouse_id")}
+            label={t("page.mark_translation.title.from_warehouse_id")}
             name='from_warehouse_id'
             value={formValues.from_warehouse_id}
             onChange={handleInputChange}
-          />
-          <TextField
-            size="small"
-            type="number"
-            label={t("page.post.title.to_warehouse_id")}
-            name='to_warehouse_id'
-            value={formValues.to_warehouse_id}
-            onChange={handleInputChange}
-          />
-          <TextField
-            size="small"
-            type="number"
-            label={t("page.post.title.product_id")}
-            name='product_id'
-            value={formValues.product_id}
-            onChange={handleInputChange}
+            error={!!errors.from_warehouse_id}
+            helperText={errors.from_warehouse_id}
           />
           <TextField
             required
             size="small"
             type="number"
-            label={t("page.post.title.quantity")}
+            label={t("page.mark_translation.title.to_warehouse_id")}
+            name='to_warehouse_id'
+            value={formValues.to_warehouse_id}
+            onChange={handleInputChange}
+            error={!!errors.to_warehouse_id}
+            helperText={errors.to_warehouse_id}
+          />
+          <TextField
+            required
+            size="small"
+            type="number"
+            label={t("page.mark_translation.title.product_id")}
+            name='product_id'
+            value={formValues.product_id}
+            onChange={handleInputChange}
+            error={!!errors.product_id}
+            helperText={errors.product_id}
+          />
+          <TextField
+            required
+            size="small"
+            type="number"
+            label={t("page.mark_translation.title.quantity")}
             name='quantity'
             value={formValues.quantity}
             onChange={handleInputChange}
@@ -215,7 +239,7 @@ const ErpInventoryTransferAdd = forwardRef(({ onSubmit }: ErpInventoryTransferAd
           <TextField
             required
             size="small"
-            label={t("page.post.title.transfer_date")}
+            label={t("page.mark_translation.title.transfer_date")}
             name='transfer_date'
             value={formValues.transfer_date}
             onChange={handleInputChange}
@@ -224,7 +248,7 @@ const ErpInventoryTransferAdd = forwardRef(({ onSubmit }: ErpInventoryTransferAd
           />
           <TextField
             size="small"
-            label={t("page.post.title.remarks")}
+            label={t("page.mark_translation.title.remarks")}
             name='remarks'
             value={formValues.remarks}
             onChange={handleInputChange}
@@ -232,7 +256,7 @@ const ErpInventoryTransferAdd = forwardRef(({ onSubmit }: ErpInventoryTransferAd
           <TextField
             required
             size="small"
-            label={t("page.post.title.department_code")}
+            label={t("page.mark_translation.title.department_code")}
             name='department_code'
             value={formValues.department_code}
             onChange={handleInputChange}
@@ -243,7 +267,7 @@ const ErpInventoryTransferAdd = forwardRef(({ onSubmit }: ErpInventoryTransferAd
             required
             size="small"
             type="number"
-            label={t("page.post.title.department_id")}
+            label={t("page.mark_translation.title.department_id")}
             name='department_id'
             value={formValues.department_id}
             onChange={handleInputChange}

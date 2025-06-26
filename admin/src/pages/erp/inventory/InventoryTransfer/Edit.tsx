@@ -6,6 +6,9 @@ import { ErpInventoryTransferRequest, ErpInventoryTransferResponse, updateErpInv
 import CustomizedDialog from '@/components/CustomizedDialog';
 
 interface FormErrors { 
+  from_warehouse_id?: string; // 调出仓库ID
+  to_warehouse_id?: string; // 调入仓库ID
+  product_id?: string; // 产品ID
   quantity?: string; // 调拨数量
   transfer_date?: string; // 调拨日期
   department_code?: string; // 部门编码
@@ -47,20 +50,32 @@ const ErpInventoryTransferEdit = forwardRef(({ onSubmit }: ErpInventoryTransferE
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
     
-    if (!formValues.quantity && formValues.quantity != 0) {
-      newErrors.quantity = t('page.post.error.quantity');
+    if (!erpInventoryTransfer.from_warehouse_id && erpInventoryTransfer.from_warehouse_id != 0) {
+      newErrors.from_warehouse_id = t('page.mark_translation.error.from_warehouse_id');
     }
     
-    if (!formValues.transfer_date.trim()) {
-      newErrors.transfer_date = t('page.post.error.transfer_date');
+    if (!erpInventoryTransfer.to_warehouse_id && erpInventoryTransfer.to_warehouse_id != 0) {
+      newErrors.to_warehouse_id = t('page.mark_translation.error.to_warehouse_id');
     }
     
-    if (!formValues.department_code.trim()) {
-      newErrors.department_code = t('page.post.error.department_code');
+    if (!erpInventoryTransfer.product_id && erpInventoryTransfer.product_id != 0) {
+      newErrors.product_id = t('page.mark_translation.error.product_id');
     }
     
-    if (!formValues.department_id && formValues.department_id != 0) {
-      newErrors.department_id = t('page.post.error.department_id');
+    if (!erpInventoryTransfer.quantity && erpInventoryTransfer.quantity != 0) {
+      newErrors.quantity = t('page.mark_translation.error.quantity');
+    }
+    
+    if (!erpInventoryTransfer.transfer_date.trim()) {
+      newErrors.transfer_date = t('page.mark_translation.error.transfer_date');
+    }
+    
+    if (!erpInventoryTransfer.department_code.trim()) {
+      newErrors.department_code = t('page.mark_translation.error.department_code');
+    }
+    
+    if (!erpInventoryTransfer.department_id && erpInventoryTransfer.department_id != 0) {
+      newErrors.department_id = t('page.mark_translation.error.department_id');
     }
     
     setErrors(newErrors);
@@ -133,7 +148,7 @@ const ErpInventoryTransferEdit = forwardRef(({ onSubmit }: ErpInventoryTransferE
     <CustomizedDialog
       open={open}
       onClose={handleClose}
-      title={t('global.operate.edit') + t('global.page.post')}
+      title={t('global.operate.edit') + t('global.page.mark_translation')}
       maxWidth={maxWidth}
       actions={
         <>
@@ -152,34 +167,43 @@ const ErpInventoryTransferEdit = forwardRef(({ onSubmit }: ErpInventoryTransferE
       >
         <FormControl sx={ {minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' }} }>
           <TextField
+            required
             size="small"
             type="number"
-            label={t("page.post.title.from_warehouse_id")}
+            label={t("page.mark_translation.title.from_warehouse_id")}
             name='from_warehouse_id'
             value={ erpInventoryTransfer.from_warehouse_id}
             onChange={handleInputChange}
-          />
-          <TextField
-            size="small"
-            type="number"
-            label={t("page.post.title.to_warehouse_id")}
-            name='to_warehouse_id'
-            value={ erpInventoryTransfer.to_warehouse_id}
-            onChange={handleInputChange}
-          />
-          <TextField
-            size="small"
-            type="number"
-            label={t("page.post.title.product_id")}
-            name='product_id'
-            value={ erpInventoryTransfer.product_id}
-            onChange={handleInputChange}
+            error={!!errors.from_warehouse_id}
+            helperText={errors.from_warehouse_id}
           />
           <TextField
             required
             size="small"
             type="number"
-            label={t("page.post.title.quantity")}
+            label={t("page.mark_translation.title.to_warehouse_id")}
+            name='to_warehouse_id'
+            value={ erpInventoryTransfer.to_warehouse_id}
+            onChange={handleInputChange}
+            error={!!errors.to_warehouse_id}
+            helperText={errors.to_warehouse_id}
+          />
+          <TextField
+            required
+            size="small"
+            type="number"
+            label={t("page.mark_translation.title.product_id")}
+            name='product_id'
+            value={ erpInventoryTransfer.product_id}
+            onChange={handleInputChange}
+            error={!!errors.product_id}
+            helperText={errors.product_id}
+          />
+          <TextField
+            required
+            size="small"
+            type="number"
+            label={t("page.mark_translation.title.quantity")}
             name='quantity'
             value={ erpInventoryTransfer.quantity}
             onChange={handleInputChange}
@@ -189,7 +213,7 @@ const ErpInventoryTransferEdit = forwardRef(({ onSubmit }: ErpInventoryTransferE
           <TextField
             required
             size="small"
-            label={t("page.post.title.transfer_date")}
+            label={t("page.mark_translation.title.transfer_date")}
             name='transfer_date'
             value={ erpInventoryTransfer.transfer_date}
             onChange={handleInputChange}
@@ -198,7 +222,7 @@ const ErpInventoryTransferEdit = forwardRef(({ onSubmit }: ErpInventoryTransferE
           />
           <TextField
             size="small"
-            label={t("page.post.title.remarks")}
+            label={t("page.mark_translation.title.remarks")}
             name='remarks'
             value={ erpInventoryTransfer.remarks}
             onChange={handleInputChange}
@@ -206,7 +230,7 @@ const ErpInventoryTransferEdit = forwardRef(({ onSubmit }: ErpInventoryTransferE
           <TextField
             required
             size="small"
-            label={t("page.post.title.department_code")}
+            label={t("page.mark_translation.title.department_code")}
             name='department_code'
             value={ erpInventoryTransfer.department_code}
             onChange={handleInputChange}
@@ -217,7 +241,7 @@ const ErpInventoryTransferEdit = forwardRef(({ onSubmit }: ErpInventoryTransferE
             required
             size="small"
             type="number"
-            label={t("page.post.title.department_id")}
+            label={t("page.mark_translation.title.department_id")}
             name='department_id'
             value={ erpInventoryTransfer.department_id}
             onChange={handleInputChange}

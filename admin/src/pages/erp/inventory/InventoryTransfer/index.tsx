@@ -4,11 +4,12 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { DataGrid, GridCallbackDetails, GridColDef, GridFilterModel, GridRenderCellParams, GridSortModel } from '@mui/x-data-grid';
 import EditIcon from '@/assets/image/svg/edit.svg';
 import DeleteIcon from '@/assets/image/svg/delete.svg';
-import { pageErpInventoryTransfer, ErpInventoryTransferQueryCondition, ErpInventoryTransferResponse } from '@/api';
+import { disableErpInventoryTransfer, enableErpInventoryTransfer, pageErpInventoryTransfer, ErpInventoryTransferQueryCondition, ErpInventoryTransferResponse } from '@/api';
 import ErpInventoryTransferAdd from './Add';
 import ErpInventoryTransferEdit from './Edit';
 import ErpInventoryTransferDelete from './Delete';
 import { useHomeStore } from '@/store';
+import CustomizedAutoMore from '@/components/CustomizedAutoMore';
 
 export default function ErpInventoryTransfer() {
   const { t } = useTranslation();
@@ -30,16 +31,16 @@ export default function ErpInventoryTransfer() {
 
   const columns: GridColDef[] = useMemo(
     () => [
-      { field: 'from_warehouse_id', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'to_warehouse_id', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'product_id', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'quantity', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'transfer_date', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'remarks', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'department_code', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'department_id', headerName: t("page."), flex: 1, minWidth: 100 },
-
-      { field: 'create_time', headerName: t("page.post.title.create.time"), flex: 1, minWidth: 180 },
+      { field: 'from_warehouse_id', headerName: t("page.mark_translation.title.from_warehouse_id"), flex: 1, minWidth: 100 },
+      { field: 'to_warehouse_id', headerName: t("page.mark_translation.title.to_warehouse_id"), flex: 1, minWidth: 100 },
+      { field: 'product_id', headerName: t("page.mark_translation.title.product_id"), flex: 1, minWidth: 100 },
+      { field: 'quantity', headerName: t("page.mark_translation.title.quantity"), flex: 1, minWidth: 100 },
+      { field: 'transfer_date', headerName: t("page.mark_translation.title.transfer_date"), flex: 1, minWidth: 100 },
+      { field: 'remarks', headerName: t("page.mark_translation.title.remarks"), flex: 1, minWidth: 100 },
+      { field: 'department_code', headerName: t("page.mark_translation.title.department_code"), flex: 1, minWidth: 100 },
+      { field: 'department_id', headerName: t("page.mark_translation.title.department_id"), flex: 1, minWidth: 100 },
+      
+      { field: 'create_time', headerName: t("global.title.create.time"), flex: 1, minWidth: 180 },
       {
         field: 'actions',
         sortable: false,
@@ -48,27 +49,27 @@ export default function ErpInventoryTransfer() {
         flex: 1,
         minWidth: 100,
         renderCell: (params: GridRenderCellParams) => (
-          <Box sx={{ height: '100%', display: 'flex', gap: 1, alignItems: 'center' }}>
-            {hasOperatePermission('system:post:edit') && <Button
+          <CustomizedAutoMore>
+            {hasOperatePermission('mark_permission:edit') && <Button
               size="small"
               variant='customOperate'
-              title={t('page.post.operate.edit')}
+              title={t('global.operate.edit') + t('global.page.mark_translation')}
               startIcon={<EditIcon />}
               onClick={() => handleClickOpenEdit(params.row)}
             />}
-            {hasOperatePermission('system:post:delete') && <Button
-              sx={{ color: 'error.main' }}
+            {hasOperatePermission('mark_permission:delete') && <Button
+              sx={ {color: 'error.main'} }
               size="small"
               variant='customOperate'
-              title={t('page.post.operate.delete')}
+              title={t('global.operate.delete') + t('global.page.mark_translation')}
               startIcon={<DeleteIcon />}
               onClick={() => handleClickOpenDelete(params.row)}
             />}
-          </Box>
+          </CustomizedAutoMore>
         ),
       },
     ],
-    [t]
+    [t, handleStatusChange]
   );
 
   const queryRecords = async (condition: ErpInventoryTransferQueryCondition) => {
@@ -112,10 +113,10 @@ export default function ErpInventoryTransfer() {
   };
 
   return (
-    <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-      <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between' }}>
+    <Box sx={ {height: '100%', display: 'flex', flexDirection: 'column'} }>
+      <Box sx={ {mb: 2, display: 'flex', justifyContent: 'space-between'} }>
         <Box></Box>
-        {hasOperatePermission('system:post:add') && <Button variant="customContained" onClick={handleClickOpenAdd}>
+        {hasOperatePermission('mark_permission:add') && <Button variant="customContained" onClick={handleClickOpenAdd}>
           {t('global.operate.add')}
         </Button>}
       </Box>
@@ -132,7 +133,7 @@ export default function ErpInventoryTransfer() {
         filterModel={filterModel}
         onFilterModelChange={handleFilterModelChange}
         pageSizeOptions={[10, 20, 50, 100]}
-        paginationModel={{ page: condition.page - 1, pageSize: condition.size }}
+        paginationModel={ {page: condition.page - 1, pageSize: condition.size} }
         onPaginationModelChange={(model) => {
           setCondition((prev) => ({
             ...prev,
