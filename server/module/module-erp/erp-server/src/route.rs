@@ -13,8 +13,12 @@ use crate::api::erp_inbound_order::{ erp_inbound_order_route, erp_inbound_order_
 use crate::api::erp_inbound_order_attachment::{ erp_inbound_order_attachment_route, erp_inbound_order_attachment_router };
 use crate::api::erp_inbound_order_detail::{ erp_inbound_order_detail_route, erp_inbound_order_detail_router };
 use crate::api::erp_inventory_check::{ erp_inventory_check_route, erp_inventory_check_router };
+use crate::api::erp_inventory_check_attachment::{ erp_inventory_check_attachment_route, erp_inventory_check_attachment_router };
+use crate::api::erp_inventory_check_detail::{ erp_inventory_check_detail_route, erp_inventory_check_detail_router };
 use crate::api::erp_inventory_record::{ erp_inventory_record_route, erp_inventory_record_router };
 use crate::api::erp_inventory_transfer::{ erp_inventory_transfer_route, erp_inventory_transfer_router };
+use crate::api::erp_inventory_transfer_attachment::{ erp_inventory_transfer_attachment_route, erp_inventory_transfer_attachment_router };
+use crate::api::erp_inventory_transfer_detail::{ erp_inventory_transfer_detail_route, erp_inventory_transfer_detail_router };
 use crate::api::erp_outbound_order::{ erp_outbound_order_route, erp_outbound_order_router };
 use crate::api::erp_outbound_order_attachment::{ erp_outbound_order_attachment_route, erp_outbound_order_attachment_router };
 use crate::api::erp_outbound_order_detail::{ erp_outbound_order_detail_route, erp_outbound_order_detail_router };
@@ -60,8 +64,12 @@ use crate::AppState;
         (name = "erp_inbound_order_attachment", description = "入库订单附件"),
         (name = "erp_inbound_order_detail", description = "入库详情"),
         (name = "erp_inventory_check", description = "库存盘点"),
+        (name = "erp_inventory_check_attachment", description = "库存盘点附件"),
+        (name = "erp_inventory_check_detail", description = "库存盘点详情"),
         (name = "erp_inventory_record", description = "库存记录"),
         (name = "erp_inventory_transfer", description = "库存调拨"),
+        (name = "erp_inventory_transfer_attachment", description = "库存调拨附件"),
+        (name = "erp_inventory_transfer_detail", description = "库存调拨详情"),
         (name = "erp_outbound_order", description = "出库订单"),
         (name = "erp_outbound_order_attachment", description = "出库订单附件"),
         (name = "erp_outbound_order_detail", description = "出库详情"),
@@ -114,8 +122,12 @@ pub async fn auth_router(state: AppState) -> OpenApiRouter {
         .nest("/erp_inbound_order_attachment", erp_inbound_order_attachment_router(state.clone()).await)
         .nest("/erp_inbound_order_detail", erp_inbound_order_detail_router(state.clone()).await)
         .nest("/erp_inventory_check", erp_inventory_check_router(state.clone()).await)
+        .nest("/erp_inventory_check_attachment", erp_inventory_check_attachment_router(state.clone()).await)
+        .nest("/erp_inventory_check_detail", erp_inventory_check_detail_router(state.clone()).await)
         .nest("/erp_inventory_record", erp_inventory_record_router(state.clone()).await)
         .nest("/erp_inventory_transfer", erp_inventory_transfer_router(state.clone()).await)
+        .nest("/erp_inventory_transfer_attachment", erp_inventory_transfer_attachment_router(state.clone()).await)
+        .nest("/erp_inventory_transfer_detail", erp_inventory_transfer_detail_router(state.clone()).await)
         .nest("/erp_outbound_order", erp_outbound_order_router(state.clone()).await)
         .nest("/erp_outbound_order_attachment", erp_outbound_order_attachment_router(state.clone()).await)
         .nest("/erp_outbound_order_detail", erp_outbound_order_detail_router(state.clone()).await)

@@ -2,7 +2,6 @@ use chrono::NaiveDateTime;
 use sea_orm::Condition;
 use sea_orm::entity::prelude::*;
 use common::interceptor::orm::active_filter::ActiveFilterEntityTrait;
-use crate::model::{erp_product, erp_warehouse};
 
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel)]
 #[sea_orm(table_name = "erp_inventory_transfer")]
@@ -11,13 +10,7 @@ pub struct Model {
     #[sea_orm(primary_key)]
     pub id: i64, // 调拨记录ID
     
-    pub from_warehouse_id: i64, // 调出仓库ID
-    
-    pub to_warehouse_id: i64, // 调入仓库ID
-    
-    pub product_id: i64, // 产品ID
-    
-    pub quantity: i32, // 调拨数量
+    pub order_number: i64, // 订单编号
     
     pub transfer_date: NaiveDateTime, // 调拨日期
     
@@ -42,29 +35,7 @@ pub struct Model {
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
-pub enum Relation {
-
-    #[sea_orm(
-        belongs_to = "super::erp_product::Entity",
-        from = "Column::ProductId",
-        to = "erp_product::Column::Id"
-    )]
-    TransferProduct,
-
-    #[sea_orm(
-        belongs_to = "super::erp_warehouse::Entity",
-        from = "Column::FromWarehouseId",
-        to = "erp_warehouse::Column::Id"
-    )]
-    TransferFromWarehouse,
-
-    #[sea_orm(
-        belongs_to = "super::erp_warehouse::Entity",
-        from = "Column::ToWarehouseId",
-        to = "erp_warehouse::Column::Id"
-    )]
-    TransferToWarehouse,
-}
+pub enum Relation {}
 
 impl Related<Entity> for Entity {
     fn to() -> RelationDef {

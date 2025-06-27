@@ -5,17 +5,19 @@ use serde_with::{serde_as, DisplayFromStr};
 
 #[serde_as]
 #[derive(Deserialize, Serialize, Debug, Clone, ToSchema)]
-pub struct ErpInventoryCheckResponse {
+pub struct ErpInventoryTransferDetailResponse {
     
-    pub id: i64, // 盘点记录ID
+    pub id: i64, // ID
     
-    pub order_number: i64, // 订单编号
+    pub order_id: i64, // 调拨订单ID
     
-    // #[serde_as(as = "DisplayFromStr")]
-    // #[serde(with = "serde_with::chrono::naive_datetime")]
-    #[serde_as(as = "common::formatter::string_date_time::StringDateTime")]
-    #[schema(value_type = String, format = Date)]
-    pub check_date: NaiveDateTime, // 盘点日期
+    pub from_warehouse_id: i64, // 调出仓库ID
+    
+    pub to_warehouse_id: i64, // 调入仓库ID
+    
+    pub product_id: i64, // 产品ID
+    
+    pub quantity: i32, // 调拨数量
     
     pub remarks: Option<String>, // 备注
     

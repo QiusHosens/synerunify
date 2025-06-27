@@ -4,15 +4,21 @@ use sea_orm::entity::prelude::*;
 use common::interceptor::orm::active_filter::ActiveFilterEntityTrait;
 
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel)]
-#[sea_orm(table_name = "erp_inventory_check")]
+#[sea_orm(table_name = "erp_inventory_transfer_detail")]
 pub struct Model {
     
     #[sea_orm(primary_key)]
-    pub id: i64, // 盘点记录ID
+    pub id: i64, // ID
     
-    pub order_number: i64, // 订单编号
+    pub order_id: i64, // 调拨订单ID
     
-    pub check_date: NaiveDateTime, // 盘点日期
+    pub from_warehouse_id: i64, // 调出仓库ID
+    
+    pub to_warehouse_id: i64, // 调入仓库ID
+    
+    pub product_id: i64, // 产品ID
+    
+    pub quantity: i32, // 调拨数量
     
     pub remarks: Option<String>, // 备注
     

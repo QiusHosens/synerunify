@@ -1,17 +1,18 @@
-use chrono::NaiveDateTime;
+
 use serde::{Serialize, Deserialize};
 use utoipa::ToSchema;
 use common::base::page::PaginatedRequest;
 
 #[derive(Serialize, Deserialize, Debug, ToSchema)]
-pub struct CreateErpInventoryCheckRequest {
+pub struct CreateErpInventoryCheckDetailRequest {
     
-    pub order_number: i64, // 订单编号
+    pub order_id: i64, // 盘点订单ID
     
-    // #[serde_as(as = "DisplayFromStr")]
-    // #[serde(with = "serde_with::chrono::naive_datetime")]
-    #[schema(value_type = String, format = Date)]
-    pub check_date: NaiveDateTime, // 盘点日期
+    pub warehouse_id: i64, // 仓库ID
+    
+    pub product_id: i64, // 产品ID
+    
+    pub checked_quantity: i32, // 盘点数量
     
     pub remarks: Option<String>, // 备注
     
@@ -22,16 +23,17 @@ pub struct CreateErpInventoryCheckRequest {
 }
 
 #[derive(Serialize, Deserialize, Debug, ToSchema)]
-pub struct UpdateErpInventoryCheckRequest {
+pub struct UpdateErpInventoryCheckDetailRequest {
     
-    pub id: i64, // 盘点记录ID
+    pub id: i64, // ID
     
-    pub order_number: Option<i64>, // 订单编号
+    pub order_id: Option<i64>, // 盘点订单ID
     
-    // #[serde_as(as = "DisplayFromStr")]
-    // #[serde(with = "serde_with::chrono::naive_datetime")]
-    #[schema(value_type = String, format = Date)]
-    pub check_date: Option<NaiveDateTime>, // 盘点日期
+    pub warehouse_id: Option<i64>, // 仓库ID
+    
+    pub product_id: Option<i64>, // 产品ID
+    
+    pub checked_quantity: Option<i32>, // 盘点数量
     
     pub remarks: Option<String>, // 备注
     
