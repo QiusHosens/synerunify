@@ -325,6 +325,7 @@ CREATE TABLE `erp_inventory_transfer_attachment`  (
 DROP TABLE IF EXISTS `erp_inventory_transfer_detail`;
 CREATE TABLE `erp_inventory_transfer_detail`  (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT 'ID',
+  `order_id` bigint NOT NULL COMMENT '调拨订单ID',
   `from_warehouse_id` bigint NOT NULL COMMENT '调出仓库ID',
   `to_warehouse_id` bigint NOT NULL COMMENT '调入仓库ID',
   `product_id` bigint NOT NULL COMMENT '产品ID',

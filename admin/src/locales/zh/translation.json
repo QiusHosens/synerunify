@@ -115,6 +115,7 @@
   "global.page.erp.other.inbound": "其他入库",
   "global.page.erp.other.outbound": "其他出库",
   "global.page.erp.inventory.check": "库存盘点",
+  "global.page.erp.inventory.transfer": "库存调拨",
 
   "global.order.placeholder.order.number": "订单编号,由系统自动生成",
   "global.title.erp.purchase.list": "采购订单列表",

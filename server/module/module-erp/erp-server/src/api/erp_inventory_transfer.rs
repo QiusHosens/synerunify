@@ -57,7 +57,10 @@ async fn create(
 ) -> CommonResult<i64> {
     match service::erp_inventory_transfer::create(&state.db, login_user, payload).await {
         Ok(id) => {CommonResult::with_data(id)}
-        Err(e) => {CommonResult::with_err(&e.to_string())}
+        Err(e) => {
+            println!("create transfer error, {:#?}", e);
+            CommonResult::with_err(&e.to_string())
+        }
     }
 }
 

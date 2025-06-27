@@ -54,7 +54,7 @@ pub async fn update(db: &DatabaseConnection, login_user: LoginUserContext, reque
     // 开启事务
     let txn = db.begin().await?;
     // 修改订单
-    erp_inventory_check.update(db).await?;
+    erp_inventory_check.update(&txn).await?;
     // 更新订单详情
     erp_inventory_check_detail::update_batch(&db, &txn, login_user.clone(), inventory_check.clone(), request.details).await?;
     // 更新订单文件

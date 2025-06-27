@@ -80,7 +80,7 @@ const ErpInventoryCheckEdit = forwardRef(({ onSubmit }: ErpInventoryCheckEditPro
     };
 
     if (!erpInventoryCheckRequest.check_date.trim()) {
-      newErrors.check_date = t('page.erp.inventorycheck.error.check_date');
+      newErrors.check_date = t('page.erp.inventory.check.error.check_date');
     }
 
     erpInventoryCheckRequest.details.forEach((product, index) => {
@@ -169,7 +169,7 @@ const ErpInventoryCheckEdit = forwardRef(({ onSubmit }: ErpInventoryCheckEditPro
     if (validateForm()) {
       const details: ErpInventoryCheckDetailRequest[] = [];
       for (const product of erpInventoryCheckRequest.details) {
-        let detail: ErpInventoryCheckDetailRequest = {
+        const detail: ErpInventoryCheckDetailRequest = {
           warehouse_id: product.warehouse_id,
           product_id: product.product_id!,
           checked_quantity: product.checked_quantity,
@@ -182,7 +182,7 @@ const ErpInventoryCheckEdit = forwardRef(({ onSubmit }: ErpInventoryCheckEditPro
       }
       const attachments: ErpInventoryCheckAttachmentRequest[] = [];
       for (const attachment of erpInventoryCheckRequest.attachments) {
-        let attach: ErpInventoryCheckAttachmentRequest = {
+        const attach: ErpInventoryCheckAttachmentRequest = {
           file_id: attachment.file_id!
         } as ErpInventoryCheckAttachmentRequest;
         if (attachment.id) {
@@ -253,17 +253,6 @@ const ErpInventoryCheckEdit = forwardRef(({ onSubmit }: ErpInventoryCheckEditPro
       ],
     }));
   }, [products, showMessage, t]);
-
-  const handleClickDetailDelete = useCallback((index: number) => {
-    setErpInventoryCheckRequest((prev) => ({
-      ...prev,
-      details: prev.details.filter((_, idx) => idx !== index),
-    }));
-    setErrors((prev) => ({
-      ...prev,
-      details: prev.details.filter((_, idx) => idx !== index),
-    }));
-  }, []);
 
   const handleWarehouseSelectChange = useCallback((e: SelectChangeEvent<number>, index: number) => {
     const { value } = e.target;
@@ -373,7 +362,7 @@ const ErpInventoryCheckEdit = forwardRef(({ onSubmit }: ErpInventoryCheckEditPro
     <CustomizedDialog
       open={open}
       onClose={handleClose}
-      title={t('global.operate.edit') + t('global.page.erp.inventorycheck')}
+      title={t('global.operate.edit') + t('global.page.erp.inventory.check')}
       maxWidth={maxWidth}
       actions={
         <>
@@ -393,7 +382,7 @@ const ErpInventoryCheckEdit = forwardRef(({ onSubmit }: ErpInventoryCheckEditPro
         }}
       >
         <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '100%' } }}>
-          <Grid container rowSpacing={2} columnSpacing={4} sx={{ '& .MuiGrid-root': { display: 'flex', justifyContent: 'center', alignItems: 'center' } }}>
+          <Grid container rowSpacing={2} columnSpacing={4} sx={{ '& .MuiGrid-root': { display: 'flex', justifyContent: 'start', alignItems: 'center' } }}>
             <Grid size={size}>
               <Stack direction="row" spacing={2} sx={{ display: "flex", alignItems: "center" }}>
                 <Box>{t('page.erp.purchase.order.title.order.number')}</Box>
@@ -408,7 +397,7 @@ const ErpInventoryCheckEdit = forwardRef(({ onSubmit }: ErpInventoryCheckEditPro
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <DateTimePicker
                     name="inbound_date"
-                    label={t('page.erp.inventorycheck.title.check.date')}
+                    label={t('page.erp.inventory.check.title.check.date')}
                     value={checkDate}
                     onChange={handleDateTimeChange}
                     slotProps={{
@@ -426,10 +415,10 @@ const ErpInventoryCheckEdit = forwardRef(({ onSubmit }: ErpInventoryCheckEditPro
                 </LocalizationProvider>
               </FormControl>
             </Grid>
-            <Grid size={size}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <TextField
                 size="small"
-                label={t("page.erp.inventorycheck.title.remarks")}
+                label={t("page.erp.inventory.check.title.remarks")}
                 name='remarks'
                 value={erpInventoryCheckRequest.remarks}
                 onChange={handleInputChange}
@@ -444,14 +433,14 @@ const ErpInventoryCheckEdit = forwardRef(({ onSubmit }: ErpInventoryCheckEditPro
         <Card variant="outlined" sx={{ width: '100%', mt: 1, p: 2 }}>
           <Box sx={{ display: 'table', width: '100%', "& .table-row": { display: 'table-row', "& .table-cell": { display: 'table-cell', padding: 1, textAlign: 'center', } } }}>
             <Box className='table-row'>
-              <Box className='table-cell' sx={{ width: 50 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.no')}</Typography></Box>
-              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.inbound.detail.title.warehouse')}</Typography></Box>
-              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.product')}</Typography></Box>
-              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.barcode')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.no')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 300 }}><Typography variant="body1">{t('page.erp.purchase.inbound.detail.title.warehouse')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 200 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.product')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 200 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.barcode')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.stock')}</Typography></Box>
               <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.unit')}</Typography></Box>
-              <Box className='table-cell' sx={{ width: 200 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.remarks')}</Typography></Box>
               <Box className='table-cell' sx={{ width: 150 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.quantity')}</Typography></Box>
-              <Box className='table-cell' sx={{ width: 50 }}><Typography variant="body1">{t('global.operate.actions')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 200 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.remarks')}</Typography></Box>
             </Box>
             {erpInventoryCheckRequest.details.map((item, index) => (
               <Box className='table-row' key={index}>
@@ -518,16 +507,6 @@ const ErpInventoryCheckEdit = forwardRef(({ onSubmit }: ErpInventoryCheckEditPro
                     onChange={(e) => handleDetailInputChange(e as React.ChangeEvent<HTMLInputElement>, index)}
                     error={!!(errors.details[index]?.checked_quantity)}
                     helperText={errors.details[index]?.checked_quantity}
-                  />
-                </Box>
-                <Box className='table-cell' sx={{ width: 50, verticalAlign: 'middle' }}>
-                  <Button
-                    sx={{ color: 'error.main' }}
-                    size="small"
-                    variant="customOperate"
-                    title={t('global.operate.delete') + t('global.page.erp.purchase.order')}
-                    startIcon={<DeleteIcon />}
-                    onClick={() => handleClickDetailDelete(index)}
                   />
                 </Box>
               </Box>

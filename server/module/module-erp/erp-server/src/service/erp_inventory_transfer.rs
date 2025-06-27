@@ -30,7 +30,7 @@ pub async fn create(db: &DatabaseConnection, login_user: LoginUserContext, reque
     // 开启事务
     let txn = db.begin().await?;
     // 创建订单
-    let erp_inventory_transfer = erp_inventory_transfer.insert(db).await?;
+    let erp_inventory_transfer = erp_inventory_transfer.insert(&txn).await?;
     // 创建订单详情
     erp_inventory_transfer_detail::create_batch(&db, &txn, login_user.clone(), erp_inventory_transfer.clone(), request.details).await?;
     // 创建订单文件
@@ -54,7 +54,7 @@ pub async fn update(db: &DatabaseConnection, login_user: LoginUserContext, reque
     // 开启事务
     let txn = db.begin().await?;
     // 修改订单
-    erp_inventory_transfer.update(db).await?;
+    erp_inventory_transfer.update(&txn).await?;
     // 修改订单详情
     erp_inventory_transfer_detail::update_batch(&db, &txn, login_user.clone(), inventory_transfer.clone(), request.details).await?;
     // 修改订单文件

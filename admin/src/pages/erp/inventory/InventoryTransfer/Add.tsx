@@ -382,7 +382,7 @@ const ErpInventoryTransferAdd = forwardRef(({ onSubmit }: ErpInventoryTransferAd
           width: 'fit-content',
         }}
       >
-        <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' } }}>
+        <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '100%' } }}>
           <Grid container rowSpacing={2} columnSpacing={4} sx={{ '& .MuiGrid-root': { display: 'flex', justifyContent: 'center', alignItems: 'center' } }}>
             <Grid size={size}>
               <TextField size="small" label={t('global.order.placeholder.order.number')} disabled />
@@ -410,7 +410,7 @@ const ErpInventoryTransferAdd = forwardRef(({ onSubmit }: ErpInventoryTransferAd
                 </LocalizationProvider>
               </FormControl>
             </Grid>
-            <Grid size={size}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <TextField
                 size="small"
                 label={t("page.erp.inventory.transfer.title.remarks")}
@@ -428,14 +428,15 @@ const ErpInventoryTransferAdd = forwardRef(({ onSubmit }: ErpInventoryTransferAd
         <Card variant="outlined" sx={{ width: '100%', mt: 1, p: 2 }}>
           <Box sx={{ display: 'table', width: '100%', "& .table-row": { display: 'table-row', "& .table-cell": { display: 'table-cell', padding: 1, textAlign: 'center', } } }}>
             <Box className='table-row'>
-              <Box className='table-cell' sx={{ width: 50 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.no')}</Typography></Box>
-              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.inbound.detail.title.warehouse')}</Typography></Box>
-              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.inbound.detail.title.warehouse')}</Typography></Box>
-              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.product')}</Typography></Box>
-              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.barcode')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.no')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 200 }}><Typography variant="body1">{t('page.erp.purchase.inbound.detail.title.warehouse')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 200 }}><Typography variant="body1">{t('page.erp.purchase.inbound.detail.title.warehouse')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 200 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.product')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 200 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.barcode')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.stock')}</Typography></Box>
               <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.unit')}</Typography></Box>
-              <Box className='table-cell' sx={{ width: 200 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.remarks')}</Typography></Box>
               <Box className='table-cell' sx={{ width: 150 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.quantity')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 200 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.remarks')}</Typography></Box>
               <Box className='table-cell' sx={{ width: 50 }}><Typography variant="body1">{t('global.operate.actions')}</Typography></Box>
             </Box>
             {formValues.details.map((item, index) => (
@@ -507,20 +508,20 @@ const ErpInventoryTransferAdd = forwardRef(({ onSubmit }: ErpInventoryTransferAd
                 <Box className='table-cell' sx={{ width: 50 }}>
                   <TextField
                     size="small"
-                    name="remarks"
-                    value={item.remarks}
-                    onChange={(e) => handleDetailInputChange(e as React.ChangeEvent<HTMLInputElement>, index)}
-                  />
-                </Box>
-                <Box className='table-cell' sx={{ width: 50 }}>
-                  <TextField
-                    size="small"
                     type="number"
                     name="quantity"
                     value={item.quantity}
                     onChange={(e) => handleDetailInputChange(e as React.ChangeEvent<HTMLInputElement>, index)}
                     error={!!(errors.details[index]?.quantity)}
                     helperText={errors.details[index]?.quantity}
+                  />
+                </Box>
+                <Box className='table-cell' sx={{ width: 50 }}>
+                  <TextField
+                    size="small"
+                    name="remarks"
+                    value={item.remarks}
+                    onChange={(e) => handleDetailInputChange(e as React.ChangeEvent<HTMLInputElement>, index)}
                   />
                 </Box>
                 <Box className='table-cell' sx={{ width: 50, verticalAlign: 'middle' }}>

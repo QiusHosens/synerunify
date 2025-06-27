@@ -121,54 +121,56 @@ const CaptchaDialog = forwardRef(({ onSubmit }: CaptchaDialogProps, ref) => {
     const refresh = async (id: string) => {
         const idType = CAPTCHA_ID_MAP[id];
         setIdType(idType);
-        const result = await getData(id);
+        getData(id).then((result) => {
+            setCheckRequest({
+                id,
+                captchaKey: result.captcha_key,
+            })
 
-        setCheckRequest({
-            id,
-            captchaKey: result.captcha_key,
-        })
+            setConfig({
+                width: result.master_width,
+                height: result.master_height
+            })
 
-        setConfig({
-            width: result.master_width,
-            height: result.master_height
-        })
+            const data = {
+                image: result.master_image_base64,
+                thumb: result.thumb_image_base64
+            };
 
-        const data = {
-            image: result.master_image_base64,
-            thumb: result.thumb_image_base64
-        };
-
-        switch (idType) {
-            case 1:
-            case 2:
-                setClickData(data);
-                break;
-            case 3:
-                setSlideData({
-                    ...data,
-                    thumbX: 0,
-                    thumbY: result.display_y,
-                    thumbWidth: result.thumb_width,
-                    thumbHeight: result.thumb_height,
-                });
-                break;
-            case 4:
-                setSlideRegionData({
-                    ...data,
-                    thumbX: 0,
-                    thumbY: 0,
-                    thumbWidth: result.thumb_width,
-                    thumbHeight: result.thumb_height,
-                });
-                break;
-            case 5:
-                setRotateData({
-                    ...data,
-                    angle: 0,
-                    thumbSize: result.thumb_size
-                });
-                break;
-        }
+            switch (idType) {
+                case 1:
+                case 2:
+                    setClickData(data);
+                    break;
+                case 3:
+                    setSlideData({
+                        ...data,
+                        thumbX: 0,
+                        thumbY: result.display_y,
+                        thumbWidth: result.thumb_width,
+                        thumbHeight: result.thumb_height,
+                    });
+                    break;
+                case 4:
+                    setSlideRegionData({
+                        ...data,
+                        thumbX: 0,
+                        thumbY: 0,
+                        thumbWidth: result.thumb_width,
+                        thumbHeight: result.thumb_height,
+                    });
+                    break;
+                case 5:
+                    setRotateData({
+                        ...data,
+                        angle: 0,
+                        thumbSize: result.thumb_size
+                    });
+                    break;
+            }
+        }).catch(() => {
+            handleClose();
+        });
     }
 
     const handleClose = () => {

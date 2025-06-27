@@ -12,6 +12,7 @@ import ErpInventoryTransferDelete from './Delete';
 import { useHomeStore } from '@/store';
 import CustomizedAutoMore from '@/components/CustomizedAutoMore';
 import ErpInventoryTransferInfo from './Info';
+import CustomizedCopyableText from '@/components/CustomizedCopyableText';
 
 export default function ErpInventoryTransfer() {
   const { t } = useTranslation();
@@ -34,7 +35,17 @@ export default function ErpInventoryTransfer() {
 
   const columns: GridColDef[] = useMemo(
     () => [
-      { field: 'order_number', headerName: t("page.erp.inventory.transfer.title.order.number"), flex: 1, minWidth: 100 },
+      {
+        field: 'order_number', 
+        headerName: t("page.erp.inventory.transfer.title.order.number"), 
+        flex: 1, 
+        minWidth: 100, 
+        renderCell: (params: GridRenderCellParams) => (
+          <CustomizedCopyableText
+            text={params.row.order_number}
+          />
+        )
+      },
       { field: 'transfer_date', headerName: t("page.erp.inventory.transfer.title.transfer.date"), flex: 1, minWidth: 100 },
       { field: 'remarks', headerName: t("page.erp.inventory.transfer.title.remarks"), flex: 1, minWidth: 100 },
       { field: 'create_time', headerName: t("global.title.create.time"), flex: 1, minWidth: 180 },

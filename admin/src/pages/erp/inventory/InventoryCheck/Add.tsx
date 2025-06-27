@@ -1,4 +1,4 @@
-import { Box, Button, Card, FormControl, FormHelperText, Grid, MenuItem, Select, SelectChangeEvent, Switch, TextField, Typography } from '@mui/material';
+import { Box, Button, Card, FormControl, FormHelperText, Grid, MenuItem, Select, SelectChangeEvent, TextField, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { forwardRef, useCallback, useImperativeHandle, useState } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
@@ -105,7 +105,7 @@ const ErpInventoryCheckAdd = forwardRef(({ onSubmit }: ErpInventoryCheckAddProps
     };
 
     if (!formValues.check_date.trim()) {
-      newErrors.check_date = t('page.erp.inventorycheck.error.check_date');
+      newErrors.check_date = t('page.erp.inventory.check.error.check_date');
     }
 
     formValues.details.forEach((product, index) => {
@@ -353,7 +353,7 @@ const ErpInventoryCheckAdd = forwardRef(({ onSubmit }: ErpInventoryCheckAddProps
     <CustomizedDialog
       open={open}
       onClose={handleClose}
-      title={t('global.operate.add') + t('global.page.erp.inventorycheck')}
+      title={t('global.operate.add') + t('global.page.erp.inventory.check')}
       maxWidth={maxWidth}
       actions={
         <>
@@ -382,7 +382,7 @@ const ErpInventoryCheckAdd = forwardRef(({ onSubmit }: ErpInventoryCheckAddProps
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <DateTimePicker
                     name="inbound_date"
-                    label={t('page.erp.inventorycheck.title.check.date')}
+                    label={t('page.erp.inventory.check.title.check.date')}
                     value={checkDate}
                     onChange={handleDateTimeChange}
                     slotProps={{
@@ -400,10 +400,10 @@ const ErpInventoryCheckAdd = forwardRef(({ onSubmit }: ErpInventoryCheckAddProps
                 </LocalizationProvider>
               </FormControl>
             </Grid>
-            <Grid size={size}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <TextField
                 size="small"
-                label={t("page.erp.inventorycheck.title.remarks")}
+                label={t("page.erp.inventory.check.title.remarks")}
                 name='remarks'
                 value={formValues.remarks}
                 onChange={handleInputChange}
@@ -418,14 +418,15 @@ const ErpInventoryCheckAdd = forwardRef(({ onSubmit }: ErpInventoryCheckAddProps
         <Card variant="outlined" sx={{ width: '100%', mt: 1, p: 2 }}>
           <Box sx={{ display: 'table', width: '100%', "& .table-row": { display: 'table-row', "& .table-cell": { display: 'table-cell', padding: 1, textAlign: 'center', } } }}>
             <Box className='table-row'>
-              <Box className='table-cell' sx={{ width: 50 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.no')}</Typography></Box>
-              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.inbound.detail.title.warehouse')}</Typography></Box>
-              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.product')}</Typography></Box>
-              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.barcode')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.no')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 300 }}><Typography variant="body1">{t('page.erp.purchase.inbound.detail.title.warehouse')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 200 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.product')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 200 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.barcode')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.stock')}</Typography></Box>
               <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.unit')}</Typography></Box>
-              <Box className='table-cell' sx={{ width: 200 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.remarks')}</Typography></Box>
               <Box className='table-cell' sx={{ width: 150 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.quantity')}</Typography></Box>
-              <Box className='table-cell' sx={{ width: 50 }}><Typography variant="body1">{t('global.operate.actions')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 200 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.remarks')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('global.operate.actions')}</Typography></Box>
             </Box>
             {formValues.details.map((item, index) => (
               <Box className='table-row' key={index}>
@@ -478,20 +479,20 @@ const ErpInventoryCheckAdd = forwardRef(({ onSubmit }: ErpInventoryCheckAddProps
                 <Box className='table-cell' sx={{ width: 50 }}>
                   <TextField
                     size="small"
-                    name="remarks"
-                    value={item.remarks}
+                    type="number"
+                    name="checked_quantity"
+                    value={item.checked_quantity}
                     onChange={(e) => handleDetailInputChange(e as React.ChangeEvent<HTMLInputElement>, index)}
+                    error={!!(errors.details[index]?.checked_quantity)}
+                    helperText={errors.details[index]?.checked_quantity}
                   />
                 </Box>
                 <Box className='table-cell' sx={{ width: 50 }}>
                   <TextField
                     size="small"
-                    type="number"
-                    name="quantity"
-                    value={item.checked_quantity}
+                    name="remarks"
+                    value={item.remarks}
                     onChange={(e) => handleDetailInputChange(e as React.ChangeEvent<HTMLInputElement>, index)}
-                    error={!!(errors.details[index]?.checked_quantity)}
-                    helperText={errors.details[index]?.checked_quantity}
                   />
                 </Box>
                 <Box className='table-cell' sx={{ width: 50, verticalAlign: 'middle' }}>

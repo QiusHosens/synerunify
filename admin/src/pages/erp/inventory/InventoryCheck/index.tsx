@@ -12,6 +12,7 @@ import ErpInventoryCheckDelete from './Delete';
 import { useHomeStore } from '@/store';
 import CustomizedAutoMore from '@/components/CustomizedAutoMore';
 import ErpInventoryCheckInfo from './Info';
+import CustomizedCopyableText from '@/components/CustomizedCopyableText';
 
 export default function ErpInventoryCheck() {
   const { t } = useTranslation();
@@ -34,7 +35,17 @@ export default function ErpInventoryCheck() {
 
   const columns: GridColDef[] = useMemo(
     () => [
-      { field: 'order_number', headerName: t("page.erp.inventory.check.title.order.number"), flex: 1, minWidth: 100 },
+      {
+        field: 'order_number',
+        headerName: t("page.erp.inventory.check.title.order.number"),
+        flex: 1,
+        minWidth: 100,
+        renderCell: (params: GridRenderCellParams) => (
+          <CustomizedCopyableText
+            text={params.row.order_number}
+          />
+        )
+      },
       { field: 'check_date', headerName: t("page.erp.inventory.check.title.check.date"), flex: 1, minWidth: 100 },
       { field: 'remarks', headerName: t("page.erp.inventory.check.title.remarks"), flex: 1, minWidth: 100 },
       { field: 'create_time', headerName: t("global.title.create.time"), flex: 1, minWidth: 180 },
