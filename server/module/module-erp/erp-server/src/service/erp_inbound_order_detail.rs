@@ -15,7 +15,7 @@ use erp_model::response::erp_inbound_order_detail::{ErpInboundOrderDetailBaseOth
 use crate::convert::erp_inbound_order_detail::{create_request_to_model, model_to_base_other_response, model_to_base_purchase_response, model_to_response, update_request_to_model};
 use anyhow::{anyhow, Context, Result};
 use sea_orm::ActiveValue::{NotSet, Set};
-use common::constants::enum_constants::{STATUS_DISABLE, STATUS_ENABLE};
+use common::constants::enum_constants::{RECORD_TYPE_INBOUND_OTHER, RECORD_TYPE_INBOUND_PURCHASE, STATUS_DISABLE, STATUS_ENABLE};
 use common::base::page::PaginatedResponse;
 use common::context::context::LoginUserContext;
 use common::interceptor::orm::active_filter::ActiveFilterEntityTrait;
@@ -93,7 +93,7 @@ pub async fn create_batch_purchase(db: &DatabaseConnection, txn: &DatabaseTransa
         // 修改产品库存
         erp_product_inventory::inbound(&db, txn, login_user.clone(), product_inventories).await?;
         // 增加库存记录
-        erp_inventory_record::inbound(&db, txn, login_user, inbound_inventories).await?;
+        erp_inventory_record::inbound(&db, txn, login_user, inbound_inventories, RECORD_TYPE_INBOUND_PURCHASE).await?;
     }
     Ok(())
 }
@@ -151,7 +151,7 @@ pub async fn create_batch_other(db: &DatabaseConnection, txn: &DatabaseTransacti
         // 修改产品库存
         erp_product_inventory::inbound(&db, txn, login_user.clone(), product_inventories).await?;
         // 增加库存记录
-        erp_inventory_record::inbound(&db, txn, login_user, inbound_inventories).await?;
+        erp_inventory_record::inbound(&db, txn, login_user, inbound_inventories, RECORD_TYPE_INBOUND_OTHER).await?;
     }
     Ok(())
 }
@@ -232,7 +232,7 @@ pub async fn update_batch_purchase(db: &DatabaseConnection, txn: &DatabaseTransa
     // 修改产品库存
     erp_product_inventory::inbound(&db, txn, login_user.clone(), product_inventories).await?;
     // 增加库存记录
-    erp_inventory_record::inbound(&db, txn, login_user, inbound_inventories).await?;
+    erp_inventory_record::inbound(&db, txn, login_user, inbound_inventories, RECORD_TYPE_INBOUND_PURCHASE).await?;
 
     Ok(())
 }

@@ -1,35 +1,31 @@
 use sea_orm::{Set, NotSet};
 use crate::model::erp_inventory_transfer_attachment::{self, Model as ErpInventoryTransferAttachment, ActiveModel as ErpInventoryTransferAttachmentActiveModel};
 use erp_model::request::erp_inventory_transfer_attachment::{CreateErpInventoryTransferAttachmentRequest, UpdateErpInventoryTransferAttachmentRequest};
-use erp_model::response::erp_inventory_transfer_attachment::ErpInventoryTransferAttachmentResponse;
+use erp_model::response::erp_inventory_transfer_attachment::{ErpInventoryTransferAttachmentBaseResponse, ErpInventoryTransferAttachmentResponse};
 
 pub fn create_request_to_model(request: &CreateErpInventoryTransferAttachmentRequest) -> ErpInventoryTransferAttachmentActiveModel {
     ErpInventoryTransferAttachmentActiveModel {
-        order_id: Set(request.order_id.clone()),
         file_id: Set(request.file_id.clone()),
         remarks: request.remarks.as_ref().map_or(NotSet, |remarks| Set(Some(remarks.clone()))),
-        department_code: Set(request.department_code.clone()),
-        department_id: Set(request.department_id.clone()),
+        ..Default::default()
+    }
+}
+
+pub fn update_add_request_to_model(request: &UpdateErpInventoryTransferAttachmentRequest) -> ErpInventoryTransferAttachmentActiveModel {
+    ErpInventoryTransferAttachmentActiveModel {
+        file_id: Set(request.file_id.clone()),
+        remarks: request.remarks.as_ref().map_or(NotSet, |remarks| Set(Some(remarks.clone()))),
         ..Default::default()
     }
 }
 
 pub fn update_request_to_model(request: &UpdateErpInventoryTransferAttachmentRequest, existing: ErpInventoryTransferAttachment) -> ErpInventoryTransferAttachmentActiveModel {
     let mut active_model: ErpInventoryTransferAttachmentActiveModel = existing.into();
-    if let Some(order_id) = &request.order_id { 
-        active_model.order_id = Set(order_id.clone());
-    }
-    if let Some(file_id) = &request.file_id { 
+    if let file_id = &request.file_id { 
         active_model.file_id = Set(file_id.clone());
     }
     if let Some(remarks) = &request.remarks { 
         active_model.remarks = Set(Some(remarks.clone()));
-    }
-    if let Some(department_code) = &request.department_code { 
-        active_model.department_code = Set(department_code.clone());
-    }
-    if let Some(department_id) = &request.department_id { 
-        active_model.department_id = Set(department_id.clone());
     }
     active_model
 }
@@ -46,5 +42,15 @@ pub fn model_to_response(model: ErpInventoryTransferAttachment) -> ErpInventoryT
         create_time: model.create_time,
         updater: model.updater,
         update_time: model.update_time,
+    }
+}
+
+pub fn model_to_base_response(model: ErpInventoryTransferAttachment, file_name: Option<String>) -> ErpInventoryTransferAttachmentBaseResponse {
+    ErpInventoryTransferAttachmentBaseResponse { 
+        id: model.id,
+        file_id: model.file_id,
+        remarks: model.remarks,
+
+        file_name,
     }
 }

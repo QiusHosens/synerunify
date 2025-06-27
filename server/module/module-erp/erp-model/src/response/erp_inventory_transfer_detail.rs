@@ -42,3 +42,20 @@ pub struct ErpInventoryTransferDetailResponse {
     pub update_time: NaiveDateTime, // 更新时间
     
 }
+
+#[derive(Deserialize, Serialize, Debug, Clone, ToSchema)]
+pub struct ErpInventoryTransferDetailBaseResponse {
+    
+    pub id: i64, // ID
+    
+    pub from_warehouse_id: i64, // 调出仓库ID
+    
+    pub to_warehouse_id: i64, // 调入仓库ID
+    
+    pub product_id: i64, // 产品ID
+    
+    pub quantity: i32, // 调拨数量
+    
+    pub remarks: Option<String>, // 备注
+    
+}

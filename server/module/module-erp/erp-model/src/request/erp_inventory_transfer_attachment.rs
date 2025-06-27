@@ -6,32 +6,20 @@ use common::base::page::PaginatedRequest;
 #[derive(Serialize, Deserialize, Debug, ToSchema)]
 pub struct CreateErpInventoryTransferAttachmentRequest {
     
-    pub order_id: i64, // 调拨订单ID
-    
     pub file_id: i64, // 文件ID
     
     pub remarks: Option<String>, // 备注
-    
-    pub department_code: String, // 部门编码
-    
-    pub department_id: i64, // 部门ID
     
 }
 
 #[derive(Serialize, Deserialize, Debug, ToSchema)]
 pub struct UpdateErpInventoryTransferAttachmentRequest {
     
-    pub id: i64, // ID
+    pub id: Option<i64>, // ID,修改有,新增无
     
-    pub order_id: Option<i64>, // 调拨订单ID
-    
-    pub file_id: Option<i64>, // 文件ID
+    pub file_id: i64, // 文件ID
     
     pub remarks: Option<String>, // 备注
-    
-    pub department_code: Option<String>, // 部门编码
-    
-    pub department_id: Option<i64>, // 部门ID
     
 }
 

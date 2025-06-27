@@ -183,3 +183,45 @@ pub async fn outbound(db: &DatabaseConnection, txn: &DatabaseTransaction, login_
 
     Ok(())
 }
+
+/// 设置库存
+pub async fn set(db: &DatabaseConnection, txn: &DatabaseTransaction, login_user: LoginUserContext, requests: Vec<ErpProductInventoryInOutRequest>) -> Result<()> {
+    if requests.is_empty() {
+        return Ok(());
+    }
+
+    for request in requests {
+        // 查询是否存在匹配的库存记录
+        let existing_inventory = ErpProductInventoryEntity::find()
+            .filter(Column::ProductId.eq(request.product_id))
+            .filter(Column::WarehouseId.eq(request.warehouse_id))
+            .filter(Column::TenantId.eq(login_user.tenant_id))
+            .one(txn)
+            .await?;
+
+        match existing_inventory {
+            Some(inventory) => {
+                // 记录存在，更新库存数量
+                let mut active_model: ErpProductInventoryActiveModel = inventory.clone().into();
+                active_model.stock_quantity = Set(request.quantity);
+                active_model.updater = Set(Some(login_user.id));
+                active_model.update(txn).await?;
+            }
+            None => {
+                // 记录不存在，插入新记录
+                let new_inventory = ErpProductInventoryActiveModel {
+                    product_id: Set(request.product_id),
+                    warehouse_id: Set(request.warehouse_id),
+                    tenant_id: Set(login_user.tenant_id),
+                    stock_quantity: Set(request.quantity),
+                    creator: Set(Some(login_user.id)),
+                    updater: Set(Some(login_user.id)),
+                    ..Default::default()
+                };
+                new_inventory.insert(txn).await?;
+            }
+        }
+    }
+
+    Ok(())
+}

@@ -12,7 +12,7 @@ use erp_model::response::erp_inventory_record::{ErpInventoryRecordPageResponse, 
 use crate::convert::erp_inventory_record::{create_in_request_to_model, create_request_to_model, model_to_page_response, model_to_response, update_request_to_model};
 use anyhow::{Result, anyhow};
 use sea_orm::ActiveValue::Set;
-use common::constants::enum_constants::{RECORD_TYPE_INBOUND, RECORD_TYPE_OUTBOUND, STATUS_DISABLE, STATUS_ENABLE};
+use common::constants::enum_constants::{STATUS_DISABLE, STATUS_ENABLE};
 use common::base::page::PaginatedResponse;
 use common::context::context::LoginUserContext;
 use common::interceptor::orm::active_filter::ActiveFilterEntityTrait;
@@ -150,10 +150,10 @@ pub async fn list(db: &DatabaseConnection, login_user: LoginUserContext) -> Resu
 }
 
 /// 入库记录
-pub async fn inbound(db: &DatabaseConnection, txn: &DatabaseTransaction, login_user: LoginUserContext, requests: Vec<ErpInventoryRecordInRequest>) -> Result<()> {
+pub async fn inbound(db: &DatabaseConnection, txn: &DatabaseTransaction, login_user: LoginUserContext, requests: Vec<ErpInventoryRecordInRequest>, inbound_type: i8) -> Result<()> {
     for request in requests {
         let mut erp_inventory_record = create_in_request_to_model(&request);
-        erp_inventory_record.record_type = Set(RECORD_TYPE_INBOUND);
+        erp_inventory_record.record_type = Set(inbound_type);
         erp_inventory_record.department_id = Set(login_user.department_id);
         erp_inventory_record.department_code = Set(login_user.department_code.clone());
         erp_inventory_record.creator = Set(Some(login_user.id));
@@ -165,10 +165,10 @@ pub async fn inbound(db: &DatabaseConnection, txn: &DatabaseTransaction, login_u
 }
 
 /// 出库记录
-pub async fn outbound(db: &DatabaseConnection, txn: &DatabaseTransaction, login_user: LoginUserContext, requests: Vec<ErpInventoryRecordInRequest>) -> Result<()> {
+pub async fn outbound(db: &DatabaseConnection, txn: &DatabaseTransaction, login_user: LoginUserContext, requests: Vec<ErpInventoryRecordInRequest>, outbound_type: i8) -> Result<()> {
     for request in requests {
         let mut erp_inventory_record = create_in_request_to_model(&request);
-        erp_inventory_record.record_type = Set(RECORD_TYPE_OUTBOUND);
+        erp_inventory_record.record_type = Set(outbound_type);
         erp_inventory_record.department_id = Set(login_user.department_id);
         erp_inventory_record.department_code = Set(login_user.department_code.clone());
         erp_inventory_record.creator = Set(Some(login_user.id));

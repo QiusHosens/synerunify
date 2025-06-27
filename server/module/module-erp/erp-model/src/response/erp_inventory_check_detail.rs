@@ -40,3 +40,18 @@ pub struct ErpInventoryCheckDetailResponse {
     pub update_time: NaiveDateTime, // 更新时间
     
 }
+
+#[derive(Deserialize, Serialize, Debug, Clone, ToSchema)]
+pub struct ErpInventoryCheckDetailBaseResponse {
+    
+    pub id: i64, // ID
+    
+    pub warehouse_id: i64, // 仓库ID
+    
+    pub product_id: i64, // 产品ID
+    
+    pub checked_quantity: i32, // 盘点数量
+    
+    pub remarks: Option<String>, // 备注
+    
+}

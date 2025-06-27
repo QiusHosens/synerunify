@@ -32,5 +32,9 @@ pub const SALE_RETURN_STATUS_RECEIVED: i8 = 1; // 销售退货订单状态-已�
 pub const SALE_RETURN_STATUS_COMPLETE: i8 = 2; // 销售退货订单状态-已完成
 pub const SALE_RETURN_STATUS_CANCEL: i8 = 3; // 销售退货订单状态-已取消
 
-pub const RECORD_TYPE_INBOUND: i8 = 0; // 记录类型-入库
-pub const RECORD_TYPE_OUTBOUND: i8 = 1; // 记录类型-出库
+pub const RECORD_TYPE_INBOUND_PURCHASE: i8 = 0; // 记录类型-采购入库
+pub const RECORD_TYPE_OUTBOUND_SALE: i8 = 1; // 记录类型-销售出库
+pub const RECORD_TYPE_INBOUND_OTHER: i8 = 2; // 记录类型-其他入库
+pub const RECORD_TYPE_OUTBOUND_OTHER: i8 = 3; // 记录类型-其他出库
+pub const RECORD_TYPE_INBOUND_TRANSFER: i8 = 4; // 记录类型-调拨入库
+pub const RECORD_TYPE_OUTBOUND_TRANSFER: i8 = 5; // 记录类型-调拨出库

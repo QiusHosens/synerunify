@@ -6,7 +6,7 @@ use ctor;
 use macros::require_authorize;
 use axum::{routing::{get, post}, Router, extract::{State, Path, Json, Query}, response::IntoResponse, Extension};
 use common::base::page::PaginatedResponse;
-use erp_model::request::erp_inventory_transfer::{CreateErpInventoryTransferRequest, UpdateErpInventoryTransferRequest, PaginatedKeywordRequest};
+use erp_model::{request::erp_inventory_transfer::{CreateErpInventoryTransferRequest, PaginatedKeywordRequest, UpdateErpInventoryTransferRequest}, response::erp_inventory_transfer::ErpInventoryTransferBaseResponse};
 use erp_model::response::erp_inventory_transfer::ErpInventoryTransferResponse;
 use common::base::response::CommonResult;
 use common::context::context::LoginUserContext;
@@ -19,6 +19,7 @@ pub async fn erp_inventory_transfer_router(state: AppState) -> OpenApiRouter {
         .routes(routes!(update))
         .routes(routes!(delete))
         .routes(routes!(get_by_id))
+        .routes(routes!(get_base_by_id))
         .routes(routes!(list))
         .routes(routes!(page))
         .with_state(state)
@@ -134,6 +135,34 @@ async fn get_by_id(
     Path(id): Path<i64>,
 ) -> CommonResult<ErpInventoryTransferResponse> {
     match service::erp_inventory_transfer::get_by_id(&state.db, login_user, id).await {
+        Ok(Some(data)) => {CommonResult::with_data(data)}
+        Ok(None) => {CommonResult::with_none()}
+        Err(e) => {CommonResult::with_err(&e.to_string())}
+    }
+}
+
+#[utoipa::path(
+    get,
+    path = "/get_base/{id}",
+    operation_id = "erp_inventory_transfer_get_base_by_id",
+    params(
+        ("id" = i64, Path, description = "id")
+    ),
+    responses(
+        (status = 200, description = "get base by id", body = CommonResult<ErpInventoryTransferBaseResponse>)
+    ),
+    tag = "erp_inventory_transfer",
+    security(
+        ("bearerAuth" = [])
+    )
+)]
+#[require_authorize(operation_id = "erp_inventory_transfer_get_base_by_id", authorize = "")]
+async fn get_base_by_id(
+    State(state): State<AppState>,
+    Extension(login_user): Extension<LoginUserContext>,
+    Path(id): Path<i64>,
+) -> CommonResult<ErpInventoryTransferBaseResponse> {
+    match service::erp_inventory_transfer::get_base_by_id(&state.db, login_user, id).await {
         Ok(Some(data)) => {CommonResult::with_data(data)}
         Ok(None) => {CommonResult::with_none()}
         Err(e) => {CommonResult::with_err(&e.to_string())}
