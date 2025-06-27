@@ -524,7 +524,7 @@ const ErpOutboundOrderAdd = forwardRef(({ onSubmit }: ErpOutboundOrderAddProps, 
                   <TextField
                     size="small"
                     name="remarks"
-                    defaultValue={formValues.details[index].remarks}
+                    value={formValues.details[index].remarks}
                     onChange={(e) => handleDetailInputChange(e as React.ChangeEvent<HTMLInputElement>, index)}
                   />
                 </Box>

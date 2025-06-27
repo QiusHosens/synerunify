@@ -147,7 +147,7 @@ const ErpInboundOrderAdd = forwardRef(({ onSubmit }: ErpInboundOrderAddProps, re
       if (!product.product_id && product.product_id !== 0) {
         newErrors.details[index].product_id = t('page.erp.purchase.inbound.detail.error.product');
       }
-      if (!product.quantity) {
+      if (!product.quantity && product.quantity !== 0) {
         newErrors.details[index].quantity = t('page.erp.purchase.inbound.detail.error.quantity');
       }
       if (!product.unit_price && product.unit_price !== 0) {
@@ -604,7 +604,7 @@ const ErpInboundOrderAdd = forwardRef(({ onSubmit }: ErpInboundOrderAddProps, re
                   <TextField
                     size="small"
                     name="remarks"
-                    defaultValue={item.remarks}
+                    value={item.remarks}
                     onChange={(e) => handleDetailInputChange(e as React.ChangeEvent<HTMLInputElement>, index)}
                   />
                 </Box>

@@ -1,18 +1,30 @@
-import { Box, Button, FormControl, Switch, TextField, Typography } from '@mui/material';
+import { Box, Button, Card, FormControl, FormHelperText, Grid, MenuItem, Select, SelectChangeEvent, Stack, TextField, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { forwardRef, useImperativeHandle, useState } from 'react';
+import { forwardRef, useCallback, useImperativeHandle, useState } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
-import { ErpInventoryTransferRequest, ErpInventoryTransferResponse, updateErpInventoryTransfer } from '@/api';
+import { ErpInventoryTransferAttachmentRequest, ErpInventoryTransferDetailRequest, ErpInventoryTransferRequest, ErpInventoryTransferResponse, ErpProductResponse, ErpWarehouseResponse, getBaseErpInventoryTransfer, listErpProduct, listErpWarehouse, updateErpInventoryTransfer } from '@/api';
 import CustomizedDialog from '@/components/CustomizedDialog';
+import { useMessage } from '@/components/GlobalMessage';
+import { Dayjs } from 'dayjs';
+import CustomizedFileUpload, { DownloadProps, UploadFile } from '@/components/CustomizedFileUpload';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { downloadSystemFile, uploadSystemFile } from '@/api/system_file';
+import { PickerValue } from '@mui/x-date-pickers/internals';
+import { DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers';
+import AddCircleSharpIcon from '@mui/icons-material/AddCircleSharp';
+import DeleteIcon from '@/assets/image/svg/delete.svg';
+import CustomizedCopyableText from '@/components/CustomizedCopyableText';
 
-interface FormErrors { 
+interface FormDetailErrors {
   from_warehouse_id?: string; // 调出仓库ID
   to_warehouse_id?: string; // 调入仓库ID
   product_id?: string; // 产品ID
   quantity?: string; // 调拨数量
+}
+
+interface FormErrors {
   transfer_date?: string; // 调拨日期
-  department_code?: string; // 部门编码
-  department_id?: string; // 部门ID
+  details: FormDetailErrors[];
 }
 
 interface ErpInventoryTransferEditProps {
@@ -21,25 +33,32 @@ interface ErpInventoryTransferEditProps {
 
 const ErpInventoryTransferEdit = forwardRef(({ onSubmit }: ErpInventoryTransferEditProps, ref) => {
   const { t } = useTranslation();
-
+  const { showMessage } = useMessage();
   const [open, setOpen] = useState(false);
-  const [maxWidth] = useState<DialogProps['maxWidth']>('sm');
-  const [erpInventoryTransfer, setErpInventoryTransfer] = useState<ErpInventoryTransferRequest>({
+  const [maxWidth] = useState<DialogProps['maxWidth']>('xl');
+  const [warehouses, setWarehouses] = useState<ErpWarehouseResponse[]>([]);
+  const [products, setProducts] = useState<ErpProductResponse[]>([]);
+  const [transferDate, setTransferDate] = useState<Dayjs | null>(null);
+  const [erpInventoryTransfer, setErpInventoryTransfer] = useState<ErpInventoryTransferResponse>();
+  const [erpInventoryTransferRequest, setErpInventoryTransferRequest] = useState<ErpInventoryTransferRequest>({
     id: 0,
-    from_warehouse_id: 0,
-    to_warehouse_id: 0,
-    product_id: 0,
-    quantity: 0,
     transfer_date: '',
     remarks: '',
-    department_code: '',
-    department_id: 0,
-    });
-  const [errors, setErrors] = useState<FormErrors>({});
+    details: [],
+    attachments: []
+  });
+  const [errors, setErrors] = useState<FormErrors>({
+    details: [],
+  });
+  const [size] = useState({ xs: 12, md: 3 });
+  const [fileWidth] = useState<number>(420);
+  const [fileHeight] = useState<number>(245);
+  const [downloadImages, setDownloadImages] = useState<Map<number, DownloadProps>>(new Map<number, DownloadProps>());
 
   useImperativeHandle(ref, () => ({
-    show(erpInventoryTransfer: ErpInventoryTransferResponse) {
-      initForm(erpInventoryTransfer);
+    show(erpInventoryTransferRequest: ErpInventoryTransferResponse) {
+      initForm(erpInventoryTransferRequest);
+      initWarehouses();
       setOpen(true);
     },
     hide() {
@@ -47,39 +66,48 @@ const ErpInventoryTransferEdit = forwardRef(({ onSubmit }: ErpInventoryTransferE
     },
   }));
 
+  const initWarehouses = useCallback(async () => {
+    const warehouses = await listErpWarehouse();
+    setWarehouses(warehouses);
+  }, []);
+
   const validateForm = (): boolean => {
-    const newErrors: FormErrors = {};
-    
-    if (!erpInventoryTransfer.from_warehouse_id && erpInventoryTransfer.from_warehouse_id != 0) {
-      newErrors.from_warehouse_id = t('page.mark_translation.error.from_warehouse_id');
+    const newErrors: FormErrors = {
+      details: erpInventoryTransferRequest.details.map(() => ({
+        warehouse_id: undefined,
+        product_id: undefined,
+        checked_quantity: undefined,
+      })),
+    };
+
+    if (!erpInventoryTransferRequest.transfer_date.trim()) {
+      newErrors.transfer_date = t('page.erp.inventory.transfer.error.transfer_date');
     }
-    
-    if (!erpInventoryTransfer.to_warehouse_id && erpInventoryTransfer.to_warehouse_id != 0) {
-      newErrors.to_warehouse_id = t('page.mark_translation.error.to_warehouse_id');
-    }
-    
-    if (!erpInventoryTransfer.product_id && erpInventoryTransfer.product_id != 0) {
-      newErrors.product_id = t('page.mark_translation.error.product_id');
-    }
-    
-    if (!erpInventoryTransfer.quantity && erpInventoryTransfer.quantity != 0) {
-      newErrors.quantity = t('page.mark_translation.error.quantity');
-    }
-    
-    if (!erpInventoryTransfer.transfer_date.trim()) {
-      newErrors.transfer_date = t('page.mark_translation.error.transfer_date');
-    }
-    
-    if (!erpInventoryTransfer.department_code.trim()) {
-      newErrors.department_code = t('page.mark_translation.error.department_code');
-    }
-    
-    if (!erpInventoryTransfer.department_id && erpInventoryTransfer.department_id != 0) {
-      newErrors.department_id = t('page.mark_translation.error.department_id');
-    }
-    
+
+    erpInventoryTransferRequest.details.forEach((product, index) => {
+      if (!product.from_warehouse_id) {
+        newErrors.details[index].from_warehouse_id = t('page.erp.purchase.inbound.detail.error.warehouse');
+      }
+      if (!product.to_warehouse_id) {
+        newErrors.details[index].to_warehouse_id = t('page.erp.purchase.inbound.detail.error.warehouse');
+      }
+      if (!product.product_id && product.product_id !== 0) {
+        newErrors.details[index].product_id = t('page.erp.purchase.inbound.detail.error.product');
+      }
+      if (!product.quantity && product.quantity !== 0) {
+        newErrors.details[index].quantity = t('page.erp.purchase.inbound.detail.error.quantity');
+      }
+    });
+
     setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    return !Object.keys(newErrors).some((key) => {
+      if (key === 'details') {
+        return newErrors.details.some((err) =>
+          Object.values(err).some((value) => value !== undefined)
+        );
+      }
+      return newErrors[key as keyof FormErrors];
+    });
   };
 
   const handleCancel = () => {
@@ -90,16 +118,91 @@ const ErpInventoryTransferEdit = forwardRef(({ onSubmit }: ErpInventoryTransferE
     setOpen(false);
   };
 
-  const initForm = (erpInventoryTransfer: ErpInventoryTransferResponse) => {
-    setErpInventoryTransfer({
-      ...erpInventoryTransfer,
+  const initForm = async (erpInventoryTransferRequest: ErpInventoryTransferResponse) => {
+    const products = await listErpProduct();
+    setProducts(products);
+    const result = await getBaseErpInventoryTransfer(erpInventoryTransferRequest.id);
+    const details = result.details;
+    if (details) {
+      for (const detail of details) {
+        for (const product of products) {
+          if (product.id === detail.product_id) {
+            detail.product = product;
+          }
+        }
+      }
+    }
+    setErpInventoryTransferRequest({
+      ...result,
+      details,
     })
-    setErrors({});
+    setErpInventoryTransfer(erpInventoryTransferRequest);
+    setTransferDate(new AdapterDayjs().dayjs(result.transfer_date));
+    // 设置图片
+    for (const attachment of result.attachments) {
+      const file_id = attachment.file_id;
+      const filename = attachment.file_name.indexOf('.') > 0 ? attachment.file_name.substring(0, attachment.file_name.lastIndexOf('.')) : attachment.file_name;
+      const result = await downloadSystemFile(file_id, (progress) => {
+        setDownloadImages(prev => {
+          const data: DownloadProps = {
+            filename,
+            status: 'downloading',
+            progress
+          };
+          const newMap = new Map(prev);
+          newMap.set(file_id, data);
+          return newMap;
+        })
+      })
+
+      setDownloadImages(prev => {
+        const data: DownloadProps = {
+          filename,
+          status: 'done',
+          previewUrl: window.URL.createObjectURL(result),
+        };
+        const newMap = new Map(prev);
+        newMap.set(file_id, data);
+        return newMap;
+      })
+    }
+    setErrors({ details: [], });
   }
 
   const handleSubmit = async () => {
     if (validateForm()) {
-      await updateErpInventoryTransfer(erpInventoryTransfer);
+      const details: ErpInventoryTransferDetailRequest[] = [];
+      for (const product of erpInventoryTransferRequest.details) {
+        let detail: ErpInventoryTransferDetailRequest = {
+          from_warehouse_id: product.from_warehouse_id,
+          to_warehouse_id: product.to_warehouse_id,
+          product_id: product.product_id!,
+          quantity: product.quantity,
+          remarks: product.remarks,
+        } as ErpInventoryTransferDetailRequest;
+        if (product.id) {
+          detail.id = product.id;
+        }
+        details.push(detail);
+      }
+      const attachments: ErpInventoryTransferAttachmentRequest[] = [];
+      for (const attachment of erpInventoryTransferRequest.attachments) {
+        let attach: ErpInventoryTransferAttachmentRequest = {
+          file_id: attachment.file_id!
+        } as ErpInventoryTransferAttachmentRequest;
+        if (attachment.id) {
+          attach.id = attachment.id;
+        }
+        attachments.push(attach);
+      }
+      const request: ErpInventoryTransferRequest = {
+        id: erpInventoryTransferRequest.id,
+        transfer_date: erpInventoryTransferRequest.transfer_date,
+        remarks: erpInventoryTransferRequest.remarks,
+        details,
+        attachments
+      }
+      await updateErpInventoryTransfer(request);
       handleClose();
       onSubmit();
     }
@@ -107,33 +210,9 @@ const ErpInventoryTransferEdit = forwardRef(({ onSubmit }: ErpInventoryTransferE
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type } = e.target;
-    if (type == 'number') {
-      const numberValue = Number(value);
-      setErpInventoryTransfer(prev => ({
-        ...prev,
-        [name]: numberValue
-      }));
-    } else {
-      setErpInventoryTransfer(prev => ({
-        ...prev,
-        [name]: value
-      }));
-    }
-
-    if (errors[name as keyof FormErrors]) {
-      setErrors(prev => ({
-        ...prev,
-        [name]: undefined
-      }));
-    }
-  };
-
-  const handleStatusChange = (e: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
-    const { name } = e.target;
-
-    setErpInventoryTransfer(prev => ({
+    setErpInventoryTransferRequest((prev) => ({
       ...prev,
-      [name]: checked ? 0 : 1
+      [name]: type === 'number' ? Number(value) : value,
     }));
 
     if (errors[name as keyof FormErrors]) {
@@ -144,11 +223,166 @@ const ErpInventoryTransferEdit = forwardRef(({ onSubmit }: ErpInventoryTransferE
     }
   };
 
+  const handleDateTimeChange = useCallback((value: PickerValue) => {
+    setTransferDate(value);
+    if (value) {
+      setErpInventoryTransferRequest((prev) => ({ ...prev, transfer_date: value.format('YYYY-MM-DD HH:mm:ss') }));
+      setErrors((prev) => ({ ...prev, transfer_date: undefined }));
+    }
+  }, []);
+
+  const handleAddDetail = useCallback(() => {
+    if (!warehouses || warehouses.length == 0) {
+      showMessage(t('global.error.warehouse.empty'));
+    }
+    if (!warehouses || warehouses.length == 1) {
+      showMessage(t('global.error.warehouse.only.one'));
+    }
+    if (!products || products.length == 0) {
+      showMessage(t('global.error.product.empty'));
+    }
+
+    const newDetail: ErpInventoryTransferDetailRequest = {
+      from_warehouse_id: warehouses[0].id,
+      to_warehouse_id: warehouses[1].id,
+      product_id: products[0].id,
+      quantity: 1,
+      remarks: '',
+      product: products[0],
+    };
+    setErpInventoryTransferRequest((prev) => ({
+      ...prev,
+      details: [...prev.details, newDetail],
+    }));
+    setErrors((prev) => ({
+      ...prev,
+      details: [
+        ...prev.details,
+        { warehouse_id: undefined, product_id: undefined, quantity: undefined, unit_price: undefined, tax_rate: undefined },
+      ],
+    }));
+  }, [products, showMessage, t]);
+
+  const handleClickDetailDelete = useCallback((index: number) => {
+    setErpInventoryTransferRequest((prev) => ({
+      ...prev,
+      details: prev.details.filter((_, idx) => idx !== index),
+    }));
+    setErrors((prev) => ({
+      ...prev,
+      details: prev.details.filter((_, idx) => idx !== index),
+    }));
+  }, []);
+
+  const handleWarehouseSelectChange = useCallback((e: SelectChangeEvent<number>, index: number) => {
+    const { name, value } = e.target;
+    setErpInventoryTransferRequest((prev) => ({
+      ...prev,
+      details: prev.details.map((item, idx) =>
+        idx === index ? { ...item, [name]: value } : item
+      ),
+    }));
+    setErrors((prev) => ({
+      ...prev,
+      details: prev.details.map((item, idx) =>
+        idx === index ? { ...item, [name]: undefined } : item
+      ),
+    }));
+  }, [warehouses]);
+
+  const handleProductSelectChange = useCallback((e: SelectChangeEvent<number>, index: number) => {
+    const { value } = e.target;
+    const product = products.find((p) => p.id === value);
+    setErpInventoryTransferRequest((prev) => ({
+      ...prev,
+      details: prev.details.map((item, idx) =>
+        idx === index ? { ...item, product_id: value, product } : item
+      ),
+    }));
+    setErrors((prev) => ({
+      ...prev,
+      details: prev.details.map((item, idx) =>
+        idx === index ? { ...item, product_id: undefined } : item
+      ),
+    }));
+  }, [products]);
+
+  const handleDetailInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>, index: number) => {
+    const { name, value, type } = e.target;
+    const numberValue = type === 'number' ? Number(value) : value;
+    setErpInventoryTransferRequest((prev) => {
+      const updatedProducts = prev.details.map((item, idx) => {
+        if (idx !== index) return item;
+        const updatedItem = { ...item, [name]: numberValue };
+        return updatedItem;
+      });
+      return { ...prev, details: updatedProducts };
+    });
+    setErrors((prev) => ({
+      ...prev,
+      details: prev.details.map((item, idx) =>
+        idx === index ? { ...item, [name]: undefined } : item
+      ),
+    }));
+  }, []);
+
+  const handleFileChange = useCallback(async (file: UploadFile | null, action: 'upload' | 'remove', index: number) => {
+    // console.log(`Upload ${index} file updated:`, file, `Action: ${action}`);
+
+    if (action === 'upload' && file) {
+      // 更新文件列表,增加一个附件,等待上传完成后在写入信息
+      setErpInventoryTransferRequest((prev) => {
+        return { ...prev, attachments: [...prev.attachments, { file }] };
+      })
+
+      // 上传文件
+      try {
+        const result = await uploadSystemFile(file.file, (progress) => {
+          setErpInventoryTransferRequest((prev) => {
+            const updatedAttachments = prev.attachments.map((item, idx) => {
+              if (idx !== index) return item;
+              const updatedItem = { ...item, file: { ...item.file!, progress } };
+              return updatedItem;
+            })
+            return { ...prev, attachments: updatedAttachments };
+          });
+        });
+
+        // 上传完成
+        setErpInventoryTransferRequest((prev) => {
+          const updatedAttachments = prev.attachments.map((item, idx) => {
+            if (idx !== index) return item;
+            const updatedItem = { ...item, file_id: result, file: { ...item.file!, status: 'done' as const } };
+            return updatedItem;
+          })
+          return { ...prev, attachments: updatedAttachments };
+        });
+      } catch (error) {
+        console.error('upload file error', error);
+        // 上传失败
+        setErpInventoryTransferRequest((prev) => {
+          const updatedAttachments = prev.attachments.map((item, idx) => {
+            if (idx !== index) return item;
+            const updatedItem = { ...item, file: { ...item.file!, status: 'error' as const } };
+            return updatedItem;
+          })
+          return { ...prev, attachments: updatedAttachments };
+        });
+      }
+    } else if (action === 'remove') {
+      // 删除文件并移除上传框
+      setErpInventoryTransferRequest((prev) => {
+        const updatedAttachments = prev.attachments.filter((_, idx) => idx !== index);
+        return { ...prev, attachments: updatedAttachments };
+      });
+    }
+  }, []);
+
   return (
     <CustomizedDialog
       open={open}
       onClose={handleClose}
-      title={t('global.operate.edit') + t('global.page.mark_translation')}
+      title={t('global.operate.edit') + t('global.page.erp.inventory.transfer')}
       maxWidth={maxWidth}
       actions={
         <>
@@ -160,95 +394,213 @@ const ErpInventoryTransferEdit = forwardRef(({ onSubmit }: ErpInventoryTransferE
       <Box
         noValidate
         component="form"
-        sx={ {display: 'flex',
+        sx={{
+          display: 'flex',
           flexDirection: 'column',
           m: 'auto',
-          width: 'fit-content',} }
+          width: 'fit-content',
+        }}
       >
-        <FormControl sx={ {minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' }} }>
-          <TextField
-            required
-            size="small"
-            type="number"
-            label={t("page.mark_translation.title.from_warehouse_id")}
-            name='from_warehouse_id'
-            value={ erpInventoryTransfer.from_warehouse_id}
-            onChange={handleInputChange}
-            error={!!errors.from_warehouse_id}
-            helperText={errors.from_warehouse_id}
-          />
-          <TextField
-            required
-            size="small"
-            type="number"
-            label={t("page.mark_translation.title.to_warehouse_id")}
-            name='to_warehouse_id'
-            value={ erpInventoryTransfer.to_warehouse_id}
-            onChange={handleInputChange}
-            error={!!errors.to_warehouse_id}
-            helperText={errors.to_warehouse_id}
-          />
-          <TextField
-            required
-            size="small"
-            type="number"
-            label={t("page.mark_translation.title.product_id")}
-            name='product_id'
-            value={ erpInventoryTransfer.product_id}
-            onChange={handleInputChange}
-            error={!!errors.product_id}
-            helperText={errors.product_id}
-          />
-          <TextField
-            required
-            size="small"
-            type="number"
-            label={t("page.mark_translation.title.quantity")}
-            name='quantity'
-            value={ erpInventoryTransfer.quantity}
-            onChange={handleInputChange}
-            error={!!errors.quantity}
-            helperText={errors.quantity}
-          />
-          <TextField
-            required
-            size="small"
-            label={t("page.mark_translation.title.transfer_date")}
-            name='transfer_date'
-            value={ erpInventoryTransfer.transfer_date}
-            onChange={handleInputChange}
-            error={!!errors.transfer_date}
-            helperText={errors.transfer_date}
-          />
-          <TextField
-            size="small"
-            label={t("page.mark_translation.title.remarks")}
-            name='remarks'
-            value={ erpInventoryTransfer.remarks}
-            onChange={handleInputChange}
-          />
-          <TextField
-            required
-            size="small"
-            label={t("page.mark_translation.title.department_code")}
-            name='department_code'
-            value={ erpInventoryTransfer.department_code}
-            onChange={handleInputChange}
-            error={!!errors.department_code}
-            helperText={errors.department_code}
-          />
-          <TextField
-            required
-            size="small"
-            type="number"
-            label={t("page.mark_translation.title.department_id")}
-            name='department_id'
-            value={ erpInventoryTransfer.department_id}
-            onChange={handleInputChange}
-            error={!!errors.department_id}
-            helperText={errors.department_id}
-          />
-          </FormControl>
+        <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' } }}>
+          <Grid container rowSpacing={2} columnSpacing={4} sx={{ '& .MuiGrid-root': { display: 'flex', justifyContent: 'center', alignItems: 'center' } }}>
+            <Grid size={size}>
+              <Stack direction="row" spacing={2} sx={{ display: "flex", alignItems: "center" }}>
+                <Box>{t('page.erp.purchase.order.title.order.number')}</Box>
+                <Box>{erpInventoryTransfer && <CustomizedCopyableText text={erpInventoryTransfer.order_number} sx={{
+                  fontSize: '0.75rem',
+                  fontWeight: 500,
+                }} />}</Box>
+              </Stack>
+            </Grid>
+            <Grid size={size}>
+              <FormControl sx={{ mt: 2, minWidth: 120, width: '100%' }}>
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <DateTimePicker
+                    name="inbound_date"
+                    label={t('page.erp.inventory.transfer.title.transfer.date')}
+                    value={transferDate}
+                    onChange={handleDateTimeChange}
+                    slotProps={{
+                      textField: {
+                        size: 'small',
+                        required: true,
+                        error: !!errors.transfer_date,
+                        helperText: errors.transfer_date,
+                      },
+                      openPickerButton: {
+                        sx: { mr: -1, '& .MuiSvgIcon-root': { fontSize: '1rem' } },
+                      },
+                    }}
+                  />
+                </LocalizationProvider>
+              </FormControl>
+            </Grid>
+            <Grid size={size}>
+              <TextField
+                size="small"
+                label={t("page.erp.inventory.transfer.title.remarks")}
+                name='remarks'
+                value={erpInventoryTransferRequest.remarks}
+                onChange={handleInputChange}
+              />
+            </Grid>
+          </Grid>
+        </FormControl>
+
+        <Typography variant="body1" sx={{ mt: 3, fontSize: '1rem', fontWeight: 500 }}>
+          {t('page.erp.purchase.order.title.check.list')}
+        </Typography>
+        <Card variant="outlined" sx={{ width: '100%', mt: 1, p: 2 }}>
+          <Box sx={{ display: 'table', width: '100%', "& .table-row": { display: 'table-row', "& .table-cell": { display: 'table-cell', padding: 1, textAlign: 'center', } } }}>
+            <Box className='table-row'>
+              <Box className='table-cell' sx={{ width: 50 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.no')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.inbound.detail.title.warehouse')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.inbound.detail.title.warehouse')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.product')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.barcode')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.unit')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 200 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.remarks')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 150 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.quantity')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 50 }}><Typography variant="body1">{t('global.operate.actions')}</Typography></Box>
+            </Box>
+            {erpInventoryTransferRequest.details.map((item, index) => (
+              <Box className='table-row' key={index}>
+                <Box className='table-cell' sx={{ width: 50, verticalAlign: 'middle' }}><Typography variant="body1">{index + 1}</Typography></Box>
+                <Box className='table-cell' sx={{ width: 100 }}>
+                  <FormControl sx={{ minWidth: 120, width: '100%' }}>
+                    <Select
+                      size="small"
+                      name="from_warehouse_id"
+                      value={item.from_warehouse_id}
+                      onChange={(e) => handleWarehouseSelectChange(e, index)}
+                      error={!!(errors.details[index]?.from_warehouse_id)}
+                    >
+                      {warehouses.map((warehouse) => (
+                        <MenuItem key={warehouse.id} value={warehouse.id}>
+                          {warehouse.name}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                    <FormHelperText sx={{ color: 'error.main' }}>{errors.details[index]?.from_warehouse_id}</FormHelperText>
+                  </FormControl>
+                </Box>
+                <Box className='table-cell' sx={{ width: 100 }}>
+                  <FormControl sx={{ minWidth: 120, width: '100%' }}>
+                    <Select
+                      size="small"
+                      name="to_warehouse_id"
+                      value={item.to_warehouse_id}
+                      onChange={(e) => handleWarehouseSelectChange(e, index)}
+                      error={!!(errors.details[index]?.to_warehouse_id)}
+                    >
+                      {warehouses.map((warehouse) => (
+                        <MenuItem key={warehouse.id} value={warehouse.id}>
+                          {warehouse.name}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                    <FormHelperText sx={{ color: 'error.main' }}>{errors.details[index]?.to_warehouse_id}</FormHelperText>
+                  </FormControl>
+                </Box>
+                <Box className='table-cell' sx={{ width: 100 }}>
+                  <FormControl sx={{ minWidth: 120, width: '100%' }}>
+                    <Select
+                      size="small"
+                      name="product_id"
+                      value={item.product_id ?? ''}
+                      onChange={(e) => handleProductSelectChange(e, index)}
+                      error={!!(errors.details[index]?.product_id)}
+                    >
+                      {products.map((product) => (
+                        <MenuItem key={product.id} value={product.id}>
+                          {product.name}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                    <FormHelperText sx={{ color: 'error.main' }}>{errors.details[index]?.product_id}</FormHelperText>
+                  </FormControl>
+                </Box>
+                <Box className='table-cell' sx={{ width: 50 }}>
+                  <TextField size="small" value={item.product?.stock_quantity ?? ''} disabled />
+                </Box>
+                <Box className='table-cell' sx={{ width: 50 }}>
+                  <TextField size="small" value={item.product?.barcode ?? ''} disabled />
+                </Box>
+                <Box className='table-cell' sx={{ width: 50 }}>
+                  <TextField size="small" value={item.product?.unit_name ?? ''} disabled />
+                </Box>
+                <Box className='table-cell' sx={{ width: 50 }}>
+                  <TextField
+                    size="small"
+                    name="remarks"
+                    value={item.remarks}
+                    onChange={(e) => handleDetailInputChange(e as React.ChangeEvent<HTMLInputElement>, index)}
+                  />
+                </Box>
+                <Box className='table-cell' sx={{ width: 50 }}>
+                  <TextField
+                    size="small"
+                    type="number"
+                    name="quantity"
+                    value={item.quantity}
+                    onChange={(e) => handleDetailInputChange(e as React.ChangeEvent<HTMLInputElement>, index)}
+                    error={!!(errors.details[index]?.quantity)}
+                    helperText={errors.details[index]?.quantity}
+                  />
+                </Box>
+                <Box className='table-cell' sx={{ width: 50, verticalAlign: 'middle' }}>
+                  <Button
+                    sx={{ color: 'error.main' }}
+                    size="small"
+                    variant="customOperate"
+                    title={t('global.operate.delete') + t('global.page.erp.purchase.order')}
+                    startIcon={<DeleteIcon />}
+                    onClick={() => handleClickDetailDelete(index)}
+                  />
+                </Box>
+              </Box>
+            ))}
+          </Box>
+          <Box sx={{ mt: 2, display: 'flex', justifyContent: 'center' }}>
+            <Button variant="outlined" startIcon={<AddCircleSharpIcon />} onClick={handleAddDetail}>
+              {t('page.erp.purchase.order.title.operate.add')}
+            </Button>
+          </Box>
+        </Card>
+
+        <Typography variant="body1" sx={{ mt: 3, fontSize: '1rem', fontWeight: 500 }}>
+          {t('page.erp.purchase.order.title.attachment')}
+        </Typography>
+        <Card variant="outlined" sx={{ width: '100%', mt: 1, p: 2 }}>
+          <Grid container rowSpacing={2} columnSpacing={4} sx={{ '& .MuiGrid-root': { display: 'flex', justifyContent: 'center', alignItems: 'center' } }}>
+            {erpInventoryTransferRequest.attachments.map((item, index) => (
+              <Grid key={index} size={{ xs: 12, md: 4 }}>
+                <CustomizedFileUpload
+                  id={'file-upload-' + index}
+                  accept=".jpg,jpeg,.png"
+                  maxSize={100}
+                  onChange={(files, action) => handleFileChange(files, action, index)}
+                  file={item.file}
+                  width={fileWidth}
+                  height={fileHeight}
+                  download={downloadImages?.get(item.file_id!)}
+                >
+                </CustomizedFileUpload>
+              </Grid>
+            ))}
+            <Grid size={{ xs: 12, md: 4 }}>
+              <CustomizedFileUpload
+                id={'file-upload-' + erpInventoryTransferRequest.attachments.length}
+                accept=".jpg,jpeg,.png"
+                maxSize={100}
+                onChange={(file, action) => handleFileChange(file, action, erpInventoryTransferRequest.attachments.length)}
+                width={fileWidth}
+                height={fileHeight}
+              >
+              </CustomizedFileUpload>
+            </Grid>
+          </Grid>
+        </Card>
       </Box>
     </CustomizedDialog>
   )

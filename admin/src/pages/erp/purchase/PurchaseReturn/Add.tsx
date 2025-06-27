@@ -542,7 +542,7 @@ const ErpPurchaseReturnAdd = forwardRef(({ onSubmit }: ErpPurchaseReturnAddProps
                   <TextField
                     size="small"
                     name="remarks"
-                    defaultValue={formValues.details[index] && formValues.details[index].remarks}
+                    value={formValues.details[index] && formValues.details[index].remarks}
                     onChange={(e) => handleDetailInputChange(e as React.ChangeEvent<HTMLInputElement>, index)}
                   />
                 </Box>

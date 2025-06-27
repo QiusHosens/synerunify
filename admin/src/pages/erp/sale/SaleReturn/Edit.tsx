@@ -520,7 +520,7 @@ const ErpSalesReturnEdit = forwardRef(({ onSubmit }: ErpSalesReturnEditProps, re
                     <TextField
                       size="small"
                       name="remarks"
-                      defaultValue={erpSalesReturnRequest.details[index].remarks}
+                      value={erpSalesReturnRequest.details[index].remarks}
                       onChange={(e) => handleDetailInputChange(e as React.ChangeEvent<HTMLInputElement>, index)}
                     />
                   </Box>

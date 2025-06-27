@@ -1,7 +1,8 @@
-import { Box, Button, Switch } from '@mui/material';
+import { Box, Button } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { DataGrid, GridCallbackDetails, GridColDef, GridFilterModel, GridRenderCellParams, GridSortModel } from '@mui/x-data-grid';
+import ViewIcon from '@/assets/image/svg/view.svg';
 import EditIcon from '@/assets/image/svg/edit.svg';
 import DeleteIcon from '@/assets/image/svg/delete.svg';
 import { pageErpInventoryCheck, ErpInventoryCheckQueryCondition, ErpInventoryCheckResponse } from '@/api';
@@ -9,6 +10,8 @@ import ErpInventoryCheckAdd from './Add';
 import ErpInventoryCheckEdit from './Edit';
 import ErpInventoryCheckDelete from './Delete';
 import { useHomeStore } from '@/store';
+import CustomizedAutoMore from '@/components/CustomizedAutoMore';
+import ErpInventoryCheckInfo from './Info';
 
 export default function ErpInventoryCheck() {
   const { t } = useTranslation();
@@ -24,21 +27,17 @@ export default function ErpInventoryCheck() {
   const [sortModel, setSortModel] = useState<GridSortModel>([]);
   const [filterModel, setFilterModel] = useState<GridFilterModel>();
 
+  const viewErpInventoryCheck = useRef(null);
   const addErpInventoryCheck = useRef(null);
   const editErpInventoryCheck = useRef(null);
   const deleteErpInventoryCheck = useRef(null);
 
   const columns: GridColDef[] = useMemo(
     () => [
-      { field: 'warehouse_id', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'product_id', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'checked_quantity', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'check_date', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'remarks', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'department_code', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'department_id', headerName: t("page."), flex: 1, minWidth: 100 },
-      
-      { field: 'create_time', headerName: t("page.post.title.create.time"), flex: 1, minWidth: 180 },
+      { field: 'order_number', headerName: t("page.erp.inventory.check.title.order.number"), flex: 1, minWidth: 100 },
+      { field: 'check_date', headerName: t("page.erp.inventory.check.title.check.date"), flex: 1, minWidth: 100 },
+      { field: 'remarks', headerName: t("page.erp.inventory.check.title.remarks"), flex: 1, minWidth: 100 },
+      { field: 'create_time', headerName: t("global.title.create.time"), flex: 1, minWidth: 180 },
       {
         field: 'actions',
         sortable: false,
@@ -47,23 +46,30 @@ export default function ErpInventoryCheck() {
         flex: 1,
         minWidth: 100,
         renderCell: (params: GridRenderCellParams) => (
-          <Box sx={ { height: '100%', display: 'flex', gap: 1, alignItems: 'center' } }>
-            {hasOperatePermission('system:post:edit') && <Button
+          <CustomizedAutoMore>
+            {hasOperatePermission('erp:inventory:check:get') && <Button
               size="small"
               variant='customOperate'
-              title={t('page.post.operate.edit')}
+              title={t('global.operate.view') + t('global.page.erp.inventory.check')}
+              startIcon={<ViewIcon />}
+              onClick={() => handleClickOpenView(params.row)}
+            />}
+            {hasOperatePermission('erp:inventory:check:edit') && <Button
+              size="small"
+              variant='customOperate'
+              title={t('global.operate.edit') + t('global.page.erp.inventory.check')}
               startIcon={<EditIcon />}
               onClick={() => handleClickOpenEdit(params.row)}
             />}
-            {hasOperatePermission('system:post:delete') && <Button
-              sx={ {color: 'error.main'} }
+            {hasOperatePermission('erp:inventory:check:delete') && <Button
+              sx={{ color: 'error.main' }}
               size="small"
               variant='customOperate'
-              title={t('page.post.operate.delete')}
+              title={t('global.operate.delete') + t('global.page.erp.inventory.check')}
               startIcon={<DeleteIcon />}
               onClick={() => handleClickOpenDelete(params.row)}
             />}
-          </Box>
+          </CustomizedAutoMore>
         ),
       },
     ],
@@ -79,6 +85,10 @@ export default function ErpInventoryCheck() {
   const handleClickOpenAdd = () => {
     (addErpInventoryCheck.current as any).show();
   }
+
+  const handleClickOpenView = (erpInventoryCheck: ErpInventoryCheckResponse) => {
+    (viewErpInventoryCheck.current as any).show(erpInventoryCheck);
+  };
 
   const handleClickOpenEdit = (erpInventoryCheck: ErpInventoryCheckResponse) => {
     (editErpInventoryCheck.current as any).show(erpInventoryCheck);
@@ -111,10 +121,10 @@ export default function ErpInventoryCheck() {
   };
 
   return (
-    <Box sx={ {height: '100%', display: 'flex', flexDirection: 'column'} }>
-      <Box sx={ {mb: 2, display: 'flex', justifyContent: 'space-between'} }>
+    <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+      <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between' }}>
         <Box></Box>
-        {hasOperatePermission('system:post:add') && <Button variant="customContained" onClick={handleClickOpenAdd}>
+        {hasOperatePermission('erp:inventory:check:add') && <Button variant="customContained" onClick={handleClickOpenAdd}>
           {t('global.operate.add')}
         </Button>}
       </Box>
@@ -131,7 +141,7 @@ export default function ErpInventoryCheck() {
         filterModel={filterModel}
         onFilterModelChange={handleFilterModelChange}
         pageSizeOptions={[10, 20, 50, 100]}
-        paginationModel={ {page: condition.page - 1, pageSize: condition.size} }
+        paginationModel={{ page: condition.page - 1, pageSize: condition.size }}
         onPaginationModelChange={(model) => {
           setCondition((prev) => ({
             ...prev,
@@ -140,6 +150,7 @@ export default function ErpInventoryCheck() {
           }));
         }}
       />
+      <ErpInventoryCheckInfo ref={viewErpInventoryCheck} />
       <ErpInventoryCheckAdd ref={addErpInventoryCheck} onSubmit={refreshData} />
       <ErpInventoryCheckEdit ref={editErpInventoryCheck} onSubmit={refreshData} />
       <ErpInventoryCheckDelete ref={deleteErpInventoryCheck} onSubmit={refreshData} />

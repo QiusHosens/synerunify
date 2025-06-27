@@ -555,7 +555,7 @@ const ErpPurchaseOrderAdd = forwardRef(({ onSubmit }: ErpPurchaseOrderAddProps, 
                   <TextField
                     size="small"
                     name="remarks"
-                    defaultValue={item.remarks}
+                    value={item.remarks}
                     onChange={(e) => handleProductInputChange(e as React.ChangeEvent<HTMLInputElement>, index)}
                   />
                 </Box>

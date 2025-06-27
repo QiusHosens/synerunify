@@ -1,15 +1,17 @@
-import { Box, Button, Switch } from '@mui/material';
+import { Box, Button } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { DataGrid, GridCallbackDetails, GridColDef, GridFilterModel, GridRenderCellParams, GridSortModel } from '@mui/x-data-grid';
+import ViewIcon from '@/assets/image/svg/view.svg';
 import EditIcon from '@/assets/image/svg/edit.svg';
 import DeleteIcon from '@/assets/image/svg/delete.svg';
-import { disableErpInventoryTransfer, enableErpInventoryTransfer, pageErpInventoryTransfer, ErpInventoryTransferQueryCondition, ErpInventoryTransferResponse } from '@/api';
+import { pageErpInventoryTransfer, ErpInventoryTransferQueryCondition, ErpInventoryTransferResponse } from '@/api';
 import ErpInventoryTransferAdd from './Add';
 import ErpInventoryTransferEdit from './Edit';
 import ErpInventoryTransferDelete from './Delete';
 import { useHomeStore } from '@/store';
 import CustomizedAutoMore from '@/components/CustomizedAutoMore';
+import ErpInventoryTransferInfo from './Info';
 
 export default function ErpInventoryTransfer() {
   const { t } = useTranslation();
@@ -25,21 +27,16 @@ export default function ErpInventoryTransfer() {
   const [sortModel, setSortModel] = useState<GridSortModel>([]);
   const [filterModel, setFilterModel] = useState<GridFilterModel>();
 
+  const viewErpInventoryTransfer = useRef(null);
   const addErpInventoryTransfer = useRef(null);
   const editErpInventoryTransfer = useRef(null);
   const deleteErpInventoryTransfer = useRef(null);
 
   const columns: GridColDef[] = useMemo(
     () => [
-      { field: 'from_warehouse_id', headerName: t("page.mark_translation.title.from_warehouse_id"), flex: 1, minWidth: 100 },
-      { field: 'to_warehouse_id', headerName: t("page.mark_translation.title.to_warehouse_id"), flex: 1, minWidth: 100 },
-      { field: 'product_id', headerName: t("page.mark_translation.title.product_id"), flex: 1, minWidth: 100 },
-      { field: 'quantity', headerName: t("page.mark_translation.title.quantity"), flex: 1, minWidth: 100 },
-      { field: 'transfer_date', headerName: t("page.mark_translation.title.transfer_date"), flex: 1, minWidth: 100 },
-      { field: 'remarks', headerName: t("page.mark_translation.title.remarks"), flex: 1, minWidth: 100 },
-      { field: 'department_code', headerName: t("page.mark_translation.title.department_code"), flex: 1, minWidth: 100 },
-      { field: 'department_id', headerName: t("page.mark_translation.title.department_id"), flex: 1, minWidth: 100 },
-      
+      { field: 'order_number', headerName: t("page.erp.inventory.transfer.title.order.number"), flex: 1, minWidth: 100 },
+      { field: 'transfer_date', headerName: t("page.erp.inventory.transfer.title.transfer.date"), flex: 1, minWidth: 100 },
+      { field: 'remarks', headerName: t("page.erp.inventory.transfer.title.remarks"), flex: 1, minWidth: 100 },
       { field: 'create_time', headerName: t("global.title.create.time"), flex: 1, minWidth: 180 },
       {
         field: 'actions',
@@ -50,18 +47,25 @@ export default function ErpInventoryTransfer() {
         minWidth: 100,
         renderCell: (params: GridRenderCellParams) => (
           <CustomizedAutoMore>
-            {hasOperatePermission('mark_permission:edit') && <Button
+            {hasOperatePermission('erp:inventory:transfer:get') && <Button
               size="small"
               variant='customOperate'
-              title={t('global.operate.edit') + t('global.page.mark_translation')}
+              title={t('global.operate.view') + t('global.page.erp.inventory.transfer')}
+              startIcon={<ViewIcon />}
+              onClick={() => handleClickOpenView(params.row)}
+            />}
+            {hasOperatePermission('erp:inventory:transfer:edit') && <Button
+              size="small"
+              variant='customOperate'
+              title={t('global.operate.edit') + t('global.page.erp.inventory.transfer')}
               startIcon={<EditIcon />}
               onClick={() => handleClickOpenEdit(params.row)}
             />}
-            {hasOperatePermission('mark_permission:delete') && <Button
-              sx={ {color: 'error.main'} }
+            {hasOperatePermission('erp:inventory:transfer:delete') && <Button
+              sx={{ color: 'error.main' }}
               size="small"
               variant='customOperate'
-              title={t('global.operate.delete') + t('global.page.mark_translation')}
+              title={t('global.operate.delete') + t('global.page.erp.inventory.transfer')}
               startIcon={<DeleteIcon />}
               onClick={() => handleClickOpenDelete(params.row)}
             />}
@@ -69,7 +73,7 @@ export default function ErpInventoryTransfer() {
         ),
       },
     ],
-    [t, handleStatusChange]
+    [t]
   );
 
   const queryRecords = async (condition: ErpInventoryTransferQueryCondition) => {
@@ -81,6 +85,10 @@ export default function ErpInventoryTransfer() {
   const handleClickOpenAdd = () => {
     (addErpInventoryTransfer.current as any).show();
   }
+
+  const handleClickOpenView = (erpInventoryTransfer: ErpInventoryTransferResponse) => {
+    (viewErpInventoryTransfer.current as any).show(erpInventoryTransfer);
+  };
 
   const handleClickOpenEdit = (erpInventoryTransfer: ErpInventoryTransferResponse) => {
     (editErpInventoryTransfer.current as any).show(erpInventoryTransfer);
@@ -113,10 +121,10 @@ export default function ErpInventoryTransfer() {
   };
 
   return (
-    <Box sx={ {height: '100%', display: 'flex', flexDirection: 'column'} }>
-      <Box sx={ {mb: 2, display: 'flex', justifyContent: 'space-between'} }>
+    <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+      <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between' }}>
         <Box></Box>
-        {hasOperatePermission('mark_permission:add') && <Button variant="customContained" onClick={handleClickOpenAdd}>
+        {hasOperatePermission('erp:inventory:transfer:add') && <Button variant="customContained" onClick={handleClickOpenAdd}>
           {t('global.operate.add')}
         </Button>}
       </Box>
@@ -133,7 +141,7 @@ export default function ErpInventoryTransfer() {
         filterModel={filterModel}
         onFilterModelChange={handleFilterModelChange}
         pageSizeOptions={[10, 20, 50, 100]}
-        paginationModel={ {page: condition.page - 1, pageSize: condition.size} }
+        paginationModel={{ page: condition.page - 1, pageSize: condition.size }}
         onPaginationModelChange={(model) => {
           setCondition((prev) => ({
             ...prev,
@@ -142,6 +150,7 @@ export default function ErpInventoryTransfer() {
           }));
         }}
       />
+      <ErpInventoryTransferInfo ref={viewErpInventoryTransfer} />
       <ErpInventoryTransferAdd ref={addErpInventoryTransfer} onSubmit={refreshData} />
       <ErpInventoryTransferEdit ref={editErpInventoryTransfer} onSubmit={refreshData} />
       <ErpInventoryTransferDelete ref={deleteErpInventoryTransfer} onSubmit={refreshData} />

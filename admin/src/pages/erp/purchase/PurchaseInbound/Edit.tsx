@@ -417,7 +417,7 @@ const ErpInboundOrderEdit = forwardRef(({ onSubmit }: ErpInboundOrderEditProps, 
                     <TextField
                       size="small"
                       name="remarks"
-                      defaultValue={item.remarks}
+                      value={item.remarks}
                       disabled
                     />
                   </Box>

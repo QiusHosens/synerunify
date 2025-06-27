@@ -114,12 +114,14 @@
   "global.page.erp.sales.return": "销售退货",
   "global.page.erp.other.inbound": "其他入库",
   "global.page.erp.other.outbound": "其他出库",
+  "global.page.erp.inventory.check": "库存盘点",
 
   "global.order.placeholder.order.number": "订单编号,由系统自动生成",
   "global.title.erp.purchase.list": "采购订单列表",
   "global.title.erp.sales.list": "销售订单列表",
   "global.error.product.empty": "产品为空,请先添加产品",
   "global.error.warehouse.empty": "仓库为空,请先添加仓库",
+  "global.error.warehouse.only.one": "仓库数量为1,无需调拨",
 
   "page.login.title.username": "用户名",
   "page.login.title.password": "密码",
@@ -515,5 +517,17 @@
   "page.erp.sale.outbound.title.settlement.account": "结算账户ID",
   "page.erp.sale.outbound.error.sales.order": "请选择销售订单",
   "page.erp.sale.outbound.error.customer.id": "请输入客户",
-  "page.erp.sale.outbound.error.outbound_date": "请输入出库日期"
+  "page.erp.sale.outbound.error.outbound_date": "请输入出库日期",
+
+  "page.erp.inventory.check.title.order.number": "订单编号",
+  "page.erp.inventory.check.title.check.date": "盘点日期",
+  "page.erp.inventory.check.title.remarks": "备注",
+  "page.erp.inventory.check.error.order.number": "请输入订单编号",
+  "page.erp.inventory.check.error.check.date": "请输入盘点日期",
+
+  "page.erp.inventory.transfer.title.order.number": "订单编号",
+  "page.erp.inventory.transfer.title.transfer.date": "调拨日期",
+  "page.erp.inventory.transfer.title.remarks": "备注",
+  "page.erp.inventory.transfer.error.order.number": "请输入订单编号",
+  "page.erp.inventory.transfer.error.transfer.date": "请输入调拨日期"
 }
