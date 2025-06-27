@@ -1,17 +1,17 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : 192.168.1.18_synerunify
+ Source Server         : 192.168.0.99_synerunify
  Source Server Type    : MySQL
- Source Server Version : 80200 (8.2.0)
- Source Host           : 192.168.1.18:3306
+ Source Server Version : 80100 (8.1.0)
+ Source Host           : 192.168.0.99:30010
  Source Schema         : synerunify
 
  Target Server Type    : MySQL
- Target Server Version : 80200 (8.2.0)
+ Target Server Version : 80100 (8.1.0)
  File Encoding         : 65001
 
- Date: 25/06/2025 20:58:45
+ Date: 27/06/2025 09:13:04
 */
 
 SET NAMES utf8mb4;
@@ -174,9 +174,7 @@ INSERT INTO `erp_inbound_order_detail` VALUES (2, 1, 3, 1, 1, 20, 50, 1000, 2, '
 DROP TABLE IF EXISTS `erp_inventory_check`;
 CREATE TABLE `erp_inventory_check`  (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '盘点记录ID',
-  `warehouse_id` bigint NOT NULL COMMENT '仓库ID',
-  `product_id` bigint NOT NULL COMMENT '产品ID',
-  `checked_quantity` int NOT NULL COMMENT '盘点数量',
+  `order_number` bigint NOT NULL COMMENT '订单编号',
   `check_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '盘点日期',
   `remarks` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
   `department_code` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '部门编码',
@@ -192,6 +190,56 @@ CREATE TABLE `erp_inventory_check`  (
 
 -- ----------------------------
 -- Records of erp_inventory_check
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for erp_inventory_check_attachment
+-- ----------------------------
+DROP TABLE IF EXISTS `erp_inventory_check_attachment`;
+CREATE TABLE `erp_inventory_check_attachment`  (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT 'ID',
+  `order_id` bigint NOT NULL COMMENT '盘点订单ID',
+  `file_id` bigint NOT NULL COMMENT '文件ID',
+  `remarks` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
+  `department_code` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '部门编码',
+  `department_id` bigint NOT NULL COMMENT '部门ID',
+  `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updater` bigint NULL DEFAULT NULL COMMENT '更新者ID',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+  `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '库存盘点附件表' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of erp_inventory_check_attachment
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for erp_inventory_check_detail
+-- ----------------------------
+DROP TABLE IF EXISTS `erp_inventory_check_detail`;
+CREATE TABLE `erp_inventory_check_detail`  (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT 'ID',
+  `order_id` bigint NOT NULL COMMENT '盘点订单ID',
+  `warehouse_id` bigint NOT NULL COMMENT '仓库ID',
+  `product_id` bigint NOT NULL COMMENT '产品ID',
+  `checked_quantity` int NOT NULL COMMENT '盘点数量',
+  `remarks` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
+  `department_code` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '部门编码',
+  `department_id` bigint NOT NULL COMMENT '部门ID',
+  `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updater` bigint NULL DEFAULT NULL COMMENT '更新者ID',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+  `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '库存盘点详情表' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of erp_inventory_check_detail
 -- ----------------------------
 
 -- ----------------------------
@@ -229,10 +277,7 @@ INSERT INTO `erp_inventory_record` VALUES (2, 1, 1, 20, 0, '2025-06-22 00:00:00'
 DROP TABLE IF EXISTS `erp_inventory_transfer`;
 CREATE TABLE `erp_inventory_transfer`  (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '调拨记录ID',
-  `from_warehouse_id` bigint NOT NULL COMMENT '调出仓库ID',
-  `to_warehouse_id` bigint NOT NULL COMMENT '调入仓库ID',
-  `product_id` bigint NOT NULL COMMENT '产品ID',
-  `quantity` int NOT NULL COMMENT '调拨数量',
+  `order_number` bigint NOT NULL COMMENT '订单编号',
   `transfer_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '调拨日期',
   `remarks` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
   `department_code` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '部门编码',
@@ -248,6 +293,56 @@ CREATE TABLE `erp_inventory_transfer`  (
 
 -- ----------------------------
 -- Records of erp_inventory_transfer
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for erp_inventory_transfer_attachment
+-- ----------------------------
+DROP TABLE IF EXISTS `erp_inventory_transfer_attachment`;
+CREATE TABLE `erp_inventory_transfer_attachment`  (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT 'ID',
+  `order_id` bigint NOT NULL COMMENT '调拨订单ID',
+  `file_id` bigint NOT NULL COMMENT '文件ID',
+  `remarks` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
+  `department_code` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '部门编码',
+  `department_id` bigint NOT NULL COMMENT '部门ID',
+  `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updater` bigint NULL DEFAULT NULL COMMENT '更新者ID',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+  `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '库存调拨附件表' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of erp_inventory_transfer_attachment
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for erp_inventory_transfer_detail
+-- ----------------------------
+DROP TABLE IF EXISTS `erp_inventory_transfer_detail`;
+CREATE TABLE `erp_inventory_transfer_detail`  (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT 'ID',
+  `from_warehouse_id` bigint NOT NULL COMMENT '调出仓库ID',
+  `to_warehouse_id` bigint NOT NULL COMMENT '调入仓库ID',
+  `product_id` bigint NOT NULL COMMENT '产品ID',
+  `quantity` int NOT NULL COMMENT '调拨数量',
+  `remarks` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
+  `department_code` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '部门编码',
+  `department_id` bigint NOT NULL COMMENT '部门ID',
+  `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updater` bigint NULL DEFAULT NULL COMMENT '更新者ID',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+  `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '库存调拨详情表' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of erp_inventory_transfer_detail
 -- ----------------------------
 
 -- ----------------------------
