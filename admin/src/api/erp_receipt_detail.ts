@@ -12,10 +12,12 @@ const apis = {
 
 export interface ErpReceiptDetailRequest {
   id?: number; // 收款详情ID
-  sales_order_id: number; // 销售订单ID
-  sales_return_id: number; // 销售退货ID
+  sales_order_id?: number; // 销售订单ID
+  sales_return_id?: number; // 销售退货ID
   amount: number; // 金额
   remarks: string; // 备注
+
+  type?: number; // 0为销售订单出库,1为销售退货
 }
 
 export interface ErpReceiptDetailResponse {
@@ -39,6 +41,8 @@ export interface ErpReceiptDetailBaseResponse {
   sales_return_id: number; // 销售退货ID
   amount: number; // 金额
   remarks: string; // 备注
+
+  type?: number; // 0为销售订单出库,1为销售退货
 }
 
 export interface ErpReceiptDetailQueryCondition extends PaginatedRequest {}

@@ -22,6 +22,7 @@ pub async fn erp_sales_return_router(state: AppState) -> OpenApiRouter {
         .routes(routes!(get_base_by_id))
         .routes(routes!(get_info_by_id))
         .routes(routes!(list))
+        .routes(routes!(list_by_customer_id))
         .routes(routes!(page))
         .with_state(state)
 }

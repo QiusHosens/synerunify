@@ -15,7 +15,7 @@ const apis = {
 };
 
 export interface ErpReceiptRequest {
-  id: number; // 收款ID
+  id?: number; // 收款ID
   customer_id: number; // 客户ID
   settlement_account_id: number; // 结算账户ID
   amount: number; // 收款金额

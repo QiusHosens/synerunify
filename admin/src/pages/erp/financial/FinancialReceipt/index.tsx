@@ -1,15 +1,17 @@
-import { Box, Button, Switch } from '@mui/material';
+import { Box, Button } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { DataGrid, GridCallbackDetails, GridColDef, GridFilterModel, GridRenderCellParams, GridSortModel } from '@mui/x-data-grid';
+import ViewIcon from '@/assets/image/svg/view.svg';
 import EditIcon from '@/assets/image/svg/edit.svg';
 import DeleteIcon from '@/assets/image/svg/delete.svg';
-import { disableErpReceipt, enableErpReceipt, pageErpReceipt, ErpReceiptQueryCondition, ErpReceiptResponse } from '@/api';
+import { pageErpReceipt, ErpReceiptQueryCondition, ErpReceiptResponse } from '@/api';
 import ErpReceiptAdd from './Add';
 import ErpReceiptEdit from './Edit';
 import ErpReceiptDelete from './Delete';
 import { useHomeStore } from '@/store';
 import CustomizedAutoMore from '@/components/CustomizedAutoMore';
+import ErpReceiptInfo from './Info';
 
 export default function ErpReceipt() {
   const { t } = useTranslation();
@@ -25,25 +27,22 @@ export default function ErpReceipt() {
   const [sortModel, setSortModel] = useState<GridSortModel>([]);
   const [filterModel, setFilterModel] = useState<GridFilterModel>();
 
+  const viewErpReceipt = useRef(null);
   const addErpReceipt = useRef(null);
   const editErpReceipt = useRef(null);
   const deleteErpReceipt = useRef(null);
 
   const columns: GridColDef[] = useMemo(
     () => [
-      { field: 'order_number', headerName: t("page.erp.receipt.title.order_number"), flex: 1, minWidth: 100 },
-      { field: 'customer_id', headerName: t("page.erp.receipt.title.customer_id"), flex: 1, minWidth: 100 },
-      { field: 'user_id', headerName: t("page.erp.receipt.title.user_id"), flex: 1, minWidth: 100 },
-      { field: 'settlement_account_id', headerName: t("page.erp.receipt.title.settlement_account_id"), flex: 1, minWidth: 100 },
+      { field: 'order_number', headerName: t("page.erp.receipt.title.order.number"), flex: 1.4, minWidth: 100 },
+      { field: 'customer_id', headerName: t("page.erp.receipt.title.customer"), flex: 1, minWidth: 100 },
+      { field: 'settlement_account_id', headerName: t("page.erp.receipt.title.settlement.account"), flex: 1, minWidth: 100 },
       { field: 'amount', headerName: t("page.erp.receipt.title.amount"), flex: 1, minWidth: 100 },
-      { field: 'discount_amount', headerName: t("page.erp.receipt.title.discount_amount"), flex: 1, minWidth: 100 },
-      { field: 'receipt_date', headerName: t("page.erp.receipt.title.receipt_date"), flex: 1, minWidth: 100 },
-      { field: 'payment_method', headerName: t("page.erp.receipt.title.payment_method"), flex: 1, minWidth: 100 },
-      { field: 'receipt_status', headerName: t("page.erp.receipt.title.receipt_status"), flex: 1, minWidth: 100 },
+      { field: 'discount_amount', headerName: t("page.erp.receipt.title.discount.amount"), flex: 1, minWidth: 100 },
+      { field: 'receipt_date', headerName: t("page.erp.receipt.title.receipt.date"), flex: 1, minWidth: 100 },
+      { field: 'payment_method', headerName: t("page.erp.receipt.title.payment.method"), flex: 1, minWidth: 100 },
+      { field: 'receipt_status', headerName: t("page.erp.receipt.title.receipt.status"), flex: 1, minWidth: 100 },
       { field: 'remarks', headerName: t("page.erp.receipt.title.remarks"), flex: 1, minWidth: 100 },
-      { field: 'department_code', headerName: t("page.erp.receipt.title.department_code"), flex: 1, minWidth: 100 },
-      { field: 'department_id', headerName: t("page.erp.receipt.title.department_id"), flex: 1, minWidth: 100 },
-      
       { field: 'create_time', headerName: t("global.title.create.time"), flex: 1, minWidth: 180 },
       {
         field: 'actions',
@@ -54,15 +53,22 @@ export default function ErpReceipt() {
         minWidth: 100,
         renderCell: (params: GridRenderCellParams) => (
           <CustomizedAutoMore>
-            {hasOperatePermission('mark_permission:edit') && <Button
+            {hasOperatePermission('erp:financial:receipt:get') && <Button
+              size="small"
+              variant='customOperate'
+              title={t('global.operate.view') + t('global.page.erp.receipt')}
+              startIcon={<ViewIcon />}
+              onClick={() => handleClickOpenView(params.row)}
+            />}
+            {hasOperatePermission('erp:financial:receipt:edit') && <Button
               size="small"
               variant='customOperate'
               title={t('global.operate.edit') + t('global.page.erp.receipt')}
               startIcon={<EditIcon />}
               onClick={() => handleClickOpenEdit(params.row)}
             />}
-            {hasOperatePermission('mark_permission:delete') && <Button
-              sx={ {color: 'error.main'} }
+            {hasOperatePermission('erp:financial:receipt:delete') && <Button
+              sx={{ color: 'error.main' }}
               size="small"
               variant='customOperate'
               title={t('global.operate.delete') + t('global.page.erp.receipt')}
@@ -73,7 +79,7 @@ export default function ErpReceipt() {
         ),
       },
     ],
-    [t, handleStatusChange]
+    [t]
   );
 
   const queryRecords = async (condition: ErpReceiptQueryCondition) => {
@@ -85,6 +91,10 @@ export default function ErpReceipt() {
   const handleClickOpenAdd = () => {
     (addErpReceipt.current as any).show();
   }
+
+  const handleClickOpenView = (erpReceipt: ErpReceiptResponse) => {
+    (viewErpReceipt.current as any).show(erpReceipt);
+  };
 
   const handleClickOpenEdit = (erpReceipt: ErpReceiptResponse) => {
     (editErpReceipt.current as any).show(erpReceipt);
@@ -117,10 +127,10 @@ export default function ErpReceipt() {
   };
 
   return (
-    <Box sx={ {height: '100%', display: 'flex', flexDirection: 'column'} }>
-      <Box sx={ {mb: 2, display: 'flex', justifyContent: 'space-between'} }>
+    <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+      <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between' }}>
         <Box></Box>
-        {hasOperatePermission('mark_permission:add') && <Button variant="customContained" onClick={handleClickOpenAdd}>
+        {hasOperatePermission('erp:financial:receipt:add') && <Button variant="customContained" onClick={handleClickOpenAdd}>
           {t('global.operate.add')}
         </Button>}
       </Box>
@@ -137,7 +147,7 @@ export default function ErpReceipt() {
         filterModel={filterModel}
         onFilterModelChange={handleFilterModelChange}
         pageSizeOptions={[10, 20, 50, 100]}
-        paginationModel={ {page: condition.page - 1, pageSize: condition.size} }
+        paginationModel={{ page: condition.page - 1, pageSize: condition.size }}
         onPaginationModelChange={(model) => {
           setCondition((prev) => ({
             ...prev,
@@ -146,6 +156,7 @@ export default function ErpReceipt() {
           }));
         }}
       />
+      <ErpReceiptInfo ref={viewErpReceipt} />
       <ErpReceiptAdd ref={addErpReceipt} onSubmit={refreshData} />
       <ErpReceiptEdit ref={editErpReceipt} onSubmit={refreshData} />
       <ErpReceiptDelete ref={deleteErpReceipt} onSubmit={refreshData} />

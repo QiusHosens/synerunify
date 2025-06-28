@@ -250,14 +250,14 @@ const ErpPaymentEdit = forwardRef(({ onSubmit }: ErpPaymentEditProps, ref) => {
 
   const handleSupplierChange = useCallback(async (e: SelectChangeEvent<number>) => {
     const { name, value } = e.target;
+    setErpPaymentRequest((prev) => ({ ...prev, [name]: value }));
+    setErrors((prev) => ({ ...prev, [name]: undefined }));
     // 查询采购入库订单
     const inboundOrders = await listSupplierErpInboundOrder(value);
     setInboundOrders(inboundOrders);
     // 查询采购退货订单
     const returnOrders = await listSupplierErpPurchaseReturn(value);
     setReturnOrders(returnOrders);
-    setErpPaymentRequest((prev) => ({ ...prev, [name]: value }));
-    setErrors((prev) => ({ ...prev, [name]: undefined }));
   }, []);
 
   const handleSelectChange = useCallback((e: SelectChangeEvent<number>) => {
