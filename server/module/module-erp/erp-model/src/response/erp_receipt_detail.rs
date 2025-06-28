@@ -18,7 +18,7 @@ pub struct ErpReceiptDetailResponse {
     
     pub amount: i64, // 金额
     
-    pub description: Option<String>, // 描述
+    pub remarks: Option<String>, // 描述
     
     pub department_code: String, // 部门编码
     
@@ -39,5 +39,20 @@ pub struct ErpReceiptDetailResponse {
     #[serde_as(as = "common::formatter::string_date_time::StringDateTime")]
     #[schema(value_type = String, format = Date)]
     pub update_time: NaiveDateTime, // 更新时间
+    
+}
+
+#[derive(Deserialize, Serialize, Debug, Clone, ToSchema)]
+pub struct ErpReceiptDetailBaseResponse {
+    
+    pub id: i64, // 收款详情ID
+    
+    pub sales_order_id: Option<i64>, // 销售订单ID
+    
+    pub sales_return_id: Option<i64>, // 销售退货ID
+    
+    pub amount: i64, // 金额
+    
+    pub remarks: Option<String>, // 描述
     
 }

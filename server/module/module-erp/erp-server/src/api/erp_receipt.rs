@@ -6,7 +6,7 @@ use ctor;
 use macros::require_authorize;
 use axum::{routing::{get, post}, Router, extract::{State, Path, Json, Query}, response::IntoResponse, Extension};
 use common::base::page::PaginatedResponse;
-use erp_model::request::erp_receipt::{CreateErpReceiptRequest, UpdateErpReceiptRequest, PaginatedKeywordRequest};
+use erp_model::{request::erp_receipt::{CreateErpReceiptRequest, PaginatedKeywordRequest, UpdateErpReceiptRequest}, response::erp_receipt::{ErpReceiptBaseResponse, ErpReceiptInfoResponse, ErpReceiptPageResponse}};
 use erp_model::response::erp_receipt::ErpReceiptResponse;
 use common::base::response::CommonResult;
 use common::context::context::LoginUserContext;
@@ -19,6 +19,8 @@ pub async fn erp_receipt_router(state: AppState) -> OpenApiRouter {
         .routes(routes!(update))
         .routes(routes!(delete))
         .routes(routes!(get_by_id))
+        .routes(routes!(get_base_by_id))
+        .routes(routes!(get_info_by_id))
         .routes(routes!(list))
         .routes(routes!(page))
         .with_state(state)
@@ -142,6 +144,62 @@ async fn get_by_id(
 
 #[utoipa::path(
     get,
+    path = "/get_base/{id}",
+    operation_id = "erp_receipt_get_base_by_id",
+    params(
+        ("id" = i64, Path, description = "id")
+    ),
+    responses(
+        (status = 200, description = "get base by id", body = CommonResult<ErpReceiptBaseResponse>)
+    ),
+    tag = "erp_receipt",
+    security(
+        ("bearerAuth" = [])
+    )
+)]
+#[require_authorize(operation_id = "erp_receipt_get_base_by_id", authorize = "")]
+async fn get_base_by_id(
+    State(state): State<AppState>,
+    Extension(login_user): Extension<LoginUserContext>,
+    Path(id): Path<i64>,
+) -> CommonResult<ErpReceiptBaseResponse> {
+    match service::erp_receipt::get_base_by_id(&state.db, login_user, id).await {
+        Ok(Some(data)) => {CommonResult::with_data(data)}
+        Ok(None) => {CommonResult::with_none()}
+        Err(e) => {CommonResult::with_err(&e.to_string())}
+    }
+}
+
+#[utoipa::path(
+    get,
+    path = "/get_info/{id}",
+    operation_id = "erp_receipt_get_info_by_id",
+    params(
+        ("id" = i64, Path, description = "id")
+    ),
+    responses(
+        (status = 200, description = "get info by id", body = CommonResult<ErpReceiptInfoResponse>)
+    ),
+    tag = "erp_receipt",
+    security(
+        ("bearerAuth" = [])
+    )
+)]
+#[require_authorize(operation_id = "erp_receipt_get_info_by_id", authorize = "")]
+async fn get_info_by_id(
+    State(state): State<AppState>,
+    Extension(login_user): Extension<LoginUserContext>,
+    Path(id): Path<i64>,
+) -> CommonResult<ErpReceiptInfoResponse> {
+    match service::erp_receipt::get_info_by_id(&state.db, login_user, id).await {
+        Ok(Some(data)) => {CommonResult::with_data(data)}
+        Ok(None) => {CommonResult::with_none()}
+        Err(e) => {CommonResult::with_err(&e.to_string())}
+    }
+}
+
+#[utoipa::path(
+    get,
     path = "/page",
     operation_id = "erp_receipt_page",
     params(
@@ -150,7 +208,7 @@ async fn get_by_id(
         ("keyword" = Option<String>, Query, description = "keyword")
     ),
     responses(
-        (status = 200, description = "get page", body = CommonResult<PaginatedResponse<ErpReceiptResponse>>)
+        (status = 200, description = "get page", body = CommonResult<PaginatedResponse<ErpReceiptPageResponse>>)
     ),
     tag = "erp_receipt",
     security(
@@ -162,7 +220,7 @@ async fn page(
     State(state): State<AppState>,
     Extension(login_user): Extension<LoginUserContext>,
     Query(params): Query<PaginatedKeywordRequest>,
-) -> CommonResult<PaginatedResponse<ErpReceiptResponse>> {
+) -> CommonResult<PaginatedResponse<ErpReceiptPageResponse>> {
     match service::erp_receipt::get_paginated(&state.db, login_user, params).await {
         Ok(data) => {CommonResult::with_data(data)}
         Err(e) => {CommonResult::with_err(&e.to_string())}

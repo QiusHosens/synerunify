@@ -6,7 +6,20 @@ use common::base::page::PaginatedRequest;
 #[derive(Serialize, Deserialize, Debug, ToSchema)]
 pub struct CreateErpReceiptDetailRequest {
     
-    pub receipt_id: i64, // 收款ID
+    pub sales_order_id: Option<i64>, // 销售订单ID
+    
+    pub sales_return_id: Option<i64>, // 销售退货ID
+    
+    pub amount: i64, // 金额
+    
+    pub remarks: Option<String>, // 描述
+    
+}
+
+#[derive(Serialize, Deserialize, Debug, ToSchema)]
+pub struct UpdateErpReceiptDetailRequest {
+    
+    pub id: Option<i64>, // 收款详情ID
     
     pub sales_order_id: Option<i64>, // 销售订单ID
     
@@ -14,32 +27,7 @@ pub struct CreateErpReceiptDetailRequest {
     
     pub amount: i64, // 金额
     
-    pub description: Option<String>, // 描述
-    
-    pub department_code: String, // 部门编码
-    
-    pub department_id: i64, // 部门ID
-    
-}
-
-#[derive(Serialize, Deserialize, Debug, ToSchema)]
-pub struct UpdateErpReceiptDetailRequest {
-    
-    pub id: i64, // 收款详情ID
-    
-    pub receipt_id: Option<i64>, // 收款ID
-    
-    pub sales_order_id: Option<i64>, // 销售订单ID
-    
-    pub sales_return_id: Option<i64>, // 销售退货ID
-    
-    pub amount: Option<i64>, // 金额
-    
-    pub description: Option<String>, // 描述
-    
-    pub department_code: Option<String>, // 部门编码
-    
-    pub department_id: Option<i64>, // 部门ID
+    pub remarks: Option<String>, // 描述
     
 }
 

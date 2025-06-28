@@ -1,17 +1,17 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : 192.168.0.99_synerunify
+ Source Server         : 192.168.1.18_synerunify
  Source Server Type    : MySQL
- Source Server Version : 80100 (8.1.0)
- Source Host           : 192.168.0.99:30010
+ Source Server Version : 80200 (8.2.0)
+ Source Host           : 192.168.1.18:3306
  Source Schema         : synerunify
 
  Target Server Type    : MySQL
- Target Server Version : 80100 (8.1.0)
+ Target Server Version : 80200 (8.2.0)
  File Encoding         : 65001
 
- Date: 27/06/2025 09:13:04
+ Date: 28/06/2025 08:54:47
 */
 
 SET NAMES utf8mb4;
@@ -186,11 +186,12 @@ CREATE TABLE `erp_inventory_check`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '库存盘点表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '库存盘点表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of erp_inventory_check
 -- ----------------------------
+INSERT INTO `erp_inventory_check` VALUES (1, 64335513670127616, '2025-06-27 00:00:00', '测试盘点', '0000', 1, 1, '2025-06-27 12:46:21', 1, '2025-06-27 12:46:21', b'0', 1);
 
 -- ----------------------------
 -- Table structure for erp_inventory_check_attachment
@@ -210,11 +211,12 @@ CREATE TABLE `erp_inventory_check_attachment`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '库存盘点附件表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '库存盘点附件表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of erp_inventory_check_attachment
 -- ----------------------------
+INSERT INTO `erp_inventory_check_attachment` VALUES (1, 1, 65, NULL, '0000', 1, 1, '2025-06-27 12:46:21', 1, '2025-06-27 12:46:21', b'0', 1);
 
 -- ----------------------------
 -- Table structure for erp_inventory_check_detail
@@ -236,11 +238,12 @@ CREATE TABLE `erp_inventory_check_detail`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '库存盘点详情表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '库存盘点详情表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of erp_inventory_check_detail
 -- ----------------------------
+INSERT INTO `erp_inventory_check_detail` VALUES (1, 1, 2, 1, 10, '测试盘点', '0000', 1, 1, '2025-06-27 12:46:21', 1, '2025-06-27 12:46:21', b'0', 1);
 
 -- ----------------------------
 -- Table structure for erp_inventory_record
@@ -263,13 +266,17 @@ CREATE TABLE `erp_inventory_record`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '库存记录表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '库存记录表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of erp_inventory_record
 -- ----------------------------
 INSERT INTO `erp_inventory_record` VALUES (1, 1, 1, 3, 0, '2025-06-22 00:00:00', '仓库1', '0000', 1, 1, '2025-06-22 01:14:45', 1, '2025-06-22 01:14:45', b'0', 1);
 INSERT INTO `erp_inventory_record` VALUES (2, 1, 1, 20, 0, '2025-06-22 00:00:00', '仓库2', '0000', 1, 1, '2025-06-22 01:14:45', 1, '2025-06-22 01:14:45', b'0', 1);
+INSERT INTO `erp_inventory_record` VALUES (3, 1, 1, 1, 1, '2025-06-26 00:00:00', '测试产品1', '0000', 1, 1, '2025-06-25 14:31:05', 1, '2025-06-25 14:31:05', b'0', 1);
+INSERT INTO `erp_inventory_record` VALUES (4, 1, 1, 1, 1, '2025-06-26 00:00:00', '', '0000', 1, 1, '2025-06-25 14:31:05', 1, '2025-06-25 14:31:05', b'0', 1);
+INSERT INTO `erp_inventory_record` VALUES (5, 1, 2, 5, 4, '2025-06-27 00:00:00', '调拨', '0000', 1, 1, '2025-06-27 12:38:07', 1, '2025-06-27 12:38:07', b'0', 1);
+INSERT INTO `erp_inventory_record` VALUES (6, 1, 1, 5, 5, '2025-06-27 00:00:00', '调拨', '0000', 1, 1, '2025-06-27 12:38:07', 1, '2025-06-27 12:38:07', b'0', 1);
 
 -- ----------------------------
 -- Table structure for erp_inventory_transfer
@@ -289,11 +296,12 @@ CREATE TABLE `erp_inventory_transfer`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '库存调拨表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '库存调拨表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of erp_inventory_transfer
 -- ----------------------------
+INSERT INTO `erp_inventory_transfer` VALUES (4, 64333444120842240, '2025-06-27 00:00:00', '测试调拨', '0000', 1, 1, '2025-06-27 12:38:07', 1, '2025-06-27 12:38:07', b'0', 1);
 
 -- ----------------------------
 -- Table structure for erp_inventory_transfer_attachment
@@ -313,11 +321,12 @@ CREATE TABLE `erp_inventory_transfer_attachment`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '库存调拨附件表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '库存调拨附件表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of erp_inventory_transfer_attachment
 -- ----------------------------
+INSERT INTO `erp_inventory_transfer_attachment` VALUES (1, 4, 64, NULL, '0000', 1, 1, '2025-06-27 12:38:07', 1, '2025-06-27 12:38:07', b'0', 1);
 
 -- ----------------------------
 -- Table structure for erp_inventory_transfer_detail
@@ -340,11 +349,12 @@ CREATE TABLE `erp_inventory_transfer_detail`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '库存调拨详情表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '库存调拨详情表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of erp_inventory_transfer_detail
 -- ----------------------------
+INSERT INTO `erp_inventory_transfer_detail` VALUES (1, 4, 1, 2, 1, 5, '调拨', '0000', 1, 1, '2025-06-27 12:38:07', 1, '2025-06-27 12:38:07', b'0', 1);
 
 -- ----------------------------
 -- Table structure for erp_outbound_order
@@ -370,11 +380,12 @@ CREATE TABLE `erp_outbound_order`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '出库订单表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '出库订单表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of erp_outbound_order
 -- ----------------------------
+INSERT INTO `erp_outbound_order` VALUES (1, 63637073734668288, 1, 1, 1, '2025-06-26 00:00:00', '测试', 1, 100, 1, '0000', 1, 1, '2025-06-25 14:31:05', 1, '2025-06-25 14:31:05', b'0', 1);
 
 -- ----------------------------
 -- Table structure for erp_outbound_order_attachment
@@ -394,11 +405,13 @@ CREATE TABLE `erp_outbound_order_attachment`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '出库订单附件表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '出库订单附件表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of erp_outbound_order_attachment
 -- ----------------------------
+INSERT INTO `erp_outbound_order_attachment` VALUES (1, 1, 61, NULL, '0000', 1, 1, '2025-06-25 14:31:05', 1, '2025-06-25 14:31:05', b'0', 1);
+INSERT INTO `erp_outbound_order_attachment` VALUES (2, 1, 62, NULL, '0000', 1, 1, '2025-06-25 14:31:05', 1, '2025-06-25 14:31:05', b'0', 1);
 
 -- ----------------------------
 -- Table structure for erp_outbound_order_detail
@@ -424,11 +437,13 @@ CREATE TABLE `erp_outbound_order_detail`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '出库详情表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '出库详情表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of erp_outbound_order_detail
 -- ----------------------------
+INSERT INTO `erp_outbound_order_detail` VALUES (1, 1, 1, 1, 1, 1, 20, 20, 1, '测试产品1', '0000', 1, 1, '2025-06-25 14:31:05', 1, '2025-06-25 14:31:05', b'0', 1);
+INSERT INTO `erp_outbound_order_detail` VALUES (2, 1, 2, 1, 1, 1, 80, 80, 1, '', '0000', 1, 1, '2025-06-25 14:31:05', 1, '2025-06-25 14:31:05', b'0', 1);
 
 -- ----------------------------
 -- Table structure for erp_payment
@@ -436,6 +451,7 @@ CREATE TABLE `erp_outbound_order_detail`  (
 DROP TABLE IF EXISTS `erp_payment`;
 CREATE TABLE `erp_payment`  (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '付款ID',
+  `order_number` bigint NOT NULL COMMENT '订单编号',
   `supplier_id` bigint NOT NULL COMMENT '供应商ID',
   `user_id` bigint NOT NULL COMMENT '关联用户ID',
   `settlement_account_id` bigint NULL DEFAULT NULL COMMENT '结算账户ID',
@@ -443,7 +459,6 @@ CREATE TABLE `erp_payment`  (
   `discount_amount` bigint NULL DEFAULT 0 COMMENT '优惠金额',
   `payment_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '付款日期',
   `payment_method` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '付款方式 (如 bank_transfer, cash, credit)',
-  `description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '描述',
   `payment_status` tinyint NOT NULL DEFAULT 0 COMMENT '状态 (0=pending, 1=completed, 2=cancelled)',
   `remarks` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
   `department_code` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '部门编码',
@@ -495,7 +510,7 @@ CREATE TABLE `erp_payment_detail`  (
   `purchase_order_id` bigint NULL DEFAULT NULL COMMENT '采购订单ID',
   `purchase_return_id` bigint NULL DEFAULT NULL COMMENT '采购退货ID',
   `amount` bigint NOT NULL COMMENT '金额',
-  `description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '描述',
+  `remarks` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
   `department_code` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '部门编码',
   `department_id` bigint NOT NULL COMMENT '部门ID',
   `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
@@ -590,12 +605,13 @@ CREATE TABLE `erp_product_inventory`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '产品库存表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '产品库存表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of erp_product_inventory
 -- ----------------------------
-INSERT INTO `erp_product_inventory` VALUES (1, 1, 1, 23, 1, '2025-06-22 01:14:45', 1, '2025-06-22 01:14:45', b'0', 1);
+INSERT INTO `erp_product_inventory` VALUES (1, 1, 1, 16, 1, '2025-06-22 01:14:45', 1, '2025-06-27 12:38:07', b'0', 1);
+INSERT INTO `erp_product_inventory` VALUES (2, 1, 2, 10, 1, '2025-06-27 12:38:07', 1, '2025-06-27 12:46:21', b'0', 1);
 
 -- ----------------------------
 -- Table structure for erp_product_unit
@@ -811,6 +827,7 @@ INSERT INTO `erp_purchase_return_detail` VALUES (2, 1, 3, 1, 1, 20, 50, 1000, 2,
 DROP TABLE IF EXISTS `erp_receipt`;
 CREATE TABLE `erp_receipt`  (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '收款ID',
+  `order_number` bigint NOT NULL COMMENT '订单编号',
   `customer_id` bigint NOT NULL COMMENT '客户ID',
   `user_id` bigint NOT NULL COMMENT '关联用户ID',
   `settlement_account_id` bigint NULL DEFAULT NULL COMMENT '结算账户ID',
@@ -818,7 +835,6 @@ CREATE TABLE `erp_receipt`  (
   `discount_amount` bigint NULL DEFAULT 0 COMMENT '优惠金额',
   `receipt_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '收款日期',
   `payment_method` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '收款方式 (如 bank_transfer, cash, credit)',
-  `description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '描述',
   `receipt_status` tinyint NOT NULL DEFAULT 0 COMMENT '状态 (0=pending, 1=completed, 2=cancelled)',
   `remarks` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
   `department_code` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '部门编码',
@@ -870,7 +886,7 @@ CREATE TABLE `erp_receipt_detail`  (
   `sales_order_id` bigint NULL DEFAULT NULL COMMENT '销售订单ID',
   `sales_return_id` bigint NULL DEFAULT NULL COMMENT '销售退货ID',
   `amount` bigint NOT NULL COMMENT '金额',
-  `description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '描述',
+  `remarks` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
   `department_code` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '部门编码',
   `department_id` bigint NOT NULL COMMENT '部门ID',
   `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
@@ -1000,11 +1016,12 @@ CREATE TABLE `erp_sales_return`  (
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `order_number`(`order_number` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '销售退货表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '销售退货表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of erp_sales_return
 -- ----------------------------
+INSERT INTO `erp_sales_return` VALUES (1, 63635320976969728, 1, 1, '2025-06-26 00:00:00', 100, 0, 1, 1, 0, '测试', '0000', 1, 1, '2025-06-25 14:24:07', 1, '2025-06-25 14:24:07', b'0', 1);
 
 -- ----------------------------
 -- Table structure for erp_sales_return_attachment
@@ -1024,11 +1041,13 @@ CREATE TABLE `erp_sales_return_attachment`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '销售退货附件表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '销售退货附件表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of erp_sales_return_attachment
 -- ----------------------------
+INSERT INTO `erp_sales_return_attachment` VALUES (1, 1, 58, NULL, '0000', 1, 1, '2025-06-25 14:24:07', 1, '2025-06-25 14:24:07', b'0', 1);
+INSERT INTO `erp_sales_return_attachment` VALUES (2, 1, 57, NULL, '0000', 1, 1, '2025-06-25 14:24:07', 1, '2025-06-25 14:24:07', b'0', 1);
 
 -- ----------------------------
 -- Table structure for erp_sales_return_detail
@@ -1054,11 +1073,13 @@ CREATE TABLE `erp_sales_return_detail`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '销售退货详情表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '销售退货详情表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of erp_sales_return_detail
 -- ----------------------------
+INSERT INTO `erp_sales_return_detail` VALUES (1, 1, 1, 1, 1, 1, 20, 20, 1, '', '0000', 1, 1, '2025-06-25 14:24:07', 1, '2025-06-25 14:24:07', b'0', 1);
+INSERT INTO `erp_sales_return_detail` VALUES (2, 1, 2, 1, 1, 1, 80, 80, 1, '', '0000', 1, 1, '2025-06-25 14:24:07', 1, '2025-06-25 14:24:07', b'0', 1);
 
 -- ----------------------------
 -- Table structure for erp_settlement_account
@@ -1140,12 +1161,13 @@ CREATE TABLE `erp_warehouse`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '仓库信息表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '仓库信息表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of erp_warehouse
 -- ----------------------------
 INSERT INTO `erp_warehouse` VALUES (1, '测试仓库', '高新区123', 0, 1, 10, 100, '测试负责人', '测试', 1, '2025-06-09 14:10:17', 1, '2025-06-09 14:17:59', b'0', 1);
+INSERT INTO `erp_warehouse` VALUES (2, '测试仓库2', '高新区', 0, 1, 0, 0, '测试负责人', '测试', 1, '2025-06-27 12:18:12', 1, '2025-06-27 12:18:12', b'0', 1);
 
 -- ----------------------------
 -- Table structure for system_data_scope_rule
@@ -1313,7 +1335,7 @@ CREATE TABLE `system_file`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 53 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '文件信息表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 66 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '文件信息表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of system_file
@@ -1370,6 +1392,19 @@ INSERT INTO `system_file` VALUES (49, '增值税发票.jpg', 'image/jpeg', 84093
 INSERT INTO `system_file` VALUES (50, '增值税发票1.jpg', 'image/jpeg', 84093, '2025/06/25/63609290979545088_增值税发票1.jpg', 1, '0000', 1, 1, '2025-06-25 12:40:41', 1, '2025-06-25 12:40:41', b'0', 1);
 INSERT INTO `system_file` VALUES (51, '增值税发票.jpg', 'image/jpeg', 84093, '2025/06/25/63611132027342848_增值税发票.jpg', 0, '0000', 1, 1, '2025-06-25 12:48:00', 1, '2025-06-25 12:48:10', b'0', 1);
 INSERT INTO `system_file` VALUES (52, '增值税发票1.jpg', 'image/jpeg', 84093, '2025/06/25/63611140470476800_增值税发票1.jpg', 0, '0000', 1, 1, '2025-06-25 12:48:02', 1, '2025-06-25 12:48:10', b'0', 1);
+INSERT INTO `system_file` VALUES (53, '增值税发票1.jpg', 'image/jpeg', 84093, '2025/06/25/63634223281475584_增值税发票1.jpg', 1, '0000', 1, 1, '2025-06-25 14:19:45', 1, '2025-06-25 14:19:45', b'0', 1);
+INSERT INTO `system_file` VALUES (54, '增值税发票.jpg', 'image/jpeg', 84093, '2025/06/25/63634224539766784_增值税发票.jpg', 1, '0000', 1, 1, '2025-06-25 14:19:46', 1, '2025-06-25 14:19:46', b'0', 1);
+INSERT INTO `system_file` VALUES (55, '增值税发票.jpg', 'image/jpeg', 84093, '2025/06/25/63634390256717824_增值税发票.jpg', 1, '0000', 1, 1, '2025-06-25 14:20:25', 1, '2025-06-25 14:20:25', b'0', 1);
+INSERT INTO `system_file` VALUES (56, '增值税发票1.jpg', 'image/jpeg', 84093, '2025/06/25/63634395390545920_增值税发票1.jpg', 1, '0000', 1, 1, '2025-06-25 14:20:27', 1, '2025-06-25 14:20:27', b'0', 1);
+INSERT INTO `system_file` VALUES (57, '增值税发票1.jpg', 'image/jpeg', 84093, '2025/06/25/63634708872826880_增值税发票1.jpg', 0, '0000', 1, 1, '2025-06-25 14:21:41', 1, '2025-06-25 14:24:07', b'0', 1);
+INSERT INTO `system_file` VALUES (58, '增值税发票.jpg', 'image/jpeg', 84093, '2025/06/25/63634710726709248_增值税发票.jpg', 0, '0000', 1, 1, '2025-06-25 14:21:42', 1, '2025-06-25 14:24:07', b'0', 1);
+INSERT INTO `system_file` VALUES (59, '增值税发票.jpg', 'image/jpeg', 84093, '2025/06/25/63636419213529088_增值税发票.jpg', 1, '0000', 1, 1, '2025-06-25 14:28:29', 1, '2025-06-25 14:28:29', b'0', 1);
+INSERT INTO `system_file` VALUES (60, '增值税发票1.jpg', 'image/jpeg', 84093, '2025/06/25/63636426842968064_增值税发票1.jpg', 1, '0000', 1, 1, '2025-06-25 14:28:31', 1, '2025-06-25 14:28:31', b'0', 1);
+INSERT INTO `system_file` VALUES (61, '增值税发票.jpg', 'image/jpeg', 84093, '2025/06/25/63637063831916544_增值税发票.jpg', 0, '0000', 1, 1, '2025-06-25 14:31:03', 1, '2025-06-25 14:31:05', b'0', 1);
+INSERT INTO `system_file` VALUES (62, '增值税发票1.jpg', 'image/jpeg', 84093, '2025/06/25/63637067099279360_增值税发票1.jpg', 0, '0000', 1, 1, '2025-06-25 14:31:04', 1, '2025-06-25 14:31:05', b'0', 1);
+INSERT INTO `system_file` VALUES (63, '增值税发票.jpg', 'image/jpeg', 84093, '2025/06/27/64328656318631936_增值税发票.jpg', 1, '0000', 1, 1, '2025-06-27 12:19:06', 1, '2025-06-27 12:19:06', b'0', 1);
+INSERT INTO `system_file` VALUES (64, '增值税发票.jpg', 'image/jpeg', 84093, '2025/06/27/64329649534013440_增值税发票.jpg', 0, '0000', 1, 1, '2025-06-27 12:23:02', 1, '2025-06-27 12:38:07', b'0', 1);
+INSERT INTO `system_file` VALUES (65, '增值税发票.jpg', 'image/jpeg', 84093, '2025/06/27/64335480660955136_增值税发票.jpg', 0, '0000', 1, 1, '2025-06-27 12:46:13', 1, '2025-06-27 12:46:21', b'0', 1);
 
 -- ----------------------------
 -- Table structure for system_menu
@@ -2034,7 +2069,7 @@ CREATE TABLE `system_user`  (
 -- ----------------------------
 -- Records of system_user
 -- ----------------------------
-INSERT INTO `system_user` VALUES (1, 'admin', '$2b$06$Ohq86rDIvNuy/4ZvsTF4dOw.7I7QJj620LC25PwgYDmrKqKmKsJz6', '超级管理员', '超级管理员', '123@qq.com', '18888888888', 0, '', 0, '127.0.0.1', '2025-06-23 03:05:53', '0000', 1, 1, '2025-03-08 10:14:52', 1, '2025-06-23 03:05:36', b'0', 1);
+INSERT INTO `system_user` VALUES (1, 'admin', '$2b$06$Ohq86rDIvNuy/4ZvsTF4dOw.7I7QJj620LC25PwgYDmrKqKmKsJz6', '超级管理员', '超级管理员', '123@qq.com', '18888888888', 0, '', 0, '127.0.0.1', '2025-06-27 12:05:57', '0000', 1, 1, '2025-03-08 10:14:52', 1, '2025-06-27 12:05:55', b'0', 1);
 INSERT INTO `system_user` VALUES (11, 'test', '$2b$06$S2yMOy4Mp5gImLOEl8X3K.T8XAWrfXVwGXK/vOBL.30PGNnnGIDzy', '测试管理员', NULL, '', '15555555555', 0, '', 0, '127.0.0.1', '2025-05-23 08:16:27', '0000-0000', 7, 1, '2025-05-23 08:16:00', 1, '2025-05-23 08:16:25', b'0', 2);
 
 -- ----------------------------

@@ -16,7 +16,6 @@ use common::state::app_state::AppState;
 pub async fn erp_payment_attachment_router(state: AppState) -> OpenApiRouter {
     OpenApiRouter::new()
         .routes(routes!(create))
-        .routes(routes!(update))
         .routes(routes!(delete))
         .routes(routes!(get_by_id))
         .routes(routes!(list))
@@ -27,7 +26,6 @@ pub async fn erp_payment_attachment_router(state: AppState) -> OpenApiRouter {
 pub async fn erp_payment_attachment_route(state: AppState) -> Router {
     Router::new()
         .route("/create", post(create))
-        .route("/update", post(update))
         .route("/delete/{id}", post(delete))
         .route("/get/{id}", get(get_by_id))
         .route("/list", get(list))
@@ -56,31 +54,6 @@ async fn create(
 ) -> CommonResult<i64> {
     match service::erp_payment_attachment::create(&state.db, login_user, payload).await {
         Ok(id) => {CommonResult::with_data(id)}
-        Err(e) => {CommonResult::with_err(&e.to_string())}
-    }
-}
-
-#[utoipa::path(
-    post,
-    path = "/update",
-    operation_id = "erp_payment_attachment_update",
-    request_body(content = UpdateErpPaymentAttachmentRequest, description = "update", content_type = "application/json"),
-    responses(
-        (status = 204, description = "update")
-    ),
-    tag = "erp_payment_attachment",
-    security(
-        ("bearerAuth" = [])
-    )
-)]
-#[require_authorize(operation_id = "erp_payment_attachment_update", authorize = "")]
-async fn update(
-    State(state): State<AppState>,
-    Extension(login_user): Extension<LoginUserContext>,
-    Json(payload): Json<UpdateErpPaymentAttachmentRequest>,
-) -> CommonResult<()> {
-    match service::erp_payment_attachment::update(&state.db, login_user, payload).await {
-        Ok(_) => {CommonResult::with_none()}
         Err(e) => {CommonResult::with_err(&e.to_string())}
     }
 }

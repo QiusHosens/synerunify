@@ -2,6 +2,7 @@ use chrono::NaiveDateTime;
 use sea_orm::Condition;
 use sea_orm::entity::prelude::*;
 use common::interceptor::orm::active_filter::ActiveFilterEntityTrait;
+use crate::model::{erp_customer, erp_settlement_account};
 
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel)]
 #[sea_orm(table_name = "erp_receipt")]
@@ -9,6 +10,8 @@ pub struct Model {
     
     #[sea_orm(primary_key)]
     pub id: i64, // 收款ID
+
+    pub order_number: i64, // 订单编号
     
     pub customer_id: i64, // 客户ID
     
@@ -23,8 +26,6 @@ pub struct Model {
     pub receipt_date: NaiveDateTime, // 收款日期
     
     pub payment_method: Option<String>, // 收款方式 (如 bank_transfer, cash, credit)
-    
-    pub description: Option<String>, // 描述
     
     pub receipt_status: i8, // 状态 (0=pending, 1=completed, 2=cancelled)
     
@@ -49,7 +50,22 @@ pub struct Model {
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
-pub enum Relation {}
+pub enum Relation {
+
+    #[sea_orm(
+        belongs_to = "super::erp_customer::Entity",
+        from = "Column::CustomerId",
+        to = "erp_customer::Column::Id"
+    )]
+    OrderCustomer,
+
+    #[sea_orm(
+        belongs_to = "super::erp_settlement_account::Entity",
+        from = "Column::SettlementAccountId",
+        to = "erp_settlement_account::Column::Id"
+    )]
+    OrderSettlementAccount,
+}
 
 impl Related<Entity> for Entity {
     fn to() -> RelationDef {

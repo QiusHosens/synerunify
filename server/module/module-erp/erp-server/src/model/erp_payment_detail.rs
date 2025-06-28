@@ -18,7 +18,7 @@ pub struct Model {
     
     pub amount: i64, // 金额
     
-    pub description: Option<String>, // 描述
+    pub remarks: Option<String>, // 描述
     
     pub department_code: String, // 部门编码
     
