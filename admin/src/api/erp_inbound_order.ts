@@ -13,6 +13,7 @@ const apis = {
   get_base_other: "/erp/erp_inbound_order/get_base_other", // 单条查询
   get_info_purchase: "/erp/erp_inbound_order/get_info_purchase", // 单条查询
   list: "/erp/erp_inbound_order/list", // 列表查询
+  list_supplier: "/erp/erp_inbound_order/list_supplier", // 列表查询
   page_purchase: "/erp/erp_inbound_order/page_purchase", // 分页查询采购入库
   page_other: "/erp/erp_inbound_order/page_other", // 分页查询其他入库
 };
@@ -125,6 +126,12 @@ export const listErpInboundOrder = (): Promise<
   Array<ErpInboundOrderResponse>
 > => {
   return api.get<Array<ErpInboundOrderResponse>>(apis.list);
+};
+
+export const listSupplierErpInboundOrder = (supplier_id: number): Promise<
+  Array<ErpInboundOrderResponse>
+> => {
+  return api.get<Array<ErpInboundOrderResponse>>(`${apis.list_supplier}/${supplier_id}`);
 };
 
 export const pagePurchaseErpInboundOrder = (

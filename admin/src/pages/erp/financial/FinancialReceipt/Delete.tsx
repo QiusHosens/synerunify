@@ -47,7 +47,7 @@ const ErpReceiptDelete = forwardRef(({ onSubmit }: ErpReceiptDeleteProps, ref) =
     <CustomizedDialog
       open={open}
       onClose={handleClose}
-      title={t('global.operate.delete') + t('global.page.post')}
+      title={t('global.operate.delete') + t('global.page.erp.receipt')}
       maxWidth={maxWidth}
       actions={
         <>
@@ -57,7 +57,7 @@ const ErpReceiptDelete = forwardRef(({ onSubmit }: ErpReceiptDeleteProps, ref) =
       }
     >
       <DialogContentText>
-        {t('global.description.delete', { name: erpReceipt && erpReceipt.name })}
+        {t('global.description.delete', { name: erpReceipt && erpReceipt.order_number })}
       </DialogContentText>
     </CustomizedDialog>
   )

@@ -249,3 +249,30 @@ async fn list(
         Err(e) => {CommonResult::with_err(&e.to_string())}
     }
 }
+
+#[utoipa::path(
+    get,
+    path = "/list_customer/{id}",
+    operation_id = "erp_sales_return_list_customer",
+    params(
+        ("customer_id" = i64, Path, description = "customer id")
+    ),
+    responses(
+        (status = 200, description = "list customer all", body = CommonResult<Vec<ErpSalesReturnResponse>>)
+    ),
+    tag = "erp_sales_return",
+    security(
+        ("bearerAuth" = [])
+    )
+)]
+#[require_authorize(operation_id = "erp_sales_return_list_customer", authorize = "")]
+async fn list_by_customer_id(
+    State(state): State<AppState>,
+    Extension(login_user): Extension<LoginUserContext>,
+    Path(customer_id): Path<i64>,
+) -> CommonResult<Vec<ErpSalesReturnResponse>> {
+    match service::erp_sales_return::list_by_customer_id(&state.db, login_user, customer_id).await {
+        Ok(data) => {CommonResult::with_data(data)}
+        Err(e) => {CommonResult::with_err(&e.to_string())}
+    }
+}

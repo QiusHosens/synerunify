@@ -11,6 +11,7 @@ const apis = {
   get_base: '/erp/erp_sales_return/get_base', // 单条查询
   get_info: '/erp/erp_sales_return/get_info', // 单条查询
   list: '/erp/erp_sales_return/list', // 列表查询
+  list_customer: '/erp/erp_sales_return/list_customer', // 列表查询
   page: '/erp/erp_sales_return/page', // 分页查询
 }
 
@@ -85,6 +86,10 @@ export const getInfoErpSalesReturn = (id: number): Promise<ErpSalesReturnRespons
 
 export const listErpSalesReturn = (): Promise<Array<ErpSalesReturnResponse>> => {
   return api.get<Array<ErpSalesReturnResponse>>(apis.list);
+}
+
+export const listCustomerErpSalesReturn = (customer_id: number): Promise<Array<ErpSalesReturnResponse>> => {
+  return api.get<Array<ErpSalesReturnResponse>>(`${apis.list_customer}/${customer_id}`);
 }
 
 export const pageErpSalesReturn = (condition: ErpSalesReturnQueryCondition): Promise<PaginatedResponse<ErpSalesReturnResponse>> => {

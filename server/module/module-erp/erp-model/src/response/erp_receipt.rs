@@ -11,6 +11,8 @@ use crate::response::{erp_receipt_attachment::ErpReceiptAttachmentBaseResponse, 
 pub struct ErpReceiptResponse {
     
     pub id: i64, // 收款ID
+
+    pub order_number: i64, // 订单编号
     
     pub customer_id: i64, // 客户ID
     
@@ -61,6 +63,8 @@ pub struct ErpReceiptResponse {
 pub struct ErpReceiptPageResponse {
     
     pub id: i64, // 收款ID
+
+    pub order_number: i64, // 订单编号
     
     pub customer_id: i64, // 客户ID
     
@@ -117,6 +121,8 @@ pub struct ErpReceiptPageResponse {
 pub struct ErpReceiptBaseResponse {
     
     pub id: i64, // 收款ID
+
+    pub order_number: i64, // 订单编号
     
     pub customer_id: i64, // 客户ID
     
@@ -151,6 +157,8 @@ pub struct ErpReceiptBaseResponse {
 pub struct ErpReceiptInfoResponse {
     
     pub id: i64, // 收款ID
+
+    pub order_number: i64, // 订单编号
     
     pub customer_id: i64, // 客户ID
     

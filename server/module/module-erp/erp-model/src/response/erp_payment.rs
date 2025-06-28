@@ -11,6 +11,8 @@ use crate::response::{erp_payment_attachment::ErpPaymentAttachmentBaseResponse, 
 pub struct ErpPaymentResponse {
     
     pub id: i64, // 付款ID
+
+    pub order_number: i64, // 订单编号
     
     pub supplier_id: i64, // 供应商ID
     
@@ -61,6 +63,8 @@ pub struct ErpPaymentResponse {
 pub struct ErpPaymentPageResponse {
     
     pub id: i64, // 付款ID
+
+    pub order_number: i64, // 订单编号
     
     pub supplier_id: i64, // 供应商ID
     
@@ -117,6 +121,8 @@ pub struct ErpPaymentPageResponse {
 pub struct ErpPaymentBaseResponse {
     
     pub id: i64, // 付款ID
+
+    pub order_number: i64, // 订单编号
     
     pub supplier_id: i64, // 供应商ID
     
@@ -151,6 +157,8 @@ pub struct ErpPaymentBaseResponse {
 pub struct ErpPaymentInfoResponse {
     
     pub id: i64, // 付款ID
+
+    pub order_number: i64, // 订单编号
     
     pub supplier_id: i64, // 供应商ID
     

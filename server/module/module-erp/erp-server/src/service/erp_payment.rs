@@ -23,6 +23,7 @@ pub async fn create(db: &DatabaseConnection, login_user: LoginUserContext, reque
         Ok(id) => erp_payment.order_number = Set(id),
         Err(e) => return Err(anyhow!("订单编号生成失败")),
     }
+    erp_payment.user_id = Set(login_user.id.clone());
     erp_payment.department_id = Set(login_user.department_id.clone());
     erp_payment.department_code = Set(login_user.department_code.clone());
     erp_payment.creator = Set(Some(login_user.id.clone()));

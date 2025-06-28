@@ -11,6 +11,7 @@ const apis = {
   get_detail: "/erp/erp_sales_order/get_detail", // 单条查询
   get_info: "/erp/erp_sales_order/get_info", // 单条查询
   list: "/erp/erp_sales_order/list", // 列表查询
+  list_customer: "/erp/erp_sales_order/list_customer", // 列表查询
   page: "/erp/erp_sales_order/page", // 分页查询
   page_ship_out: "/erp/erp_sales_order/page_ship_out", // 分页查询
 };
@@ -133,6 +134,10 @@ export const getErpSalesOrderInfo = (
 
 export const listErpSalesOrder = (): Promise<Array<ErpSalesOrderResponse>> => {
   return api.get<Array<ErpSalesOrderResponse>>(apis.list);
+};
+
+export const listCustomerErpSalesOrder = (customer_id: number): Promise<Array<ErpSalesOrderResponse>> => {
+  return api.get<Array<ErpSalesOrderResponse>>(`${apis.list_customer}/${customer_id}`);
 };
 
 export const pageErpSalesOrder = (

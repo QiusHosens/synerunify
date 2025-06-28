@@ -23,6 +23,7 @@ pub async fn erp_purchase_return_router(state: AppState) -> OpenApiRouter {
         .routes(routes!(get_info_by_id))
         .routes(routes!(list))
         .routes(routes!(page))
+        .routes(routes!(list_by_supplier_id))
         .with_state(state)
 }
 
@@ -245,6 +246,33 @@ async fn list(
     Extension(login_user): Extension<LoginUserContext>,
 ) -> CommonResult<Vec<ErpPurchaseReturnResponse>> {
     match service::erp_purchase_return::list(&state.db, login_user).await {
+        Ok(data) => {CommonResult::with_data(data)}
+        Err(e) => {CommonResult::with_err(&e.to_string())}
+    }
+}
+
+#[utoipa::path(
+    get,
+    path = "/list_supplier/{id}",
+    operation_id = "erp_purchase_return_list_supplier",
+    params(
+        ("supplier_id" = i64, Path, description = "supplier id")
+    ),
+    responses(
+        (status = 200, description = "list supplier all", body = CommonResult<Vec<ErpPurchaseReturnResponse>>)
+    ),
+    tag = "erp_purchase_return",
+    security(
+        ("bearerAuth" = [])
+    )
+)]
+#[require_authorize(operation_id = "erp_purchase_return_list_supplier", authorize = "")]
+async fn list_by_supplier_id(
+    State(state): State<AppState>,
+    Extension(login_user): Extension<LoginUserContext>,
+    Path(supplier_id): Path<i64>,
+) -> CommonResult<Vec<ErpPurchaseReturnResponse>> {
+    match service::erp_purchase_return::list_by_supplier_id(&state.db, login_user, supplier_id).await {
         Ok(data) => {CommonResult::with_data(data)}
         Err(e) => {CommonResult::with_err(&e.to_string())}
     }

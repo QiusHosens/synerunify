@@ -188,3 +188,11 @@ pub async fn list(db: &DatabaseConnection, login_user: LoginUserContext) -> Resu
         .all(db).await?;
     Ok(list.into_iter().map(model_to_response).collect())
 }
+
+pub async fn list_by_supplier_id(db: &DatabaseConnection, login_user: LoginUserContext, supplier_id: i64) -> Result<Vec<ErpPurchaseReturnResponse>> {
+    let list = ErpPurchaseReturnEntity::find_active()
+        .filter(Column::TenantId.eq(login_user.tenant_id))
+        .filter(Column::SupplierId.eq(supplier_id))
+        .all(db).await?;
+    Ok(list.into_iter().map(model_to_response).collect())
+}

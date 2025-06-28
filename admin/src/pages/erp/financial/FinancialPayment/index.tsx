@@ -1,7 +1,8 @@
-import { Box, Button, Switch } from '@mui/material';
+import { Box, Button } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { DataGrid, GridCallbackDetails, GridColDef, GridFilterModel, GridRenderCellParams, GridSortModel } from '@mui/x-data-grid';
+import ViewIcon from '@/assets/image/svg/view.svg';
 import EditIcon from '@/assets/image/svg/edit.svg';
 import DeleteIcon from '@/assets/image/svg/delete.svg';
 import { pageErpPayment, ErpPaymentQueryCondition, ErpPaymentResponse } from '@/api';
@@ -9,6 +10,9 @@ import ErpPaymentAdd from './Add';
 import ErpPaymentEdit from './Edit';
 import ErpPaymentDelete from './Delete';
 import { useHomeStore } from '@/store';
+import CustomizedAutoMore from '@/components/CustomizedAutoMore';
+import CustomizedCopyableText from '@/components/CustomizedCopyableText';
+import ErpPaymentInfo from './Info';
 
 export default function ErpPayment() {
   const { t } = useTranslation();
@@ -24,27 +28,33 @@ export default function ErpPayment() {
   const [sortModel, setSortModel] = useState<GridSortModel>([]);
   const [filterModel, setFilterModel] = useState<GridFilterModel>();
 
+  const viewErpPayment = useRef(null);
   const addErpPayment = useRef(null);
   const editErpPayment = useRef(null);
   const deleteErpPayment = useRef(null);
 
   const columns: GridColDef[] = useMemo(
     () => [
-      { field: 'purchase_order_id', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'supplier_id', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'user_id', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'settlement_account_id', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'amount', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'discount_amount', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'payment_date', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'payment_method', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'description', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'payment_status', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'remarks', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'department_code', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'department_id', headerName: t("page."), flex: 1, minWidth: 100 },
-
-      { field: 'create_time', headerName: t("page.post.title.create.time"), flex: 1, minWidth: 180 },
+      {
+        field: 'order_number',
+        headerName: t("page.erp.payment.title.order.number"),
+        flex: 1.4,
+        minWidth: 100,
+        renderCell: (params: GridRenderCellParams) => (
+          <CustomizedCopyableText
+            text={params.row.order_number}
+          />
+        )
+      },
+      { field: 'supplier_name', headerName: t("page.erp.payment.title.supplier"), flex: 1, minWidth: 100 },
+      { field: 'settlement_account_name', headerName: t("page.erp.payment.title.settlement.account"), flex: 1, minWidth: 100 },
+      { field: 'amount', headerName: t("page.erp.payment.title.amount"), flex: 1, minWidth: 100 },
+      { field: 'discount_amount', headerName: t("page.erp.payment.title.discount.amount"), flex: 1, minWidth: 100 },
+      { field: 'payment_date', headerName: t("page.erp.payment.title.payment.date"), flex: 1, minWidth: 100 },
+      { field: 'payment_method', headerName: t("page.erp.payment.title.payment.method"), flex: 1, minWidth: 100 },
+      { field: 'remarks', headerName: t("page.erp.payment.title.remarks"), flex: 1, minWidth: 100 },
+      { field: 'payment_status', headerName: t("page.erp.payment.title.payment.status"), flex: 1, minWidth: 100 },
+      { field: 'create_time', headerName: t("global.title.create.time"), flex: 1, minWidth: 180 },
       {
         field: 'actions',
         sortable: false,
@@ -53,23 +63,30 @@ export default function ErpPayment() {
         flex: 1,
         minWidth: 100,
         renderCell: (params: GridRenderCellParams) => (
-          <Box sx={{ height: '100%', display: 'flex', gap: 1, alignItems: 'center' }}>
-            {hasOperatePermission('system:post:edit') && <Button
+          <CustomizedAutoMore>
+            {hasOperatePermission('erp:financial:payment:get') && <Button
               size="small"
               variant='customOperate'
-              title={t('page.post.operate.edit')}
+              title={t('global.operate.view') + t('global.page.erp.payment')}
+              startIcon={<ViewIcon />}
+              onClick={() => handleClickOpenView(params.row)}
+            />}
+            {hasOperatePermission('erp:financial:payment:edit') && <Button
+              size="small"
+              variant='customOperate'
+              title={t('global.operate.edit') + t('global.page.erp.payment')}
               startIcon={<EditIcon />}
               onClick={() => handleClickOpenEdit(params.row)}
             />}
-            {hasOperatePermission('system:post:delete') && <Button
+            {hasOperatePermission('erp:financial:payment:delete') && <Button
               sx={{ color: 'error.main' }}
               size="small"
               variant='customOperate'
-              title={t('page.post.operate.delete')}
+              title={t('global.operate.delete') + t('global.page.erp.payment')}
               startIcon={<DeleteIcon />}
               onClick={() => handleClickOpenDelete(params.row)}
             />}
-          </Box>
+          </CustomizedAutoMore>
         ),
       },
     ],
@@ -85,6 +102,10 @@ export default function ErpPayment() {
   const handleClickOpenAdd = () => {
     (addErpPayment.current as any).show();
   }
+
+  const handleClickOpenView = (erpPayment: ErpPaymentResponse) => {
+    (viewErpPayment.current as any).show(erpPayment);
+  };
 
   const handleClickOpenEdit = (erpPayment: ErpPaymentResponse) => {
     (editErpPayment.current as any).show(erpPayment);
@@ -120,7 +141,7 @@ export default function ErpPayment() {
     <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
       <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between' }}>
         <Box></Box>
-        {hasOperatePermission('system:post:add') && <Button variant="customContained" onClick={handleClickOpenAdd}>
+        {hasOperatePermission('erp:financial:payment:add') && <Button variant="customContained" onClick={handleClickOpenAdd}>
           {t('global.operate.add')}
         </Button>}
       </Box>
@@ -146,6 +167,7 @@ export default function ErpPayment() {
           }));
         }}
       />
+      <ErpPaymentInfo ref={viewErpPayment}/>
       <ErpPaymentAdd ref={addErpPayment} onSubmit={refreshData} />
       <ErpPaymentEdit ref={editErpPayment} onSubmit={refreshData} />
       <ErpPaymentDelete ref={deleteErpPayment} onSubmit={refreshData} />

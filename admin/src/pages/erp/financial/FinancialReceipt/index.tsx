@@ -4,11 +4,12 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { DataGrid, GridCallbackDetails, GridColDef, GridFilterModel, GridRenderCellParams, GridSortModel } from '@mui/x-data-grid';
 import EditIcon from '@/assets/image/svg/edit.svg';
 import DeleteIcon from '@/assets/image/svg/delete.svg';
-import { pageErpReceipt, ErpReceiptQueryCondition, ErpReceiptResponse } from '@/api';
+import { disableErpReceipt, enableErpReceipt, pageErpReceipt, ErpReceiptQueryCondition, ErpReceiptResponse } from '@/api';
 import ErpReceiptAdd from './Add';
 import ErpReceiptEdit from './Edit';
 import ErpReceiptDelete from './Delete';
 import { useHomeStore } from '@/store';
+import CustomizedAutoMore from '@/components/CustomizedAutoMore';
 
 export default function ErpReceipt() {
   const { t } = useTranslation();
@@ -30,21 +31,20 @@ export default function ErpReceipt() {
 
   const columns: GridColDef[] = useMemo(
     () => [
-      { field: 'sales_order_id', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'customer_id', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'user_id', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'settlement_account_id', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'amount', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'discount_amount', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'receipt_date', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'payment_method', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'description', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'receipt_status', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'remarks', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'department_code', headerName: t("page."), flex: 1, minWidth: 100 },
-      { field: 'department_id', headerName: t("page."), flex: 1, minWidth: 100 },
-
-      { field: 'create_time', headerName: t("page.post.title.create.time"), flex: 1, minWidth: 180 },
+      { field: 'order_number', headerName: t("page.erp.receipt.title.order_number"), flex: 1, minWidth: 100 },
+      { field: 'customer_id', headerName: t("page.erp.receipt.title.customer_id"), flex: 1, minWidth: 100 },
+      { field: 'user_id', headerName: t("page.erp.receipt.title.user_id"), flex: 1, minWidth: 100 },
+      { field: 'settlement_account_id', headerName: t("page.erp.receipt.title.settlement_account_id"), flex: 1, minWidth: 100 },
+      { field: 'amount', headerName: t("page.erp.receipt.title.amount"), flex: 1, minWidth: 100 },
+      { field: 'discount_amount', headerName: t("page.erp.receipt.title.discount_amount"), flex: 1, minWidth: 100 },
+      { field: 'receipt_date', headerName: t("page.erp.receipt.title.receipt_date"), flex: 1, minWidth: 100 },
+      { field: 'payment_method', headerName: t("page.erp.receipt.title.payment_method"), flex: 1, minWidth: 100 },
+      { field: 'receipt_status', headerName: t("page.erp.receipt.title.receipt_status"), flex: 1, minWidth: 100 },
+      { field: 'remarks', headerName: t("page.erp.receipt.title.remarks"), flex: 1, minWidth: 100 },
+      { field: 'department_code', headerName: t("page.erp.receipt.title.department_code"), flex: 1, minWidth: 100 },
+      { field: 'department_id', headerName: t("page.erp.receipt.title.department_id"), flex: 1, minWidth: 100 },
+      
+      { field: 'create_time', headerName: t("global.title.create.time"), flex: 1, minWidth: 180 },
       {
         field: 'actions',
         sortable: false,
@@ -53,27 +53,27 @@ export default function ErpReceipt() {
         flex: 1,
         minWidth: 100,
         renderCell: (params: GridRenderCellParams) => (
-          <Box sx={{ height: '100%', display: 'flex', gap: 1, alignItems: 'center' }}>
-            {hasOperatePermission('system:post:edit') && <Button
+          <CustomizedAutoMore>
+            {hasOperatePermission('mark_permission:edit') && <Button
               size="small"
               variant='customOperate'
-              title={t('page.post.operate.edit')}
+              title={t('global.operate.edit') + t('global.page.erp.receipt')}
               startIcon={<EditIcon />}
               onClick={() => handleClickOpenEdit(params.row)}
             />}
-            {hasOperatePermission('system:post:delete') && <Button
-              sx={{ color: 'error.main' }}
+            {hasOperatePermission('mark_permission:delete') && <Button
+              sx={ {color: 'error.main'} }
               size="small"
               variant='customOperate'
-              title={t('page.post.operate.delete')}
+              title={t('global.operate.delete') + t('global.page.erp.receipt')}
               startIcon={<DeleteIcon />}
               onClick={() => handleClickOpenDelete(params.row)}
             />}
-          </Box>
+          </CustomizedAutoMore>
         ),
       },
     ],
-    [t]
+    [t, handleStatusChange]
   );
 
   const queryRecords = async (condition: ErpReceiptQueryCondition) => {
@@ -117,10 +117,10 @@ export default function ErpReceipt() {
   };
 
   return (
-    <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-      <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between' }}>
+    <Box sx={ {height: '100%', display: 'flex', flexDirection: 'column'} }>
+      <Box sx={ {mb: 2, display: 'flex', justifyContent: 'space-between'} }>
         <Box></Box>
-        {hasOperatePermission('system:post:add') && <Button variant="customContained" onClick={handleClickOpenAdd}>
+        {hasOperatePermission('mark_permission:add') && <Button variant="customContained" onClick={handleClickOpenAdd}>
           {t('global.operate.add')}
         </Button>}
       </Box>
@@ -137,7 +137,7 @@ export default function ErpReceipt() {
         filterModel={filterModel}
         onFilterModelChange={handleFilterModelChange}
         pageSizeOptions={[10, 20, 50, 100]}
-        paginationModel={{ page: condition.page - 1, pageSize: condition.size }}
+        paginationModel={ {page: condition.page - 1, pageSize: condition.size} }
         onPaginationModelChange={(model) => {
           setCondition((prev) => ({
             ...prev,

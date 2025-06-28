@@ -49,6 +49,7 @@ pub fn update_request_to_model(request: &UpdateErpPaymentRequest, existing: ErpP
 pub fn model_to_response(model: ErpPayment) -> ErpPaymentResponse {
     ErpPaymentResponse { 
         id: model.id,
+        order_number: model.order_number,
         supplier_id: model.supplier_id,
         user_id: model.user_id,
         settlement_account_id: model.settlement_account_id,
@@ -73,6 +74,7 @@ pub fn model_to_page_response(model: ErpPayment, model_supplier: Option<ErpSuppl
 
     ErpPaymentPageResponse { 
         id: model.id,
+        order_number: model.order_number,
         supplier_id: model.supplier_id,
         user_id: model.user_id,
         settlement_account_id: model.settlement_account_id,
@@ -97,6 +99,7 @@ pub fn model_to_page_response(model: ErpPayment, model_supplier: Option<ErpSuppl
 pub fn model_to_base_response(model: ErpPayment, details: Vec<ErpPaymentDetailBaseResponse>, attachments: Vec<ErpPaymentAttachmentBaseResponse>) -> ErpPaymentBaseResponse {
     ErpPaymentBaseResponse { 
         id: model.id,
+        order_number: model.order_number,
         supplier_id: model.supplier_id,
         user_id: model.user_id,
         settlement_account_id: model.settlement_account_id,
@@ -118,6 +121,7 @@ pub fn model_to_info_response(model: ErpPayment, model_supplier: Option<ErpSuppl
     
     ErpPaymentInfoResponse { 
         id: model.id,
+        order_number: model.order_number,
         supplier_id: model.supplier_id,
         user_id: model.user_id,
         settlement_account_id: model.settlement_account_id,

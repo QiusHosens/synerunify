@@ -172,6 +172,14 @@ pub async fn list(db: &DatabaseConnection, login_user: LoginUserContext) -> Resu
     Ok(list.into_iter().map(model_to_response).collect())
 }
 
+pub async fn list_by_customer_id(db: &DatabaseConnection, login_user: LoginUserContext, customer_id: i64) -> Result<Vec<ErpSalesOrderResponse>> {
+    let list = ErpSalesOrderEntity::find_active()
+        .filter(Column::TenantId.eq(login_user.tenant_id))
+        .filter(Column::CustomerId.eq(customer_id))
+        .all(db).await?;
+    Ok(list.into_iter().map(model_to_response).collect())
+}
+
 pub async fn get_ship_out_paginated(db: &DatabaseConnection, login_user: LoginUserContext, params: PaginatedKeywordRequest) -> Result<PaginatedResponse<ErpSalesOrderPageResponse>> {
     let paginator = ErpSalesOrderEntity::find_active_with_data_permission(login_user.clone())
         .filter(Column::TenantId.eq(login_user.tenant_id))

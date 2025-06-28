@@ -9,6 +9,7 @@ const apis = {
   delete: '/erp/erp_purchase_order/delete', // 删除
   get: '/erp/erp_purchase_order/get', // 单条查询
   list: '/erp/erp_purchase_order/list', // 列表查询
+  list_supplier: '/erp/erp_purchase_order/list_supplier', // 列表查询
   page: '/erp/erp_purchase_order/page', // 分页查询
   get_detail: '/erp/erp_purchase_order/get_detail', // 单条查询订单详情
   get_info: '/erp/erp_purchase_order/get_info', // 单条查询订单所有信息
@@ -142,4 +143,8 @@ export const cancelErpPurchaseOrder = (id: number): Promise<void> => {
 
 export const pageReceivedErpPurchaseOrder = (condition: ErpPurchaseOrderQueryCondition): Promise<PaginatedResponse<ErpPurchaseOrderResponse>> => {
   return api.get<PaginatedResponse<ErpPurchaseOrderResponse>>(apis.page_received, condition);
+}
+
+export const listSupplierErpPurchaseOrder = (supplier_id: number): Promise<Array<ErpPurchaseOrderResponse>> => {
+  return api.get<Array<ErpPurchaseOrderResponse>>(`${apis.list_supplier}/${supplier_id}`);
 }

@@ -195,7 +195,7 @@ const ErpPurchaseOrderEdit = forwardRef(({ onSubmit }: ErpPurchaseOrderEditProps
     if (validateForm()) {
       const purchase_products: ErpPurchaseOrderDetailRequest[] = [];
       for (const product of erpPurchaseOrderRequest.purchase_products) {
-        let detail: ErpPurchaseOrderDetailRequest = {
+        const detail: ErpPurchaseOrderDetailRequest = {
           product_id: product.product_id!,
           quantity: product.quantity,
           unit_price: product.unit_price,
@@ -210,7 +210,7 @@ const ErpPurchaseOrderEdit = forwardRef(({ onSubmit }: ErpPurchaseOrderEditProps
       }
       const purchase_attachment: ErpPurchaseOrderAttachmentRequest[] = [];
       for (const attachment of erpPurchaseOrderRequest.purchase_attachment) {
-        let attach: ErpPurchaseOrderAttachmentRequest = {
+        const attach: ErpPurchaseOrderAttachmentRequest = {
           file_id: attachment.file_id!
         } as ErpPurchaseOrderAttachmentRequest;
         if (attachment.id) {

@@ -11,6 +11,7 @@ const apis = {
   get_base: "/erp/erp_purchase_return/get_base", // 单条查询
   get_info: "/erp/erp_purchase_return/get_info", // 单条查询
   list: "/erp/erp_purchase_return/list", // 列表查询
+  list_supplier: "/erp/erp_purchase_return/list_supplier", // 列表查询
   page: "/erp/erp_purchase_return/page", // 分页查询
 };
 
@@ -95,6 +96,12 @@ export const listErpPurchaseReturn = (): Promise<
   Array<ErpPurchaseReturnResponse>
 > => {
   return api.get<Array<ErpPurchaseReturnResponse>>(apis.list);
+};
+
+export const listSupplierErpPurchaseReturn = (supplier_id: number): Promise<
+  Array<ErpPurchaseReturnResponse>
+> => {
+  return api.get<Array<ErpPurchaseReturnResponse>>(`${apis.list_supplier}/${supplier_id}`);
 };
 
 export const pageErpPurchaseReturn = (

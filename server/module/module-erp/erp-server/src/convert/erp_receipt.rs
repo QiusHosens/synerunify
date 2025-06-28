@@ -49,6 +49,7 @@ pub fn update_request_to_model(request: &UpdateErpReceiptRequest, existing: ErpR
 pub fn model_to_response(model: ErpReceipt) -> ErpReceiptResponse {
     ErpReceiptResponse { 
         id: model.id,
+        order_number: model.order_number,
         customer_id: model.customer_id,
         user_id: model.user_id,
         settlement_account_id: model.settlement_account_id,
@@ -73,6 +74,7 @@ pub fn model_to_page_response(model: ErpReceipt, model_customer: Option<ErpCusto
 
     ErpReceiptPageResponse { 
         id: model.id,
+        order_number: model.order_number,
         customer_id: model.customer_id,
         user_id: model.user_id,
         settlement_account_id: model.settlement_account_id,
@@ -97,6 +99,7 @@ pub fn model_to_page_response(model: ErpReceipt, model_customer: Option<ErpCusto
 pub fn model_to_base_response(model: ErpReceipt, details: Vec<ErpReceiptDetailBaseResponse>, attachments: Vec<ErpReceiptAttachmentBaseResponse>) -> ErpReceiptBaseResponse {
     ErpReceiptBaseResponse { 
         id: model.id,
+        order_number: model.order_number,
         customer_id: model.customer_id,
         user_id: model.user_id,
         settlement_account_id: model.settlement_account_id,
@@ -118,6 +121,7 @@ pub fn model_to_info_response(model: ErpReceipt, model_customer: Option<ErpCusto
 
     ErpReceiptInfoResponse { 
         id: model.id,
+        order_number: model.order_number,
         customer_id: model.customer_id,
         user_id: model.user_id,
         settlement_account_id: model.settlement_account_id,

@@ -14,6 +14,7 @@ const apis = {
   get_base_other: '/erp/erp_outbound_order/get_base_other', // 单条查询
   get_info_sales: '/erp/erp_outbound_order/get_info_sales', // 单条查询
   list: '/erp/erp_outbound_order/list', // 列表查询
+  list_customer: '/erp/erp_outbound_order/list_customer', // 列表查询
   page_sales: '/erp/erp_outbound_order/page_sales', // 分页查询
   page_other: '/erp/erp_outbound_order/page_other', // 分页查询
 }
@@ -100,6 +101,10 @@ export const getInfoSaleErpOutboundOrder = (id: number): Promise<ErpOutboundOrde
 
 export const listErpOutboundOrder = (): Promise<Array<ErpOutboundOrderResponse>> => {
   return api.get<Array<ErpOutboundOrderResponse>>(apis.list);
+}
+
+export const listCustomerErpOutboundOrder = (customer_id: number): Promise<Array<ErpOutboundOrderResponse>> => {
+  return api.get<Array<ErpOutboundOrderResponse>>(`${apis.list_customer}/${customer_id}`);
 }
 
 export const pageSaleErpOutboundOrder = (condition: ErpOutboundOrderQueryCondition): Promise<PaginatedResponse<ErpOutboundOrderResponse>> => {

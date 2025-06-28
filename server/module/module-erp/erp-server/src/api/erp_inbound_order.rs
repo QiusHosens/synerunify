@@ -27,6 +27,7 @@ pub async fn erp_inbound_order_router(state: AppState) -> OpenApiRouter {
         .routes(routes!(list))
         .routes(routes!(paginated_purchase))
         .routes(routes!(paginated_other))
+        .routes(routes!(list_by_supplier_id))
         .with_state(state)
 }
 
@@ -358,6 +359,33 @@ async fn list(
     Extension(login_user): Extension<LoginUserContext>,
 ) -> CommonResult<Vec<ErpInboundOrderResponse>> {
     match service::erp_inbound_order::list(&state.db, login_user).await {
+        Ok(data) => {CommonResult::with_data(data)}
+        Err(e) => {CommonResult::with_err(&e.to_string())}
+    }
+}
+
+#[utoipa::path(
+    get,
+    path = "/list_supplier/{id}",
+    operation_id = "erp_inbound_order_list_supplier",
+    params(
+        ("supplier_id" = i64, Path, description = "supplier id")
+    ),
+    responses(
+        (status = 200, description = "list supplier all", body = CommonResult<Vec<ErpInboundOrderResponse>>)
+    ),
+    tag = "erp_inbound_order",
+    security(
+        ("bearerAuth" = [])
+    )
+)]
+#[require_authorize(operation_id = "erp_inbound_order_list_supplier", authorize = "")]
+async fn list_by_supplier_id(
+    State(state): State<AppState>,
+    Extension(login_user): Extension<LoginUserContext>,
+    Path(supplier_id): Path<i64>,
+) -> CommonResult<Vec<ErpInboundOrderResponse>> {
+    match service::erp_inbound_order::list_by_supplier_id(&state.db, login_user, supplier_id).await {
         Ok(data) => {CommonResult::with_data(data)}
         Err(e) => {CommonResult::with_err(&e.to_string())}
     }

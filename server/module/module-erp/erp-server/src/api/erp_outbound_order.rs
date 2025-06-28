@@ -27,6 +27,7 @@ pub async fn erp_outbound_order_router(state: AppState) -> OpenApiRouter {
         .routes(routes!(list))
         .routes(routes!(page_sales))
         .routes(routes!(page_other))
+        .routes(routes!(list_by_customer_id))
         .with_state(state)
 }
 
@@ -356,6 +357,33 @@ async fn list(
     Extension(login_user): Extension<LoginUserContext>,
 ) -> CommonResult<Vec<ErpOutboundOrderResponse>> {
     match service::erp_outbound_order::list(&state.db, login_user).await {
+        Ok(data) => {CommonResult::with_data(data)}
+        Err(e) => {CommonResult::with_err(&e.to_string())}
+    }
+}
+
+#[utoipa::path(
+    get,
+    path = "/list_customer/{id}",
+    operation_id = "erp_outbound_order_list_customer",
+    params(
+        ("customer_id" = i64, Path, description = "customer id")
+    ),
+    responses(
+        (status = 200, description = "list customer all", body = CommonResult<Vec<ErpOutboundOrderResponse>>)
+    ),
+    tag = "erp_outbound_order",
+    security(
+        ("bearerAuth" = [])
+    )
+)]
+#[require_authorize(operation_id = "erp_outbound_order_list_customer", authorize = "")]
+async fn list_by_customer_id(
+    State(state): State<AppState>,
+    Extension(login_user): Extension<LoginUserContext>,
+    Path(customer_id): Path<i64>,
+) -> CommonResult<Vec<ErpOutboundOrderResponse>> {
+    match service::erp_outbound_order::list_by_customer_id(&state.db, login_user, customer_id).await {
         Ok(data) => {CommonResult::with_data(data)}
         Err(e) => {CommonResult::with_err(&e.to_string())}
     }

@@ -1,22 +1,22 @@
-import { PaginatedRequest, PaginatedResponse } from '@/base/page';
-import { api } from '@/utils/request';
+import { PaginatedRequest, PaginatedResponse } from "@/base/page";
+import { UploadFile } from "@/components/CustomizedFileUpload";
+import { api } from "@/utils/request";
 
 const apis = {
-  create: '/erp/erp_payment_attachment/create', // 新增
-  update: '/erp/erp_payment_attachment/update', // 修改
-  delete: '/erp/erp_payment_attachment/delete', // 删除
-  get: '/erp/erp_payment_attachment/get', // 单条查询
-  list: '/erp/erp_payment_attachment/list', // 列表查询
-  page: '/erp/erp_payment_attachment/page', // 分页查询
-}
+  create: "/erp/erp_payment_attachment/create", // 新增
+  update: "/erp/erp_payment_attachment/update", // 修改
+  delete: "/erp/erp_payment_attachment/delete", // 删除
+  get: "/erp/erp_payment_attachment/get", // 单条查询
+  list: "/erp/erp_payment_attachment/list", // 列表查询
+  page: "/erp/erp_payment_attachment/page", // 分页查询
+};
 
 export interface ErpPaymentAttachmentRequest {
-  id: number; // 附件ID
-  payment_id: number; // 付款ID
-  file_id: number; // 文件ID
-  remarks: string; // 备注
-  department_code: string; // 部门编码
-  department_id: number; // 部门ID
+  id?: number; // 附件ID
+  file_id?: number; // 文件ID
+  remarks?: string; // 备注
+
+  file?: UploadFile | null;
 }
 
 export interface ErpPaymentAttachmentResponse {
@@ -32,30 +32,49 @@ export interface ErpPaymentAttachmentResponse {
   update_time: string; // 更新时间
 }
 
-export interface ErpPaymentAttachmentQueryCondition extends PaginatedRequest {
+export interface ErpPaymentAttachmentBaseResponse {
+  id: number; // 附件ID
+  file_id: number; // 文件ID
+  remarks: string; // 备注
 
+  file_name: string; // 文件名
 }
 
-export const createErpPaymentAttachment = (erp_payment_attachment: ErpPaymentAttachmentRequest): Promise<number> => {
+export interface ErpPaymentAttachmentQueryCondition extends PaginatedRequest {}
+
+export const createErpPaymentAttachment = (
+  erp_payment_attachment: ErpPaymentAttachmentRequest
+): Promise<number> => {
   return api.post<number>(apis.create, erp_payment_attachment);
-}
+};
 
-export const updateErpPaymentAttachment = (erp_payment_attachment: ErpPaymentAttachmentRequest): Promise<void> => {
+export const updateErpPaymentAttachment = (
+  erp_payment_attachment: ErpPaymentAttachmentRequest
+): Promise<void> => {
   return api.post<void>(apis.update, erp_payment_attachment);
-}
+};
 
 export const deleteErpPaymentAttachment = (id: number): Promise<void> => {
   return api.post<void>(`${apis.delete}/${id}`);
-}
+};
 
-export const getErpPaymentAttachment = (id: number): Promise<ErpPaymentAttachmentResponse> => {
+export const getErpPaymentAttachment = (
+  id: number
+): Promise<ErpPaymentAttachmentResponse> => {
   return api.get<ErpPaymentAttachmentResponse>(`${apis.get}/${id}`);
-}
+};
 
-export const listErpPaymentAttachment = (): Promise<Array<ErpPaymentAttachmentResponse>> => {
+export const listErpPaymentAttachment = (): Promise<
+  Array<ErpPaymentAttachmentResponse>
+> => {
   return api.get<Array<ErpPaymentAttachmentResponse>>(apis.list);
-}
+};
 
-export const pageErpPaymentAttachment = (condition: ErpPaymentAttachmentQueryCondition): Promise<PaginatedResponse<ErpPaymentAttachmentResponse>> => {
-  return api.get<PaginatedResponse<ErpPaymentAttachmentResponse>>(apis.page, condition);
-}
+export const pageErpPaymentAttachment = (
+  condition: ErpPaymentAttachmentQueryCondition
+): Promise<PaginatedResponse<ErpPaymentAttachmentResponse>> => {
+  return api.get<PaginatedResponse<ErpPaymentAttachmentResponse>>(
+    apis.page,
+    condition
+  );
+};

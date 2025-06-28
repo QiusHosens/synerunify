@@ -188,3 +188,11 @@ pub async fn list(db: &DatabaseConnection, login_user: LoginUserContext) -> Resu
         .all(db).await?;
     Ok(list.into_iter().map(model_to_response).collect())
 }
+
+pub async fn list_by_customer_id(db: &DatabaseConnection, login_user: LoginUserContext, customer_id: i64) -> Result<Vec<ErpSalesReturnResponse>> {
+    let list = ErpSalesReturnEntity::find_active()
+        .filter(Column::TenantId.eq(login_user.tenant_id))
+        .filter(Column::CustomerId.eq(customer_id))
+        .all(db).await?;
+    Ok(list.into_iter().map(model_to_response).collect())
+}

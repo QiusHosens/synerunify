@@ -1,4 +1,4 @@
-import { Box, Button, Card, FormControl, FormHelperText, Grid, MenuItem, Select, SelectChangeEvent, Stack, Switch, TextField, Typography } from '@mui/material';
+import { Box, Button, Card, FormControl, FormHelperText, Grid, MenuItem, Select, SelectChangeEvent, Stack, TextField, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { forwardRef, useCallback, useImperativeHandle, useState } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
@@ -12,7 +12,6 @@ import { PickerValue } from '@mui/x-date-pickers/internals';
 import { useMessage } from '@/components/GlobalMessage';
 import { DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import AddCircleSharpIcon from '@mui/icons-material/AddCircleSharp';
-import DeleteIcon from '@/assets/image/svg/delete.svg';
 import CustomizedCopyableText from '@/components/CustomizedCopyableText';
 
 interface FormDetailErrors {
