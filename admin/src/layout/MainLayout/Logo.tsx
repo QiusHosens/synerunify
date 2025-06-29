@@ -1,15 +1,12 @@
-import { Typography } from "@mui/material";
+import { Box, SvgIcon } from "@mui/material";
+import Logo1 from '@/assets/logo_1.svg';
 
 export default function Logo() {
   return (
     <>
-      <Typography
-        component="h1"
-        variant="h4"
-        sx={{ width: "100%", fontSize: "clamp(2rem, 10vw, 2.15rem)" }}
-      >
-        Logo
-      </Typography>
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <SvgIcon component={Logo1} width={2031} height={599} inheritViewBox sx={{ width: 'auto', height: '63px' }} />
+      </Box>
     </>
   );
 }

@@ -41,7 +41,9 @@ export default function SideMenu({ sx, sideMenuWidth, routeTree }: SideMenuProps
       <Box
         sx={{
           display: "flex",
-          mt: "calc(var(--template-frame-height, 0px) + 4px)",
+          justifyContent: 'center', 
+          alignItems: 'center',
+          // mt: "calc(var(--template-frame-height, 0px) + 4px)",
           p: 1.5,
         }}
       >
