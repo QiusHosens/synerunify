@@ -190,19 +190,8 @@
     "switch.keep.false": "不缓存",
     "tip.visible": "不可见时，路由将不会出现在侧边栏，但仍然可以访问",
     "tip.always.show": "不总是显示时，当该菜单只有一个子菜单时，不展示自己，直接展示子菜单",
-    "tip.keep.alive": "缓存时，则会被 `keep-alive` 缓存，必须填写「组件名称」字段",
-    "error.permission": "common.error.input|权限标识",
-    "error.path": "common.error.input|路由地址",
-    "error.icon": "common.error.select|图标",
-    "error.component": "common.error.input|组件地址",
-    "error.component.name": "common.error.input|组件名称",
-    "error.name": "common.error.input|名称",
-    "error.type": "common.error.select|类型",
-    "error.sort": "common.error.input|排序",
-    "error.parent": "common.error.select|父级节点",
-    "error.status": "common.error.select|状态",
-    "operate.edit": "common.operate.edit|菜单",
-    "operate.delete": "common.operate.delete|菜单"
+    "tip.keep.alive": "缓存时，则会被 `keep-alive` 缓存，必须填写「组件名称」字段"
+
   },
   "page.role": {
     "title.data.scope.rule": "数据权限规则",

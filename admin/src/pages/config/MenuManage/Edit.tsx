@@ -106,7 +106,7 @@ const MenuEdit = forwardRef(({ onSubmit }: MenuEditProps, ref) => {
     }
 
     if (type != 3 && !menu.path.trim()) {
-      newErrors.path = t('global.error.input.please') + t('page.menu.error.path');
+      newErrors.path = t('global.error.input.please') + t('page.menu.title.path');
     }
 
     // if (type != 2 && !menu.icon.trim()) {

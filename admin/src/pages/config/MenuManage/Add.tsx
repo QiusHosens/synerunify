@@ -116,12 +116,12 @@ const MenuAdd = forwardRef(({ onSubmit }: MenuAddProps, ref) => {
       newErrors.sort = t('global.error.input.please') + t('common.title.sort');
     }
 
-    if (!formValues.parent_id && formValues.parent_id != 0) {
+    if (!formValues.parent_id && formValues.parent_id != 0) { 
       newErrors.parent_id = t('global.error.input.please') + t('common.title.parent');
     }
 
     if (type != 3 && !formValues.path.trim()) {
-      newErrors.path = t('global.error.input.please') + t('page.menu.error.path');
+      newErrors.path = t('global.error.input.please') + t('page.menu.title.path');
     }
 
     // if (type != 2 && !formValues.icon.trim()) {
