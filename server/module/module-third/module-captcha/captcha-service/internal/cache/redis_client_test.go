@@ -14,7 +14,7 @@ func TestRedisClient(t *testing.T) {
 	assert.NoError(t, err)
 	defer mr.Close()
 
-	client, err := NewRedisClient(mr.Addr(), "TEST_KEY:", 60*time.Second)
+	client, err := NewRedisClient(mr.Addr(), "TEST_KEY:", 60*time.Second, "", "0")
 	assert.NoError(t, err)
 	defer client.Close()
 
