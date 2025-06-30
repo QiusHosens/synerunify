@@ -86,7 +86,7 @@ const MenuEdit = forwardRef(({ onSubmit }: MenuEditProps, ref) => {
     const type = menu.type;
 
     if (!menu.name.trim()) {
-      newErrors.name = t('page.menu.error.name');
+      newErrors.name = t('global.error.input.please') + t('common.title.name');
     }
 
     // if (type != 0 && !menu.permission.trim()) {
@@ -94,19 +94,19 @@ const MenuEdit = forwardRef(({ onSubmit }: MenuEditProps, ref) => {
     // }
 
     if (!menu.type && menu.type != 0) {
-      newErrors.type = t('page.menu.error.type');
+      newErrors.type = t('global.error.input.please') + t('common.title.type');
     }
 
     if (!menu.sort && menu.sort != 0) {
-      newErrors.sort = t('page.menu.error.sort');
+      newErrors.sort = t('global.error.input.please') + t('common.title.sort');
     }
 
     if (!menu.parent_id && menu.parent_id != 0) {
-      newErrors.parent_id = t('page.menu.error.parent');
+      newErrors.parent_id = t('global.error.input.please') + t('common.title.parent');
     }
 
     if (type != 3 && !menu.path.trim()) {
-      newErrors.path = t('page.menu.error.path');
+      newErrors.path = t('global.error.input.please') + t('page.menu.error.path');
     }
 
     // if (type != 2 && !menu.icon.trim()) {
@@ -122,7 +122,7 @@ const MenuEdit = forwardRef(({ onSubmit }: MenuEditProps, ref) => {
     // }
 
     if (!menu.status && menu.status != 0) {
-      newErrors.status = t('page.menu.error.status');
+      newErrors.status = t('global.error.input.please') + t('common.title.status');
     }
 
     // console.log('errors', newErrors);
@@ -345,14 +345,14 @@ const MenuEdit = forwardRef(({ onSubmit }: MenuEditProps, ref) => {
         }}
       >
         <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiSelect-root': { width: '200px' } }}>
-          <DictSelect dict_type='menu_type' value={type} onChange={handleTypeChange} label={t("page.menu.title.type")}></DictSelect>
+          <DictSelect dict_type='menu_type' value={type} onChange={handleTypeChange} label={t("common.title.type")}></DictSelect>
         </FormControl>
         <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiSelect-root': { width: '200px' } }}>
           <SelectTree
             expandToSelected
             name='parent_id'
             size="small"
-            label={t('page.menu.title.parent')}
+            label={t('common.title.parent')}
             treeData={menuTreeData}
             value={selectedMenuId}
             onChange={(name, node) => handleChange(name, node as TreeNode)}
@@ -362,7 +362,7 @@ const MenuEdit = forwardRef(({ onSubmit }: MenuEditProps, ref) => {
           <TextField
             required
             size="small"
-            label={t("page.menu.title.name")}
+            label={t("common.title.name")}
             name='name'
             value={menu.name}
             onChange={handleInputChange}
@@ -429,7 +429,7 @@ const MenuEdit = forwardRef(({ onSubmit }: MenuEditProps, ref) => {
             required
             size="small"
             type="number"
-            label={t("page.menu.title.sort")}
+            label={t("common.title.sort")}
             name="sort"
             value={menu.sort}
             onChange={handleInputChange}
@@ -439,9 +439,9 @@ const MenuEdit = forwardRef(({ onSubmit }: MenuEditProps, ref) => {
 
         </FormControl>
         <Box sx={{ mt: 2, display: 'flex', alignItems: 'center' }}>
-          <Typography sx={{ mr: 4 }}>{t("page.menu.title.status")}</Typography>
+          <Typography sx={{ mr: 4 }}>{t("common.title.status")}</Typography>
           <Switch sx={{ mr: 2 }} name='status' checked={!menu.status} onChange={handleStatusChange} />
-          <Typography>{menu.status == 0 ? t('page.menu.switch.status.true') : t('page.menu.switch.status.false')}</Typography>
+          <Typography>{menu.status == 0 ? t('common.switch.status.true') : t('common.switch.status.false')}</Typography>
         </Box>
         {type != '3' && <Stack direction="row" spacing={2} sx={{ mt: 2, alignItems: 'center' }}>
           <QuestionBadge title={t("page.menu.tip.visible")}>

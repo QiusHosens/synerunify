@@ -53,13 +53,13 @@ export default function MenuManage() {
 
   const columns: GridColDef[] = useMemo(
     () => [
-      { field: 'name', headerName: t("page.menu.title.name"), flex: 1, minWidth: 200 },
+      { field: 'name', headerName: t("common.title.name"), flex: 1, minWidth: 200 },
       {
         field: 'types',
         // sortable: false,
         // resizable: false,
         filterable: false,
-        headerName: t("page.menu.title.type"),
+        headerName: t("common.title.type"),
         flex: 1,
         minWidth: 80,
         renderCell: (params: GridRenderCellParams) => (
@@ -84,14 +84,14 @@ export default function MenuManage() {
       { field: 'component_name', headerName: t("page.menu.title.component.name"), flex: 1, minWidth: 150 },
       {
         field: 'sort',
-        headerName: t("page.menu.title.sort"),
+        headerName: t("common.title.sort"),
         flex: 1,
         minWidth: 60,
       },
       {
         field: 'status',
         sortable: false,
-        headerName: t("page.menu.title.status"),
+        headerName: t("common.title.status"),
         flex: 1,
         minWidth: 80,
         renderCell: (params: GridRenderCellParams) => (

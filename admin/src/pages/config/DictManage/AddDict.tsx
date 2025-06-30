@@ -68,19 +68,19 @@ const DictAdd = forwardRef(({ onSubmit }: DictAddProps, ref) => {
     const newErrors: FormErrors = {};
 
     if (!formValues.dict_type.trim()) {
-      newErrors.dict_type = t('page.dict.error.dict.type');
+      newErrors.dict_type = t('global.error.select.please') + t('page.dict.title.dict.type');
     }
 
     if (!formValues.label.trim()) {
-      newErrors.label = t('page.dict.error.label');
+      newErrors.label = t('global.error.input.please') + t('page.dict.title.label');
     }
 
     if (!formValues.value.trim()) {
-      newErrors.value = t('page.dict.error.value');
+      newErrors.value = t('global.error.input.please') + t('page.dict.title.value');
     }
 
     if (!formValues.sort && formValues.sort != 0) {
-      newErrors.sort = t('page.dict.error.sort');
+      newErrors.sort = t('global.error.input.please') + t('page.dict.title.sort');
     }
 
     console.log('errors', newErrors);
@@ -195,7 +195,7 @@ const DictAdd = forwardRef(({ onSubmit }: DictAddProps, ref) => {
         }}
       >
         <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiSelect-root': { width: '200px' } }}>
-          <InputLabel required size="small" classes={{ root: 'CustomInputLabelRootSelect', shrink: 'CustomInputLabelShrinkSelect' }} id="dict-type-select-label">{t("page.dict.title.type")}</InputLabel>
+          <InputLabel required size="small" id="dict-type-select-label">{t("common.title.type")}</InputLabel>
           <Select
             required
             size="small"
@@ -204,9 +204,7 @@ const DictAdd = forwardRef(({ onSubmit }: DictAddProps, ref) => {
             name="dict_type"
             value={formValues.dict_type}
             onChange={(e) => handleSelectChange(e)}
-            // value={type}
-            // onChange={handleTypeChange}
-            label={t("page.menu.title.type")}
+            label={t("common.title.type")}
           >
             {types.map(item => (<MenuItem key={item.type} value={item.type}>{item.name}</MenuItem>))}
           </Select>

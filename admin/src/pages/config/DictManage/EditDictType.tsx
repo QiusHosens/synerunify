@@ -41,11 +41,11 @@ const DictTypeEdit = forwardRef(({ onSubmit }: DictTypeEditProps, ref) => {
     const newErrors: FormErrors = {};
 
     if (!dictType.name.trim()) {
-      newErrors.name = t('page.dict.error.name');
+      newErrors.name = t('global.error.input.please') + t('common.title.name');
     }
 
     if (!dictType.type.trim()) {
-      newErrors.type = t('page.dict.error.type');
+      newErrors.type = t('global.error.input.please') + t('common.title.type');
     }
 
     setErrors(newErrors);

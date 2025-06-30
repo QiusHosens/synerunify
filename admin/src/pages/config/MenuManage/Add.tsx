@@ -101,7 +101,7 @@ const MenuAdd = forwardRef(({ onSubmit }: MenuAddProps, ref) => {
     const type = formValues.type;
 
     if (!formValues.name.trim()) {
-      newErrors.name = t('page.menu.error.name');
+      newErrors.name = t('global.error.input.please') + t('common.title.name');
     }
 
     // if (type != 0 && !formValues.permission.trim()) {
@@ -109,19 +109,19 @@ const MenuAdd = forwardRef(({ onSubmit }: MenuAddProps, ref) => {
     // }
 
     if (!formValues.type && formValues.type != 0) {
-      newErrors.type = t('page.menu.error.type');
+      newErrors.type = t('global.error.input.please') + t('common.title.type');
     }
 
     if (!formValues.sort && formValues.sort != 0) {
-      newErrors.sort = t('page.menu.error.sort');
+      newErrors.sort = t('global.error.input.please') + t('common.title.sort');
     }
 
     if (!formValues.parent_id && formValues.parent_id != 0) {
-      newErrors.parent_id = t('page.menu.error.parent');
+      newErrors.parent_id = t('global.error.input.please') + t('common.title.parent');
     }
 
     if (type != 3 && !formValues.path.trim()) {
-      newErrors.path = t('page.menu.error.path');
+      newErrors.path = t('global.error.input.please') + t('page.menu.error.path');
     }
 
     // if (type != 2 && !formValues.icon.trim()) {
@@ -137,7 +137,7 @@ const MenuAdd = forwardRef(({ onSubmit }: MenuAddProps, ref) => {
     // }
 
     if (!formValues.status && formValues.status != 0) {
-      newErrors.status = t('page.menu.error.status');
+      newErrors.status = t('global.error.input.please') + t('common.title.status');
     }
 
     console.log('errors', newErrors);
@@ -383,14 +383,14 @@ const MenuAdd = forwardRef(({ onSubmit }: MenuAddProps, ref) => {
         }}
       >
         <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiSelect-root': { width: '200px' } }}>
-          <DictSelect dict_type='menu_type' value={type} onChange={handleTypeChange} label={t("page.menu.title.type")}></DictSelect>
+          <DictSelect dict_type='menu_type' value={type} onChange={handleTypeChange} label={t("common.title.type")}></DictSelect>
         </FormControl>
         <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiSelect-root': { width: '200px' } }}>
           <SelectTree
             expandToSelected
             name='parent_id'
             size="small"
-            label={t('page.menu.title.parent')}
+            label={t('common.title.parent')}
             treeData={menuTreeData}
             value={selectedMenuId}
             onChange={(name, node) => handleChange(name, node as TreeNode)}
@@ -400,7 +400,7 @@ const MenuAdd = forwardRef(({ onSubmit }: MenuAddProps, ref) => {
           <TextField
             required
             size="small"
-            label={t("page.menu.title.name")}
+            label={t("common.title.name")}
             name='name'
             value={formValues.name}
             onChange={handleInputChange}
@@ -459,7 +459,7 @@ const MenuAdd = forwardRef(({ onSubmit }: MenuAddProps, ref) => {
             required
             size="small"
             type="number"
-            label={t("page.menu.title.sort")}
+            label={t("common.title.sort")}
             name="sort"
             value={formValues.sort}
             onChange={handleInputChange}
@@ -469,9 +469,9 @@ const MenuAdd = forwardRef(({ onSubmit }: MenuAddProps, ref) => {
 
         </FormControl>
         <Box sx={{ mt: 2, display: 'flex', alignItems: 'center' }}>
-          <Typography sx={{ mr: 4 }}>{t("page.menu.title.status")}</Typography>
+          <Typography sx={{ mr: 4 }}>{t("common.title.status")}</Typography>
           <Switch sx={{ mr: 2 }} name='status' checked={!formValues.status} onChange={handleStatusChange} />
-          <Typography>{formValues.status == 0 ? t('page.menu.switch.status.true') : t('page.menu.switch.status.false')}</Typography>
+          <Typography>{formValues.status == 0 ? t('common.switch.status.true') : t('common.switch.status.false')}</Typography>
         </Box>
         {type != '3' && <Stack direction="row" spacing={2} sx={{ mt: 2, alignItems: 'center' }}>
           <QuestionBadge title={t("page.menu.tip.visible")}>
