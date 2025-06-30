@@ -137,6 +137,32 @@
   
   "page.dashboard.title.welcome": "欢迎来到仪表盘！",
 
+  "common": {
+    "title.name": "名称",
+    "title.status": "状态",
+    "title.sort": "排序",
+    "title.remark": "备注",
+    "title.type": "类型",
+    "title.code": "编码",
+    "title.parent": "上级",
+    "title.create.time": "创建时间",
+    "title.contact.person": "联系人",
+    "title.phone": "电话",
+    "title.email": "邮箱",
+    "title.address": "地址",
+    "switch.status.true": "开启",
+    "switch.status.false": "关闭"
+  },
+  "erp.common": {
+    "title.order.number": "订单编号",
+    "title.total.amount": "总金额",
+    "title.discount.rate": "优惠率",
+    "title.settlement.account": "结算账户",
+    "title.remarks": "备注",
+    "title.order.status": "订单状态",
+    "title.date": "{action}日期",
+    "placeholder.order.number": "订单编号,由系统自动生成"
+  },
   "page.dict": {
     "title.type.name": "类型名称",
     "title.type.status": "字典类型状态",
@@ -144,9 +170,6 @@
     "title.value": "键值",
     "title.color.type": "颜色类型",
     "title.css.class": "css样式",
-    "error.label": "common.error.input|标签",
-    "error.value": "common.error.input|键值",
-    "error.dict.type": "common.error.select|类型",
     "operate.edit.type": "编辑字典类型"
   },
   "page.menu": {
@@ -429,36 +452,6 @@
     "error.outbound.order.empty": "销售出库订单为空",
     "error.sale.return.order.empty": "销售退货订单为空"
   },
-  "common": {
-    "title.name": "名称",
-    "title.status": "状态",
-    "title.sort": "排序",
-    "title.remark": "备注",
-    "title.type": "类型",
-    "title.code": "编码",
-    "title.parent": "上级",
-    "title.create.time": "创建时间",
-    "title.contact.person": "联系人",
-    "title.phone": "电话",
-    "title.email": "邮箱",
-    "title.address": "地址",
-    "switch.status.true": "开启",
-    "switch.status.false": "关闭",
-    "error.input": "请输入{field}",
-    "error.select": "请选择{field}",
-    "operate.edit": "编辑{entity}",
-    "operate.delete": "删除{entity}"
-  },
-  "erp.common": {
-    "title.order.number": "订单编号",
-    "title.total.amount": "总金额",
-    "title.discount.rate": "优惠率",
-    "title.settlement.account": "结算账户",
-    "title.remarks": "备注",
-    "title.order.status": "订单状态",
-    "title.date": "{action}日期",
-    "placeholder.order.number": "订单编号,由系统自动生成"
-  },
   "erp.order.detail": {
     "title.product": "产品名称",
     "title.quantity": "数量",
@@ -467,28 +460,6 @@
     "title.tax.rate": "税率",
     "title.remarks": "备注"
   },
-
-  "page.dict.title.name": "名称",
-  "page.dict.title.type": "类型",
-  "page.dict.title.type.name": "类型名称",
-  "page.dict.title.type.status": "字典类型状态",
-  "page.dict.title.type.remark": "字典类型备注",
-  "page.dict.title.label": "标签",
-  "page.dict.title.value": "键值",
-  "page.dict.title.status": "状态",
-  "page.dict.title.sort": "排序",
-  "page.dict.title.color.type": "颜色类型",
-  "page.dict.title.css.class": "css样式",
-  "page.dict.title.remark": "备注",
-  "page.dict.error.name": "请输入名称",
-  "page.dict.error.type": "请输入类型",
-  "page.dict.error.dict.type": "请选择类型",
-  "page.dict.error.label": "请输入标签",
-  "page.dict.error.value": "请输入键值",
-  "page.dict.error.sort": "请输入排序",
-  "page.dict.operate.edit.type": "编辑字典类型",
-  "page.dict.operate.edit": "编辑字典",
-  "page.dict.operate.delete": "删除字典",
   
   "page.menu.title.parent": "上级节点",
   "page.menu.title.name": "名称",

@@ -61,16 +61,16 @@ export default function DictManage() {
     () => [
       { field: 'label', headerName: t("page.dict.title.label"), flex: 1, minWidth: 80 },
       { field: 'value', headerName: t("page.dict.title.value"), flex: 1, minWidth: 60 },
-      { field: 'remark', headerName: t("page.dict.title.remark"), flex: 1, minWidth: 80 },
-      { field: 'sort', headerName: t("page.dict.title.sort"), flex: 1, minWidth: 60 },
-      { field: 'dict_type', headerName: t("page.dict.title.type"), flex: 1, minWidth: 100 },
+      { field: 'remark', headerName: t("common.title.remark"), flex: 1, minWidth: 80 },
+      { field: 'sort', headerName: t("common.title.sort"), flex: 1, minWidth: 60 },
+      { field: 'dict_type', headerName: t("common.title.type"), flex: 1, minWidth: 100 },
       { field: 'type_name', sortable: false, headerName: t("page.dict.title.type.name"), flex: 1, minWidth: 100 },
       { field: 'color_type', headerName: t("page.dict.title.color.type"), flex: 1, minWidth: 100 },
       { field: 'css_class', headerName: t("page.dict.title.css.class"), flex: 1, minWidth: 100 },
       {
         field: 'status',
         sortable: false,
-        headerName: t("page.dict.title.status"),
+        headerName: t("common.title.status"),
         flex: 1,
         minWidth: 80,
         renderCell: (params: GridRenderCellParams) => (

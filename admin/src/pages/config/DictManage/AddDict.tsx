@@ -236,7 +236,7 @@ const DictAdd = forwardRef(({ onSubmit }: DictAddProps, ref) => {
             required
             size="small"
             type="number"
-            label={t("page.dict.title.sort")}
+            label={t("common.title.sort")}
             name="sort"
             value={formValues.sort}
             onChange={handleInputChange}
@@ -245,7 +245,7 @@ const DictAdd = forwardRef(({ onSubmit }: DictAddProps, ref) => {
           />
           <TextField
             size="small"
-            label={t("page.dict.title.remark")}
+            label={t("common.title.remark")}
             name="remark"
             value={formValues.remark}
             onChange={handleInputChange}

@@ -135,7 +135,7 @@ const DictTypeEdit = forwardRef(({ onSubmit }: DictTypeEditProps, ref) => {
           <TextField
             required
             size="small"
-            label={t("page.dict.title.name")}
+            label={t("common.title.name")}
             name="name"
             value={dictType.name}
             onChange={handleInputChange}
@@ -145,7 +145,7 @@ const DictTypeEdit = forwardRef(({ onSubmit }: DictTypeEditProps, ref) => {
           <TextField
             required
             size="small"
-            label={t("page.dict.title.type")}
+            label={t("common.title.type")}
             name="type"
             value={dictType.type}
             onChange={handleInputChange}
@@ -154,7 +154,7 @@ const DictTypeEdit = forwardRef(({ onSubmit }: DictTypeEditProps, ref) => {
           />
           <TextField
             size="small"
-            label={t("page.dict.title.remark")}
+            label={t("common.title.remark")}
             name="remark"
             value={dictType.remark}
             onChange={handleInputChange}
