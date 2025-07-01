@@ -229,19 +229,13 @@
     "title.location": "仓库位置",
     "title.storage.fee": "仓储费",
     "title.handling.fee": "搬运费",
-    "title.manager": "负责人",
-    "error.warehouse.name": "common.error.input|仓库名称",
-    "error.sort": "common.error.input|排序"
+    "title.manager": "负责人"
   },
   "page.erp.product.category": {
-    "title.name": "分类名称",
-    "error.name": "common.error.input|分类名称",
-    "error.sort": "common.error.input|排序"
+    "title.name": "分类名称"
   },
   "page.erp.product.unit": {
-    "title.name": "单位名称",
-    "error.name": "common.error.input|单位名称",
-    "error.sort": "common.error.input|排序"
+    "title.name": "单位名称"
   },
   "page.erp.product.list": {
     "title.product.code": "产品编码",
@@ -255,32 +249,21 @@
     "title.sale.price": "销售价格",
     "title.min.price": "最低价格",
     "title.stock.quantity": "库存数量",
-    "title.min.stock": "最低库存",
-    "error.name": "common.error.input|产品名称",
-    "error.unit": "common.error.select|产品单位",
-    "error.stock.quantity": "common.error.input|库存数量",
-    "error.min.stock": "common.error.input|最低库存"
+    "title.min.stock": "最低库存"
   },
   "page.erp.financial.account": {
     "title.bank.name": "开户行",
-    "title.bank.account": "银行账号",
-    "error.name": "common.error.input|账户名称",
-    "error.sort": "common.error.input|排序"
+    "title.bank.account": "银行账号"
   },
   "page.erp.purchase.supplier": {
     "title.tax.id": "纳税人识别号",
     "title.tax.rate": "税率",
-    "title.bank.address": "开户地址",
-    "error.name": "common.error.input|供应商名称",
-    "error.sort": "common.error.input|排序"
+    "title.bank.address": "开户地址"
   },
   "page.erp.sale.customer": {
     "title.tax.id": "纳税人识别号",
     "title.tax.rate": "税率",
-    "title.bank.address": "开户地址",
-    "error.name": "common.error.input|客户名称",
-    "error.status": "common.error.select|状态",
-    "error.sort": "common.error.input|排序"
+    "title.bank.address": "开户地址"
   },
   "page.erp.purchase.order": {
     "title.supplier": "供应商",
@@ -412,78 +395,6 @@
     "title.tax.rate": "税率",
     "title.remarks": "备注"
   },
-
-  "page.erp.inventory.warehouse.title.name": "仓库名称",
-  "page.erp.inventory.warehouse.title.location": "仓库位置",
-  "page.erp.inventory.warehouse.title.status": "状态",
-  "page.erp.inventory.warehouse.title.sort": "排序",
-  "page.erp.inventory.warehouse.title.storage.fee": "仓储费",
-  "page.erp.inventory.warehouse.title.handling.fee": "搬运费",
-  "page.erp.inventory.warehouse.title.manager": "负责人",
-  "page.erp.inventory.warehouse.title.remarks": "备注",
-  "page.erp.inventory.warehouse.error.warehouse.name": "请输入仓库名称",
-  "page.erp.inventory.warehouse.error.sort": "请输入排序",
-
-  "page.erp.product.category.title.code": "分类编码",
-  "page.erp.product.category.title.name": "分类名称",
-  "page.erp.product.category.title.parent": "上级分类",
-  "page.erp.product.category.title.status": "状态",
-  "page.erp.product.category.title.sort": "排序",
-  "page.erp.product.category.title.remarks": "备注",
-  "page.erp.product.category.error.name": "请输入分类名称",
-  "page.erp.product.category.error.sort": "请输入排序",
-
-  "page.erp.product.unit.title.name": "单位名称",
-  "page.erp.product.unit.title.status": "状态",
-  "page.erp.product.unit.title.sort": "排序",
-  "page.erp.product.unit.title.remarks": "备注",
-  "page.erp.product.unit.error.name": "请输入单位名称",
-  "page.erp.product.unit.error.sort": "请输入排序",
-
-  "page.erp.product.list.title.product.code": "产品编码",
-  "page.erp.product.list.title.name": "产品名称",
-  "page.erp.product.list.title.category": "产品分类",
-  "page.erp.product.list.title.unit": "产品单位",
-  "page.erp.product.list.title.status": "状态",
-  "page.erp.product.list.title.barcode": "条码",
-  "page.erp.product.list.title.specification": "规格",
-  "page.erp.product.list.title.shelf.life.days": "保质期天数",
-  "page.erp.product.list.title.weight": "重量",
-  "page.erp.product.list.title.purchase.price": "采购价格",
-  "page.erp.product.list.title.sale.price": "销售价格",
-  "page.erp.product.list.title.min.price": "最低价格",
-  "page.erp.product.list.title.stock.quantity": "库存数量",
-  "page.erp.product.list.title.min.stock": "最低库存",
-  "page.erp.product.list.title.remarks": "备注",
-  "page.erp.product.list.error.name": "请输入产品名称",
-  "page.erp.product.list.error.unit": "请选择产品单位",
-  "page.erp.product.list.error.stock.quantity": "请输入库存数量",
-  "page.erp.product.list.error.min.stock": "请输入最低库存",
-
-  "page.erp.financial.account.title.name": "账户名称",
-  "page.erp.financial.account.title.bank.name": "开户行",
-  "page.erp.financial.account.title.bank.account": "银行账号",
-  "page.erp.financial.account.title.status": "状态",
-  "page.erp.financial.account.title.sort": "排序",
-  "page.erp.financial.account.title.remarks": "备注",
-  "page.erp.financial.account.error.name": "请输入账户名称",
-  "page.erp.financial.account.error.sort": "请输入排序",
-
-  "page.erp.purchase.supplier.title.name": "供应商名称",
-  "page.erp.purchase.supplier.title.contact.person": "联系人",
-  "page.erp.purchase.supplier.title.phone": "电话",
-  "page.erp.purchase.supplier.title.email": "邮箱",
-  "page.erp.purchase.supplier.title.address": "地址",
-  "page.erp.purchase.supplier.title.status": "状态",
-  "page.erp.purchase.supplier.title.tax.id": "纳税人识别号",
-  "page.erp.purchase.supplier.title.tax.rate": "税率",
-  "page.erp.purchase.supplier.title.bank.name": "开户行",
-  "page.erp.purchase.supplier.title.bank.account": "银行账号",
-  "page.erp.purchase.supplier.title.bank.address": "开户地址",
-  "page.erp.purchase.supplier.title.remarks": "备注",
-  "page.erp.purchase.supplier.title.sort": "排序",
-  "page.erp.purchase.supplier.error.name": "请输入供应商名称",
-  "page.erp.purchase.supplier.error.sort": "请输入排序",
 
   "page.erp.sale.customer.title.name": "客户名称",
   "page.erp.sale.customer.title.contact.person": "联系人",

@@ -52,11 +52,11 @@ const ErpSupplierEdit = forwardRef(({ onSubmit }: ErpSupplierEditProps, ref) => 
     const newErrors: FormErrors = {};
 
     if (!erpSupplier.name.trim()) {
-      newErrors.name = t('page.erp.purchase.supplier.error.name');
+      newErrors.name = t('global.error.input.please') + t('common.title.name');
     }
 
     if (!erpSupplier.sort && erpSupplier.sort != 0) {
-      newErrors.sort = t('page.erp.purchase.supplier.error.sort');
+      newErrors.sort = t('global.error.input.please') + t('common.title.sort');
     }
 
     setErrors(newErrors);
@@ -154,7 +154,7 @@ const ErpSupplierEdit = forwardRef(({ onSubmit }: ErpSupplierEditProps, ref) => 
               <TextField
                 required
                 size="small"
-                label={t("page.erp.purchase.supplier.title.name")}
+                label={t("common.title.name")}
                 name='name'
                 value={erpSupplier.name}
                 onChange={handleInputChange}
@@ -165,7 +165,7 @@ const ErpSupplierEdit = forwardRef(({ onSubmit }: ErpSupplierEditProps, ref) => 
             <Grid size={{ xs: 12, md: 6 }}>
               <TextField
                 size="small"
-                label={t("page.erp.purchase.supplier.title.contact.person")}
+                label={t("common.title.contact.person")}
                 name='contact_person'
                 value={erpSupplier.contact_person}
                 onChange={handleInputChange}
@@ -174,7 +174,7 @@ const ErpSupplierEdit = forwardRef(({ onSubmit }: ErpSupplierEditProps, ref) => 
             <Grid size={{ xs: 12, md: 6 }}>
               <TextField
                 size="small"
-                label={t("page.erp.purchase.supplier.title.phone")}
+                label={t("common.title.phone")}
                 name='phone'
                 value={erpSupplier.phone}
                 onChange={handleInputChange}
@@ -183,7 +183,7 @@ const ErpSupplierEdit = forwardRef(({ onSubmit }: ErpSupplierEditProps, ref) => 
             <Grid size={{ xs: 12, md: 6 }}>
               <TextField
                 size="small"
-                label={t("page.erp.purchase.supplier.title.email")}
+                label={t("common.title.email")}
                 name='email'
                 value={erpSupplier.email}
                 onChange={handleInputChange}
@@ -192,7 +192,7 @@ const ErpSupplierEdit = forwardRef(({ onSubmit }: ErpSupplierEditProps, ref) => 
             <Grid size={{ xs: 12, md: 6 }}>
               <TextField
                 size="small"
-                label={t("page.erp.purchase.supplier.title.address")}
+                label={t("common.title.address")}
                 name='address'
                 value={erpSupplier.address}
                 onChange={handleInputChange}
@@ -220,7 +220,7 @@ const ErpSupplierEdit = forwardRef(({ onSubmit }: ErpSupplierEditProps, ref) => 
             <Grid size={{ xs: 12, md: 6 }}>
               <TextField
                 size="small"
-                label={t("page.erp.purchase.supplier.title.bank.name")}
+                label={t("page.erp.financial.account.title.bank.name")}
                 name='bank_name'
                 value={erpSupplier.bank_name}
                 onChange={handleInputChange}
@@ -229,7 +229,7 @@ const ErpSupplierEdit = forwardRef(({ onSubmit }: ErpSupplierEditProps, ref) => 
             <Grid size={{ xs: 12, md: 6 }}>
               <TextField
                 size="small"
-                label={t("page.erp.purchase.supplier.title.bank.account")}
+                label={t("page.erp.financial.account.title.bank.account")}
                 name='bank_account'
                 value={erpSupplier.bank_account}
                 onChange={handleInputChange}
@@ -247,7 +247,7 @@ const ErpSupplierEdit = forwardRef(({ onSubmit }: ErpSupplierEditProps, ref) => 
             <Grid size={{ xs: 12, md: 6 }}>
               <TextField
                 size="small"
-                label={t("page.erp.purchase.supplier.title.remarks")}
+                label={t("common.title.remark")}
                 name='remarks'
                 value={erpSupplier.remarks}
                 onChange={handleInputChange}
@@ -258,7 +258,7 @@ const ErpSupplierEdit = forwardRef(({ onSubmit }: ErpSupplierEditProps, ref) => 
                 required
                 size="small"
                 type="number"
-                label={t("page.erp.purchase.supplier.title.sort")}
+                label={t("common.title.sort")}
                 name='sort'
                 value={erpSupplier.sort}
                 onChange={handleInputChange}
@@ -268,9 +268,9 @@ const ErpSupplierEdit = forwardRef(({ onSubmit }: ErpSupplierEditProps, ref) => 
             </Grid>
             <Grid size={{ xs: 12, md: 6 }}>
               <Box sx={{ mt: 2, display: 'flex', alignItems: 'center' }}>
-                <Typography sx={{ mr: 4 }}>{t("global.title.status")}</Typography>
+                <Typography sx={{ mr: 4 }}>{t("common.title.status")}</Typography>
                 <Switch sx={{ mr: 2 }} name='status' checked={!erpSupplier.status} onChange={handleStatusChange} />
-                <Typography>{erpSupplier.status == 0 ? t('global.switch.status.true') : t('global.switch.status.false')}</Typography>
+                <Typography>{erpSupplier.status == 0 ? t('common.switch.status.true') : t('common.switch.status.false')}</Typography>
               </Box>
             </Grid>
           </Grid>

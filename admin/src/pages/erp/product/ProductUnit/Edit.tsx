@@ -43,11 +43,11 @@ const ErpProductUnitEdit = forwardRef(({ onSubmit }: ErpProductUnitEditProps, re
     const newErrors: FormErrors = {};
 
     if (!erpProductUnit.name.trim()) {
-      newErrors.name = t('page.erp.product.unit.error.name');
+      newErrors.name = t('global.error.input.please') + t('common.title.name');
     }
 
     if (!erpProductUnit.sort && erpProductUnit.sort != 0) {
-      newErrors.sort = t('page.erp.product.unit.error.sort');
+      newErrors.sort = t('global.error.input.please') + t('common.title.sort');
     }
 
     setErrors(newErrors);
@@ -143,7 +143,7 @@ const ErpProductUnitEdit = forwardRef(({ onSubmit }: ErpProductUnitEditProps, re
           <TextField
             required
             size="small"
-            label={t("page.erp.product.unit.title.name")}
+            label={t("common.title.name")}
             name='name'
             value={erpProductUnit.name}
             onChange={handleInputChange}
@@ -154,7 +154,7 @@ const ErpProductUnitEdit = forwardRef(({ onSubmit }: ErpProductUnitEditProps, re
             required
             size="small"
             type="number"
-            label={t("page.erp.product.unit.title.sort")}
+            label={t("common.title.sort")}
             name='sort'
             value={erpProductUnit.sort}
             onChange={handleInputChange}
@@ -163,16 +163,16 @@ const ErpProductUnitEdit = forwardRef(({ onSubmit }: ErpProductUnitEditProps, re
           />
           <TextField
             size="small"
-            label={t("page.erp.product.unit.title.remarks")}
+            label={t("common.title.remark")}
             name='remarks'
             value={erpProductUnit.remarks}
             onChange={handleInputChange}
           />
         </FormControl>
         <Box sx={{ mt: 2, display: 'flex', alignItems: 'center' }}>
-          <Typography sx={{ mr: 4 }}>{t("global.title.status")}</Typography>
+          <Typography sx={{ mr: 4 }}>{t("common.title.status")}</Typography>
           <Switch sx={{ mr: 2 }} name='status' checked={!erpProductUnit.status} onChange={handleStatusChange} />
-          <Typography>{erpProductUnit.status == 0 ? t('global.switch.status.true') : t('global.switch.status.false')}</Typography>
+          <Typography>{erpProductUnit.status == 0 ? t('common.switch.status.true') : t('common.switch.status.false')}</Typography>
         </Box>
       </Box>
     </CustomizedDialog>

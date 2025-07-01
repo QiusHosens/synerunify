@@ -47,11 +47,11 @@ const ErpWarehouseEdit = forwardRef(({ onSubmit }: ErpWarehouseEditProps, ref) =
     const newErrors: FormErrors = {};
 
     if (!erpWarehouse.name.trim()) {
-      newErrors.name = t('page.erp.inventory.warehouse.error.name');
+      newErrors.name = t('global.error.input.please') + t('common.title.name');
     }
 
     if (!erpWarehouse.sort && erpWarehouse.sort != 0) {
-      newErrors.sort = t('page.erp.inventory.warehouse.error.sort');
+      newErrors.sort = t('global.error.input.please') + t('common.title.sort');
     }
 
     setErrors(newErrors);
@@ -147,7 +147,7 @@ const ErpWarehouseEdit = forwardRef(({ onSubmit }: ErpWarehouseEditProps, ref) =
           <TextField
             required
             size="small"
-            label={t("page.erp.inventory.warehouse.title.name")}
+            label={t("common.title.name")}
             name='name'
             value={erpWarehouse.name}
             onChange={handleInputChange}
@@ -165,7 +165,7 @@ const ErpWarehouseEdit = forwardRef(({ onSubmit }: ErpWarehouseEditProps, ref) =
             required
             size="small"
             type="number"
-            label={t("page.erp.inventory.warehouse.title.sort")}
+            label={t("common.title.sort")}
             name='sort'
             value={erpWarehouse.sort}
             onChange={handleInputChange}
@@ -197,16 +197,16 @@ const ErpWarehouseEdit = forwardRef(({ onSubmit }: ErpWarehouseEditProps, ref) =
           />
           <TextField
             size="small"
-            label={t("page.erp.inventory.warehouse.title.remarks")}
+            label={t("common.title.remark")}
             name='remarks'
             value={erpWarehouse.remarks}
             onChange={handleInputChange}
           />
         </FormControl>
         <Box sx={{ mt: 2, display: 'flex', alignItems: 'center' }}>
-          <Typography sx={{ mr: 4 }}>{t("global.title.status")}</Typography>
+          <Typography sx={{ mr: 4 }}>{t("common.title.status")}</Typography>
           <Switch sx={{ mr: 2 }} name='status' checked={!erpWarehouse.status} onChange={handleStatusChange} />
-          <Typography>{erpWarehouse.status == 0 ? t('global.switch.status.true') : t('global.switch.status.false')}</Typography>
+          <Typography>{erpWarehouse.status == 0 ? t('common.switch.status.true') : t('common.switch.status.false')}</Typography>
         </Box>
       </Box>
     </CustomizedDialog>

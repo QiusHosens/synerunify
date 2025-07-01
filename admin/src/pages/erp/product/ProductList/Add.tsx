@@ -116,11 +116,11 @@ const ErpProductAdd = forwardRef(({ onSubmit }: ErpProductAddProps, ref) => {
     const newErrors: FormErrors = {};
 
     if (!formValues.name.trim()) {
-      newErrors.name = t('page.erp.product.list.error.name');
+      newErrors.name = t('global.error.input.please') + t('common.title.name');
     }
 
     if (!formValues.min_stock && formValues.min_stock != 0) {
-      newErrors.min_stock = t('page.erp.product.list.error.min.stock');
+      newErrors.min_stock = t('global.error.input.please') + t('page.erp.product.list.title.min.stock');
     }
 
     setErrors(newErrors);
@@ -271,7 +271,7 @@ const ErpProductAdd = forwardRef(({ onSubmit }: ErpProductAddProps, ref) => {
               <TextField
                 required
                 size="small"
-                label={t("page.erp.product.list.title.name")}
+                label={t("common.title.name")}
                 name='name'
                 value={formValues.name}
                 onChange={handleInputChange}
@@ -400,7 +400,7 @@ const ErpProductAdd = forwardRef(({ onSubmit }: ErpProductAddProps, ref) => {
             <Grid size={{ xs: 12, md: 6 }}>
               <TextField
                 size="small"
-                label={t("page.erp.product.list.title.remarks")}
+                label={t("common.title.remark")}
                 name='remarks'
                 value={formValues.remarks}
                 onChange={handleInputChange}
@@ -408,9 +408,9 @@ const ErpProductAdd = forwardRef(({ onSubmit }: ErpProductAddProps, ref) => {
             </Grid>
             <Grid size={{ xs: 12, md: 6 }}>
               <Box sx={{ mt: 2, display: 'flex', alignItems: 'center' }}>
-                <Typography sx={{ mr: 4 }}>{t("global.title.status")}</Typography>
+                <Typography sx={{ mr: 4 }}>{t("common.title.status")}</Typography>
                 <Switch sx={{ mr: 2 }} name='status' checked={!formValues.status} onChange={handleStatusChange} />
-                <Typography>{formValues.status == 0 ? t('global.switch.status.true') : t('global.switch.status.false')}</Typography>
+                <Typography>{formValues.status == 0 ? t('common.switch.status.true') : t('common.switch.status.false')}</Typography>
               </Box>
             </Grid>
           </Grid>

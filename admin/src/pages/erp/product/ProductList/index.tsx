@@ -53,17 +53,17 @@ export default function ErpProduct() {
 
   const columns: GridColDef[] = useMemo(
     () => [
-      { field: 'name', headerName: t("page.erp.product.list.title.name"), flex: 1, minWidth: 100 },
+      { field: 'name', headerName: t("common.title.name"), flex: 1, minWidth: 100 },
       { field: 'product_code', headerName: t("page.erp.product.list.title.product.code"), flex: 1, minWidth: 100 },
       { field: 'category_id', headerName: t("page.erp.product.list.title.category"), flex: 1, minWidth: 100 },
       { field: 'specification', headerName: t("page.erp.product.list.title.specification"), flex: 1, minWidth: 100 },
       { field: 'sale_price', headerName: t("page.erp.product.list.title.sale.price"), flex: 1, minWidth: 100 },
       { field: 'stock_quantity', headerName: t("page.erp.product.list.title.stock.quantity"), flex: 1, minWidth: 100 },
-      { field: 'remarks', headerName: t("page.erp.product.list.title.remarks"), flex: 1, minWidth: 100 },
+      { field: 'remarks', headerName: t("common.title.remark"), flex: 1, minWidth: 100 },
       {
         field: 'status',
         sortable: false,
-        headerName: t("global.title.status"),
+        headerName: t("common.title.status"),
         flex: 1,
         minWidth: 80,
         renderCell: (params: GridRenderCellParams) => (
@@ -72,7 +72,7 @@ export default function ErpProduct() {
           </Box>
         ),
       },
-      { field: 'create_time', headerName: t("global.title.create.time"), flex: 1, minWidth: 180 },
+      { field: 'create_time', headerName: t("common.title.create.time"), flex: 1, minWidth: 180 },
       {
         field: 'actions',
         sortable: false,

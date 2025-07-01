@@ -53,13 +53,13 @@ export default function ErpProductUnit() {
 
   const columns: GridColDef[] = useMemo(
     () => [
-      { field: 'name', headerName: t("page.erp.product.unit.title.name"), flex: 1, minWidth: 100 },
-      { field: 'remarks', headerName: t("page.erp.product.unit.title.remarks"), flex: 1, minWidth: 100 },
-      { field: 'sort', headerName: t("page.erp.product.unit.title.sort"), flex: 1, minWidth: 60 },
+      { field: 'name', headerName: t("common.title.name"), flex: 1, minWidth: 100 },
+      { field: 'remarks', headerName: t("common.title.remark"), flex: 1, minWidth: 100 },
+      { field: 'sort', headerName: t("common.title.sort"), flex: 1, minWidth: 60 },
       {
         field: 'status',
         sortable: false,
-        headerName: t("global.title.status"),
+        headerName: t("common.title.status"),
         flex: 1,
         minWidth: 80,
         renderCell: (params: GridRenderCellParams) => (
@@ -68,7 +68,7 @@ export default function ErpProductUnit() {
           </Box>
         ),
       },
-      { field: 'create_time', headerName: t("global.title.create.time"), flex: 1, minWidth: 180 },
+      { field: 'create_time', headerName: t("common.title.create.time"), flex: 1, minWidth: 180 },
       {
         field: 'actions',
         sortable: false,

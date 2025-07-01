@@ -53,16 +53,16 @@ export default function ErpSupplier() {
 
   const columns: GridColDef[] = useMemo(
     () => [
-      { field: 'name', headerName: t("page.erp.purchase.supplier.title.name"), flex: 1, minWidth: 100 },
-      { field: 'contact_person', headerName: t("page.erp.purchase.supplier.title.contact.person"), flex: 1, minWidth: 100 },
-      { field: 'phone', headerName: t("page.erp.purchase.supplier.title.phone"), flex: 1, minWidth: 100 },
+      { field: 'name', headerName: t("common.title.name"), flex: 1, minWidth: 100 },
+      { field: 'contact_person', headerName: t("common.title.contact.person"), flex: 1, minWidth: 100 },
+      { field: 'phone', headerName: t("common.title.phone"), flex: 1, minWidth: 100 },
       { field: 'tax_rate', headerName: t("page.erp.purchase.supplier.title.tax.rate"), flex: 1, minWidth: 100 },
-      { field: 'remarks', headerName: t("page.erp.purchase.supplier.title.remarks"), flex: 1, minWidth: 100 },
-      { field: 'sort', headerName: t("page.erp.purchase.supplier.title.sort"), flex: 1, minWidth: 100 },
+      { field: 'remarks', headerName: t("common.title.remark"), flex: 1, minWidth: 100 },
+      { field: 'sort', headerName: t("common.title.sort"), flex: 1, minWidth: 100 },
       {
         field: 'status',
         sortable: false,
-        headerName: t("global.title.status"),
+        headerName: t("common.title.status"),
         flex: 1,
         minWidth: 80,
         renderCell: (params: GridRenderCellParams) => (
@@ -71,7 +71,7 @@ export default function ErpSupplier() {
           </Box>
         ),
       },
-      { field: 'create_time', headerName: t("global.title.create.time"), flex: 1, minWidth: 180 },
+      { field: 'create_time', headerName: t("common.title.create.time"), flex: 1, minWidth: 180 },
       {
         field: 'actions',
         sortable: false,

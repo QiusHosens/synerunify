@@ -52,15 +52,11 @@ const ErpSettlementAccountAdd = forwardRef(({ onSubmit }: ErpSettlementAccountAd
     const newErrors: FormErrors = {};
 
     if (!formValues.name.trim()) {
-      newErrors.name = t('page.erp.financial.account.error.name');
-    }
-
-    if (!formValues.status && formValues.status != 0) {
-      newErrors.status = t('page.erp.financial.account.error.status');
+      newErrors.name = t('global.error.input.please') + t('common.title.name');
     }
 
     if (!formValues.sort && formValues.sort != 0) {
-      newErrors.sort = t('page.erp.financial.account.error.sort');
+      newErrors.sort = t('global.error.input.please') + t('common.title.sort');
     }
 
     setErrors(newErrors);
@@ -171,7 +167,7 @@ const ErpSettlementAccountAdd = forwardRef(({ onSubmit }: ErpSettlementAccountAd
           <TextField
             required
             size="small"
-            label={t("page.erp.financial.account.title.name")}
+            label={t("common.title.name")}
             name='name'
             value={formValues.name}
             onChange={handleInputChange}
@@ -196,7 +192,7 @@ const ErpSettlementAccountAdd = forwardRef(({ onSubmit }: ErpSettlementAccountAd
             required
             size="small"
             type="number"
-            label={t("page.erp.financial.account.title.sort")}
+            label={t("common.title.sort")}
             name='sort'
             value={formValues.sort}
             onChange={handleInputChange}
@@ -205,16 +201,16 @@ const ErpSettlementAccountAdd = forwardRef(({ onSubmit }: ErpSettlementAccountAd
           />
           <TextField
             size="small"
-            label={t("page.erp.financial.account.title.remarks")}
+            label={t("common.title.remark")}
             name='remarks'
             value={formValues.remarks}
             onChange={handleInputChange}
           />
         </FormControl>
         <Box sx={{ mt: 2, display: 'flex', alignItems: 'center' }}>
-          <Typography sx={{ mr: 4 }}>{t("global.title.status")}</Typography>
+          <Typography sx={{ mr: 4 }}>{t("common.title.status")}</Typography>
           <Switch sx={{ mr: 2 }} name='status' checked={!formValues.status} onChange={handleStatusChange} />
-          <Typography>{formValues.status == 0 ? t('global.switch.status.true') : t('global.switch.status.false')}</Typography>
+          <Typography>{formValues.status == 0 ? t('common.switch.status.true') : t('common.switch.status.false')}</Typography>
         </Box>
       </Box>
     </CustomizedDialog>

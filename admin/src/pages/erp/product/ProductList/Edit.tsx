@@ -102,11 +102,11 @@ const ErpProductEdit = forwardRef(({ onSubmit }: ErpProductEditProps, ref) => {
     const newErrors: FormErrors = {};
 
     if (!erpProduct.name.trim()) {
-      newErrors.name = t('page.erp.product.list.error.name');
+      newErrors.name = t('global.error.input.please') + t('common.title.name');
     }
 
     if (!erpProduct.min_stock && erpProduct.min_stock != 0) {
-      newErrors.min_stock = t('page.erp.product.list.error.min.stock');
+      newErrors.min_stock = t('global.error.input.please') + t('page.erp.product.list.title.min.stock');
     }
 
     setErrors(newErrors);
@@ -236,7 +236,7 @@ const ErpProductEdit = forwardRef(({ onSubmit }: ErpProductEditProps, ref) => {
               <TextField
                 required
                 size="small"
-                label={t("page.erp.product.list.title.name")}
+                label={t("common.title.name")}
                 name='name'
                 value={erpProduct.name}
                 onChange={handleInputChange}
@@ -365,7 +365,7 @@ const ErpProductEdit = forwardRef(({ onSubmit }: ErpProductEditProps, ref) => {
             <Grid size={{ xs: 12, md: 6 }}>
               <TextField
                 size="small"
-                label={t("page.erp.product.list.title.remarks")}
+                label={t("common.title.remark")}
                 name='remarks'
                 value={erpProduct.remarks}
                 onChange={handleInputChange}
@@ -373,9 +373,9 @@ const ErpProductEdit = forwardRef(({ onSubmit }: ErpProductEditProps, ref) => {
             </Grid>
             <Grid size={{ xs: 12, md: 6 }}>
               <Box sx={{ mt: 2, display: 'flex', alignItems: 'center' }}>
-                <Typography sx={{ mr: 4 }}>{t("global.title.status")}</Typography>
+                <Typography sx={{ mr: 4 }}>{t("common.title.status")}</Typography>
                 <Switch sx={{ mr: 2 }} name='status' checked={!erpProduct.status} onChange={handleStatusChange} />
-                <Typography>{erpProduct.status == 0 ? t('global.switch.status.true') : t('global.switch.status.false')}</Typography>
+                <Typography>{erpProduct.status == 0 ? t('common.switch.status.true') : t('common.switch.status.false')}</Typography>
               </Box>
             </Grid>
           </Grid>

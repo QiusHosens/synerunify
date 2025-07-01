@@ -127,11 +127,11 @@ const ErpProductCategoryAdd = forwardRef(({ onSubmit }: ErpProductCategoryAddPro
     const newErrors: FormErrors = {};
 
     if (!formValues.name.trim()) {
-      newErrors.name = t('page.erp.product.category.error.name');
+      newErrors.name = t('global.error.input.please') + t('common.title.name');
     }
 
     if (!formValues.sort && formValues.sort != 0) {
-      newErrors.sort = t('page.erp.product.category.error.sort');
+      newErrors.sort = t('global.error.input.please') + t('common.title.sort');
     }
 
     setErrors(newErrors);
@@ -260,7 +260,7 @@ const ErpProductCategoryAdd = forwardRef(({ onSubmit }: ErpProductCategoryAddPro
             expandToSelected
             name='parent_id'
             size="small"
-            label={t('page.erp.product.category.title.parent')}
+            label={t('common.title.parent')}
             treeData={treeData}
             value={selectedCategoryId}
             onChange={(name, node) => handleChange(name, node as TreeNode)}
@@ -270,7 +270,7 @@ const ErpProductCategoryAdd = forwardRef(({ onSubmit }: ErpProductCategoryAddPro
           <TextField
             required
             size="small"
-            label={t("page.erp.product.category.title.name")}
+            label={t("common.title.name")}
             name='name'
             value={formValues.name}
             onChange={handleInputChange}
@@ -279,7 +279,7 @@ const ErpProductCategoryAdd = forwardRef(({ onSubmit }: ErpProductCategoryAddPro
           />
           <TextField
             size="small"
-            label={t("page.erp.product.category.title.code")}
+            label={t("common.title.code")}
             name='code'
             value={formValues.code}
             onChange={handleInputChange}
@@ -288,7 +288,7 @@ const ErpProductCategoryAdd = forwardRef(({ onSubmit }: ErpProductCategoryAddPro
             required
             size="small"
             type="number"
-            label={t("page.erp.product.category.title.sort")}
+            label={t("common.title.sort")}
             name='sort'
             value={formValues.sort}
             onChange={handleInputChange}
@@ -297,16 +297,16 @@ const ErpProductCategoryAdd = forwardRef(({ onSubmit }: ErpProductCategoryAddPro
           />
           <TextField
             size="small"
-            label={t("page.erp.product.category.title.remarks")}
+            label={t("common.title.remark")}
             name='remarks'
             value={formValues.remarks}
             onChange={handleInputChange}
           />
         </FormControl>
         <Box sx={{ mt: 2, display: 'flex', alignItems: 'center' }}>
-          <Typography sx={{ mr: 4 }}>{t("global.title.status")}</Typography>
+          <Typography sx={{ mr: 4 }}>{t("common.title.status")}</Typography>
           <Switch sx={{ mr: 2 }} name='status' checked={!formValues.status} onChange={handleStatusChange} />
-          <Typography>{formValues.status == 0 ? t('global.switch.status.true') : t('global.switch.status.false')}</Typography>
+          <Typography>{formValues.status == 0 ? t('common.switch.status.true') : t('common.switch.status.false')}</Typography>
         </Box>
       </Box>
     </CustomizedDialog>
