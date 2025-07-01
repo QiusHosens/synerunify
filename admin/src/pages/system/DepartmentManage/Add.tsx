@@ -67,15 +67,15 @@ const DepartmentAdd = forwardRef(({ onSubmit }: DepartmentAddProps, ref) => {
     const newErrors: FormErrors = {};
 
     if (!formValues.name.trim()) {
-      newErrors.name = t('page.department.error.name');
+      newErrors.name = t('global.error.input.please') + t('common.title.name');
     }
 
     if (!formValues.parent_id && formValues.parent_id != 0) {
-      newErrors.parent_id = t('page.department.error.parent');
+      newErrors.parent_id = t('global.error.select.please') + t('common.title.parent');
     }
 
     if (!formValues.sort && formValues.sort != 0) {
-      newErrors.sort = t('page.department.error.sort');
+      newErrors.sort = t('global.error.input.please') + t('common.title.sort');
     }
 
     setErrors(newErrors);
@@ -282,7 +282,7 @@ const DepartmentAdd = forwardRef(({ onSubmit }: DepartmentAddProps, ref) => {
             expandToSelected
             name='parent_id'
             size="small"
-            label={t('page.department.title.parent')}
+            label={t('common.title.parent')}
             treeData={treeData}
             value={selectedDepartmentId}
             onChange={(name, node) => handleChange(name, node as TreeNode)}
@@ -292,7 +292,7 @@ const DepartmentAdd = forwardRef(({ onSubmit }: DepartmentAddProps, ref) => {
           <TextField
             required
             size="small"
-            label={t("page.department.title.name")}
+            label={t("common.title.name")}
             name='name'
             value={formValues.name}
             onChange={handleInputChange}
@@ -316,14 +316,14 @@ const DepartmentAdd = forwardRef(({ onSubmit }: DepartmentAddProps, ref) => {
         <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' } }}>
           <TextField
             size="small"
-            label={t("page.department.title.phone")}
+            label={t("common.title.phone")}
             name="phone"
             value={formValues.phone}
             onChange={handleInputChange}
           />
           <TextField
             size="small"
-            label={t("page.department.title.email")}
+            label={t("common.title.email")}
             name="email"
             value={formValues.email}
             onChange={handleInputChange}
@@ -332,7 +332,7 @@ const DepartmentAdd = forwardRef(({ onSubmit }: DepartmentAddProps, ref) => {
             required
             size="small"
             type="number"
-            label={t("page.department.title.sort")}
+            label={t("common.title.sort")}
             name="sort"
             value={formValues.sort}
             onChange={handleInputChange}
@@ -341,9 +341,9 @@ const DepartmentAdd = forwardRef(({ onSubmit }: DepartmentAddProps, ref) => {
           />
         </FormControl>
         <Box sx={{ mt: 2, display: 'flex', alignItems: 'center' }}>
-          <Typography sx={{ mr: 4 }}>{t("page.department.title.status")}</Typography>
+          <Typography sx={{ mr: 4 }}>{t("common.title.status")}</Typography>
           <Switch sx={{ mr: 2 }} name='status' checked={!formValues.status} onChange={handleStatusChange} />
-          <Typography>{formValues.status == 0 ? t('page.department.switch.status.true') : t('page.department.switch.status.false')}</Typography>
+          <Typography>{formValues.status == 0 ? t('common.switch.status.true') : t('common.switch.status.false')}</Typography>
         </Box>
       </Box>
     </CustomizedDialog>

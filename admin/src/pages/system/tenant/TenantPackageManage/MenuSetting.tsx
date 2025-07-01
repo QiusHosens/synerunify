@@ -143,7 +143,7 @@ const TenantPackageMenuSetting = forwardRef(({ onSubmit }: TenantPackageMenuSett
       >
         <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiStack-root': { mt: 2, width: '200px' } }}>
           <Stack direction="row" spacing={2}>
-            <Box>{t('global.page.tenant.package')}{t('page.tenant.package.title.name')}</Box>
+            <Box>{t('global.page.tenant.package')}{t('common.title.name')}</Box>
             <Box>{tenantPackage && <CustomizedTag label={tenantPackage.name} />}</Box>
           </Stack>
         </FormControl>

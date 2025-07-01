@@ -52,14 +52,14 @@ export default function PostManage() {
 
   const columns: GridColDef[] = useMemo(
     () => [
-      { field: 'name', headerName: t("page.post.title.name"), flex: 1, minWidth: 100 },
-      { field: 'code', headerName: t("page.post.title.code"), flex: 1, minWidth: 100 },
-      { field: 'sort', headerName: t("page.post.title.sort"), flex: 1, minWidth: 60 },
-      { field: 'remark', headerName: t("page.post.title.remark"), flex: 1, minWidth: 100 },
+      { field: 'name', headerName: t("common.title.name"), flex: 1, minWidth: 100 },
+      { field: 'code', headerName: t("common.title.code"), flex: 1, minWidth: 100 },
+      { field: 'sort', headerName: t("common.title.sort"), flex: 1, minWidth: 60 },
+      { field: 'remark', headerName: t("common.title.remark"), flex: 1, minWidth: 100 },
       {
         field: 'status',
         sortable: false,
-        headerName: t("page.post.title.status"),
+        headerName: t("common.title.status"),
         flex: 1,
         minWidth: 80,
         renderCell: (params: GridRenderCellParams) => (
@@ -68,7 +68,7 @@ export default function PostManage() {
           </Box>
         ),
       },
-      { field: 'create_time', headerName: t("page.post.title.create.time"), flex: 1, minWidth: 180 },
+      { field: 'create_time', headerName: t("common.title.create.time"), flex: 1, minWidth: 180 },
       {
         field: 'actions',
         sortable: false,

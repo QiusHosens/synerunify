@@ -53,7 +53,7 @@ export default function TenantManage() {
 
   const columns: GridColDef[] = useMemo(
     () => [
-      { field: 'name', headerName: t("page.tenant.title.name"), flex: 1, minWidth: 100 },
+      { field: 'name', headerName: t("common.title.name"), flex: 1, minWidth: 100 },
       {
         field: 'package_name',
         headerName: t("page.tenant.title.package"),
@@ -73,7 +73,7 @@ export default function TenantManage() {
       {
         field: 'status',
         sortable: false,
-        headerName: t("page.tenant.title.status"),
+        headerName: t("common.title.status"),
         flex: 1,
         minWidth: 80,
         renderCell: (params: GridRenderCellParams) => (

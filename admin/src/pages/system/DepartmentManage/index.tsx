@@ -48,20 +48,20 @@ export default function DepartmentManage() {
 
   const columns: GridColDef[] = useMemo(
     () => [
-      { field: 'name', headerName: t("page.department.title.name"), flex: 1, minWidth: 200 },
+      { field: 'name', headerName: t("common.title.name"), flex: 1, minWidth: 200 },
       { field: 'leader_user_name', headerName: t("page.department.title.leader.user.name"), flex: 1, minWidth: 120 },
-      { field: 'phone', headerName: t("page.department.title.phone"), flex: 1, minWidth: 150 },
-      { field: 'email', headerName: t("page.department.title.email"), flex: 1, minWidth: 150 },
+      { field: 'phone', headerName: t("common.title.phone"), flex: 1, minWidth: 150 },
+      { field: 'email', headerName: t("common.title.email"), flex: 1, minWidth: 150 },
       {
         field: 'sort',
-        headerName: t("page.department.title.sort"),
+        headerName: t("common.title.sort"),
         flex: 1,
         minWidth: 60,
       },
       {
         field: 'status',
         sortable: false,
-        headerName: t("page.department.title.status"),
+        headerName: t("common.title.status"),
         flex: 1,
         minWidth: 80,
         renderCell: (params: GridRenderCellParams) => (

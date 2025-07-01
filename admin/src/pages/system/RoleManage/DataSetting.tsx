@@ -177,11 +177,11 @@ const RoleDataSetting = forwardRef(({ onSubmit }: RoleDataSettingProps, ref) => 
       >
         <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiStack-root': { mt: 2, width: '200px' } }}>
           <Stack direction="row" spacing={2}>
-            <Box>{t('global.page.role')}{t('page.role.title.name')}</Box>
+            <Box>{t('global.page.role')}{t('common.title.name')}</Box>
             <Box>{originRole && originRole.name}</Box>
           </Stack>
           <Stack direction="row" spacing={2}>
-            <Box>{t('global.page.role')}{t('page.role.title.code')}</Box>
+            <Box>{t('global.page.role')}{t('common.title.code')}</Box>
             <Box>{originRole && originRole.code}</Box>
           </Stack>
         </FormControl>

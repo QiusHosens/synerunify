@@ -48,23 +48,19 @@ const RoleEdit = forwardRef(({ onSubmit }: RoleEditProps, ref) => {
     const newErrors: FormErrors = {};
 
     if (!role.type && role.type != 0) {
-      newErrors.type = t('page.role.error.type');
+      newErrors.type = t('global.error.select.please') + t('common.title.type');
     }
 
     if (!role.name.trim()) {
-      newErrors.name = t('page.role.error.name');
+      newErrors.name = t('global.error.input.please') + t('common.title.name');
     }
 
     if (!role.code.trim()) {
-      newErrors.code = t('page.role.error.code');
+      newErrors.code = t('global.error.input.please') + t('common.title.code');
     }
 
     if (!role.sort && role.sort != 0) {
-      newErrors.sort = t('page.role.error.sort');
-    }
-
-    if (!role.status && role.status != 0) {
-      newErrors.status = t('page.role.error.status');
+      newErrors.sort = t('global.error.input.please') + t('common.title.sort');
     }
 
     setErrors(newErrors);
@@ -185,13 +181,13 @@ const RoleEdit = forwardRef(({ onSubmit }: RoleEditProps, ref) => {
         }}
       >
         <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiSelect-root': { width: '200px' } }}>
-          <DictSelect name='type' dict_type='role_type' value={role.type.toString()} onChange={handleTypeChange} label={t("page.role.title.type")}></DictSelect>
+          <DictSelect name='type' dict_type='role_type' value={role.type.toString()} onChange={handleTypeChange} label={t("common.title.type")}></DictSelect>
         </FormControl>
         <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' } }}>
           <TextField
             required
             size="small"
-            label={t("page.role.title.name")}
+            label={t("common.title.name")}
             name='name'
             value={role.name}
             onChange={handleInputChange}
@@ -200,7 +196,7 @@ const RoleEdit = forwardRef(({ onSubmit }: RoleEditProps, ref) => {
           />
           <TextField
             size="small"
-            label={t("page.role.title.code")}
+            label={t("common.title.code")}
             name="code"
             value={role.code}
             onChange={handleInputChange}
@@ -212,7 +208,7 @@ const RoleEdit = forwardRef(({ onSubmit }: RoleEditProps, ref) => {
             required
             size="small"
             type="number"
-            label={t("page.role.title.sort")}
+            label={t("common.title.sort")}
             name="sort"
             value={role.sort}
             onChange={handleInputChange}
@@ -221,16 +217,16 @@ const RoleEdit = forwardRef(({ onSubmit }: RoleEditProps, ref) => {
           />
           <TextField
             size="small"
-            label={t("page.role.title.remark")}
+            label={t("common.title.remark")}
             name="remark"
             value={role.remark}
             onChange={handleInputChange}
           />
         </FormControl>
         <Box sx={{ mt: 2, display: 'flex', alignItems: 'center' }}>
-          <Typography sx={{ mr: 4 }}>{t("page.role.title.status")}</Typography>
+          <Typography sx={{ mr: 4 }}>{t("common.title.status")}</Typography>
           <Switch sx={{ mr: 2 }} name='status' checked={!role.status} onChange={handleStatusChange} />
-          <Typography>{role.status == 0 ? t('page.role.switch.status.true') : t('page.role.switch.status.false')}</Typography>
+          <Typography>{role.status == 0 ? t('common.switch.status.true') : t('common.switch.status.false')}</Typography>
         </Box>
       </Box>
     </CustomizedDialog>

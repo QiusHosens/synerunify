@@ -40,7 +40,7 @@ const TenantPackageEdit = forwardRef(({ onSubmit }: TenantPackageEditProps, ref)
     const newErrors: FormErrors = {};
 
     if (!tenantPackage.name.trim()) {
-      newErrors.name = t('page.tenant.package.error.name');
+      newErrors.name = t('global.error.input.please') + t('common.title.name');
     }
 
     setErrors(newErrors);
@@ -144,7 +144,7 @@ const TenantPackageEdit = forwardRef(({ onSubmit }: TenantPackageEditProps, ref)
           <TextField
             required
             size="small"
-            label={t("page.tenant.package.title.name")}
+            label={t("common.title.name")}
             name='name'
             value={tenantPackage.name}
             onChange={handleInputChange}
@@ -153,16 +153,16 @@ const TenantPackageEdit = forwardRef(({ onSubmit }: TenantPackageEditProps, ref)
           />
           <TextField
             size="small"
-            label={t("page.tenant.package.title.remark")}
+            label={t("common.title.remark")}
             name="remark"
             value={tenantPackage.remark}
             onChange={handleInputChange}
           />
         </FormControl>
         <Box sx={{ mt: 2, display: 'flex', alignItems: 'center' }}>
-          <Typography sx={{ mr: 4 }}>{t("page.tenant.package.title.status")}</Typography>
+          <Typography sx={{ mr: 4 }}>{t("common.title.status")}</Typography>
           <Switch sx={{ mr: 2 }} name='status' checked={!tenantPackage.status} onChange={handleStatusChange} />
-          <Typography>{tenantPackage.status == 0 ? t('page.tenant.package.switch.status.true') : t('page.tenant.package.switch.status.false')}</Typography>
+          <Typography>{tenantPackage.status == 0 ? t('common.switch.status.true') : t('common.switch.status.false')}</Typography>
         </Box>
       </Box>
     </CustomizedDialog>

@@ -55,23 +55,19 @@ const RoleAdd = forwardRef(({ onSubmit }: RoleAddProps, ref) => {
     const newErrors: FormErrors = {};
 
     if (!formValues.type && formValues.type != 0) {
-      newErrors.type = t('page.role.error.type');
+      newErrors.type = t('global.error.select.please') + t('common.title.type');
     }
 
     if (!formValues.name.trim()) {
-      newErrors.name = t('page.role.error.name');
+      newErrors.name = t('global.error.input.please') + t('common.title.name');
     }
 
     if (!formValues.code.trim()) {
-      newErrors.code = t('page.role.error.code');
+      newErrors.code = t('global.error.input.please') + t('common.title.code');
     }
 
     if (!formValues.sort && formValues.sort != 0) {
-      newErrors.sort = t('page.role.error.sort');
-    }
-
-    if (!formValues.status && formValues.status != 0) {
-      newErrors.status = t('page.role.error.status');
+      newErrors.sort = t('global.error.input.please') + t('common.title.sort');
     }
 
     console.log('errors', newErrors);
@@ -215,7 +211,7 @@ const RoleAdd = forwardRef(({ onSubmit }: RoleAddProps, ref) => {
           <TextField
             required
             size="small"
-            label={t("page.role.title.name")}
+            label={t("common.title.name")}
             name='name'
             value={formValues.name}
             onChange={handleInputChange}
@@ -224,7 +220,7 @@ const RoleAdd = forwardRef(({ onSubmit }: RoleAddProps, ref) => {
           />
           <TextField
             size="small"
-            label={t("page.role.title.code")}
+            label={t("common.title.code")}
             name="code"
             value={formValues.code}
             onChange={handleInputChange}
@@ -236,7 +232,7 @@ const RoleAdd = forwardRef(({ onSubmit }: RoleAddProps, ref) => {
             required
             size="small"
             type="number"
-            label={t("page.role.title.sort")}
+            label={t("common.title.sort")}
             name="sort"
             value={formValues.sort}
             onChange={handleInputChange}
@@ -245,16 +241,16 @@ const RoleAdd = forwardRef(({ onSubmit }: RoleAddProps, ref) => {
           />
           <TextField
             size="small"
-            label={t("page.role.title.remark")}
+            label={t("common.title.remark")}
             name="remark"
             value={formValues.remark}
             onChange={handleInputChange}
           />
         </FormControl>
         <Box sx={{ mt: 2, display: 'flex', alignItems: 'center' }}>
-          <Typography sx={{ mr: 4 }}>{t("page.role.title.status")}</Typography>
+          <Typography sx={{ mr: 4 }}>{t("common.title.status")}</Typography>
           <Switch sx={{ mr: 2 }} name='status' checked={!formValues.status} onChange={handleStatusChange} />
-          <Typography>{formValues.status == 0 ? t('page.role.switch.status.true') : t('page.role.switch.status.false')}</Typography>
+          <Typography>{formValues.status == 0 ? t('common.switch.status.true') : t('common.switch.status.false')}</Typography>
         </Box>
       </Box>
     </CustomizedDialog>

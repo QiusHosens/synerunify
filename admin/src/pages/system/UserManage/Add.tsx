@@ -85,23 +85,23 @@ const UserAdd = forwardRef(({ onSubmit }: UserAddProps, ref) => {
     const newErrors: FormErrors = {};
 
     if (!formValues.username.trim()) {
-      newErrors.username = t('page.user.error.username');
+      newErrors.username = t('global.error.input.please') + t('page.user.title.username');
     }
 
     if (!formValues.password.trim()) {
-      newErrors.password = t('page.user.error.password');
+      newErrors.password = t('global.error.input.please') + t('page.user.title.password');
     }
 
     if (!formValues.nickname.trim()) {
-      newErrors.nickname = t('page.user.error.nickname');
+      newErrors.nickname = t('global.error.input.please') + t('page.user.title.nickname');
     }
 
     if (!formValues.department_id) {
-      newErrors.department_id = t('page.user.error.department');
+      newErrors.department_id = t('global.error.select.please') + t('page.user.title.department');
     }
 
     if (!formValues.role_id) {
-      newErrors.role_id = t('page.user.error.role');
+      newErrors.role_id = t('global.error.select.please') + t('page.user.title.role');
     }
 
     console.log('errors', newErrors);
@@ -492,16 +492,16 @@ const UserAdd = forwardRef(({ onSubmit }: UserAddProps, ref) => {
           />
           <TextField
             size="small"
-            label={t("page.user.title.remark")}
+            label={t("common.title.remark")}
             name="remark"
             value={formValues.remark}
             onChange={handleInputChange}
           />
         </FormControl>
         <Box sx={{ mt: 2, display: 'flex', alignItems: 'center' }}>
-          <Typography sx={{ mr: 4 }}>{t("page.user.title.status")}</Typography>
+          <Typography sx={{ mr: 4 }}>{t("common.title.status")}</Typography>
           <Switch sx={{ mr: 2 }} name='status' checked={!formValues.status} onChange={handleStatusChange} />
-          <Typography>{formValues.status == 0 ? t('page.user.switch.status.true') : t('page.user.switch.status.false')}</Typography>
+          <Typography>{formValues.status == 0 ? t('common.switch.status.true') : t('common.switch.status.false')}</Typography>
         </Box>
       </Box>
     </CustomizedDialog>

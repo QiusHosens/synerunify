@@ -49,11 +49,11 @@ const PostAdd = forwardRef(({ onSubmit }: PostAddProps, ref) => {
     const newErrors: FormErrors = {};
 
     if (!formValues.name.trim()) {
-      newErrors.name = t('page.post.error.name');
+      newErrors.name = t('global.error.input.please') + t('common.title.name');
     }
 
     if (!formValues.sort && formValues.sort != 0) {
-      newErrors.sort = t('page.post.error.sort');
+      newErrors.sort = t('global.error.input.please') + t('common.title.sort');
     }
 
     console.log('errors', newErrors);
@@ -173,7 +173,7 @@ const PostAdd = forwardRef(({ onSubmit }: PostAddProps, ref) => {
           <TextField
             required
             size="small"
-            label={t("page.post.title.name")}
+            label={t("common.title.name")}
             name='name'
             value={formValues.name}
             onChange={handleInputChange}
@@ -182,7 +182,7 @@ const PostAdd = forwardRef(({ onSubmit }: PostAddProps, ref) => {
           />
           <TextField
             size="small"
-            label={t("page.post.title.code")}
+            label={t("common.title.code")}
             name='code'
             value={formValues.code}
             onChange={handleInputChange}
@@ -191,7 +191,7 @@ const PostAdd = forwardRef(({ onSubmit }: PostAddProps, ref) => {
             required
             size="small"
             type="number"
-            label={t("page.post.title.sort")}
+            label={t("common.title.sort")}
             name="sort"
             value={formValues.sort}
             onChange={handleInputChange}
@@ -200,16 +200,16 @@ const PostAdd = forwardRef(({ onSubmit }: PostAddProps, ref) => {
           />
           <TextField
             size="small"
-            label={t("page.post.title.remark")}
+            label={t("common.title.remark")}
             name="remark"
             value={formValues.remark}
             onChange={handleInputChange}
           />
         </FormControl>
         <Box sx={{ mt: 2, display: 'flex', alignItems: 'center' }}>
-          <Typography sx={{ mr: 4 }}>{t("page.post.title.status")}</Typography>
+          <Typography sx={{ mr: 4 }}>{t("common.title.status")}</Typography>
           <Switch sx={{ mr: 2 }} name='status' checked={!formValues.status} onChange={handleStatusChange} />
-          <Typography>{formValues.status == 0 ? t('page.post.switch.status.true') : t('page.post.switch.status.false')}</Typography>
+          <Typography>{formValues.status == 0 ? t('common.switch.status.true') : t('common.switch.status.false')}</Typography>
         </Box>
       </Box>
     </CustomizedDialog>

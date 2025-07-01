@@ -46,11 +46,11 @@ const DepartmentEdit = forwardRef(({ onSubmit }: DepartmentEditProps, ref) => {
     const newErrors: FormErrors = {};
 
     if (!department.name.trim()) {
-      newErrors.name = t('page.department.error.name');
+      newErrors.name = t('global.error.input.please') + t('common.title.name');
     }
 
     if (!department.sort && department.sort != 0) {
-      newErrors.sort = t('page.department.error.sort');
+      newErrors.sort = t('global.error.input.please') + t('common.title.sort');
     }
 
     setErrors(newErrors);

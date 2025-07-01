@@ -111,31 +111,31 @@ const TenantAdd = forwardRef(({ onSubmit }: TenantAddProps, ref) => {
     const newErrors: FormErrors = {};
 
     if (!formValues.name.trim()) {
-      newErrors.name = t('page.tenant.error.name');
+      newErrors.name = t('global.error.input.please') + t('common.title.name');
     }
 
     if (!formValues.contact_name.trim()) {
-      newErrors.contact_name = t('page.tenant.error.contact.name');
+      newErrors.contact_name = t('global.error.input.please') + t('page.tenant.title.contact.name');
     }
 
     if (!formValues.username.trim()) {
-      newErrors.username = t('page.tenant.error.admin.username');
+      newErrors.username = t('global.error.input.please') + t('page.tenant.title.admin.username');
     }
 
     if (!formValues.password.trim()) {
-      newErrors.password = t('page.tenant.error.admin.password');
+      newErrors.password = t('global.error.input.please') + t('page.tenant.title.admin.password');
     }
 
     if (!formValues.nickname.trim()) {
-      newErrors.nickname = t('page.tenant.error.admin.nickname');
+      newErrors.nickname = t('global.error.input.please') + t('page.tenant.title.admin.nickname');
     }
 
     if (!formValues.expire_time.trim()) {
-      newErrors.expire_time = t('page.tenant.error.expire.time');
+      newErrors.expire_time = t('global.error.select.please') + t('page.tenant.title.expire.time');
     }
 
     if (!formValues.account_count) {
-      newErrors.account_count = t('page.tenant.error.account.count');
+      newErrors.account_count = t('global.error.input.please') + t('page.tenant.title.account.count');
     }
 
     console.log('errors', newErrors);
@@ -302,7 +302,7 @@ const TenantAdd = forwardRef(({ onSubmit }: TenantAddProps, ref) => {
           <TextField
             required
             size="small"
-            label={t("page.tenant.title.name")}
+            label={t("common.title.name")}
             name='name'
             value={formValues.name}
             onChange={handleInputChange}
@@ -452,9 +452,9 @@ const TenantAdd = forwardRef(({ onSubmit }: TenantAddProps, ref) => {
           />
         </FormControl>
         <Box sx={{ mt: 2, display: 'flex', alignItems: 'center' }}>
-          <Typography sx={{ mr: 4 }}>{t("page.tenant.title.status")}</Typography>
+          <Typography sx={{ mr: 4 }}>{t("common.title.status")}</Typography>
           <Switch sx={{ mr: 2 }} name='status' checked={!formValues.status} onChange={handleStatusChange} />
-          <Typography>{formValues.status == 0 ? t('page.tenant.switch.status.true') : t('page.tenant.switch.status.false')}</Typography>
+          <Typography>{formValues.status == 0 ? t('common.switch.status.true') : t('common.switch.status.false')}</Typography>
         </Box>
       </Box>
     </CustomizedDialog>

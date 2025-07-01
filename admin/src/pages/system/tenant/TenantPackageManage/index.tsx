@@ -9,7 +9,6 @@ import TenantPackageAdd from './Add';
 import TenantPackageEdit from './Edit';
 import TenantPackageDelete from './Delete';
 import TenantPackageMenuSetting from './MenuSetting';
-import CustomizedMore from '@/components/CustomizedMore';
 import { useHomeStore } from '@/store';
 import CustomizedAutoMore from '@/components/CustomizedAutoMore';
 
@@ -56,12 +55,12 @@ export default function TenantPackageManage() {
 
   const columns: GridColDef[] = useMemo(
     () => [
-      { field: 'name', headerName: t("page.tenant.package.title.name"), flex: 1, minWidth: 100 },
-      { field: 'remark', headerName: t("page.tenant.package.title.remark"), flex: 1, minWidth: 100 },
+      { field: 'name', headerName: t("common.title.name"), flex: 1, minWidth: 100 },
+      { field: 'remark', headerName: t("common.title.remark"), flex: 1, minWidth: 100 },
       {
         field: 'status',
         sortable: false,
-        headerName: t("page.tenant.package.title.status"),
+        headerName: t("common.title.status"),
         flex: 1,
         minWidth: 80,
         renderCell: (params: GridRenderCellParams) => (
@@ -70,7 +69,7 @@ export default function TenantPackageManage() {
           </Box>
         ),
       },
-      { field: 'create_time', headerName: t("page.tenant.package.title.create.time"), flex: 1, minWidth: 180 },
+      { field: 'create_time', headerName: t("common.title.create.time"), flex: 1, minWidth: 180 },
       {
         field: 'actions',
         sortable: false,

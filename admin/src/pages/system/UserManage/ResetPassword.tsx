@@ -54,7 +54,7 @@ const UserResetPassword = forwardRef(({ onSubmit }: UserResetPasswordProps, ref)
     const newErrors: FormErrors = {};
 
     if (!user.password.trim()) {
-      newErrors.password = t('page.user.error.password');
+      newErrors.password = t('global.error.input.please') + t('page.user.title.password');
     }
 
     setErrors(newErrors);

@@ -61,19 +61,19 @@ const TenantEdit = forwardRef(({ onSubmit }: TenantEditProps, ref) => {
     const newErrors: FormErrors = {};
 
     if (!tenant.name.trim()) {
-      newErrors.name = t('page.tenant.error.name');
+      newErrors.name = t('global.error.input.please') + t('common.title.name');
     }
 
     if (!tenant.contact_name.trim()) {
-      newErrors.contact_name = t('page.tenant.error.contact.name');
+      newErrors.contact_name = t('global.error.input.please') + t('page.tenant.title.contact.name');
     }
 
     if (!tenant.expire_time.trim()) {
-      newErrors.expire_time = t('page.tenant.error.expire.time');
+      newErrors.expire_time = t('global.error.select.please') + t('page.tenant.title.expire.time');
     }
 
     if (!tenant.account_count) {
-      newErrors.account_count = t('page.tenant.error.account.count');
+      newErrors.account_count = t('global.error.input.please') + t('page.tenant.title.account.count');
     }
 
     setErrors(newErrors);

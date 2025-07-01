@@ -59,10 +59,10 @@ export default function RoleManage() {
 
   const columns: GridColDef[] = useMemo(
     () => [
-      { field: 'name', headerName: t("page.role.title.name"), flex: 1, minWidth: 100 },
+      { field: 'name', headerName: t("common.title.name"), flex: 1, minWidth: 100 },
       {
         field: 'type',
-        headerName: t("page.role.title.type"),
+        headerName: t("common.title.type"),
         flex: 1,
         minWidth: 80,
         renderCell: (params: GridRenderCellParams) => (
@@ -71,8 +71,8 @@ export default function RoleManage() {
           </>
         )
       },
-      { field: 'code', headerName: t("page.role.title.code"), flex: 1, minWidth: 120 },
-      { field: 'sort', headerName: t("page.role.title.sort"), flex: 1, minWidth: 60 },
+      { field: 'code', headerName: t("common.title.code"), flex: 1, minWidth: 120 },
+      { field: 'sort', headerName: t("common.title.sort"), flex: 1, minWidth: 60 },
       {
         field: 'data_scope_rule_name',
         sortable: false,
@@ -86,19 +86,11 @@ export default function RoleManage() {
           </>
         )
       },
-      // {
-      //   field: 'data_scope_department_ids',
-      //   sortable: false,
-      //   filterable: false,
-      //   headerName: t("page.role.title.data.scope.department"),
-      //   flex: 1,
-      //   minWidth: 100
-      // },
-      { field: 'remark', headerName: t("page.role.title.remark"), flex: 1, minWidth: 100 },
+      { field: 'remark', headerName: t("common.title.remark"), flex: 1, minWidth: 100 },
       {
         field: 'status',
         sortable: false,
-        headerName: t("page.role.title.status"),
+        headerName: t("common.title.status"),
         flex: 1,
         minWidth: 80,
         renderCell: (params: GridRenderCellParams) => (

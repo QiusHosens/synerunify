@@ -68,15 +68,15 @@ const UserEdit = forwardRef(({ onSubmit }: UserEditProps, ref) => {
     const newErrors: FormErrors = {};
 
     if (!user.nickname.trim()) {
-      newErrors.nickname = t('page.user.error.nickname');
+      newErrors.nickname = t('global.error.input.please') + t('page.user.title.nickname');
     }
 
     if (!user.department_id) {
-      newErrors.department_id = t('page.user.error.department');
+      newErrors.department_id = t('global.error.select.please') + t('page.user.title.department');
     }
 
     if (!user.role_id) {
-      newErrors.role_id = t('page.user.error.role');
+      newErrors.role_id = t('global.error.select.please') + t('page.user.title.role');
     }
 
     setErrors(newErrors);
@@ -377,16 +377,16 @@ const UserEdit = forwardRef(({ onSubmit }: UserEditProps, ref) => {
           />
           <TextField
             size="small"
-            label={t("page.user.title.remark")}
+            label={t("common.title.remark")}
             name="remark"
             value={user.remark}
             onChange={handleInputChange}
           />
         </FormControl>
         <Box sx={{ mt: 2, display: 'flex', alignItems: 'center' }}>
-          <Typography sx={{ mr: 4 }}>{t("page.user.title.status")}</Typography>
+          <Typography sx={{ mr: 4 }}>{t("common.title.status")}</Typography>
           <Switch sx={{ mr: 2 }} name='status' checked={!user.status} onChange={handleStatusChange} />
-          <Typography>{user.status == 0 ? t('page.user.switch.status.true') : t('page.user.switch.status.false')}</Typography>
+          <Typography>{user.status == 0 ? t('common.switch.status.true') : t('common.switch.status.false')}</Typography>
         </Box>
       </Box>
     </CustomizedDialog>

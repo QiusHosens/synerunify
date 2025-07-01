@@ -76,7 +76,7 @@ export default function UserManage() {
       {
         field: 'status',
         sortable: false,
-        headerName: t("page.user.title.status"),
+        headerName: t("common.title.status"),
         flex: 1,
         minWidth: 80,
         renderCell: (params: GridRenderCellParams) => (
@@ -85,7 +85,7 @@ export default function UserManage() {
           </Box>
         ),
       },
-      { field: 'create_time', headerName: t("page.user.title.create.time"), flex: 1, minWidth: 180 },
+      { field: 'create_time', headerName: t("common.title.create.time"), flex: 1, minWidth: 180 },
       {
         field: 'actions',
         sortable: false,
