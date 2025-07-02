@@ -95,20 +95,20 @@ const ErpReceiptEdit = forwardRef(({ onSubmit }: ErpReceiptEditProps, ref) => {
     };
 
     if (!erpReceiptRequest.customer_id && erpReceiptRequest.customer_id != 0) {
-      newErrors.customer_id = t('page.erp.receipt.error.customer_id');
+      newErrors.customer_id = t('global.error.select.please') + t('erp.common.title.customer');
     }
 
     if (!erpReceiptRequest.amount && erpReceiptRequest.amount != 0) {
-      newErrors.amount = t('page.erp.receipt.error.amount');
+      newErrors.amount = t('global.error.input.please') + t('page.erp.receipt.title.amount');
     }
 
     if (!erpReceiptRequest.receipt_date.trim()) {
-      newErrors.receipt_date = t('page.erp.receipt.error.receipt_date');
+      newErrors.receipt_date = t('global.error.select.please') + t('page.erp.receipt.title.receipt.date');
     }
 
     erpReceiptRequest.details.forEach((product, index) => {
       if (!product.amount && product.amount !== 0) {
-        newErrors.details[index].amount = t('page.erp.receipt.detail.error.amount');
+        newErrors.details[index].amount = t('global.error.input.please') + t('page.erp.receipt.detail.title.amount');
       }
     });
 
@@ -445,7 +445,7 @@ const ErpReceiptEdit = forwardRef(({ onSubmit }: ErpReceiptEditProps, ref) => {
           <Grid container rowSpacing={2} columnSpacing={4} sx={{ '& .MuiGrid-root': { display: 'flex', justifyContent: 'start', alignItems: 'center' } }}>
             <Grid size={size}>
               <Stack direction="row" spacing={2} sx={{ display: "flex", alignItems: "center" }}>
-                <Box>{t('page.erp.receipt.title.customer')}</Box>
+                <Box>{t('erp.common.title.customer')}</Box>
                 <Box>{erpReceipt && <CustomizedCopyableText text={erpReceipt.order_number} sx={{
                   fontSize: '0.75rem',
                   fontWeight: 500,
@@ -567,18 +567,18 @@ const ErpReceiptEdit = forwardRef(({ onSubmit }: ErpReceiptEditProps, ref) => {
         <Card variant="outlined" sx={{ width: '100%', mt: 1, p: 2 }}>
           <Box sx={{ display: 'table', width: '100%', "& .table-row": { display: 'table-row', "& .table-cell": { display: 'table-cell', padding: 1, textAlign: 'center', } } }}>
             <Box className='table-row'>
-              <Box className='table-cell' sx={{ width: 50 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.no')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 50 }}><Typography variant="body1">{t('erp.detail.common.title.no')}</Typography></Box>
               <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.inbound.detail.title.warehouse')}</Typography></Box>
-              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.product')}</Typography></Box>
-              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.barcode')}</Typography></Box>
-              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.unit')}</Typography></Box>
-              <Box className='table-cell' sx={{ width: 200 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.remarks')}</Typography></Box>
-              <Box className='table-cell' sx={{ width: 150 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.quantity')}</Typography></Box>
-              <Box className='table-cell' sx={{ width: 150 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.unit.price')}</Typography></Box>
-              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.subtotal')}</Typography></Box>
-              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.tax.rate')}</Typography></Box>
-              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.tax')}</Typography></Box>
-              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.tax.total')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('erp.detail.common.title.product')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('erp.detail.common.title.barcode')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('erp.detail.common.title.unit')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 200 }}><Typography variant="body1">{t('erp.detail.common.title.remarks')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 150 }}><Typography variant="body1">{t('erp.detail.common.title.quantity')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 150 }}><Typography variant="body1">{t('erp.detail.common.title.unit.price')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('erp.detail.common.title.subtotal')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('erp.detail.common.title.tax.rate')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('erp.detail.common.title.tax')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('erp.detail.common.title.tax.total')}</Typography></Box>
               <Box className='table-cell' sx={{ width: 50 }}><Typography variant="body1">{t('global.operate.actions')}</Typography></Box>
             </Box>
             {erpReceiptRequest.details.map((item, index) => (

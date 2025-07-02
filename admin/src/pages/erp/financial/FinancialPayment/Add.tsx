@@ -116,20 +116,20 @@ const ErpPaymentAdd = forwardRef(({ onSubmit }: ErpPaymentAddProps, ref) => {
     };
 
     if (!formValues.supplier_id && formValues.supplier_id != 0) {
-      newErrors.supplier_id = t('page.erp.payment.error.supplier');
+      newErrors.supplier_id = t('global.error.select.please') + t('erp.common.title.supplier');
     }
 
     if (!formValues.amount && formValues.amount != 0) {
-      newErrors.amount = t('page.erp.payment.error.amount');
+      newErrors.amount = t('global.error.input.please') + t('page.erp.payment.title.amount');
     }
 
     if (!formValues.payment_date.trim()) {
-      newErrors.payment_date = t('page.erp.payment.error.payment.date');
+      newErrors.payment_date = t('global.error.select.please') + t('page.erp.payment.title.payment.date');
     }
 
     formValues.details.forEach((product, index) => {
       if (!product.amount && product.amount !== 0) {
-        newErrors.details[index].amount = t('page.erp.payment.detail.error.amount');
+        newErrors.details[index].amount = t('global.error.input.please') + t('erp.detail.common.title.amount');
       }
     });
 
@@ -427,7 +427,7 @@ const ErpPaymentAdd = forwardRef(({ onSubmit }: ErpPaymentAddProps, ref) => {
             </Grid>
             <Grid size={size}>
               <FormControl sx={{ mt: 2, minWidth: 120, width: '100%' }}>
-                <InputLabel required size="small" id="supplier-select-label">{t('page.erp.purchase.order.title.supplier')}</InputLabel>
+                <InputLabel required size="small" id="supplier-select-label">{t('erp.common.title.supplier')}</InputLabel>
                 <Select
                   required
                   size="small"
@@ -436,7 +436,7 @@ const ErpPaymentAdd = forwardRef(({ onSubmit }: ErpPaymentAddProps, ref) => {
                   name="supplier_id"
                   value={formValues.supplier_id ?? ''}
                   onChange={handleSupplierChange}
-                  label={t('page.erp.purchase.inbound.title.supplier')}
+                  label={t('erp.common.title.supplier')}
                   error={!!errors.supplier_id}
                 >
                   {suppliers.map((item) => (
@@ -473,14 +473,14 @@ const ErpPaymentAdd = forwardRef(({ onSubmit }: ErpPaymentAddProps, ref) => {
             </Grid>
             <Grid size={size}>
               <FormControl sx={{ mt: 2, minWidth: 120, width: '100%' }}>
-                <InputLabel size="small" id="settlement-account-select-label">{t('page.erp.purchase.inbound.title.settlement.account')}</InputLabel>
+                <InputLabel size="small" id="settlement-account-select-label">{t('erp.common.title.settlement.account')}</InputLabel>
                 <Select
                   size="small"
                   labelId="settlement-account-select-label"
                   name="settlement_account_id"
                   value={formValues.settlement_account_id ?? ''}
                   onChange={handleSelectChange}
-                  label={t('page.erp.purchase.inbound.title.settlement.account')}
+                  label={t('erp.common.title.settlement.account')}
                 >
                   {settlementAccounts.map((item) => (
                     <MenuItem key={item.id} value={item.id}>
@@ -526,7 +526,7 @@ const ErpPaymentAdd = forwardRef(({ onSubmit }: ErpPaymentAddProps, ref) => {
             <Grid size={size}>
               <TextField
                 size="small"
-                label={t("page.erp.payment.title.remarks")}
+                label={t("common.title.remark")}
                 name='remarks'
                 value={formValues.remarks}
                 onChange={handleInputChange}
@@ -536,23 +536,23 @@ const ErpPaymentAdd = forwardRef(({ onSubmit }: ErpPaymentAddProps, ref) => {
         </FormControl>
 
         <Typography variant="body1" sx={{ mt: 3, fontSize: '1rem', fontWeight: 500 }}>
-          {t('page.erp.purchase.order.title.check.list')}
+          {t('erp.common.title.check.list')}
         </Typography>
         <Card variant="outlined" sx={{ width: '100%', mt: 1, p: 2 }}>
           <Box sx={{ display: 'table', width: '100%', "& .table-row": { display: 'table-row', "& .table-cell": { display: 'table-cell', padding: 1, textAlign: 'center', } } }}>
             <Box className='table-row'>
-              <Box className='table-cell' sx={{ width: 50 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.no')}</Typography></Box>
-              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.inbound.detail.title.warehouse')}</Typography></Box>
-              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.product')}</Typography></Box>
-              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.barcode')}</Typography></Box>
-              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.unit')}</Typography></Box>
-              <Box className='table-cell' sx={{ width: 200 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.remarks')}</Typography></Box>
-              <Box className='table-cell' sx={{ width: 150 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.quantity')}</Typography></Box>
-              <Box className='table-cell' sx={{ width: 150 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.unit.price')}</Typography></Box>
-              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.subtotal')}</Typography></Box>
-              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.tax.rate')}</Typography></Box>
-              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.tax')}</Typography></Box>
-              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.tax.total')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 50 }}><Typography variant="body1">{t('erp.detail.common.title.no')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('erp.detail.common.title.warehouse')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('erp.detail.common.title.product')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('erp.detail.common.title.barcode')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('erp.detail.common.title.unit')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 200 }}><Typography variant="body1">{t('erp.detail.common.title.remarks')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 150 }}><Typography variant="body1">{t('erp.detail.common.title.quantity')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 150 }}><Typography variant="body1">{t('erp.detail.common.title.unit.price')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('erp.detail.common.title.subtotal')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('erp.detail.common.title.tax.rate')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('erp.detail.common.title.tax')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('erp.detail.common.title.tax.total')}</Typography></Box>
               <Box className='table-cell' sx={{ width: 50 }}><Typography variant="body1">{t('global.operate.actions')}</Typography></Box>
             </Box>
             {formValues.details.map((item, index) => (
@@ -640,7 +640,7 @@ const ErpPaymentAdd = forwardRef(({ onSubmit }: ErpPaymentAddProps, ref) => {
         </Card>
 
         <Typography variant="body1" sx={{ mt: 3, fontSize: '1rem', fontWeight: 500 }}>
-          {t('page.erp.purchase.order.title.attachment')}
+          {t('erp.common.title.attachment')}
         </Typography>
         <Card variant="outlined" sx={{ width: '100%', mt: 1, p: 2 }}>
           <Grid container rowSpacing={2} columnSpacing={4} sx={{ '& .MuiGrid-root': { display: 'flex', justifyContent: 'center', alignItems: 'center' } }}>
