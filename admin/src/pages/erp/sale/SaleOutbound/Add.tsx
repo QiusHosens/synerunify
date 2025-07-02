@@ -134,16 +134,16 @@ const ErpOutboundOrderAdd = forwardRef(({ onSubmit }: ErpOutboundOrderAddProps, 
     };
 
     if (!formValues.sale_id && formValues.sale_id != 0) {
-      newErrors.sale_id = t('page.erp.sales.outbound.error.sales.order');
+      newErrors.sale_id = t('global.error.select.please') + t('erp.common.title.sale');
     }
 
     if (!formValues.outbound_date.trim()) {
-      newErrors.outbound_date = t('page.erp.sale.outbound.error.outbound_date');
+      newErrors.outbound_date = t('global.error.select.please') + t('page.erp.sale.outbound.title.outbound.date');
     }
 
     formValues.details.forEach((product, index) => {
       if (!product.warehouse_id) {
-        newErrors.details[index].warehouse_id = t('page.erp.sale.outbound.detail.error.warehouse');
+        newErrors.details[index].warehouse_id = t('global.error.select.please') + t('erp.detail.common.title.warehouse');
       }
     });
 
@@ -356,17 +356,17 @@ const ErpOutboundOrderAdd = forwardRef(({ onSubmit }: ErpOutboundOrderAddProps, 
         <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '100%' } }}>
           <Grid container rowSpacing={2} columnSpacing={4} sx={{ '& .MuiGrid-root': { display: 'flex', justifyContent: 'center', alignItems: 'center' } }}>
             <Grid size={size}>
-              <TextField size="small" label={t('global.order.placeholder.order.number')} disabled />
+              <TextField size="small" label={t('erp.common.placeholder.order.number')} disabled />
             </Grid>
             <Grid size={size}>
               <FormControl sx={{ mt: 2, minWidth: 120, width: '100%', '& .MuiOutlinedInput-root': { width: '100%', pr: 0 } }} variant="outlined" error={!!errors.sale_id}>
-                <InputLabel required size="small" shrink={erpSalesOrder ? true : false} htmlFor="return-sales-id">{t("page.erp.sale.outbound.title.sale")}</InputLabel>
+                <InputLabel required size="small" shrink={erpSalesOrder ? true : false} htmlFor="return-sales-id">{t("erp.common.title.sale")}</InputLabel>
                 <OutlinedInput
                   required
                   size="small"
                   id="return-sales-id"
                   type='text'
-                  label={t("page.erp.sale.outbound.title.sale")}
+                  label={t("erp.common.title.sale")}
                   value={erpSalesOrder && erpSalesOrder.order_number}
                   onChange={handleInputChange}
                   error={!!errors.sale_id}
@@ -392,7 +392,7 @@ const ErpOutboundOrderAdd = forwardRef(({ onSubmit }: ErpOutboundOrderAddProps, 
               <TextField
                 required
                 size="small"
-                label={t("page.erp.sale.outbound.title.customer")}
+                label={t("erp.common.title.customer")}
                 value={erpSalesOrder && erpSalesOrder.customer_name}
                 onChange={handleInputChange}
                 disabled
@@ -430,14 +430,14 @@ const ErpOutboundOrderAdd = forwardRef(({ onSubmit }: ErpOutboundOrderAddProps, 
             </Grid>
             <Grid size={size}>
               <FormControl sx={{ mt: 2, minWidth: 120, width: '100%' }}>
-                <InputLabel size="small" id="settlement-account-select-label">{t('page.erp.sale.outbound.title.settlement.account')}</InputLabel>
+                <InputLabel size="small" id="settlement-account-select-label">{t('erp.common.title.settlement.account')}</InputLabel>
                 <Select
                   size="small"
                   labelId="settlement-account-select-label"
                   name="settlement_account_id"
                   value={formValues.settlement_account_id ?? ''}
                   onChange={handleSelectChange}
-                  label={t('page.erp.sale.outbound.title.settlement.account')}
+                  label={t('erp.common.title.settlement.account')}
                 >
                   {settlementAccounts.map((item) => (
                     <MenuItem key={item.id} value={item.id}>
@@ -451,7 +451,7 @@ const ErpOutboundOrderAdd = forwardRef(({ onSubmit }: ErpOutboundOrderAddProps, 
               <TextField
                 size="small"
                 type="number"
-                label={t("page.erp.sale.outbound.title.discount.rate")}
+                label={t("erp.common.title.discount.rate")}
                 name='discount_rate'
                 value={formValues.discount_rate}
                 onChange={handleInputChange}
@@ -461,7 +461,7 @@ const ErpOutboundOrderAdd = forwardRef(({ onSubmit }: ErpOutboundOrderAddProps, 
               <TextField
                 size="small"
                 type="number"
-                label={t("page.erp.sale.outbound.title.other.cost")}
+                label={t("erp.common.title.other.cost")}
                 name='other_cost'
                 value={formValues.other_cost}
                 onChange={handleInputChange}
@@ -470,7 +470,7 @@ const ErpOutboundOrderAdd = forwardRef(({ onSubmit }: ErpOutboundOrderAddProps, 
             <Grid size={size}>
               <TextField
                 size="small"
-                label={t("page.erp.sale.outbound.title.remarks")}
+                label={t("common.title.remark")}
                 name='remarks'
                 value={formValues.remarks}
                 onChange={handleInputChange}
@@ -480,24 +480,24 @@ const ErpOutboundOrderAdd = forwardRef(({ onSubmit }: ErpOutboundOrderAddProps, 
         </FormControl>
 
         <Typography variant="body1" sx={{ mt: 3, fontSize: '1rem', fontWeight: 500 }}>
-          {t('page.erp.purchase.order.title.check.list')}
+          {t('erp.common.title.check.list')}
         </Typography>
         <Card variant="outlined" sx={{ width: '100%', mt: 1, p: 2 }}>
           <Box sx={{ display: 'table', width: '100%', "& .table-row": { display: 'table-row', "& .table-cell": { display: 'table-cell', padding: 1, textAlign: 'center', } } }}>
             <Box className='table-row'>
-              <Box className='table-cell' sx={{ width: 50 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.no')}</Typography></Box>
-              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.inbound.detail.title.warehouse')}</Typography></Box>
-              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.remarks')}</Typography></Box>
-              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.product')}</Typography></Box>
-              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.barcode')}</Typography></Box>
-              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.unit')}</Typography></Box>
-              <Box className='table-cell' sx={{ width: 200 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.remarks')}</Typography></Box>
-              <Box className='table-cell' sx={{ width: 150 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.quantity')}</Typography></Box>
-              <Box className='table-cell' sx={{ width: 150 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.unit.price')}</Typography></Box>
-              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.subtotal')}</Typography></Box>
-              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.tax.rate')}</Typography></Box>
-              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.tax')}</Typography></Box>
-              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.tax.total')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 50 }}><Typography variant="body1">{t('erp.detail.common.title.no')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('erp.detail.common.title.warehouse')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('erp.detail.common.title.remarks')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('erp.detail.common.title.product')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('erp.detail.common.title.barcode')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('erp.detail.common.title.unit')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 200 }}><Typography variant="body1">{t('erp.detail.common.title.remarks')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 150 }}><Typography variant="body1">{t('erp.detail.common.title.quantity')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 150 }}><Typography variant="body1">{t('erp.detail.common.title.unit.price')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('erp.detail.common.title.subtotal')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('erp.detail.common.title.tax.rate')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('erp.detail.common.title.tax')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('erp.detail.common.title.tax.total')}</Typography></Box>
             </Box>
             {erpSalesOrder && erpSalesOrder.details.map((item, index) => (
               <Box className='table-row' key={index}>
@@ -564,7 +564,7 @@ const ErpOutboundOrderAdd = forwardRef(({ onSubmit }: ErpOutboundOrderAddProps, 
         </Card>
 
         <Typography variant="body1" sx={{ mt: 3, fontSize: '1rem', fontWeight: 500 }}>
-          {t('page.erp.purchase.order.title.attachment')}
+          {t('erp.common.title.attachment')}
         </Typography>
         <Card variant="outlined" sx={{ width: '100%', mt: 1, p: 2 }}>
           <Grid container rowSpacing={2} columnSpacing={4} sx={{ '& .MuiGrid-root': { display: 'flex', justifyContent: 'center', alignItems: 'center' } }}>

@@ -38,7 +38,7 @@ export default function ErpPurchaseReturn() {
     () => [
       {
         field: 'order_number',
-        headerName: t("page.erp.purchase.return.title.order.number"),
+        headerName: t("erp.common.title.order.number"),
         flex: 1.4,
         minWidth: 100,
         renderCell: (params: GridRenderCellParams) => (
@@ -49,7 +49,7 @@ export default function ErpPurchaseReturn() {
       },
       {
         field: 'purchase_order_number',
-        headerName: t("page.erp.purchase.return.title.purchase.order"),
+        headerName: t("erp.common.title.purchase"),
         flex: 1.4,
         minWidth: 100,
         renderCell: (params: GridRenderCellParams) => (
@@ -58,15 +58,15 @@ export default function ErpPurchaseReturn() {
           />
         )
       },
-      { field: 'supplier_name', headerName: t("page.erp.purchase.return.title.supplier"), flex: 1, minWidth: 100 },
+      { field: 'supplier_name', headerName: t("erp.common.title.supplier"), flex: 1, minWidth: 100 },
       { field: 'return_date', headerName: t("page.erp.purchase.return.title.return.date"), flex: 1, minWidth: 100 },
-      { field: 'total_amount', headerName: t("page.erp.purchase.return.title.total.amount"), flex: 1, minWidth: 100 },
-      { field: 'discount_rate', headerName: t("page.erp.purchase.return.title.discount.rate"), flex: 1, minWidth: 100 },
-      { field: 'settlement_account_name', headerName: t("page.erp.purchase.return.title.settlement.account"), flex: 1, minWidth: 100 },
-      { field: 'remarks', headerName: t("page.erp.purchase.return.title.remarks"), flex: 1, minWidth: 100 },
+      { field: 'total_amount', headerName: t("erp.common.title.total.amount"), flex: 1, minWidth: 100 },
+      { field: 'discount_rate', headerName: t("erp.common.title.discount.rate"), flex: 1, minWidth: 100 },
+      { field: 'settlement_account_name', headerName: t("erp.common.title.settlement.account"), flex: 1, minWidth: 100 },
+      { field: 'remarks', headerName: t("common.title.remark"), flex: 1, minWidth: 100 },
       {
         field: 'order_status',
-        headerName: t("page.erp.purchase.return.title.order.status"),
+        headerName: t("erp.common.title.order.status"),
         flex: 1,
         minWidth: 100,
         renderCell: (params: GridRenderCellParams) => (
@@ -75,7 +75,7 @@ export default function ErpPurchaseReturn() {
           </>
         )
       },
-      { field: 'create_time', headerName: t("global.title.create.time"), flex: 1, minWidth: 180 },
+      { field: 'create_time', headerName: t("common.title.create.time"), flex: 1, minWidth: 180 },
       {
         field: 'actions',
         sortable: false,

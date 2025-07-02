@@ -29,14 +29,14 @@ const PurchaseOrderSelect = forwardRef(({ onSubmit }: PurchaseOrderSelectProps, 
 
     const columns: GridColDef[] = useMemo(
         () => [
-            { field: 'order_number', headerName: t("page.erp.purchase.order.title.order.number"), flex: 1.4, minWidth: 100 },
-            { field: 'supplier_name', headerName: t("page.erp.purchase.order.title.supplier"), flex: 1, minWidth: 100 },
+            { field: 'order_number', headerName: t("erp.common.title.order.number"), flex: 1.4, minWidth: 100 },
+            { field: 'supplier_name', headerName: t("erp.common.title.supplier"), flex: 1, minWidth: 100 },
             { field: 'purchase_date', headerName: t("page.erp.purchase.order.title.purchase.date"), flex: 1.4, minWidth: 100 },
-            { field: 'total_amount', headerName: t("page.erp.purchase.order.title.total.amount"), flex: 1, minWidth: 100 },
-            { field: 'discount_rate', headerName: t("page.erp.purchase.order.title.discount.rate"), flex: 1, minWidth: 100 },
+            { field: 'total_amount', headerName: t("erp.common.title.total.amount"), flex: 1, minWidth: 100 },
+            { field: 'discount_rate', headerName: t("erp.common.title.discount.rate"), flex: 1, minWidth: 100 },
             {
                 field: 'order_status',
-                headerName: t("page.erp.purchase.order.title.order.status"),
+                headerName: t("erp.common.title.order.status"),
                 flex: 1,
                 minWidth: 100,
                 renderCell: (params: GridRenderCellParams) => (
@@ -45,7 +45,7 @@ const PurchaseOrderSelect = forwardRef(({ onSubmit }: PurchaseOrderSelectProps, 
                     </>
                 )
             },
-            { field: 'create_time', headerName: t("global.title.create.time"), flex: 1.4, minWidth: 180 },
+            { field: 'create_time', headerName: t("common.title.create.time"), flex: 1.4, minWidth: 180 },
             {
                 field: 'actions',
                 sortable: false,
@@ -119,7 +119,7 @@ const PurchaseOrderSelect = forwardRef(({ onSubmit }: PurchaseOrderSelectProps, 
         <CustomizedDialog
             open={open}
             onClose={handleClose}
-            title={t('page.erp.purchase.inbound.title.purchase.list')}
+            title={t('erp.common.title.purchase.list')}
             maxWidth={maxWidth}
         >
             <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>

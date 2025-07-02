@@ -66,11 +66,11 @@ const ErpCustomerAdd = forwardRef(({ onSubmit }: ErpCustomerAddProps, ref) => {
     const newErrors: FormErrors = {};
 
     if (!formValues.name.trim()) {
-      newErrors.name = t('page.erp.sale.customer.error.name');
+      newErrors.name = t('global.error.input.please') + t('common.title.name');
     }
 
     if (!formValues.sort && formValues.sort != 0) {
-      newErrors.sort = t('page.erp.sale.customer.error.sort');
+      newErrors.sort = t('global.error.input.please') + t('common.title.sort');
     }
 
     setErrors(newErrors);
@@ -201,7 +201,7 @@ const ErpCustomerAdd = forwardRef(({ onSubmit }: ErpCustomerAddProps, ref) => {
             <Grid size={{ xs: 12, md: 6 }}>
               <TextField
                 size="small"
-                label={t("page.erp.sale.customer.title.contact.person")}
+                label={t("common.title.contact.person")}
                 name='contact_person'
                 value={formValues.contact_person}
                 onChange={handleInputChange}
@@ -210,7 +210,7 @@ const ErpCustomerAdd = forwardRef(({ onSubmit }: ErpCustomerAddProps, ref) => {
             <Grid size={{ xs: 12, md: 6 }}>
               <TextField
                 size="small"
-                label={t("page.erp.sale.customer.title.phone")}
+                label={t("common.title.phone")}
                 name='phone'
                 value={formValues.phone}
                 onChange={handleInputChange}
@@ -219,7 +219,7 @@ const ErpCustomerAdd = forwardRef(({ onSubmit }: ErpCustomerAddProps, ref) => {
             <Grid size={{ xs: 12, md: 6 }}>
               <TextField
                 size="small"
-                label={t("page.erp.sale.customer.title.email")}
+                label={t("common.title.email")}
                 name='email'
                 value={formValues.email}
                 onChange={handleInputChange}
@@ -228,7 +228,7 @@ const ErpCustomerAdd = forwardRef(({ onSubmit }: ErpCustomerAddProps, ref) => {
             <Grid size={{ xs: 12, md: 6 }}>
               <TextField
                 size="small"
-                label={t("page.erp.sale.customer.title.address")}
+                label={t("common.title.address")}
                 name='address'
                 value={formValues.address}
                 onChange={handleInputChange}
@@ -239,7 +239,7 @@ const ErpCustomerAdd = forwardRef(({ onSubmit }: ErpCustomerAddProps, ref) => {
                 required
                 size="small"
                 type="number"
-                label={t("page.erp.sale.customer.title.sort")}
+                label={t("common.title.sort")}
                 name='sort'
                 value={formValues.sort}
                 onChange={handleInputChange}
@@ -269,7 +269,7 @@ const ErpCustomerAdd = forwardRef(({ onSubmit }: ErpCustomerAddProps, ref) => {
             <Grid size={{ xs: 12, md: 6 }}>
               <TextField
                 size="small"
-                label={t("page.erp.sale.customer.title.bank.name")}
+                label={t("page.erp.financial.account.title.bank.name")}
                 name='bank_name'
                 value={formValues.bank_name}
                 onChange={handleInputChange}
@@ -278,7 +278,7 @@ const ErpCustomerAdd = forwardRef(({ onSubmit }: ErpCustomerAddProps, ref) => {
             <Grid size={{ xs: 12, md: 6 }}>
               <TextField
                 size="small"
-                label={t("page.erp.sale.customer.title.bank.account")}
+                label={t("page.erp.financial.account.title.bank.account")}
                 name='bank_account'
                 value={formValues.bank_account}
                 onChange={handleInputChange}
@@ -296,7 +296,7 @@ const ErpCustomerAdd = forwardRef(({ onSubmit }: ErpCustomerAddProps, ref) => {
             <Grid size={{ xs: 12, md: 6 }}>
               <TextField
                 size="small"
-                label={t("page.erp.sale.customer.title.remarks")}
+                label={t("common.title.remark")}
                 name='remarks'
                 value={formValues.remarks}
                 onChange={handleInputChange}
@@ -304,9 +304,9 @@ const ErpCustomerAdd = forwardRef(({ onSubmit }: ErpCustomerAddProps, ref) => {
             </Grid>
             <Grid size={{ xs: 12, md: 6 }}>
               <Box sx={{ mt: 2, display: 'flex', alignItems: 'center' }}>
-                <Typography sx={{ mr: 4 }}>{t("global.title.status")}</Typography>
+                <Typography sx={{ mr: 4 }}>{t("common.title.status")}</Typography>
                 <Switch sx={{ mr: 2 }} name='status' checked={!formValues.status} onChange={handleStatusChange} />
-                <Typography>{formValues.status == 0 ? t('global.switch.status.true') : t('global.switch.status.false')}</Typography>
+                <Typography>{formValues.status == 0 ? t('common.switch.status.true') : t('common.switch.status.false')}</Typography>
               </Box>
             </Grid>
           </Grid>

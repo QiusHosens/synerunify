@@ -2,10 +2,9 @@ import { Box, Button, DialogProps } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useState } from 'react';
 import { DataGrid, GridCallbackDetails, GridColDef, GridFilterModel, GridRenderCellParams, GridSortModel } from '@mui/x-data-grid';
-import { pageErpPurchaseOrder, ErpPurchaseOrderQueryCondition, ErpPurchaseOrderResponse, pageReceivedErpPurchaseOrder } from '@/api';
+import {  ErpPurchaseOrderQueryCondition, ErpPurchaseOrderResponse, pageReceivedErpPurchaseOrder } from '@/api';
 import CustomizedAutoMore from '@/components/CustomizedAutoMore';
 import CheckIcon from '@mui/icons-material/Check';
-import CustomizedDictTag from '@/components/CustomizedDictTag';
 import CustomizedDialog from '@/components/CustomizedDialog';
 
 interface PurchaseOrderSelectProps {
@@ -29,12 +28,12 @@ const PurchaseOrderSelect = forwardRef(({ onSubmit }: PurchaseOrderSelectProps, 
 
     const columns: GridColDef[] = useMemo(
         () => [
-            { field: 'order_number', headerName: t("page.erp.purchase.order.title.order.number"), flex: 1.4, minWidth: 100 },
-            { field: 'supplier_name', headerName: t("page.erp.purchase.order.title.supplier"), flex: 1, minWidth: 100 },
+            { field: 'order_number', headerName: t("erp.common.title.order.number"), flex: 1.4, minWidth: 100 },
+            { field: 'supplier_name', headerName: t("erp.common.title.supplier"), flex: 1, minWidth: 100 },
             { field: 'purchase_date', headerName: t("page.erp.purchase.order.title.purchase.date"), flex: 1.4, minWidth: 100 },
-            { field: 'total_amount', headerName: t("page.erp.purchase.order.title.total.amount"), flex: 1, minWidth: 100 },
-            { field: 'discount_rate', headerName: t("page.erp.purchase.order.title.discount.rate"), flex: 1, minWidth: 100 },
-            { field: 'create_time', headerName: t("global.title.create.time"), flex: 1.4, minWidth: 180 },
+            { field: 'total_amount', headerName: t("erp.common.title.total.amount"), flex: 1, minWidth: 100 },
+            { field: 'discount_rate', headerName: t("erp.common.title.discount.rate"), flex: 1, minWidth: 100 },
+            { field: 'create_time', headerName: t("common.title.create.time"), flex: 1.4, minWidth: 180 },
             {
                 field: 'actions',
                 sortable: false,
@@ -108,7 +107,7 @@ const PurchaseOrderSelect = forwardRef(({ onSubmit }: PurchaseOrderSelectProps, 
         <CustomizedDialog
             open={open}
             onClose={handleClose}
-            title={t('page.erp.purchase.inbound.title.purchase.list')}
+            title={t('erp.common.title.purchase.list')}
             maxWidth={maxWidth}
         >
             <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>

@@ -47,16 +47,16 @@ export default function ErpSalesOrder() {
           />
         )
       },
-      { field: 'customer_id', headerName: t("page.erp.sale.order.title.customer"), flex: 1, minWidth: 100 },
+      { field: 'customer_id', headerName: t("erp.common.title.customer"), flex: 1, minWidth: 100 },
       { field: 'order_date', headerName: t("page.erp.sale.order.title.order.date"), flex: 1.4, minWidth: 100 },
-      { field: 'total_amount', headerName: t("page.erp.sale.order.title.total.amount"), flex: 1, minWidth: 100 },
-      { field: 'discount_rate', headerName: t("page.erp.sale.order.title.discount.rate"), flex: 1, minWidth: 100 },
-      { field: 'settlement_account_id', headerName: t("page.erp.sale.order.title.settlement.account"), flex: 1, minWidth: 100 },
-      { field: 'deposit', headerName: t("page.erp.sale.order.title.deposit"), flex: 1, minWidth: 100 },
-      { field: 'remarks', headerName: t("page.erp.sale.order.title.remarks"), flex: 1, minWidth: 100 },
+      { field: 'total_amount', headerName: t("erp.common.title.total.amount"), flex: 1, minWidth: 100 },
+      { field: 'discount_rate', headerName: t("erp.common.title.discount.rate"), flex: 1, minWidth: 100 },
+      { field: 'settlement_account_id', headerName: t("erp.common.title.settlement.account"), flex: 1, minWidth: 100 },
+      { field: 'deposit', headerName: t("erp.common.title.deposit"), flex: 1, minWidth: 100 },
+      { field: 'remarks', headerName: t("common.title.remark"), flex: 1, minWidth: 100 },
       {
         field: 'order_status',
-        headerName: t("page.erp.sale.order.title.order.status"),
+        headerName: t("erp.common.title.order.status"),
         flex: 1,
         minWidth: 100,
         renderCell: (params: GridRenderCellParams) => (
@@ -65,7 +65,7 @@ export default function ErpSalesOrder() {
           </>
         )
       },
-      { field: 'create_time', headerName: t("global.title.create.time"), flex: 1, minWidth: 180 },
+      { field: 'create_time', headerName: t("common.title.create.time"), flex: 1, minWidth: 180 },
       {
         field: 'actions',
         sortable: false,
