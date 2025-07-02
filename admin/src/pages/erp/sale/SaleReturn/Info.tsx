@@ -9,11 +9,11 @@ import { downloadSystemFile } from '@/api/system_file';
 import CustomizedCopyableText from '@/components/CustomizedCopyableText';
 import CustomizedTag from '@/components/CustomizedTag';
 
-const ErpSalesReturnEdit = forwardRef(({ }, ref) => {
+const ErpSalesReturnInfo = forwardRef(({ }, ref) => {
   const { t } = useTranslation();
 
   const [open, setOpen] = useState(false);
-  const [maxWidth] = useState<DialogProps['maxWidth']>('sm');
+  const [maxWidth] = useState<DialogProps['maxWidth']>('xl');
   const [erpSalesOrder, setErpSalesOrder] = useState<ErpSalesOrderInfoResponse>();
   const [erpSalesOrderDetailMap, setErpSalesOrderDetailMap] = useState<Map<number, ErpSalesOrderDetailBaseResponse>>();
   const [warehouses, setWarehouses] = useState<ErpWarehouseResponse[]>([]);
@@ -267,4 +267,4 @@ const ErpSalesReturnEdit = forwardRef(({ }, ref) => {
   )
 });
 
-export default ErpSalesReturnEdit;
+export default ErpSalesReturnInfo;

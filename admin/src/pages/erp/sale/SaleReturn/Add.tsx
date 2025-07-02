@@ -376,7 +376,7 @@ const ErpSalesReturnAdd = forwardRef(({ onSubmit }: ErpSalesReturnAddProps, ref)
             </Grid>
             <Grid size={size}>
               <FormControl sx={{ mt: 2, minWidth: 120, width: '100%', '& .MuiOutlinedInput-root': { width: '100%', pr: 0 } }} variant="outlined" error={!!errors.sales_order_id}>
-                <InputLabel required size="small" shrink={erpSalesOrder ? true : false} htmlFor="return-sales-id">{t("page.erp.sales.return.title.sales.order")}</InputLabel>
+                <InputLabel required size="small" shrink={erpSalesOrder ? true : false} htmlFor="return-sales-id">{t("erp.common.title.sale")}</InputLabel>
                 <OutlinedInput
                   required
                   size="small"

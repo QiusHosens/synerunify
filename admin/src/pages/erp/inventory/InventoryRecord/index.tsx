@@ -19,14 +19,14 @@ export default function ErpInventoryRecord() {
 
   const columns: GridColDef[] = useMemo(
     () => [
-      { field: 'product_name', headerName: t("page.erp.product.list.title.name"), flex: 1, minWidth: 100 },
-      { field: 'warehouse_name', headerName: t("page.erp.inventory.warehouse.title.name"), flex: 1, minWidth: 100 },
-      { field: 'quantity', headerName: t("page.mark_translation.title.quantity"), flex: 1, minWidth: 100 },
+      { field: 'product_name', headerName: t("erp.common.title.product.name"), flex: 1, minWidth: 100 },
+      { field: 'warehouse_name', headerName: t("erp.common.title.warehouse.name"), flex: 1, minWidth: 100 },
+      { field: 'quantity', headerName: t("erp.detail.common.title.quantity"), flex: 1, minWidth: 100 },
       { field: 'unit_name', headerName: t("page.erp.product.unit.title.name"), flex: 1, minWidth: 100 },
-      { field: 'record_type', headerName: t("page.mark_translation.title.record_type"), flex: 1, minWidth: 100 },
-      { field: 'record_date', headerName: t("page.mark_translation.title.record_date"), flex: 1, minWidth: 100 },
-      { field: 'remarks', headerName: t("page.mark_translation.title.remarks"), flex: 1, minWidth: 100 },
-      { field: 'create_time', headerName: t("global.title.create.time"), flex: 1, minWidth: 180 },
+      { field: 'record_type', headerName: t("page.erp.inventory.record.title.record.type"), flex: 1, minWidth: 100 },
+      { field: 'record_date', headerName: t("page.erp.inventory.record.title.record.date"), flex: 1, minWidth: 100 },
+      { field: 'remarks', headerName: t("common.title.remark"), flex: 1, minWidth: 100 },
+      { field: 'create_time', headerName: t("common.title.create.time"), flex: 1, minWidth: 180 },
     ],
     [t]
   );

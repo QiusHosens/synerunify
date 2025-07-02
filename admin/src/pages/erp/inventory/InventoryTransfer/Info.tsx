@@ -107,7 +107,7 @@ const ErpInventoryTransferInfo = forwardRef(({ }, ref) => {
           <Grid container rowSpacing={2} columnSpacing={4} sx={{ '& .MuiGrid-root': { display: 'flex', justifyContent: 'start', alignItems: 'center' } }}>
             <Grid size={size}>
               <Stack direction="row" spacing={2} sx={{ display: "flex", alignItems: "center" }}>
-                <Box>{t('page.erp.purchase.order.title.order.number')}</Box>
+                <Box>{t('erp.common.title.order.number')}</Box>
                 <Box>{erpInventoryTransfer && <CustomizedCopyableText text={erpInventoryTransfer.order_number} sx={{
                   fontSize: '0.75rem',
                   fontWeight: 500,
@@ -122,7 +122,7 @@ const ErpInventoryTransferInfo = forwardRef(({ }, ref) => {
             </Grid>
             <Grid size={{ xs: 12, md: 6 }}>
               <Stack direction="row" spacing={2} sx={{ display: "flex", alignItems: "center" }}>
-                <Box>{t('page.erp.inventory.transfer.title.remarks')}</Box>
+                <Box>{t('common.title.remark')}</Box>
                 <Box>{erpInventoryTransfer && <CustomizedTag label={erpInventoryTransfer.remarks} />}</Box>
               </Stack>
             </Grid>
@@ -130,20 +130,20 @@ const ErpInventoryTransferInfo = forwardRef(({ }, ref) => {
         </FormControl>
 
         <Typography variant="body1" sx={{ mt: 3, fontSize: '1rem', fontWeight: 500 }}>
-          {t('page.erp.purchase.order.title.check.list')}
+          {t('erp.common.title.check.list')}
         </Typography>
         <Card variant="outlined" sx={{ width: '100%', mt: 1, p: 2 }}>
           <Box sx={{ display: 'table', width: '100%', "& .table-row": { display: 'table-row', "& .table-cell": { display: 'table-cell', padding: 1, textAlign: 'center', } } }}>
             <Box className='table-row'>
-              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.no')}</Typography></Box>
-              <Box className='table-cell' sx={{ width: 200 }}><Typography variant="body1">{t('page.erp.purchase.inbound.detail.title.warehouse')}</Typography></Box>
-              <Box className='table-cell' sx={{ width: 200 }}><Typography variant="body1">{t('page.erp.purchase.inbound.detail.title.warehouse')}</Typography></Box>
-              <Box className='table-cell' sx={{ width: 200 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.product')}</Typography></Box>
-              <Box className='table-cell' sx={{ width: 200 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.barcode')}</Typography></Box>
-              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.stock')}</Typography></Box>
-              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.unit')}</Typography></Box>
-              <Box className='table-cell' sx={{ width: 150 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.quantity')}</Typography></Box>
-              <Box className='table-cell' sx={{ width: 200 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.remarks')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('erp.detail.common.title.no')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 200 }}><Typography variant="body1">{t('erp.detail.common.title.warehouse.from')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 200 }}><Typography variant="body1">{t('erp.detail.common.title.warehouse.to')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 200 }}><Typography variant="body1">{t('erp.detail.common.title.product')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 200 }}><Typography variant="body1">{t('erp.detail.common.title.barcode')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('erp.detail.common.title.stock')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('erp.detail.common.title.unit')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 150 }}><Typography variant="body1">{t('erp.detail.common.title.quantity')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 200 }}><Typography variant="body1">{t('erp.detail.common.title.remarks')}</Typography></Box>
             </Box>
             {erpInventoryTransfer && erpInventoryTransfer.details.map((item, index) => (
               <Box className='table-row' key={index}>
@@ -228,7 +228,7 @@ const ErpInventoryTransferInfo = forwardRef(({ }, ref) => {
         </Card>
 
         <Typography variant="body1" sx={{ mt: 3, fontSize: '1rem', fontWeight: 500 }}>
-          {t('page.erp.purchase.order.title.attachment')}
+          {t('erp.common.title.attachment')}
         </Typography>
         <Card variant="outlined" sx={{ width: '100%', mt: 1, p: 2 }}>
           <Grid container rowSpacing={2} columnSpacing={4} sx={{ '& .MuiGrid-root': { display: 'flex', justifyContent: 'center', alignItems: 'center' } }}>

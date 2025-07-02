@@ -356,7 +356,7 @@ const ErpSalesReturnEdit = forwardRef(({ onSubmit }: ErpSalesReturnEditProps, re
           width: 'fit-content',
         }}
       >
-        <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' } }}>
+        <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '100%' } }}>
           <Grid container rowSpacing={2} columnSpacing={4} sx={{ '& .MuiGrid-root': { display: 'flex', justifyContent: 'start', alignItems: 'center' } }}>
             <Grid size={size}>
               <Stack direction="row" spacing={2} sx={{ display: "flex", alignItems: "center" }}>

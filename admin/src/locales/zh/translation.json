@@ -167,17 +167,22 @@
     "title.remarks": "备注",
     "title.order.status": "订单状态",
     "title.product": "产品",
+    "title.product.name": "产品名称",
+    "title.warehouse.name": "仓库名称",
+    "title.stock.quantity": "库存数量",
     "title.check.list": "产品清单",
     "title.attachment": "附件",
-    "title.operate.add": "添加采购产品",
     "title.purchase.list": "采购订单列表",
     "placeholder.order.number": "订单编号,由系统自动生成",
-    "operate.select": "选择"
+    "operate.select": "选择",
+    "operate.add": "添加产品"
   },
   "erp.detail.common": {
     "title.no": "序号",
     "title.product": "产品名称",
     "title.warehouse": "仓库",
+    "title.warehouse.from": "调出仓库",
+    "title.warehouse.to": "调入仓库",
     "title.stock": "库存",
     "title.barcode": "条码",
     "title.unit": "单位",
@@ -188,7 +193,9 @@
     "title.tax.rate": "税率",
     "title.tax": "税额",
     "title.tax.total": "税额合计",
-    "error.product.empty": "产品为空,请先添加产品"
+    "error.product.empty": "产品为空,请先添加产品",
+    "error.warehouse.empty": "仓库为空,请先添加仓库",
+    "error.warehouse.only.one": "仓库数量为1,无需调拨"
   },
   "page.dict": {
     "title.type.name": "类型名称",
@@ -317,14 +324,14 @@
     "title.outbound.date": "出库日期"
   },
   "page.erp.inventory.check": {
-    "title.check.date": "盘点日期",
-    "error.order.number": "common.error.input|订单编号",
-    "error.check.date": "common.error.input|盘点日期"
+    "title.check.date": "盘点日期"
+  },
+  "page.erp.inventory.record": {
+    "title.record.type": "记录类型",
+    "title.record.date": "记录时间"
   },
   "page.erp.inventory.transfer": {
-    "title.transfer.date": "调拨日期",
-    "error.order.number": "common.error.input|订单编号",
-    "error.transfer.date": "common.error.input|调拨日期"
+    "title.transfer.date": "调拨日期"
   },
   "page.erp.payment": {
     "title.amount": "付款金额",
@@ -363,64 +370,6 @@
     "title.tax.rate": "税率",
     "title.remarks": "备注"
   },
-
-  "page.erp.sale.order.title.order.number": "订单编号",
-  "page.erp.sale.order.title.customer": "客户",
-  "page.erp.sale.order.title.order.date": "订单日期",
-  "page.erp.sale.order.title.total.amount": "总金额",
-  "page.erp.sale.order.title.order.status": "订单状态",
-  "page.erp.sale.order.title.discount.rate": "优惠率",
-  "page.erp.sale.order.title.settlement.account": "结算账户",
-  "page.erp.sale.order.title.deposit": "定金",
-  "page.erp.sale.order.title.remarks": "备注",
-  "page.erp.sale.order.error.customer.id": "请选择客户",
-  "page.erp.sale.order.error.order.date": "请选择订单日期",
-  "page.erp.sale.order.error.total.amount": "请输入总金额",
-
-  "page.erp.sales.return.title.order.number": "订单编号",
-  "page.erp.sales.return.title.sales.order": "销售订单",
-  "page.erp.sales.return.title.customer": "客户",
-  "page.erp.sales.return.title.return.date": "退货日期",
-  "page.erp.sales.return.title.total.amount": "总金额",
-  "page.erp.sales.return.title.order.status": "订单状态",
-  "page.erp.sales.return.title.discount.rate": "优惠率",
-  "page.erp.sales.return.title.settlement.account": "结算账户",
-  "page.erp.sales.return.title.deposit": "定金",
-  "page.erp.sales.return.title.remarks": "备注",
-  "page.erp.sales.return.error.order.number": "请输入订单编号",
-  "page.erp.sales.return.error.sales.order": "请选择销售订单",
-  "page.erp.sales.return.error.customer": "请选择客户",
-  "page.erp.sales.return.error.return.date": "请选择退货日期",
-  "page.erp.sales.return.error.total.amount": "请输入总金额",
-
-  "page.erp.sales.return.detail.title.order": "退货订单",
-  "page.erp.sales.return.detail.title.sale.detail": "销售订单详情",
-  "page.erp.sales.return.detail.title.warehouse": "仓库",
-  "page.erp.sales.return.detail.title.product": "产品",
-  "page.erp.sales.return.detail.title.quantity": "数量",
-  "page.erp.sales.return.detail.title.unit.price": "单价",
-  "page.erp.sales.return.detail.title.subtotal": "小计",
-  "page.erp.sales.return.detail.title.tax.rate": "税率",
-  "page.erp.sales.return.detail.title.remarks": "备注",
-  "page.erp.sales.return.detail.error.order": "请输入退货订单",
-  "page.erp.sales.return.detail.error.sale.detail": "请输入销售订单详情",
-  "page.erp.sales.return.detail.error.warehouse": "请输入仓库",
-  "page.erp.sales.return.detail.error.product": "请输入产品",
-  "page.erp.sales.return.detail.error.quantity": "请输入数量",
-  "page.erp.sales.return.detail.error.unit.price": "请输入单价",
-  "page.erp.sales.return.detail.error.subtotal": "请输入小计",
-
-  "page.erp.sale.outbound.title.order.number": "订单编号",
-  "page.erp.sale.outbound.title.sale": "销售订单",
-  "page.erp.sale.outbound.title.customer": "客户",
-  "page.erp.sale.outbound.title.outbound.date": "出库日期",
-  "page.erp.sale.outbound.title.remarks": "备注",
-  "page.erp.sale.outbound.title.discount.rate": "优惠率",
-  "page.erp.sale.outbound.title.other.cost": "其他费用",
-  "page.erp.sale.outbound.title.settlement.account": "结算账户ID",
-  "page.erp.sale.outbound.error.sales.order": "请选择销售订单",
-  "page.erp.sale.outbound.error.customer.id": "请输入客户",
-  "page.erp.sale.outbound.error.outbound_date": "请输入出库日期",
 
   "page.erp.inventory.check.title.order.number": "订单编号",
   "page.erp.inventory.check.title.check.date": "盘点日期",

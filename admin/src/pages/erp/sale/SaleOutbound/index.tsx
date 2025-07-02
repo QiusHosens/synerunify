@@ -34,15 +34,15 @@ export default function ErpOutboundOrder() {
 
   const columns: GridColDef[] = useMemo(
     () => [
-      { field: 'order_number', headerName: t("page.erp.sale.outbound.title.order.number"), flex: 1, minWidth: 100 },
-      { field: 'sale_id', headerName: t("page.erp.sale.outbound.title.sale"), flex: 1, minWidth: 100 },
-      { field: 'customer_id', headerName: t("page.erp.sale.outbound.title.customer"), flex: 1, minWidth: 100 },
+      { field: 'order_number', headerName: t("erp.common.title.order.number"), flex: 1, minWidth: 100 },
+      { field: 'sale_id', headerName: t("erp.common.title.sale"), flex: 1, minWidth: 100 },
+      { field: 'customer_id', headerName: t("erp.common.title.customer"), flex: 1, minWidth: 100 },
       { field: 'outbound_date', headerName: t("page.erp.sale.outbound.title.outbound.date"), flex: 1, minWidth: 100 },
-      { field: 'remarks', headerName: t("page.erp.sale.outbound.title.remarks"), flex: 1, minWidth: 100 },
-      { field: 'discount_rate', headerName: t("page.erp.sale.outbound.title.discount.rate"), flex: 1, minWidth: 100 },
-      { field: 'other_cost', headerName: t("page.erp.sale.outbound.title.other.cost"), flex: 1, minWidth: 100 },
-      { field: 'settlement_account_id', headerName: t("page.erp.sale.outbound.title.settlement.account"), flex: 1, minWidth: 100 },
-      { field: 'create_time', headerName: t("global.title.create.time"), flex: 1, minWidth: 180 },
+      { field: 'remarks', headerName: t("common.title.remark"), flex: 1, minWidth: 100 },
+      { field: 'discount_rate', headerName: t("erp.common.title.discount.rate"), flex: 1, minWidth: 100 },
+      { field: 'other_cost', headerName: t("erp.common.title.other.cost"), flex: 1, minWidth: 100 },
+      { field: 'settlement_account_id', headerName: t("erp.common.title.settlement.account"), flex: 1, minWidth: 100 },
+      { field: 'create_time', headerName: t("common.title.create.time"), flex: 1, minWidth: 180 },
       {
         field: 'actions',
         sortable: false,

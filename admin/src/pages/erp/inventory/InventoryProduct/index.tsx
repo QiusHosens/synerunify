@@ -26,11 +26,11 @@ export default function ErpProductInventory() {
 
   const columns: GridColDef[] = useMemo(
     () => [
-      { field: 'product_name', headerName: t("page.erp.product.list.title.name"), flex: 1, minWidth: 100 },
-      { field: 'warehouse_name', headerName: t("page.erp.inventory.warehouse.title.name"), flex: 1, minWidth: 100 },
-      { field: 'stock_quantity', headerName: t("page.erp.product.list.title.stock.quantity"), flex: 1, minWidth: 100 },
+      { field: 'product_name', headerName: t("erp.common.title.product.name"), flex: 1, minWidth: 100 },
+      { field: 'warehouse_name', headerName: t("erp.common.title.warehouse.name"), flex: 1, minWidth: 100 },
+      { field: 'stock_quantity', headerName: t("erp.common.title.stock.quantity"), flex: 1, minWidth: 100 },
       { field: 'unit_name', headerName: t("page.erp.product.unit.title.name"), flex: 1, minWidth: 100 },
-      { field: 'create_time', headerName: t("global.title.create.time"), flex: 1, minWidth: 180 },
+      { field: 'create_time', headerName: t("common.title.create.time"), flex: 1, minWidth: 180 },
       {
         field: 'actions',
         sortable: false,

@@ -2,6 +2,7 @@ import { Box, Button } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { DataGrid, GridCallbackDetails, GridColDef, GridFilterModel, GridRenderCellParams, GridSortModel } from '@mui/x-data-grid';
+import ViewIcon from '@/assets/image/svg/view.svg';
 import EditIcon from '@/assets/image/svg/edit.svg';
 import DeleteIcon from '@/assets/image/svg/delete.svg';
 import { pageErpSalesReturn, ErpSalesReturnQueryCondition, ErpSalesReturnResponse } from '@/api';
@@ -12,6 +13,7 @@ import { useHomeStore } from '@/store';
 import CustomizedAutoMore from '@/components/CustomizedAutoMore';
 import CustomizedCopyableText from '@/components/CustomizedCopyableText';
 import CustomizedDictTag from '@/components/CustomizedDictTag';
+import ErpSalesReturnInfo from './Info';
 
 export default function ErpSalesReturn() {
   const { t } = useTranslation();
@@ -28,6 +30,7 @@ export default function ErpSalesReturn() {
   const [filterModel, setFilterModel] = useState<GridFilterModel>();
 
   const addErpSalesReturn = useRef(null);
+  const viewErpSalesReturn = useRef(null);
   const editErpSalesReturn = useRef(null);
   const deleteErpSalesReturn = useRef(null);
 
@@ -35,7 +38,7 @@ export default function ErpSalesReturn() {
     () => [
       {
         field: 'order_number',
-        headerName: t("page.erp.sales.return.title.order.number"),
+        headerName: t("erp.common.title.order.number"),
         flex: 1.4,
         minWidth: 100,
         renderCell: (params: GridRenderCellParams) => (
@@ -46,7 +49,7 @@ export default function ErpSalesReturn() {
       },
       {
         field: 'sales_order_number',
-        headerName: t("page.erp.sales.return.title.sales.order"),
+        headerName: t("erp.common.title.sale"),
         flex: 1.4,
         minWidth: 100,
         renderCell: (params: GridRenderCellParams) => (
@@ -55,15 +58,15 @@ export default function ErpSalesReturn() {
           />
         )
       },
-      { field: 'customer_name', headerName: t("page.erp.sales.return.title.customer"), flex: 1, minWidth: 100 },
+      { field: 'customer_name', headerName: t("erp.common.title.customer"), flex: 1, minWidth: 100 },
       { field: 'return_date', headerName: t("page.erp.sales.return.title.return.date"), flex: 1, minWidth: 100 },
-      { field: 'total_amount', headerName: t("page.erp.sales.return.title.total.amount"), flex: 1, minWidth: 100 },
-      { field: 'discount_rate', headerName: t("page.erp.sales.return.title.discount.rate"), flex: 1, minWidth: 100 },
-      { field: 'settlement_account_name', headerName: t("page.erp.sales.return.title.settlement.account"), flex: 1, minWidth: 100 },
-      { field: 'remarks', headerName: t("page.erp.sales.return.title.remarks"), flex: 1, minWidth: 100 },
+      { field: 'total_amount', headerName: t("erp.common.title.total.amount"), flex: 1, minWidth: 100 },
+      { field: 'discount_rate', headerName: t("erp.common.title.discount.rate"), flex: 1, minWidth: 100 },
+      { field: 'settlement_account_name', headerName: t("erp.common.title.settlement.account"), flex: 1, minWidth: 100 },
+      { field: 'remarks', headerName: t("common.title.remark"), flex: 1, minWidth: 100 },
       {
         field: 'order_status',
-        headerName: t("page.erp.sales.return.title.order.status"),
+        headerName: t("erp.common.title.order.status"),
         flex: 1,
         minWidth: 100,
         renderCell: (params: GridRenderCellParams) => (
@@ -72,7 +75,7 @@ export default function ErpSalesReturn() {
           </>
         )
       },
-      { field: 'create_time', headerName: t("global.title.create.time"), flex: 1, minWidth: 180 },
+      { field: 'create_time', headerName: t("common.title.create.time"), flex: 1, minWidth: 180 },
       {
         field: 'actions',
         sortable: false,
@@ -82,6 +85,13 @@ export default function ErpSalesReturn() {
         minWidth: 100,
         renderCell: (params: GridRenderCellParams) => (
           <CustomizedAutoMore>
+            {hasOperatePermission('erp:sale:return:get') && <Button
+              size="small"
+              variant='customOperate'
+              title={t('global.operate.view') + t('global.page.erp.sales.return')}
+              startIcon={<ViewIcon />}
+              onClick={() => handleClickOpenView(params.row)}
+            />}
             {hasOperatePermission('erp:sale:return:edit') && <Button
               size="small"
               variant='customOperate'
@@ -113,6 +123,10 @@ export default function ErpSalesReturn() {
   const handleClickOpenAdd = () => {
     (addErpSalesReturn.current as any).show();
   }
+
+  const handleClickOpenView = (erpSalesReturn: ErpSalesReturnResponse) => {
+    (viewErpSalesReturn.current as any).show(erpSalesReturn);
+  };
 
   const handleClickOpenEdit = (erpSalesReturn: ErpSalesReturnResponse) => {
     (editErpSalesReturn.current as any).show(erpSalesReturn);
@@ -174,6 +188,7 @@ export default function ErpSalesReturn() {
           }));
         }}
       />
+      <ErpSalesReturnInfo ref={viewErpSalesReturn} />
       <ErpSalesReturnAdd ref={addErpSalesReturn} onSubmit={refreshData} />
       <ErpSalesReturnEdit ref={editErpSalesReturn} onSubmit={refreshData} />
       <ErpSalesReturnDelete ref={deleteErpSalesReturn} onSubmit={refreshData} />

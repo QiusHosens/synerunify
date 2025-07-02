@@ -38,7 +38,7 @@ export default function ErpSalesOrder() {
     () => [
       {
         field: 'order_number',
-        headerName: t("page.erp.sale.order.title.order.number"),
+        headerName: t("erp.common.title.order.number"),
         flex: 1.4,
         minWidth: 100,
         renderCell: (params: GridRenderCellParams) => (

@@ -37,7 +37,7 @@ export default function ErpInventoryTransfer() {
     () => [
       {
         field: 'order_number', 
-        headerName: t("page.erp.inventory.transfer.title.order.number"), 
+        headerName: t("erp.common.title.order.number"), 
         flex: 1, 
         minWidth: 100, 
         renderCell: (params: GridRenderCellParams) => (
@@ -47,8 +47,8 @@ export default function ErpInventoryTransfer() {
         )
       },
       { field: 'transfer_date', headerName: t("page.erp.inventory.transfer.title.transfer.date"), flex: 1, minWidth: 100 },
-      { field: 'remarks', headerName: t("page.erp.inventory.transfer.title.remarks"), flex: 1, minWidth: 100 },
-      { field: 'create_time', headerName: t("global.title.create.time"), flex: 1, minWidth: 180 },
+      { field: 'remarks', headerName: t("common.title.remark"), flex: 1, minWidth: 100 },
+      { field: 'create_time', headerName: t("common.title.create.time"), flex: 1, minWidth: 180 },
       {
         field: 'actions',
         sortable: false,

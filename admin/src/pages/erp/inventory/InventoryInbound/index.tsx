@@ -37,7 +37,7 @@ export default function ErpInboundOrder() {
     () => [
       {
         field: 'order_number',
-        headerName: t("page.erp.purchase.inbound.title.order.number"),
+        headerName: t("erp.common.title.order.number"),
         flex: 1.4,
         minWidth: 100,
         renderCell: (params: GridRenderCellParams) => (
@@ -47,11 +47,11 @@ export default function ErpInboundOrder() {
         )
       },
       { field: 'inbound_date', headerName: t("page.erp.purchase.inbound.title.inbound.date"), flex: 1, minWidth: 100 },
-      { field: 'settlement_account_name', headerName: t("page.erp.purchase.inbound.title.settlement.account"), flex: 1, minWidth: 100 },
-      { field: 'discount_rate', headerName: t("page.erp.purchase.inbound.title.discount.rate"), flex: 1, minWidth: 100 },
-      { field: 'other_cost', headerName: t("page.erp.purchase.inbound.title.other.cost"), flex: 1, minWidth: 100 },
-      { field: 'remarks', headerName: t("page.erp.purchase.inbound.title.remarks"), flex: 1, minWidth: 100 },
-      { field: 'create_time', headerName: t("global.title.create.time"), flex: 1, minWidth: 180 },
+      { field: 'settlement_account_name', headerName: t("erp.common.title.settlement.account"), flex: 1, minWidth: 100 },
+      { field: 'discount_rate', headerName: t("erp.common.title.discount.rate"), flex: 1, minWidth: 100 },
+      { field: 'other_cost', headerName: t("erp.common.title.other.cost"), flex: 1, minWidth: 100 },
+      { field: 'remarks', headerName: t("common.title.remark"), flex: 1, minWidth: 100 },
+      { field: 'create_time', headerName: t("common.title.create.time"), flex: 1, minWidth: 180 },
       {
         field: 'actions',
         sortable: false,

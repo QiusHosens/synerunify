@@ -81,21 +81,21 @@ const ErpInventoryTransferEdit = forwardRef(({ onSubmit }: ErpInventoryTransferE
     };
 
     if (!erpInventoryTransferRequest.transfer_date.trim()) {
-      newErrors.transfer_date = t('page.erp.inventory.transfer.error.transfer_date');
+      newErrors.transfer_date = t('global.error.select.please') + t('page.erp.inventory.transfer.title.transfer.date');
     }
 
     erpInventoryTransferRequest.details.forEach((product, index) => {
       if (!product.from_warehouse_id) {
-        newErrors.details[index].from_warehouse_id = t('page.erp.purchase.inbound.detail.error.warehouse');
+        newErrors.details[index].from_warehouse_id = t('global.error.select.please') + t('erp.detail.common.title.warehouse.from');
       }
       if (!product.to_warehouse_id) {
-        newErrors.details[index].to_warehouse_id = t('page.erp.purchase.inbound.detail.error.warehouse');
+        newErrors.details[index].to_warehouse_id = t('global.error.select.please') + t('erp.detail.common.title.warehouse.to');
       }
       if (!product.product_id && product.product_id !== 0) {
-        newErrors.details[index].product_id = t('page.erp.purchase.inbound.detail.error.product');
+        newErrors.details[index].product_id = t('global.error.select.please') + t('erp.common.title.product');
       }
       if (!product.quantity && product.quantity !== 0) {
-        newErrors.details[index].quantity = t('page.erp.purchase.inbound.detail.error.quantity');
+        newErrors.details[index].quantity = t('global.error.input.please') + t('erp.detail.common.title.quantity');
       }
     });
 
@@ -233,13 +233,13 @@ const ErpInventoryTransferEdit = forwardRef(({ onSubmit }: ErpInventoryTransferE
 
   const handleAddDetail = useCallback(() => {
     if (!warehouses || warehouses.length == 0) {
-      showMessage(t('global.error.warehouse.empty'));
+      showMessage(t('erp.detail.common.error.warehouse.empty'));
     }
     if (!warehouses || warehouses.length == 1) {
-      showMessage(t('global.error.warehouse.only.one'));
+      showMessage(t('erp.detail.common.error.warehouse.only.one'));
     }
     if (!products || products.length == 0) {
-      showMessage(t('global.error.product.empty'));
+      showMessage(t('erp.detail.common.error.product.empty'));
     }
 
     const newDetail: ErpInventoryTransferDetailRequest = {
@@ -405,7 +405,7 @@ const ErpInventoryTransferEdit = forwardRef(({ onSubmit }: ErpInventoryTransferE
           <Grid container rowSpacing={2} columnSpacing={4} sx={{ '& .MuiGrid-root': { display: 'flex', justifyContent: 'start', alignItems: 'center' } }}>
             <Grid size={size}>
               <Stack direction="row" spacing={2} sx={{ display: "flex", alignItems: "center" }}>
-                <Box>{t('page.erp.purchase.order.title.order.number')}</Box>
+                <Box>{t('erp.common.title.order.number')}</Box>
                 <Box>{erpInventoryTransfer && <CustomizedCopyableText text={erpInventoryTransfer.order_number} sx={{
                   fontSize: '0.75rem',
                   fontWeight: 500,
@@ -438,7 +438,7 @@ const ErpInventoryTransferEdit = forwardRef(({ onSubmit }: ErpInventoryTransferE
             <Grid size={{ xs: 12, md: 6 }}>
               <TextField
                 size="small"
-                label={t("page.erp.inventory.transfer.title.remarks")}
+                label={t("common.title.remark")}
                 name='remarks'
                 value={erpInventoryTransferRequest.remarks}
                 onChange={handleInputChange}
@@ -448,20 +448,20 @@ const ErpInventoryTransferEdit = forwardRef(({ onSubmit }: ErpInventoryTransferE
         </FormControl>
 
         <Typography variant="body1" sx={{ mt: 3, fontSize: '1rem', fontWeight: 500 }}>
-          {t('page.erp.purchase.order.title.check.list')}
+          {t('erp.common.title.check.list')}
         </Typography>
         <Card variant="outlined" sx={{ width: '100%', mt: 1, p: 2 }}>
           <Box sx={{ display: 'table', width: '100%', "& .table-row": { display: 'table-row', "& .table-cell": { display: 'table-cell', padding: 1, textAlign: 'center', } } }}>
             <Box className='table-row'>
-              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.no')}</Typography></Box>
-              <Box className='table-cell' sx={{ width: 200 }}><Typography variant="body1">{t('page.erp.purchase.inbound.detail.title.warehouse')}</Typography></Box>
-              <Box className='table-cell' sx={{ width: 200 }}><Typography variant="body1">{t('page.erp.purchase.inbound.detail.title.warehouse')}</Typography></Box>
-              <Box className='table-cell' sx={{ width: 200 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.product')}</Typography></Box>
-              <Box className='table-cell' sx={{ width: 200 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.barcode')}</Typography></Box>
-              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.unit')}</Typography></Box>
-              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.stock')}</Typography></Box>
-              <Box className='table-cell' sx={{ width: 150 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.quantity')}</Typography></Box>
-              <Box className='table-cell' sx={{ width: 200 }}><Typography variant="body1">{t('page.erp.purchase.order.detail.title.remarks')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('erp.detail.common.title.no')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 200 }}><Typography variant="body1">{t('erp.detail.common.title.warehouse.from')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 200 }}><Typography variant="body1">{t('erp.detail.common.title.warehouse.to')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 200 }}><Typography variant="body1">{t('erp.detail.common.title.product')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 200 }}><Typography variant="body1">{t('erp.detail.common.title.barcode')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('erp.detail.common.title.unit')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('erp.detail.common.title.stock')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 150 }}><Typography variant="body1">{t('erp.detail.common.title.quantity')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 200 }}><Typography variant="body1">{t('erp.detail.common.title.remarks')}</Typography></Box>
               <Box className='table-cell' sx={{ width: 50 }}><Typography variant="body1">{t('global.operate.actions')}</Typography></Box>
             </Box>
             {erpInventoryTransferRequest.details.map((item, index) => (
@@ -564,13 +564,13 @@ const ErpInventoryTransferEdit = forwardRef(({ onSubmit }: ErpInventoryTransferE
           </Box>
           <Box sx={{ mt: 2, display: 'flex', justifyContent: 'center' }}>
             <Button variant="outlined" startIcon={<AddCircleSharpIcon />} onClick={handleAddDetail}>
-              {t('page.erp.purchase.order.title.operate.add')}
+              {t('erp.common.operate.add')}
             </Button>
           </Box>
         </Card>
 
         <Typography variant="body1" sx={{ mt: 3, fontSize: '1rem', fontWeight: 500 }}>
-          {t('page.erp.purchase.order.title.attachment')}
+          {t('erp.common.title.attachment')}
         </Typography>
         <Card variant="outlined" sx={{ width: '100%', mt: 1, p: 2 }}>
           <Grid container rowSpacing={2} columnSpacing={4} sx={{ '& .MuiGrid-root': { display: 'flex', justifyContent: 'center', alignItems: 'center' } }}>
