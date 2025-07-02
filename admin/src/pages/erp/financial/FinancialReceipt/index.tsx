@@ -34,16 +34,16 @@ export default function ErpReceipt() {
 
   const columns: GridColDef[] = useMemo(
     () => [
-      { field: 'order_number', headerName: t("page.erp.receipt.title.order.number"), flex: 1.4, minWidth: 100 },
-      { field: 'customer_id', headerName: t("page.erp.receipt.title.customer"), flex: 1, minWidth: 100 },
-      { field: 'settlement_account_id', headerName: t("page.erp.receipt.title.settlement.account"), flex: 1, minWidth: 100 },
+      { field: 'order_number', headerName: t("erp.common.title.order.number"), flex: 1.4, minWidth: 100 },
+      { field: 'customer_id', headerName: t("erp.common.title.customer"), flex: 1, minWidth: 100 },
+      { field: 'settlement_account_id', headerName: t("erp.common.title.settlement.account"), flex: 1, minWidth: 100 },
       { field: 'amount', headerName: t("page.erp.receipt.title.amount"), flex: 1, minWidth: 100 },
       { field: 'discount_amount', headerName: t("page.erp.receipt.title.discount.amount"), flex: 1, minWidth: 100 },
       { field: 'receipt_date', headerName: t("page.erp.receipt.title.receipt.date"), flex: 1, minWidth: 100 },
       { field: 'payment_method', headerName: t("page.erp.receipt.title.payment.method"), flex: 1, minWidth: 100 },
       { field: 'receipt_status', headerName: t("page.erp.receipt.title.receipt.status"), flex: 1, minWidth: 100 },
-      { field: 'remarks', headerName: t("page.erp.receipt.title.remarks"), flex: 1, minWidth: 100 },
-      { field: 'create_time', headerName: t("global.title.create.time"), flex: 1, minWidth: 180 },
+      { field: 'remarks', headerName: t("common.title.remark"), flex: 1, minWidth: 100 },
+      { field: 'create_time', headerName: t("common.title.create.time"), flex: 1, minWidth: 180 },
       {
         field: 'actions',
         sortable: false,

@@ -445,7 +445,7 @@ const ErpReceiptEdit = forwardRef(({ onSubmit }: ErpReceiptEditProps, ref) => {
           <Grid container rowSpacing={2} columnSpacing={4} sx={{ '& .MuiGrid-root': { display: 'flex', justifyContent: 'start', alignItems: 'center' } }}>
             <Grid size={size}>
               <Stack direction="row" spacing={2} sx={{ display: "flex", alignItems: "center" }}>
-                <Box>{t('erp.common.title.customer')}</Box>
+                <Box>{t('erp.common.title.order.number')}</Box>
                 <Box>{erpReceipt && <CustomizedCopyableText text={erpReceipt.order_number} sx={{
                   fontSize: '0.75rem',
                   fontWeight: 500,
@@ -454,7 +454,7 @@ const ErpReceiptEdit = forwardRef(({ onSubmit }: ErpReceiptEditProps, ref) => {
             </Grid>
             <Grid size={size}>
               <FormControl sx={{ mt: 2, minWidth: 120, width: '100%' }}>
-                <InputLabel required size="small" id="customer-select-label">{t('page.erp.receipt.title.customer')}</InputLabel>
+                <InputLabel required size="small" id="customer-select-label">{t('erp.common.title.customer')}</InputLabel>
                 <Select
                   required
                   size="small"
@@ -463,7 +463,7 @@ const ErpReceiptEdit = forwardRef(({ onSubmit }: ErpReceiptEditProps, ref) => {
                   name="customer_id"
                   value={erpReceiptRequest.customer_id ?? ''}
                   onChange={handleCustomerChange}
-                  label={t('page.erp.receipt.title.customer')}
+                  label={t('erp.common.title.customer')}
                   error={!!errors.customer_id}
                 >
                   {customers.map((item) => (
@@ -500,14 +500,14 @@ const ErpReceiptEdit = forwardRef(({ onSubmit }: ErpReceiptEditProps, ref) => {
             </Grid>
             <Grid size={size}>
               <FormControl sx={{ mt: 2, minWidth: 120, width: '100%' }}>
-                <InputLabel size="small" id="settlement-account-select-label">{t('page.erp.receipt.title.settlement.account')}</InputLabel>
+                <InputLabel size="small" id="settlement-account-select-label">{t('erp.common.title.settlement.account')}</InputLabel>
                 <Select
                   size="small"
                   labelId="settlement-account-select-label"
                   name="settlement_account_id"
                   value={erpReceiptRequest.settlement_account_id ?? ''}
                   onChange={handleSelectChange}
-                  label={t('page.erp.receipt.title.settlement.account')}
+                  label={t('erp.common.title.settlement.account')}
                 >
                   {settlementAccounts.map((item) => (
                     <MenuItem key={item.id} value={item.id}>
@@ -552,7 +552,7 @@ const ErpReceiptEdit = forwardRef(({ onSubmit }: ErpReceiptEditProps, ref) => {
             <Grid size={size}>
               <TextField
                 size="small"
-                label={t("page.erp.receipt.title.remarks")}
+                label={t("common.title.remark")}
                 name='remarks'
                 value={erpReceiptRequest.remarks}
                 onChange={handleInputChange}
@@ -562,13 +562,13 @@ const ErpReceiptEdit = forwardRef(({ onSubmit }: ErpReceiptEditProps, ref) => {
         </FormControl>
 
         <Typography variant="body1" sx={{ mt: 3, fontSize: '1rem', fontWeight: 500 }}>
-          {t('page.erp.purchase.order.title.check.list')}
+          {t('erp.common.title.check.list')}
         </Typography>
         <Card variant="outlined" sx={{ width: '100%', mt: 1, p: 2 }}>
           <Box sx={{ display: 'table', width: '100%', "& .table-row": { display: 'table-row', "& .table-cell": { display: 'table-cell', padding: 1, textAlign: 'center', } } }}>
             <Box className='table-row'>
               <Box className='table-cell' sx={{ width: 50 }}><Typography variant="body1">{t('erp.detail.common.title.no')}</Typography></Box>
-              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('page.erp.purchase.inbound.detail.title.warehouse')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('erp.detail.common.title.warehouse')}</Typography></Box>
               <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('erp.detail.common.title.product')}</Typography></Box>
               <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('erp.detail.common.title.barcode')}</Typography></Box>
               <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('erp.detail.common.title.unit')}</Typography></Box>
@@ -666,7 +666,7 @@ const ErpReceiptEdit = forwardRef(({ onSubmit }: ErpReceiptEditProps, ref) => {
         </Card>
 
         <Typography variant="body1" sx={{ mt: 3, fontSize: '1rem', fontWeight: 500 }}>
-          {t('page.erp.purchase.order.title.attachment')}
+          {t('erp.common.title.attachment')}
         </Typography>
         <Card variant="outlined" sx={{ width: '100%', mt: 1, p: 2 }}>
           <Grid container rowSpacing={2} columnSpacing={4} sx={{ '& .MuiGrid-root': { display: 'flex', justifyContent: 'center', alignItems: 'center' } }}>

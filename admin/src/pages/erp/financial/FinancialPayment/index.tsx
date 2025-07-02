@@ -52,7 +52,7 @@ export default function ErpPayment() {
       { field: 'discount_amount', headerName: t("page.erp.payment.title.discount.amount"), flex: 1, minWidth: 100 },
       { field: 'payment_date', headerName: t("page.erp.payment.title.payment.date"), flex: 1, minWidth: 100 },
       { field: 'payment_method', headerName: t("page.erp.payment.title.payment.method"), flex: 1, minWidth: 100 },
-      { field: 'remarks', headerName: t("page.erp.payment.title.remarks"), flex: 1, minWidth: 100 },
+      { field: 'remarks', headerName: t("common.title.remark"), flex: 1, minWidth: 100 },
       { field: 'payment_status', headerName: t("page.erp.payment.title.payment.status"), flex: 1, minWidth: 100 },
       { field: 'create_time', headerName: t("common.title.create.time"), flex: 1, minWidth: 180 },
       {
