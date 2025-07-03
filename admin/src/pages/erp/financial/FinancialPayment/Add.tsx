@@ -541,19 +541,12 @@ const ErpPaymentAdd = forwardRef(({ onSubmit }: ErpPaymentAddProps, ref) => {
         <Card variant="outlined" sx={{ width: '100%', mt: 1, p: 2 }}>
           <Box sx={{ display: 'table', width: '100%', "& .table-row": { display: 'table-row', "& .table-cell": { display: 'table-cell', padding: 1, textAlign: 'center', } } }}>
             <Box className='table-row'>
-              <Box className='table-cell' sx={{ width: 50 }}><Typography variant="body1">{t('erp.detail.common.title.no')}</Typography></Box>
-              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('erp.detail.common.title.warehouse')}</Typography></Box>
-              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('erp.detail.common.title.product')}</Typography></Box>
-              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('erp.detail.common.title.barcode')}</Typography></Box>
-              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('erp.detail.common.title.unit')}</Typography></Box>
-              <Box className='table-cell' sx={{ width: 200 }}><Typography variant="body1">{t('erp.detail.common.title.remarks')}</Typography></Box>
-              <Box className='table-cell' sx={{ width: 150 }}><Typography variant="body1">{t('erp.detail.common.title.quantity')}</Typography></Box>
-              <Box className='table-cell' sx={{ width: 150 }}><Typography variant="body1">{t('erp.detail.common.title.unit.price')}</Typography></Box>
-              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('erp.detail.common.title.subtotal')}</Typography></Box>
-              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('erp.detail.common.title.tax.rate')}</Typography></Box>
-              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('erp.detail.common.title.tax')}</Typography></Box>
-              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('erp.detail.common.title.tax.total')}</Typography></Box>
-              <Box className='table-cell' sx={{ width: 50 }}><Typography variant="body1">{t('global.operate.actions')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('erp.detail.common.title.no')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 200 }}><Typography variant="body1">{t('erp.common.title.order.number')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('erp.detail.common.title.amount')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('erp.detail.common.title.remarks')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('global.operate.actions')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 800 }}></Box>
             </Box>
             {formValues.details.map((item, index) => (
               <Box className='table-row' key={index}>
@@ -580,7 +573,7 @@ const ErpPaymentAdd = forwardRef(({ onSubmit }: ErpPaymentAddProps, ref) => {
                   <FormControl sx={{ minWidth: 120, width: '100%' }}>
                     <Select
                       size="small"
-                      name="product_id"
+                      name="purchase_return_id"
                       value={item.purchase_return_id ?? ''}
                       onChange={(e) => handleReturnSelectChange(e, index)}
                       error={!!(errors.details[index]?.purchase_return_id)}
@@ -594,7 +587,6 @@ const ErpPaymentAdd = forwardRef(({ onSubmit }: ErpPaymentAddProps, ref) => {
                     <FormHelperText sx={{ color: 'error.main' }}>{errors.details[index]?.purchase_return_id}</FormHelperText>
                   </FormControl>
                 </Box>}
-
                 <Box className='table-cell' sx={{ width: 50 }}>
                   <TextField
                     size="small"
