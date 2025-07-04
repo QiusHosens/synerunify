@@ -1,1 +1,1 @@
-docker build -t synerunify/captcha-service .
+docker build -t synerunify/service-captcha .

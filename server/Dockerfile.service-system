@@ -28,6 +28,6 @@ RUN apt-get update && apt-get install -y libssl3
 COPY --from=builder /app/target/release/system-server ./system-server
 COPY --from=builder /app/regexes.yaml ./regexes.yaml
 
-EXPOSE 9000
+EXPOSE 8080
 
 CMD ["/app/system-server"]

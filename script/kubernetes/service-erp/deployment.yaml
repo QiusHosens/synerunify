@@ -2,21 +2,21 @@
 kind: Deployment
 apiVersion: apps/v1
 metadata:
-  name: logger-server
+  name: service-erp
   namespace: synerunify
   labels:
-    app: logger-server
+    app: service-erp
   annotations:
     deployment.kubernetes.io/revision: '2'
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: logger-server
+      app: service-erp
   template:
     metadata:
       labels:
-        app: logger-server
+        app: service-erp
     spec:
       volumes:
         - name: host-time
@@ -25,14 +25,14 @@ spec:
             type: ''
         - name: log
           hostPath:
-            path: /data/volume/logger-server/logs
+            path: /data/volume/service-erp/logs
             type: ''
       containers:
-        - name: logger-server
-          image: 'synerunify/logger-server'
+        - name: service-erp
+          image: 'synerunify/service-erp'
           ports:
-            - name: tcp-9010
-              containerPort: 9010
+            - name: tcp-8080
+              containerPort: 8080
               protocol: TCP
           env:
             - name: DATABASE_URL
@@ -45,26 +45,16 @@ spec:
                 configMapKeyRef:
                   name: synerunify-config
                   key: REDIS_URL
-            - name: MONGO_URL
-              valueFrom:
-                configMapKeyRef:
-                  name: synerunify-config
-                  key: MONGO_URL
-            - name: SYSTEM_SERVER_PORT
-              valueFrom:
-                configMapKeyRef:
-                  name: synerunify-config
-                  key: SYSTEM_SERVER_PORT
-            - name: LOGGER_SERVER_PORT
-              valueFrom:
-                configMapKeyRef:
-                  name: synerunify-config
-                  key: LOGGER_SERVER_PORT
             - name: LOG_LEVEL
               valueFrom:
                 configMapKeyRef:
                   name: synerunify-config
                   key: LOG_LEVEL
+            - name: SYSTEM_SERVER_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: synerunify-config
+                  key: SYSTEM_SERVER_PORT
           resources: {}
           volumeMounts:
             - name: host-time
@@ -93,19 +83,19 @@ spec:
 kind: Service
 apiVersion: v1
 metadata:
-  name: logger-server
+  name: service-erp
   namespace: synerunify
   labels:
-    app: logger-server
+    app: service-erp
 spec:
   ports:
-    - name: tcp-9010
+    - name: tcp-8080
       protocol: TCP
-      port: 9010
-      targetPort: 9010
-      nodePort: 9010
+      port: 8080
+      targetPort: 8080
+      nodePort: 9030
   selector:
-    app: logger-server
+    app: service-erp
   type: NodePort
   sessionAffinity: None
   externalTrafficPolicy: Cluster
