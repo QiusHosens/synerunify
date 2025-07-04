@@ -33,7 +33,7 @@ export interface ErpSalesOrderAttachmentResponse {
   update_time: string; // 更新时间
 }
 
-export interface ErpPurchaseOrderAttachmentBaseResponse {
+export interface ErpSalesOrderAttachmentBaseResponse {
   id: number; // 附件ID
   purchase_id: number; // 采购订单ID
   file_id: number; // 文件ID

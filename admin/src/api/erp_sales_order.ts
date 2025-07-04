@@ -1,7 +1,8 @@
 import { PaginatedRequest, PaginatedResponse } from "@/base/page";
 import { api } from "@/utils/request";
 import { ErpSalesOrderDetailBaseResponse, ErpSalesOrderDetailRequest } from "./erp_sales_order_detail";
-import { ErpPurchaseOrderAttachmentBaseResponse, ErpSalesOrderAttachmentRequest } from "./erp_sales_order_attachment";
+import { ErpSalesOrderAttachmentBaseResponse, ErpSalesOrderAttachmentRequest } from "./erp_sales_order_attachment";
+import { ErpPurchaseOrderAttachmentBaseResponse } from "./erp_purchase_order_attachment";
 
 const apis = {
   create: "/erp/erp_sales_order/create", // 新增
@@ -67,7 +68,7 @@ export interface ErpSalesOrderBaseResponse {
   remarks: string; // 备注
 
   details: ErpSalesOrderDetailBaseResponse[]; // 入库采购产品仓库列表
-  attachments: ErpPurchaseOrderAttachmentBaseResponse[]; // 入库附件列表
+  attachments: ErpSalesOrderAttachmentBaseResponse[]; // 入库附件列表
 }
 
 export interface ErpSalesOrderInfoResponse {
@@ -93,7 +94,7 @@ export interface ErpSalesOrderInfoResponse {
   settlement_account_name: string; // 结算账户名
 
   details: ErpSalesOrderDetailBaseResponse[]; // 入库采购产品仓库列表
-  attachments: ErpPurchaseOrderAttachmentBaseResponse[]; // 入库附件列表
+  attachments: ErpSalesOrderAttachmentBaseResponse[]; // 入库附件列表
 }
 
 export interface ErpSalesOrderQueryCondition extends PaginatedRequest {}
