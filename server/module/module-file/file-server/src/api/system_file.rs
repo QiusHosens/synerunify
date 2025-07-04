@@ -23,6 +23,7 @@ pub async fn system_file_router(state: AppState) -> OpenApiRouter {
         .routes(routes!(page))
         .routes(routes!(upload))
         .routes(routes!(download))
+        .routes(routes!(download_with_suffix))
         .with_state(state)
 }
 
@@ -243,6 +244,59 @@ async fn download(
     Extension(login_user): Extension<LoginUserContext>,
     Path(id): Path<i64>,
 ) -> Result<impl IntoResponse, StatusCode> {
+    let file = match service::system_file::get_file_data(&state.db, login_user, state.minio, id).await {
+        Ok(Some(data)) => data,
+        Ok(None) => {
+            return Err(StatusCode::NOT_FOUND)
+        },
+        Err(_) => return Err(StatusCode::INTERNAL_SERVER_ERROR),
+    };
+    
+    let mut content_type = mime::APPLICATION_OCTET_STREAM;
+    if file.file_type.is_some() {
+        content_type = file.file_type
+        .unwrap()
+        .parse::<mime::Mime>()
+        .unwrap_or(mime::APPLICATION_OCTET_STREAM);
+    }
+
+    Ok((
+        StatusCode::OK,
+        [
+            (axum::http::header::CONTENT_TYPE, content_type.to_string()),
+            (
+                axum::http::header::CONTENT_DISPOSITION,
+                format!("attachment; filename=\"{}\"", file.file_name)
+            ),
+        ],
+        file.data,
+    ))
+}
+
+#[utoipa::path(
+    get,
+    path = "/download_with_suffix/{name}",
+    operation_id = "system_file_download_with_suffix",
+    params(
+        ("name" = String, Path, description = "name")
+    ),
+    responses(
+        (status = 200, description = "download", content_type = "application/octet-stream"),
+        (status = 404, description = "File not found"),
+        (status = 500, description = "Internal server error")
+    ),
+    tag = "system_file",
+    security(
+        ("bearerAuth" = [])
+    )
+)]
+#[require_authorize(operation_id = "system_file_download_with_suffix", authorize = "")]
+async fn download_with_suffix(
+    State(state): State<AppState>,
+    Extension(login_user): Extension<LoginUserContext>,
+    Path(name): Path<String>,
+) -> Result<impl IntoResponse, StatusCode> {
+    let id: i64 = name.split('.').next().unwrap().parse().unwrap();
     let file = match service::system_file::get_file_data(&state.db, login_user, state.minio, id).await {
         Ok(Some(data)) => data,
         Ok(None) => {

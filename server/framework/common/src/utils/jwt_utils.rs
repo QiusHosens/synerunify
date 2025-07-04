@@ -1,6 +1,7 @@
 use crate::context::context::LoginUserContext;
 use crate::database::redis::RedisManager;
 use crate::database::redis_constants::{REDIS_KEY_LOGIN_USER_PREFIX, REDIS_KEY_TENANTS_LIST};
+use axum::extract::Query;
 use axum::{extract::FromRequestParts, http::{request::Parts, StatusCode}, response::{IntoResponse, Response}, Json, RequestPartsExt};
 use axum_extra::headers::Authorization;
 use axum_extra::TypedHeader;
@@ -61,6 +62,11 @@ struct AppState {
     secret: Vec<u8>,
 }
 
+#[derive(Deserialize)]
+struct TokenQuery {
+    token: Option<String>,
+}
+
 // 自定义错误类型
 #[derive(Debug)]
 pub enum AuthError {
@@ -103,16 +109,35 @@ where
 
     async fn from_request_parts(parts: &mut Parts, _state: &S) -> Result<Self, Self::Rejection> {
         // 使用 TypedHeader 提取 Authorization Bearer token
-        let TypedHeader(auth) = TypedHeader::<Authorization<headers::authorization::Bearer>>::from_request_parts(parts, _state)
-            .await
-            .map_err(|e| AuthError::InvalidToken)?;
+        let auth_result = TypedHeader::<Authorization<headers::authorization::Bearer>>::from_request_parts(parts, &()).await;
+        let mut token = match auth_result {
+            Ok(TypedHeader(auth)) => auth.0.token().to_string(),
+            Err(e) => {
+                info!("No Authorization header found: {}", e);
+                String::new() // 如果没有 Authorization 头，设置为空字符串
+            }
+        };
 
-        let token = auth.token();
+        info!("Extracted token from header: {}, path: {}", token, parts.uri);
 
-        info!("token: {:?}", token);
+        // 如果 token 为空，并且 URI 以 /file/ 开头，则尝试从查询参数中提取 token
+        if token.is_empty() && parts.uri.path().contains("system_file/download") {
+            let query: Query<TokenQuery> = Query::try_from_uri(&parts.uri)
+                .map_err(|e| {
+                    error!("Failed to parse query parameters: {}", e);
+                    AuthError::InvalidToken
+                })?;
+            
+            token = query.0.token.unwrap_or_default();
+            info!("Extracted token from query: {}", token);
+        }
+
+        if token.is_empty() {
+            return Err(AuthError::InvalidToken);
+        }
 
         let token_data = decode::<AccessClaims>(
-            token,
+            &token,
             &DecodingKey::from_secret(&*SECRET_KEY),
             &Validation::new(Algorithm::HS256),
         ).map_err(|e| {
