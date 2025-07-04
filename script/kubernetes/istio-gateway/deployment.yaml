@@ -30,7 +30,7 @@ spec:
             prefix: /system
       route:
         - destination:
-            host: system-server.synerunify.svc.cluster.local
+            host: service-system.synerunify.svc.cluster.local
             port:
               number: 8080
     - match:
@@ -38,7 +38,7 @@ spec:
             prefix: /logger
       route:
         - destination:
-            host: logger-server.synerunify.svc.cluster.local
+            host: service-logger.synerunify.svc.cluster.local
             port:
               number: 8080
     - match:
@@ -46,7 +46,7 @@ spec:
             prefix: /file
       route:
         - destination:
-            host: file-server.synerunify.svc.cluster.local
+            host: service-file.synerunify.svc.cluster.local
             port:
               number: 8080
     - match:
@@ -54,7 +54,7 @@ spec:
             prefix: /erp
       route:
         - destination:
-            host: erp-server.synerunify.svc.cluster.local
+            host: service-erp.synerunify.svc.cluster.local
             port:
               number: 8080
     - match:
@@ -62,7 +62,7 @@ spec:
             prefix: /captcha
       route:
         - destination:
-            host: captcha-service.synerunify.svc.cluster.local
+            host: service-captcha.synerunify.svc.cluster.local
             port:
               number: 8080
 ---
