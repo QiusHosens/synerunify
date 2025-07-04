@@ -103,7 +103,7 @@ spec:
       protocol: TCP
       port: 8080
       targetPort: 8080
-      nodePort: 9020
+      nodePort: 40020
   selector:
     app: service-file
   type: NodePort

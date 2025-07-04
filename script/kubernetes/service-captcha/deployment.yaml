@@ -69,12 +69,12 @@ spec:
       protocol: TCP
       port: 8080
       targetPort: 8080
-      nodePort: 9020
+      nodePort: 40000
     - name: grpc-50051
       protocol: TCP
       port: 50051
       targetPort: 50051
-      nodePort: 9021
+      nodePort: 40001
   selector:
     app: service-captcha
   type: NodePort

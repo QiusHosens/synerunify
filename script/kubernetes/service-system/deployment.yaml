@@ -93,7 +93,7 @@ spec:
       protocol: TCP
       port: 8080
       targetPort: 8080
-      nodePort: 9000
+      nodePort: 40030
   selector:
     app: service-system
   type: NodePort

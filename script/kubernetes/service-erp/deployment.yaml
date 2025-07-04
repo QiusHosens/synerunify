@@ -93,7 +93,7 @@ spec:
       protocol: TCP
       port: 8080
       targetPort: 8080
-      nodePort: 9030
+      nodePort: 40040
   selector:
     app: service-erp
   type: NodePort
