@@ -1,0 +1,26 @@
+# build file
+FROM rust AS builder
+
+RUN apt update && apt install -y musl-tools musl-dev
+RUN update-ca-certificates
+
+WORKDIR /app
+
+COPY ./ ./
+
+RUN cd . && \
+    cargo build --release --bin file-server
+
+# build final
+FROM debian:bookworm-slim
+
+WORKDIR /app
+
+RUN apt-get update && apt-get install -y libssl3
+
+COPY --from=builder /app/target/release/file-server ./file-server
+COPY --from=builder /app/regexes.yaml ./regexes.yaml
+
+EXPOSE 8080
+
+CMD ["/app/file-server"]
