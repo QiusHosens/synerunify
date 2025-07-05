@@ -11,4 +11,4 @@ data:
   MINIO_ACCESS_KEY: 'synerunify'
   MINIO_SECRET_KEY: 'synerunify'
   LOG_LEVEL: 'info'
-  GRPC_CAPTCHA_SERVICE_URL: 'http://captcha-service.synerunify.svc:50051'
+  GRPC_CAPTCHA_SERVICE_URL: 'http://service-captcha.synerunify.svc:50051'
