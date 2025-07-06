@@ -65,6 +65,14 @@ spec:
             host: service-captcha.synerunify.svc.cluster.local
             port:
               number: 8080
+    - match:
+        - uri:
+            prefix: /onlinePreview
+      route:
+        - destination:
+            host: fileview.synerunify.svc.cluster.local
+            port:
+              number: 8012
 ---
 apiVersion: security.istio.io/v1beta1
 kind: AuthorizationPolicy
