@@ -50,7 +50,7 @@ export default function ErpPayment() {
       { field: 'settlement_account_name', headerName: t("erp.common.title.settlement.account"), flex: 1, minWidth: 100 },
       { field: 'amount', headerName: t("page.erp.payment.title.amount"), flex: 1, minWidth: 100 },
       { field: 'discount_amount', headerName: t("page.erp.payment.title.discount.amount"), flex: 1, minWidth: 100 },
-      { field: 'payment_date', headerName: t("page.erp.payment.title.payment.date"), flex: 1, minWidth: 100 },
+      { field: 'payment_date', headerName: t("page.erp.payment.title.payment.date"), flex: 1.4, minWidth: 100 },
       { field: 'payment_method', headerName: t("page.erp.payment.title.payment.method"), flex: 1, minWidth: 100 },
       { field: 'remarks', headerName: t("common.title.remark"), flex: 1, minWidth: 100 },
       { field: 'payment_status', headerName: t("page.erp.payment.title.payment.status"), flex: 1, minWidth: 100 },

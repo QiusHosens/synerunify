@@ -65,7 +65,7 @@ export default function TenantManage() {
           </>
         )
       },
-      { field: 'contact_name', headerName: t("page.tenant.title.contact.name"), flex: 1, minWidth: 120 },
+      { field: 'contact_name', headerName: t("common.title.contact.person"), flex: 1, minWidth: 120 },
       { field: 'contact_mobile', headerName: t("page.tenant.title.contact.mobile"), flex: 1, minWidth: 150 },
       { field: 'website', headerName: t("page.tenant.title.website"), flex: 1, minWidth: 180 },
       { field: 'expire_time', headerName: t("page.tenant.title.expire.time"), flex: 1, minWidth: 180 },

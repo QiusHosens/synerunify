@@ -1,8 +1,8 @@
-import { Box, Button, Card, FormControl, FormHelperText, Grid, InputLabel, MenuItem, Select, SelectChangeEvent, Stack, Switch, TextField, Typography } from '@mui/material';
+import { Box, Button, Card, FormControl, FormHelperText, Grid, InputLabel, MenuItem, Select, SelectChangeEvent, Stack, TextField, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { forwardRef, useCallback, useImperativeHandle, useState } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
-import { ErpCustomerResponse, ErpOutboundOrderAttachmentRequest, ErpOutboundOrderRequest, ErpOutboundOrderResponse, ErpProductResponse, ErpSalesOrderDetailBaseResponse, ErpSalesOrderInfoResponse, ErpSettlementAccountResponse, ErpWarehouseResponse, getBaseOtherErpOutboundOrder, getBaseSaleErpOutboundOrder, getErpSalesOrderInfo, listErpCustomer, listErpProduct, listErpSettlementAccount, listErpWarehouse, updateSaleErpOutboundOrder } from '@/api';
+import { ErpCustomerResponse, ErpOutboundOrderAttachmentRequest, ErpOutboundOrderRequest, ErpOutboundOrderResponse, ErpProductResponse, ErpSettlementAccountResponse, ErpWarehouseResponse, getBaseOtherErpOutboundOrder, listErpCustomer, listErpProduct, listErpSettlementAccount, listErpWarehouse, updateSaleErpOutboundOrder } from '@/api';
 import CustomizedDialog from '@/components/CustomizedDialog';
 import { Dayjs } from 'dayjs';
 import CustomizedFileUpload, { DownloadProps, UploadFile } from '@/components/CustomizedFileUpload';
@@ -10,7 +10,6 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { downloadSystemFile, uploadSystemFile } from '@/api/system_file';
 import { PickerValue } from '@mui/x-date-pickers/internals';
 import CustomizedCopyableText from '@/components/CustomizedCopyableText';
-import CustomizedTag from '@/components/CustomizedTag';
 import { DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers';
 
 interface FormErrors {

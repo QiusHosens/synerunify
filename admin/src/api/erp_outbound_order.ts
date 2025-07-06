@@ -11,8 +11,9 @@ const apis = {
   delete: '/erp/erp_outbound_order/delete', // 删除
   get: '/erp/erp_outbound_order/get', // 单条查询
   get_base_sales: '/erp/erp_outbound_order/get_base_sales', // 单条查询
-  get_base_other: '/erp/erp_outbound_order/get_base_other', // 单条查询
   get_info_sales: '/erp/erp_outbound_order/get_info_sales', // 单条查询
+  get_base_other: '/erp/erp_outbound_order/get_base_other', // 单条查询
+  get_info_other: '/erp/erp_outbound_order/get_info_other', // 单条查询
   list: '/erp/erp_outbound_order/list', // 列表查询
   list_customer: '/erp/erp_outbound_order/list_customer', // 列表查询
   page_sales: '/erp/erp_outbound_order/page_sales', // 分页查询
@@ -91,12 +92,16 @@ export const getBaseSaleErpOutboundOrder = (id: number): Promise<ErpOutboundOrde
   return api.get<ErpOutboundOrderResponse>(`${apis.get_base_sales}/${id}`);
 }
 
+export const getInfoSaleErpOutboundOrder = (id: number): Promise<ErpOutboundOrderResponse> => {
+  return api.get<ErpOutboundOrderResponse>(`${apis.get_info_sales}/${id}`);
+}
+
 export const getBaseOtherErpOutboundOrder = (id: number): Promise<ErpOutboundOrderResponse> => {
   return api.get<ErpOutboundOrderResponse>(`${apis.get_base_other}/${id}`);
 }
 
-export const getInfoSaleErpOutboundOrder = (id: number): Promise<ErpOutboundOrderResponse> => {
-  return api.get<ErpOutboundOrderResponse>(`${apis.get_info_sales}/${id}`);
+export const getInfoOtherErpOutboundOrder = (id: number): Promise<ErpOutboundOrderResponse> => {
+  return api.get<ErpOutboundOrderResponse>(`${apis.get_info_other}/${id}`);
 }
 
 export const listErpOutboundOrder = (): Promise<Array<ErpOutboundOrderResponse>> => {

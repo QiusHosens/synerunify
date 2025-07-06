@@ -97,8 +97,6 @@ pub async fn create_batch_sale(db: &DatabaseConnection, txn: &DatabaseTransactio
 }
 
 pub async fn create_batch_other(db: &DatabaseConnection, txn: &DatabaseTransaction, login_user: LoginUserContext, order: ErpOutboundOrderModel, requests: Vec<CreateErpOutboundOrderDetailOtherRequest>) -> Result<()> {
-    let sale_id = order.sale_id.ok_or_else(|| anyhow!("订单产品不匹配"))?;
-    
     let mut models: Vec<ErpOutboundOrderDetailActiveModel> = Vec::new();
     let mut product_inventories: Vec<ErpProductInventoryInOutRequest> = Vec::new();
     let mut inbound_inventories: Vec<ErpInventoryRecordInRequest> = Vec::new();

@@ -616,7 +616,7 @@ const ErpPurchaseOrderAdd = forwardRef(({ onSubmit }: ErpPurchaseOrderAddProps, 
           </Box>
           <Box sx={{ mt: 2, display: 'flex', justifyContent: 'center' }}>
             <Button variant="outlined" startIcon={<AddCircleSharpIcon />} onClick={handleAddPurchaseProduct}>
-              {t('erp.common.title.operate.add')}
+              {t('erp.common.operate.add')}
             </Button>
           </Box>
         </Card>

@@ -6,7 +6,7 @@ use crate::model::erp_purchase_order::{self, Model as ErpPurchaseOrder};
 use crate::model::erp_supplier::{self, Model as ErpSupplier};
 use crate::model::erp_settlement_account::{self, Model as ErpSettlementAccount};
 use erp_model::request::erp_inbound_order::{CreateErpInboundOrderOtherRequest, CreateErpInboundOrderPurchaseRequest, CreateErpInboundOrderRequest, UpdateErpInboundOrderOtherRequest, UpdateErpInboundOrderPurchaseRequest, UpdateErpInboundOrderRequest};
-use erp_model::response::erp_inbound_order::{ErpInboundOrderBaseOtherResponse, ErpInboundOrderBasePurchaseResponse, ErpInboundOrderInfoPurchaseResponse, ErpInboundOrderPageOtherResponse, ErpInboundOrderPagePurchaseResponse, ErpInboundOrderResponse};
+use erp_model::response::erp_inbound_order::{ErpInboundOrderBaseOtherResponse, ErpInboundOrderBasePurchaseResponse, ErpInboundOrderInfoOtherResponse, ErpInboundOrderInfoPurchaseResponse, ErpInboundOrderPageOtherResponse, ErpInboundOrderPagePurchaseResponse, ErpInboundOrderResponse};
 
 pub fn create_request_to_model(request: &CreateErpInboundOrderRequest) -> ErpInboundOrderActiveModel {
     ErpInboundOrderActiveModel {
@@ -251,6 +251,30 @@ pub fn model_to_base_other_response(model: ErpInboundOrder, details: Vec<ErpInbo
         discount_rate: model.discount_rate,
         other_cost: model.other_cost,
         settlement_account_id: model.settlement_account_id,
+
+        details,
+        attachments,
+    }
+}
+
+pub fn model_to_info_other_response(model: ErpInboundOrder, model_supplier: Option<ErpSupplier>, model_settlement_account: Option<ErpSettlementAccount>, details: Vec<ErpInboundOrderDetailBaseOtherResponse>, attachments: Vec<ErpInboundOrderAttachmentBaseResponse>) -> ErpInboundOrderInfoOtherResponse {
+    let supplier_name = model_supplier.map(|supplier| supplier.name.clone());
+    let settlement_account_name = model_settlement_account.map(|settlement_account| settlement_account.name.clone());
+
+    ErpInboundOrderInfoOtherResponse { 
+        id: model.id,
+        order_number: model.order_number,
+        purchase_id: model.purchase_id,
+        supplier_id: model.supplier_id,
+        user_id: model.user_id,
+        inbound_date: model.inbound_date,
+        remarks: model.remarks,
+        discount_rate: model.discount_rate,
+        other_cost: model.other_cost,
+        settlement_account_id: model.settlement_account_id,
+
+        supplier_name,
+        settlement_account_name,
 
         details,
         attachments,

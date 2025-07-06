@@ -65,7 +65,7 @@ const TenantEdit = forwardRef(({ onSubmit }: TenantEditProps, ref) => {
     }
 
     if (!tenant.contact_name.trim()) {
-      newErrors.contact_name = t('global.error.input.please') + t('page.tenant.title.contact.name');
+      newErrors.contact_name = t('global.error.input.please') + t('common.title.contact.person');
     }
 
     if (!tenant.expire_time.trim()) {
@@ -243,7 +243,7 @@ const TenantEdit = forwardRef(({ onSubmit }: TenantEditProps, ref) => {
           <TextField
             required
             size="small"
-            label={t("page.tenant.title.contact.name")}
+            label={t("common.title.contact.person")}
             name='contact_name'
             value={tenant.contact_name}
             onChange={handleInputChange}

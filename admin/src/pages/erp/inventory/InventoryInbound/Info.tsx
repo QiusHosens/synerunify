@@ -1,8 +1,8 @@
-import { Box, Card, FormControl, Grid, InputLabel, MenuItem, Select, Stack, TextField, Typography } from '@mui/material';
+import { Box, Card, FormControl, Grid, MenuItem, Select, Stack, TextField, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { forwardRef, useCallback, useImperativeHandle, useState } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
-import { ErpInboundOrderBaseResponse, ErpInboundOrderResponse, ErpPurchaseOrderDetailInfoResponse, ErpPurchaseOrderInfoResponse, ErpSettlementAccountResponse, ErpWarehouseResponse, getErpPurchaseOrderInfo, getInfoPurchaseErpInboundOrder, listErpSettlementAccount, listErpWarehouse } from '@/api';
+import { ErpInboundOrderBaseResponse, ErpInboundOrderResponse, ErpProductResponse, ErpWarehouseResponse, getInfoOtherErpInboundOrder, listErpProduct, listErpWarehouse } from '@/api';
 import CustomizedDialog from '@/components/CustomizedDialog';
 import CustomizedFileUpload, { DownloadProps } from '@/components/CustomizedFileUpload';
 import { downloadSystemFile } from '@/api/system_file';
@@ -14,8 +14,7 @@ const ErpInboundOrderInfo = forwardRef(({ }, ref) => {
 
   const [open, setOpen] = useState(false);
   const [maxWidth] = useState<DialogProps['maxWidth']>('xl');
-  const [erpPurchaseOrder, setErpPurchaseOrder] = useState<ErpPurchaseOrderInfoResponse>();
-  const [erpPurchaseOrderDetailMap, setErpPurchaseOrderDetailMap] = useState<Map<number, ErpPurchaseOrderDetailInfoResponse>>();
+  const [products, setProducts] = useState<ErpProductResponse[]>([]);
   const [erpInboundOrder, setErpInboundOrder] = useState<ErpInboundOrderBaseResponse>();
   const [warehouses, setWarehouses] = useState<ErpWarehouseResponse[]>([]);
   const [size] = useState({ xs: 12, md: 3 });
@@ -44,17 +43,20 @@ const ErpInboundOrderInfo = forwardRef(({ }, ref) => {
   };
 
   const initForm = async (erpInboundOrderRequest: ErpInboundOrderResponse) => {
+    const products = await listErpProduct();
+    setProducts(products);
     // 查询入库订单
-    const result = await getInfoPurchaseErpInboundOrder(erpInboundOrderRequest.id);
-    // 查询采购订单
-    const purchaseOrder = await getErpPurchaseOrderInfo(erpInboundOrderRequest.purchase_id);
-
-    const purchaseOrderDetailMap: Map<number, ErpPurchaseOrderDetailInfoResponse> = new Map();
-    for (const purchaseDetail of purchaseOrder.purchase_products) {
-      purchaseOrderDetailMap.set(purchaseDetail.id, purchaseDetail);
+    const result = await getInfoOtherErpInboundOrder(erpInboundOrderRequest.id);
+    const details = result.details;
+    if (details) {
+      for (const detail of details) {
+        for (const product of products) {
+          if (product.id === detail.product_id) {
+            detail.product = product;
+          }
+        }
+      }
     }
-    setErpPurchaseOrderDetailMap(purchaseOrderDetailMap);
-    setErpPurchaseOrder(purchaseOrder);
     setErpInboundOrder(result);
     // 设置图片
     for (const attachment of result.attachments) {
@@ -114,7 +116,7 @@ const ErpInboundOrderInfo = forwardRef(({ }, ref) => {
                 }} />}</Box>
               </Stack>
             </Grid>
-            <Grid size={size}>
+            {/* <Grid size={size}>
               <Stack direction="row" spacing={2} sx={{ display: "flex", alignItems: "center" }}>
                 <Box>{t('erp.common.title.purchase')}</Box>
                 <Box>{erpPurchaseOrder && <CustomizedCopyableText text={erpPurchaseOrder.order_number} sx={{
@@ -122,11 +124,11 @@ const ErpInboundOrderInfo = forwardRef(({ }, ref) => {
                   fontWeight: 500,
                 }} />}</Box>
               </Stack>
-            </Grid>
+            </Grid> */}
             <Grid size={size}>
               <Stack direction="row" spacing={2} sx={{ display: "flex", alignItems: "center" }}>
                 <Box>{t('erp.common.title.supplier')}</Box>
-                <Box>{erpPurchaseOrder && <CustomizedTag label={erpPurchaseOrder.supplier_name} />}</Box>
+                <Box>{erpInboundOrder && <CustomizedTag label={erpInboundOrder.supplier_name} />}</Box>
               </Stack>
             </Grid>
             <Grid size={size}>
@@ -182,71 +184,90 @@ const ErpInboundOrderInfo = forwardRef(({ }, ref) => {
               <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('erp.detail.common.title.tax')}</Typography></Box>
               <Box className='table-cell' sx={{ width: 100 }}><Typography variant="body1">{t('erp.detail.common.title.tax.total')}</Typography></Box>
             </Box>
-            {erpInboundOrder && erpInboundOrder.details && erpInboundOrder.details.map((item, index) => {
-              let purchaseDetail = undefined;
-              if (erpPurchaseOrderDetailMap && item.purchase_detail_id && erpPurchaseOrderDetailMap.get(item.purchase_detail_id) && erpPurchaseOrderDetailMap.get(item.purchase_detail_id)) {
-                purchaseDetail = erpPurchaseOrderDetailMap && item.purchase_detail_id && erpPurchaseOrderDetailMap.get(item.purchase_detail_id) && erpPurchaseOrderDetailMap.get(item.purchase_detail_id)
-              }
-              return (
-                <Box className='table-row' key={index}>
-                  <Box className='table-cell' sx={{ width: 50, verticalAlign: 'middle' }}><Typography variant="body1">{index + 1}</Typography></Box>
-                  <Box className='table-cell' sx={{ width: 100 }}>
-                    <FormControl sx={{ minWidth: 120, width: '100%' }}>
-                      <Select
-                        size="small"
-                        name="warehouse_id"
-                        value={item.warehouse_id}
-                        disabled
-                      >
-                        {warehouses.map((warehouse) => (
-                          <MenuItem key={warehouse.id} value={warehouse.id}>
-                            {warehouse.name}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    </FormControl>
-                  </Box>
-                  <Box className='table-cell' sx={{ width: 50 }}>
-                    <TextField
+            {erpInboundOrder && erpInboundOrder.details && erpInboundOrder.details.map((item, index) =>
+            (
+              <Box className='table-row' key={index}>
+                <Box className='table-cell' sx={{ width: 50, verticalAlign: 'middle' }}><Typography variant="body1">{index + 1}</Typography></Box>
+                <Box className='table-cell' sx={{ width: 100 }}>
+                  <FormControl sx={{ minWidth: 120, width: '100%' }}>
+                    <Select
                       size="small"
-                      name="remarks"
-                      value={item.remarks}
+                      name="warehouse_id"
+                      value={item.warehouse_id}
                       disabled
-                    />
-                  </Box>
-                  <Box className='table-cell' sx={{ width: 50 }}>
-                    <TextField size="small" value={purchaseDetail && purchaseDetail.product_name} disabled />
-                  </Box>
-                  <Box className='table-cell' sx={{ width: 50 }}>
-                    <TextField size="small" value={purchaseDetail && purchaseDetail.product_barcode} disabled />
-                  </Box>
-                  <Box className='table-cell' sx={{ width: 50 }}>
-                    <TextField size="small" value={purchaseDetail && purchaseDetail.product_unit_name} disabled />
-                  </Box>
-                  <Box className='table-cell' sx={{ width: 50 }}>
-                    <TextField size="small" value={item.remarks} disabled />
-                  </Box>
-                  <Box className='table-cell' sx={{ width: 50 }}>
-                    <TextField size="small" value={purchaseDetail && purchaseDetail.quantity} disabled />
-                  </Box>
-                  <Box className='table-cell' sx={{ width: 50 }}>
-                    <TextField size="small" value={purchaseDetail && purchaseDetail.unit_price} disabled />
-                  </Box>
-                  <Box className='table-cell' sx={{ width: 50 }}>
-                    <TextField size="small" value={purchaseDetail && purchaseDetail.subtotal} disabled />
-                  </Box>
-                  <Box className='table-cell' sx={{ width: 50 }}>
-                    <TextField size="small" value={purchaseDetail && purchaseDetail.tax_rate} disabled />
-                  </Box>
-                  <Box className='table-cell' sx={{ width: 50 }}>
-                    <TextField size="small" value={purchaseDetail ? (purchaseDetail.quantity * purchaseDetail.unit_price * purchaseDetail.tax_rate / 100) : 0} disabled />
-                  </Box>
-                  <Box className='table-cell' sx={{ width: 50 }}>
-                    <TextField size="small" value={purchaseDetail ? purchaseDetail.quantity * purchaseDetail.unit_price * (1 + purchaseDetail.tax_rate / 100) : 0} disabled />
-                  </Box>
+                    >
+                      {warehouses.map((warehouse) => (
+                        <MenuItem key={warehouse.id} value={warehouse.id}>
+                          {warehouse.name}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
                 </Box>
-              )
-            })}
+                {/* <Box className='table-cell' sx={{ width: 50 }}>
+                  <TextField
+                    size="small"
+                    name="remarks"
+                    value={item.remarks}
+                    disabled
+                  />
+                </Box> */}
+                <Box className='table-cell' sx={{ width: 100 }}>
+                  <FormControl sx={{ minWidth: 120, width: '100%' }}>
+                    <Select
+                      size="small"
+                      name="product_id"
+                      value={item.product_id ?? ''}
+                      disabled
+                    >
+                      {products.map((product) => (
+                        <MenuItem key={product.id} value={product.id}>
+                          {product.name}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Box>
+                {/* <Box className='table-cell' sx={{ width: 50 }}>
+                  <TextField size="small" value={item.product?.stock_quantity ?? ''} disabled />
+                </Box> */}
+                <Box className='table-cell' sx={{ width: 50 }}>
+                  <TextField size="small" value={item.product?.barcode ?? ''} disabled />
+                </Box>
+                <Box className='table-cell' sx={{ width: 50 }}>
+                  <TextField size="small" value={item.product?.unit_name ?? ''} disabled />
+                </Box>
+                <Box className='table-cell' sx={{ width: 50 }}>
+                  <TextField
+                    size="small"
+                    name="remarks"
+                    disabled
+                  />
+                </Box>
+                <Box className='table-cell' sx={{ width: 50 }}>
+                  <TextField size="small" value={item.remarks} disabled />
+                </Box>
+                <Box className='table-cell' sx={{ width: 50 }}>
+                  <TextField size="small" value={item.quantity} disabled />
+                </Box>
+                <Box className='table-cell' sx={{ width: 50 }}>
+                  <TextField size="small" value={item.unit_price} disabled />
+                </Box>
+                <Box className='table-cell' sx={{ width: 50 }}>
+                  <TextField size="small" value={item.subtotal} disabled />
+                </Box>
+                <Box className='table-cell' sx={{ width: 50 }}>
+                  <TextField size="small" value={item.tax_rate} disabled />
+                </Box>
+                <Box className='table-cell' sx={{ width: 50 }}>
+                  <TextField size="small" value={(item.quantity! * item.unit_price! * item.tax_rate!) / 100} disabled />
+                </Box>
+                <Box className='table-cell' sx={{ width: 50 }}>
+                  <TextField size="small" value={item.quantity! * item.unit_price! * (1 + item.tax_rate! / 100)} disabled />
+                </Box>
+              </Box>
+            )
+            )}
           </Box>
         </Card>
 

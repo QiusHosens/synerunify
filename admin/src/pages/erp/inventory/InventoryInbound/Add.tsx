@@ -1,6 +1,6 @@
 import { Box, Button, Card, FormControl, FormHelperText, Grid, InputLabel, MenuItem, Select, SelectChangeEvent, TextField, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { forwardRef, useCallback, useImperativeHandle, useRef, useState } from 'react';
+import { forwardRef, useCallback, useImperativeHandle, useState } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
 import { createOtherErpInboundOrder, ErpInboundOrderAttachmentRequest, ErpInboundOrderDetailRequest, ErpInboundOrderRequest, ErpProductResponse, ErpSettlementAccountResponse, ErpSupplierResponse, ErpWarehouseResponse, listErpProduct, listErpSettlementAccount, listErpSupplier, listErpWarehouse } from '@/api';
 import CustomizedDialog from '@/components/CustomizedDialog';
@@ -591,9 +591,9 @@ const ErpInboundOrderAdd = forwardRef(({ onSubmit }: ErpInboundOrderAddProps, re
                     <FormHelperText sx={{ color: 'error.main' }}>{errors.details[index]?.product_id}</FormHelperText>
                   </FormControl>
                 </Box>
-                <Box className='table-cell' sx={{ width: 50 }}>
+                {/* <Box className='table-cell' sx={{ width: 50 }}>
                   <TextField size="small" value={item.product?.stock_quantity ?? ''} disabled />
-                </Box>
+                </Box> */}
                 <Box className='table-cell' sx={{ width: 50 }}>
                   <TextField size="small" value={item.product?.barcode ?? ''} disabled />
                 </Box>

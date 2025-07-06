@@ -9,8 +9,8 @@ use crate::model::erp_supplier::{Model as ErpSupplierModel, ActiveModel as ErpSu
 use crate::model::erp_settlement_account::{Model as ErpSettlementAccountModel, ActiveModel as ErpSettlementAccountActiveModel, Entity as ErpSettlementAccountEntity};
 use crate::service::{erp_inbound_order_attachment, erp_inbound_order_detail, erp_purchase_order, erp_settlement_account};
 use erp_model::request::erp_inbound_order::{CreateErpInboundOrderOtherRequest, CreateErpInboundOrderPurchaseRequest, CreateErpInboundOrderRequest, PaginatedKeywordRequest, UpdateErpInboundOrderOtherRequest, UpdateErpInboundOrderPurchaseRequest, UpdateErpInboundOrderRequest};
-use erp_model::response::erp_inbound_order::{ErpInboundOrderBaseOtherResponse, ErpInboundOrderBasePurchaseResponse, ErpInboundOrderInfoPurchaseResponse, ErpInboundOrderPageOtherResponse, ErpInboundOrderPagePurchaseResponse, ErpInboundOrderResponse};
-use crate::convert::erp_inbound_order::{create_other_request_to_model, create_purchase_request_to_model, create_request_to_model, model_to_base_other_response, model_to_base_purchase_response, model_to_info_purchase_response, model_to_page_other_response, model_to_page_purchase_response, model_to_response, update_other_request_to_model, update_purchase_request_to_model, update_request_to_model};
+use erp_model::response::erp_inbound_order::{ErpInboundOrderBaseOtherResponse, ErpInboundOrderBasePurchaseResponse, ErpInboundOrderInfoOtherResponse, ErpInboundOrderInfoPurchaseResponse, ErpInboundOrderPageOtherResponse, ErpInboundOrderPagePurchaseResponse, ErpInboundOrderResponse};
+use crate::convert::erp_inbound_order::{create_other_request_to_model, create_purchase_request_to_model, create_request_to_model, model_to_base_other_response, model_to_base_purchase_response, model_to_info_other_response, model_to_info_purchase_response, model_to_page_other_response, model_to_page_purchase_response, model_to_response, update_other_request_to_model, update_purchase_request_to_model, update_request_to_model};
 use anyhow::{anyhow, Context, Result};
 use sea_orm::ActiveValue::Set;
 use common::constants::enum_constants::{STATUS_DISABLE, STATUS_ENABLE};
@@ -202,6 +202,28 @@ pub async fn get_base_other_by_id(db: &DatabaseConnection, login_user: LoginUser
     let details = erp_inbound_order_detail::list_other_by_inbound_id(&db, login_user.clone(), id).await?;
     let attachments = erp_inbound_order_attachment::list_by_inbound_id(&db, login_user, id).await?;
     Ok(Some(model_to_base_other_response(erp_inbound_order, details, attachments)))
+}
+
+pub async fn get_info_other_by_id(db: &DatabaseConnection, login_user: LoginUserContext, id: i64) -> Result<Option<ErpInboundOrderInfoOtherResponse>> {
+    let condition = Condition::all()
+            .add(Column::Id.eq(id))
+            .add(Column::TenantId.eq(login_user.tenant_id));
+            
+    let erp_inbound_order = ErpInboundOrderEntity::find_active_with_data_permission(login_user.clone())
+        .filter(condition)
+        .select_also(ErpSupplierEntity)
+        .select_also(ErpSettlementAccountEntity)
+        .join(JoinType::LeftJoin, Relation::InboundSupplier.def())
+        .join(JoinType::LeftJoin, Relation::InboundSettlementAccount.def())
+        .one(db).await?;
+
+    if erp_inbound_order.is_none() {
+        return Ok(None);
+    }
+    let (inbound_order, supplier, settlement_account) = erp_inbound_order.unwrap();
+    let details = erp_inbound_order_detail::list_other_by_inbound_id(&db, login_user.clone(), id).await?;
+    let attachments = erp_inbound_order_attachment::list_by_inbound_id(&db, login_user, id).await?;
+    Ok(Some(model_to_info_other_response(inbound_order, supplier, settlement_account, details, attachments)))
 }
 
 pub async fn get_paginated_purchase(db: &DatabaseConnection, login_user: LoginUserContext, params: PaginatedKeywordRequest) -> Result<PaginatedResponse<ErpInboundOrderPagePurchaseResponse>> {

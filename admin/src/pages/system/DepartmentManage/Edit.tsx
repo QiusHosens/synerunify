@@ -175,7 +175,7 @@ const DepartmentEdit = forwardRef(({ onSubmit }: DepartmentEditProps, ref) => {
           <TextField
             required
             size="small"
-            label={t("page.department.title.name")}
+            label={t("common.title.name")}
             name='name'
             value={department.name}
             onChange={handleInputChange}
@@ -199,14 +199,14 @@ const DepartmentEdit = forwardRef(({ onSubmit }: DepartmentEditProps, ref) => {
         <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' } }}>
           <TextField
             size="small"
-            label={t("page.department.title.phone")}
+            label={t("common.title.phone")}
             name="phone"
             value={department.phone}
             onChange={handleInputChange}
           />
           <TextField
             size="small"
-            label={t("page.department.title.email")}
+            label={t("common.title.email")}
             name="email"
             value={department.email}
             onChange={handleInputChange}
@@ -215,7 +215,7 @@ const DepartmentEdit = forwardRef(({ onSubmit }: DepartmentEditProps, ref) => {
             required
             size="small"
             type="number"
-            label={t("page.department.title.sort")}
+            label={t("common.title.sort")}
             name="sort"
             value={department.sort}
             onChange={handleInputChange}
@@ -224,9 +224,9 @@ const DepartmentEdit = forwardRef(({ onSubmit }: DepartmentEditProps, ref) => {
           />
         </FormControl>
         <Box sx={{ mt: 2, display: 'flex', alignItems: 'center' }}>
-          <Typography sx={{ mr: 4 }}>{t("page.department.title.status")}</Typography>
+          <Typography sx={{ mr: 4 }}>{t("common.title.status")}</Typography>
           <Switch sx={{ mr: 2 }} name='status' checked={!department.status} onChange={handleStatusChange} />
-          <Typography>{department.status == 0 ? t('page.department.switch.status.true') : t('page.department.switch.status.false')}</Typography>
+          <Typography>{department.status == 0 ? t('common.switch.status.true') : t('common.switch.status.false')}</Typography>
         </Box>
       </Box>
     </CustomizedDialog>

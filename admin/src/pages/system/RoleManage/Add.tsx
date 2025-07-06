@@ -205,7 +205,7 @@ const RoleAdd = forwardRef(({ onSubmit }: RoleAddProps, ref) => {
         }}
       >
         <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiSelect-root': { width: '200px' } }}>
-          <DictSelect name='type' dict_type='role_type' value={formValues.type.toString()} onChange={handleTypeChange} label={t("page.role.title.type")}></DictSelect>
+          <DictSelect name='type' dict_type='role_type' value={formValues.type.toString()} onChange={handleTypeChange} label={t("common.title.type")}></DictSelect>
         </FormControl>
         <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' } }}>
           <TextField

@@ -156,7 +156,7 @@ const ErpInboundOrderEdit = forwardRef(({ onSubmit }: ErpInboundOrderEditProps, 
     if (validateForm()) {
       const attachments: ErpInboundOrderAttachmentRequest[] = [];
       for (const attachment of erpInboundOrderRequest.attachments) {
-        let attach: ErpInboundOrderAttachmentRequest = {
+        const attach: ErpInboundOrderAttachmentRequest = {
           file_id: attachment.file_id!
         } as ErpInboundOrderAttachmentRequest
         if (attachment.id) {
@@ -448,9 +448,9 @@ const ErpInboundOrderEdit = forwardRef(({ onSubmit }: ErpInboundOrderEditProps, 
                     </Select>
                   </FormControl>
                 </Box>
-                <Box className='table-cell' sx={{ width: 50 }}>
+                {/* <Box className='table-cell' sx={{ width: 50 }}>
                   <TextField size="small" value={item.product?.stock_quantity ?? ''} disabled />
-                </Box>
+                </Box> */}
                 <Box className='table-cell' sx={{ width: 50 }}>
                   <TextField size="small" value={item.product?.barcode ?? ''} disabled />
                 </Box>

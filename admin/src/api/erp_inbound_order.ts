@@ -10,8 +10,9 @@ const apis = {
   update_other: "/erp/erp_inbound_order/update_other", // 修改其他入库
   delete: "/erp/erp_inbound_order/delete", // 删除
   get_base_purchase: "/erp/erp_inbound_order/get_base_purchase", // 单条查询
-  get_base_other: "/erp/erp_inbound_order/get_base_other", // 单条查询
   get_info_purchase: "/erp/erp_inbound_order/get_info_purchase", // 单条查询
+  get_base_other: "/erp/erp_inbound_order/get_base_other", // 单条查询
+  get_info_other: "/erp/erp_inbound_order/get_info_other", // 单条查询
   list: "/erp/erp_inbound_order/list", // 列表查询
   list_supplier: "/erp/erp_inbound_order/list_supplier", // 列表查询
   page_purchase: "/erp/erp_inbound_order/page_purchase", // 分页查询采购入库
@@ -110,16 +111,22 @@ export const getBasePurchaseErpInboundOrder = (
   return api.get<ErpInboundOrderBaseResponse>(`${apis.get_base_purchase}/${id}`);
 };
 
+export const getInfoPurchaseErpInboundOrder = (
+  id: number
+): Promise<ErpInboundOrderBaseResponse> => {
+  return api.get<ErpInboundOrderBaseResponse>(`${apis.get_info_purchase}/${id}`);
+};
+
 export const getBaseOtherErpInboundOrder = (
   id: number
 ): Promise<ErpInboundOrderBaseResponse> => {
   return api.get<ErpInboundOrderBaseResponse>(`${apis.get_base_other}/${id}`);
 };
 
-export const getInfoPurchaseErpInboundOrder = (
+export const getInfoOtherErpInboundOrder = (
   id: number
 ): Promise<ErpInboundOrderBaseResponse> => {
-  return api.get<ErpInboundOrderBaseResponse>(`${apis.get_info_purchase}/${id}`);
+  return api.get<ErpInboundOrderBaseResponse>(`${apis.get_info_other}/${id}`);
 };
 
 export const listErpInboundOrder = (): Promise<

@@ -190,7 +190,7 @@ const ErpCustomerAdd = forwardRef(({ onSubmit }: ErpCustomerAddProps, ref) => {
               <TextField
                 required
                 size="small"
-                label={t("page.erp.sale.customer.title.name")}
+                label={t("common.title.name")}
                 name='name'
                 value={formValues.name}
                 onChange={handleInputChange}

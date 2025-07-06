@@ -485,7 +485,7 @@ const UserAdd = forwardRef(({ onSubmit }: UserAddProps, ref) => {
           />
           <TextField
             size="small"
-            label={t("page.user.title.email")}
+            label={t("common.title.email")}
             name="email"
             value={formValues.email}
             onChange={handleInputChange}

@@ -115,7 +115,7 @@ const TenantAdd = forwardRef(({ onSubmit }: TenantAddProps, ref) => {
     }
 
     if (!formValues.contact_name.trim()) {
-      newErrors.contact_name = t('global.error.input.please') + t('page.tenant.title.contact.name');
+      newErrors.contact_name = t('global.error.input.please') + t('common.title.contact.person');
     }
 
     if (!formValues.username.trim()) {
@@ -329,7 +329,7 @@ const TenantAdd = forwardRef(({ onSubmit }: TenantAddProps, ref) => {
           <TextField
             required
             size="small"
-            label={t("page.tenant.title.contact.name")}
+            label={t("common.title.contact.person")}
             name='contact_name'
             value={formValues.contact_name}
             onChange={handleInputChange}

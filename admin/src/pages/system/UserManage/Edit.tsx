@@ -370,7 +370,7 @@ const UserEdit = forwardRef(({ onSubmit }: UserEditProps, ref) => {
           />
           <TextField
             size="small"
-            label={t("page.user.title.email")}
+            label={t("common.title.email")}
             name="email"
             value={user.email}
             onChange={handleInputChange}

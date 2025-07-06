@@ -9,8 +9,8 @@ use crate::model::erp_customer::{Model as ErpCustomerModel, ActiveModel as ErpCu
 use crate::model::erp_settlement_account::{Model as ErpSettlementAccountModel, ActiveModel as ErpSettlementAccountActiveModel, Entity as ErpSettlementAccountEntity};
 use crate::service::{erp_outbound_order_attachment, erp_outbound_order_detail, erp_sales_order, erp_settlement_account};
 use erp_model::request::erp_outbound_order::{CreateErpOutboundOrderOtherRequest, CreateErpOutboundOrderRequest, CreateErpOutboundOrderSaleRequest, PaginatedKeywordRequest, UpdateErpOutboundOrderOtherRequest, UpdateErpOutboundOrderRequest, UpdateErpOutboundOrderSaleRequest};
-use erp_model::response::erp_outbound_order::{ErpOutboundOrderBaseOtherResponse, ErpOutboundOrderBaseSalesResponse, ErpOutboundOrderInfoSalesResponse, ErpOutboundOrderPageOtherResponse, ErpOutboundOrderPageSalesResponse, ErpOutboundOrderResponse};
-use crate::convert::erp_outbound_order::{create_other_request_to_model, create_request_to_model, create_sale_request_to_model, model_to_base_other_response, model_to_base_sales_response, model_to_info_sales_response, model_to_page_other_response, model_to_page_sales_response, model_to_response, update_other_request_to_model, update_request_to_model, update_sale_request_to_model};
+use erp_model::response::erp_outbound_order::{ErpOutboundOrderBaseOtherResponse, ErpOutboundOrderBaseSalesResponse, ErpOutboundOrderInfoOtherResponse, ErpOutboundOrderInfoSalesResponse, ErpOutboundOrderPageOtherResponse, ErpOutboundOrderPageSalesResponse, ErpOutboundOrderResponse};
+use crate::convert::erp_outbound_order::{create_other_request_to_model, create_request_to_model, create_sale_request_to_model, model_to_base_other_response, model_to_base_sales_response, model_to_info_other_response, model_to_info_sales_response, model_to_page_other_response, model_to_page_sales_response, model_to_response, update_other_request_to_model, update_request_to_model, update_sale_request_to_model};
 use anyhow::{anyhow, Context, Result};
 use sea_orm::ActiveValue::Set;
 use common::constants::enum_constants::{STATUS_DISABLE, STATUS_ENABLE};
@@ -200,6 +200,28 @@ pub async fn get_info_sales_by_id(db: &DatabaseConnection, login_user: LoginUser
     let details = erp_outbound_order_detail::list_sales_by_outbound_id(&db, login_user.clone(), id).await?;
     let attachments = erp_outbound_order_attachment::list_by_outbound_id(&db, login_user, id).await?;
     Ok(Some(model_to_info_sales_response(outbound_order, settlement_account, details, attachments)))
+}
+
+pub async fn get_info_other_by_id(db: &DatabaseConnection, login_user: LoginUserContext, id: i64) -> Result<Option<ErpOutboundOrderInfoOtherResponse>> {
+    let condition = Condition::all()
+            .add(Column::Id.eq(id))
+            .add(Column::TenantId.eq(login_user.tenant_id));
+            
+    let erp_outbound_order = ErpOutboundOrderEntity::find_active_with_data_permission(login_user.clone())
+        .filter(condition)
+        .select_also(ErpCustomerEntity)
+        .select_also(ErpSettlementAccountEntity)
+        .join(JoinType::LeftJoin, Relation::OutboundCustomer.def())
+        .join(JoinType::LeftJoin, Relation::OutboundSettlementAccount.def())
+        .one(db).await?;
+    
+    if erp_outbound_order.is_none() {
+        return Ok(None);
+    }
+    let (outbound_order, customer, settlement_account) = erp_outbound_order.unwrap();
+    let details = erp_outbound_order_detail::list_other_by_outbound_id(&db, login_user.clone(), id).await?;
+    let attachments = erp_outbound_order_attachment::list_by_outbound_id(&db, login_user, id).await?;
+    Ok(Some(model_to_info_other_response(outbound_order, customer, settlement_account, details, attachments)))
 }
 
 pub async fn get_paginated_sales(db: &DatabaseConnection, login_user: LoginUserContext, params: PaginatedKeywordRequest) -> Result<PaginatedResponse<ErpOutboundOrderPageSalesResponse>> {

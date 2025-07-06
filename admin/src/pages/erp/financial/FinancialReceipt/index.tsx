@@ -12,6 +12,7 @@ import ErpReceiptDelete from './Delete';
 import { useHomeStore } from '@/store';
 import CustomizedAutoMore from '@/components/CustomizedAutoMore';
 import ErpReceiptInfo from './Info';
+import CustomizedCopyableText from '@/components/CustomizedCopyableText';
 
 export default function ErpReceipt() {
   const { t } = useTranslation();
@@ -34,12 +35,22 @@ export default function ErpReceipt() {
 
   const columns: GridColDef[] = useMemo(
     () => [
-      { field: 'order_number', headerName: t("erp.common.title.order.number"), flex: 1.4, minWidth: 100 },
+      {
+        field: 'order_number', 
+        headerName: t("erp.common.title.order.number"), 
+        flex: 1.4, 
+        minWidth: 100, 
+        renderCell: (params: GridRenderCellParams) => (
+          <CustomizedCopyableText
+            text={params.row.order_number}
+          />
+        )
+      },
       { field: 'customer_id', headerName: t("erp.common.title.customer"), flex: 1, minWidth: 100 },
       { field: 'settlement_account_id', headerName: t("erp.common.title.settlement.account"), flex: 1, minWidth: 100 },
       { field: 'amount', headerName: t("page.erp.receipt.title.amount"), flex: 1, minWidth: 100 },
       { field: 'discount_amount', headerName: t("page.erp.receipt.title.discount.amount"), flex: 1, minWidth: 100 },
-      { field: 'receipt_date', headerName: t("page.erp.receipt.title.receipt.date"), flex: 1, minWidth: 100 },
+      { field: 'receipt_date', headerName: t("page.erp.receipt.title.receipt.date"), flex: 1.4, minWidth: 100 },
       { field: 'payment_method', headerName: t("page.erp.receipt.title.payment.method"), flex: 1, minWidth: 100 },
       { field: 'receipt_status', headerName: t("page.erp.receipt.title.receipt.status"), flex: 1, minWidth: 100 },
       { field: 'remarks', headerName: t("common.title.remark"), flex: 1, minWidth: 100 },

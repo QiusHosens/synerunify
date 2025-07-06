@@ -6,7 +6,7 @@ use crate::model::erp_sales_order::{self, Model as ErpSalesOrder};
 use crate::model::erp_customer::{self, Model as ErpCustomer};
 use crate::model::erp_settlement_account::{self, Model as ErpSettlementAccount};
 use erp_model::request::erp_outbound_order::{CreateErpOutboundOrderOtherRequest, CreateErpOutboundOrderRequest, CreateErpOutboundOrderSaleRequest, UpdateErpOutboundOrderOtherRequest, UpdateErpOutboundOrderRequest, UpdateErpOutboundOrderSaleRequest};
-use erp_model::response::erp_outbound_order::{ErpOutboundOrderBaseOtherResponse, ErpOutboundOrderBaseSalesResponse, ErpOutboundOrderInfoSalesResponse, ErpOutboundOrderPageOtherResponse, ErpOutboundOrderPageSalesResponse, ErpOutboundOrderResponse};
+use erp_model::response::erp_outbound_order::{ErpOutboundOrderBaseOtherResponse, ErpOutboundOrderBaseSalesResponse, ErpOutboundOrderInfoOtherResponse, ErpOutboundOrderInfoSalesResponse, ErpOutboundOrderPageOtherResponse, ErpOutboundOrderPageSalesResponse, ErpOutboundOrderResponse};
 
 pub fn create_request_to_model(request: &CreateErpOutboundOrderRequest) -> ErpOutboundOrderActiveModel {
     ErpOutboundOrderActiveModel {
@@ -256,5 +256,29 @@ pub fn model_to_info_sales_response(model: ErpOutboundOrder, model_settlement_ac
         attachments,
 
         settlement_account_name,
+    }
+}
+
+pub fn model_to_info_other_response(model: ErpOutboundOrder, model_customer: Option<ErpCustomer>, model_settlement_account: Option<ErpSettlementAccount>, details: Vec<ErpOutboundOrderDetailBaseOtherResponse>, attachments: Vec<ErpOutboundOrderAttachmentBaseResponse>) -> ErpOutboundOrderInfoOtherResponse {
+    let customer_name = model_customer.map(|customer| customer.name.clone());
+    let settlement_account_name = model_settlement_account.map(|settlement_account| settlement_account.name.clone());
+
+    ErpOutboundOrderInfoOtherResponse { 
+        id: model.id,
+        order_number: model.order_number,
+        sale_id: model.sale_id,
+        customer_id: model.customer_id,
+        user_id: model.user_id,
+        outbound_date: model.outbound_date,
+        remarks: model.remarks,
+        discount_rate: model.discount_rate,
+        other_cost: model.other_cost,
+        settlement_account_id: model.settlement_account_id,
+
+        customer_name,
+        settlement_account_name,
+
+        details,
+        attachments,
     }
 }
