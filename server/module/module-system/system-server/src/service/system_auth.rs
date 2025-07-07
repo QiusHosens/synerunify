@@ -256,20 +256,20 @@ async fn add_login_logger_redis(request_context: RequestContext, user: SystemUse
 
     let login_logger = LoginLogger {
         id: None,
-        trace_id: "".to_string(),
-        user_id,
+        trace_id: None,
+        user_id: Some(user_id),
         user_type: None,
         username,
         result,
         user_ip: request_context.ip,
         user_agent: request_context.user_agent,
-        department_code,
-        department_id,
+        department_code: Some(department_code),
+        department_id: Some(department_id),
         operator: Some(user_id),
         operator_nickname: Some(user_nickname),
-        operate_time: Utc::now().timestamp(),
-        deleted: false,
-        tenant_id
+        operate_time: Some(Utc::now().timestamp()),
+        deleted: Some(false),
+        tenant_id: Some(tenant_id)
     };
     info!("login logger: {:?}", login_logger);
     RedisManager::push_list::<_, String>(REDIS_KEY_LOGGER_LOGIN_PREFIX, serde_json::to_string(&login_logger)?)?;

@@ -48,6 +48,7 @@ fn add_logger(request_context: RequestContext, login_user: Option<LoginUserConte
 }
 
 async fn add_logger_redis(request_context: RequestContext, login_user: Option<LoginUserContext>, result: String, duration: Duration) -> Result<()> {
+    info!("login user, {:?}", login_user.clone());
     let user_id = login_user.clone().map(|u| u.id);
     let user_nickname = login_user.clone().map(|u| u.nickname);
     let tenant_id = login_user.clone().map(|u| u.tenant_id);
@@ -56,27 +57,27 @@ async fn add_logger_redis(request_context: RequestContext, login_user: Option<Lo
     // TODO
     let operation_logger = OperationLogger {
         id: None,
-        trace_id: "".to_string(),
+        trace_id: None,
         user_id,
         user_type: None,
-        r#type: "".to_string(),
-        sub_type: "".to_string(),
-        biz_id: 0,
-        action: "".to_string(),
-        success: true,
+        r#type: None,
+        sub_type: None,
+        biz_id: None,
+        action: None,
+        success: Some(true),
         result,
-        extra: "".to_string(),
+        extra: None,
         request_method: request_context.method,
         request_url: request_context.request_url,
         user_ip: request_context.ip,
         user_agent: request_context.user_agent,
         department_code,
         department_id,
-        duration: duration.as_millis() as i64,
+        duration: Some(duration.as_millis() as i64),
         operator: user_id,
         operator_nickname: user_nickname,
-        operate_time: Utc::now().timestamp(),
-        deleted: false,
+        operate_time: Some(Utc::now().timestamp()),
+        deleted: Some(false),
         tenant_id
     };
     // info!("operation logger: {:?}", operation_logger);

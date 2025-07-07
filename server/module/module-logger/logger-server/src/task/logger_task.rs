@@ -35,7 +35,7 @@ impl Task for LoginLoggerTask {
             match service::login_logger::add_batch(login_loggers).await {
                 Ok(_) => {}
                 Err(e) => {
-                    tracing::info!("save login logger error: {}", e.to_string());
+                    tracing::info!("save login logger error: {:#?}", e);
                 }
             }
         });

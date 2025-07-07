@@ -28,7 +28,7 @@ use common::utils::jwt_utils::AccessClaims;
 #[openapi(
     info(
         title = "API",
-        description = "api",
+        description = "system",
         version = "1.0.0"
     ),
     tags(
@@ -61,6 +61,7 @@ pub async fn api(state: AppState) -> Router {
 
     // 注册路由权限
     init_route_authorizes(&api);
+
     router
         .merge(utoipa_swagger_ui::SwaggerUi::new("/system/swagger-ui").url("/system/api-docs/openapi.json", api.clone()))
 }

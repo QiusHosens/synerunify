@@ -58,40 +58,40 @@ mod tests {
     //     assert_eq!(result.unwrap_err(), "Time offset too large (exceeds 2 days)");
     // }
 
-    #[test]
-    #[ignore]
-    fn test_concurrent_generation() {
-        let generator = Arc::new(SnowflakeGenerator::new());
-        let mut handles = vec![];
-        let num_threads = 10;
-        let ids_per_thread = 1000;
-        let ids = Arc::new(Mutex::new(HashSet::new()));
+    // #[test]
+    // #[ignore]
+    // fn test_concurrent_generation() {
+    //     let generator = Arc::new(SnowflakeGenerator::new());
+    //     let mut handles = vec![];
+    //     let num_threads = 10;
+    //     let ids_per_thread = 1000;
+    //     let ids = Arc::new(Mutex::new(HashSet::new()));
 
-        // 启动多个线程并发生成ID
-        for _ in 0..num_threads {
-            let generator = Arc::clone(&generator);
-            let ids = Arc::clone(&ids);
-            let handle = thread::spawn(move || {
-                for _ in 0..ids_per_thread {
-                    if let Ok(id) = generator.generate() {
-                        let mut ids_set = ids.lock().unwrap();
-                        ids_set.insert(id);
-                    }
-                }
-            });
-            handles.push(handle);
-        }
+    //     // 启动多个线程并发生成ID
+    //     for _ in 0..num_threads {
+    //         let generator = Arc::clone(&generator);
+    //         let ids = Arc::clone(&ids);
+    //         let handle = thread::spawn(move || {
+    //             for _ in 0..ids_per_thread {
+    //                 if let Ok(id) = generator.generate() {
+    //                     let mut ids_set = ids.lock().unwrap();
+    //                     ids_set.insert(id);
+    //                 }
+    //             }
+    //         });
+    //         handles.push(handle);
+    //     }
 
-        // 等待所有线程完成
-        for handle in handles {
-            handle.join().unwrap();
-        }
+    //     // 等待所有线程完成
+    //     for handle in handles {
+    //         handle.join().unwrap();
+    //     }
 
-        // 检查生成的ID数量和唯一性
-        let ids_set = ids.lock().unwrap();
-        assert_eq!(ids_set.len(), num_threads * ids_per_thread, "Some IDs are duplicated");
-        assert!(ids_set.iter().all(|&id| id.to_string().len() <= 19), "Some IDs exceed 19 digits");
-    }
+    //     // 检查生成的ID数量和唯一性
+    //     let ids_set = ids.lock().unwrap();
+    //     assert_eq!(ids_set.len(), num_threads * ids_per_thread, "Some IDs are duplicated");
+    //     assert!(ids_set.iter().all(|&id| id.to_string().len() <= 19), "Some IDs exceed 19 digits");
+    // }
 
     #[test]
     #[ignore]

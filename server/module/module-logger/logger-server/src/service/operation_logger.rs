@@ -1,6 +1,7 @@
 use anyhow::{Result, anyhow};
 use common::base::logger::OperationLogger;
 use common::base::page::PaginatedResponse;
+use common::context::context::LoginUserContext;
 use common::database::mongo::MongoManager;
 use logger_model::request::operation_logger::PaginatedKeywordRequest;
 use logger_model::response::operation_logger::OperationLoggerResponse;
@@ -24,9 +25,10 @@ pub async fn delete_batch(ids: Vec<String>) -> Result<()> {
     Ok(())
 }
 
-pub async fn get_paginated(params: PaginatedKeywordRequest) -> Result<PaginatedResponse<OperationLoggerResponse>> {
+pub async fn get_paginated(params: PaginatedKeywordRequest, login_user: LoginUserContext) -> Result<PaginatedResponse<OperationLoggerResponse>> {
     let mongo = MongoManager::get();
-    let page_result = mongo.find_operation_logs_paginated(None, params.base.page, params.base.size).await?;
+    let filter = Some(OperationLogger::with_tenant_id(login_user.tenant_id));
+    let page_result = mongo.find_operation_logs_paginated(filter, params.base.page, params.base.size).await?;
 
     let mut results: Vec<OperationLoggerResponse> = Vec::new();
     for operation_logger in page_result.list {

@@ -6,9 +6,9 @@ pub struct LoginLoggerResponse {
 
     pub id: Option<String>, // id
 
-    pub trace_id: String, // 链路追踪编号
+    pub trace_id: Option<String>, // 链路追踪编号
 
-    pub user_id: i64, // 用户编号
+    pub user_id: Option<i64>, // 用户编号
 
     pub user_type: Option<i8>, // 用户类型
 
@@ -20,14 +20,14 @@ pub struct LoginLoggerResponse {
 
     pub user_agent: String, // 浏览器 UA
 
-    pub department_code: String, // 部门编码
+    pub department_code: Option<String>, // 部门编码
 
-    pub department_id: i64, // 部门ID
+    pub department_id: Option<i64>, // 部门ID
 
     pub operator: Option<i64>, // 操作者id
 
     pub operator_nickname: Option<String>, // 操作者昵称
 
-    pub operate_time: i64, // 操作时间
+    pub operate_time: Option<i64>, // 操作时间
 
 }

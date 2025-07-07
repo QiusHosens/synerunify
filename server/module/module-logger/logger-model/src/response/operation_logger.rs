@@ -6,23 +6,23 @@ pub struct OperationLoggerResponse {
 
     pub id: Option<String>, // id
 
-    pub trace_id: String, // 链路追踪编号
+    pub trace_id: Option<String>, // 链路追踪编号
 
     pub user_id: Option<i64>, // 用户编号
 
     pub user_type: Option<i8>, // 用户类型
 
-    pub r#type: String, // 操作模块类型
+    pub r#type: Option<String>, // 操作模块类型
 
-    pub sub_type: String, // 操作名
+    pub sub_type: Option<String>, // 操作名
 
-    pub biz_id: i64, // 操作数据模块编号
+    pub biz_id: Option<i64>, // 操作数据模块编号
 
-    pub action: String, // 操作内容
+    pub action: Option<String>, // 操作内容
 
-    pub success: bool, // 操作结果
+    pub success: Option<bool>, // 操作结果
 
-    pub extra: String, // 拓展字段
+    pub extra: Option<String>, // 拓展字段
 
     pub request_method: String, // 请求方法名
 
@@ -40,6 +40,6 @@ pub struct OperationLoggerResponse {
 
     pub operator_nickname: Option<String>, // 操作者昵称
 
-    pub operate_time: i64, // 操作时间
+    pub operate_time: Option<i64>, // 操作时间
 
 }

@@ -10,7 +10,7 @@ use utoipa_axum::router::OpenApiRouter;
 #[openapi(
     info(
         title = "API",
-        description = "api",
+        description = "file",
         version = "1.0.0"
     ),
     tags(
@@ -27,6 +27,7 @@ pub async fn api(state: AppState) -> Router {
 
     // 注册路由权限
     init_route_authorizes(&api);
+
     router
         .merge(utoipa_swagger_ui::SwaggerUi::new("/file/swagger-ui").url("/file/api-docs/openapi.json", api.clone()))
 }

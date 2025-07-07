@@ -26,6 +26,7 @@ impl Task for OperationLoggerTask {
             tracing::info!("operation logger is empty");
             return Ok(())
         }
+        // tracing::info!("operation loggers, {:?}", logs);
         let mut operation_loggers = Vec::new();
         for log in logs {
             let operation_logger = serde_json::from_str::<OperationLogger>(&log)?;
@@ -35,7 +36,7 @@ impl Task for OperationLoggerTask {
             match service::operation_logger::add_batch(operation_loggers).await {
                 Ok(_) => {}
                 Err(e) => {
-                    tracing::info!("save operation logger error: {}", e.to_string());
+                    tracing::info!("save operation logger error: {:#?}", e);
                 }
             }
         });
@@ -43,7 +44,7 @@ impl Task for OperationLoggerTask {
     }
 
     fn on_error(&self, error: Box<dyn Error + Send + Sync>) -> ErrorAction {
-        tracing::error!("execute task {} error: {}", self.name, error);
+        tracing::error!("execute task {} error: {:#?}", self.name, error);
         ErrorAction::Continue
     }
 }

@@ -50,6 +50,8 @@ utoipa-scalar = { version = "0.3.0" }
 chrono = "0.4.41"
 uaparser = "0.6.4"
 
+ctor = "0.4.2"
+
 common = { path = "../../../framework/common" }
 macros = { path = "../../../framework/macros" }
 logger-model = { path = "../logger-model" }

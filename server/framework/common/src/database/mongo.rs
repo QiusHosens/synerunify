@@ -5,6 +5,7 @@ use mongodb::{
     error::Error as MongoError,
 };
 use once_cell::sync::OnceCell;
+use tracing::info;
 use std::env;
 use mongodb::bson::{from_document, to_document};
 use mongodb::bson::oid::ObjectId;
@@ -150,6 +151,7 @@ impl MongoManager {
         page_size: u64,
     ) -> Result<PaginatedResponse<OperationLogger>, MongoError> {
         let filter_doc = filter.map(|f| to_document(&f)).transpose()?;
+        info!("filter doc, {:?}", filter_doc);
         let page_result = self.find_paginated(&self.operation_collection, filter_doc, page, page_size).await?;
         let mut results: Vec<OperationLogger> = Vec::new();
         for doc in page_result.list {
