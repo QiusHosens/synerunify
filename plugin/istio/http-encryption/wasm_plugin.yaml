@@ -1,0 +1,16 @@
+apiVersion: extensions.istio.io/v1alpha1
+kind: WasmPlugin
+metadata:
+  name: http-encryption
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: your-app
+  url: file:///path/to/http_encryption.wasm
+  imagePullPolicy: IfNotPresent
+  phase: BEFORE_AUTHZ
+  vmConfig:
+    env:
+      - name: REDIS_HOST
+        value: "redis-service:6379"

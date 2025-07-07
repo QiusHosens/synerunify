@@ -1,0 +1,1 @@
+docker build -t synerunify/http-encryption-wasm .
