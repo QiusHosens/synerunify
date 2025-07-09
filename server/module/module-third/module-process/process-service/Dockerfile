@@ -1,3 +1,18 @@
+# 假设使用的是 Python 官方镜像
+FROM python:3.12 AS build
+
+# 安装 grpcio-tools
+RUN pip install grpcio-tools
+
+# 设置工作目录
+WORKDIR /app
+
+# 复制项目文件
+COPY . .
+
+# 运行 protoc 命令
+RUN python3 -m grpc_tools.protoc -Iproto --python_out=src --grpc_python_out=src proto/image_service.proto
+
 # 使用 Ubuntu 24.04 作为基础镜像
 FROM ubuntu:24.04
 
@@ -61,11 +76,14 @@ WORKDIR /app
 # 复制项目文件
 COPY . .
 
-# 安装 Python 依赖
-RUN pip3 install -r requirements.txt
+# 安装虚拟环境/安装 Python 依赖
+RUN apt update && apt install python3-venv -y \
+    && python3 -m venv /app/venv \
+    && . /app/venv/bin/activate \
+    && /app/venv/bin/pip install -r requirements.txt
 
 # 生成 gRPC 代码
-RUN python3 -m grpc_tools.protoc -Iproto --python_out=src --grpc_python_out=src proto/image_service.proto
+COPY --from=builder /app/src/image_service_* /app/src/
 
 # 配置 supervisord
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf

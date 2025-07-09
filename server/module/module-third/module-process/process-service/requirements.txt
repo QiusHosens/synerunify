@@ -1,7 +1,7 @@
 flask==3.1.1
-pillow==11.3.0
+pillow==11.2.1
 pytesseract==0.3.13
-grpcio==1.73.1
-grpcio-tools==1.73.1
+grpcio==1.72.1
+grpcio-tools==1.72.1
 requests==2.32.4
 supervisor==4.2.5
