@@ -8,7 +8,6 @@ import Layout from '@/layout/MainLayout/Layout';
 import React from 'react';
 import LoginLayout from '@/layout/LoginLayout';
 import { Box, CircularProgress, Typography } from '@mui/material';
-import { useTranslation } from 'react-i18next';
 
 // 动态组件映射
 const componentMap: { [key: string]: React.LazyExoticComponent<React.ComponentType<Element>> } = {
@@ -21,6 +20,8 @@ const componentMap: { [key: string]: React.LazyExoticComponent<React.ComponentTy
   'pages/system/RoleManage': lazy(() => import('@/pages/system/RoleManage')),
   'pages/system/PostManage': lazy(() => import('@/pages/system/PostManage')),
   'pages/system/UserManage': lazy(() => import('@/pages/system/UserManage')),
+  'pages/system/audit/OperationLogger': lazy(() => import('@/pages/system/audit/OperationLogger')),
+  'pages/system/audit/LoginLogger': lazy(() => import('@/pages/system/audit/LoginLogger')),
 
   'pages/erp/purchase/PurchaseOrder': lazy(() => import('@/pages/erp/purchase/PurchaseOrder')),
   'pages/erp/purchase/PurchaseInbound': lazy(() => import('@/pages/erp/purchase/PurchaseInbound')),
