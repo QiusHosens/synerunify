@@ -33,6 +33,9 @@ RUN wget http://www.leptonica.org/source/leptonica-1.84.1.tar.gz \
     && cd .. \
     && rm -rf leptonica-1.84.1.tar.gz leptonica-1.84.1
 
+# 设置工作目录
+WORKDIR /app
+
 # 克隆 Tesseract 源码并编译安装
 RUN git clone https://github.com/QiusHosens/tesseract.git \
     && cd tesseract \
@@ -50,9 +53,6 @@ RUN wget https://github.com/tesseract-ocr/tessdata/raw/main/eng.traineddata -P /
 
 # 设置 Tesseract 环境变量
 ENV TESSDATA_PREFIX=/usr/local/share/tessdata
-
-# 设置工作目录
-WORKDIR /app
 
 # 复制项目文件
 COPY . .
