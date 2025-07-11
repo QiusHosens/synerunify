@@ -66,10 +66,9 @@ RUN pip install grpcio-tools \
 # 运行 protoc 命令生成 gRPC 代码
 RUN python3 -m grpc_tools.protoc -Iproto --python_out=src --grpc_python_out=src proto/image_service.proto
 
+RUN chmod +x /app/entrypoint.sh
+
 # 暴露端口
 EXPOSE 8080 50051
 
-# 使用 nohup 运行服务并将日志写入同一文件
-CMD /app/venv/bin/python src/server.py > /app/log.txt 2>&1 & \
-    /app/venv/bin/python src/another_service.py > /app/log.txt 2>&1 & \
-    tail -f /app/log.txt
+ENTRYPOINT ["/app/entrypoint.sh"]
