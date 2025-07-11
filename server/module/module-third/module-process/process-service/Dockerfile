@@ -21,6 +21,7 @@ RUN apt-get update && apt-get install -y \
     wget \
     git \
     python3-venv \
+    supervisor \
     && rm -rf /var/lib/apt/lists/*
 
 # 安装 Leptonica（Tesseract 依赖的图像处理库）
@@ -66,9 +67,11 @@ RUN pip install grpcio-tools \
 # 运行 protoc 命令生成 gRPC 代码
 RUN python3 -m grpc_tools.protoc -Iproto --python_out=src --grpc_python_out=src proto/image_service.proto
 
-RUN chmod +x /app/entrypoint.sh
+RUN chmod +x /app/entrypoint.sh \
+    && chmod +x /app/supervisord.conf
 
 # 暴露端口
 EXPOSE 8080 50051
 
-ENTRYPOINT ["/app/entrypoint.sh"]
+#ENTRYPOINT ["/app/entrypoint.sh"]
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
