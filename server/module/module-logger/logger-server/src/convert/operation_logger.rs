@@ -19,6 +19,7 @@ pub fn model_to_response(model: OperationLogger) -> OperationLoggerResponse {
         user_agent: model.user_agent,
         department_code: model.department_code,
         department_id: model.department_id,
+        duration: model.duration,
         operator: model.operator,
         operator_nickname: model.operator_nickname,
         operate_time: model.operate_time,

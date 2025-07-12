@@ -42,6 +42,7 @@ export interface OperationLoggerResponse {
   operator: number; // 操作者id
   operator_nickname: string; // 操作者昵称
   operate_time: number; // 操作时间
+  duration: number; // 操作时长
 }
 
 export interface LoggerQueryCondition extends PaginatedRequest {

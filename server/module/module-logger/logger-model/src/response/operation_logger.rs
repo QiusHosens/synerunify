@@ -36,6 +36,8 @@ pub struct OperationLoggerResponse {
 
     pub department_id: Option<i64>, // 部门ID
 
+    pub duration: Option<i64>, // 操作时长
+
     pub operator: Option<i64>, // 操作者id
 
     pub operator_nickname: Option<String>, // 操作者昵称

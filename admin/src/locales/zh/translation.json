@@ -361,5 +361,17 @@
     "title.subtotal": "小计",
     "title.tax.rate": "税率",
     "title.remarks": "备注"
+  },
+  "system.audit.logger.title": {
+    "username": "用户账号",
+    "result": "登陆结果",
+    "user.ip": "用户IP",
+    "user.agent": "浏览器UA",
+    "department": "部门",
+    "operator": "操作者",
+    "operate.time": "操作时间",
+    "success": "操作结果",
+    "request.url": "请求地址",
+    "request.method": "请求方法"
   }
 }

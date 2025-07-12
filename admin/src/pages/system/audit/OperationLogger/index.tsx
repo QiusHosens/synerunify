@@ -2,37 +2,37 @@ import { Box } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useEffect, useMemo, useState } from 'react';
 import { DataGrid, GridCallbackDetails, GridColDef, GridFilterModel, GridSortModel } from '@mui/x-data-grid';
-import { pageErpInventoryRecord, ErpInventoryRecordQueryCondition, ErpInventoryRecordResponse } from '@/api';
+import { LoggerQueryCondition, OperationLoggerResponse, pageOperationLogger } from '@/api/logger';
 
 export default function ErpInventoryRecord() {
   const { t } = useTranslation();
 
   const [total, setTotal] = useState<number>(0);
-  const [condition, setCondition] = useState<ErpInventoryRecordQueryCondition>({
+  const [condition, setCondition] = useState<LoggerQueryCondition>({
     page: 1,
     size: 20,
   });
 
-  const [records, setRecords] = useState<Array<ErpInventoryRecordResponse>>([]);
+  const [records, setRecords] = useState<Array<OperationLoggerResponse>>([]);
   const [sortModel, setSortModel] = useState<GridSortModel>([]);
   const [filterModel, setFilterModel] = useState<GridFilterModel>();
 
   const columns: GridColDef[] = useMemo(
     () => [
-      { field: 'product_name', headerName: t("erp.common.title.product.name"), flex: 1, minWidth: 100 },
-      { field: 'warehouse_name', headerName: t("erp.common.title.warehouse.name"), flex: 1, minWidth: 100 },
-      { field: 'quantity', headerName: t("erp.detail.common.title.quantity"), flex: 1, minWidth: 100 },
-      { field: 'unit_name', headerName: t("page.erp.product.unit.title.name"), flex: 1, minWidth: 100 },
-      { field: 'record_type', headerName: t("page.erp.inventory.record.title.record.type"), flex: 1, minWidth: 100 },
-      { field: 'record_date', headerName: t("page.erp.inventory.record.title.record.date"), flex: 1, minWidth: 100 },
-      { field: 'remarks', headerName: t("common.title.remark"), flex: 1, minWidth: 100 },
-      { field: 'create_time', headerName: t("common.title.create.time"), flex: 1, minWidth: 180 },
+      { field: 'request_url', headerName: t("system.audit.logger.title.request.url"), flex: 1, minWidth: 100 },
+      { field: 'request_method', headerName: t("system.audit.logger.title.request.method"), flex: 1, minWidth: 100 },
+      { field: 'success', headerName: t("system.audit.logger.title.success"), flex: 1, minWidth: 100 },
+      { field: 'user_ip', headerName: t("system.audit.logger.title.user.ip"), flex: 1, minWidth: 100 },
+      { field: 'user_agent', headerName: t("system.audit.logger.title.user.agent"), flex: 1, minWidth: 100 },
+      { field: 'department_id', headerName: t("system.audit.logger.title.department"), flex: 1, minWidth: 100 },
+      { field: 'operator_nickname', headerName: t("system.audit.logger.title.operator"), flex: 1, minWidth: 100 },
+      { field: 'operate_time', headerName: t("system.audit.logger.title.operate.time"), flex: 1, minWidth: 180 },
     ],
     [t]
   );
 
-  const queryRecords = async (condition: ErpInventoryRecordQueryCondition) => {
-    const result = await pageErpInventoryRecord(condition);
+  const queryRecords = async (condition: LoggerQueryCondition) => {
+    const result = await pageOperationLogger(condition);
     setRecords(result.list);
     setTotal(result.total);
   };
@@ -44,14 +44,14 @@ export default function ErpInventoryRecord() {
   const handleSortModelChange = (model: GridSortModel, details: GridCallbackDetails) => {
     setSortModel(model);
     if (model.length > 0) {
-      setCondition((prev) => ({ ...prev, ...{ sort_field: model[0].field, sort: model[0].sort } } as ErpInventoryRecordQueryCondition));
+      setCondition((prev) => ({ ...prev, ...{ sort_field: model[0].field, sort: model[0].sort } } as LoggerQueryCondition));
     }
   };
 
   const handleFilterModelChange = (model: GridFilterModel, _details: GridCallbackDetails) => {
     setFilterModel(model);
     if (model.items.length > 0) {
-      setCondition((prev) => ({ ...prev, ...{ filter_field: model.items[0].field, filter_operator: model.items[0].operator, filter_value: model.items[0].value } } as ErpInventoryRecordQueryCondition));
+      setCondition((prev) => ({ ...prev, ...{ filter_field: model.items[0].field, filter_operator: model.items[0].operator, filter_value: model.items[0].value } } as LoggerQueryCondition));
     }
   }
 

@@ -20,14 +20,13 @@ export default function ErpInventoryRecord() {
 
   const columns: GridColDef[] = useMemo(
     () => [
-      { field: 'username', headerName: t("erp.common.title.product.name"), flex: 1, minWidth: 100 },
-      { field: 'result', headerName: t("erp.common.title.warehouse.name"), flex: 1, minWidth: 100 },
-      { field: 'user_ip', headerName: t("erp.detail.common.title.quantity"), flex: 1, minWidth: 100 },
-      { field: 'user_agent', headerName: t("page.erp.product.unit.title.name"), flex: 1, minWidth: 100 },
-      { field: 'department_id', headerName: t("page.erp.inventory.record.title.record.type"), flex: 1, minWidth: 100 },
-      { field: 'operator', headerName: t("page.erp.inventory.record.title.record.date"), flex: 1, minWidth: 100 },
-      { field: 'operator_nickname', headerName: t("common.title.remark"), flex: 1, minWidth: 100 },
-      { field: 'operate_time', headerName: t("common.title.create.time"), flex: 1, minWidth: 180 },
+      { field: 'username', headerName: t("system.audit.logger.title.username"), flex: 1, minWidth: 100 },
+      { field: 'result', headerName: t("system.audit.logger.title.result"), flex: 1, minWidth: 100 },
+      { field: 'user_ip', headerName: t("system.audit.logger.title.user.ip"), flex: 1, minWidth: 100 },
+      { field: 'user_agent', headerName: t("system.audit.logger.title.user.agent"), flex: 1, minWidth: 100 },
+      { field: 'department_id', headerName: t("system.audit.logger.title.department"), flex: 1, minWidth: 100 },
+      { field: 'operator_nickname', headerName: t("system.audit.logger.title.operator"), flex: 1, minWidth: 100 },
+      { field: 'operate_time', headerName: t("system.audit.logger.title.operate.time"), flex: 1, minWidth: 180 },
     ],
     [t]
   );
