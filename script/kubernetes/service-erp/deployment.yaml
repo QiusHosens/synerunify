@@ -50,11 +50,6 @@ spec:
                 configMapKeyRef:
                   name: synerunify-config
                   key: LOG_LEVEL
-            - name: SYSTEM_SERVER_PORT
-              valueFrom:
-                configMapKeyRef:
-                  name: synerunify-config
-                  key: SYSTEM_SERVER_PORT
           resources: {}
           volumeMounts:
             - name: host-time

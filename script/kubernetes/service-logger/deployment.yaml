@@ -55,11 +55,6 @@ spec:
                 configMapKeyRef:
                   name: synerunify-config
                   key: MONGO_URL
-            - name: SYSTEM_SERVER_PORT
-              valueFrom:
-                configMapKeyRef:
-                  name: synerunify-config
-                  key: SYSTEM_SERVER_PORT
           resources: {}
           volumeMounts:
             - name: host-time
