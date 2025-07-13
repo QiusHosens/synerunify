@@ -194,6 +194,7 @@ impl MongoManager {
         let mut results = Vec::new();
         while cursor.advance().await? {
             let doc = cursor.deserialize_current()?;
+            info!("mongo doc, {:#?}", doc);
             let item: T = from_document(doc)?;
             results.push(item);
         }

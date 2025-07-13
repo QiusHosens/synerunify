@@ -6,7 +6,7 @@ use crate::utils::type_utils;
 pub struct LoginLogger {
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub id: Option<String>, // id
+    pub id: Option<i64>, // id
 
     #[serde(skip_serializing_if = "Option::is_none")]
     pub trace_id: Option<String>, // 链路追踪编号
@@ -66,7 +66,7 @@ impl LoginLogger {
 pub struct OperationLogger {
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub id: Option<String>, // id
+    pub id: Option<i64>, // id
 
     #[serde(skip_serializing_if = "Option::is_none")]
     pub trace_id: Option<String>, // 链路追踪编号

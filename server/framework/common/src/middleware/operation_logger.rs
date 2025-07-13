@@ -12,6 +12,7 @@ use crate::base::response::CommonResultJsonString;
 use crate::context::context::{LoginUserContext, RequestContext};
 use crate::database::redis::RedisManager;
 use crate::database::redis_constants::REDIS_KEY_LOGGER_OPERATION_PREFIX;
+use crate::utils::snowflake_generator::SnowflakeGenerator;
 
 pub async fn operation_logger_handler(request: Request, next: Next) -> Result<Response, StatusCode> {
     let start = Instant::now();
@@ -55,7 +56,7 @@ async fn add_logger_redis(request_context: RequestContext, login_user: Option<Lo
     let department_code = login_user.clone().map(|u| u.department_code);
     let department_id = login_user.clone().map(|u| u.department_id);
     // TODO
-    let operation_logger = OperationLogger {
+    let mut operation_logger = OperationLogger {
         id: None,
         trace_id: None,
         user_id,
@@ -80,6 +81,12 @@ async fn add_logger_redis(request_context: RequestContext, login_user: Option<Lo
         deleted: Some(false),
         tenant_id
     };
+    // 生成id
+    let generator = SnowflakeGenerator::new_with_machine_id(1000).unwrap();
+    match generator.generate() {
+        Ok(id) => operation_logger.id = Some(id),
+        Err(e) => operation_logger.id = None
+    }
     // info!("operation logger: {:?}", operation_logger);
     RedisManager::push_list::<_, String>(REDIS_KEY_LOGGER_OPERATION_PREFIX, serde_json::to_string(&operation_logger)?)?;
     Ok(())

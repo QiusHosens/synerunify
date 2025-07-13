@@ -1,5 +1,6 @@
 use axum::{extract::{Query, State}, Extension};
 use macros::require_authorize;
+use tracing::error;
 use utoipa_axum::router::OpenApiRouter;
 use utoipa_axum::routes;
 use common::{base::response::CommonResult, context::context::LoginUserContext};
@@ -39,6 +40,9 @@ async fn page(
 ) -> CommonResult<PaginatedResponse<OperationLoggerResponse>> {
     match service::operation_logger::get_paginated(params, login_user).await {
         Ok(data) => {CommonResult::with_data(data)}
-        Err(e) => {CommonResult::with_err(&e.to_string())}
+        Err(e) => {
+            error!("page operation log error, {:#?}", e);
+            CommonResult::with_err(&e.to_string())
+        }
     }
 }

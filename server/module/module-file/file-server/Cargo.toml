@@ -16,7 +16,7 @@ axum = { version = "0.8.4", default-features = false, features = [
     "query",
     "json",
     "tokio",
-    "http1",
+    "http2",
     "multipart",
 ] }
 tower-http = { version = "0.6.4", default-features = false, features = [

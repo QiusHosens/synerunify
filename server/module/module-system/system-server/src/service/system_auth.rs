@@ -4,6 +4,7 @@ use crate::convert::system_data_scope_rule::create_request_to_model;
 use crate::grpc::client::captcha;
 use anyhow::{anyhow, Result};
 use common::constants::enums::DeviceType;
+use common::utils::snowflake_generator::SnowflakeGenerator;
 use sea_orm::{ActiveModelTrait, ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter, QuerySelect};
 use strum::IntoEnumIterator;
 use std::sync::Arc;
@@ -254,7 +255,7 @@ async fn add_login_logger_redis(request_context: RequestContext, user: SystemUse
     let department_code = user.department_code;
     let department_id = user.department_id;
 
-    let login_logger = LoginLogger {
+    let mut login_logger = LoginLogger {
         id: None,
         trace_id: None,
         user_id: Some(user_id),
@@ -271,6 +272,12 @@ async fn add_login_logger_redis(request_context: RequestContext, user: SystemUse
         deleted: Some(false),
         tenant_id: Some(tenant_id)
     };
+    // 生成id
+    let generator = SnowflakeGenerator::new_with_machine_id(1000).unwrap();
+    match generator.generate() {
+        Ok(id) => login_logger.id = Some(id),
+        Err(e) => login_logger.id = None
+    }
     info!("login logger: {:?}", login_logger);
     RedisManager::push_list::<_, String>(REDIS_KEY_LOGGER_LOGIN_PREFIX, serde_json::to_string(&login_logger)?)?;
     Ok(())
