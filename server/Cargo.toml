@@ -8,6 +8,7 @@ members = [
     "module/module-system/*",
     "module/module-erp/*",
     "module/module-third/module-captcha/captcha-grpc-rust",
+    "module/module-third/module-process/process-rust/*",
 ]
 resolver = "2"
 

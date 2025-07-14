@@ -12,6 +12,7 @@ pub struct Config {
     pub logger_server_port: u16, // 服务端口
     pub file_server_port: u16, // 服务端口
     pub erp_server_port: u16, // 服务端口
+    pub process_parse_service_port: u16, // 服务端口
     pub database_url: String, // 数据库地址
     pub api_prefix: String, // api前缀
     pub log_level: String, // 日志级别
@@ -52,6 +53,10 @@ impl Config {
                 .unwrap_or_else(|_| "8080".to_string())
                 .parse::<u16>()
                 .unwrap_or(8080);
+            let process_parse_service_port = env::var("PROCESS_PARSE_SERVICE_PORT")
+                .unwrap_or_else(|_| "8080".to_string())
+                .parse::<u16>()
+                .unwrap_or(8080);
             let database_url = env::var("DATABASE_URL")
                 .unwrap_or_else(|_| "mysql://synerunify:synerunify@127.0.0.1:3306/synerunify".to_string());
             let api_prefix = env::var("API_PREFIX")
@@ -81,6 +86,7 @@ impl Config {
                 logger_server_port,
                 file_server_port,
                 erp_server_port,
+                process_parse_service_port,
                 database_url,
                 api_prefix,
                 log_level,

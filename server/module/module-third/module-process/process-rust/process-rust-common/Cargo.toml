@@ -1,0 +1,39 @@
+[package]
+name = "process-rust-common"
+version = { workspace = true }
+edition = { workspace = true }
+rust-version = { workspace = true }
+
+[lints.rust]
+unused_imports = "allow"
+
+[dependencies]
+axum = { version = "0.8.4", default-features = false, features = [
+    "matched-path",
+    "form",
+    "tracing",
+    "query",
+    "json",
+    "tokio",
+    "http2",
+    "multipart",
+] }
+
+serde = { version = "1.0.219", default-features = false, features = ["derive"] }
+serde_json = "1.0.140"
+chrono = { version = "0.4.41" }       # 用于处理时间
+
+serde_with = { version = "3.12.0" }
+
+# sea-orm
+sea-orm = { version = "1.1.11", features = [ "sqlx-mysql", "runtime-tokio-native-tls", "macros", "debug-print", "with-chrono" ] }
+
+utoipa = { version = "5.3.1", features = ["axum_extras"] } # 添加 utoipa，支持 Axum
+utoipa-swagger-ui = { version = "9.0.0", features = ["axum"] } # 添加 Swagger UI 支持
+
+anyhow = "1.0.98" # 返回
+mime = "0.3.17"
+
+common = { path = "../../../../../framework/common" }
+process-rust-model = { path = "../process-rust-model" }
+file-common = { path = "../../../../module-file/file-common" }

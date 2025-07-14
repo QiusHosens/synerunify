@@ -198,3 +198,17 @@ pub async fn get_file_data(db: &DatabaseConnection, login_user: LoginUserContext
 
     Ok(Some(model_to_data_response(system_file, data)))
 }
+
+pub async fn get_file_data_by_path(minio: Option<MinioClient>, file_path: String) -> Result<Option<Vec<u8>>> {
+    if minio.is_none() {
+        return Err(anyhow!("客户端初始化失败"));
+    }
+    let minio = minio.unwrap();
+
+    let data = match minio.download_file(file_path).await {
+        std::result::Result::Ok(data) => data,
+        Err(_) => return Err(anyhow!("文件下载失败")),
+    };
+
+    Ok(Some(data))
+}
