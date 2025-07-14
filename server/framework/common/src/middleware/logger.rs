@@ -6,7 +6,8 @@ use axum::http::{Request, StatusCode};
 use axum::response::{IntoResponse, Response};
 use tracing::error;
 use tracing_appender::rolling;
-use tracing_subscriber::{fmt, EnvFilter};
+use tracing_subscriber::{fmt};
+// use tracing_subscriber::EnvFilter;
 use tracing_subscriber::prelude::*;
 use crate::config::config::Config;
 
@@ -24,7 +25,7 @@ pub async fn init_tracing() -> io::Result<()> {
     // let env_filter = EnvFilter::try_from_default_env()
     //     .unwrap_or_else(|_| EnvFilter::new("info"));
     let config = Config::load();
-    let env_filter = EnvFilter::new(format!("{}", config.log_level));
+    // let env_filter = EnvFilter::new(format!("{}", config.log_level));
 
     // 配置日志文件路径
     let log_dir = "logs";
@@ -55,7 +56,7 @@ pub async fn init_tracing() -> io::Result<()> {
     tracing_subscriber::registry()
         .with(file_layer)      // 输出到文件
         .with(stdout_layer)    // 输出到控制台
-        .with(env_filter)      // 应用环境变量过滤
+        // .with(env_filter)      // 应用环境变量过滤
         .init();
 
     // 设置全局 panic hook

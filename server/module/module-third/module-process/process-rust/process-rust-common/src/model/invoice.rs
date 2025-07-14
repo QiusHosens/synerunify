@@ -236,3 +236,23 @@ impl InternationalInvoice {
         self.hs_codes.insert(item_name, hs_code);
     }
 }
+
+/// 统一发票枚举
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub enum Invoice {
+    VatOrdinary(VatOrdinaryInvoice),
+    VatSpecial(VatSpecialInvoice),
+    Electronic(ElectronicInvoice),
+    International(InternationalInvoice),
+}
+
+/// 解析结果，包含发票、类型名称和泛型内容
+#[derive(Debug)]
+pub struct InvoiceParseResult<T>
+where
+    T: for<'de> Deserialize<'de> + std::fmt::Debug,
+{
+    pub invoice: Invoice,
+    pub invoice_type: String,
+    pub content: T,
+}
