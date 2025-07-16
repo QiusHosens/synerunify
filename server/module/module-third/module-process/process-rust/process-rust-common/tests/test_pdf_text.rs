@@ -1,12 +1,28 @@
 use anyhow::Ok;
 use pdf::content::{self, Op};
+use regex::Regex;
 
 #[tokio::test]
-async fn test_pdf_extract() {
+async fn test_pdf_extract() -> anyhow::Result<()> {
     // let path = "invoice_personal_normal.pdf"; // 替换成你的 PDF 文件路径
     let bytes = std::fs::read("tests/invoice_personal_normal.pdf").unwrap();
-    let out = pdf_extract::extract_text_from_mem(&bytes).unwrap();
-    println!("{}", out);
+    let text = pdf_extract::extract_text_from_mem(&bytes).unwrap();
+    println!("{}", text);
+    
+    // 提取信息
+    let invoice_info = extract_invoice_info(text.as_str())?;
+    
+    // 输出结果
+    println!("发票信息概览：");
+    println!("发票类型：{}", invoice_info.invoice_type);
+    println!("开票日期：{}", invoice_info.date);
+    println!("发票号码：{}", invoice_info.number);
+    println!("开票人：{}", invoice_info.issuer);
+    println!("订单号：{}", invoice_info.order);
+    println!("合计金额：¥{}", invoice_info.total);
+    println!("税额：¥{}", invoice_info.tax);
+    println!("价税合计：¥{}", invoice_info.total_with_tax);
+    Ok(())
 }
 
 // #[tokio::test]
@@ -247,7 +263,7 @@ async fn test_pdf() -> anyhow::Result<()> {
                     Op::TextDraw { text } => {
                         // text 是 PdfString 类型，它包含原始字节和可能的 UTF-8 缓存
                         // 打印原始字节对于调试很有用
-                        println!("  - 文本: 绘制文本: 原始字节={:?}", text.to_string());
+                        println!("  - 文本: 绘制文本: 原始字节={:?}", text.as_bytes());
                         // 警告: 直接打印 text.to_string() 或 text.to_str() 
                         // 不一定能得到正确的可读文本，因为它依赖于当前的字体编码。
                         // println!("    尝试解码: {:?}", text.to_string()); 
@@ -278,4 +294,90 @@ async fn test_pdf() -> anyhow::Result<()> {
     }
 
     Ok(())
+}
+
+
+fn extract_invoice_info(input: &str) -> anyhow::Result<InvoiceInfo> {
+    // 定义正则表达式来匹配所需字段
+    let type_re = Regex::new(r"电子发票\(普通发票\)")?;
+    let date_re = Regex::new(r"开票日期:\s*(\d{4}年\d{2}月\d{2}日)")?;
+    let number_re = Regex::new(r"发票号码:\s*(\d+)")?;
+    let issuer_re = Regex::new(r"开票人:\s*(\S+)")?;
+    let order_re = Regex::new(r"订单号:\s*(\d+)")?;
+    let total_re = Regex::new(r"合\s*计：¥(\d+\.\d{2})")?;
+    let tax_re = Regex::new(r"¥(\d+\.\d{2})\s*¥(\d+\.\d{2})\s*税")?;
+    let total_with_tax_re = Regex::new(r"价税合计.*¥(\d+\.\d{2})")?;
+
+    // 提取字段
+    let invoice_type = type_re
+        .captures(input)
+        .and_then(|cap| cap.get(0))
+        .map(|m| m.as_str().to_string())
+        .unwrap_or_default();
+
+    let date = date_re
+        .captures(input)
+        .and_then(|cap| cap.get(1))
+        .map(|m| m.as_str().to_string())
+        .unwrap_or_default();
+
+    let number = number_re
+        .captures(input)
+        .and_then(|cap| cap.get(1))
+        .map(|m| m.as_str().to_string())
+        .unwrap_or_default();
+
+    let issuer = issuer_re
+        .captures(input)
+        .and_then(|cap| cap.get(1))
+        .map(|m| m.as_str().to_string())
+        .unwrap_or_default();
+
+    let order = order_re
+        .captures(input)
+        .and_then(|cap| cap.get(1))
+        .map(|m| m.as_str().to_string())
+        .unwrap_or_default();
+
+    let total = total_re
+        .captures(input)
+        .and_then(|cap| cap.get(1))
+        .map(|m| m.as_str().to_string())
+        .unwrap_or_default();
+
+    let tax = tax_re
+        .captures(input)
+        .and_then(|cap| cap.get(2))
+        .map(|m| m.as_str().to_string())
+        .unwrap_or_default();
+
+    let total_with_tax = total_with_tax_re
+        .captures(input)
+        .and_then(|cap| cap.get(1))
+        .map(|m| m.as_str().to_string())
+        .unwrap_or_default();
+
+    Ok(InvoiceInfo {
+        invoice_type,
+        date,
+        number,
+        issuer,
+        order,
+        total,
+        tax,
+        total_with_tax,
+    })
+}
+
+// 定义结构体存储发票信息
+#[derive(Debug)]
+struct InvoiceInfo {
+    invoice_type: String,
+    date: String,
+    number: String,
+    issuer: String,
+    order: String,
+    total: String,
+    tax: String,
+    total_with_tax: String,
 }

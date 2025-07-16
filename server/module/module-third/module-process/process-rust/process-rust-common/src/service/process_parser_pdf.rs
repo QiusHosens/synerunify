@@ -13,38 +13,8 @@ use crate::model::invoice::{BaseInvoice, ElectronicInvoice, InternationalInvoice
 pub async fn parse_invoice<T>(pdf_data: Vec<u8>) -> Result<Option<InvoiceParseResult<T>>>
   where
     T: for<'de> Deserialize<'de> + std::fmt::Debug + Clone, {
-  // 读取 PDF 文件
-  // let pdf_data = fs::read(pdf_path)?;
-  // 解析 PDF
-  // let pdf = PdfFile::new(pdf_data)?;
-  
-  // 提取所有页面文本
-  let mut text = String::new();
-  // for page in pdf.pages() {
-  //     let page = page?;
-  //     if let Some(content) = page.contents.as_ref() {
-  //         for op in content.operations.iter() {
-  //             match op {
-  //                 pdf::content::Operation::ShowText { text, .. } => {
-  //                     let page_text = text
-  //                         .iter()
-  //                         .filter_map(|s| {
-  //                             if let pdf::primitive::Primitive::String(PdfString(s)) = s {
-  //                                 String::from_utf8(s.clone()).ok()
-  //                             } else {
-  //                                 None
-  //                             }
-  //                         })
-  //                         .collect::<Vec<_>>()
-  //                         .join(" ");
-  //                     text.push_str(&page_text);
-  //                     text.push('\n');
-  //                 }
-  //                 _ => {}
-  //             }
-  //         }
-  //     }
-  // }
+  let text = pdf_extract::extract_text_from_mem(&pdf_data).unwrap();
+  println!("pdf content, {}", text);
 
   // 正则表达式提取关键字段
   let invoice_number_re = Regex::new(r"Invoice Number:?\s*(\w+)")?;
