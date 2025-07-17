@@ -42,6 +42,8 @@ mime = "0.3.17"
 pdf = "0.9.0"
 regex = "1.11.1"
 pdf-extract = "0.9.0"
+lazy_static = "1"
+lopdf = "0.36.0"
 
 common = { path = "../../../../../framework/common" }
 process-rust-model = { path = "../process-rust-model" }

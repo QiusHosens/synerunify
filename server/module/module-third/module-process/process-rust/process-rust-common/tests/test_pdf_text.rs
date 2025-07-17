@@ -1,6 +1,7 @@
 use anyhow::Ok;
 use pdf::content::{self, Op};
 use regex::Regex;
+use lopdf::Document;
 
 #[tokio::test]
 async fn test_pdf_extract() -> anyhow::Result<()> {
@@ -22,6 +23,17 @@ async fn test_pdf_extract() -> anyhow::Result<()> {
     println!("合计金额：¥{}", invoice_info.total);
     println!("税额：¥{}", invoice_info.tax);
     println!("价税合计：¥{}", invoice_info.total_with_tax);
+    Ok(())
+}
+
+#[tokio::test]
+async fn test_lopdf() -> anyhow::Result<()> {
+    let file = "tests/invoice_personal_normal.pdf";
+    let doc = Document::load(file).expect("无法加载 PDF 文件");
+    let pages = doc.get_pages();
+    println!("总页数: {:?}", pages.len());
+    let text = doc.extract_text(&[1]).expect("提取文本失败");
+    println!("{:?}", text);
     Ok(())
 }
 
@@ -299,9 +311,9 @@ async fn test_pdf() -> anyhow::Result<()> {
 
 fn extract_invoice_info(input: &str) -> anyhow::Result<InvoiceInfo> {
     // 定义正则表达式来匹配所需字段
-    let type_re = Regex::new(r"电子发票\(普通发票\)")?;
-    let date_re = Regex::new(r"开票日期:\s*(\d{4}年\d{2}月\d{2}日)")?;
-    let number_re = Regex::new(r"发票号码:\s*(\d+)")?;
+    let type_re = Regex::new(r"电子发票\(([^\)]+)\)")?;
+    let date_re = Regex::new(r"\s*(\d{4}年\d{2}月\d{2}日)")?;
+    let number_re = Regex::new(r"\s*(\d{8}|\d{20})")?;
     let issuer_re = Regex::new(r"开票人:\s*(\S+)")?;
     let order_re = Regex::new(r"订单号:\s*(\d+)")?;
     let total_re = Regex::new(r"合\s*计：¥(\d+\.\d{2})")?;
