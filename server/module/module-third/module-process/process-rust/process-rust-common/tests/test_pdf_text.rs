@@ -34,6 +34,43 @@ async fn test_lopdf() -> anyhow::Result<()> {
     println!("总页数: {:?}", pages.len());
     let text = doc.extract_text(&[1]).expect("提取文本失败");
     println!("{:?}", text);
+    println!("{}", text);
+    let input = text.as_str();
+
+    let type_re = Regex::new(r"电子发票\(([^\)]+)\)")?;
+    let date_re = Regex::new(r"\s*(\d{4}年\d{2}月\d{2}日)")?;
+    let number_re = Regex::new(r"\s*(\d{18}|\d{20})")?;
+
+    // 提取字段
+    let invoice_type: String = type_re
+        .captures(input)
+        .and_then(|cap| cap.get(0))
+        .map(|m| m.as_str().to_string())
+        .unwrap_or_default();
+
+    let date = date_re
+        .captures(input)
+        .and_then(|cap| cap.get(1))
+        .map(|m| m.as_str().to_string())
+        .unwrap_or_default();
+
+    let number = number_re
+        .captures(input)
+        .and_then(|cap| cap.get(1))
+        .map(|m| m.as_str().to_string())
+        .unwrap_or_default();
+
+    // 输出结果
+    println!("发票信息概览：");
+    println!("发票类型：{}", invoice_type);
+    println!("开票日期：{}", date);
+    println!("发票号码：{}", number);
+    // println!("开票人：{}", invoice_info.issuer);
+    // println!("订单号：{}", invoice_info.order);
+    // println!("合计金额：¥{}", invoice_info.total);
+    // println!("税额：¥{}", invoice_info.tax);
+    // println!("价税合计：¥{}", invoice_info.total_with_tax);
+
     Ok(())
 }
 
