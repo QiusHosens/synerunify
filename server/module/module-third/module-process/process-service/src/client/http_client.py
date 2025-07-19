@@ -1,6 +1,6 @@
 import requests
 
-def upload_image(image_path, url='http://localhost:8080/process_image'):
+def upload_image(image_path, url='http://192.168.1.18:40050/process_image'):
     with open(image_path, 'rb') as image_file:
         files = {'image': image_file}
         response = requests.post(url, files=files)
