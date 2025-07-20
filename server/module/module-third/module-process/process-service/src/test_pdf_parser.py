@@ -8,6 +8,7 @@ def parse_invoice(text):
 
     # 使用正则表达式提取关键字段
     patterns = {
+        'invoice_title': r'\s*(.*?)\n',
         'invoice_number': r'发票号码:\s*(\d+)',
         'issue_date': r'开票日期:\s*(\d{4}年\d{2}月\d{2}日)',
         'buyer_name': r'购\s*买\s*方\s*信\s*息.*?名\s*称:\s*(.*?)\n',
@@ -47,7 +48,8 @@ def parse_invoice(text):
 
 
 if __name__ == "__main__":
-    text = extract_text("invoice_personal_normal.pdf")
+    text = extract_text("../samples/22_个人.pdf")
+    # text = extract_text("../samples/1_发票27.0元.pdf")
     print(text)
 
     # 解析发票
