@@ -58,6 +58,7 @@ if __name__ == "__main__":
             text = extract_text(file_path)
             # print(text)
             parse_invoice(text)
+
     # text = extract_text("../samples/22_个人.pdf")
     # # text = extract_text("../samples/1_发票27.0元.pdf")
     # print(text)
