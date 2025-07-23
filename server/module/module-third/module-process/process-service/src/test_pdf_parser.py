@@ -54,9 +54,9 @@ if __name__ == "__main__":
     for file_path in Path(directory).rglob("*.pdf"):
         if file_path.is_file():
             size = file_path.stat().st_size
-            # print(f"文件: {file_path}, 大小: {size} 字节")
+            print(f"文件: {file_path}, 大小: {size} 字节")
             text = extract_text(file_path)
-            # print(text)
+            print(text)
             parse_invoice(text)
 
     # text = extract_text("../samples/22_个人.pdf")
