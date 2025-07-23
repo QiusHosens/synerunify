@@ -2,6 +2,11 @@ import requests
 import os
 import fitz
 import io
+import jieba
+import re
+
+from src.entity.vat_invoice import VatInvoice
+
 
 def upload_image(image_path, url='http://39.102.215.118:40050/process_image'):
     with open(image_path, 'rb') as image_file:
@@ -28,9 +33,22 @@ def upload_image_byte(image_byte, url='http://39.102.215.118:40050/process_image
     print("Raw Response:", response.text)
 
     if response.status_code == 200:
-        print("识别结果:", response.json()['text'])
+        text = response.json()['text']
+        print("识别结果:", text)
+        return text
     else:
         print("错误:", response.json()['error'])
+        return None
+
+# 清理乱码，保留换行符
+def clean_text(text):
+    # 保留中文、字母、数字、常见标点和换行符
+    cleaned_text = re.sub(r'[^\w\s,.!?，。！？:：%（）()\-\n]', '', text)
+    # 去除多余的空白字符（保留换行符）
+    lines = cleaned_text.split('\n')
+    cleaned_lines = [' '.join(line.split()) for line in lines]
+    cleaned_text = '\n'.join(cleaned_lines)
+    return cleaned_text
 
 if __name__ == '__main__':
     input_dir = '../../samples/'
@@ -51,7 +69,17 @@ if __name__ == '__main__':
             # 将 pixmap 转为 BinaryIO
             img_byte_arr = io.BytesIO(pix.tobytes("png"))
             img_byte_arr.seek(0)
-            upload_image_byte(img_byte_arr)
+            result = upload_image_byte(img_byte_arr)
+            clean_text = clean_text(result)
+            print("clean text:", clean_text)
+            vat_invoice = VatInvoice(clean_text)
+            print(f"invoice: {vat_invoice.to_dict()}")
+
+            # result = clean_text.replace(' ', '')
+            # print("result:", result)
+            # seg_list = jieba.cut(result, cut_all=False)
+            # print("精确模式:", "/".join(seg_list))
+
             # binary_images.append(img_byte_arr)
 
             # 保存图片
