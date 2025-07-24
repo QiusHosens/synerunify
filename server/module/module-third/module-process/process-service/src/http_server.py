@@ -27,9 +27,11 @@ def process_image():
         return jsonify({'error': 'No image provided'}), 400
 
     file = request.files['image']
+    config = request.form.get('config', '--oem 3 --psm 6')
+
     try:
         img = Image.open(file.stream)
-        text = pytesseract.image_to_string(img, lang='eng+chi_sim', config='--oem 3 --psm 6')
+        text = pytesseract.image_to_string(img, lang='eng+chi_sim', config=config)
         return jsonify({'text': text})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
@@ -41,6 +43,7 @@ def process_image_path():
         return jsonify({'error': 'No file_path provided'}), 400
 
     file_path = request.json['file_path']
+    config = request.form.get('config', '--oem 3 --psm 6')
 
     try:
         # 从 MinIO 获取文件
@@ -65,12 +68,12 @@ def process_image_path():
                 img_data = pix.tobytes("png")
                 img = Image.open(io.BytesIO(img_data))
                 # OCR 识别，累加每页的文本
-                text += pytesseract.image_to_string(img, lang='eng+chi_sim', config='--oem 3 --psm 6') + "\n"
+                text += pytesseract.image_to_string(img, lang='eng+chi_sim', config=config) + "\n"
             doc.close()
         elif file_extension in ['.png', '.jpg', '.jpeg', '.bmp', '.tiff']:
             # 直接处理图片
             img = Image.open(file_stream)
-            text = pytesseract.image_to_string(img, lang='eng+chi_sim', config='--oem 3 --psm 6')
+            text = pytesseract.image_to_string(img, lang='eng+chi_sim', config=config)
         else:
             return jsonify({'error': 'Unsupported file type'}), 400
 

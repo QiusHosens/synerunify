@@ -105,11 +105,6 @@ class VatInvoice:
                 print(f"Date parsing error: {issue_date_str}")
         self.issue_date = issue_date
 
-        # buyer = PartyInfo(buyer_name, buyer_tax_id)
-        # seller = PartyInfo(seller_name, seller_tax_id)
-        #
-        # super().__init__(invoice_id, issue_date, buyer, seller)
-
         # Extract item details
         item_name = pattern.match_by_pattern(text, pattern.pattern_item_name)
         item_model = pattern.match_by_pattern(text, pattern.pattern_item_model)
