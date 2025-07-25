@@ -2,7 +2,6 @@ import requests
 import os
 import fitz
 import io
-import jieba
 import re
 
 from src.entity.vat_invoice import VatInvoice
