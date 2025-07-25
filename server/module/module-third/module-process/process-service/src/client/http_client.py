@@ -8,7 +8,7 @@ import re
 from src.entity.vat_invoice import VatInvoice
 
 
-def upload_image(image_path, url='http://39.102.215.118:40050/process_image'):
+def upload_image(image_path, url='http://www.synerunify.com:40050/process_image'):
     with open(image_path, 'rb') as image_file:
         files = {'image': image_file}
         response = requests.post(url, files=files)
@@ -23,9 +23,12 @@ def upload_image(image_path, url='http://39.102.215.118:40050/process_image'):
     else:
         print("错误:", response.json()['error'])
 
-def upload_image_byte(image_byte, url='http://39.102.215.118:40050/process_image'):
+def upload_image_byte(image_byte, url='http://www.synerunify.com:40050/process_image'):
     files = {'image': image_byte}
-    response = requests.post(url, files=files)
+    custom_config = '--oem 3 --psm 6'
+
+    data = {'config': custom_config}
+    response = requests.post(url, files=files, data=data)
 
     # Print raw response for debugging
     print("Status Code:", response.status_code)
