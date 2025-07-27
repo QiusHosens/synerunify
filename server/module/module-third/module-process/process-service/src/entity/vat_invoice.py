@@ -16,7 +16,7 @@ class InvoicePattern:
         self.pattern_check_code = r'校\s*验\s*码\s*[:：]\s*([\d\s]+)'
 
         # 名称
-        self.pattern_name = r'名\s*称\s*[:：]\s*(.*?)(?=\s*\d*(?:\n|$))' # r'名\s*称\s*[:：]\s*(.*?)(?:\n|$)'
+        self.pattern_name = r'名\s*称\s*[:：]\s*(.*?)(?=\s*\d*(?:\n|$))'  # r'名\s*称\s*[:：]\s*(.*?)(?:\n|$)'
         # 纳税人识别号
         self.pattern_tax_id = r'纳\s*税\s*人\s*识\s*别\s*号\s*[:：]\s*([A-Za-z0-9]+)'
         # 地址电话
@@ -34,7 +34,7 @@ class InvoicePattern:
         self.pattern_item_tax_amount = r'税\s*额\s*([\d.]+)'
         self.pattern_total_amount = r'¥([\d.]+)'
         self.pattern_total_amount_text = r'价税合计\(大写\)\s*(.*?)(?:\n|$)'
-        self.pattern_issuer = r'开票人[:：]\s*(.*?)(?:\n|$)'
+        self.pattern_issuer = r'开\s*票\s*人\s*[:：]\s*(.*?)(?:\n|$)'
 
     def match_by_pattern(self, text: str, pattern: str) -> LiteralString | None:
         try:
@@ -65,11 +65,9 @@ class InvoiceItem:
         self.tax_rate = float(tax_rate.strip('%'))/100 if tax_rate else 0.0
         self.tax_amount = float(tax_amount) if tax_amount else 0.0
 
-    def get_total(self) -> float:
-        return self.quantity * self.unit_price
-
 class VatInvoice:
     def __init__(self, text: str):
+        global quantity
         pattern = InvoicePattern()
 
         code = pattern.match_by_pattern(text, pattern.pattern_code)
@@ -105,26 +103,76 @@ class VatInvoice:
                 print(f"Date parsing error: {issue_date_str}")
         self.issue_date = issue_date
 
-        # Extract item details
-        item_name = pattern.match_by_pattern(text, pattern.pattern_item_name)
-        item_model = pattern.match_by_pattern(text, pattern.pattern_item_model)
-        item_unit = pattern.match_by_pattern(text, pattern.pattern_item_unit)
-        item_quantity = pattern.match_by_pattern(text, pattern.pattern_item_quantity)
-        item_unit_price = pattern.match_by_pattern(text, pattern.pattern_item_unit_price)
-        item_amount = pattern.match_by_pattern(text, pattern.pattern_item_amount)
-        item_tax_rate = pattern.match_by_pattern(text, pattern.pattern_item_tax_rate)
-        item_tax_amount = pattern.match_by_pattern(text, pattern.pattern_item_tax_amount)
-
-        # if item_name and item_quantity and item_unit_price:
-        #     item = InvoiceItem(
-        #         item_name, item_model, item_unit, item_quantity,
-        #         item_unit_price, item_amount, item_tax_rate, item_tax_amount
-        #     )
-        #     self.add_item(item)
-
         self.total_amount = pattern.match_by_pattern(text, pattern.pattern_total_amount)
         self.total_amount_text = pattern.match_by_pattern(text, pattern.pattern_total_amount_text)
         self.issuer = pattern.match_by_pattern(text, pattern.pattern_issuer)
+
+        pattern_content = r'税\s*额\s*\n([\s\S]*?)\n\s*合\s+计'
+        match_content = re.search(pattern_content, text, re.MULTILINE)
+        if not match_content:
+            return
+
+        content = match_content.group(1).strip()
+        print("content:", content)
+        self.items = []
+        for line in content.split('\n'):
+            line = line.strip()
+            print("line:", line)
+            if not line:
+                return
+            # 按空格分割
+            parts = line.split()
+
+            # 从后向前匹配,遇到非数字部分退出
+            result = []
+            original_index = 0
+            for i, part in enumerate(reversed(parts)):
+                if part.replace('.', '').replace('-', '').isdigit() or part.endswith('%'):
+                    result.append(part)
+                else:
+                    original_index = len(parts) - 1 - i
+                    break
+
+            # 连接结果
+            name = ''.join(parts[0:original_index+1])
+            print("name:", name)
+            print("others:", ','.join(result))
+            model = ''
+            unit = ''
+            quantity = None
+            unit_price = None
+            amount = None
+            tax_rate = None
+            tax_amount = None
+            if len(result) > 0:
+                tax_amount = result.pop(0)
+            if len(result) > 0:
+                tax_rate = result.pop(0)
+            if len(result) > 0:
+                amount = result.pop(0)
+            if len(result) > 0:
+                unit_price = result.pop(0)
+            if len(result) > 0:
+                quantity = result.pop(0)
+            if len(result) > 0:
+                unit = result.pop(0)
+            if len(result) > 0:
+                model = result.pop(0)
+
+            item = InvoiceItem(name, model, unit, quantity, unit_price, amount, tax_rate, tax_amount)
+            self.items.append(item)
+
+    def add_item(self, item: InvoiceItem):
+        self.items.append(item)
+
+    def get_total_tax_amount(self) -> float:
+        return sum(item.tax_amount for item in self.items)
+
+    def get_total_amount(self) -> float:
+        return sum(item.amount for item in self.items)
+
+    def get_total(self) -> float:
+        return self.get_total_amount() + self.get_total_tax_amount()
 
     def to_dict(self) -> Dict:
         return {
@@ -135,21 +183,20 @@ class VatInvoice:
             "issue_date": self.issue_date.strftime("%Y-%m-%d"),
             "buyer": {"name": self.buyer.name, "tax_id": self.buyer.tax_id, "address_phone": self.buyer.address_phone, "bank_account": self.buyer.bank_account} if self.buyer else {},
             "seller": {"name": self.seller.name, "tax_id": self.seller.tax_id, "address_phone": self.seller.address_phone, "bank_account": self.seller.bank_account} if self.seller else {},
-            # "items": [
-            #     {
-            #         "name": item.name,
-            #         "model": item.model,
-            #         "unit": item.unit,
-            #         "quantity": item.quantity,
-            #         "unit_price": item.unit_price,
-            #         "amount": item.amount,
-            #         "tax_rate": item.tax_rate,
-            #         "tax_amount": item.tax_amount,
-            #         "total": item.get_total()
-            #     } for item in self.items
-            # ],
-            # "subtotal": self.get_subtotal(),
-            # "tax": self.get_tax(),
-            # "total": self.get_total(),
+            "items": [
+                {
+                    "name": item.name,
+                    "model": item.model,
+                    "unit": item.unit,
+                    "quantity": item.quantity,
+                    "unit_price": item.unit_price,
+                    "amount": item.amount,
+                    "tax_rate": item.tax_rate,
+                    "tax_amount": item.tax_amount,
+                } for item in self.items
+            ],
+            "total_amount": self.get_total_amount(),
+            "total_tax_amount": self.get_total_tax_amount(),
+            "total": self.get_total(),
             "issuer": self.issuer
         }

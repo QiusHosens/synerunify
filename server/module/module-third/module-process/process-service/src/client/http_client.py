@@ -24,7 +24,8 @@ def upload_image(image_path, url='http://www.synerunify.com:40050/process_image'
 
 def upload_image_byte(image_byte, url='http://www.synerunify.com:40050/process_image'):
     files = {'image': image_byte}
-    custom_config = '--oem 3 --psm 6'
+    # custom_config = '--oem 3 --psm 6'
+    custom_config = '--oem 1 --psm 6'
 
     data = {'config': custom_config}
     response = requests.post(url, files=files, data=data)
