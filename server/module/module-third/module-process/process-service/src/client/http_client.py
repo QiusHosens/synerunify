@@ -55,13 +55,8 @@ def clean_text(text):
 
 if __name__ == '__main__':
     input_dir = '../../samples/'
-    file_name = '1_发票27.0元.pdf'
+    file_name = '2_发票17.34元.pdf'
     pdf_path = input_dir + file_name
-    output_dir = input_dir + 'temp'
-
-    # 创建输出目录（如果不存在）
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
 
     try:
         doc = fitz.open(pdf_path)
