@@ -53,11 +53,7 @@ def clean_text(text):
     cleaned_text = '\n'.join(cleaned_lines)
     return cleaned_text
 
-if __name__ == '__main__':
-    input_dir = '../../samples/'
-    file_name = '2_发票17.34元.pdf'
-    pdf_path = input_dir + file_name
-
+def process_pdf(pdf_path: str):
     try:
         doc = fitz.open(pdf_path)
         for page_num in range(len(doc)):
@@ -88,4 +84,23 @@ if __name__ == '__main__':
     except Exception as e:
         print(f"Error during conversion: {e}")
 
-    # upload_image(os.path.join(output_dir, '1_发票27.0元.pdf_1.png'))
+def process_image(image_path):
+    try:
+        result = upload_image(image_path)
+        # clean_text = clean_text(result)
+        # print("clean text:", clean_text)
+        # vat_invoice = VatInvoice(clean_text)
+        # print(f"invoice: {vat_invoice.to_dict()}")
+    except Exception as e:
+        print(f"Error during conversion: {e}")
+
+if __name__ == '__main__':
+    input_dir = '../../samples/'
+    # file_name = '2_发票17.34元.pdf'
+    file_name = 'top.png'
+
+    file_path = input_dir + file_name
+
+    # process_pdf(file_path)
+    process_image(file_path)
+
