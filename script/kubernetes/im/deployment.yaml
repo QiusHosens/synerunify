@@ -1,0 +1,185 @@
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: wukongim
+  namespace: synerunify
+  labels:
+    app: wukongim
+  annotations:
+    deployment.kubernetes.io/revision: '2'
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: wukongim
+  template:
+    metadata:
+      labels:
+        app: wukongim
+    spec:
+      volumes:
+        - name: host-time
+          hostPath:
+            path: /etc/localtime
+            type: ''
+        - name: data
+          hostPath:
+            path: /data/volume/wukongim/data
+            type: ''
+      containers:
+        - name: wukongim
+          image: 'wukongim/wukongim:v2'
+          ports:
+            - name: ws
+              containerPort: 5200
+              protocol: TCP
+            - name: tcp
+              containerPort: 5100
+              protocol: TCP
+            - name: monitor
+              containerPort: 5300
+              protocol: TCP
+            - name: api
+              containerPort: 5001
+              protocol: TCP
+            - name: demo
+              containerPort: 5172
+              protocol: TCP
+          env:
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: WK_CLUSTER_SERVERADDR_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: POD_IP
+              value: "$(WK_CLUSTER_SERVERADDR_IP)"
+            - name: WK_CLUSTER_SERVERADDR
+              value: "$(WK_CLUSTER_SERVERADDR_IP):11110"
+            - name: WK_EXTERNAL_TCPADDR
+              valueFrom:
+                configMapKeyRef:
+                  name: synerunify-config
+                  key: WK_EXTERNAL_TCPADDR
+            - name: WK_EXTERNAL_WSADDR
+              valueFrom:
+                configMapKeyRef:
+                  name: synerunify-config
+                  key: WK_EXTERNAL_WSADDR
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+          command:
+            - /bin/sh
+            - -c
+            - |
+              echo "当前命名空间: ${POD_NAMESPACE}"
+              echo "当前节点名称: ${POD_NAME}+1"
+              NODE_ID=$(echo "${POD_NAME##*-}")
+              NEW_NODE_ID=$((NODE_ID + 1))
+              export WK_CLUSTER_NODEID="${NEW_NODE_ID}"
+              echo "Node ID: ${WK_CLUSTER_NODEID}"
+              export WK_CLUSTER_APIURL="http://${WK_CLUSTER_SERVERADDR_IP}:5001"
+              echo "WK_CLUSTER_APIURL: ${WK_CLUSTER_APIURL}"
+              echo "WK_EXTERNAL_TCPADDR: ${WK_EXTERNAL_TCPADDR}"
+              echo "WK_EXTERNAL_WSADDR: ${WK_EXTERNAL_WSADDR}"
+              
+              if [ "$NEW_NODE_ID" -gt 1 ]; then
+                  export WK_CLUSTER_SEED="1@helm-wukongim-0.helm-wukongim-headless.${POD_NAMESPACE}.svc.cluster.local:11110"
+                  echo "当前种子节点: ${WK_CLUSTER_SEED}"
+              else
+                  echo "该节点为根节点，无需设置种子节点"
+              fi
+              
+              exec /home/app --config=/root/wukongim/wk.yaml --ignoreMissingConfig=true
+          resources: {}
+          volumeMounts:
+            - name: host-time
+              readOnly: true
+              mountPath: /etc/localtime
+            - name: data
+              mountPath: /home/wukongimdata
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          imagePullPolicy: IfNotPresent
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      serviceAccountName: default
+      securityContext: {}
+      schedulerName: default-scheduler
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 25%
+      maxSurge: 25%
+  revisionHistoryLimit: 10
+  progressDeadlineSeconds: 600
+...
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: wukongim-headless
+  namespace: synerunify
+  labels:
+    app: wukongim
+spec:
+  ports:
+    - name: nc
+      port: 11110
+      targetPort: 11110
+  publishNotReadyAddresses: true
+  selector:
+    app: wukongim
+  clusterIP: None
+...
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: wukongim
+  namespace: synerunify
+  labels:
+    app: wukongim
+spec:
+  ports:
+    - name: ws
+      protocol: TCP
+      port: 5200
+      targetPort: 5200
+      nodePort: 5200
+    - name: tcp
+      protocol: TCP
+      port: 5100
+      targetPort: 5100
+      nodePort: 5100
+    - name: monitor
+      protocol: TCP
+      port: 5300
+      targetPort: 5300
+      nodePort: 5300
+    - name: api
+      protocol: TCP
+      port: 5001
+      targetPort: 5001
+      nodePort: 5001
+    - name: demo
+      protocol: TCP
+      port: 5172
+      targetPort: 5172
+      nodePort: 5172
+  selector:
+    app: wukongim
+  type: NodePort
+  sessionAffinity: None
+  externalTrafficPolicy: Cluster
+  ipFamilies:
+    - IPv4
+  ipFamilyPolicy: SingleStack
+  internalTrafficPolicy: Cluster
+...

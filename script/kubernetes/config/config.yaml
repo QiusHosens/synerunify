@@ -12,3 +12,5 @@ data:
   MINIO_SECRET_KEY: 'synerunify'
   LOG_LEVEL: 'info'
   GRPC_CAPTCHA_SERVICE_URL: 'http://service-captcha.synerunify.svc:50051'
+  WK_EXTERNAL_TCPADDR: 'ws://www.synerunify.com:5100'
+  WK_EXTERNAL_WSADDR: 'ws://www.synerunify.com:5200'
