@@ -7,6 +7,7 @@ import { HomeMenuResponse } from '@/api';
 import Language from "./Language";
 import Notification from "./Notification";
 import Profile from "./Profile";
+import Contact from "./Contact";
 
 interface HeaderProps {
   sx?: SxProps<Theme>;
@@ -47,6 +48,7 @@ export default function Header({ sx, height, routeTree }: HeaderProps) {
           {/* <Search /> */}
           <Language />
           <Notification />
+          <Contact />
           <SettingsButton />
           <Profile />
         </Stack>

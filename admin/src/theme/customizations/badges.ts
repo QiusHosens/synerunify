@@ -4,6 +4,7 @@ export const badgesCustomizations: Components<Theme> = {
   MuiBadge: {
     styleOverrides: {
       root: ({ theme }) => ({
+        color: '#637381',
         "&.customQuestionBadge": {
           //   display: "flex",
           //   alignItems: "center",
