@@ -197,6 +197,7 @@
     "error.warehouse.only.one": "仓库数量为1,无需调拨"
   },
   "page.dict": {
+    "title.type": "类型",
     "title.type.name": "类型名称",
     "title.type.status": "字典类型状态",
     "title.label": "标签",

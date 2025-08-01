@@ -3,6 +3,7 @@ import { useDictStore } from '@/store';
 import { InputLabel, MenuItem, Select, SelectChangeEvent } from '@mui/material';
 import { SxProps, Theme } from '@mui/material/styles';
 import { ReactNode, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface DictSelectProps {
     name?: string;
@@ -23,6 +24,7 @@ const DictSelect: React.FC<DictSelectProps> = ({
     onChange,
     sx
 }) => {
+    const { t } = useTranslation();
     const { dictOfType } = useDictStore();
     const [dicts, setDicts] = useState<SystemDictDataResponse[]>([]);
 
@@ -44,7 +46,7 @@ const DictSelect: React.FC<DictSelectProps> = ({
                 onChange={onChange}
                 label={label}
             >
-                {hasEmpty && <MenuItem value="">请选择</MenuItem>}
+                {hasEmpty && <MenuItem value="">{t('global.error.select.please')}</MenuItem>}
                 {dicts.map(item => (
                     <MenuItem key={item.id} value={item.value}>{item.label}</MenuItem>
                 ))}

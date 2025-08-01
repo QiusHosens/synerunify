@@ -194,7 +194,7 @@ export default function DictManage() {
         <Box>
           {/* <SvgIcon component={ReactIcon} /> */}
           <FormControl sx={{ minWidth: 120, '& .MuiSelect-root': { width: '200px' } }}>
-            <InputLabel size="small" id="dict-type-select-label">{t("page.dict.title.type")}</InputLabel>
+            <InputLabel size="small" id="dict-type-select-label">{t('global.error.select.please') + t("page.dict.title.type")}</InputLabel>
             <Select
               size="small"
               labelId="dict-type-select-label"
@@ -202,9 +202,9 @@ export default function DictManage() {
               value={condition.dict_type || ''}
               // onChange={handleInputChange}
               onChange={event => handleInputChange(event as any)}
-              label={t("page.dict.title.type")}
+              label={t('global.error.select.please') + t('page.dict.title.type')}
             >
-              <MenuItem value="">请选择</MenuItem>
+              <MenuItem value="">{t('global.error.select.please')}</MenuItem>
               {types.map(item => (
                 <MenuItem key={item.id} value={item.type}>{item.name}</MenuItem>
               ))}
