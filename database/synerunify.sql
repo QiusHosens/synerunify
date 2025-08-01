@@ -11,7 +11,7 @@
  Target Server Version : 80200 (8.2.0)
  File Encoding         : 65001
 
- Date: 30/07/2025 23:49:58
+ Date: 01/08/2025 21:48:58
 */
 
 SET NAMES utf8mb4;
@@ -1201,14 +1201,14 @@ CREATE TABLE `mall_product_brand`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '商品品牌' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '商品品牌' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_product_brand
 -- ----------------------------
-INSERT INTO `mall_product_brand` VALUES (1, '苹果', 'http://127.0.0.1:48080/admin-api/infra/file/4/get/047b5ef63a1b72ff5bfff423e4973c6a4821c8bf56dac6b0aa5972f50c2645d4.png', 1, '是上市', 0, '1', '2022-07-30 22:12:18', '1', '2023-08-31 14:26:05', b'0', 1);
-INSERT INTO `mall_product_brand` VALUES (2, '华为', 'http://127.0.0.1:48080/admin-api/infra/file/4/get/6a14445c06448a4133b74d5e67bbe32dfc4d0022cbef44e3d0669407bf18db15.png', 0, '遥遥领先', 0, '1', '2023-08-31 14:26:00', '1', '2023-08-31 14:26:00', b'0', 1);
-INSERT INTO `mall_product_brand` VALUES (3, '索尼', 'http://127.0.0.1:48080/admin-api/infra/file/4/get/f5b7a536306cd1180a42a2211a8212dc23de6b949d30c30d036caa063042f928.png', 2, '<p>xxx</p>', 0, '1', '2023-08-31 14:39:58', '1', '2024-07-21 10:23:16', b'0', 1);
+INSERT INTO `mall_product_brand` VALUES (1, '苹果', 'http://127.0.0.1:48080/admin-api/infra/file/4/get/047b5ef63a1b72ff5bfff423e4973c6a4821c8bf56dac6b0aa5972f50c2645d4.png', 1, '是上市', 0, 1, '2022-07-30 22:12:18', 1, '2023-08-31 14:26:05', b'0', 1);
+INSERT INTO `mall_product_brand` VALUES (2, '华为', 'http://127.0.0.1:48080/admin-api/infra/file/4/get/6a14445c06448a4133b74d5e67bbe32dfc4d0022cbef44e3d0669407bf18db15.png', 0, '遥遥领先', 0, 1, '2023-08-31 14:26:00', 1, '2023-08-31 14:26:00', b'0', 1);
+INSERT INTO `mall_product_brand` VALUES (3, '索尼', 'http://127.0.0.1:48080/admin-api/infra/file/4/get/f5b7a536306cd1180a42a2211a8212dc23de6b949d30c30d036caa063042f928.png', 2, '<p>xxx</p>', 0, 1, '2023-08-31 14:39:58', 1, '2024-07-21 10:23:16', b'0', 1);
 
 -- ----------------------------
 -- Table structure for mall_product_browse_history
@@ -1228,7 +1228,7 @@ CREATE TABLE `mall_product_browse_history`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `idx_spuId`(`spu_id` ASC) USING BTREE,
   INDEX `idx_userId`(`user_id` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1743 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '商品浏览记录表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1743 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '商品浏览记录表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_product_browse_history
@@ -1312,22 +1312,22 @@ INSERT INTO `mall_product_browse_history` VALUES (329, 249, 633, b'0', NULL, '20
 INSERT INTO `mall_product_browse_history` VALUES (330, 249, 633, b'0', NULL, '2025-03-16 10:21:57', NULL, '2025-03-16 10:21:57', b'1', 1);
 INSERT INTO `mall_product_browse_history` VALUES (331, 249, 633, b'0', NULL, '2025-03-16 10:21:59', NULL, '2025-03-16 10:21:59', b'1', 1);
 INSERT INTO `mall_product_browse_history` VALUES (332, 249, 633, b'0', NULL, '2025-03-16 10:22:39', NULL, '2025-03-16 10:22:39', b'1', 1);
-INSERT INTO `mall_product_browse_history` VALUES (333, 249, 633, b'0', NULL, '2025-03-16 10:22:50', '249', '2025-03-16 10:22:50', b'1', 1);
-INSERT INTO `mall_product_browse_history` VALUES (334, 249, 633, b'0', '249', '2025-03-16 10:43:11', '249', '2025-03-16 10:43:11', b'1', 1);
-INSERT INTO `mall_product_browse_history` VALUES (335, 249, 633, b'0', '249', '2025-03-16 10:43:14', '249', '2025-03-16 10:43:14', b'1', 1);
-INSERT INTO `mall_product_browse_history` VALUES (336, 249, 633, b'0', '249', '2025-03-16 10:44:08', '249', '2025-03-16 10:44:08', b'1', 1);
-INSERT INTO `mall_product_browse_history` VALUES (337, 249, 633, b'0', '249', '2025-03-16 10:44:10', '249', '2025-03-16 10:44:10', b'1', 1);
-INSERT INTO `mall_product_browse_history` VALUES (338, 249, 633, b'0', '249', '2025-03-16 10:44:11', '249', '2025-03-16 10:44:11', b'1', 1);
-INSERT INTO `mall_product_browse_history` VALUES (339, 249, 633, b'0', '249', '2025-03-16 10:44:15', '249', '2025-03-16 10:44:15', b'1', 1);
-INSERT INTO `mall_product_browse_history` VALUES (340, 249, 633, b'0', '249', '2025-03-16 10:44:16', '249', '2025-03-16 10:44:16', b'1', 1);
-INSERT INTO `mall_product_browse_history` VALUES (341, 249, 633, b'0', '249', '2025-03-16 10:44:18', '249', '2025-03-16 10:44:18', b'1', 1);
-INSERT INTO `mall_product_browse_history` VALUES (342, 249, 633, b'0', '249', '2025-03-16 10:44:28', '249', '2025-03-16 10:44:28', b'1', 1);
-INSERT INTO `mall_product_browse_history` VALUES (343, 249, 633, b'0', '249', '2025-03-16 10:50:16', '249', '2025-03-16 10:50:16', b'1', 1);
-INSERT INTO `mall_product_browse_history` VALUES (344, 249, 633, b'0', '249', '2025-03-16 10:50:17', '249', '2025-03-16 10:50:17', b'1', 1);
-INSERT INTO `mall_product_browse_history` VALUES (345, 249, 633, b'0', '249', '2025-03-16 10:51:51', '249', '2025-03-16 10:51:51', b'1', 1);
-INSERT INTO `mall_product_browse_history` VALUES (346, 249, 633, b'0', '249', '2025-03-16 10:51:53', '249', '2025-03-16 10:51:53', b'1', 1);
-INSERT INTO `mall_product_browse_history` VALUES (347, 249, 633, b'0', '249', '2025-03-16 10:52:18', '249', '2025-03-16 10:52:18', b'1', 1);
-INSERT INTO `mall_product_browse_history` VALUES (348, 249, 633, b'0', '249', '2025-03-16 10:52:22', '249', '2025-03-16 10:52:22', b'1', 1);
+INSERT INTO `mall_product_browse_history` VALUES (333, 249, 633, b'0', NULL, '2025-03-16 10:22:50', 249, '2025-03-16 10:22:50', b'1', 1);
+INSERT INTO `mall_product_browse_history` VALUES (334, 249, 633, b'0', 249, '2025-03-16 10:43:11', 249, '2025-03-16 10:43:11', b'1', 1);
+INSERT INTO `mall_product_browse_history` VALUES (335, 249, 633, b'0', 249, '2025-03-16 10:43:14', 249, '2025-03-16 10:43:14', b'1', 1);
+INSERT INTO `mall_product_browse_history` VALUES (336, 249, 633, b'0', 249, '2025-03-16 10:44:08', 249, '2025-03-16 10:44:08', b'1', 1);
+INSERT INTO `mall_product_browse_history` VALUES (337, 249, 633, b'0', 249, '2025-03-16 10:44:10', 249, '2025-03-16 10:44:10', b'1', 1);
+INSERT INTO `mall_product_browse_history` VALUES (338, 249, 633, b'0', 249, '2025-03-16 10:44:11', 249, '2025-03-16 10:44:11', b'1', 1);
+INSERT INTO `mall_product_browse_history` VALUES (339, 249, 633, b'0', 249, '2025-03-16 10:44:15', 249, '2025-03-16 10:44:15', b'1', 1);
+INSERT INTO `mall_product_browse_history` VALUES (340, 249, 633, b'0', 249, '2025-03-16 10:44:16', 249, '2025-03-16 10:44:16', b'1', 1);
+INSERT INTO `mall_product_browse_history` VALUES (341, 249, 633, b'0', 249, '2025-03-16 10:44:18', 249, '2025-03-16 10:44:18', b'1', 1);
+INSERT INTO `mall_product_browse_history` VALUES (342, 249, 633, b'0', 249, '2025-03-16 10:44:28', 249, '2025-03-16 10:44:28', b'1', 1);
+INSERT INTO `mall_product_browse_history` VALUES (343, 249, 633, b'0', 249, '2025-03-16 10:50:16', 249, '2025-03-16 10:50:16', b'1', 1);
+INSERT INTO `mall_product_browse_history` VALUES (344, 249, 633, b'0', 249, '2025-03-16 10:50:17', 249, '2025-03-16 10:50:17', b'1', 1);
+INSERT INTO `mall_product_browse_history` VALUES (345, 249, 633, b'0', 249, '2025-03-16 10:51:51', 249, '2025-03-16 10:51:51', b'1', 1);
+INSERT INTO `mall_product_browse_history` VALUES (346, 249, 633, b'0', 249, '2025-03-16 10:51:53', 249, '2025-03-16 10:51:53', b'1', 1);
+INSERT INTO `mall_product_browse_history` VALUES (347, 249, 633, b'0', 249, '2025-03-16 10:52:18', 249, '2025-03-16 10:52:18', b'1', 1);
+INSERT INTO `mall_product_browse_history` VALUES (348, 249, 633, b'0', 249, '2025-03-16 10:52:22', 249, '2025-03-16 10:52:22', b'1', 1);
 INSERT INTO `mall_product_browse_history` VALUES (349, 249, 634, b'0', NULL, '2025-03-16 16:34:17', NULL, '2025-03-16 16:34:17', b'0', 1);
 INSERT INTO `mall_product_browse_history` VALUES (350, 249, 634, b'0', NULL, '2025-03-16 16:34:17', NULL, '2025-03-16 16:34:17', b'0', 1);
 INSERT INTO `mall_product_browse_history` VALUES (351, 249, 633, b'0', NULL, '2025-03-16 16:34:17', NULL, '2025-03-16 16:34:17', b'1', 1);
@@ -2741,80 +2741,80 @@ CREATE TABLE `mall_product_category`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 84 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '商品分类' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 84 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '商品分类' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_product_category
 -- ----------------------------
-INSERT INTO `mall_product_category` VALUES (15, 0, '童装童鞋', 'http://test.yudao.iocoder.cn/1dc5d968737a990719e95492ebc9e3f8b0308214b503c51887f442f7c7584321.jpg', 1, 0, '1', '2023-04-25 16:57:05', '1', '2024-01-13 22:52:46', b'0', 1);
-INSERT INTO `mall_product_category` VALUES (16, 15, '时尚女装', 'http://127.0.0.1:48080/admin-api/infra/file/4/get/aa8d5c44ac0390ab398bae0dc8883575e3cb57594f9ed00248febe8e3d7484d1.png', 200, 0, '1', '2023-04-25 17:09:00', '1', '2023-08-31 06:27:16', b'1', 1);
-INSERT INTO `mall_product_category` VALUES (17, 15, '精品男装', 'http://127.0.0.1:48080/admin-api/infra/file/4/get/b0c166c0846fa2280b4a02431e2ac2e2363f2d2a6b608598f34b067a5ccf1245.png', 100, 0, '1', '2023-04-25 17:09:33', '1', '2023-08-31 06:27:15', b'1', 1);
-INSERT INTO `mall_product_category` VALUES (18, 15, '箱包', 'http://127.0.0.1:48080/admin-api/infra/file/4/get/8682928caa2a5a49b380ac93059adc435099873cdf646084f31cea79d5c27f40.png', 80, 0, '1', '2023-04-25 17:09:51', '1', '2023-08-31 06:27:13', b'1', 1);
-INSERT INTO `mall_product_category` VALUES (19, 15, '汉服', 'http://test.yudao.iocoder.cn/be01a5421e2ae5befd68fdd73521e58b2d35d49e1be0d275a9b6bff810e3374a.png', 0, 0, '1', '2023-04-25 17:10:15', '1', '2024-01-13 22:27:04', b'0', 1);
-INSERT INTO `mall_product_category` VALUES (20, 15, '配饰', 'http://127.0.0.1:48080/admin-api/infra/file/4/get/51bf43fcad0b947f5fa377356fb7034b47223fdbcec241d50e6e60a9be498730.jpg', 0, 0, '1', '2023-04-25 17:10:56', '1', '2023-08-31 06:27:07', b'1', 1);
-INSERT INTO `mall_product_category` VALUES (21, 15, '美妆工具', 'http://127.0.0.1:48080/admin-api/infra/file/4/get/c3cd6735cf157c218bc32ece312fd90cb2130c437dc9ec61d4030681d6ba4efb.png', 0, 0, '1', '2023-04-25 17:11:15', '1', '2023-08-31 06:27:05', b'1', 1);
-INSERT INTO `mall_product_category` VALUES (22, 0, '网络盒子', 'http://127.0.0.1:48080/admin-api/infra/file/4/get/74656bb8bc988c0419e0dbc613eda24a03956b950452b3565527301a5782db3a.png', 50, 0, '1', '2023-04-25 17:12:13', '1', '2023-08-31 06:26:57', b'1', 1);
-INSERT INTO `mall_product_category` VALUES (23, 22, '尿裤湿巾', 'http://127.0.0.1:48080/admin-api/infra/file/4/get/20162f22d8f6b427f0d6f1678c9fbb7bf0c1b70768bdc86101bee8b5e13bec5a.jpeg', 0, 0, '1', '2023-04-25 17:12:42', '1', '2023-08-31 06:26:55', b'1', 1);
-INSERT INTO `mall_product_category` VALUES (24, 15, '宠物主粮', 'http://127.0.0.1:48080/admin-api/infra/file/4/get/383729ba05711c400f9e44db11a63603af0fdbc99e58cd7b40e9296ca4e0510e.jpg', 0, 0, '1', '2023-04-25 17:13:09', '1', '2023-08-31 06:27:03', b'1', 1);
-INSERT INTO `mall_product_category` VALUES (25, 0, '家电电器', 'http://127.0.0.1:48080/admin-api/infra/file/4/get/c8a34dc2688fd4d2c95b5f49888865db1c88fd3bde153e3f7f0bcd4ff9971c96.png', 50, 0, '1', '2023-04-25 17:13:43', '1', '2023-08-31 06:27:01', b'1', 1);
-INSERT INTO `mall_product_category` VALUES (26, 25, '封口/封杯机', 'http://127.0.0.1:48080/admin-api/infra/file/4/get/1c0c208cfcf871c146006d97f95ae4fcd14d8a2deb3eabe3696367af61cb5e69.png', 60, 0, '1', '2023-04-25 17:14:39', '1', '2023-08-31 06:26:49', b'1', 1);
-INSERT INTO `mall_product_category` VALUES (27, 25, '空调', 'http://127.0.0.1:48080/admin-api/infra/file/4/get/d578e1e60b2dc3efe70643d25a8b2150dabfecd658fdb2fafcdb786d525f66d1.png', 60, 0, '1', '2023-04-25 17:15:12', '1', '2023-08-31 06:26:47', b'1', 1);
-INSERT INTO `mall_product_category` VALUES (28, 15, 'T 恤', 'http://test.yudao.iocoder.cn/1abe3ad4bcfe1f8e335873dd8718d40bbafc24a3693408966316fc827fefd771.png', 2, 0, '1', '2023-08-31 14:33:30', '1', '2024-01-13 22:28:45', b'0', 1);
-INSERT INTO `mall_product_category` VALUES (29, 15, '裙子', 'http://test.yudao.iocoder.cn/8313fe1abaedf15940f77e91d797fe8f24489e13ecfef2214a2474de2a1807e6.png', 1, 0, '1', '2023-08-31 14:35:03', '1', '2024-01-13 22:28:04', b'0', 1);
-INSERT INTO `mall_product_category` VALUES (30, 0, '家用电器', 'http://test.yudao.iocoder.cn/d71510c1ca5c5e4c7dd445da9f9357bf169978ed84febeb35ccf6dc0951a18e9.jpg', 2, 0, '1', '2023-08-31 15:01:32', '1', '2024-01-13 22:53:44', b'0', 1);
-INSERT INTO `mall_product_category` VALUES (31, 30, '智能电视', 'http://test.yudao.iocoder.cn/c294b0e21674ad5cf900faec7c6c661bd87ba7de969dcabc46ffde685e769856.png', 1, 0, '1', '2023-08-31 15:02:22', '1', '2024-01-13 22:33:02', b'0', 1);
-INSERT INTO `mall_product_category` VALUES (32, 30, '洗衣机', 'http://test.yudao.iocoder.cn/f612e98e489f1f099836e6f7322c447c3046519575095263baba1b7140063093.png', 2, 0, '1', '2023-08-31 15:05:27', '1', '2024-01-13 22:33:14', b'0', 1);
-INSERT INTO `mall_product_category` VALUES (33, 30, '游戏本', 'http://127.0.0.1:48080/admin-api/infra/file/4/get/11ce6f2153950c66fd3d2e8c78d75f4a0b0fb5b49993099a6d1eb7f29cadda67.png', 3, 0, '1', '2023-08-31 15:06:31', '1', '2023-08-31 07:06:39', b'1', 1);
-INSERT INTO `mall_product_category` VALUES (34, 30, '厨房冰箱', 'http://test.yudao.iocoder.cn/12b9641562f0e1d1d7e8b7147d14a75ed25149d26e0175e906c277a58e693f61.png', 3, 0, '1', '2023-08-31 15:06:31', '1', '2024-01-13 22:33:29', b'0', 1);
-INSERT INTO `mall_product_category` VALUES (35, 30, '电饭煲', 'http://test.yudao.iocoder.cn/c6ec808ebcfbe35597e13643ae2781d3da854339a3caf61a6d89518cbe1b1085.png', 4, 0, '1', '2023-10-01 20:24:40', '1', '2024-01-13 22:34:11', b'0', 1);
-INSERT INTO `mall_product_category` VALUES (36, 30, '养生壶', 'http://test.yudao.iocoder.cn/44fee42840097416689c7c32c76e5841cf171e8a31f437813b1385bbf6b7a001.png', 5, 0, '1', '2023-10-01 20:25:59', '1', '2024-01-13 22:34:51', b'0', 1);
-INSERT INTO `mall_product_category` VALUES (37, 30, '吸尘器', 'http://test.yudao.iocoder.cn/eef2b274843e41a41294610094882c0ded469145651395bad225610802bafdf8.png', 6, 0, '1', '2023-10-01 20:27:41', '1', '2024-01-13 22:35:11', b'0', 1);
-INSERT INTO `mall_product_category` VALUES (38, 0, '电子数码', 'http://test.yudao.iocoder.cn/7e600e817c8ec0f2f747f41b59e1a3ac28ac850a9b77ed78d69af5fadbef700e.jpg', 3, 0, '1', '2023-10-01 20:28:21', '1', '2024-01-13 22:55:09', b'0', 1);
-INSERT INTO `mall_product_category` VALUES (39, 38, '数码相机', 'http://test.yudao.iocoder.cn/f7bb34dc71c9d0e14671198d6a23e57669a0847059783e9acf6caa8f79ccc896.png', 1, 0, '1', '2023-10-01 20:29:44', '1', '2024-01-13 22:36:27', b'0', 1);
-INSERT INTO `mall_product_category` VALUES (40, 38, '笔记本电脑', 'http://test.yudao.iocoder.cn/72e9aa277521ffa1b696c8b8bb01124393e60e59efec172537cdb5f0eb828353.png', 2, 0, '1', '2023-10-01 20:30:18', '1', '2024-01-13 22:36:40', b'0', 1);
-INSERT INTO `mall_product_category` VALUES (41, 0, '美妆个护', 'http://test.yudao.iocoder.cn/e5ba252dbc6423327fec784f5775f55355f17fd6a2440919a2d91c4e541dfa81.png', 4, 0, '1', '2023-10-01 20:31:00', '1', '2024-01-13 22:56:36', b'0', 1);
-INSERT INTO `mall_product_category` VALUES (42, 41, '护肤套装', 'http://test.yudao.iocoder.cn/a86aad413989d547e91b46b83721ac48a3271edacd05022b11c75ba2a5c0b3a8.png', 1, 0, '1', '2023-10-01 20:31:34', '1', '2024-01-13 22:40:36', b'0', 1);
-INSERT INTO `mall_product_category` VALUES (43, 41, '洁面', 'http://test.yudao.iocoder.cn/23f2ed918b5cfac04d6cb75e574b84b647074792e88f3bd86ec0abb003eda447.png', 2, 0, '1', '2023-10-01 20:33:53', '1', '2024-01-13 22:41:03', b'0', 1);
-INSERT INTO `mall_product_category` VALUES (44, 41, '香水', 'http://test.yudao.iocoder.cn/cd8fc1f520071f8fb8ac62f149627ae629950d7bfc52a3811236d88d478692c8.png', 3, 0, '1', '2023-10-01 20:34:31', '1', '2024-01-13 22:41:24', b'0', 1);
-INSERT INTO `mall_product_category` VALUES (45, 41, '彩妆', 'http://test.yudao.iocoder.cn/35cb3c3a242bc9690a4d640c2cfd9eb6607e43788a86e1fac8a0f1afd19a2b2d.png', 4, 0, '1', '2023-10-01 20:35:38', '1', '2024-01-13 22:41:41', b'0', 1);
-INSERT INTO `mall_product_category` VALUES (46, 41, '粉底', 'http://test.yudao.iocoder.cn/70b828c0751431d3f83bb9bbff4b5a40c074a8c0860fe92981b0344f2c067450.png', 5, 0, '1', '2023-10-01 20:36:07', '1', '2024-01-13 22:41:56', b'0', 1);
-INSERT INTO `mall_product_category` VALUES (47, 0, '母婴用品', 'http://test.yudao.iocoder.cn/7d5e76eea5f29773a8962fabb0131d012434ee4cae3ddb416d135e20f89123eb.jpg', 6, 0, '1', '2023-10-01 20:36:46', '1', '2024-01-13 22:57:16', b'0', 1);
-INSERT INTO `mall_product_category` VALUES (48, 47, '婴儿装', 'http://test.yudao.iocoder.cn/1d854fe6f4b92a693c091a6c194131c7f2ef16c58233fae29bc6f8807f7e5148.png', 1, 0, '1', '2023-10-01 20:37:18', '1', '2024-01-13 22:44:37', b'0', 1);
-INSERT INTO `mall_product_category` VALUES (49, 47, '早教机', 'http://test.yudao.iocoder.cn/7ba39ecf36a07daff239ac5a3f8d8c08ea50938f55738b2737577140d855dde4.png', 2, 0, '1', '2023-10-01 20:37:48', '1', '2024-01-13 22:44:50', b'0', 1);
-INSERT INTO `mall_product_category` VALUES (50, 47, '洋娃娃', 'http://test.yudao.iocoder.cn/f9b69b5b02d7daa0d6fb9620d3a442d8e26983a2447e81c1faec00f981f874d5.png', 3, 0, '1', '2023-10-01 20:38:22', '1', '2024-01-13 22:45:03', b'0', 1);
-INSERT INTO `mall_product_category` VALUES (51, 47, '毛绒玩具', 'http://test.yudao.iocoder.cn/55ac92652d6d55d282a48ea1a33f606980b40b69a768115d091ffd052b59cfdb.png', 4, 0, '1', '2023-10-01 20:39:12', '1', '2024-01-13 22:45:26', b'0', 1);
-INSERT INTO `mall_product_category` VALUES (52, 47, '洗澡用具', 'http://test.yudao.iocoder.cn/e3c1691a366942ed7c8dcde78458c3d0fa600258e157cfe97b20726d234b4201.png', 5, 0, '1', '2023-10-01 20:40:32', '1', '2024-01-13 22:45:41', b'0', 1);
-INSERT INTO `mall_product_category` VALUES (53, 47, ' 扫描仪', 'http://127.0.0.1:48080/admin-api/infra/file/0/get/5ada4b58af70b6113fb8f15ed4ff690be14c12f1767fd72da84582cfe0737aa9.jpg', 6, 0, '1', '2023-10-01 20:41:11', '1', '2023-12-27 07:16:40', b'1', 1);
-INSERT INTO `mall_product_category` VALUES (54, 0, '新鲜水果', 'http://127.0.0.1:48080/admin-api/infra/file/0/get/20e5f60270dc7bab414ac9f55115530e80f5fedbad0872bde02ab736380ea075.jpg', 7, 0, '1', '2023-10-01 20:42:55', '1', '2023-12-27 07:25:21', b'1', 1);
-INSERT INTO `mall_product_category` VALUES (55, 54, '枇杷', 'http://127.0.0.1:48080/admin-api/infra/file/0/get/a44a4336732d8d79e0732fa4f4816075dd8cc6678a6044b9f817e349627e4110.jpg', 1, 0, '1', '2023-10-01 20:43:25', '1', '2023-12-27 07:25:19', b'1', 1);
-INSERT INTO `mall_product_category` VALUES (56, 54, '香蕉', 'http://127.0.0.1:48080/admin-api/infra/file/0/get/b821ec118ac9b3259c504d82efbec18d48ef645d7ce0ad69e4c00b8c0ff3be59.jpg', 2, 0, '1', '2023-10-01 20:43:51', '1', '2023-12-27 07:25:17', b'1', 1);
-INSERT INTO `mall_product_category` VALUES (57, 54, '草莓', 'http://127.0.0.1:48080/admin-api/infra/file/0/get/7ef48d8f66b90fea777a969fcf9349ecfd32ccf7ee35d4c2361317781300beac.jpg', 3, 0, '1', '2023-10-01 20:44:54', '1', '2023-12-27 07:25:15', b'1', 1);
-INSERT INTO `mall_product_category` VALUES (58, 54, '芒果', 'http://127.0.0.1:48080/admin-api/infra/file/0/get/2ce996408f1db200828ea7d17d96c813305a2d00a85c36da0b050d7dc3edc5b8.jpg', 4, 0, '1', '2023-10-01 20:45:17', '1', '2023-12-27 07:25:13', b'1', 1);
-INSERT INTO `mall_product_category` VALUES (59, 54, '石榴', 'http://127.0.0.1:48080/admin-api/infra/file/0/get/024e658bf9185251712bcf0665f6a59c0a262104650b16bbc403aa506483592c.jpg', 5, 0, '1', '2023-10-01 20:45:41', '1', '2023-12-27 07:25:11', b'1', 1);
-INSERT INTO `mall_product_category` VALUES (60, 15, '演出服', 'http://test.yudao.iocoder.cn/9d939f82a2ca6cfafd4e37c236fc7479186e7eb29b6af7b6f111e790da203deb.png', 3, 0, '1', '2024-01-13 22:29:55', '1', '2024-01-13 22:30:21', b'0', 1);
-INSERT INTO `mall_product_category` VALUES (61, 15, '外套', 'http://test.yudao.iocoder.cn/ecc140ec8303a376bac59ed740ee1607a75be392baa210879e46d18af6ba7b49.png', 4, 0, '1', '2024-01-13 22:30:55', '1', '2024-01-13 22:30:55', b'0', 1);
-INSERT INTO `mall_product_category` VALUES (62, 15, '裤子', 'http://test.yudao.iocoder.cn/1a5a63800acb7c5ee1de379fecb54857658b3a1c6d5a0009b09d69b1f95afa7b.png', 5, 0, '1', '2024-01-13 22:31:30', '1', '2024-01-13 22:31:30', b'0', 1);
-INSERT INTO `mall_product_category` VALUES (63, 15, '凉鞋', 'http://test.yudao.iocoder.cn/d78bbf1bd61b432f507e90e4819b0ebef4f438e8e6bba1afc97805223c1caddd.png', 6, 0, '1', '2024-01-13 22:31:51', '1', '2024-01-13 22:31:51', b'0', 1);
-INSERT INTO `mall_product_category` VALUES (64, 15, '皮鞋', 'http://test.yudao.iocoder.cn/bce052da46c9b09ca022cb2e9ebc020c2d3418e3585bbca82fb2ccfa38676b95.png', 8, 0, '1', '2024-01-13 22:32:12', '1', '2024-01-13 22:32:12', b'0', 1);
-INSERT INTO `mall_product_category` VALUES (65, 15, '运动鞋', 'http://test.yudao.iocoder.cn/c204a4f7d9ffe946abe9dd9c4014f05f166d8fbb27ac4cdd55de1f7fa0821701.png', 9, 0, '1', '2024-01-13 22:32:31', '1', '2024-01-13 22:32:31', b'0', 1);
-INSERT INTO `mall_product_category` VALUES (66, 30, '破壁机', 'http://test.yudao.iocoder.cn/c2af15653284c9d9b7062dd43523faee15c4f11424045e84778f7775dbecad42.png', 5, 0, '1', '2024-01-13 22:34:34', '1', '2024-01-13 22:34:34', b'0', 1);
-INSERT INTO `mall_product_category` VALUES (67, 30, '除螨仪', 'http://test.yudao.iocoder.cn/08e1dcd9e2bce783f86c85e421bca5ebc59918789fa3f074eb082c1fc03910b8.png', 7, 0, '1', '2024-01-13 22:35:32', '1', '2024-01-13 22:35:32', b'0', 1);
-INSERT INTO `mall_product_category` VALUES (68, 30, '电热水器', 'http://test.yudao.iocoder.cn/d590ad06e676bdf79b97e30941ba0821cbe2b1c9fb2001d5e4947f17b3eb4ee5.png', 8, 0, '1', '2024-01-13 22:35:50', '1', '2024-01-13 22:35:50', b'0', 1);
-INSERT INTO `mall_product_category` VALUES (69, 38, '平板电脑', 'http://test.yudao.iocoder.cn/678a3ab46ea88dc76d7ee8189e1b18c6928ae21d05479e10f294241c931b59ff.png', 3, 0, '1', '2024-01-13 22:37:36', '1', '2024-01-13 22:37:48', b'0', 1);
-INSERT INTO `mall_product_category` VALUES (70, 38, '耳机耳麦', 'http://test.yudao.iocoder.cn/b9351ca7be1ad7d8d8d86e80e715e005be1f3f2e70dcc2a7f6a1d252b3fdae63.png', 4, 0, '1', '2024-01-13 22:38:11', '1', '2024-01-13 22:38:20', b'0', 1);
-INSERT INTO `mall_product_category` VALUES (71, 38, '音箱', 'http://test.yudao.iocoder.cn/d115ee64cd19758f14f07258a6c94158df1a53bfd40344ad597163d35f88584c.png', 5, 0, '1', '2024-01-13 22:38:41', '1', '2024-01-13 22:38:41', b'0', 1);
-INSERT INTO `mall_product_category` VALUES (72, 38, '麦克风', 'http://test.yudao.iocoder.cn/225de704d411d10544725e79c82493c1a7787bc5140368ea3d248d6d1505c2eb.png', 6, 0, '1', '2024-01-13 22:38:58', '1', '2024-01-13 22:38:58', b'0', 1);
-INSERT INTO `mall_product_category` VALUES (73, 38, '游戏机', 'http://test.yudao.iocoder.cn/229ffc7388cdd60f9cbcb5638f03a2211d99eeed2b834631deb8e9242bbf9c74.png', 7, 0, '1', '2024-01-13 22:39:13', '1', '2024-01-13 22:39:13', b'0', 1);
-INSERT INTO `mall_product_category` VALUES (74, 38, '投影仪', 'http://test.yudao.iocoder.cn/758d3a5387507358c7236de4c8f96de1c7f5097ff6a7722b34772fb7b76b140f.png', 8, 0, '1', '2024-01-13 22:39:35', '1', '2024-01-13 22:39:35', b'0', 1);
-INSERT INTO `mall_product_category` VALUES (75, 38, '无人机', 'http://test.yudao.iocoder.cn/1cf25a3632564bda880338dde73a70e734a0249e0619da20c2fc5743d5d79796.png', 9, 0, '1', '2024-01-13 22:39:49', '1', '2024-01-13 22:39:49', b'0', 1);
-INSERT INTO `mall_product_category` VALUES (76, 41, '隔离', 'http://test.yudao.iocoder.cn/058d6693f811bf0d8b652688f852b1a789994bcbc77b4f2a1515cfcaffc9976a.png', 6, 0, '1', '2024-01-13 22:42:26', '1', '2024-01-13 22:42:26', b'0', 1);
-INSERT INTO `mall_product_category` VALUES (77, 41, '洗发水', 'http://test.yudao.iocoder.cn/4146acdacc2c1ed8b21b9c24512ea0ac363f7c8b866b82d183526c113040e7df.png', 7, 0, '1', '2024-01-13 22:42:45', '1', '2024-01-13 22:42:45', b'0', 1);
-INSERT INTO `mall_product_category` VALUES (78, 41, '沐浴露', 'http://test.yudao.iocoder.cn/0e9add6b7831811c74b1dd60ef2adb73780a8a69c988e551beb6fb47f2c3f8f9.png', 8, 0, '1', '2024-01-13 22:43:08', '1', '2024-01-13 22:43:08', b'0', 1);
-INSERT INTO `mall_product_category` VALUES (79, 41, '口腔清理', 'http://test.yudao.iocoder.cn/0a727817e3b08eb562e3314011d61f79c703c796a742fbb7a40b6cb2e6eb6010.png', 10, 0, '1', '2024-01-13 22:43:42', '1', '2024-01-13 22:43:42', b'0', 1);
-INSERT INTO `mall_product_category` VALUES (80, 47, '宝宝个护', 'http://test.yudao.iocoder.cn/0c0a153b39ec8285efb93710c3f698f9513f76d1c7765db22d099de3d707153b.png', 6, 0, '1', '2024-01-13 22:46:08', '1', '2024-01-13 22:46:08', b'0', 1);
-INSERT INTO `mall_product_category` VALUES (81, 47, '儿童餐具', 'http://test.yudao.iocoder.cn/f8e8437ce80362a3ee20ac97aef98eadc275ed7ea7d9c9e89b0c2663aa416bf0.png', 7, 0, '1', '2024-01-13 22:46:28', '1', '2024-01-13 22:46:28', b'0', 1);
-INSERT INTO `mall_product_category` VALUES (82, 47, '儿童水杯', 'http://test.yudao.iocoder.cn/1f1c3e4778149161be9deb6518f9523b442852f36cc1fcb2a3002a9f359752f2.png', 8, 0, '1', '2024-01-13 22:46:55', '1', '2024-01-13 22:47:29', b'0', 1);
-INSERT INTO `mall_product_category` VALUES (83, 47, '婴儿推车', 'http://test.yudao.iocoder.cn/600941856424c1b9ac52b352e8cdb1c2a7197fcee350b4964e62b16714846d6b.png', 9, 0, '1', '2024-01-13 22:47:52', '1', '2024-01-13 22:47:52', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (15, 0, '童装童鞋', 'http://test.yudao.iocoder.cn/1dc5d968737a990719e95492ebc9e3f8b0308214b503c51887f442f7c7584321.jpg', 1, 0, 1, '2023-04-25 16:57:05', 1, '2024-01-13 22:52:46', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (16, 15, '时尚女装', 'http://127.0.0.1:48080/admin-api/infra/file/4/get/aa8d5c44ac0390ab398bae0dc8883575e3cb57594f9ed00248febe8e3d7484d1.png', 200, 0, 1, '2023-04-25 17:09:00', 1, '2023-08-31 06:27:16', b'1', 1);
+INSERT INTO `mall_product_category` VALUES (17, 15, '精品男装', 'http://127.0.0.1:48080/admin-api/infra/file/4/get/b0c166c0846fa2280b4a02431e2ac2e2363f2d2a6b608598f34b067a5ccf1245.png', 100, 0, 1, '2023-04-25 17:09:33', 1, '2023-08-31 06:27:15', b'1', 1);
+INSERT INTO `mall_product_category` VALUES (18, 15, '箱包', 'http://127.0.0.1:48080/admin-api/infra/file/4/get/8682928caa2a5a49b380ac93059adc435099873cdf646084f31cea79d5c27f40.png', 80, 0, 1, '2023-04-25 17:09:51', 1, '2023-08-31 06:27:13', b'1', 1);
+INSERT INTO `mall_product_category` VALUES (19, 15, '汉服', 'http://test.yudao.iocoder.cn/be01a5421e2ae5befd68fdd73521e58b2d35d49e1be0d275a9b6bff810e3374a.png', 0, 0, 1, '2023-04-25 17:10:15', 1, '2024-01-13 22:27:04', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (20, 15, '配饰', 'http://127.0.0.1:48080/admin-api/infra/file/4/get/51bf43fcad0b947f5fa377356fb7034b47223fdbcec241d50e6e60a9be498730.jpg', 0, 0, 1, '2023-04-25 17:10:56', 1, '2023-08-31 06:27:07', b'1', 1);
+INSERT INTO `mall_product_category` VALUES (21, 15, '美妆工具', 'http://127.0.0.1:48080/admin-api/infra/file/4/get/c3cd6735cf157c218bc32ece312fd90cb2130c437dc9ec61d4030681d6ba4efb.png', 0, 0, 1, '2023-04-25 17:11:15', 1, '2023-08-31 06:27:05', b'1', 1);
+INSERT INTO `mall_product_category` VALUES (22, 0, '网络盒子', 'http://127.0.0.1:48080/admin-api/infra/file/4/get/74656bb8bc988c0419e0dbc613eda24a03956b950452b3565527301a5782db3a.png', 50, 0, 1, '2023-04-25 17:12:13', 1, '2023-08-31 06:26:57', b'1', 1);
+INSERT INTO `mall_product_category` VALUES (23, 22, '尿裤湿巾', 'http://127.0.0.1:48080/admin-api/infra/file/4/get/20162f22d8f6b427f0d6f1678c9fbb7bf0c1b70768bdc86101bee8b5e13bec5a.jpeg', 0, 0, 1, '2023-04-25 17:12:42', 1, '2023-08-31 06:26:55', b'1', 1);
+INSERT INTO `mall_product_category` VALUES (24, 15, '宠物主粮', 'http://127.0.0.1:48080/admin-api/infra/file/4/get/383729ba05711c400f9e44db11a63603af0fdbc99e58cd7b40e9296ca4e0510e.jpg', 0, 0, 1, '2023-04-25 17:13:09', 1, '2023-08-31 06:27:03', b'1', 1);
+INSERT INTO `mall_product_category` VALUES (25, 0, '家电电器', 'http://127.0.0.1:48080/admin-api/infra/file/4/get/c8a34dc2688fd4d2c95b5f49888865db1c88fd3bde153e3f7f0bcd4ff9971c96.png', 50, 0, 1, '2023-04-25 17:13:43', 1, '2023-08-31 06:27:01', b'1', 1);
+INSERT INTO `mall_product_category` VALUES (26, 25, '封口/封杯机', 'http://127.0.0.1:48080/admin-api/infra/file/4/get/1c0c208cfcf871c146006d97f95ae4fcd14d8a2deb3eabe3696367af61cb5e69.png', 60, 0, 1, '2023-04-25 17:14:39', 1, '2023-08-31 06:26:49', b'1', 1);
+INSERT INTO `mall_product_category` VALUES (27, 25, '空调', 'http://127.0.0.1:48080/admin-api/infra/file/4/get/d578e1e60b2dc3efe70643d25a8b2150dabfecd658fdb2fafcdb786d525f66d1.png', 60, 0, 1, '2023-04-25 17:15:12', 1, '2023-08-31 06:26:47', b'1', 1);
+INSERT INTO `mall_product_category` VALUES (28, 15, 'T 恤', 'http://test.yudao.iocoder.cn/1abe3ad4bcfe1f8e335873dd8718d40bbafc24a3693408966316fc827fefd771.png', 2, 0, 1, '2023-08-31 14:33:30', 1, '2024-01-13 22:28:45', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (29, 15, '裙子', 'http://test.yudao.iocoder.cn/8313fe1abaedf15940f77e91d797fe8f24489e13ecfef2214a2474de2a1807e6.png', 1, 0, 1, '2023-08-31 14:35:03', 1, '2024-01-13 22:28:04', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (30, 0, '家用电器', 'http://test.yudao.iocoder.cn/d71510c1ca5c5e4c7dd445da9f9357bf169978ed84febeb35ccf6dc0951a18e9.jpg', 2, 0, 1, '2023-08-31 15:01:32', 1, '2024-01-13 22:53:44', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (31, 30, '智能电视', 'http://test.yudao.iocoder.cn/c294b0e21674ad5cf900faec7c6c661bd87ba7de969dcabc46ffde685e769856.png', 1, 0, 1, '2023-08-31 15:02:22', 1, '2024-01-13 22:33:02', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (32, 30, '洗衣机', 'http://test.yudao.iocoder.cn/f612e98e489f1f099836e6f7322c447c3046519575095263baba1b7140063093.png', 2, 0, 1, '2023-08-31 15:05:27', 1, '2024-01-13 22:33:14', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (33, 30, '游戏本', 'http://127.0.0.1:48080/admin-api/infra/file/4/get/11ce6f2153950c66fd3d2e8c78d75f4a0b0fb5b49993099a6d1eb7f29cadda67.png', 3, 0, 1, '2023-08-31 15:06:31', 1, '2023-08-31 07:06:39', b'1', 1);
+INSERT INTO `mall_product_category` VALUES (34, 30, '厨房冰箱', 'http://test.yudao.iocoder.cn/12b9641562f0e1d1d7e8b7147d14a75ed25149d26e0175e906c277a58e693f61.png', 3, 0, 1, '2023-08-31 15:06:31', 1, '2024-01-13 22:33:29', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (35, 30, '电饭煲', 'http://test.yudao.iocoder.cn/c6ec808ebcfbe35597e13643ae2781d3da854339a3caf61a6d89518cbe1b1085.png', 4, 0, 1, '2023-10-01 20:24:40', 1, '2024-01-13 22:34:11', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (36, 30, '养生壶', 'http://test.yudao.iocoder.cn/44fee42840097416689c7c32c76e5841cf171e8a31f437813b1385bbf6b7a001.png', 5, 0, 1, '2023-10-01 20:25:59', 1, '2024-01-13 22:34:51', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (37, 30, '吸尘器', 'http://test.yudao.iocoder.cn/eef2b274843e41a41294610094882c0ded469145651395bad225610802bafdf8.png', 6, 0, 1, '2023-10-01 20:27:41', 1, '2024-01-13 22:35:11', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (38, 0, '电子数码', 'http://test.yudao.iocoder.cn/7e600e817c8ec0f2f747f41b59e1a3ac28ac850a9b77ed78d69af5fadbef700e.jpg', 3, 0, 1, '2023-10-01 20:28:21', 1, '2024-01-13 22:55:09', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (39, 38, '数码相机', 'http://test.yudao.iocoder.cn/f7bb34dc71c9d0e14671198d6a23e57669a0847059783e9acf6caa8f79ccc896.png', 1, 0, 1, '2023-10-01 20:29:44', 1, '2024-01-13 22:36:27', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (40, 38, '笔记本电脑', 'http://test.yudao.iocoder.cn/72e9aa277521ffa1b696c8b8bb01124393e60e59efec172537cdb5f0eb828353.png', 2, 0, 1, '2023-10-01 20:30:18', 1, '2024-01-13 22:36:40', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (41, 0, '美妆个护', 'http://test.yudao.iocoder.cn/e5ba252dbc6423327fec784f5775f55355f17fd6a2440919a2d91c4e541dfa81.png', 4, 0, 1, '2023-10-01 20:31:00', 1, '2024-01-13 22:56:36', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (42, 41, '护肤套装', 'http://test.yudao.iocoder.cn/a86aad413989d547e91b46b83721ac48a3271edacd05022b11c75ba2a5c0b3a8.png', 1, 0, 1, '2023-10-01 20:31:34', 1, '2024-01-13 22:40:36', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (43, 41, '洁面', 'http://test.yudao.iocoder.cn/23f2ed918b5cfac04d6cb75e574b84b647074792e88f3bd86ec0abb003eda447.png', 2, 0, 1, '2023-10-01 20:33:53', 1, '2024-01-13 22:41:03', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (44, 41, '香水', 'http://test.yudao.iocoder.cn/cd8fc1f520071f8fb8ac62f149627ae629950d7bfc52a3811236d88d478692c8.png', 3, 0, 1, '2023-10-01 20:34:31', 1, '2024-01-13 22:41:24', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (45, 41, '彩妆', 'http://test.yudao.iocoder.cn/35cb3c3a242bc9690a4d640c2cfd9eb6607e43788a86e1fac8a0f1afd19a2b2d.png', 4, 0, 1, '2023-10-01 20:35:38', 1, '2024-01-13 22:41:41', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (46, 41, '粉底', 'http://test.yudao.iocoder.cn/70b828c0751431d3f83bb9bbff4b5a40c074a8c0860fe92981b0344f2c067450.png', 5, 0, 1, '2023-10-01 20:36:07', 1, '2024-01-13 22:41:56', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (47, 0, '母婴用品', 'http://test.yudao.iocoder.cn/7d5e76eea5f29773a8962fabb0131d012434ee4cae3ddb416d135e20f89123eb.jpg', 6, 0, 1, '2023-10-01 20:36:46', 1, '2024-01-13 22:57:16', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (48, 47, '婴儿装', 'http://test.yudao.iocoder.cn/1d854fe6f4b92a693c091a6c194131c7f2ef16c58233fae29bc6f8807f7e5148.png', 1, 0, 1, '2023-10-01 20:37:18', 1, '2024-01-13 22:44:37', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (49, 47, '早教机', 'http://test.yudao.iocoder.cn/7ba39ecf36a07daff239ac5a3f8d8c08ea50938f55738b2737577140d855dde4.png', 2, 0, 1, '2023-10-01 20:37:48', 1, '2024-01-13 22:44:50', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (50, 47, '洋娃娃', 'http://test.yudao.iocoder.cn/f9b69b5b02d7daa0d6fb9620d3a442d8e26983a2447e81c1faec00f981f874d5.png', 3, 0, 1, '2023-10-01 20:38:22', 1, '2024-01-13 22:45:03', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (51, 47, '毛绒玩具', 'http://test.yudao.iocoder.cn/55ac92652d6d55d282a48ea1a33f606980b40b69a768115d091ffd052b59cfdb.png', 4, 0, 1, '2023-10-01 20:39:12', 1, '2024-01-13 22:45:26', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (52, 47, '洗澡用具', 'http://test.yudao.iocoder.cn/e3c1691a366942ed7c8dcde78458c3d0fa600258e157cfe97b20726d234b4201.png', 5, 0, 1, '2023-10-01 20:40:32', 1, '2024-01-13 22:45:41', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (53, 47, ' 扫描仪', 'http://127.0.0.1:48080/admin-api/infra/file/0/get/5ada4b58af70b6113fb8f15ed4ff690be14c12f1767fd72da84582cfe0737aa9.jpg', 6, 0, 1, '2023-10-01 20:41:11', 1, '2023-12-27 07:16:40', b'1', 1);
+INSERT INTO `mall_product_category` VALUES (54, 0, '新鲜水果', 'http://127.0.0.1:48080/admin-api/infra/file/0/get/20e5f60270dc7bab414ac9f55115530e80f5fedbad0872bde02ab736380ea075.jpg', 7, 0, 1, '2023-10-01 20:42:55', 1, '2023-12-27 07:25:21', b'1', 1);
+INSERT INTO `mall_product_category` VALUES (55, 54, '枇杷', 'http://127.0.0.1:48080/admin-api/infra/file/0/get/a44a4336732d8d79e0732fa4f4816075dd8cc6678a6044b9f817e349627e4110.jpg', 1, 0, 1, '2023-10-01 20:43:25', 1, '2023-12-27 07:25:19', b'1', 1);
+INSERT INTO `mall_product_category` VALUES (56, 54, '香蕉', 'http://127.0.0.1:48080/admin-api/infra/file/0/get/b821ec118ac9b3259c504d82efbec18d48ef645d7ce0ad69e4c00b8c0ff3be59.jpg', 2, 0, 1, '2023-10-01 20:43:51', 1, '2023-12-27 07:25:17', b'1', 1);
+INSERT INTO `mall_product_category` VALUES (57, 54, '草莓', 'http://127.0.0.1:48080/admin-api/infra/file/0/get/7ef48d8f66b90fea777a969fcf9349ecfd32ccf7ee35d4c2361317781300beac.jpg', 3, 0, 1, '2023-10-01 20:44:54', 1, '2023-12-27 07:25:15', b'1', 1);
+INSERT INTO `mall_product_category` VALUES (58, 54, '芒果', 'http://127.0.0.1:48080/admin-api/infra/file/0/get/2ce996408f1db200828ea7d17d96c813305a2d00a85c36da0b050d7dc3edc5b8.jpg', 4, 0, 1, '2023-10-01 20:45:17', 1, '2023-12-27 07:25:13', b'1', 1);
+INSERT INTO `mall_product_category` VALUES (59, 54, '石榴', 'http://127.0.0.1:48080/admin-api/infra/file/0/get/024e658bf9185251712bcf0665f6a59c0a262104650b16bbc403aa506483592c.jpg', 5, 0, 1, '2023-10-01 20:45:41', 1, '2023-12-27 07:25:11', b'1', 1);
+INSERT INTO `mall_product_category` VALUES (60, 15, '演出服', 'http://test.yudao.iocoder.cn/9d939f82a2ca6cfafd4e37c236fc7479186e7eb29b6af7b6f111e790da203deb.png', 3, 0, 1, '2024-01-13 22:29:55', 1, '2024-01-13 22:30:21', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (61, 15, '外套', 'http://test.yudao.iocoder.cn/ecc140ec8303a376bac59ed740ee1607a75be392baa210879e46d18af6ba7b49.png', 4, 0, 1, '2024-01-13 22:30:55', 1, '2024-01-13 22:30:55', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (62, 15, '裤子', 'http://test.yudao.iocoder.cn/1a5a63800acb7c5ee1de379fecb54857658b3a1c6d5a0009b09d69b1f95afa7b.png', 5, 0, 1, '2024-01-13 22:31:30', 1, '2024-01-13 22:31:30', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (63, 15, '凉鞋', 'http://test.yudao.iocoder.cn/d78bbf1bd61b432f507e90e4819b0ebef4f438e8e6bba1afc97805223c1caddd.png', 6, 0, 1, '2024-01-13 22:31:51', 1, '2024-01-13 22:31:51', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (64, 15, '皮鞋', 'http://test.yudao.iocoder.cn/bce052da46c9b09ca022cb2e9ebc020c2d3418e3585bbca82fb2ccfa38676b95.png', 8, 0, 1, '2024-01-13 22:32:12', 1, '2024-01-13 22:32:12', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (65, 15, '运动鞋', 'http://test.yudao.iocoder.cn/c204a4f7d9ffe946abe9dd9c4014f05f166d8fbb27ac4cdd55de1f7fa0821701.png', 9, 0, 1, '2024-01-13 22:32:31', 1, '2024-01-13 22:32:31', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (66, 30, '破壁机', 'http://test.yudao.iocoder.cn/c2af15653284c9d9b7062dd43523faee15c4f11424045e84778f7775dbecad42.png', 5, 0, 1, '2024-01-13 22:34:34', 1, '2024-01-13 22:34:34', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (67, 30, '除螨仪', 'http://test.yudao.iocoder.cn/08e1dcd9e2bce783f86c85e421bca5ebc59918789fa3f074eb082c1fc03910b8.png', 7, 0, 1, '2024-01-13 22:35:32', 1, '2024-01-13 22:35:32', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (68, 30, '电热水器', 'http://test.yudao.iocoder.cn/d590ad06e676bdf79b97e30941ba0821cbe2b1c9fb2001d5e4947f17b3eb4ee5.png', 8, 0, 1, '2024-01-13 22:35:50', 1, '2024-01-13 22:35:50', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (69, 38, '平板电脑', 'http://test.yudao.iocoder.cn/678a3ab46ea88dc76d7ee8189e1b18c6928ae21d05479e10f294241c931b59ff.png', 3, 0, 1, '2024-01-13 22:37:36', 1, '2024-01-13 22:37:48', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (70, 38, '耳机耳麦', 'http://test.yudao.iocoder.cn/b9351ca7be1ad7d8d8d86e80e715e005be1f3f2e70dcc2a7f6a1d252b3fdae63.png', 4, 0, 1, '2024-01-13 22:38:11', 1, '2024-01-13 22:38:20', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (71, 38, '音箱', 'http://test.yudao.iocoder.cn/d115ee64cd19758f14f07258a6c94158df1a53bfd40344ad597163d35f88584c.png', 5, 0, 1, '2024-01-13 22:38:41', 1, '2024-01-13 22:38:41', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (72, 38, '麦克风', 'http://test.yudao.iocoder.cn/225de704d411d10544725e79c82493c1a7787bc5140368ea3d248d6d1505c2eb.png', 6, 0, 1, '2024-01-13 22:38:58', 1, '2024-01-13 22:38:58', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (73, 38, '游戏机', 'http://test.yudao.iocoder.cn/229ffc7388cdd60f9cbcb5638f03a2211d99eeed2b834631deb8e9242bbf9c74.png', 7, 0, 1, '2024-01-13 22:39:13', 1, '2024-01-13 22:39:13', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (74, 38, '投影仪', 'http://test.yudao.iocoder.cn/758d3a5387507358c7236de4c8f96de1c7f5097ff6a7722b34772fb7b76b140f.png', 8, 0, 1, '2024-01-13 22:39:35', 1, '2024-01-13 22:39:35', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (75, 38, '无人机', 'http://test.yudao.iocoder.cn/1cf25a3632564bda880338dde73a70e734a0249e0619da20c2fc5743d5d79796.png', 9, 0, 1, '2024-01-13 22:39:49', 1, '2024-01-13 22:39:49', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (76, 41, '隔离', 'http://test.yudao.iocoder.cn/058d6693f811bf0d8b652688f852b1a789994bcbc77b4f2a1515cfcaffc9976a.png', 6, 0, 1, '2024-01-13 22:42:26', 1, '2024-01-13 22:42:26', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (77, 41, '洗发水', 'http://test.yudao.iocoder.cn/4146acdacc2c1ed8b21b9c24512ea0ac363f7c8b866b82d183526c113040e7df.png', 7, 0, 1, '2024-01-13 22:42:45', 1, '2024-01-13 22:42:45', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (78, 41, '沐浴露', 'http://test.yudao.iocoder.cn/0e9add6b7831811c74b1dd60ef2adb73780a8a69c988e551beb6fb47f2c3f8f9.png', 8, 0, 1, '2024-01-13 22:43:08', 1, '2024-01-13 22:43:08', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (79, 41, '口腔清理', 'http://test.yudao.iocoder.cn/0a727817e3b08eb562e3314011d61f79c703c796a742fbb7a40b6cb2e6eb6010.png', 10, 0, 1, '2024-01-13 22:43:42', 1, '2024-01-13 22:43:42', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (80, 47, '宝宝个护', 'http://test.yudao.iocoder.cn/0c0a153b39ec8285efb93710c3f698f9513f76d1c7765db22d099de3d707153b.png', 6, 0, 1, '2024-01-13 22:46:08', 1, '2024-01-13 22:46:08', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (81, 47, '儿童餐具', 'http://test.yudao.iocoder.cn/f8e8437ce80362a3ee20ac97aef98eadc275ed7ea7d9c9e89b0c2663aa416bf0.png', 7, 0, 1, '2024-01-13 22:46:28', 1, '2024-01-13 22:46:28', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (82, 47, '儿童水杯', 'http://test.yudao.iocoder.cn/1f1c3e4778149161be9deb6518f9523b442852f36cc1fcb2a3002a9f359752f2.png', 8, 0, 1, '2024-01-13 22:46:55', 1, '2024-01-13 22:47:29', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (83, 47, '婴儿推车', 'http://test.yudao.iocoder.cn/600941856424c1b9ac52b352e8cdb1c2a7197fcee350b4964e62b16714846d6b.png', 9, 0, 1, '2024-01-13 22:47:52', 1, '2024-01-13 22:47:52', b'0', 1);
 
 -- ----------------------------
 -- Table structure for mall_product_comment
@@ -2850,7 +2850,7 @@ CREATE TABLE `mall_product_comment`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 15 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '商品评论' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 15 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '商品评论' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_product_comment
@@ -2878,22 +2878,22 @@ CREATE TABLE `mall_product_favorite`  (
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `idx_userId`(`user_id` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 32 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin COMMENT = '商品收藏表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 32 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin COMMENT = '商品收藏表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_product_favorite
 -- ----------------------------
-INSERT INTO `mall_product_favorite` VALUES (21, 247, 610632, '1', '2022-08-01 22:46:35', '1', '2023-06-25 04:26:02', b'1', 1);
-INSERT INTO `mall_product_favorite` VALUES (22, 247, 633, '247', '2023-06-09 20:01:11', '247', '2023-06-09 12:01:17', b'1', 1);
-INSERT INTO `mall_product_favorite` VALUES (23, 247, 633, '247', '2023-06-11 22:20:27', '247', '2023-06-11 14:20:28', b'1', 1);
-INSERT INTO `mall_product_favorite` VALUES (24, 247, 633, '247', '2023-06-11 22:20:46', '247', '2023-06-15 11:37:12', b'1', 1);
-INSERT INTO `mall_product_favorite` VALUES (25, 247, 633, '247', '2023-06-15 19:37:13', '247', '2023-12-14 16:01:28', b'1', 1);
-INSERT INTO `mall_product_favorite` VALUES (26, 247, 633, '247', '2023-12-15 09:14:01', '247', '2023-12-15 01:41:22', b'1', 1);
-INSERT INTO `mall_product_favorite` VALUES (27, 247, 633, '247', '2023-12-15 09:41:24', '247', '2023-12-29 17:36:38', b'1', 1);
-INSERT INTO `mall_product_favorite` VALUES (28, 247, 633, '247', '2024-01-20 17:05:10', '247', '2023-12-29 17:50:28', b'1', 1);
-INSERT INTO `mall_product_favorite` VALUES (29, 247, 633, '247', '2024-01-20 17:19:01', '247', '2024-01-20 17:19:01', b'0', 1);
-INSERT INTO `mall_product_favorite` VALUES (30, 247, 639, '247', '2024-07-22 10:16:08', '247', '2024-07-22 10:16:09', b'1', 1);
-INSERT INTO `mall_product_favorite` VALUES (31, 247, 634, '247', '2024-09-21 14:02:54', '247', '2024-09-21 14:02:55', b'1', 1);
+INSERT INTO `mall_product_favorite` VALUES (21, 247, 610632, 1, '2022-08-01 22:46:35', 1, '2023-06-25 04:26:02', b'1', 1);
+INSERT INTO `mall_product_favorite` VALUES (22, 247, 633, 247, '2023-06-09 20:01:11', 247, '2023-06-09 12:01:17', b'1', 1);
+INSERT INTO `mall_product_favorite` VALUES (23, 247, 633, 247, '2023-06-11 22:20:27', 247, '2023-06-11 14:20:28', b'1', 1);
+INSERT INTO `mall_product_favorite` VALUES (24, 247, 633, 247, '2023-06-11 22:20:46', 247, '2023-06-15 11:37:12', b'1', 1);
+INSERT INTO `mall_product_favorite` VALUES (25, 247, 633, 247, '2023-06-15 19:37:13', 247, '2023-12-14 16:01:28', b'1', 1);
+INSERT INTO `mall_product_favorite` VALUES (26, 247, 633, 247, '2023-12-15 09:14:01', 247, '2023-12-15 01:41:22', b'1', 1);
+INSERT INTO `mall_product_favorite` VALUES (27, 247, 633, 247, '2023-12-15 09:41:24', 247, '2023-12-29 17:36:38', b'1', 1);
+INSERT INTO `mall_product_favorite` VALUES (28, 247, 633, 247, '2024-01-20 17:05:10', 247, '2023-12-29 17:50:28', b'1', 1);
+INSERT INTO `mall_product_favorite` VALUES (29, 247, 633, 247, '2024-01-20 17:19:01', 247, '2024-01-20 17:19:01', b'0', 1);
+INSERT INTO `mall_product_favorite` VALUES (30, 247, 639, 247, '2024-07-22 10:16:08', 247, '2024-07-22 10:16:09', b'1', 1);
+INSERT INTO `mall_product_favorite` VALUES (31, 247, 634, 247, '2024-09-21 14:02:54', 247, '2024-09-21 14:02:55', b'1', 1);
 
 -- ----------------------------
 -- Table structure for mall_product_property
@@ -2912,7 +2912,7 @@ CREATE TABLE `mall_product_property`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `idx_name`(`name`(32) ASC) USING BTREE COMMENT '规格名称索引'
-) ENGINE = InnoDB AUTO_INCREMENT = 17 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '商品属性项' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 17 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '商品属性项' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_product_property
@@ -2951,7 +2951,7 @@ CREATE TABLE `mall_product_property_value`  (
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 32 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '商品属性值' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 32 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '商品属性值' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_product_property_value
@@ -3014,7 +3014,7 @@ CREATE TABLE `mall_product_sku`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 38 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '商品sku' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 38 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '商品sku' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_product_sku
@@ -3086,7 +3086,7 @@ CREATE TABLE `mall_product_spu`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 642 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '商品spu' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 642 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '商品spu' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_product_spu
@@ -3132,7 +3132,7 @@ CREATE TABLE `mall_product_statistics`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `idx_time`(`time` ASC) USING BTREE,
   INDEX `idx_spu_id`(`spu_id` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 76 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '商品统计表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 76 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '商品统计表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_product_statistics
@@ -3238,18 +3238,18 @@ CREATE TABLE `mall_promotion_article`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '文章管理表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '文章管理表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_promotion_article
 -- ----------------------------
-INSERT INTO `mall_promotion_article` VALUES (1, 2, 633, '意见反馈', '', 'http://127.0.0.1:48080/admin-api/infra/file/0/get/cb59dd08e53685d02145d5b60afb61a996bccb0773b5c88ae10dbba819283a3e.jpg', '1111111111111111111112222222222222222222222222222222', '0', 10, 0, b'1', b'1', '<p>哈哈哈哈</p>', '1', '2023-10-16 21:48:11', '1', '2025-05-01 15:28:59', b'1', 1);
-INSERT INTO `mall_promotion_article` VALUES (2, 3, 0, '用户协议', '', 'http://test.yudao.iocoder.cn/f716a8fe41dd6f3d57113ecb6f06018904c6504a92433d141231f2138f0ede69.png', '', '0', 0, 0, b'0', b'0', '<p>我是用户协议，可以按需更改哈！</p>', '1', '2023-12-27 21:15:09', '1', '2025-05-01 15:35:43', b'0', 1);
-INSERT INTO `mall_promotion_article` VALUES (3, 3, 0, '隐私协议', '', 'http://test.yudao.iocoder.cn/42ca1a46545be9f03d9909237b08c09392df249043407214d3435717a9cfb76b.png', '', '0', 0, 0, b'0', b'0', '<p>啦啦啦啦，我是隐私协议</p>', '1', '2023-12-27 21:23:16', '1', '2025-05-01 15:32:26', b'0', 1);
-INSERT INTO `mall_promotion_article` VALUES (4, 3, 0, '关于我们', '', 'http://test.yudao.iocoder.cn/280ef6562ba6e10a18397a320b22470a5249356bc17e1e3f3f9ab62ac3820b32.png', '', '0', 0, 0, b'0', b'0', '<p>啦啦啦啦，我是关于我们</p>', '1', '2023-12-27 21:23:42', '1', '2025-05-01 15:32:35', b'0', 1);
-INSERT INTO `mall_promotion_article` VALUES (5, 3, 0, '常见问题', '', 'http://test.yudao.iocoder.cn/4ac1319213673bb3aa43a32be359c947689d0e554189a5c3094aed87072a897d.png', '', '0', 0, 0, b'0', b'0', '<h2>① 商品退货了，谁承担运费？</h2><p>亲，平台运费规则秉承“谁过错，谁承担”的原则,如非商家或者物流问题，建议您联系商家协商处理，售后，退货运费需要您自行承担;如商品存在质量问题、商家发错货等情况，退货运费由商家承担。为了更好的保障您的权益，请您保留好相关凭证,退货物流费用麻烦您先垫付，不要使用到付，待商家收到您寄回的商品，退款成功后，您可以凭借凭证联系商家处理~</p><h2>② 付款后订单显示待付款？</h2><p>如您账户显示已扣款，但订单交易状态显示”等待付款”，可能是由于网络繁忙导致数据延迟，建议您稍后关注订单交易状态以及交易账户流水情况。</p><h2>③ 发货时间？</h2><p>一般情况下，用户下单后48小时内发货</p>', '1', '2023-12-27 22:05:57', '1', '2025-05-01 15:29:58', b'0', 1);
-INSERT INTO `mall_promotion_article` VALUES (6, 3, 0, '意见反馈', '', 'http://test.yudao.iocoder.cn/285fb3da4dca5288cd963746efe3b3c9c1052263c2a350d60756ea212c9d7995.png', '', '0', 0, 0, b'0', b'0', '<p>客服电话：xxxx</p><p>公司官网：www.iocoder.cn</p><p><br></p>', '1', '2025-05-01 15:29:45', '1', '2025-05-01 15:29:45', b'0', 1);
-INSERT INTO `mall_promotion_article` VALUES (7, 3, 0, '发票管理', '', 'http://test.yudao.iocoder.cn/65c1335bb3df2cc136e7618d7ae51e58c6f04031bae42f7d394aced9d7912c0e.png', '', '0', 0, 0, b'0', b'0', '<p>发给 7685413@qq.com 税号 + 公司名，<br><br>一般周五统一开，周一到周四的发票！</p>', '1', '2025-05-01 15:35:33', '1', '2025-05-01 15:35:33', b'0', 1);
+INSERT INTO `mall_promotion_article` VALUES (1, 2, 633, '意见反馈', '', 'http://127.0.0.1:48080/admin-api/infra/file/0/get/cb59dd08e53685d02145d5b60afb61a996bccb0773b5c88ae10dbba819283a3e.jpg', '1111111111111111111112222222222222222222222222222222', '0', 10, 0, b'1', b'1', '<p>哈哈哈哈</p>', 1, '2023-10-16 21:48:11', 1, '2025-05-01 15:28:59', b'1', 1);
+INSERT INTO `mall_promotion_article` VALUES (2, 3, 0, '用户协议', '', 'http://test.yudao.iocoder.cn/f716a8fe41dd6f3d57113ecb6f06018904c6504a92433d141231f2138f0ede69.png', '', '0', 0, 0, b'0', b'0', '<p>我是用户协议，可以按需更改哈！</p>', 1, '2023-12-27 21:15:09', 1, '2025-05-01 15:35:43', b'0', 1);
+INSERT INTO `mall_promotion_article` VALUES (3, 3, 0, '隐私协议', '', 'http://test.yudao.iocoder.cn/42ca1a46545be9f03d9909237b08c09392df249043407214d3435717a9cfb76b.png', '', '0', 0, 0, b'0', b'0', '<p>啦啦啦啦，我是隐私协议</p>', 1, '2023-12-27 21:23:16', 1, '2025-05-01 15:32:26', b'0', 1);
+INSERT INTO `mall_promotion_article` VALUES (4, 3, 0, '关于我们', '', 'http://test.yudao.iocoder.cn/280ef6562ba6e10a18397a320b22470a5249356bc17e1e3f3f9ab62ac3820b32.png', '', '0', 0, 0, b'0', b'0', '<p>啦啦啦啦，我是关于我们</p>', 1, '2023-12-27 21:23:42', 1, '2025-05-01 15:32:35', b'0', 1);
+INSERT INTO `mall_promotion_article` VALUES (5, 3, 0, '常见问题', '', 'http://test.yudao.iocoder.cn/4ac1319213673bb3aa43a32be359c947689d0e554189a5c3094aed87072a897d.png', '', '0', 0, 0, b'0', b'0', '<h2>① 商品退货了，谁承担运费？</h2><p>亲，平台运费规则秉承“谁过错，谁承担”的原则,如非商家或者物流问题，建议您联系商家协商处理，售后，退货运费需要您自行承担;如商品存在质量问题、商家发错货等情况，退货运费由商家承担。为了更好的保障您的权益，请您保留好相关凭证,退货物流费用麻烦您先垫付，不要使用到付，待商家收到您寄回的商品，退款成功后，您可以凭借凭证联系商家处理~</p><h2>② 付款后订单显示待付款？</h2><p>如您账户显示已扣款，但订单交易状态显示”等待付款”，可能是由于网络繁忙导致数据延迟，建议您稍后关注订单交易状态以及交易账户流水情况。</p><h2>③ 发货时间？</h2><p>一般情况下，用户下单后48小时内发货</p>', 1, '2023-12-27 22:05:57', 1, '2025-05-01 15:29:58', b'0', 1);
+INSERT INTO `mall_promotion_article` VALUES (6, 3, 0, '意见反馈', '', 'http://test.yudao.iocoder.cn/285fb3da4dca5288cd963746efe3b3c9c1052263c2a350d60756ea212c9d7995.png', '', '0', 0, 0, b'0', b'0', '<p>客服电话：xxxx</p><p>公司官网：www.iocoder.cn</p><p><br></p>', 1, '2025-05-01 15:29:45', 1, '2025-05-01 15:29:45', b'0', 1);
+INSERT INTO `mall_promotion_article` VALUES (7, 3, 0, '发票管理', '', 'http://test.yudao.iocoder.cn/65c1335bb3df2cc136e7618d7ae51e58c6f04031bae42f7d394aced9d7912c0e.png', '', '0', 0, 0, b'0', b'0', '<p>发给 7685413@qq.com 税号 + 公司名，<br><br>一般周五统一开，周一到周四的发票！</p>', 1, '2025-05-01 15:35:33', 1, '2025-05-01 15:35:33', b'0', 1);
 
 -- ----------------------------
 -- Table structure for mall_promotion_article_category
@@ -3268,14 +3268,14 @@ CREATE TABLE `mall_promotion_article_category`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '文章分类表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '文章分类表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_promotion_article_category
 -- ----------------------------
-INSERT INTO `mall_promotion_article_category` VALUES (1, '电子资讯', 'http://127.0.0.1:48080/admin-api/infra/file/0/get/d6d29a8f02fdd7d86a32a3b9511b40783f5f71b2ee79d66479618f17e4f15985.png', 0, 0, '1', '2023-10-16 09:52:09', '1', '2023-10-16 09:52:09', b'0', 1);
-INSERT INTO `mall_promotion_article_category` VALUES (2, '技术前沿', 'http://127.0.0.1:48080/admin-api/infra/file/0/get/89c3b3f6a624a4f595eff40908498e12dd7922c693fc24ae7d2409beb75aeef5.png', 0, 1, '1', '2023-10-16 09:52:22', '1', '2023-12-09 00:13:56', b'0', 1);
-INSERT INTO `mall_promotion_article_category` VALUES (3, '系统分类', '', 0, 0, '1', '2023-12-27 21:12:05', '1', '2023-12-27 21:12:05', b'0', 1);
+INSERT INTO `mall_promotion_article_category` VALUES (1, '电子资讯', 'http://127.0.0.1:48080/admin-api/infra/file/0/get/d6d29a8f02fdd7d86a32a3b9511b40783f5f71b2ee79d66479618f17e4f15985.png', 0, 0, 1, '2023-10-16 09:52:09', 1, '2023-10-16 09:52:09', b'0', 1);
+INSERT INTO `mall_promotion_article_category` VALUES (2, '技术前沿', 'http://127.0.0.1:48080/admin-api/infra/file/0/get/89c3b3f6a624a4f595eff40908498e12dd7922c693fc24ae7d2409beb75aeef5.png', 0, 1, 1, '2023-10-16 09:52:22', 1, '2023-12-09 00:13:56', b'0', 1);
+INSERT INTO `mall_promotion_article_category` VALUES (3, '系统分类', '', 0, 0, 1, '2023-12-27 21:12:05', 1, '2023-12-27 21:12:05', b'0', 1);
 
 -- ----------------------------
 -- Table structure for mall_promotion_banner
@@ -3298,12 +3298,12 @@ CREATE TABLE `mall_promotion_banner`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = 'Banner 广告位' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = 'Banner 广告位' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_promotion_banner
 -- ----------------------------
-INSERT INTO `mall_promotion_banner` VALUES (4, '测试', 'http://127.0.0.1:48080/admin-api/infra/file/4/get/c27824a47a09d504bfefad46ff4660b4d635c05c6f9addc6aef2ce86619c7fcf.jpeg', 'http://www.iocoder.cn', 0, 0, 5, '3232112', NULL, '1', '2023-10-24 20:22:51', '1', '2023-10-24 20:22:51', b'0', 1);
+INSERT INTO `mall_promotion_banner` VALUES (4, '测试', 'http://127.0.0.1:48080/admin-api/infra/file/4/get/c27824a47a09d504bfefad46ff4660b4d635c05c6f9addc6aef2ce86619c7fcf.jpeg', 'http://www.iocoder.cn', 0, 0, 5, '3232112', NULL, 1, '2023-10-24 20:22:51', 1, '2023-10-24 20:22:51', b'0', 1);
 
 -- ----------------------------
 -- Table structure for mall_promotion_bargain_activity
@@ -3333,7 +3333,7 @@ CREATE TABLE `mall_promotion_bargain_activity`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 26 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '砍价活动' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 26 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '砍价活动' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_promotion_bargain_activity
@@ -3357,7 +3357,7 @@ CREATE TABLE `mall_promotion_bargain_help`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 37 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '砍价助力表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 37 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '砍价助力表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_promotion_bargain_help
@@ -3389,7 +3389,7 @@ CREATE TABLE `mall_promotion_bargain_record`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 33 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '砍价记录表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 33 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '砍价记录表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_promotion_bargain_record
@@ -3423,7 +3423,7 @@ CREATE TABLE `mall_promotion_combination_activity`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 9 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '拼团活动' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 9 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '拼团活动' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_promotion_combination_activity
@@ -3451,7 +3451,7 @@ CREATE TABLE `mall_promotion_combination_product`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 34 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '拼团商品' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 34 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '拼团商品' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_promotion_combination_product
@@ -3498,7 +3498,7 @@ CREATE TABLE `mall_promotion_combination_record`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 19 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '拼团记录' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 19 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '拼团记录' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_promotion_combination_record
@@ -3543,46 +3543,11 @@ CREATE TABLE `mall_promotion_coupon`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 41 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '优惠劵' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 41 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '优惠劵' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_promotion_coupon
 -- ----------------------------
-INSERT INTO `mall_promotion_coupon` VALUES (1, 1, '优惠劵A', 1, 247, 1, 10000, '2019-04-08 00:00:00', '2019-04-10 00:00:00', 1, NULL, 1, NULL, 1000, NULL, 0, '2019-05-17 17:46:30', '', '2022-11-03 00:09:56', '', '2023-10-03 04:59:13', b'0', 1);
-INSERT INTO `mall_promotion_coupon` VALUES (2, 1, '优惠劵B', 2, 247, 1, 2, '2019-04-08 00:00:00', '2019-04-10 00:00:00', 1, NULL, 2, 49, 1000, NULL, 0, '2019-05-17 14:21:17', '', '2022-11-03 00:09:56', '', '2023-12-16 02:28:26', b'0', 1);
-INSERT INTO `mall_promotion_coupon` VALUES (3, 1, '优惠劵C', 1, 247, 1, 10, '2019-04-08 00:00:00', '2019-04-10 00:00:00', 1, NULL, 1, NULL, 9, NULL, 0, '2019-05-17 17:58:50', '', '2022-11-03 00:09:56', '', '2023-12-16 01:19:07', b'0', 1);
-INSERT INTO `mall_promotion_coupon` VALUES (8, 1, '优惠劵AAA', 1, 247, 1, 1000, '2023-12-17 10:38:43', '2023-12-18 10:38:43', 2, '633,634', 2, 99, 1000, 10, NULL, NULL, '247', '2023-12-16 10:38:43', '247', '2023-12-16 10:38:43', b'0', 1);
-INSERT INTO `mall_promotion_coupon` VALUES (9, 1, '优惠劵AAA', 1, 247, 1, 1000, '2023-12-17 10:38:51', '2023-12-18 10:38:51', 2, '633,634', 2, 99, 1000, 10, NULL, NULL, '247', '2023-12-16 10:38:51', '247', '2023-12-16 10:38:51', b'0', 1);
-INSERT INTO `mall_promotion_coupon` VALUES (10, 1, '优惠劵AAA', 1, 247, 1, 1000, '2023-12-17 10:39:01', '2023-12-18 10:39:01', 2, '633,634', 2, 99, 1000, 10, NULL, NULL, '247', '2023-12-16 10:39:01', '247', '2023-12-16 10:39:01', b'0', 1);
-INSERT INTO `mall_promotion_coupon` VALUES (11, 1, '优惠劵AAA', 1, 247, 1, 1000, '2023-12-17 10:39:01', '2023-12-18 10:39:01', 2, '633,634', 2, 99, 1000, 10, NULL, NULL, '247', '2023-12-16 10:39:01', '247', '2023-12-16 10:39:01', b'0', 1);
-INSERT INTO `mall_promotion_coupon` VALUES (12, 1, '优惠劵AAA', 1, 247, 1, 1000, '2023-12-17 10:39:02', '2023-12-18 10:39:02', 2, '633,634', 2, 99, 1000, 10, NULL, NULL, '247', '2023-12-16 10:39:02', '247', '2023-12-16 10:39:02', b'0', 1);
-INSERT INTO `mall_promotion_coupon` VALUES (13, 1, '优惠劵AAA', 1, 247, 1, 1000, '2023-12-17 10:39:02', '2023-12-18 10:39:02', 2, '633,634', 2, 99, 1000, 10, NULL, NULL, '247', '2023-12-16 10:39:02', '247', '2023-12-16 10:39:02', b'0', 1);
-INSERT INTO `mall_promotion_coupon` VALUES (14, 1, '优惠劵AAA', 1, 247, 1, 1000, '2023-12-17 19:14:00', '2023-12-18 19:14:00', 2, '633,634', 2, 99, 1000, 10, NULL, NULL, '247', '2023-12-16 19:14:00', '247', '2023-12-16 19:14:00', b'0', 1);
-INSERT INTO `mall_promotion_coupon` VALUES (15, 1, '优惠劵AAA', 1, 247, 1, 1000, '2023-12-17 19:15:51', '2023-12-18 19:15:51', 2, '633,634', 2, 99, 1000, 10, NULL, NULL, '247', '2023-12-16 19:15:51', '247', '2023-12-16 19:15:51', b'0', 1);
-INSERT INTO `mall_promotion_coupon` VALUES (16, 1, '优惠劵AAA', 1, 247, 1, 1000, '2023-12-17 19:15:54', '2023-12-18 19:15:54', 2, '633,634', 2, 99, 1000, 10, NULL, NULL, '247', '2023-12-16 19:15:54', '247', '2023-12-16 19:15:54', b'0', 1);
-INSERT INTO `mall_promotion_coupon` VALUES (17, 1, '优惠劵AAA', 1, 247, 1, 1000, '2023-12-25 20:36:36', '2023-12-26 20:36:36', 2, '633,634', 2, 99, 1000, 10, NULL, NULL, '247', '2023-12-24 20:36:36', '247', '2023-12-24 20:36:36', b'0', 1);
-INSERT INTO `mall_promotion_coupon` VALUES (18, 1, '优惠劵AAA', 1, 247, 1, 1000, '2024-01-21 16:35:17', '2024-01-22 16:35:17', 2, '633,634', 2, 99, 1000, 10, NULL, NULL, '247', '2024-01-20 16:35:17', '247', '2024-01-20 16:35:17', b'0', 1);
-INSERT INTO `mall_promotion_coupon` VALUES (19, 1, '优惠劵AAA', 1, 247, 1, 1000, '2024-01-21 16:35:19', '2024-01-22 16:35:19', 2, '633,634', 2, 99, 1000, 10, NULL, NULL, '247', '2024-01-20 16:35:19', '247', '2024-01-20 16:35:19', b'0', 1);
-INSERT INTO `mall_promotion_coupon` VALUES (20, 1, '优惠劵AAA', 1, 247, 1, 1000, '2024-01-21 16:35:20', '2024-01-22 16:35:20', 2, '633,634', 2, 99, 1000, 10, NULL, NULL, '247', '2024-01-20 16:35:20', '247', '2024-01-20 16:35:20', b'0', 1);
-INSERT INTO `mall_promotion_coupon` VALUES (21, 1, '优惠劵AAA', 1, 247, 1, 1000, '2024-01-21 16:35:20', '2024-01-22 16:35:20', 2, '633,634', 2, 99, 1000, 10, NULL, NULL, '247', '2024-01-20 16:35:20', '247', '2024-01-20 16:35:20', b'0', 1);
-INSERT INTO `mall_promotion_coupon` VALUES (22, 1, '优惠劵AAA', 1, 247, 1, 1000, '2024-01-21 17:07:12', '2024-01-22 17:07:12', 2, '633,634', 2, 99, 1000, 10, NULL, NULL, '247', '2024-01-20 17:07:12', '247', '2024-01-20 17:07:12', b'0', 1);
-INSERT INTO `mall_promotion_coupon` VALUES (23, 1, '优惠劵AAA', 1, 247, 1, 1000, '2024-01-21 17:08:16', '2024-01-22 17:08:16', 2, '633,634', 2, 99, 1000, 10, NULL, NULL, '247', '2024-01-20 17:08:16', '247', '2024-01-20 17:08:16', b'0', 1);
-INSERT INTO `mall_promotion_coupon` VALUES (24, 1, '优惠劵AAA', 1, 247, 1, 1000, '2024-01-21 17:08:17', '2024-01-22 17:08:17', 2, '633,634', 2, 99, 1000, 10, NULL, NULL, '247', '2024-01-20 17:08:17', '247', '2024-01-20 17:08:17', b'0', 1);
-INSERT INTO `mall_promotion_coupon` VALUES (25, 1, '优惠劵AAA', 1, 247, 1, 1000, '2024-01-21 17:08:18', '2024-01-22 17:08:18', 2, '633,634', 2, 99, 1000, 10, NULL, NULL, '247', '2024-01-20 17:08:18', '247', '2024-01-20 17:08:18', b'0', 1);
-INSERT INTO `mall_promotion_coupon` VALUES (26, 1, '优惠劵AAA', 1, 247, 1, 1000, '2024-01-21 17:08:19', '2024-01-22 17:08:19', 2, '633,634', 2, 99, 1000, 10, NULL, NULL, '247', '2024-01-20 17:08:19', '247', '2024-01-20 17:08:19', b'0', 1);
-INSERT INTO `mall_promotion_coupon` VALUES (27, 1, '优惠劵AAA', 1, 247, 1, 1000, '2024-01-21 17:08:50', '2024-01-22 17:08:50', 2, '633,634', 2, 99, 1000, 10, NULL, NULL, '247', '2024-01-20 17:08:50', '247', '2024-01-20 17:08:50', b'0', 1);
-INSERT INTO `mall_promotion_coupon` VALUES (28, 1, '优惠劵AAA', 1, 247, 1, 1000, '2024-01-21 17:08:51', '2024-01-22 17:08:51', 2, '633,634', 2, 99, 1000, 10, NULL, NULL, '247', '2024-01-20 17:08:51', '247', '2024-01-20 17:08:51', b'0', 1);
-INSERT INTO `mall_promotion_coupon` VALUES (29, 1, '优惠劵AAA', 1, 247, 1, 1000, '2024-01-21 17:08:52', '2024-01-22 17:08:52', 2, '633,634', 2, 99, 1000, 10, NULL, NULL, '247', '2024-01-20 17:08:52', '247', '2024-01-20 17:08:52', b'0', 1);
-INSERT INTO `mall_promotion_coupon` VALUES (30, 1, '优惠劵AAA', 1, 247, 1, 1000, '2024-01-21 17:09:04', '2024-01-22 17:09:04', 2, '633,634', 2, 99, 1000, 10, NULL, NULL, '247', '2024-01-20 17:09:04', '247', '2024-01-20 17:09:04', b'0', 1);
-INSERT INTO `mall_promotion_coupon` VALUES (31, 1, '优惠劵AAA', 1, 247, 1, 1000, '2024-01-21 17:09:15', '2024-01-22 17:09:15', 2, '633,634', 2, 99, 1000, 10, NULL, NULL, '247', '2024-01-20 17:09:15', '247', '2024-01-20 17:09:15', b'0', 1);
-INSERT INTO `mall_promotion_coupon` VALUES (32, 1, '优惠劵AAA', 1, 247, 1, 1000, '2024-01-21 17:09:16', '2024-01-22 17:09:16', 2, '633,634', 2, 99, 1000, 10, NULL, NULL, '247', '2024-01-20 17:09:16', '247', '2024-01-20 17:09:16', b'0', 1);
-INSERT INTO `mall_promotion_coupon` VALUES (33, 1, '优惠劵AAA', 1, 247, 1, 1000, '2024-01-21 17:09:27', '2024-01-22 17:09:27', 2, '633,634', 2, 99, 1000, 10, NULL, NULL, '247', '2024-01-20 17:09:27', '247', '2024-01-20 17:09:27', b'0', 1);
-INSERT INTO `mall_promotion_coupon` VALUES (34, 1, '优惠劵AAA', 1, 247, 1, 1000, '2024-01-21 17:09:35', '2024-01-22 17:09:35', 2, '633,634', 2, 99, 1000, 10, NULL, NULL, '247', '2024-01-20 17:09:35', '247', '2024-01-20 17:09:35', b'0', 1);
-INSERT INTO `mall_promotion_coupon` VALUES (35, 1, '优惠劵AAA', 1, 247, 1, 1000, '2024-02-21 17:25:33', '2024-10-30 20:01:15', 2, '633,634', 2, 99, 1000, 10, NULL, NULL, '247', '2024-01-20 17:25:33', '247', '2024-09-07 03:43:07', b'0', 1);
-INSERT INTO `mall_promotion_coupon` VALUES (36, 1, '优惠劵AAA', 1, 247, 1, 1000, '2024-10-29 19:52:54', '2024-10-30 20:01:15', 2, '633,634', 2, 99, 1000, 10, NULL, NULL, '247', '2024-07-28 19:52:54', '247', '2024-09-07 03:46:54', b'0', 1);
-INSERT INTO `mall_promotion_coupon` VALUES (37, 1, '优惠劵 BBB', 1, 292, 1, 1000, '2024-09-29 19:53:58', '2024-10-30 19:53:58', 2, '633,634', 2, 99, 1000, 10, NULL, NULL, '292', '2024-07-28 19:53:58', '292', '2024-09-07 03:46:10', b'0', 1);
-INSERT INTO `mall_promotion_coupon` VALUES (38, 1, '9 折卷', 1, 292, 1, 1000, '2024-07-28 19:55:03', '2024-07-30 19:55:03', 1, '633,634', 2, 90, 1000, 10, NULL, NULL, '292', '2024-07-28 19:55:03', '292', '2024-07-28 19:55:03', b'0', 1);
-INSERT INTO `mall_promotion_coupon` VALUES (39, 1, '9 折卷', 1, 292, 1, 1000, '2024-07-28 20:01:15', '2024-10-30 20:01:15', 1, '633,634', 2, 90, 1000, 9999900, NULL, NULL, '292', '2024-07-28 20:01:16', '292', '2024-09-07 03:42:12', b'0', 1);
 
 -- ----------------------------
 -- Table structure for mall_promotion_coupon_template
@@ -3610,9 +3575,9 @@ CREATE TABLE `mall_promotion_coupon_template`  (
   `discount_limit_price` int NULL DEFAULT NULL COMMENT '折扣上限，仅在 discount_type 等于 2 时生效',
   `take_count` int NOT NULL DEFAULT 0 COMMENT '领取优惠券的数量',
   `use_count` int NOT NULL DEFAULT 0 COMMENT '使用优惠券的次数',
-  `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
+  `creator` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '创建者',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `updater` bigint NULL DEFAULT NULL COMMENT '更新者ID',
+  `updater` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '更新者',
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
@@ -3644,9 +3609,9 @@ CREATE TABLE `mall_promotion_discount_activity`  (
   `start_time` datetime NOT NULL COMMENT '开始时间',
   `end_time` datetime NOT NULL COMMENT '结束时间',
   `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '备注',
-  `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
+  `creator` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '创建者',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `updater` bigint NULL DEFAULT NULL COMMENT '更新者ID',
+  `updater` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '更新者',
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
@@ -3675,9 +3640,9 @@ CREATE TABLE `mall_promotion_discount_product`  (
   `activity_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '活动标题',
   `activity_start_time` datetime NOT NULL COMMENT '活动开始时间点',
   `activity_end_time` datetime NOT NULL COMMENT '活动结束时间点',
-  `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
+  `creator` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '创建者',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `updater` bigint NULL DEFAULT NULL COMMENT '更新者ID',
+  `updater` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '更新者',
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
@@ -3784,9 +3749,9 @@ CREATE TABLE `mall_promotion_kefu_conversation`  (
   `user_deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '用户是否可见',
   `admin_deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '管理员是否可见',
   `admin_unread_message_count` int NOT NULL COMMENT '管理员未读消息数',
-  `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
+  `creator` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '创建者',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `updater` bigint NULL DEFAULT NULL COMMENT '更新者ID',
+  `updater` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '更新者',
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
@@ -3814,9 +3779,9 @@ CREATE TABLE `mall_promotion_kefu_message`  (
   `content_type` int NOT NULL COMMENT '消息类型',
   `content` varchar(2048) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '消息',
   `read_status` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否已读',
-  `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
+  `creator` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '创建者',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `updater` bigint NULL DEFAULT NULL COMMENT '更新者ID',
+  `updater` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '更新者',
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
@@ -3864,9 +3829,9 @@ CREATE TABLE `mall_promotion_point_activity`  (
   `sort` int NOT NULL COMMENT '排序',
   `stock` int NOT NULL COMMENT '积分商城活动库存(剩余库存积分兑换时扣减)',
   `total_stock` int NOT NULL COMMENT '积分商城活动总库存',
-  `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
+  `creator` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '创建者',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `updater` bigint NULL DEFAULT NULL COMMENT '更新者ID',
+  `updater` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '更新者',
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
@@ -3892,9 +3857,9 @@ CREATE TABLE `mall_promotion_point_product`  (
   `price` int NOT NULL COMMENT '所需兑换金额，单位：分',
   `stock` int NOT NULL COMMENT '积分商城商品库存',
   `activity_status` int NOT NULL COMMENT '积分商城商品状态',
-  `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
+  `creator` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '创建者',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `updater` bigint NULL DEFAULT NULL COMMENT '更新者ID',
+  `updater` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '更新者',
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
@@ -3923,9 +3888,9 @@ CREATE TABLE `mall_promotion_reward_activity`  (
   `product_scope` tinyint NOT NULL COMMENT '商品范围',
   `product_scope_values` varchar(1024) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '商品范围编号的数组',
   `rules` varchar(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '优惠规则的数组',
-  `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
+  `creator` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '创建者',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `updater` bigint NULL DEFAULT NULL COMMENT '更新者ID',
+  `updater` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '更新者',
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
@@ -4217,9 +4182,9 @@ CREATE TABLE `mall_trade_brokerage_record`  (
   `unfreeze_time` datetime NULL DEFAULT NULL COMMENT '解冻时间',
   `source_user_level` int NOT NULL DEFAULT 0 COMMENT '来源用户等级',
   `source_user_id` bigint NOT NULL DEFAULT 0 COMMENT '来源用户编号',
-  `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
+  `creator` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '创建者',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `updater` bigint NULL DEFAULT NULL COMMENT '更新者ID',
+  `updater` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '更新者',
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
@@ -4284,9 +4249,9 @@ CREATE TABLE `mall_trade_brokerage_user`  (
   `brokerage_time` datetime NULL DEFAULT NULL COMMENT '成为分销员时间',
   `brokerage_price` int NOT NULL DEFAULT 0 COMMENT '可用佣金',
   `frozen_price` int NOT NULL DEFAULT 0 COMMENT '冻结佣金',
-  `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
+  `creator` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '创建者',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `updater` bigint NULL DEFAULT NULL COMMENT '更新者ID',
+  `updater` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '更新者',
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
@@ -4331,9 +4296,9 @@ CREATE TABLE `mall_trade_brokerage_withdraw`  (
   `transfer_channel_code` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '转账渠道',
   `transfer_time` datetime NULL DEFAULT NULL COMMENT '转账支付时间',
   `transfer_error_msg` varchar(4096) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT '' COMMENT '转账错误提示',
-  `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
+  `creator` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '创建者',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `updater` bigint NULL DEFAULT NULL COMMENT '更新者ID',
+  `updater` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '更新者',
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
@@ -4394,9 +4359,9 @@ CREATE TABLE `mall_trade_cart`  (
   `sku_id` bigint NOT NULL COMMENT '商品 SKU 编号',
   `count` int NOT NULL COMMENT '商品购买数量',
   `selected` bit(1) NOT NULL DEFAULT b'1' COMMENT '是否选中',
-  `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
+  `creator` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '创建者',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `updater` bigint NULL DEFAULT NULL COMMENT '更新者ID',
+  `updater` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '更新者',
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
@@ -4473,9 +4438,9 @@ CREATE TABLE `mall_trade_config`  (
   `brokerage_withdraw_fee_percent` int NOT NULL DEFAULT 0 COMMENT '提现手续费百分比',
   `brokerage_frozen_days` int NOT NULL DEFAULT 7 COMMENT '佣金冻结时间(天)',
   `brokerage_withdraw_types` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '1,2,3,4' COMMENT '提现方式：1-钱包；2-银行卡；3-微信；4-支付宝',
-  `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
+  `creator` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '创建者',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `updater` bigint NULL DEFAULT NULL COMMENT '更新者ID',
+  `updater` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '更新者',
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
@@ -4498,9 +4463,9 @@ CREATE TABLE `mall_trade_delivery_express`  (
   `logo` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '快递公司 logo',
   `sort` int NOT NULL DEFAULT 0 COMMENT '排序',
   `status` tinyint NOT NULL DEFAULT 0 COMMENT '状态',
-  `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
+  `creator` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '创建者',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `updater` bigint NULL DEFAULT NULL COMMENT '更新者ID',
+  `updater` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '更新者',
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
@@ -4524,9 +4489,9 @@ CREATE TABLE `mall_trade_delivery_express_template`  (
   `name` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '模板名称',
   `charge_mode` tinyint NOT NULL COMMENT '配送计费方式',
   `sort` int NOT NULL DEFAULT 0 COMMENT '排序',
-  `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
+  `creator` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '创建者',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `updater` bigint NULL DEFAULT NULL COMMENT '更新者ID',
+  `updater` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '更新者',
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
@@ -4552,9 +4517,9 @@ CREATE TABLE `mall_trade_delivery_express_template_charge`  (
   `start_price` int NOT NULL COMMENT '起步价，单位：分',
   `extra_count` double NOT NULL COMMENT '续件数量',
   `extra_price` int NOT NULL COMMENT '额外价，单位：分',
-  `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
+  `creator` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '创建者',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `updater` bigint NULL DEFAULT NULL COMMENT '更新者ID',
+  `updater` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '更新者',
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
@@ -4589,9 +4554,9 @@ CREATE TABLE `mall_trade_delivery_express_template_free`  (
   `area_ids` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '包邮区域 id',
   `free_price` int NOT NULL COMMENT '包邮金额，单位：分',
   `free_count` int NOT NULL DEFAULT 0 COMMENT '包邮件数,',
-  `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
+  `creator` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '创建者',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `updater` bigint NULL DEFAULT NULL COMMENT '更新者ID',
+  `updater` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '更新者',
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
@@ -4640,9 +4605,9 @@ CREATE TABLE `mall_trade_delivery_pick_up_store`  (
   `longitude` double NOT NULL COMMENT '经度',
   `verify_user_ids` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '核销用户编号数组',
   `status` tinyint NOT NULL DEFAULT 0 COMMENT '门店状态',
-  `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
+  `creator` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '创建者',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `updater` bigint NULL DEFAULT NULL COMMENT '更新者ID',
+  `updater` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '更新者',
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
@@ -5269,9 +5234,9 @@ CREATE TABLE `mall_trade_order_log`  (
   `after_status` tinyint NULL DEFAULT NULL COMMENT '操作后状态',
   `operate_type` int NOT NULL DEFAULT 0 COMMENT '操作类型',
   `content` varchar(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '操作内容',
-  `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
+  `creator` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '创建者',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `updater` bigint NULL DEFAULT NULL COMMENT '更新者ID',
+  `updater` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '更新者',
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
@@ -5607,9 +5572,9 @@ CREATE TABLE `mall_trade_statistics`  (
   `recharge_pay_price` int NOT NULL DEFAULT 0 COMMENT '充值金额，单位：分',
   `recharge_refund_count` int NOT NULL DEFAULT 0 COMMENT '充值退款订单数',
   `recharge_refund_price` int NOT NULL DEFAULT 0 COMMENT '充值退款金额，单位：分',
-  `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
+  `creator` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '创建者',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `updater` bigint NULL DEFAULT NULL COMMENT '更新者ID',
+  `updater` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '更新者',
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
