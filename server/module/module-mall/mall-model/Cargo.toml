@@ -1,0 +1,22 @@
+[package]
+name = "mall-model"
+version = { workspace = true }
+edition = { workspace = true }
+rust-version = { workspace = true }
+
+[lints.rust]
+unused_imports = "allow"
+
+[dependencies]
+serde = { version = "1.0.219", default-features = false, features = ["derive"] }
+serde_json = "1.0.140"
+chrono = { version = "0.4.41", features = ["serde"] }       # 用于处理时间
+
+serde_with = { version = "3.12.0" }
+
+utoipa = { version = "5.3.1", features = ["axum_extras"] } # 添加 utoipa，支持 Axum
+utoipa-swagger-ui = { version = "9.0.0", features = ["axum"] } # 添加 Swagger UI 支持
+
+common = { path = "../../../framework/common" }
+macros = { path = "../../../framework/macros" }
+system-common = { path = "../../module-system/system-common" }

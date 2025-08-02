@@ -7,6 +7,7 @@ members = [
     "module/module-file/*",
     "module/module-system/*",
     "module/module-erp/*",
+    "module/module-mall/*",
     "module/module-third/module-captcha/captcha-grpc-rust",
     "module/module-third/module-process/process-rust/*",
 ]
