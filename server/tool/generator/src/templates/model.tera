@@ -1,4 +1,6 @@
-use chrono::NaiveDateTime;
+use chrono::NaiveDateTime;{% if request_has_date  %}
+use chrono::NaiveDate;{% endif %}{% if request_has_time  %}
+use chrono::NaiveTime;{% endif %}
 use sea_orm::Condition;
 use sea_orm::entity::prelude::*;
 use common::interceptor::orm::active_filter::ActiveFilterEntityTrait;

@@ -1,4 +1,6 @@
-use chrono::NaiveDateTime;
+use chrono::NaiveDateTime;{% if request_has_date  %}
+use chrono::NaiveDate;{% endif %}{% if request_has_time  %}
+use chrono::NaiveTime;{% endif %}
 use serde::{Serialize, Deserialize};
 use utoipa::ToSchema;
 use serde_with::{serde_as, DisplayFromStr};
@@ -6,10 +8,10 @@ use serde_with::{serde_as, DisplayFromStr};
 #[serde_as]
 #[derive(Deserialize, Serialize, Debug, Clone, ToSchema)]
 pub struct {{ response_model_name }} {
-    {% for column in columns_response -%}{% if column.is_date %}
-    // #[serde_as(as = "DisplayFromStr")]
-    // #[serde(with = "serde_with::chrono::naive_datetime")]
-    #[serde_as(as = "common::formatter::string_date_time::StringDateTime")]
+    {% for column in columns_response -%}{% if column.is_date_time %}
+    #[serde_as(as = {% if column.nullable  %}"Option<common::formatter::string_date_time::StringDateTime>"{% else %}"common::formatter::string_date_time::StringDateTime"{% endif %})]{% endif %}{% if column.is_date %}
+    #[serde_as(as = {% if column.nullable  %}"Option<common::formatter::string_date_time::StringDate>"{% else %}"common::formatter::string_date_time::StringDate"{% endif %})]{% endif %}{% if column.is_time %}
+    #[serde_as(as = {% if column.nullable  %}"Option<common::formatter::string_date_time::StringTime>"{% else %}"common::formatter::string_date_time::StringTime"{% endif %})]{% endif %}{% if column.is_date_formatter %}
     #[schema(value_type = String, format = Date)]{% endif %}
     pub {{ column.column_name }}: {% if column.nullable  %}Option<{{ column.rust_type  }}>{% else %}{{ column.rust_type  }}{% endif %}, // {{ column.column_comment  }}
     {% endfor %}

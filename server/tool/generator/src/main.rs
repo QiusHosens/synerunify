@@ -138,8 +138,8 @@ fn main() {
     let template_base_path = format!("{}/src", base_path);
     let code_base_path = format!("{}/code", base_path);
     // 初始化数据库连接
-    let url = "mysql://synerunify:synerunify@192.168.0.99:30010/synerunify";
-    // let url = "mysql://synerunify:synerunify@192.168.1.18:3306/synerunify";
+    // let url = "mysql://synerunify:synerunify@192.168.0.99:30010/synerunify";
+    let url = "mysql://synerunify:synerunify@192.168.1.18:3306/synerunify";
     let pool = Pool::new(url).unwrap();
     let mut conn = pool.get_conn().unwrap();
 
@@ -199,6 +199,8 @@ fn main() {
         let mut columns_data_request_update: Vec<serde_json::Map<String, serde_json::Value>> = Vec::with_capacity(columns.len() - UPDATE_REQUEST_NOT_NEED_FIELDS.len());
         let mut columns_data_response: Vec<serde_json::Map<String, serde_json::Value>> = Vec::with_capacity(columns.len() - RESPONSE_NOT_NEED_FIELDS.len());
 
+        let mut request_has_date_time = false;
+        let mut request_has_date = false;
         let mut request_has_time = false;
         let mut has_tenant_field = false;
         let mut has_status_field = false;
@@ -210,7 +212,10 @@ fn main() {
             map.insert("rust_type".to_string(), data_type.into());
             let ts_data_type = ts_map_data_type(&c.data_type);
             map.insert("ts_type".to_string(), ts_data_type.into());
-            map.insert("is_date".to_string(), (data_type == "NaiveDateTime").into());
+            map.insert("is_date_formatter".to_string(), (data_type == "NaiveDateTime" || data_type == "NaiveDate" || data_type == "NaiveTime").into());
+            map.insert("is_date_time".to_string(), (data_type == "NaiveDateTime").into());
+            map.insert("is_date".to_string(), (data_type == "NaiveDate").into());
+            map.insert("is_time".to_string(), (data_type == "NaiveTime").into());
             map.insert("nullable".to_string(), (c.is_nullable == "YES").into());
             map.insert("column_comment".to_string(), c.column_comment.into());
             
@@ -225,6 +230,12 @@ fn main() {
 
             if !CREATE_REQUEST_NOT_NEED_FIELDS.contains(&c.column_name.as_str()) {
                 if data_type == "NaiveDateTime" {
+                    request_has_date_time = true;
+                }
+                if data_type == "NaiveDate" {
+                    request_has_date = true;
+                }
+                if data_type == "NaiveTime" {
                     request_has_time = true;
                 }
                 columns_data_request_create.push(map.clone());
@@ -248,6 +259,8 @@ fn main() {
         context.insert("columns_request_update", &columns_data_request_update);
         context.insert("columns_response", &columns_data_response);
 
+        context.insert("request_has_date_time", &request_has_date_time);
+        context.insert("request_has_date", &request_has_date);
         context.insert("request_has_time", &request_has_time);
         context.insert("has_tenant_field", &has_tenant_field);
         context.insert("has_status_field", &has_status_field);

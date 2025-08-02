@@ -1,13 +1,13 @@
-{% if request_has_time  %}use chrono::NaiveDateTime;{% endif %}
+{% if request_has_date_time  %}use chrono::NaiveDateTime;{% endif %}
+{% if request_has_date  %}use chrono::NaiveDate;{% endif %}
+{% if request_has_time  %}use chrono::NaiveTime;{% endif %}
 use serde::{Serialize, Deserialize};
 use utoipa::ToSchema;
 use common::base::page::PaginatedRequest;
 
 #[derive(Serialize, Deserialize, Debug, ToSchema)]
 pub struct Create{{ request_model_name }} {
-    {% for column in columns_request_create %}{% if column.is_date %}
-    // #[serde_as(as = "DisplayFromStr")]
-    // #[serde(with = "serde_with::chrono::naive_datetime")]
+    {% for column in columns_request_create %}{% if column.is_date_formatter %}
     #[schema(value_type = String, format = Date)]{% endif %}
     pub {{ column.column_name }}: {% if column.nullable  %}Option<{{ column.rust_type  }}>{% else %}{{ column.rust_type  }}{% endif %}, // {{ column.column_comment  }}
     {% endfor %}
@@ -15,9 +15,7 @@ pub struct Create{{ request_model_name }} {
 
 #[derive(Serialize, Deserialize, Debug, ToSchema)]
 pub struct Update{{ request_model_name }} {
-    {% for column in columns_request_update %}{% if column.is_date %}
-    // #[serde_as(as = "DisplayFromStr")]
-    // #[serde(with = "serde_with::chrono::naive_datetime")]
+    {% for column in columns_request_update %}{% if column.is_date_formatter %}
     #[schema(value_type = String, format = Date)]{% endif %}
     pub {{ column.column_name }}: {% if column.column_name != "id"  %}Option<{{ column.rust_type  }}>{% else %}{{ column.rust_type  }}{% endif %}, // {{ column.column_comment  }}
     {% endfor %}
