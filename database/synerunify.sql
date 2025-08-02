@@ -11,7 +11,7 @@
  Target Server Version : 80200 (8.2.0)
  File Encoding         : 65001
 
- Date: 01/08/2025 21:48:58
+ Date: 02/08/2025 14:23:23
 */
 
 SET NAMES utf8mb4;
@@ -1204,6 +1204,10 @@ CREATE TABLE `mall_product_brand`  (
 ) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '商品品牌' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
+-- Records of mall_product_brand
+-- ----------------------------
+
+-- ----------------------------
 -- Table structure for mall_product_browse_history
 -- ----------------------------
 DROP TABLE IF EXISTS `mall_product_browse_history`;
@@ -1224,6 +1228,10 @@ CREATE TABLE `mall_product_browse_history`  (
 ) ENGINE = InnoDB AUTO_INCREMENT = 1743 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '商品浏览记录表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
+-- Records of mall_product_browse_history
+-- ----------------------------
+
+-- ----------------------------
 -- Table structure for mall_product_category
 -- ----------------------------
 DROP TABLE IF EXISTS `mall_product_category`;
@@ -1242,6 +1250,10 @@ CREATE TABLE `mall_product_category`  (
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 84 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '商品分类' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of mall_product_category
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for mall_product_comment
@@ -1280,6 +1292,10 @@ CREATE TABLE `mall_product_comment`  (
 ) ENGINE = InnoDB AUTO_INCREMENT = 15 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '商品评论' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
+-- Records of mall_product_comment
+-- ----------------------------
+
+-- ----------------------------
 -- Table structure for mall_product_favorite
 -- ----------------------------
 DROP TABLE IF EXISTS `mall_product_favorite`;
@@ -1296,6 +1312,10 @@ CREATE TABLE `mall_product_favorite`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `idx_userId`(`user_id` ASC) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 32 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin COMMENT = '商品收藏表' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of mall_product_favorite
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for mall_product_property
@@ -1317,6 +1337,10 @@ CREATE TABLE `mall_product_property`  (
 ) ENGINE = InnoDB AUTO_INCREMENT = 17 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '商品属性项' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
+-- Records of mall_product_property
+-- ----------------------------
+
+-- ----------------------------
 -- Table structure for mall_product_property_value
 -- ----------------------------
 DROP TABLE IF EXISTS `mall_product_property_value`;
@@ -1334,6 +1358,10 @@ CREATE TABLE `mall_product_property_value`  (
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 32 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '商品属性值' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of mall_product_property_value
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for mall_product_sku
@@ -1362,6 +1390,10 @@ CREATE TABLE `mall_product_sku`  (
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 38 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '商品sku' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of mall_product_sku
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for mall_product_spu
@@ -1401,6 +1433,10 @@ CREATE TABLE `mall_product_spu`  (
 ) ENGINE = InnoDB AUTO_INCREMENT = 642 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '商品spu' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
+-- Records of mall_product_spu
+-- ----------------------------
+
+-- ----------------------------
 -- Table structure for mall_product_statistics
 -- ----------------------------
 DROP TABLE IF EXISTS `mall_product_statistics`;
@@ -1430,6 +1466,10 @@ CREATE TABLE `mall_product_statistics`  (
 ) ENGINE = InnoDB AUTO_INCREMENT = 76 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '商品统计表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
+-- Records of mall_product_statistics
+-- ----------------------------
+
+-- ----------------------------
 -- Table structure for mall_promotion_article
 -- ----------------------------
 DROP TABLE IF EXISTS `mall_promotion_article`;
@@ -1457,6 +1497,10 @@ CREATE TABLE `mall_promotion_article`  (
 ) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '文章管理表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
+-- Records of mall_promotion_article
+-- ----------------------------
+
+-- ----------------------------
 -- Table structure for mall_promotion_article_category
 -- ----------------------------
 DROP TABLE IF EXISTS `mall_promotion_article_category`;
@@ -1474,6 +1518,10 @@ CREATE TABLE `mall_promotion_article_category`  (
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '文章分类表' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of mall_promotion_article_category
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for mall_promotion_banner
@@ -1497,6 +1545,10 @@ CREATE TABLE `mall_promotion_banner`  (
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = 'Banner 广告位' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of mall_promotion_banner
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for mall_promotion_bargain_activity
@@ -1529,6 +1581,10 @@ CREATE TABLE `mall_promotion_bargain_activity`  (
 ) ENGINE = InnoDB AUTO_INCREMENT = 26 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '砍价活动' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
+-- Records of mall_promotion_bargain_activity
+-- ----------------------------
+
+-- ----------------------------
 -- Table structure for mall_promotion_bargain_help
 -- ----------------------------
 DROP TABLE IF EXISTS `mall_promotion_bargain_help`;
@@ -1546,6 +1602,10 @@ CREATE TABLE `mall_promotion_bargain_help`  (
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 37 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '砍价助力表' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of mall_promotion_bargain_help
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for mall_promotion_bargain_record
@@ -1570,6 +1630,10 @@ CREATE TABLE `mall_promotion_bargain_record`  (
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 33 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '砍价记录表' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of mall_promotion_bargain_record
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for mall_promotion_combination_activity
@@ -1597,6 +1661,10 @@ CREATE TABLE `mall_promotion_combination_activity`  (
 ) ENGINE = InnoDB AUTO_INCREMENT = 9 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '拼团活动' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
+-- Records of mall_promotion_combination_activity
+-- ----------------------------
+
+-- ----------------------------
 -- Table structure for mall_promotion_combination_product
 -- ----------------------------
 DROP TABLE IF EXISTS `mall_promotion_combination_product`;
@@ -1617,6 +1685,10 @@ CREATE TABLE `mall_promotion_combination_product`  (
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 34 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '拼团商品' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of mall_promotion_combination_product
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for mall_promotion_combination_record
@@ -1653,6 +1725,10 @@ CREATE TABLE `mall_promotion_combination_record`  (
 ) ENGINE = InnoDB AUTO_INCREMENT = 19 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '拼团记录' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
+-- Records of mall_promotion_combination_record
+-- ----------------------------
+
+-- ----------------------------
 -- Table structure for mall_promotion_coupon
 -- ----------------------------
 DROP TABLE IF EXISTS `mall_promotion_coupon`;
@@ -1682,6 +1758,10 @@ CREATE TABLE `mall_promotion_coupon`  (
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 41 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '优惠劵' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of mall_promotion_coupon
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for mall_promotion_coupon_template
@@ -1716,7 +1796,11 @@ CREATE TABLE `mall_promotion_coupon_template`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 23 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '优惠劵模板' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 23 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '优惠劵模板' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of mall_promotion_coupon_template
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for mall_promotion_discount_activity
@@ -1736,7 +1820,11 @@ CREATE TABLE `mall_promotion_discount_activity`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 14 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '限时折扣活动' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 14 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '限时折扣活动' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of mall_promotion_discount_activity
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for mall_promotion_discount_product
@@ -1761,7 +1849,11 @@ CREATE TABLE `mall_promotion_discount_product`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 46 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '限时折扣商品' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 46 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '限时折扣商品' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of mall_promotion_discount_product
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for mall_promotion_diy_page
@@ -1781,7 +1873,11 @@ CREATE TABLE `mall_promotion_diy_page`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 20 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '装修页面' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 20 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '装修页面' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of mall_promotion_diy_page
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for mall_promotion_diy_template
@@ -1802,7 +1898,11 @@ CREATE TABLE `mall_promotion_diy_template`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 11 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '装修模板' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 11 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '装修模板' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of mall_promotion_diy_template
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for mall_promotion_kefu_conversation
@@ -1825,7 +1925,11 @@ CREATE TABLE `mall_promotion_kefu_conversation`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '客服会话' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '客服会话' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of mall_promotion_kefu_conversation
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for mall_promotion_kefu_message
@@ -1848,7 +1952,11 @@ CREATE TABLE `mall_promotion_kefu_message`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 79 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '客服消息' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 79 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '客服消息' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of mall_promotion_kefu_message
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for mall_promotion_point_activity
@@ -1869,7 +1977,11 @@ CREATE TABLE `mall_promotion_point_activity`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '积分商城活动' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '积分商城活动' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of mall_promotion_point_activity
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for mall_promotion_point_product
@@ -1892,7 +2004,11 @@ CREATE TABLE `mall_promotion_point_product`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '积分商城商品' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '积分商城商品' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of mall_promotion_point_product
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for mall_promotion_reward_activity
@@ -1916,7 +2032,11 @@ CREATE TABLE `mall_promotion_reward_activity`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '满减送活动' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '满减送活动' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of mall_promotion_reward_activity
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for mall_promotion_seckill_activity
@@ -1943,7 +2063,11 @@ CREATE TABLE `mall_promotion_seckill_activity`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 43 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '秒杀活动' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 43 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '秒杀活动' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of mall_promotion_seckill_activity
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for mall_promotion_seckill_config
@@ -1963,7 +2087,11 @@ CREATE TABLE `mall_promotion_seckill_config`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 38 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '秒杀时段' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 38 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '秒杀时段' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of mall_promotion_seckill_config
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for mall_promotion_seckill_product
@@ -1987,7 +2115,11 @@ CREATE TABLE `mall_promotion_seckill_product`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 83 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '秒杀参与商品' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 83 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '秒杀参与商品' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of mall_promotion_seckill_product
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for mall_trade_after_sale
@@ -2009,7 +2141,7 @@ CREATE TABLE `mall_trade_after_sale`  (
   `spu_id` bigint UNSIGNED NOT NULL COMMENT '商品 SPU 编号',
   `spu_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT '商品 SPU 名称',
   `sku_id` bigint UNSIGNED NOT NULL COMMENT '商品 SKU 编号',
-  `properties` varchar(2000) NULL COMMENT '商品属性数组，JSON 格式',
+  `properties` varchar(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '商品属性数组，JSON 格式',
   `pic_url` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '商品图片',
   `count` int NOT NULL COMMENT '购买数量',
   `audit_time` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '审批时间',
@@ -2030,7 +2162,11 @@ CREATE TABLE `mall_trade_after_sale`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 31 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin COMMENT = '售后订单' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 31 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin COMMENT = '售后订单' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of mall_trade_after_sale
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for mall_trade_after_sale_log
@@ -2052,7 +2188,11 @@ CREATE TABLE `mall_trade_after_sale_log`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 61 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin COMMENT = '售后订单日志' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 61 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin COMMENT = '售后订单日志' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of mall_trade_after_sale_log
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for mall_trade_brokerage_record
@@ -2082,7 +2222,11 @@ CREATE TABLE `mall_trade_brokerage_record`  (
   INDEX `idx_user_id`(`user_id` ASC) USING BTREE COMMENT '用户编号',
   INDEX `idx_biz`(`biz_type` ASC, `biz_id` ASC) USING BTREE COMMENT '业务',
   INDEX `idx_status`(`status` ASC) USING BTREE COMMENT '状态'
-) ENGINE = InnoDB AUTO_INCREMENT = 40 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '佣金记录' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 40 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '佣金记录' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of mall_trade_brokerage_record
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for mall_trade_brokerage_user
@@ -2103,7 +2247,11 @@ CREATE TABLE `mall_trade_brokerage_user`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 296 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '分销用户' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 296 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '分销用户' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of mall_trade_brokerage_user
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for mall_trade_brokerage_withdraw
@@ -2138,7 +2286,11 @@ CREATE TABLE `mall_trade_brokerage_withdraw`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `idx_user_id`(`user_id` ASC) USING BTREE COMMENT '用户编号',
   INDEX `idx_audit_status`(`status` ASC) USING BTREE COMMENT '状态'
-) ENGINE = InnoDB AUTO_INCREMENT = 42 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '佣金提现' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 42 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '佣金提现' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of mall_trade_brokerage_withdraw
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for mall_trade_cart
@@ -2158,7 +2310,11 @@ CREATE TABLE `mall_trade_cart`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 100 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '购物车的商品信息' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 100 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '购物车的商品信息' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of mall_trade_cart
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for mall_trade_config
@@ -2188,7 +2344,11 @@ CREATE TABLE `mall_trade_config`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '交易中心配置' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '交易中心配置' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of mall_trade_config
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for mall_trade_delivery_express
@@ -2208,7 +2368,11 @@ CREATE TABLE `mall_trade_delivery_express`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '快递公司' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '快递公司' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of mall_trade_delivery_express
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for mall_trade_delivery_express_template
@@ -2226,7 +2390,11 @@ CREATE TABLE `mall_trade_delivery_express_template`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '快递运费模板' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '快递运费模板' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of mall_trade_delivery_express_template
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for mall_trade_delivery_express_template_charge
@@ -2248,7 +2416,11 @@ CREATE TABLE `mall_trade_delivery_express_template_charge`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 15 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '快递运费模板计费配置' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 15 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '快递运费模板计费配置' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of mall_trade_delivery_express_template_charge
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for mall_trade_delivery_express_template_free
@@ -2267,7 +2439,11 @@ CREATE TABLE `mall_trade_delivery_express_template_free`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 21 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '快递运费模板包邮配置' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 21 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '快递运费模板包邮配置' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of mall_trade_delivery_express_template_free
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for mall_trade_delivery_pick_up_store
@@ -2294,7 +2470,11 @@ CREATE TABLE `mall_trade_delivery_pick_up_store`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '自提门店' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '自提门店' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of mall_trade_delivery_pick_up_store
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for mall_trade_order
@@ -2308,7 +2488,7 @@ CREATE TABLE `mall_trade_order`  (
   `user_id` bigint UNSIGNED NOT NULL COMMENT '用户编号',
   `user_ip` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL DEFAULT '' COMMENT '用户 IP',
   `user_remark` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '用户备注',
-  `status` int NOT NULL DEFAULT 0 COMMENT '订单状态',
+  `status` tinyint NOT NULL DEFAULT 0 COMMENT '订单状态',
   `product_count` int NOT NULL COMMENT '购买的商品数量',
   `cancel_type` int NULL DEFAULT NULL COMMENT '取消类型',
   `remark` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '商家备注',
@@ -2361,7 +2541,11 @@ CREATE TABLE `mall_trade_order`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 277 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin COMMENT = '交易订单表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 277 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin COMMENT = '交易订单表' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of mall_trade_order
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for mall_trade_order_item
@@ -2375,7 +2559,7 @@ CREATE TABLE `mall_trade_order_item`  (
   `spu_id` bigint UNSIGNED NOT NULL COMMENT '商品 SPU 编号',
   `spu_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT '商品 SPU 名称',
   `sku_id` bigint UNSIGNED NOT NULL COMMENT '商品 SKU 编号',
-  `properties` varchar(2000) NULL COMMENT '商品属性数组，JSON 格式',
+  `properties` varchar(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '商品属性数组，JSON 格式',
   `pic_url` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '商品图片',
   `count` int NOT NULL COMMENT '购买数量',
   `comment_status` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否评价',
@@ -2398,7 +2582,11 @@ CREATE TABLE `mall_trade_order_item`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 272 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin COMMENT = '交易订单明细表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 272 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin COMMENT = '交易订单明细表' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of mall_trade_order_item
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for mall_trade_order_log
@@ -2420,7 +2608,11 @@ CREATE TABLE `mall_trade_order_log`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 8864 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '交易订单日志' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 8864 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '交易订单日志' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of mall_trade_order_log
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for mall_trade_statistics
@@ -2448,7 +2640,11 @@ CREATE TABLE `mall_trade_statistics`  (
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `trade_statistics_time_index`(`time` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 153 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '交易统计表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 153 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '交易统计表' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of mall_trade_statistics
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for system_data_scope_rule
