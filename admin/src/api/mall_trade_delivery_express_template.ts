@@ -1,0 +1,57 @@
+import { PaginatedRequest, PaginatedResponse } from '@/base/page';
+import { api } from '@/utils/request';
+
+const apis = {
+  create: '/erp/mall_trade_delivery_express_template/create', // 新增
+  update: '/erp/mall_trade_delivery_express_template/update', // 修改
+  delete: '/erp/mall_trade_delivery_express_template/delete', // 删除
+  get: '/erp/mall_trade_delivery_express_template/get', // 单条查询
+  list: '/erp/mall_trade_delivery_express_template/list', // 列表查询
+  page: '/erp/mall_trade_delivery_express_template/page', // 分页查询
+}
+
+export interface MallTradeDeliveryExpressTemplateRequest {
+  id: number; // 编号
+  name: string; // 模板名称
+  charge_mode: number; // 配送计费方式
+  sort: number; // 排序
+  }
+
+export interface MallTradeDeliveryExpressTemplateResponse {
+  id: number; // 编号
+  name: string; // 模板名称
+  charge_mode: number; // 配送计费方式
+  sort: number; // 排序
+  creator: number; // 创建者ID
+  create_time: string; // 创建时间
+  updater: number; // 更新者ID
+  update_time: string; // 更新时间
+  }
+
+export interface MallTradeDeliveryExpressTemplateQueryCondition extends PaginatedRequest {
+  
+}
+
+export const createMallTradeDeliveryExpressTemplate = (mall_trade_delivery_express_template: MallTradeDeliveryExpressTemplateRequest): Promise<number> => {
+  return api.post<number>(apis.create, mall_trade_delivery_express_template);
+}
+
+export const updateMallTradeDeliveryExpressTemplate = (mall_trade_delivery_express_template: MallTradeDeliveryExpressTemplateRequest): Promise<void> => {
+  return api.post<void>(apis.update, mall_trade_delivery_express_template);
+}
+
+export const deleteMallTradeDeliveryExpressTemplate = (id: number): Promise<void> => {
+  return api.post<void>(`${apis.delete}/${id}`);
+}
+
+export const getMallTradeDeliveryExpressTemplate = (id: number): Promise<MallTradeDeliveryExpressTemplateResponse> => {
+  return api.get<MallTradeDeliveryExpressTemplateResponse>(`${apis.get}/${id}`);
+}
+
+export const listMallTradeDeliveryExpressTemplate = (): Promise<Array<MallTradeDeliveryExpressTemplateResponse>> => {
+  return api.get<Array<MallTradeDeliveryExpressTemplateResponse>>(apis.list);
+}
+
+export const pageMallTradeDeliveryExpressTemplate = (condition: MallTradeDeliveryExpressTemplateQueryCondition): Promise<PaginatedResponse<MallTradeDeliveryExpressTemplateResponse>> => {
+  return api.get<PaginatedResponse<MallTradeDeliveryExpressTemplateResponse>>(apis.page, condition);
+}

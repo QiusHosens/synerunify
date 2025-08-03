@@ -1,0 +1,2 @@
+{% for table_name in table_names %}
+export * from './{{ table_name }}';{% endfor %}

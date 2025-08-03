@@ -160,6 +160,7 @@ fn main() {
     tera.add_template_file(format!("{}/templates/route.tera", template_base_path),  Some("route")).unwrap();
 
     tera.add_template_file(format!("{}/templates/front_api.tera", template_base_path),  Some("front_api")).unwrap();
+    tera.add_template_file(format!("{}/templates/front_api_index.tera", template_base_path),  Some("front_api_index")).unwrap();
     tera.add_template_file(format!("{}/templates/front_index.tera", template_base_path),  Some("front_index")).unwrap();
     tera.add_template_file(format!("{}/templates/front_add.tera", template_base_path),  Some("front_add")).unwrap();
     tera.add_template_file(format!("{}/templates/front_edit.tera", template_base_path),  Some("front_edit")).unwrap();
@@ -336,4 +337,9 @@ fn main() {
     let route_code = tera.render("route",  &mod_context).unwrap();
     let file_path = format!("{}/route/route.rs", code_base_path);
     write_file(&file_path, &route_code).unwrap();
+
+    // front api index
+    let front_api_index_code = tera.render("front_api_index",  &mod_context).unwrap();
+    let file_path = format!("{}/front_api_index/index.ts", code_base_path);
+    write_file(&file_path, &front_api_index_code).unwrap();
 }
