@@ -15,7 +15,7 @@ pub fn create_request_to_model(request: &CreateMallTradeAfterSaleRequest) -> Mal
         apply_pic_urls: request.apply_pic_urls.as_ref().map_or(NotSet, |apply_pic_urls| Set(Some(apply_pic_urls.clone()))),
         order_id: Set(request.order_id.clone()),
         order_no: Set(request.order_no.clone()),
-        order_item_Id: Set(request.order_item_Id.clone()),
+        order_item_id: Set(request.order_item_id.clone()),
         spu_id: Set(request.spu_id.clone()),
         spu_name: Set(request.spu_name.clone()),
         sku_id: Set(request.sku_id.clone()),
@@ -69,8 +69,8 @@ pub fn update_request_to_model(request: &UpdateMallTradeAfterSaleRequest, existi
     if let Some(order_no) = &request.order_no { 
         active_model.order_no = Set(order_no.clone());
     }
-    if let Some(order_item_Id) = &request.order_item_Id { 
-        active_model.order_item_Id = Set(order_item_Id.clone());
+    if let Some(order_item_id) = &request.order_item_id { 
+        active_model.order_item_id = Set(order_item_id.clone());
     }
     if let Some(spu_id) = &request.spu_id { 
         active_model.spu_id = Set(spu_id.clone());
@@ -139,7 +139,7 @@ pub fn model_to_response(model: MallTradeAfterSale) -> MallTradeAfterSaleRespons
         apply_pic_urls: model.apply_pic_urls,
         order_id: model.order_id,
         order_no: model.order_no,
-        order_item_Id: model.order_item_Id,
+        order_item_id: model.order_item_id,
         spu_id: model.spu_id,
         spu_name: model.spu_name,
         sku_id: model.sku_id,

@@ -30,7 +30,7 @@ pub struct Model {
     
     pub order_no: String, // 订单流水号
     
-    pub order_item_Id: i64, // 订单项编号
+    pub order_item_id: i64, // 订单项编号
     
     pub spu_id: i64, // 商品 SPU 编号
     

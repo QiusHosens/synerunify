@@ -2137,7 +2137,7 @@ CREATE TABLE `mall_trade_after_sale`  (
   `apply_pic_urls` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '补充凭证图片',
   `order_id` bigint UNSIGNED NOT NULL COMMENT '订单编号',
   `order_no` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT '订单流水号',
-  `order_item_Id` bigint UNSIGNED NOT NULL COMMENT '订单项编号',
+  `order_item_id` bigint UNSIGNED NOT NULL COMMENT '订单项编号',
   `spu_id` bigint UNSIGNED NOT NULL COMMENT '商品 SPU 编号',
   `spu_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT '商品 SPU 名称',
   `sku_id` bigint UNSIGNED NOT NULL COMMENT '商品 SKU 编号',
