@@ -7,9 +7,10 @@ use axum::response::{IntoResponse, Response};
 use tracing::error;
 use tracing_appender::rolling;
 use tracing_subscriber::{fmt};
-// use tracing_subscriber::EnvFilter;
+use tracing_subscriber::EnvFilter;
 use tracing_subscriber::prelude::*;
 use crate::config::config::Config;
+use once_cell::sync::OnceCell;
 
 // 自定义时间格式器
 struct LocalTimeFormatter;
@@ -20,12 +21,14 @@ impl fmt::time::FormatTime for LocalTimeFormatter {
     }
 }
 
+static FILE_GUARD: OnceCell<tracing_appender::non_blocking::WorkerGuard> = OnceCell::new();
+
 pub async fn init_tracing() -> io::Result<()> {
     // 从环境变量 RUST_LOG 获取日志级别，默认为 info
     // let env_filter = EnvFilter::try_from_default_env()
     //     .unwrap_or_else(|_| EnvFilter::new("info"));
     let config = Config::load();
-    // let env_filter = EnvFilter::new(format!("{}", config.log_level));
+    let env_filter = EnvFilter::new(format!("{}", config.log_level));
 
     // 配置日志文件路径
     let log_dir = "logs";
@@ -40,7 +43,9 @@ pub async fn init_tracing() -> io::Result<()> {
     let file_appender = rolling::daily(log_dir, "app.log");
 
     // 配置非阻塞写入器，限制最多保存30天
-    let (non_blocking, _guard) = tracing_appender::non_blocking(file_appender);
+    // let (non_blocking, _guard) = tracing_appender::non_blocking(file_appender);
+    let (non_blocking, guard) = tracing_appender::non_blocking(file_appender);
+    FILE_GUARD.set(guard).expect("Failed to set FILE_GUARD");
 
     let file_layer = fmt::layer()
         .with_writer(non_blocking)
@@ -56,7 +61,7 @@ pub async fn init_tracing() -> io::Result<()> {
     tracing_subscriber::registry()
         .with(file_layer)      // 输出到文件
         .with(stdout_layer)    // 输出到控制台
-        // .with(env_filter)      // 应用环境变量过滤
+        .with(env_filter)      // 应用环境变量过滤
         .init();
 
     // 设置全局 panic hook
