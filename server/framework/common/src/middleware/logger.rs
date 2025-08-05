@@ -1,6 +1,7 @@
 use chrono::Local;
 use std::{fs, panic};
 use std::io;
+use anyhow::Context;
 use axum::body::Body;
 use axum::http::{Request, StatusCode};
 use axum::response::{IntoResponse, Response};
@@ -11,6 +12,11 @@ use tracing_subscriber::EnvFilter;
 use tracing_subscriber::prelude::*;
 use crate::config::config::Config;
 use once_cell::sync::OnceCell;
+use flexi_logger::{Logger, FileSpec, Criterion, Naming, Age, Cleanup, Duplicate, WriteMode};
+use tracing_subscriber::fmt::SubscriberBuilder;
+use tracing_subscriber::layer::SubscriberExt;
+use tracing_subscriber::Registry;
+use tracing_log::LogTracer;
 
 // 自定义时间格式器
 struct LocalTimeFormatter;
@@ -24,9 +30,11 @@ impl fmt::time::FormatTime for LocalTimeFormatter {
 static FILE_GUARD: OnceCell<tracing_appender::non_blocking::WorkerGuard> = OnceCell::new();
 
 pub async fn init_tracing() -> io::Result<()> {
-    // 从环境变量 RUST_LOG 获取日志级别，默认为 info
-    // let env_filter = EnvFilter::try_from_default_env()
-    //     .unwrap_or_else(|_| EnvFilter::new("info"));
+    // "error"	只显示 error 日志
+    // "warn"	显示 warn 和 error
+    // "info"	显示 info、warn 和 error
+    // "debug"	包括 debug、info、warn、error
+    // "trace"	最详细，所有日志都输出
     let config = Config::load();
     let env_filter = EnvFilter::new(format!("{}", config.log_level));
 
@@ -84,6 +92,31 @@ pub async fn init_tracing() -> io::Result<()> {
 
     // 清理超过30天的日志文件
     cleanup_old_logs(log_dir)?;
+
+    Ok(())
+}
+
+pub async fn init_tracing_flexi() -> anyhow::Result<()> {
+    let config = Config::load();
+
+    Logger::try_with_str(&config.log_level)?
+        .log_to_file(FileSpec::default().directory("logs").basename("app"))
+        .write_mode(WriteMode::BufferAndFlush)
+        .rotate(
+            Criterion::AgeOrSize(Age::Day, 100 * 1024 * 1024), // 每天或100MB轮转
+            Naming::Timestamps,
+            Cleanup::KeepLogAndCompressedFiles(5, 30),
+        )
+        .duplicate_to_stdout(Duplicate::All)
+        .format(flexi_logger::detailed_format)
+        .start() // 初始化 log crate
+        .context("初始化日志失败，可能是日志已经设置过")?;
+
+    LogTracer::init()?; // log crate -> tracing
+
+    tracing_subscriber::registry()
+        .with(fmt::layer().with_target(false)) // 控制台日志格式
+        .init();
 
     Ok(())
 }

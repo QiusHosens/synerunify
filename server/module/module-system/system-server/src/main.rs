@@ -31,6 +31,7 @@ mod grpc;
 async fn main() -> Result<(), anyhow::Error> {
     // 初始化日志
     logger::init_tracing().await?;
+    // logger::init_tracing_flexi().await?;
     let config = Config::load();
     let database = get_database_instance(config.database_url).await;
 
