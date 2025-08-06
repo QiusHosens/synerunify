@@ -1,17 +1,17 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : 192.168.1.18_synerunify
+ Source Server         : 192.168.0.99_synerunify
  Source Server Type    : MySQL
- Source Server Version : 80200 (8.2.0)
- Source Host           : 192.168.1.18:3306
+ Source Server Version : 80100 (8.1.0)
+ Source Host           : 192.168.0.99:30010
  Source Schema         : synerunify
 
  Target Server Type    : MySQL
- Target Server Version : 80200 (8.2.0)
+ Target Server Version : 80100 (8.1.0)
  File Encoding         : 65001
 
- Date: 02/08/2025 14:23:23
+ Date: 06/08/2025 17:41:51
 */
 
 SET NAMES utf8mb4;
@@ -2913,7 +2913,7 @@ CREATE TABLE `system_menu`  (
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 211 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '菜单权限表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 244 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '菜单权限表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of system_menu
@@ -3114,6 +3114,39 @@ INSERT INTO `system_menu` VALUES (207, '查看', 'erp:financial:receipt:get', 3,
 INSERT INTO `system_menu` VALUES (208, '新增', 'erp:financial:receipt:add', 3, 1, 110, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:13:19', 1, '2025-06-10 02:13:19', b'0');
 INSERT INTO `system_menu` VALUES (209, '修改', 'erp:financial:receipt:edit', 3, 2, 110, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:13:36', 1, '2025-06-10 02:13:36', b'0');
 INSERT INTO `system_menu` VALUES (210, '删除', 'erp:financial:receipt:delete', 3, 3, 110, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:13:54', 1, '2025-06-10 02:13:54', b'0');
+INSERT INTO `system_menu` VALUES (211, '商城', '', 1, 400, 0, '/mall', 'mall', '', '', 'global.menu.mall', 0, b'1', b'1', b'1', 1, '2025-08-06 05:57:14', 1, '2025-08-06 05:57:57', b'0');
+INSERT INTO `system_menu` VALUES (212, '商品中心', '', 1, 402, 211, '/mall/product', 'product', '', '', 'global.menu.mall.product', 0, b'1', b'1', b'1', 1, '2025-06-08 14:46:06', 1, '2025-06-08 15:05:46', b'0');
+INSERT INTO `system_menu` VALUES (213, '订单中心', '', 1, 403, 211, '/mall/order', 'order', '', '', 'global.menu.mall.order', 0, b'1', b'1', b'1', 1, '2025-06-08 14:46:06', 1, '2025-06-08 15:05:46', b'0');
+INSERT INTO `system_menu` VALUES (214, '营销中心', '', 1, 404, 211, '/mall/marketing', 'marketing', '', '', 'global.menu.mall.marketing', 0, b'1', b'1', b'1', 1, '2025-06-08 14:46:06', 1, '2025-06-08 15:05:46', b'0');
+INSERT INTO `system_menu` VALUES (215, '统计中心', '', 1, 405, 211, '/mall/statistics', 'statistics', '', '', 'global.menu.mall.statistics', 0, b'1', b'1', b'1', 1, '2025-06-08 14:46:06', 1, '2025-06-08 15:05:46', b'0');
+INSERT INTO `system_menu` VALUES (216, '客服中心', '', 1, 406, 211, '/mall/serving', 'serving', '', '', 'global.menu.mall.serving', 0, b'1', b'1', b'1', 1, '2025-06-08 14:46:06', 1, '2025-06-08 15:05:46', b'0');
+INSERT INTO `system_menu` VALUES (217, '商品列表', 'mall:product:list', 2, 4021, 212, '/mall/product/list', 'productList', 'pages/mall/product/ProductList', 'ProductList', 'global.menu.mall.product.list', 0, b'1', b'1', b'1', 1, '2025-06-08 14:53:28', 1, '2025-06-08 15:08:13', b'0');
+INSERT INTO `system_menu` VALUES (218, '商品分类', 'mall:product:category', 2, 4022, 212, '/mall/product/category', 'productCategory', 'pages/mall/product/ProductCategory', 'ProductCategory', 'global.menu.mall.product.category', 0, b'1', b'1', b'1', 1, '2025-06-08 14:53:28', 1, '2025-06-08 15:08:13', b'0');
+INSERT INTO `system_menu` VALUES (219, '商品品牌', 'mall:product:brand', 2, 4023, 212, '/mall/product/brand', 'productBrand', 'pages/mall/product/ProductBrand', 'ProductBrand', 'global.menu.mall.product.brand', 0, b'1', b'1', b'1', 1, '2025-06-08 14:53:28', 1, '2025-06-08 15:08:13', b'0');
+INSERT INTO `system_menu` VALUES (220, '商品属性', 'mall:product:property', 2, 4024, 212, '/mall/product/property', 'productProperty', 'pages/mall/product/ProductProperty', 'ProductProperty', 'global.menu.mall.product.property', 0, b'1', b'1', b'1', 1, '2025-06-08 14:53:28', 1, '2025-06-08 15:08:13', b'0');
+INSERT INTO `system_menu` VALUES (221, '商品评论', 'mall:product:comment', 2, 4025, 212, '/mall/product/comment', 'productComment', 'pages/mall/product/ProductComment', 'ProductComment', 'global.menu.mall.product.comment', 0, b'1', b'1', b'1', 1, '2025-06-08 14:53:28', 1, '2025-06-08 15:08:13', b'0');
+INSERT INTO `system_menu` VALUES (222, '订单列表', 'mall:order:list', 2, 4031, 213, '/mall/order/list', 'orderList', 'pages/mall/order/OrderList', 'OrderList', 'global.menu.mall.order.list', 0, b'1', b'1', b'1', 1, '2025-06-08 14:53:28', 1, '2025-06-08 15:08:13', b'0');
+INSERT INTO `system_menu` VALUES (223, '售后退款', 'mall:order:aftersale', 2, 4032, 213, '/mall/order/after-sale', 'orderAfterSale', 'pages/mall/order/OrderAfterSale', 'OrderAfterSale', 'global.menu.mall.order.aftersale', 0, b'1', b'1', b'1', 1, '2025-06-08 14:53:28', 1, '2025-08-06 08:21:43', b'0');
+INSERT INTO `system_menu` VALUES (224, '交易配置', '', 1, 4033, 213, '/mall/order/config', 'config', '', '', 'global.menu.mall.order.config', 0, b'1', b'1', b'1', 1, '2025-06-08 14:46:06', 1, '2025-08-06 08:20:18', b'0');
+INSERT INTO `system_menu` VALUES (225, '配送管理', '', 1, 4034, 213, '/mall/order/delivery', 'delivery', '', '', 'global.menu.mall.order.delivery', 0, b'1', b'1', b'1', 1, '2025-06-08 14:46:06', 1, '2025-06-08 15:05:46', b'0');
+INSERT INTO `system_menu` VALUES (226, '分销管理', '', 1, 4035, 213, '/mall/order/brokerage', 'brokerage', '', '', 'global.menu.mall.order.brokerage', 0, b'1', b'1', b'1', 1, '2025-06-08 14:46:06', 1, '2025-06-08 15:05:46', b'0');
+INSERT INTO `system_menu` VALUES (227, '快递发货', '', 1, 40341, 225, '/mall/order/delivery/express', 'express', '', '', 'global.menu.mall.order.delivery.express', 0, b'1', b'1', b'1', 1, '2025-06-08 14:46:06', 1, '2025-06-08 15:05:46', b'0');
+INSERT INTO `system_menu` VALUES (228, '门店自提', '', 1, 40342, 225, '/mall/order/delivery/store', 'store', '', '', 'global.menu.mall.order.delivery.store', 0, b'1', b'1', b'1', 1, '2025-06-08 14:46:06', 1, '2025-06-08 15:05:46', b'0');
+INSERT INTO `system_menu` VALUES (229, '快递公司', 'mall:order:delivery:express:company', 2, 403411, 227, '/mall/order/delivery/express/company', 'company', 'pages/mall/order/delivery/express/Company', 'Company', 'global.menu.mall.order.delivery.express.company', 0, b'1', b'1', b'1', 1, '2025-06-08 14:53:28', 1, '2025-06-08 15:08:13', b'0');
+INSERT INTO `system_menu` VALUES (230, '运费模板', 'mall:order:delivery:express:template', 2, 403412, 227, '/mall/order/delivery/express/template', 'template', 'pages/mall/order/delivery/express/Template', 'Template', 'global.menu.mall.order.delivery.express.template', 0, b'1', b'1', b'1', 1, '2025-06-08 14:53:28', 1, '2025-06-08 15:08:13', b'0');
+INSERT INTO `system_menu` VALUES (231, '门店管理', 'mall:order:delivery:store:store', 2, 403421, 228, '/mall/order/delivery/store/store', 'store', 'pages/mall/order/delivery/store/Store', 'Store', 'global.menu.mall.order.delivery.store.store', 0, b'1', b'1', b'1', 1, '2025-06-08 14:53:28', 1, '2025-06-08 15:08:13', b'0');
+INSERT INTO `system_menu` VALUES (232, '核销订单', 'mall:order:delivery:store:order', 2, 403422, 228, '/mall/order/delivery/store/order', 'order', 'pages/mall/order/delivery/store/Order', 'Order', 'global.menu.mall.order.delivery.store.order', 0, b'1', b'1', b'1', 1, '2025-06-08 14:53:28', 1, '2025-06-08 15:08:13', b'0');
+INSERT INTO `system_menu` VALUES (233, '分销用户', 'mall:order:brokerage:user', 2, 40351, 226, '/mall/order/brokerage/user', 'brokerageUser', 'pages/mall/order/brokerage/BrokerageUser', 'BrokerageUser', 'global.menu.mall.order.brokerage.user', 0, b'1', b'1', b'1', 1, '2025-06-08 14:53:28', 1, '2025-06-08 15:08:13', b'0');
+INSERT INTO `system_menu` VALUES (234, '佣金记录', 'mall:order:brokerage:record', 2, 40352, 226, '/mall/order/brokerage/record', 'brokerageRecord', 'pages/mall/order/brokerage/BrokerageRecord', 'BrokerageRecord', 'global.menu.mall.order.brokerage.record', 0, b'1', b'1', b'1', 1, '2025-06-08 14:53:28', 1, '2025-06-08 15:08:13', b'0');
+INSERT INTO `system_menu` VALUES (235, '佣金提现', 'mall:order:brokerage:withdraw', 2, 40353, 226, '/mall/order/brokerage/withdraw', 'brokerageWithdraw', 'pages/mall/order/brokerage/BrokerageWithdraw', 'BrokerageWithdraw', 'global.menu.mall.order.brokerage.withdraw', 0, b'1', b'1', b'1', 1, '2025-06-08 14:53:28', 1, '2025-06-08 15:08:13', b'0');
+INSERT INTO `system_menu` VALUES (236, '内容管理', '', 1, 4041, 214, '/mall/marketing/content', 'content', '', '', 'global.menu.mall.marketing.content', 0, b'1', b'1', b'1', 1, '2025-06-08 14:46:06', 1, '2025-06-08 15:05:46', b'0');
+INSERT INTO `system_menu` VALUES (237, '优惠券', '', 1, 4042, 214, '/mall/marketing/coupon', 'coupon', '', '', 'global.menu.mall.marketing.coupon', 0, b'1', b'1', b'1', 1, '2025-06-08 14:46:06', 1, '2025-06-08 15:05:46', b'0');
+INSERT INTO `system_menu` VALUES (238, '秒杀活动', '', 1, 4043, 214, '/mall/marketing/flash-sale', 'flashsale', '', '', 'global.menu.mall.marketing.flashsale', 0, b'1', b'1', b'1', 1, '2025-06-08 14:46:06', 1, '2025-06-08 15:05:46', b'0');
+INSERT INTO `system_menu` VALUES (239, '拼团活动', '', 1, 4044, 214, '/mall/marketing/group', 'group', '', '', 'global.menu.mall.marketing.group', 0, b'1', b'1', b'1', 1, '2025-06-08 14:46:06', 1, '2025-06-08 15:05:46', b'0');
+INSERT INTO `system_menu` VALUES (240, '砍价活动', '', 1, 4045, 214, '/mall/marketing/bargain', 'bargain', '', '', 'global.menu.mall.marketing.bargain', 0, b'1', b'1', b'1', 1, '2025-06-08 14:46:06', 1, '2025-06-08 15:05:46', b'0');
+INSERT INTO `system_menu` VALUES (241, '积分商城', '', 1, 4046, 214, '/mall/marketing/integral', 'integral', '', '', 'global.menu.mall.marketing.integral', 0, b'1', b'1', b'1', 1, '2025-06-08 14:46:06', 1, '2025-06-08 15:05:46', b'0');
+INSERT INTO `system_menu` VALUES (242, '商城装修', '', 1, 4047, 214, '/mall/marketing/diy', 'diy', '', '', 'global.menu.mall.marketing.diy', 0, b'1', b'1', b'1', 1, '2025-06-08 14:46:06', 1, '2025-06-08 15:05:46', b'0');
+INSERT INTO `system_menu` VALUES (243, '优惠活动', '', 1, 4048, 214, '/mall/marketing/discount', 'discount', '', '', 'global.menu.mall.marketing.discount', 0, b'1', b'1', b'1', 1, '2025-06-08 14:46:06', 1, '2025-06-08 15:05:46', b'0');
 
 -- ----------------------------
 -- Table structure for system_notice
@@ -3553,7 +3586,7 @@ CREATE TABLE `system_user`  (
 -- ----------------------------
 -- Records of system_user
 -- ----------------------------
-INSERT INTO `system_user` VALUES (1, 'admin', '$2b$06$Ohq86rDIvNuy/4ZvsTF4dOw.7I7QJj620LC25PwgYDmrKqKmKsJz6', '超级管理员', '超级管理员', '123@qq.com', '18888888888', 0, '', 0, '192.168.1.18', '2025-07-30 08:18:54', '0000', 1, 1, '2025-03-08 10:14:52', 1, '2025-07-30 08:18:54', b'0', 1);
+INSERT INTO `system_user` VALUES (1, 'admin', '$2b$06$Ohq86rDIvNuy/4ZvsTF4dOw.7I7QJj620LC25PwgYDmrKqKmKsJz6', '超级管理员', '超级管理员', '123@qq.com', '18888888888', 0, '', 0, '127.0.0.1', '2025-08-06 01:45:31', '0000', 1, 1, '2025-03-08 10:14:52', 1, '2025-08-06 01:45:31', b'0', 1);
 INSERT INTO `system_user` VALUES (11, 'test', '$2b$06$S2yMOy4Mp5gImLOEl8X3K.T8XAWrfXVwGXK/vOBL.30PGNnnGIDzy', '测试管理员', NULL, '', '15555555555', 0, '', 0, '127.0.0.1', '2025-05-23 08:16:27', '0000-0000', 7, 1, '2025-05-23 08:16:00', 1, '2025-05-23 08:16:25', b'0', 2);
 
 -- ----------------------------
