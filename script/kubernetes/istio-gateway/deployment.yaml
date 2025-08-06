@@ -59,6 +59,14 @@ spec:
               number: 8080
     - match:
         - uri:
+            prefix: /mall
+      route:
+        - destination:
+            host: service-mall.synerunify.svc.cluster.local
+            port:
+              number: 8080
+    - match:
+        - uri:
             prefix: /captcha
       route:
         - destination:

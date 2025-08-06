@@ -123,14 +123,14 @@ pub struct ApiDocument;
 
 pub async fn api(state: AppState) -> Router {
     let (router, api) = OpenApiRouter::with_openapi(ApiDocument::openapi())
-        .nest("/erp", auth_router(state.clone()).await)
+        .nest("/mall", auth_router(state.clone()).await)
         .split_for_parts();
 
     // 注册路由权限
     init_route_authorizes(&api);
 
     router
-        .merge(utoipa_swagger_ui::SwaggerUi::new("/erp/swagger-ui").url("/erp/api-docs/openapi.json", api.clone()))
+        .merge(utoipa_swagger_ui::SwaggerUi::new("/mall/swagger-ui").url("/mall/api-docs/openapi.json", api.clone()))
 }
 
 pub async fn auth_router(state: AppState) -> OpenApiRouter {
