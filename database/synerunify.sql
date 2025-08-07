@@ -11,7 +11,7 @@
  Target Server Version : 80100 (8.1.0)
  File Encoding         : 65001
 
- Date: 06/08/2025 17:41:51
+ Date: 07/08/2025 15:01:13
 */
 
 SET NAMES utf8mb4;
@@ -1201,7 +1201,7 @@ CREATE TABLE `mall_product_brand`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '商品品牌' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '商品品牌' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_product_brand
@@ -1225,7 +1225,7 @@ CREATE TABLE `mall_product_browse_history`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `idx_spuId`(`spu_id` ASC) USING BTREE,
   INDEX `idx_userId`(`user_id` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1743 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '商品浏览记录表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '商品浏览记录表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_product_browse_history
@@ -1249,7 +1249,7 @@ CREATE TABLE `mall_product_category`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 84 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '商品分类' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '商品分类' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_product_category
@@ -1289,7 +1289,7 @@ CREATE TABLE `mall_product_comment`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 15 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '商品评论' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '商品评论' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_product_comment
@@ -1311,7 +1311,7 @@ CREATE TABLE `mall_product_favorite`  (
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `idx_userId`(`user_id` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 32 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin COMMENT = '商品收藏表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin COMMENT = '商品收藏表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_product_favorite
@@ -1334,7 +1334,7 @@ CREATE TABLE `mall_product_property`  (
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `idx_name`(`name`(32) ASC) USING BTREE COMMENT '规格名称索引'
-) ENGINE = InnoDB AUTO_INCREMENT = 17 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '商品属性项' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '商品属性项' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_product_property
@@ -1357,7 +1357,7 @@ CREATE TABLE `mall_product_property_value`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 32 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '商品属性值' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '商品属性值' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_product_property_value
@@ -1389,7 +1389,7 @@ CREATE TABLE `mall_product_sku`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 38 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '商品sku' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '商品sku' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_product_sku
@@ -1430,7 +1430,7 @@ CREATE TABLE `mall_product_spu`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 642 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '商品spu' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '商品spu' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_product_spu
@@ -1463,7 +1463,7 @@ CREATE TABLE `mall_product_statistics`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `idx_time`(`time` ASC) USING BTREE,
   INDEX `idx_spu_id`(`spu_id` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 76 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '商品统计表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '商品统计表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_product_statistics
@@ -1494,7 +1494,7 @@ CREATE TABLE `mall_promotion_article`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '文章管理表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '文章管理表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_promotion_article
@@ -1517,7 +1517,7 @@ CREATE TABLE `mall_promotion_article_category`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '文章分类表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '文章分类表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_promotion_article_category
@@ -1544,7 +1544,7 @@ CREATE TABLE `mall_promotion_banner`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = 'Banner 广告位' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = 'Banner 广告位' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_promotion_banner
@@ -1578,7 +1578,7 @@ CREATE TABLE `mall_promotion_bargain_activity`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 26 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '砍价活动' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '砍价活动' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_promotion_bargain_activity
@@ -1601,7 +1601,7 @@ CREATE TABLE `mall_promotion_bargain_help`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 37 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '砍价助力表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '砍价助力表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_promotion_bargain_help
@@ -1629,7 +1629,7 @@ CREATE TABLE `mall_promotion_bargain_record`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 33 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '砍价记录表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '砍价记录表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_promotion_bargain_record
@@ -1658,7 +1658,7 @@ CREATE TABLE `mall_promotion_combination_activity`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 9 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '拼团活动' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '拼团活动' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_promotion_combination_activity
@@ -1684,7 +1684,7 @@ CREATE TABLE `mall_promotion_combination_product`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 34 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '拼团商品' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '拼团商品' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_promotion_combination_product
@@ -1722,7 +1722,7 @@ CREATE TABLE `mall_promotion_combination_record`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 19 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '拼团记录' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '拼团记录' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_promotion_combination_record
@@ -1757,7 +1757,7 @@ CREATE TABLE `mall_promotion_coupon`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 41 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '优惠劵' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '优惠劵' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_promotion_coupon
@@ -1796,7 +1796,7 @@ CREATE TABLE `mall_promotion_coupon_template`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 23 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '优惠劵模板' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '优惠劵模板' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_promotion_coupon_template
@@ -1820,7 +1820,7 @@ CREATE TABLE `mall_promotion_discount_activity`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 14 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '限时折扣活动' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '限时折扣活动' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_promotion_discount_activity
@@ -1849,7 +1849,7 @@ CREATE TABLE `mall_promotion_discount_product`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 46 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '限时折扣商品' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '限时折扣商品' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_promotion_discount_product
@@ -1873,7 +1873,7 @@ CREATE TABLE `mall_promotion_diy_page`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 20 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '装修页面' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '装修页面' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_promotion_diy_page
@@ -1898,7 +1898,7 @@ CREATE TABLE `mall_promotion_diy_template`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 11 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '装修模板' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '装修模板' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_promotion_diy_template
@@ -1925,7 +1925,7 @@ CREATE TABLE `mall_promotion_kefu_conversation`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '客服会话' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '客服会话' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_promotion_kefu_conversation
@@ -1952,7 +1952,7 @@ CREATE TABLE `mall_promotion_kefu_message`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 79 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '客服消息' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '客服消息' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_promotion_kefu_message
@@ -1977,7 +1977,7 @@ CREATE TABLE `mall_promotion_point_activity`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '积分商城活动' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '积分商城活动' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_promotion_point_activity
@@ -2004,7 +2004,7 @@ CREATE TABLE `mall_promotion_point_product`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '积分商城商品' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '积分商城商品' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_promotion_point_product
@@ -2032,7 +2032,7 @@ CREATE TABLE `mall_promotion_reward_activity`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '满减送活动' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '满减送活动' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_promotion_reward_activity
@@ -2063,7 +2063,7 @@ CREATE TABLE `mall_promotion_seckill_activity`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 43 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '秒杀活动' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '秒杀活动' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_promotion_seckill_activity
@@ -2087,7 +2087,7 @@ CREATE TABLE `mall_promotion_seckill_config`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 38 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '秒杀时段' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '秒杀时段' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_promotion_seckill_config
@@ -2115,7 +2115,7 @@ CREATE TABLE `mall_promotion_seckill_product`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 83 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '秒杀参与商品' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '秒杀参与商品' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_promotion_seckill_product
@@ -2162,7 +2162,7 @@ CREATE TABLE `mall_trade_after_sale`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 31 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin COMMENT = '售后订单' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin COMMENT = '售后订单' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_trade_after_sale
@@ -2188,7 +2188,7 @@ CREATE TABLE `mall_trade_after_sale_log`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 61 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin COMMENT = '售后订单日志' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin COMMENT = '售后订单日志' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_trade_after_sale_log
@@ -2222,7 +2222,7 @@ CREATE TABLE `mall_trade_brokerage_record`  (
   INDEX `idx_user_id`(`user_id` ASC) USING BTREE COMMENT '用户编号',
   INDEX `idx_biz`(`biz_type` ASC, `biz_id` ASC) USING BTREE COMMENT '业务',
   INDEX `idx_status`(`status` ASC) USING BTREE COMMENT '状态'
-) ENGINE = InnoDB AUTO_INCREMENT = 40 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '佣金记录' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '佣金记录' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_trade_brokerage_record
@@ -2247,7 +2247,7 @@ CREATE TABLE `mall_trade_brokerage_user`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 296 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '分销用户' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '分销用户' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_trade_brokerage_user
@@ -2286,7 +2286,7 @@ CREATE TABLE `mall_trade_brokerage_withdraw`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `idx_user_id`(`user_id` ASC) USING BTREE COMMENT '用户编号',
   INDEX `idx_audit_status`(`status` ASC) USING BTREE COMMENT '状态'
-) ENGINE = InnoDB AUTO_INCREMENT = 42 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '佣金提现' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '佣金提现' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_trade_brokerage_withdraw
@@ -2310,7 +2310,7 @@ CREATE TABLE `mall_trade_cart`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 100 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '购物车的商品信息' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '购物车的商品信息' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_trade_cart
@@ -2344,7 +2344,7 @@ CREATE TABLE `mall_trade_config`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '交易中心配置' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '交易中心配置' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_trade_config
@@ -2368,7 +2368,7 @@ CREATE TABLE `mall_trade_delivery_express`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '快递公司' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '快递公司' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_trade_delivery_express
@@ -2390,7 +2390,7 @@ CREATE TABLE `mall_trade_delivery_express_template`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '快递运费模板' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '快递运费模板' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_trade_delivery_express_template
@@ -2416,7 +2416,7 @@ CREATE TABLE `mall_trade_delivery_express_template_charge`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 15 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '快递运费模板计费配置' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '快递运费模板计费配置' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_trade_delivery_express_template_charge
@@ -2439,7 +2439,7 @@ CREATE TABLE `mall_trade_delivery_express_template_free`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 21 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '快递运费模板包邮配置' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '快递运费模板包邮配置' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_trade_delivery_express_template_free
@@ -2470,7 +2470,7 @@ CREATE TABLE `mall_trade_delivery_pick_up_store`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '自提门店' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '自提门店' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_trade_delivery_pick_up_store
@@ -2541,7 +2541,7 @@ CREATE TABLE `mall_trade_order`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 277 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin COMMENT = '交易订单表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin COMMENT = '交易订单表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_trade_order
@@ -2582,7 +2582,7 @@ CREATE TABLE `mall_trade_order_item`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 272 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin COMMENT = '交易订单明细表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin COMMENT = '交易订单明细表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_trade_order_item
@@ -2608,7 +2608,7 @@ CREATE TABLE `mall_trade_order_log`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 8864 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '交易订单日志' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '交易订单日志' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_trade_order_log
@@ -2640,7 +2640,7 @@ CREATE TABLE `mall_trade_statistics`  (
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `trade_statistics_time_index`(`time` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 153 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '交易统计表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '交易统计表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_trade_statistics
@@ -2913,7 +2913,7 @@ CREATE TABLE `system_menu`  (
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 244 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '菜单权限表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 262 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '菜单权限表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of system_menu
@@ -3126,7 +3126,7 @@ INSERT INTO `system_menu` VALUES (219, '商品品牌', 'mall:product:brand', 2, 
 INSERT INTO `system_menu` VALUES (220, '商品属性', 'mall:product:property', 2, 4024, 212, '/mall/product/property', 'productProperty', 'pages/mall/product/ProductProperty', 'ProductProperty', 'global.menu.mall.product.property', 0, b'1', b'1', b'1', 1, '2025-06-08 14:53:28', 1, '2025-06-08 15:08:13', b'0');
 INSERT INTO `system_menu` VALUES (221, '商品评论', 'mall:product:comment', 2, 4025, 212, '/mall/product/comment', 'productComment', 'pages/mall/product/ProductComment', 'ProductComment', 'global.menu.mall.product.comment', 0, b'1', b'1', b'1', 1, '2025-06-08 14:53:28', 1, '2025-06-08 15:08:13', b'0');
 INSERT INTO `system_menu` VALUES (222, '订单列表', 'mall:order:list', 2, 4031, 213, '/mall/order/list', 'orderList', 'pages/mall/order/OrderList', 'OrderList', 'global.menu.mall.order.list', 0, b'1', b'1', b'1', 1, '2025-06-08 14:53:28', 1, '2025-06-08 15:08:13', b'0');
-INSERT INTO `system_menu` VALUES (223, '售后退款', 'mall:order:aftersale', 2, 4032, 213, '/mall/order/after-sale', 'orderAfterSale', 'pages/mall/order/OrderAfterSale', 'OrderAfterSale', 'global.menu.mall.order.aftersale', 0, b'1', b'1', b'1', 1, '2025-06-08 14:53:28', 1, '2025-08-06 08:21:43', b'0');
+INSERT INTO `system_menu` VALUES (223, '售后退款', 'mall:order:after', 2, 4032, 213, '/mall/order/after', 'orderAfter', 'pages/mall/order/OrderAfter', 'OrderAfter', 'global.menu.mall.order.after', 0, b'1', b'1', b'1', 1, '2025-06-08 14:53:28', 1, '2025-08-06 08:21:43', b'0');
 INSERT INTO `system_menu` VALUES (224, '交易配置', '', 1, 4033, 213, '/mall/order/config', 'config', '', '', 'global.menu.mall.order.config', 0, b'1', b'1', b'1', 1, '2025-06-08 14:46:06', 1, '2025-08-06 08:20:18', b'0');
 INSERT INTO `system_menu` VALUES (225, '配送管理', '', 1, 4034, 213, '/mall/order/delivery', 'delivery', '', '', 'global.menu.mall.order.delivery', 0, b'1', b'1', b'1', 1, '2025-06-08 14:46:06', 1, '2025-06-08 15:05:46', b'0');
 INSERT INTO `system_menu` VALUES (226, '分销管理', '', 1, 4035, 213, '/mall/order/brokerage', 'brokerage', '', '', 'global.menu.mall.order.brokerage', 0, b'1', b'1', b'1', 1, '2025-06-08 14:46:06', 1, '2025-06-08 15:05:46', b'0');
@@ -3141,12 +3141,30 @@ INSERT INTO `system_menu` VALUES (234, '佣金记录', 'mall:order:brokerage:rec
 INSERT INTO `system_menu` VALUES (235, '佣金提现', 'mall:order:brokerage:withdraw', 2, 40353, 226, '/mall/order/brokerage/withdraw', 'brokerageWithdraw', 'pages/mall/order/brokerage/BrokerageWithdraw', 'BrokerageWithdraw', 'global.menu.mall.order.brokerage.withdraw', 0, b'1', b'1', b'1', 1, '2025-06-08 14:53:28', 1, '2025-06-08 15:08:13', b'0');
 INSERT INTO `system_menu` VALUES (236, '内容管理', '', 1, 4041, 214, '/mall/marketing/content', 'content', '', '', 'global.menu.mall.marketing.content', 0, b'1', b'1', b'1', 1, '2025-06-08 14:46:06', 1, '2025-06-08 15:05:46', b'0');
 INSERT INTO `system_menu` VALUES (237, '优惠券', '', 1, 4042, 214, '/mall/marketing/coupon', 'coupon', '', '', 'global.menu.mall.marketing.coupon', 0, b'1', b'1', b'1', 1, '2025-06-08 14:46:06', 1, '2025-06-08 15:05:46', b'0');
-INSERT INTO `system_menu` VALUES (238, '秒杀活动', '', 1, 4043, 214, '/mall/marketing/flash-sale', 'flashsale', '', '', 'global.menu.mall.marketing.flashsale', 0, b'1', b'1', b'1', 1, '2025-06-08 14:46:06', 1, '2025-06-08 15:05:46', b'0');
+INSERT INTO `system_menu` VALUES (238, '秒杀活动', '', 1, 4043, 214, '/mall/marketing/flash', 'flash', '', '', 'global.menu.mall.marketing.flash', 0, b'1', b'1', b'1', 1, '2025-06-08 14:46:06', 1, '2025-06-08 15:05:46', b'0');
 INSERT INTO `system_menu` VALUES (239, '拼团活动', '', 1, 4044, 214, '/mall/marketing/group', 'group', '', '', 'global.menu.mall.marketing.group', 0, b'1', b'1', b'1', 1, '2025-06-08 14:46:06', 1, '2025-06-08 15:05:46', b'0');
 INSERT INTO `system_menu` VALUES (240, '砍价活动', '', 1, 4045, 214, '/mall/marketing/bargain', 'bargain', '', '', 'global.menu.mall.marketing.bargain', 0, b'1', b'1', b'1', 1, '2025-06-08 14:46:06', 1, '2025-06-08 15:05:46', b'0');
 INSERT INTO `system_menu` VALUES (241, '积分商城', '', 1, 4046, 214, '/mall/marketing/integral', 'integral', '', '', 'global.menu.mall.marketing.integral', 0, b'1', b'1', b'1', 1, '2025-06-08 14:46:06', 1, '2025-06-08 15:05:46', b'0');
 INSERT INTO `system_menu` VALUES (242, '商城装修', '', 1, 4047, 214, '/mall/marketing/diy', 'diy', '', '', 'global.menu.mall.marketing.diy', 0, b'1', b'1', b'1', 1, '2025-06-08 14:46:06', 1, '2025-06-08 15:05:46', b'0');
-INSERT INTO `system_menu` VALUES (243, '优惠活动', '', 1, 4048, 214, '/mall/marketing/discount', 'discount', '', '', 'global.menu.mall.marketing.discount', 0, b'1', b'1', b'1', 1, '2025-06-08 14:46:06', 1, '2025-06-08 15:05:46', b'0');
+INSERT INTO `system_menu` VALUES (243, '优惠活动', '', 1, 4048, 214, '/mall/marketing/promotion', 'promotion', '', '', 'global.menu.mall.marketing.promotion', 0, b'1', b'1', b'1', 1, '2025-06-08 14:46:06', 1, '2025-08-07 06:21:44', b'0');
+INSERT INTO `system_menu` VALUES (244, '文章分类', 'mall:marketing:content:category', 2, 40411, 236, '/mall/marketing/content/category', 'contentCategory', 'pages/mall/marketing/content/ContentCategory', 'ContentCategory', 'global.menu.mall.marketing.content.category', 0, b'1', b'1', b'1', 1, '2025-06-08 14:53:28', 1, '2025-06-08 15:08:13', b'0');
+INSERT INTO `system_menu` VALUES (245, '文章列表', 'mall:marketing:content:list', 2, 40412, 236, '/mall/marketing/content/list', 'contentList', 'pages/mall/marketing/content/ContentList', 'ContentList', 'global.menu.mall.marketing.content.list', 0, b'1', b'1', b'1', 1, '2025-06-08 14:53:28', 1, '2025-06-08 15:08:13', b'0');
+INSERT INTO `system_menu` VALUES (246, '横幅管理', 'mall:marketing:content:banner', 2, 40413, 236, '/mall/marketing/content/banner', 'contentBanner', 'pages/mall/marketing/content/ContentBanner', 'ContentBanner', 'global.menu.mall.marketing.content.banner', 0, b'1', b'1', b'1', 1, '2025-06-08 14:53:28', 1, '2025-06-08 15:08:13', b'0');
+INSERT INTO `system_menu` VALUES (247, '优惠券列表', 'mall:marketing:coupon:list', 2, 40421, 237, '/mall/marketing/coupon/list', 'couponList', 'pages/mall/marketing/coupon/CouponList', 'CouponList', 'global.menu.mall.marketing.coupon.list', 0, b'1', b'1', b'1', 1, '2025-06-08 14:53:28', 1, '2025-06-08 15:08:13', b'0');
+INSERT INTO `system_menu` VALUES (248, '领取记录', 'mall:marketing:coupon:record', 2, 40422, 237, '/mall/marketing/coupon/record', 'couponRecord', 'pages/mall/marketing/coupon/CouponRecord', 'CouponRecord', 'global.menu.mall.marketing.coupon.record', 0, b'1', b'1', b'1', 1, '2025-06-08 14:53:28', 1, '2025-06-08 15:08:13', b'0');
+INSERT INTO `system_menu` VALUES (249, '秒杀时段', 'mall:marketing:flash:duration', 2, 40431, 238, '/mall/marketing/flash-sale/duration', 'flashDuration', 'pages/mall/marketing/flash/FlashDuration', 'FlashDuration', 'global.menu.mall.marketing.flash.duration', 0, b'1', b'1', b'1', 1, '2025-06-08 14:53:28', 1, '2025-06-08 15:08:13', b'0');
+INSERT INTO `system_menu` VALUES (250, '秒杀商品', 'mall:marketing:flash:product', 2, 40432, 238, '/mall/marketing/flash-sale/product', 'flashProduct', 'pages/mall/marketing/flash/FlashProduct', 'FlashProduct', 'global.menu.mall.marketing.flash.product', 0, b'1', b'1', b'1', 1, '2025-06-08 14:53:28', 1, '2025-06-08 15:08:13', b'0');
+INSERT INTO `system_menu` VALUES (251, '拼团商品', 'mall:marketing:group:product', 2, 40441, 239, '/mall/marketing/group/product', 'groupProduct', 'pages/mall/marketing/group/GroupProduct', 'GroupProduct', 'global.menu.mall.marketing.group.product', 0, b'1', b'1', b'1', 1, '2025-06-08 14:53:28', 1, '2025-08-07 03:56:51', b'0');
+INSERT INTO `system_menu` VALUES (252, '拼团记录', 'mall:marketing:group:record', 2, 40442, 239, '/mall/marketing/group/record', 'groupRecord', 'pages/mall/marketing/group/GroupRecord', 'GroupRecord', 'global.menu.mall.marketing.group.record', 0, b'1', b'1', b'1', 1, '2025-06-08 14:53:28', 1, '2025-08-07 03:56:54', b'0');
+INSERT INTO `system_menu` VALUES (253, '砍价商品', 'mall:marketing:bargain:product', 2, 40451, 240, '/mall/marketing/bargain/product', 'bargainProduct', 'pages/mall/marketing/bargain/BargainProduct', 'BargainProduct', 'global.menu.mall.marketing.bargain.product', 0, b'1', b'1', b'1', 1, '2025-06-08 14:53:28', 1, '2025-06-08 15:08:13', b'0');
+INSERT INTO `system_menu` VALUES (254, '砍价记录', 'mall:marketing:bargain:record', 2, 40452, 240, '/mall/marketing/bargain/record', 'bargainRecord', 'pages/mall/marketing/bargain/BargainRecord', 'BargainRecord', 'global.menu.mall.marketing.bargain.record', 0, b'1', b'1', b'1', 1, '2025-06-08 14:53:28', 1, '2025-06-08 15:08:13', b'0');
+INSERT INTO `system_menu` VALUES (255, '装修模板', 'mall:marketing:diy:template', 2, 40471, 242, '/mall/marketing/diy/template', 'diyTemplate', 'pages/mall/marketing/diy/DiyTemplate', 'DiyTemplate', 'global.menu.mall.marketing.diy.template', 0, b'1', b'1', b'1', 1, '2025-06-08 14:53:28', 1, '2025-06-08 15:08:13', b'0');
+INSERT INTO `system_menu` VALUES (256, '装修页面', 'mall:marketing:diy:page', 2, 40472, 242, '/mall/marketing/diy/page', 'diyPage', 'pages/mall/marketing/diy/DiyPage', 'DiyPage', 'global.menu.mall.marketing.diy.page', 0, b'1', b'1', b'1', 1, '2025-06-08 14:53:28', 1, '2025-06-08 15:08:13', b'0');
+INSERT INTO `system_menu` VALUES (257, '限时折扣', 'mall:marketing:promotion:discount', 2, 40481, 243, '/mall/marketing/promotion/discount', 'promotionDiscount', 'pages/mall/marketing/promotion/PromotionDiscount', 'PromotionDiscount', 'global.menu.mall.marketing.promotion.discount', 0, b'1', b'1', b'1', 1, '2025-06-08 14:53:28', 1, '2025-06-08 15:08:13', b'0');
+INSERT INTO `system_menu` VALUES (258, '满减送', 'mall:marketing:promotion:reward', 2, 40482, 243, '/mall/marketing/promotion/reward', 'promotionReward', 'pages/mall/marketing/discount/PromotionReward', 'PromotionReward', 'global.menu.mall.marketing.promotion.reward', 0, b'1', b'1', b'1', 1, '2025-06-08 14:53:28', 1, '2025-06-08 15:08:13', b'0');
+INSERT INTO `system_menu` VALUES (259, '会员统计', 'mall:statistics:user', 2, 4051, 215, '/mall/statistics/user', 'statisticsUser', 'pages/mall/statistics/StatisticsUser', 'StatisticsUser', 'global.menu.mall.statistics.user', 0, b'1', b'1', b'1', 1, '2025-06-08 14:53:28', 1, '2025-06-08 15:08:13', b'0');
+INSERT INTO `system_menu` VALUES (260, '商品统计', 'mall:statistics:product', 2, 4051, 215, '/mall/statistics/product', 'statisticsProduct', 'pages/mall/statistics/StatisticsProduct', 'StatisticsProduct', 'global.menu.mall.statistics.product', 0, b'1', b'1', b'1', 1, '2025-06-08 14:53:28', 1, '2025-06-08 15:08:13', b'0');
+INSERT INTO `system_menu` VALUES (261, '交易统计', 'mall:statistics:trade', 2, 4051, 215, '/mall/statistics/trade', 'statisticsTrade', 'pages/mall/statistics/StatisticsTrade', 'StatisticsTrade', 'global.menu.mall.statistics.trade', 0, b'1', b'1', b'1', 1, '2025-06-08 14:53:28', 1, '2025-06-08 15:08:13', b'0');
 
 -- ----------------------------
 -- Table structure for system_notice
