@@ -2,12 +2,12 @@ import { PaginatedRequest, PaginatedResponse } from '@/base/page';
 import { api } from '@/utils/request';
 
 const apis = {
-  create: '/erp/mall_promotion_kefu_message/create', // 新增
-  update: '/erp/mall_promotion_kefu_message/update', // 修改
-  delete: '/erp/mall_promotion_kefu_message/delete', // 删除
-  get: '/erp/mall_promotion_kefu_message/get', // 单条查询
-  list: '/erp/mall_promotion_kefu_message/list', // 列表查询
-  page: '/erp/mall_promotion_kefu_message/page', // 分页查询
+  create: '/mall/mall_promotion_kefu_message/create', // 新增
+  update: '/mall/mall_promotion_kefu_message/update', // 修改
+  delete: '/mall/mall_promotion_kefu_message/delete', // 删除
+  get: '/mall/mall_promotion_kefu_message/get', // 单条查询
+  list: '/mall/mall_promotion_kefu_message/list', // 列表查询
+  page: '/mall/mall_promotion_kefu_message/page', // 分页查询
 }
 
 export interface MallPromotionKefuMessageRequest {

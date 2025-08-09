@@ -2,12 +2,12 @@ import { PaginatedRequest, PaginatedResponse } from '@/base/page';
 import { api } from '@/utils/request';
 
 const apis = {
-  create: '/erp/mall_trade_brokerage_user/create', // 新增
-  update: '/erp/mall_trade_brokerage_user/update', // 修改
-  delete: '/erp/mall_trade_brokerage_user/delete', // 删除
-  get: '/erp/mall_trade_brokerage_user/get', // 单条查询
-  list: '/erp/mall_trade_brokerage_user/list', // 列表查询
-  page: '/erp/mall_trade_brokerage_user/page', // 分页查询
+  create: '/mall/mall_trade_brokerage_user/create', // 新增
+  update: '/mall/mall_trade_brokerage_user/update', // 修改
+  delete: '/mall/mall_trade_brokerage_user/delete', // 删除
+  get: '/mall/mall_trade_brokerage_user/get', // 单条查询
+  list: '/mall/mall_trade_brokerage_user/list', // 列表查询
+  page: '/mall/mall_trade_brokerage_user/page', // 分页查询
 }
 
 export interface MallTradeBrokerageUserRequest {

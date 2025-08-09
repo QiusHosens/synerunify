@@ -2,12 +2,12 @@ import { PaginatedRequest, PaginatedResponse } from '@/base/page';
 import { api } from '@/utils/request';
 
 const apis = {
-  create: '/erp/mall_product_statistics/create', // 新增
-  update: '/erp/mall_product_statistics/update', // 修改
-  delete: '/erp/mall_product_statistics/delete', // 删除
-  get: '/erp/mall_product_statistics/get', // 单条查询
-  list: '/erp/mall_product_statistics/list', // 列表查询
-  page: '/erp/mall_product_statistics/page', // 分页查询
+  create: '/mall/mall_product_statistics/create', // 新增
+  update: '/mall/mall_product_statistics/update', // 修改
+  delete: '/mall/mall_product_statistics/delete', // 删除
+  get: '/mall/mall_product_statistics/get', // 单条查询
+  list: '/mall/mall_product_statistics/list', // 列表查询
+  page: '/mall/mall_product_statistics/page', // 分页查询
 }
 
 export interface MallProductStatisticsRequest {

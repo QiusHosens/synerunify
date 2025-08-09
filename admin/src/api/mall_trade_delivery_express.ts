@@ -2,14 +2,14 @@ import { PaginatedRequest, PaginatedResponse } from '@/base/page';
 import { api } from '@/utils/request';
 
 const apis = {
-  create: '/erp/mall_trade_delivery_express/create', // 新增
-  update: '/erp/mall_trade_delivery_express/update', // 修改
-  delete: '/erp/mall_trade_delivery_express/delete', // 删除
-  get: '/erp/mall_trade_delivery_express/get', // 单条查询
-  list: '/erp/mall_trade_delivery_express/list', // 列表查询
-  page: '/erp/mall_trade_delivery_express/page', // 分页查询
-  enable: '/erp/mall_trade_delivery_express/enable', // 启用
-  disable: '/erp/mall_trade_delivery_express/disable', // 禁用
+  create: '/mall/mall_trade_delivery_express/create', // 新增
+  update: '/mall/mall_trade_delivery_express/update', // 修改
+  delete: '/mall/mall_trade_delivery_express/delete', // 删除
+  get: '/mall/mall_trade_delivery_express/get', // 单条查询
+  list: '/mall/mall_trade_delivery_express/list', // 列表查询
+  page: '/mall/mall_trade_delivery_express/page', // 分页查询
+  enable: '/mall/mall_trade_delivery_express/enable', // 启用
+  disable: '/mall/mall_trade_delivery_express/disable', // 禁用
 }
 
 export interface MallTradeDeliveryExpressRequest {

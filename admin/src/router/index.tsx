@@ -44,6 +44,12 @@ const componentMap: { [key: string]: React.LazyExoticComponent<React.ComponentTy
   'pages/erp/financial/FinancialPayment': lazy(() => import('@/pages/erp/financial/FinancialPayment')),
   'pages/erp/financial/FinancialReceipt': lazy(() => import('@/pages/erp/financial/FinancialReceipt')),
   'pages/erp/financial/FinancialAccount': lazy(() => import('@/pages/erp/financial/FinancialAccount')),
+
+  'pages/mall/product/ProductList': lazy(() => import('@/pages/mall/product/ProductList')),
+  'pages/mall/product/ProductCategory': lazy(() => import('@/pages/mall/product/ProductCategory')),
+  'pages/mall/product/ProductBrand': lazy(() => import('@/pages/mall/product/ProductBrand')),
+  'pages/mall/product/ProductProperty': lazy(() => import('@/pages/mall/product/ProductProperty')),
+  'pages/mall/product/ProductComment': lazy(() => import('@/pages/mall/product/ProductComment')),
 };
 
 export default function Router() {

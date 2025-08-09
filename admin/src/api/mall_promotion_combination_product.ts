@@ -2,14 +2,14 @@ import { PaginatedRequest, PaginatedResponse } from '@/base/page';
 import { api } from '@/utils/request';
 
 const apis = {
-  create: '/erp/mall_promotion_combination_product/create', // 新增
-  update: '/erp/mall_promotion_combination_product/update', // 修改
-  delete: '/erp/mall_promotion_combination_product/delete', // 删除
-  get: '/erp/mall_promotion_combination_product/get', // 单条查询
-  list: '/erp/mall_promotion_combination_product/list', // 列表查询
-  page: '/erp/mall_promotion_combination_product/page', // 分页查询
-  enable: '/erp/mall_promotion_combination_product/enable', // 启用
-  disable: '/erp/mall_promotion_combination_product/disable', // 禁用
+  create: '/mall/mall_promotion_combination_product/create', // 新增
+  update: '/mall/mall_promotion_combination_product/update', // 修改
+  delete: '/mall/mall_promotion_combination_product/delete', // 删除
+  get: '/mall/mall_promotion_combination_product/get', // 单条查询
+  list: '/mall/mall_promotion_combination_product/list', // 列表查询
+  page: '/mall/mall_promotion_combination_product/page', // 分页查询
+  enable: '/mall/mall_promotion_combination_product/enable', // 启用
+  disable: '/mall/mall_promotion_combination_product/disable', // 禁用
 }
 
 export interface MallPromotionCombinationProductRequest {

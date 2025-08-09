@@ -2,12 +2,12 @@ import { PaginatedRequest, PaginatedResponse } from '@/base/page';
 import { api } from '@/utils/request';
 
 const apis = {
-  create: '/erp/mall_product_favorite/create', // 新增
-  update: '/erp/mall_product_favorite/update', // 修改
-  delete: '/erp/mall_product_favorite/delete', // 删除
-  get: '/erp/mall_product_favorite/get', // 单条查询
-  list: '/erp/mall_product_favorite/list', // 列表查询
-  page: '/erp/mall_product_favorite/page', // 分页查询
+  create: '/mall/mall_product_favorite/create', // 新增
+  update: '/mall/mall_product_favorite/update', // 修改
+  delete: '/mall/mall_product_favorite/delete', // 删除
+  get: '/mall/mall_product_favorite/get', // 单条查询
+  list: '/mall/mall_product_favorite/list', // 列表查询
+  page: '/mall/mall_product_favorite/page', // 分页查询
 }
 
 export interface MallProductFavoriteRequest {

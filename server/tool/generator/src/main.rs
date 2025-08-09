@@ -184,7 +184,7 @@ fn main() {
         let columns = get_table_columns(&mut conn, &table);
         let mut context = Context::new();
 
-        context.insert("api_prefix",  "erp");
+        context.insert("api_prefix",  "mall");
 
         context.insert("table_comment",  &table_comment);
         context.insert("model_name_lower",  &format!("{}", inflections::case::to_camel_case(&table)));

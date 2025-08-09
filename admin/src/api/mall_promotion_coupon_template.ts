@@ -2,14 +2,14 @@ import { PaginatedRequest, PaginatedResponse } from '@/base/page';
 import { api } from '@/utils/request';
 
 const apis = {
-  create: '/erp/mall_promotion_coupon_template/create', // 新增
-  update: '/erp/mall_promotion_coupon_template/update', // 修改
-  delete: '/erp/mall_promotion_coupon_template/delete', // 删除
-  get: '/erp/mall_promotion_coupon_template/get', // 单条查询
-  list: '/erp/mall_promotion_coupon_template/list', // 列表查询
-  page: '/erp/mall_promotion_coupon_template/page', // 分页查询
-  enable: '/erp/mall_promotion_coupon_template/enable', // 启用
-  disable: '/erp/mall_promotion_coupon_template/disable', // 禁用
+  create: '/mall/mall_promotion_coupon_template/create', // 新增
+  update: '/mall/mall_promotion_coupon_template/update', // 修改
+  delete: '/mall/mall_promotion_coupon_template/delete', // 删除
+  get: '/mall/mall_promotion_coupon_template/get', // 单条查询
+  list: '/mall/mall_promotion_coupon_template/list', // 列表查询
+  page: '/mall/mall_promotion_coupon_template/page', // 分页查询
+  enable: '/mall/mall_promotion_coupon_template/enable', // 启用
+  disable: '/mall/mall_promotion_coupon_template/disable', // 禁用
 }
 
 export interface MallPromotionCouponTemplateRequest {

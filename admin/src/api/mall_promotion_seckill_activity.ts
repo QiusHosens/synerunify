@@ -2,14 +2,14 @@ import { PaginatedRequest, PaginatedResponse } from '@/base/page';
 import { api } from '@/utils/request';
 
 const apis = {
-  create: '/erp/mall_promotion_seckill_activity/create', // 新增
-  update: '/erp/mall_promotion_seckill_activity/update', // 修改
-  delete: '/erp/mall_promotion_seckill_activity/delete', // 删除
-  get: '/erp/mall_promotion_seckill_activity/get', // 单条查询
-  list: '/erp/mall_promotion_seckill_activity/list', // 列表查询
-  page: '/erp/mall_promotion_seckill_activity/page', // 分页查询
-  enable: '/erp/mall_promotion_seckill_activity/enable', // 启用
-  disable: '/erp/mall_promotion_seckill_activity/disable', // 禁用
+  create: '/mall/mall_promotion_seckill_activity/create', // 新增
+  update: '/mall/mall_promotion_seckill_activity/update', // 修改
+  delete: '/mall/mall_promotion_seckill_activity/delete', // 删除
+  get: '/mall/mall_promotion_seckill_activity/get', // 单条查询
+  list: '/mall/mall_promotion_seckill_activity/list', // 列表查询
+  page: '/mall/mall_promotion_seckill_activity/page', // 分页查询
+  enable: '/mall/mall_promotion_seckill_activity/enable', // 启用
+  disable: '/mall/mall_promotion_seckill_activity/disable', // 禁用
 }
 
 export interface MallPromotionSeckillActivityRequest {

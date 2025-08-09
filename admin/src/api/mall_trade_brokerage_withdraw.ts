@@ -2,14 +2,14 @@ import { PaginatedRequest, PaginatedResponse } from '@/base/page';
 import { api } from '@/utils/request';
 
 const apis = {
-  create: '/erp/mall_trade_brokerage_withdraw/create', // 新增
-  update: '/erp/mall_trade_brokerage_withdraw/update', // 修改
-  delete: '/erp/mall_trade_brokerage_withdraw/delete', // 删除
-  get: '/erp/mall_trade_brokerage_withdraw/get', // 单条查询
-  list: '/erp/mall_trade_brokerage_withdraw/list', // 列表查询
-  page: '/erp/mall_trade_brokerage_withdraw/page', // 分页查询
-  enable: '/erp/mall_trade_brokerage_withdraw/enable', // 启用
-  disable: '/erp/mall_trade_brokerage_withdraw/disable', // 禁用
+  create: '/mall/mall_trade_brokerage_withdraw/create', // 新增
+  update: '/mall/mall_trade_brokerage_withdraw/update', // 修改
+  delete: '/mall/mall_trade_brokerage_withdraw/delete', // 删除
+  get: '/mall/mall_trade_brokerage_withdraw/get', // 单条查询
+  list: '/mall/mall_trade_brokerage_withdraw/list', // 列表查询
+  page: '/mall/mall_trade_brokerage_withdraw/page', // 分页查询
+  enable: '/mall/mall_trade_brokerage_withdraw/enable', // 启用
+  disable: '/mall/mall_trade_brokerage_withdraw/disable', // 禁用
 }
 
 export interface MallTradeBrokerageWithdrawRequest {

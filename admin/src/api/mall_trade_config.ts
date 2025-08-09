@@ -2,12 +2,12 @@ import { PaginatedRequest, PaginatedResponse } from '@/base/page';
 import { api } from '@/utils/request';
 
 const apis = {
-  create: '/erp/mall_trade_config/create', // 新增
-  update: '/erp/mall_trade_config/update', // 修改
-  delete: '/erp/mall_trade_config/delete', // 删除
-  get: '/erp/mall_trade_config/get', // 单条查询
-  list: '/erp/mall_trade_config/list', // 列表查询
-  page: '/erp/mall_trade_config/page', // 分页查询
+  create: '/mall/mall_trade_config/create', // 新增
+  update: '/mall/mall_trade_config/update', // 修改
+  delete: '/mall/mall_trade_config/delete', // 删除
+  get: '/mall/mall_trade_config/get', // 单条查询
+  list: '/mall/mall_trade_config/list', // 列表查询
+  page: '/mall/mall_trade_config/page', // 分页查询
 }
 
 export interface MallTradeConfigRequest {

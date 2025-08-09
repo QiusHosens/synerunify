@@ -2,12 +2,12 @@ import { PaginatedRequest, PaginatedResponse } from '@/base/page';
 import { api } from '@/utils/request';
 
 const apis = {
-  create: '/erp/mall_trade_after_sale_log/create', // 新增
-  update: '/erp/mall_trade_after_sale_log/update', // 修改
-  delete: '/erp/mall_trade_after_sale_log/delete', // 删除
-  get: '/erp/mall_trade_after_sale_log/get', // 单条查询
-  list: '/erp/mall_trade_after_sale_log/list', // 列表查询
-  page: '/erp/mall_trade_after_sale_log/page', // 分页查询
+  create: '/mall/mall_trade_after_sale_log/create', // 新增
+  update: '/mall/mall_trade_after_sale_log/update', // 修改
+  delete: '/mall/mall_trade_after_sale_log/delete', // 删除
+  get: '/mall/mall_trade_after_sale_log/get', // 单条查询
+  list: '/mall/mall_trade_after_sale_log/list', // 列表查询
+  page: '/mall/mall_trade_after_sale_log/page', // 分页查询
 }
 
 export interface MallTradeAfterSaleLogRequest {
