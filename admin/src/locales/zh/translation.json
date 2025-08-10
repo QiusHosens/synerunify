@@ -465,44 +465,44 @@
     "error.cost.price": "请输入成本价",
     "error.stock": "请输入库存",
     "error.delivery.types": "请输入配送方式数组",
-    "error.give.integral": "请输入赠送积分"
-  },
-  "page.mall.product.category": {
-    "title.pic.url": "移动端分类图",
-    "error.pic.url": "请输入移动端分类图"
-  },
-  "page.mall.product.brand": {
-    "title.pic.url": "品牌图片",
-    "error.pic.url": "请输入品牌图片"
-  },
-  "page.mall.product.comment": {
-    "title.user.nickname": "评价人",
-    "title.user.avatar": "头像",
-    "title.anonymous": "是否匿名",
-    "title.order": "交易订单",
-    "title.order.item": "交易订单项",
-    "title.spu.name": "商品 SPU 名称",
-    "title.sku.id": "商品 SKU 编号，关联 ProductSkuDO 的 id 编号",
-    "title.sku.pic.url": "图片地址",
-    "title.sku.properties": "属性数组，JSON 格式 [{propertId: , valueId: }, {propertId: , valueId: }]",
-    "title.visible": "是否可见",
-    "title.scores": "评分星级1-5分",
-    "title.description.scores": "描述星级 1-5 星",
-    "title.benefit.scores": "服务星级 1-5 星",
-    "title.content": "评论内容",
-    "title.pic.urls": "评论图片地址数组",
-    "title.reply.status": "商家是否回复",
-    "title.reply.user.id": "回复管理员编号，关联 AdminUserDO 的 id 编号",
-    "title.reply.content": "商家回复内容",
-    "title.reply.time": "商家回复时间",
-    "error.user.id": "请输入评价人的用户编号，关联 MemberUserDO 的 id 编号",
-    "error.anonymous": "请输入是否匿名",
-    "error.spu.id": "请输入商品 SPU 编号，关联 ProductSpuDO 的 id",
-    "error.sku.id": "请输入商品 SKU 编号，关联 ProductSkuDO 的 id 编号",
-    "error.sku.pic.url": "请输入图片地址",
-    "error.scores": "请输入评分星级1-5分",
-    "error.description.scores": "请输入描述星级 1-5 星",
-    "error.benefit.scores": "请输入服务星级 1-5 星",
-    "error.content": "请输入评论内容"
+    "error.give.integral": "请输入赠送积分",
+    "category": {
+      "title.pic.url": "移动端分类图",
+      "error.pic.url": "请输入移动端分类图"
+    },
+    "brand": {
+      "title.pic.url": "品牌图片",
+      "error.pic.url": "请输入品牌图片"
+    },
+    "comment": {
+      "title.user.nickname": "评价人",
+      "title.user.avatar": "头像",
+      "title.anonymous": "是否匿名",
+      "title.order": "交易订单",
+      "title.order.item": "交易订单项",
+      "title.spu.name": "商品 SPU 名称",
+      "title.sku.id": "商品 SKU 编号，关联 ProductSkuDO 的 id 编号",
+      "title.sku.pic.url": "图片地址",
+      "title.sku.properties": "属性数组，JSON 格式 [{propertId: , valueId: }, {propertId: , valueId: }]",
+      "title.visible": "是否可见",
+      "title.scores": "评分星级1-5分",
+      "title.description.scores": "描述星级 1-5 星",
+      "title.benefit.scores": "服务星级 1-5 星",
+      "title.content": "评论内容",
+      "title.pic.urls": "评论图片地址数组",
+      "title.reply.status": "商家是否回复",
+      "title.reply.user.id": "回复管理员编号，关联 AdminUserDO 的 id 编号",
+      "title.reply.content": "商家回复内容",
+      "title.reply.time": "商家回复时间",
+      "error.user.id": "请输入评价人的用户编号，关联 MemberUserDO 的 id 编号",
+      "error.anonymous": "请输入是否匿名",
+      "error.spu.id": "请输入商品 SPU 编号，关联 ProductSpuDO 的 id",
+      "error.sku.id": "请输入商品 SKU 编号，关联 ProductSkuDO 的 id 编号",
+      "error.sku.pic.url": "请输入图片地址",
+      "error.scores": "请输入评分星级1-5分",
+      "error.description.scores": "请输入描述星级 1-5 星",
+      "error.benefit.scores": "请输入服务星级 1-5 星",
+      "error.content": "请输入评论内容"
+    }
   }
 }

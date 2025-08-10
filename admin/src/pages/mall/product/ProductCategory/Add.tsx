@@ -2,8 +2,9 @@ import { Box, Button, FormControl, Switch, TextField, Typography } from '@mui/ma
 import { useTranslation } from 'react-i18next';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
-import { createMallProductCategory, MallProductCategoryRequest } from '@/api';
+import { createMallProductCategory, listMallProductCategory, MallProductCategoryRequest, MallProductCategoryResponse } from '@/api';
 import CustomizedDialog from '@/components/CustomizedDialog';
+import SelectTree from '@/components/SelectTree';
 
 interface FormValues {
   parent_id: number; // 父分类编号
@@ -11,13 +12,19 @@ interface FormValues {
   pic_url: string; // 移动端分类图
   sort: number; // 分类排序
   status: number; // 状态
-  }
+}
 
-interface FormErrors { 
+interface FormErrors {
   parent_id?: string; // 父分类编号
   name?: string; // 分类名称
   pic_url?: string; // 移动端分类图
-  status?: string; // 状态
+}
+
+interface TreeNode {
+  id: string | number;
+  parent_id: number;
+  label: string;
+  children: TreeNode[];
 }
 
 interface MallProductCategoryAddProps {
@@ -29,17 +36,27 @@ const MallProductCategoryAdd = forwardRef(({ onSubmit }: MallProductCategoryAddP
 
   const [open, setOpen] = useState(false);
   const [maxWidth] = useState<DialogProps['maxWidth']>('sm');
+  const [treeData, setTreeData] = useState<TreeNode[]>([
+    {
+      id: 0,
+      parent_id: -1,
+      label: '根节点',
+      children: [],
+    }
+  ]);
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string | number>(0);
   const [formValues, setFormValues] = useState<FormValues>({
     parent_id: 0,
     name: '',
     pic_url: '',
     sort: 0,
     status: 0,
-    });
+  });
   const [errors, setErrors] = useState<FormErrors>({});
 
   useImperativeHandle(ref, () => ({
     show() {
+      refreshCategorys(true);
       setOpen(true);
     },
     hide() {
@@ -47,21 +64,74 @@ const MallProductCategoryAdd = forwardRef(({ onSubmit }: MallProductCategoryAddP
     },
   }));
 
+  const refreshCategorys = async (isInit: boolean) => {
+    const result = await listMallProductCategory();
+
+    // 添加根节点
+    result.splice(0, 0, {
+      id: 0,
+      parent_id: -1,
+      name: '根节点',
+    } as MallProductCategoryResponse);
+
+    const root = findRoot(result);
+    if (root && isInit) {
+      setSelectedCategoryId(root.id);
+      setFormValues(prev => ({
+        ...prev,
+        parent_id: root.id
+      }))
+    }
+    const tree = buildTree(result, root?.parent_id);
+    setTreeData(tree);
+  }
+
+  const findRoot = (list: MallProductCategoryResponse[]): MallProductCategoryResponse | undefined => {
+    const ids = list.map(item => item.id);
+    const parentIds = list.map(item => item.parent_id);
+    const rootIds = parentIds.filter(id => ids.indexOf(id) < 0);
+    if (rootIds.length > 0) {
+      const rootId = rootIds[0];
+      return list.filter(item => rootId === item.parent_id)[0];
+    }
+    return undefined;
+  }
+
+  const buildTree = (list: MallProductCategoryResponse[], rootParentId: number | undefined): TreeNode[] => {
+    const map: { [key: string]: TreeNode } = {};
+    const tree: TreeNode[] = [];
+
+    for (const item of list) {
+      map[item.id] = {
+        id: item.id,
+        parent_id: item.parent_id,
+        label: item.name,
+        children: [],
+      };
+    }
+
+    for (const item of list) {
+      if (item.parent_id === rootParentId) {
+        tree.push(map[item.id]);
+      } else if (map[item.parent_id]) {
+        map[item.parent_id].children.push(map[item.id]);
+      }
+    }
+
+    return tree;
+  }
+
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
-    
-    if (!formValues.parent_id && formValues.parent_id != 0) {
-      newErrors.parent_id = t('common.error.parent');
-    }
-    
+
     if (!formValues.name.trim()) {
-      newErrors.name = t('common.error.name');
+      newErrors.name = t('global.error.input.please') + t('common.title.name');
     }
-    
+
     if (!formValues.pic_url.trim()) {
-      newErrors.pic_url = t('page.mall.product.category.error.pic.url');
+      newErrors.pic_url = t('global.error.select.please') + t('page.mall.product.category.title.pic.url');
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -83,7 +153,7 @@ const MallProductCategoryAdd = forwardRef(({ onSubmit }: MallProductCategoryAddP
       pic_url: '',
       sort: 0,
       status: 0,
-      });
+    });
     setErrors({});
   }
 
@@ -141,6 +211,22 @@ const MallProductCategoryAdd = forwardRef(({ onSubmit }: MallProductCategoryAddP
     }
   };
 
+  const handleChange = (name: string, node: TreeNode) => {
+    setSelectedCategoryId(node.id);
+    setFormValues(prev => ({
+      ...prev,
+      [name]: node.id
+    }));
+
+    // Clear error when user starts typing
+    if (errors[name as keyof FormErrors]) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: undefined
+      }));
+    }
+  };
+
   return (
     <CustomizedDialog
       open={open}
@@ -158,13 +244,26 @@ const MallProductCategoryAdd = forwardRef(({ onSubmit }: MallProductCategoryAddP
       <Box
         noValidate
         component="form"
-        sx={ {display: 'flex',
+        sx={{
+          display: 'flex',
           flexDirection: 'column',
           m: 'auto',
-          width: 'fit-content',} }
+          width: 'fit-content',
+        }}
       >
-        <FormControl sx={ {minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' }} }>
-          <TextField
+        <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiSelect-root': { width: '200px' } }}>
+          <SelectTree
+            expandToSelected
+            name='parent_id'
+            size="small"
+            label={t('common.title.parent')}
+            treeData={treeData}
+            value={selectedCategoryId}
+            onChange={(name, node) => handleChange(name, node as TreeNode)}
+          />
+        </FormControl>
+        <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' } }}>
+          {/* <TextField
             required
             size="small"
             type="number"
@@ -174,7 +273,7 @@ const MallProductCategoryAdd = forwardRef(({ onSubmit }: MallProductCategoryAddP
             onChange={handleInputChange}
             error={!!errors.parent_id}
             helperText={errors.parent_id}
-          />
+          /> */}
           <TextField
             required
             size="small"
@@ -203,10 +302,10 @@ const MallProductCategoryAdd = forwardRef(({ onSubmit }: MallProductCategoryAddP
             value={formValues.sort}
             onChange={handleInputChange}
           />
-          </FormControl>
-        <Box sx={ {mt: 2, display: 'flex', alignItems: 'center'} }>
-          <Typography sx={ {mr: 4} }>{t("global.title.status")}</Typography>
-          <Switch sx={ {mr: 2} } name='status' checked={!formValues.status} onChange={handleStatusChange} />
+        </FormControl>
+        <Box sx={{ mt: 2, display: 'flex', alignItems: 'center' }}>
+          <Typography sx={{ mr: 4 }}>{t("global.title.status")}</Typography>
+          <Switch sx={{ mr: 2 }} name='status' checked={!formValues.status} onChange={handleStatusChange} />
           <Typography>{formValues.status == 0 ? t('global.switch.status.true') : t('global.switch.status.false')}</Typography>
         </Box>
       </Box>
