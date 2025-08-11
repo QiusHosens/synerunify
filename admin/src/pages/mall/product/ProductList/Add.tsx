@@ -12,7 +12,7 @@ interface FormValues {
   description: string; // 商品详情
   category_id: number; // 商品分类编号
   brand_id: number; // 商品品牌编号
-  pic_url: string; // 商品封面图
+  file_id: string; // 商品封面图
   slider_pic_urls: string; // 商品轮播图地址数组，以逗号分隔最多上传15张
   sort: number; // 排序字段
   status: number; // 商品状态: 0 上架（开启） 1 下架（禁用） -1 回收
@@ -33,7 +33,7 @@ interface FormValues {
 interface FormErrors {
   name?: string; // 商品名称
   category_id?: string; // 商品分类编号
-  pic_url?: string; // 商品封面图
+  file_id?: string; // 商品封面图
   sort?: string; // 排序字段
   status?: string; // 商品状态: 0 上架（开启） 1 下架（禁用） -1 回收
   price?: string; // 商品价格，单位使用：分
@@ -59,7 +59,7 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
     description: '',
     category_id: 0,
     brand_id: 0,
-    pic_url: '',
+    file_id: '',
     slider_pic_urls: '',
     sort: 0,
     status: 0,
@@ -98,8 +98,8 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
       newErrors.category_id = t('page.mall.product.error.category_id');
     }
 
-    if (!formValues.pic_url.trim()) {
-      newErrors.pic_url = t('page.mall.product.error.pic_url');
+    if (!formValues.file_id.trim()) {
+      newErrors.file_id = t('page.mall.product.error.file_id');
     }
 
     if (!formValues.sort && formValues.sort != 0) {
@@ -152,7 +152,7 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
       description: '',
       category_id: 0,
       brand_id: 0,
-      pic_url: '',
+      file_id: '',
       slider_pic_urls: '',
       sort: 0,
       status: 0,
@@ -304,12 +304,12 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
           <TextField
             required
             size="small"
-            label={t("page.mall.product.title.pic_url")}
-            name='pic_url'
-            value={formValues.pic_url}
+            label={t("page.mall.product.title.file_id")}
+            name='file_id'
+            value={formValues.file_id}
             onChange={handleInputChange}
-            error={!!errors.pic_url}
-            helperText={errors.pic_url}
+            error={!!errors.file_id}
+            helperText={errors.file_id}
           />
           <TextField
             size="small"

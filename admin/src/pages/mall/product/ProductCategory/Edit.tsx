@@ -8,7 +8,7 @@ import CustomizedDialog from '@/components/CustomizedDialog';
 interface FormErrors { 
   parent_id?: string; // 父分类编号
   name?: string; // 分类名称
-  pic_url?: string; // 移动端分类图
+  file_id?: string; // 移动端分类图
   status?: string; // 状态
 }
 
@@ -25,7 +25,7 @@ const MallProductCategoryEdit = forwardRef(({ onSubmit }: MallProductCategoryEdi
     id: 0,
     parent_id: 0,
     name: '',
-    pic_url: '',
+    file_id: '',
     sort: 0,
     status: 0,
     });
@@ -52,8 +52,8 @@ const MallProductCategoryEdit = forwardRef(({ onSubmit }: MallProductCategoryEdi
       newErrors.name = t('common.error.name');
     }
     
-    if (!mallProductCategory.pic_url.trim()) {
-      newErrors.pic_url = t('page.mall.product.category.error.pic.url');
+    if (!mallProductCategory.file_id.trim()) {
+      newErrors.file_id = t('page.mall.product.category.error.pic.url');
     }
     
     setErrors(newErrors);
@@ -169,11 +169,11 @@ const MallProductCategoryEdit = forwardRef(({ onSubmit }: MallProductCategoryEdi
             required
             size="small"
             label={t("page.mall.product.category.title.pic.url")}
-            name='pic_url'
-            value={ mallProductCategory.pic_url}
+            name='file_id'
+            value={ mallProductCategory.file_id}
             onChange={handleInputChange}
-            error={!!errors.pic_url}
-            helperText={errors.pic_url}
+            error={!!errors.file_id}
+            helperText={errors.file_id}
           />
           <TextField
             size="small"

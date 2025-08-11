@@ -6,11 +6,12 @@ import { createMallProductCategory, listMallProductCategory, MallProductCategory
 import CustomizedDialog from '@/components/CustomizedDialog';
 import SelectTree from '@/components/SelectTree';
 import CustomizedFileUpload, { UploadFile } from '@/components/CustomizedFileUpload';
+import { uploadSystemFile } from '@/api/system_file';
 
 interface FormValues {
   parent_id: number; // 父分类编号
   name: string; // 分类名称
-  pic_url: string; // 分类图片
+  file_id?: number; // 分类图片
   sort: number; // 分类排序
   status: number; // 状态
 }
@@ -18,7 +19,7 @@ interface FormValues {
 interface FormErrors {
   parent_id?: string; // 父分类编号
   name?: string; // 分类名称
-  pic_url?: string; // 分类图片
+  file_id?: string; // 分类图片
 }
 
 interface TreeNode {
@@ -49,7 +50,6 @@ const MallProductCategoryAdd = forwardRef(({ onSubmit }: MallProductCategoryAddP
   const [formValues, setFormValues] = useState<FormValues>({
     parent_id: 0,
     name: '',
-    pic_url: '',
     sort: 0,
     status: 0,
   });
@@ -131,8 +131,8 @@ const MallProductCategoryAdd = forwardRef(({ onSubmit }: MallProductCategoryAddP
       newErrors.name = t('global.error.input.please') + t('common.title.name');
     }
 
-    if (!formValues.pic_url.trim()) {
-      newErrors.pic_url = t('global.error.select.please') + t('page.mall.product.category.title.pic.url');
+    if (!formValues.file_id && formValues.file_id != 0) {
+      newErrors.file_id = t('global.error.select.please') + t('page.mall.product.category.title.file');
     }
 
     setErrors(newErrors);
@@ -153,7 +153,6 @@ const MallProductCategoryAdd = forwardRef(({ onSubmit }: MallProductCategoryAddP
     setFormValues({
       parent_id: 0,
       name: '',
-      pic_url: '',
       sort: 0,
       status: 0,
     });
@@ -344,11 +343,11 @@ const MallProductCategoryAdd = forwardRef(({ onSubmit }: MallProductCategoryAddP
           required
           size="small"
           label={t("page.mall.product.category.title.pic.url")}
-          name='pic_url'
-          value={formValues.pic_url}
+          name='file_id'
+          value={formValues.file_id}
           onChange={handleInputChange}
-          error={!!errors.pic_url}
-          helperText={errors.pic_url}
+          error={!!errors.file_id}
+          helperText={errors.file_id}
         /> */}
         <Grid size={{ xs: 12, md: 4 }}>
           <CustomizedFileUpload

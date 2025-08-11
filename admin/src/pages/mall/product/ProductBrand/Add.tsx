@@ -7,7 +7,7 @@ import CustomizedDialog from '@/components/CustomizedDialog';
 
 interface FormValues {
   name: string; // 品牌名称
-  pic_url: string; // 品牌图片
+  file_id: string; // 品牌图片
   sort: number; // 品牌排序
   description: string; // 品牌描述
   status: number; // 状态
@@ -15,7 +15,7 @@ interface FormValues {
 
 interface FormErrors {
   name?: string; // 品牌名称
-  pic_url?: string; // 品牌图片
+  file_id?: string; // 品牌图片
   status?: string; // 状态
 }
 
@@ -30,7 +30,7 @@ const MallProductBrandAdd = forwardRef(({ onSubmit }: MallProductBrandAddProps, 
   const [maxWidth] = useState<DialogProps['maxWidth']>('sm');
   const [formValues, setFormValues] = useState<FormValues>({
     name: '',
-    pic_url: '',
+    file_id: '',
     sort: 0,
     description: '',
     status: 0,
@@ -53,8 +53,8 @@ const MallProductBrandAdd = forwardRef(({ onSubmit }: MallProductBrandAddProps, 
       newErrors.name = t('common.error.name');
     }
 
-    if (!formValues.pic_url.trim()) {
-      newErrors.pic_url = t('page.mall.product.brand.error.pic.url');
+    if (!formValues.file_id.trim()) {
+      newErrors.file_id = t('page.mall.product.brand.error.pic.url');
     }
 
     setErrors(newErrors);
@@ -74,7 +74,7 @@ const MallProductBrandAdd = forwardRef(({ onSubmit }: MallProductBrandAddProps, 
   const reset = () => {
     setFormValues({
       name: '',
-      pic_url: '',
+      file_id: '',
       sort: 0,
       description: '',
       status: 0,
@@ -175,11 +175,11 @@ const MallProductBrandAdd = forwardRef(({ onSubmit }: MallProductBrandAddProps, 
             required
             size="small"
             label={t("page.mall.product.brand.title.pic.url")}
-            name='pic_url'
-            value={formValues.pic_url}
+            name='file_id'
+            value={formValues.file_id}
             onChange={handleInputChange}
-            error={!!errors.pic_url}
-            helperText={errors.pic_url}
+            error={!!errors.file_id}
+            helperText={errors.file_id}
           />
           <TextField
             size="small"

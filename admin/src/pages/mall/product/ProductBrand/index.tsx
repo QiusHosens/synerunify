@@ -54,7 +54,7 @@ export default function MallProductBrand() {
   const columns: GridColDef[] = useMemo(
     () => [
       { field: 'name', headerName: t("common.title.name"), flex: 1, minWidth: 100 },
-      { field: 'pic_url', headerName: t("page.mall.product.brand.title.pic.url"), flex: 1, minWidth: 100 },
+      { field: 'file_id', headerName: t("page.mall.product.brand.title.pic.url"), flex: 1, minWidth: 100 },
       { field: 'sort', headerName: t("common.title.sort"), flex: 1, minWidth: 100 },
       { field: 'description', headerName: t("common.title.description"), flex: 1, minWidth: 100 },
       {

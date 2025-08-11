@@ -7,7 +7,7 @@ import CustomizedDialog from '@/components/CustomizedDialog';
 
 interface FormErrors {
   name?: string; // 品牌名称
-  pic_url?: string; // 品牌图片
+  file_id?: string; // 品牌图片
   status?: string; // 状态
 }
 
@@ -23,7 +23,7 @@ const MallProductBrandEdit = forwardRef(({ onSubmit }: MallProductBrandEditProps
   const [mallProductBrand, setMallProductBrand] = useState<MallProductBrandRequest>({
     id: 0,
     name: '',
-    pic_url: '',
+    file_id: '',
     sort: 0,
     description: '',
     status: 0,
@@ -47,8 +47,8 @@ const MallProductBrandEdit = forwardRef(({ onSubmit }: MallProductBrandEditProps
       newErrors.name = t('common.error.name');
     }
 
-    if (!mallProductBrand.pic_url.trim()) {
-      newErrors.pic_url = t('page.mall.product.brand.error.pic.url');
+    if (!mallProductBrand.file_id.trim()) {
+      newErrors.file_id = t('page.mall.product.brand.error.pic.url');
     }
 
     setErrors(newErrors);
@@ -155,11 +155,11 @@ const MallProductBrandEdit = forwardRef(({ onSubmit }: MallProductBrandEditProps
             required
             size="small"
             label={t("page.mall.product.brand.title.pic.url")}
-            name='pic_url'
-            value={mallProductBrand.pic_url}
+            name='file_id'
+            value={mallProductBrand.file_id}
             onChange={handleInputChange}
-            error={!!errors.pic_url}
-            helperText={errors.pic_url}
+            error={!!errors.file_id}
+            helperText={errors.file_id}
           />
           <TextField
             size="small"

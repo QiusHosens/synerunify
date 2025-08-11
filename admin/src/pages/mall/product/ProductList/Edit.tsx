@@ -8,7 +8,7 @@ import CustomizedDialog from '@/components/CustomizedDialog';
 interface FormErrors {
   name?: string; // 商品名称
   category_id?: string; // 商品分类编号
-  pic_url?: string; // 商品封面图
+  file_id?: string; // 商品封面图
   sort?: string; // 排序字段
   status?: string; // 商品状态: 0 上架（开启） 1 下架（禁用） -1 回收
   price?: string; // 商品价格，单位使用：分
@@ -35,7 +35,7 @@ const MallProductSpuEdit = forwardRef(({ onSubmit }: MallProductSpuEditProps, re
     description: '',
     category_id: 0,
     brand_id: 0,
-    pic_url: '',
+    file_id: '',
     slider_pic_urls: '',
     sort: 0,
     status: 0,
@@ -75,8 +75,8 @@ const MallProductSpuEdit = forwardRef(({ onSubmit }: MallProductSpuEditProps, re
       newErrors.category_id = t('page.mall.product.error.category_id');
     }
 
-    if (!mallProductSpu.pic_url.trim()) {
-      newErrors.pic_url = t('page.mall.product.error.pic_url');
+    if (!mallProductSpu.file_id.trim()) {
+      newErrors.file_id = t('page.mall.product.error.file_id');
     }
 
     if (!mallProductSpu.sort && mallProductSpu.sort != 0) {
@@ -250,12 +250,12 @@ const MallProductSpuEdit = forwardRef(({ onSubmit }: MallProductSpuEditProps, re
           <TextField
             required
             size="small"
-            label={t("page.mall.product.title.pic_url")}
-            name='pic_url'
-            value={mallProductSpu.pic_url}
+            label={t("page.mall.product.title.file_id")}
+            name='file_id'
+            value={mallProductSpu.file_id}
             onChange={handleInputChange}
-            error={!!errors.pic_url}
-            helperText={errors.pic_url}
+            error={!!errors.file_id}
+            helperText={errors.file_id}
           />
           <TextField
             size="small"

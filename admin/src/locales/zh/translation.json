@@ -440,8 +440,8 @@
     "title.description": "商品详情",
     "title.category": "商品分类",
     "title.brand": "商品品牌",
-    "title.pic.url": "商品封面图",
-    "title.slider.pic.urls": "商品轮播图地址数组，以逗号分隔最多上传15张",
+    "title.file": "商品封面图",
+    "title.slider.files": "商品轮播图地址数组，以逗号分隔最多上传15张",
     "title.sort": "排序字段",
     "title.status": "商品状态",
     "title.spec.type": "规格类型",
@@ -458,7 +458,7 @@
     "title.browse.count": "商品点击量",
     "error.name": "请输入商品名称",
     "error.category": "请选择商品分类",
-    "error.pic.url": "请输入商品封面图",
+    "error.file": "请输入商品封面图",
     "error.sort": "请输入排序字段",
     "error.status": "请输入商品状态",
     "error.price": "请输入商品价格",
@@ -467,12 +467,10 @@
     "error.delivery.types": "请输入配送方式数组",
     "error.give.integral": "请输入赠送积分",
     "category": {
-      "title.pic.url": "分类图片",
-      "error.pic.url": "请选择分类图片"
+      "title.file": "分类图片"
     },
     "brand": {
-      "title.pic.url": "品牌图片",
-      "error.pic.url": "请输入品牌图片"
+      "title.file": "品牌图片"
     },
     "comment": {
       "title.user.nickname": "评价人",
@@ -482,14 +480,14 @@
       "title.order.item": "交易订单项",
       "title.spu.name": "商品 SPU 名称",
       "title.sku.id": "商品 SKU 编号，关联 ProductSkuDO 的 id 编号",
-      "title.sku.pic.url": "图片地址",
+      "title.sku.file": "图片",
       "title.sku.properties": "属性数组，JSON 格式 [{propertId: , valueId: }, {propertId: , valueId: }]",
       "title.visible": "是否可见",
       "title.scores": "评分星级1-5分",
       "title.description.scores": "描述星级 1-5 星",
       "title.benefit.scores": "服务星级 1-5 星",
       "title.content": "评论内容",
-      "title.pic.urls": "评论图片地址数组",
+      "title.files": "评论图片地址数组",
       "title.reply.status": "商家是否回复",
       "title.reply.user.id": "回复管理员编号，关联 AdminUserDO 的 id 编号",
       "title.reply.content": "商家回复内容",
@@ -498,7 +496,7 @@
       "error.anonymous": "请输入是否匿名",
       "error.spu.id": "请输入商品 SPU 编号，关联 ProductSpuDO 的 id",
       "error.sku.id": "请输入商品 SKU 编号，关联 ProductSkuDO 的 id 编号",
-      "error.sku.pic.url": "请输入图片地址",
+      "error.sku.file": "请输入图片地址",
       "error.scores": "请输入评分星级1-5分",
       "error.description.scores": "请输入描述星级 1-5 星",
       "error.benefit.scores": "请输入服务星级 1-5 星",
