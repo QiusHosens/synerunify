@@ -1190,7 +1190,7 @@ DROP TABLE IF EXISTS `mall_product_brand`;
 CREATE TABLE `mall_product_brand`  (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '品牌编号',
   `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '品牌名称',
-  `pic_url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '品牌图片',
+  `file_id` bigint NOT NULL COMMENT '品牌图片ID',
   `sort` int NULL DEFAULT 0 COMMENT '品牌排序',
   `description` varchar(1024) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '品牌描述',
   `status` tinyint NOT NULL DEFAULT 0 COMMENT '状态',
@@ -1239,7 +1239,7 @@ CREATE TABLE `mall_product_category`  (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '分类编号',
   `parent_id` bigint NOT NULL COMMENT '父分类编号',
   `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '分类名称',
-  `pic_url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '移动端分类图',
+  `file_id` bigint NOT NULL COMMENT '分类图片ID',
   `sort` int NULL DEFAULT 0 COMMENT '分类排序',
   `status` tinyint NOT NULL DEFAULT 0 COMMENT '状态',
   `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
@@ -1262,25 +1262,25 @@ DROP TABLE IF EXISTS `mall_product_comment`;
 CREATE TABLE `mall_product_comment`  (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '评论编号，主键自增',
   `user_id` bigint NOT NULL COMMENT '评价人的用户编号，关联 MemberUserDO 的 id 编号',
-  `user_nickname` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '评价人名称',
-  `user_avatar` varchar(1024) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '评价人头像',
+  `user_nickname` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '评价人名称',
+  `user_avatar` varchar(1024) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '评价人头像',
   `anonymous` bit(1) NOT NULL COMMENT '是否匿名',
   `order_id` bigint NULL DEFAULT 0 COMMENT '交易订单编号，关联 TradeOrderDO 的 id 编号',
   `order_item_id` bigint NULL DEFAULT 0 COMMENT '交易订单项编号，关联 TradeOrderItemDO 的 id 编号',
   `spu_id` bigint NOT NULL COMMENT '商品 SPU 编号，关联 ProductSpuDO 的 id',
-  `spu_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '商品 SPU 名称',
+  `spu_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '商品 SPU 名称',
   `sku_id` bigint NOT NULL COMMENT '商品 SKU 编号，关联 ProductSkuDO 的 id 编号',
-  `sku_pic_url` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '图片地址',
-  `sku_properties` varchar(512) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '属性数组，JSON 格式 [{propertId: , valueId: }, {propertId: , valueId: }]',
+  `file_id` bigint NOT NULL COMMENT '图片ID',
+  `sku_properties` varchar(512) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '属性数组，JSON 格式 [{propertId: , valueId: }, {propertId: , valueId: }]',
   `visible` bit(1) NULL DEFAULT NULL COMMENT '是否可见，true:显示false:隐藏',
   `scores` tinyint NOT NULL COMMENT '评分星级1-5分',
   `description_scores` tinyint NOT NULL COMMENT '描述星级 1-5 星',
   `benefit_scores` tinyint NOT NULL COMMENT '服务星级 1-5 星',
-  `content` varchar(1024) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '评论内容',
-  `pic_urls` varchar(4096) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '评论图片地址数组',
+  `content` varchar(1024) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '评论内容',
+  `file_ids` varchar(4096) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '评论图片id数组',
   `reply_status` bit(1) NULL DEFAULT b'0' COMMENT '商家是否回复',
   `reply_user_id` bigint NULL DEFAULT NULL COMMENT '回复管理员编号，关联 AdminUserDO 的 id 编号',
-  `reply_content` varchar(1024) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '商家回复内容',
+  `reply_content` varchar(1024) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '商家回复内容',
   `reply_time` datetime NULL DEFAULT NULL COMMENT '商家回复时间',
   `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
@@ -1289,7 +1289,7 @@ CREATE TABLE `mall_product_comment`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '商品评论' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '商品评论' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_product_comment
@@ -1311,7 +1311,7 @@ CREATE TABLE `mall_product_favorite`  (
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `idx_userId`(`user_id` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin COMMENT = '商品收藏表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '商品收藏表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_product_favorite
@@ -1323,9 +1323,9 @@ CREATE TABLE `mall_product_favorite`  (
 DROP TABLE IF EXISTS `mall_product_property`;
 CREATE TABLE `mall_product_property`  (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '编号',
-  `name` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '名称',
+  `name` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '名称',
   `status` tinyint NOT NULL DEFAULT 0 COMMENT '状态',
-  `remark` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '备注',
+  `remark` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
   `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updater` bigint NULL DEFAULT NULL COMMENT '更新者ID',
@@ -1334,7 +1334,7 @@ CREATE TABLE `mall_product_property`  (
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `idx_name`(`name`(32) ASC) USING BTREE COMMENT '规格名称索引'
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '商品属性项' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '商品属性项' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_product_property
@@ -1347,9 +1347,9 @@ DROP TABLE IF EXISTS `mall_product_property_value`;
 CREATE TABLE `mall_product_property_value`  (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '编号',
   `property_id` bigint NULL DEFAULT NULL COMMENT '属性项的编号',
-  `name` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '名称',
+  `name` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '名称',
   `status` tinyint NOT NULL DEFAULT 0 COMMENT '状态',
-  `remark` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '备注',
+  `remark` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
   `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updater` bigint NULL DEFAULT NULL COMMENT '更新者ID',
@@ -1357,7 +1357,7 @@ CREATE TABLE `mall_product_property_value`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '商品属性值' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '商品属性值' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_product_property_value
@@ -1375,7 +1375,7 @@ CREATE TABLE `mall_product_sku`  (
   `market_price` int NULL DEFAULT NULL COMMENT '市场价，单位：分',
   `cost_price` int NOT NULL DEFAULT -1 COMMENT '成本价，单位： 分',
   `bar_code` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT 'SKU 的条形码',
-  `pic_url` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '图片地址',
+  `file_id` bigint NOT NULL COMMENT '图片ID',
   `stock` int NULL DEFAULT NULL COMMENT '库存',
   `weight` double NULL DEFAULT NULL COMMENT '商品重量，单位：kg 千克',
   `volume` double NULL DEFAULT NULL COMMENT '商品体积，单位：m^3 平米',
@@ -1407,8 +1407,8 @@ CREATE TABLE `mall_product_spu`  (
   `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL COMMENT '商品详情',
   `category_id` bigint NOT NULL COMMENT '商品分类编号',
   `brand_id` int NULL DEFAULT NULL COMMENT '商品品牌编号',
-  `pic_url` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '商品封面图',
-  `slider_pic_urls` varchar(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '商品轮播图地址数组，以逗号分隔最多上传15张',
+  `file_id` bigint NOT NULL COMMENT '商品封面ID',
+  `slider_file_ids` varchar(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '商品轮播图id数组，以逗号分隔最多上传15张',
   `sort` int NOT NULL DEFAULT 0 COMMENT '排序字段',
   `status` tinyint NOT NULL DEFAULT 0 COMMENT '商品状态: 0 上架（开启） 1 下架（禁用） -1 回收',
   `spec_type` bit(1) NULL DEFAULT NULL COMMENT '规格类型：0 单规格 1 多规格',
@@ -1479,7 +1479,7 @@ CREATE TABLE `mall_promotion_article`  (
   `spu_id` bigint NOT NULL DEFAULT 0 COMMENT '关联商品编号',
   `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '文章标题',
   `author` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '文章作者',
-  `pic_url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '文章封面图片地址',
+  `file_id` bigint NOT NULL COMMENT '文章封面图片ID',
   `introduction` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '文章简介',
   `browse_count` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '浏览次数',
   `sort` int UNSIGNED NOT NULL DEFAULT 0 COMMENT '排序',
@@ -1507,7 +1507,7 @@ DROP TABLE IF EXISTS `mall_promotion_article_category`;
 CREATE TABLE `mall_promotion_article_category`  (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '文章分类编号',
   `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '分类名称',
-  `pic_url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '图标地址',
+  `file_id` bigint NOT NULL COMMENT '图标ID',
   `status` tinyint NOT NULL DEFAULT 0 COMMENT '状态',
   `sort` int NOT NULL DEFAULT 99999 COMMENT '排序',
   `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
@@ -1530,7 +1530,7 @@ DROP TABLE IF EXISTS `mall_promotion_banner`;
 CREATE TABLE `mall_promotion_banner`  (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT 'Banner 编号',
   `title` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT 'Banner 标题',
-  `pic_url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '图片 URL',
+  `file_id` bigint NOT NULL COMMENT '图片ID',
   `url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '跳转地址',
   `status` tinyint NOT NULL DEFAULT 0 COMMENT '状态',
   `sort` int NULL DEFAULT NULL COMMENT '排序',
@@ -1556,7 +1556,7 @@ CREATE TABLE `mall_promotion_banner`  (
 DROP TABLE IF EXISTS `mall_promotion_bargain_activity`;
 CREATE TABLE `mall_promotion_bargain_activity`  (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '砍价活动编号',
-  `name` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '砍价活动名称',
+  `name` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '砍价活动名称',
   `start_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '活动开始时间',
   `end_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '活动结束时间',
   `status` tinyint NOT NULL DEFAULT 0 COMMENT '状态',
@@ -1578,7 +1578,7 @@ CREATE TABLE `mall_promotion_bargain_activity`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '砍价活动' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '砍价活动' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_promotion_bargain_activity
@@ -1601,7 +1601,7 @@ CREATE TABLE `mall_promotion_bargain_help`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '砍价助力表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '砍价助力表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_promotion_bargain_help
@@ -1629,7 +1629,7 @@ CREATE TABLE `mall_promotion_bargain_record`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '砍价记录表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '砍价记录表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_promotion_bargain_record
@@ -1641,7 +1641,7 @@ CREATE TABLE `mall_promotion_bargain_record`  (
 DROP TABLE IF EXISTS `mall_promotion_combination_activity`;
 CREATE TABLE `mall_promotion_combination_activity`  (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '活动编号',
-  `name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '拼团名称',
+  `name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '拼团名称',
   `spu_id` bigint NOT NULL COMMENT '商品 SPU ID',
   `total_limit_count` int NOT NULL COMMENT '总限购数量',
   `single_limit_count` int NOT NULL COMMENT '单次限购数量',
@@ -1658,7 +1658,7 @@ CREATE TABLE `mall_promotion_combination_activity`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '拼团活动' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '拼团活动' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_promotion_combination_activity
@@ -1684,7 +1684,7 @@ CREATE TABLE `mall_promotion_combination_product`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '拼团商品' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '拼团商品' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_promotion_combination_product
@@ -1698,13 +1698,13 @@ CREATE TABLE `mall_promotion_combination_record`  (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '编号',
   `activity_id` bigint NULL DEFAULT NULL COMMENT '拼团活动编号',
   `spu_id` bigint NULL DEFAULT NULL COMMENT '商品 SPU 编号',
-  `pic_url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '商品图片',
-  `spu_name` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '商品名称',
+  `file_id` bigint NOT NULL COMMENT '商品图片ID',
+  `spu_name` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '商品名称',
   `sku_id` bigint NULL DEFAULT NULL COMMENT '商品 SKU 编号',
   `count` int NULL DEFAULT NULL COMMENT '购买的商品数量',
   `user_id` bigint NULL DEFAULT NULL COMMENT '用户编号',
-  `nickname` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '用户昵称',
-  `avatar` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '用户头像',
+  `nickname` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '用户昵称',
+  `avatar` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '用户头像',
   `head_id` bigint NULL DEFAULT NULL COMMENT '团长编号',
   `order_id` bigint NULL DEFAULT NULL COMMENT '订单编号',
   `user_size` int NOT NULL COMMENT '可参团人数',
@@ -1722,7 +1722,7 @@ CREATE TABLE `mall_promotion_combination_record`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '拼团记录' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '拼团记录' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_promotion_combination_record
@@ -1735,7 +1735,7 @@ DROP TABLE IF EXISTS `mall_promotion_coupon`;
 CREATE TABLE `mall_promotion_coupon`  (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '优惠劵编号',
   `template_id` bigint NOT NULL COMMENT '优惠劵模板编号',
-  `name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '优惠劵名',
+  `name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '优惠劵名',
   `status` tinyint NOT NULL DEFAULT 0 COMMENT '优惠码状态     *     * 1-未使用     * 2-已使用     * 3-已失效',
   `user_id` bigint NOT NULL COMMENT '用户编号',
   `take_type` tinyint NOT NULL COMMENT '领取类型     *     * 1 - 用户主动领取     * 2 - 后台自动发放',
@@ -1743,7 +1743,7 @@ CREATE TABLE `mall_promotion_coupon`  (
   `valid_start_time` datetime NOT NULL COMMENT '生效开始时间',
   `valid_end_time` datetime NOT NULL COMMENT '生效结束时间',
   `product_scope` tinyint NOT NULL COMMENT '商品范围',
-  `product_scope_values` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '商品范围编号的数组',
+  `product_scope_values` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '商品范围编号的数组',
   `discount_type` tinyint NOT NULL COMMENT '折扣类型',
   `discount_percent` tinyint NULL DEFAULT NULL COMMENT '折扣百分比',
   `discount_price` int NULL DEFAULT NULL COMMENT '优惠金额，单位：分',
@@ -1757,7 +1757,7 @@ CREATE TABLE `mall_promotion_coupon`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '优惠劵' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '优惠劵' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_promotion_coupon
@@ -1769,15 +1769,15 @@ CREATE TABLE `mall_promotion_coupon`  (
 DROP TABLE IF EXISTS `mall_promotion_coupon_template`;
 CREATE TABLE `mall_promotion_coupon_template`  (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '模板编号，自增唯一。',
-  `name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '优惠劵名',
-  `description` varchar(512) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '优惠劵描述',
+  `name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '优惠劵名',
+  `description` varchar(512) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '优惠劵描述',
   `status` tinyint NOT NULL DEFAULT 0 COMMENT '状态',
   `total_count` int NOT NULL COMMENT '发放数量, -1 - 则表示不限制',
   `take_limit_count` tinyint NOT NULL COMMENT '每人限领个数, -1 - 则表示不限制',
   `take_type` tinyint NOT NULL COMMENT '领取方式',
   `use_price` int NOT NULL COMMENT '是否设置满多少金额可用，单位：分',
   `product_scope` tinyint NOT NULL COMMENT '商品范围',
-  `product_scope_values` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '商品范围编号的数组',
+  `product_scope_values` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '商品范围编号的数组',
   `validity_type` tinyint NOT NULL COMMENT '生效日期类型',
   `valid_start_time` datetime NULL DEFAULT NULL COMMENT '固定日期-生效开始时间',
   `valid_end_time` datetime NULL DEFAULT NULL COMMENT '固定日期-生效结束时间',
@@ -1796,7 +1796,7 @@ CREATE TABLE `mall_promotion_coupon_template`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '优惠劵模板' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '优惠劵模板' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_promotion_coupon_template
@@ -1808,11 +1808,11 @@ CREATE TABLE `mall_promotion_coupon_template`  (
 DROP TABLE IF EXISTS `mall_promotion_discount_activity`;
 CREATE TABLE `mall_promotion_discount_activity`  (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '活动编号',
-  `name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '活动标题',
+  `name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '活动标题',
   `status` tinyint NOT NULL DEFAULT 0 COMMENT '活动状态',
   `start_time` datetime NOT NULL COMMENT '开始时间',
   `end_time` datetime NOT NULL COMMENT '结束时间',
-  `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '备注',
+  `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '备注',
   `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updater` bigint NULL DEFAULT NULL COMMENT '更新者ID',
@@ -1820,7 +1820,7 @@ CREATE TABLE `mall_promotion_discount_activity`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '限时折扣活动' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '限时折扣活动' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_promotion_discount_activity
@@ -1839,7 +1839,7 @@ CREATE TABLE `mall_promotion_discount_product`  (
   `discount_percent` smallint NULL DEFAULT NULL COMMENT '折扣百分比',
   `discount_price` int NULL DEFAULT NULL COMMENT '优惠金额，单位：分',
   `activity_status` tinyint NOT NULL DEFAULT 0 COMMENT '秒杀商品状态',
-  `activity_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '活动标题',
+  `activity_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '活动标题',
   `activity_start_time` datetime NOT NULL COMMENT '活动开始时间点',
   `activity_end_time` datetime NOT NULL COMMENT '活动结束时间点',
   `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
@@ -1849,7 +1849,7 @@ CREATE TABLE `mall_promotion_discount_product`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '限时折扣商品' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '限时折扣商品' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_promotion_discount_product
@@ -1862,10 +1862,10 @@ DROP TABLE IF EXISTS `mall_promotion_diy_page`;
 CREATE TABLE `mall_promotion_diy_page`  (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '装修页面编号',
   `template_id` bigint NULL DEFAULT NULL COMMENT '装修模板编号',
-  `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '页面名称',
-  `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '备注',
-  `preview_pic_urls` varchar(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '预览图，多个逗号分隔',
-  `property` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '页面属性，JSON 格式',
+  `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '页面名称',
+  `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
+  `preview_file_ids` varchar(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '预览图id,多个逗号分隔',
+  `property` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL COMMENT '页面属性，JSON 格式',
   `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updater` bigint NULL DEFAULT NULL COMMENT '更新者ID',
@@ -1873,7 +1873,7 @@ CREATE TABLE `mall_promotion_diy_page`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '装修页面' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '装修页面' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_promotion_diy_page
@@ -1885,12 +1885,12 @@ CREATE TABLE `mall_promotion_diy_page`  (
 DROP TABLE IF EXISTS `mall_promotion_diy_template`;
 CREATE TABLE `mall_promotion_diy_template`  (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '装修模板编号',
-  `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '模板名称',
+  `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '模板名称',
   `used` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否使用',
   `used_time` datetime NULL DEFAULT NULL COMMENT '使用时间',
-  `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '备注',
-  `preview_pic_urls` varchar(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '预览图',
-  `property` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '模板属性，JSON 格式',
+  `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
+  `preview_file_ids` varchar(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '预览图',
+  `property` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL COMMENT '模板属性，JSON 格式',
   `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updater` bigint NULL DEFAULT NULL COMMENT '更新者ID',
@@ -1898,7 +1898,7 @@ CREATE TABLE `mall_promotion_diy_template`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '装修模板' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '装修模板' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_promotion_diy_template
@@ -2016,15 +2016,15 @@ CREATE TABLE `mall_promotion_point_product`  (
 DROP TABLE IF EXISTS `mall_promotion_reward_activity`;
 CREATE TABLE `mall_promotion_reward_activity`  (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '活动编号',
-  `name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '活动标题',
+  `name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '活动标题',
   `status` tinyint NOT NULL DEFAULT 0 COMMENT '活动状态',
   `start_time` datetime NOT NULL COMMENT '开始时间',
   `end_time` datetime NOT NULL COMMENT '结束时间',
-  `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '备注',
+  `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '备注',
   `condition_type` tinyint NOT NULL DEFAULT -1 COMMENT '条件类型',
   `product_scope` tinyint NOT NULL COMMENT '商品范围',
-  `product_scope_values` varchar(1024) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '商品范围编号的数组',
-  `rules` varchar(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '优惠规则的数组',
+  `product_scope_values` varchar(1024) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '商品范围编号的数组',
+  `rules` varchar(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '优惠规则的数组',
   `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updater` bigint NULL DEFAULT NULL COMMENT '更新者ID',
@@ -2032,7 +2032,7 @@ CREATE TABLE `mall_promotion_reward_activity`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '满减送活动' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '满减送活动' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_promotion_reward_activity
@@ -2045,13 +2045,13 @@ DROP TABLE IF EXISTS `mall_promotion_seckill_activity`;
 CREATE TABLE `mall_promotion_seckill_activity`  (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '秒杀活动编号',
   `spu_id` bigint NOT NULL DEFAULT 0 COMMENT '秒杀活动商品',
-  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '秒杀活动名称',
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '秒杀活动名称',
   `status` tinyint NOT NULL DEFAULT 0 COMMENT '活动状态',
-  `remark` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '备注',
+  `remark` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '备注',
   `start_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '活动开始时间',
   `end_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '活动结束时间',
   `sort` int NOT NULL DEFAULT 0 COMMENT '排序',
-  `config_ids` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '0' COMMENT '秒杀时段 id 数组',
+  `config_ids` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '0' COMMENT '秒杀时段 id 数组',
   `total_limit_count` int NULL DEFAULT 0 COMMENT '总限购数量',
   `single_limit_count` int NULL DEFAULT 0 COMMENT '单次限够数量',
   `stock` int NULL DEFAULT 0 COMMENT '秒杀库存',
@@ -2063,7 +2063,7 @@ CREATE TABLE `mall_promotion_seckill_activity`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '秒杀活动' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '秒杀活动' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_promotion_seckill_activity
@@ -2075,10 +2075,10 @@ CREATE TABLE `mall_promotion_seckill_activity`  (
 DROP TABLE IF EXISTS `mall_promotion_seckill_config`;
 CREATE TABLE `mall_promotion_seckill_config`  (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '编号',
-  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '秒杀时段名称',
-  `start_time` varchar(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '开始时间点',
-  `end_time` varchar(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '结束时间点',
-  `slider_pic_urls` varchar(1024) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '秒杀主图',
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '秒杀时段名称',
+  `start_time` varchar(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '开始时间点',
+  `end_time` varchar(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '结束时间点',
+  `slider_file_ids` varchar(1024) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '秒杀主图',
   `status` tinyint NOT NULL DEFAULT 0 COMMENT '活动状态',
   `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
@@ -2087,7 +2087,7 @@ CREATE TABLE `mall_promotion_seckill_config`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '秒杀时段' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '秒杀时段' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_promotion_seckill_config
@@ -2100,7 +2100,7 @@ DROP TABLE IF EXISTS `mall_promotion_seckill_product`;
 CREATE TABLE `mall_promotion_seckill_product`  (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '秒杀参与商品编号',
   `activity_id` bigint NOT NULL DEFAULT 0 COMMENT '秒杀活动 id',
-  `config_ids` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '0' COMMENT '秒杀时段 id 数组',
+  `config_ids` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '0' COMMENT '秒杀时段 id 数组',
   `spu_id` bigint NOT NULL DEFAULT 0 COMMENT '商品 spu_id',
   `sku_id` bigint NOT NULL DEFAULT 0 COMMENT '商品 sku_id',
   `seckill_price` int NOT NULL DEFAULT 0 COMMENT '秒杀金额，单位：分',
@@ -2115,7 +2115,7 @@ CREATE TABLE `mall_promotion_seckill_product`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '秒杀参与商品' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '秒杀参与商品' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_promotion_seckill_product
@@ -2127,34 +2127,34 @@ CREATE TABLE `mall_promotion_seckill_product`  (
 DROP TABLE IF EXISTS `mall_trade_after_sale`;
 CREATE TABLE `mall_trade_after_sale`  (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '售后编号',
-  `no` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT '售后单号',
+  `no` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '售后单号',
   `type` tinyint NULL DEFAULT NULL COMMENT '售后类型',
   `status` tinyint NOT NULL DEFAULT 0 COMMENT '售后状态',
   `way` tinyint NOT NULL COMMENT '售后方式',
   `user_id` bigint UNSIGNED NOT NULL COMMENT '用户编号',
-  `apply_reason` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT '申请原因',
-  `apply_description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '补充描述',
-  `apply_pic_urls` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '补充凭证图片',
+  `apply_reason` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '申请原因',
+  `apply_description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '补充描述',
+  `apply_file_ids` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '补充凭证图片',
   `order_id` bigint UNSIGNED NOT NULL COMMENT '订单编号',
-  `order_no` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT '订单流水号',
+  `order_no` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '订单流水号',
   `order_item_id` bigint UNSIGNED NOT NULL COMMENT '订单项编号',
   `spu_id` bigint UNSIGNED NOT NULL COMMENT '商品 SPU 编号',
-  `spu_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT '商品 SPU 名称',
+  `spu_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '商品 SPU 名称',
   `sku_id` bigint UNSIGNED NOT NULL COMMENT '商品 SKU 编号',
-  `properties` varchar(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '商品属性数组，JSON 格式',
-  `pic_url` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '商品图片',
+  `properties` varchar(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '商品属性数组，JSON 格式',
+  `file_id` bigint NOT NULL COMMENT '商品图片ID',
   `count` int NOT NULL COMMENT '购买数量',
   `audit_time` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '审批时间',
   `audit_user_id` bigint UNSIGNED NULL DEFAULT NULL COMMENT '审批人',
-  `audit_reason` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '审批备注',
+  `audit_reason` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '审批备注',
   `refund_price` int NOT NULL DEFAULT 0 COMMENT '退款金额，单位：分',
   `pay_refund_id` bigint UNSIGNED NULL DEFAULT NULL COMMENT '支付退款编号',
   `refund_time` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '退款时间',
   `logistics_id` bigint NULL DEFAULT NULL COMMENT '退货物流公司编号',
-  `logistics_no` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '退货物流单号',
+  `logistics_no` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '退货物流单号',
   `delivery_time` datetime NULL DEFAULT NULL COMMENT '退货时间',
   `receive_time` datetime NULL DEFAULT NULL COMMENT '收货时间',
-  `receive_reason` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '收货备注',
+  `receive_reason` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '收货备注',
   `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updater` bigint NULL DEFAULT NULL COMMENT '更新者ID',
@@ -2162,7 +2162,7 @@ CREATE TABLE `mall_trade_after_sale`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin COMMENT = '售后订单' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '售后订单' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_trade_after_sale
@@ -2180,7 +2180,7 @@ CREATE TABLE `mall_trade_after_sale_log`  (
   `before_status` tinyint NULL DEFAULT NULL COMMENT '售后状态（之前）',
   `after_status` tinyint NOT NULL COMMENT '售后状态（之后）',
   `operate_type` tinyint NOT NULL COMMENT '操作类型',
-  `content` varchar(512) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT '操作明细',
+  `content` varchar(512) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '操作明细',
   `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updater` bigint NULL DEFAULT NULL COMMENT '更新者ID',
@@ -2188,7 +2188,7 @@ CREATE TABLE `mall_trade_after_sale_log`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin COMMENT = '售后订单日志' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '售后订单日志' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_trade_after_sale_log
@@ -2276,7 +2276,7 @@ CREATE TABLE `mall_trade_brokerage_withdraw`  (
   `pay_transfer_id` bigint NULL DEFAULT NULL COMMENT '转账订单编号',
   `transfer_channel_code` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '转账渠道',
   `transfer_time` datetime NULL DEFAULT NULL COMMENT '转账支付时间',
-  `transfer_error_msg` varchar(4096) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT '' COMMENT '转账错误提示',
+  `transfer_error_msg` varchar(4096) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '转账错误提示',
   `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updater` bigint NULL DEFAULT NULL COMMENT '更新者ID',
@@ -2310,7 +2310,7 @@ CREATE TABLE `mall_trade_cart`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '购物车的商品信息' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '购物车的商品信息' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_trade_cart
@@ -2482,22 +2482,22 @@ CREATE TABLE `mall_trade_delivery_pick_up_store`  (
 DROP TABLE IF EXISTS `mall_trade_order`;
 CREATE TABLE `mall_trade_order`  (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '订单编号',
-  `no` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT '订单流水号',
+  `no` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '订单流水号',
   `type` int NOT NULL DEFAULT 0 COMMENT '订单类型',
   `terminal` int NOT NULL COMMENT '订单来源终端',
   `user_id` bigint UNSIGNED NOT NULL COMMENT '用户编号',
-  `user_ip` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL DEFAULT '' COMMENT '用户 IP',
-  `user_remark` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '用户备注',
+  `user_ip` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '用户 IP',
+  `user_remark` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '用户备注',
   `status` tinyint NOT NULL DEFAULT 0 COMMENT '订单状态',
   `product_count` int NOT NULL COMMENT '购买的商品数量',
   `cancel_type` int NULL DEFAULT NULL COMMENT '取消类型',
-  `remark` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '商家备注',
+  `remark` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '商家备注',
   `comment_status` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否评价',
   `brokerage_user_id` bigint NULL DEFAULT NULL COMMENT '推广人编号',
   `pay_order_id` bigint NULL DEFAULT NULL COMMENT '支付订单编号',
   `pay_status` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否已支付：[0:未支付 1:已经支付过]',
   `pay_time` datetime NULL DEFAULT NULL COMMENT '订单支付时间',
-  `pay_channel_code` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '支付成功的支付渠道',
+  `pay_channel_code` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '支付成功的支付渠道',
   `finish_time` datetime NULL DEFAULT NULL COMMENT '订单完成时间',
   `cancel_time` datetime NULL DEFAULT NULL COMMENT '订单取消时间',
   `total_price` int NOT NULL DEFAULT 0 COMMENT '商品原价（总），单位：分',
@@ -2507,15 +2507,15 @@ CREATE TABLE `mall_trade_order`  (
   `pay_price` int NOT NULL DEFAULT 0 COMMENT '应付金额（总），单位：分',
   `delivery_type` tinyint NOT NULL COMMENT '配送类型',
   `logistics_id` bigint NULL DEFAULT NULL COMMENT '发货物流公司编号',
-  `logistics_no` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '物流公司单号',
+  `logistics_no` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '物流公司单号',
   `delivery_time` datetime NULL DEFAULT NULL COMMENT '发货时间',
   `receive_time` datetime NULL DEFAULT NULL COMMENT '收货时间',
-  `receiver_name` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT '收件人名称',
-  `receiver_mobile` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT '收件人手机',
+  `receiver_name` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '收件人名称',
+  `receiver_mobile` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '收件人手机',
   `receiver_area_id` int NULL DEFAULT NULL COMMENT '收件人地区编号',
-  `receiver_detail_address` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '收件人详细地址',
+  `receiver_detail_address` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '收件人详细地址',
   `pick_up_store_id` bigint NULL DEFAULT NULL COMMENT '自提门店编号',
-  `pick_up_verify_code` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '自提核销码',
+  `pick_up_verify_code` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '自提核销码',
   `refund_status` tinyint NOT NULL DEFAULT 0 COMMENT '售后状态',
   `refund_price` int NOT NULL DEFAULT 0 COMMENT '退款金额，单位：分',
   `coupon_id` bigint UNSIGNED NULL DEFAULT NULL COMMENT '优惠劵编号',
@@ -2525,8 +2525,8 @@ CREATE TABLE `mall_trade_order`  (
   `give_point` int NOT NULL DEFAULT 0 COMMENT '赠送的积分',
   `refund_point` int NOT NULL DEFAULT 0 COMMENT '退还的使用的积分',
   `vip_price` int NOT NULL DEFAULT 0 COMMENT 'VIP 减免金额，单位：分',
-  `give_coupon_template_counts` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '赠送的优惠劵',
-  `give_coupon_ids` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '赠送的优惠劵编号',
+  `give_coupon_template_counts` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '赠送的优惠劵',
+  `give_coupon_ids` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '赠送的优惠劵编号',
   `seckill_activity_id` bigint NULL DEFAULT NULL COMMENT '秒杀活动编号',
   `bargain_activity_id` bigint NULL DEFAULT NULL COMMENT '砍价活动编号',
   `bargain_record_id` bigint NULL DEFAULT NULL COMMENT '砍价记录编号',
@@ -2541,7 +2541,7 @@ CREATE TABLE `mall_trade_order`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin COMMENT = '交易订单表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '交易订单表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_trade_order
@@ -2557,10 +2557,10 @@ CREATE TABLE `mall_trade_order_item`  (
   `order_id` bigint UNSIGNED NOT NULL COMMENT '订单编号',
   `cart_id` bigint UNSIGNED NULL DEFAULT NULL COMMENT '购物车项编号',
   `spu_id` bigint UNSIGNED NOT NULL COMMENT '商品 SPU 编号',
-  `spu_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT '商品 SPU 名称',
+  `spu_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '商品 SPU 名称',
   `sku_id` bigint UNSIGNED NOT NULL COMMENT '商品 SKU 编号',
-  `properties` varchar(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '商品属性数组，JSON 格式',
-  `pic_url` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL COMMENT '商品图片',
+  `properties` varchar(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '商品属性数组，JSON 格式',
+  `file_id` bigint NOT NULL COMMENT '商品图片ID',
   `count` int NOT NULL COMMENT '购买数量',
   `comment_status` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否评价',
   `price` int NOT NULL DEFAULT 0 COMMENT '商品原价（单），单位：分',
@@ -2582,7 +2582,7 @@ CREATE TABLE `mall_trade_order_item`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin COMMENT = '交易订单明细表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '交易订单明细表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_trade_order_item

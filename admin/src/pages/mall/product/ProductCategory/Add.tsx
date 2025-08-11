@@ -1,15 +1,16 @@
-import { Box, Button, FormControl, Switch, TextField, Typography } from '@mui/material';
+import { Box, Button, FormControl, Grid, Switch, TextField, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { forwardRef, useImperativeHandle, useState } from 'react';
+import { forwardRef, useCallback, useImperativeHandle, useState } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
 import { createMallProductCategory, listMallProductCategory, MallProductCategoryRequest, MallProductCategoryResponse } from '@/api';
 import CustomizedDialog from '@/components/CustomizedDialog';
 import SelectTree from '@/components/SelectTree';
+import CustomizedFileUpload, { UploadFile } from '@/components/CustomizedFileUpload';
 
 interface FormValues {
   parent_id: number; // 父分类编号
   name: string; // 分类名称
-  pic_url: string; // 移动端分类图
+  pic_url: string; // 分类图片
   sort: number; // 分类排序
   status: number; // 状态
 }
@@ -17,7 +18,7 @@ interface FormValues {
 interface FormErrors {
   parent_id?: string; // 父分类编号
   name?: string; // 分类名称
-  pic_url?: string; // 移动端分类图
+  pic_url?: string; // 分类图片
 }
 
 interface TreeNode {
@@ -53,6 +54,8 @@ const MallProductCategoryAdd = forwardRef(({ onSubmit }: MallProductCategoryAddP
     status: 0,
   });
   const [errors, setErrors] = useState<FormErrors>({});
+  const [fileWidth] = useState<number>(420);
+  const [fileHeight] = useState<number>(245);
 
   useImperativeHandle(ref, () => ({
     show() {
@@ -227,6 +230,58 @@ const MallProductCategoryAdd = forwardRef(({ onSubmit }: MallProductCategoryAddP
     }
   };
 
+  const handleFileChange = useCallback(async (file: UploadFile | null, action: 'upload' | 'remove', index: number) => {
+    // console.log(`Upload ${index} file updated:`, file, `Action: ${action}`);
+
+    if (action === 'upload' && file) {
+      // 更新文件列表,增加一个附件,等待上传完成后在写入信息
+      setFormValues((prev) => {
+        return { ...prev, attachments: [...prev.attachments, { file }] };
+      })
+
+      // 上传文件
+      try {
+        const result = await uploadSystemFile(file.file, (progress) => {
+          setFormValues((prev) => {
+            const updatedAttachments = prev.attachments.map((item, idx) => {
+              if (idx !== index) return item;
+              const updatedItem = { ...item, file: { ...item.file!, progress } };
+              return updatedItem;
+            })
+            return { ...prev, attachments: updatedAttachments };
+          });
+        });
+
+        // 上传完成
+        setFormValues((prev) => {
+          const updatedAttachments = prev.attachments.map((item, idx) => {
+            if (idx !== index) return item;
+            const updatedItem = { ...item, file_id: result, file: { ...item.file!, status: 'done' as const } };
+            return updatedItem;
+          })
+          return { ...prev, attachments: updatedAttachments };
+        });
+      } catch (error) {
+        console.error('upload file error', error);
+        // 上传失败
+        setFormValues((prev) => {
+          const updatedAttachments = prev.attachments.map((item, idx) => {
+            if (idx !== index) return item;
+            const updatedItem = { ...item, file: { ...item.file!, status: 'error' as const } };
+            return updatedItem;
+          })
+          return { ...prev, attachments: updatedAttachments };
+        });
+      }
+    } else if (action === 'remove') {
+      // 删除文件并移除上传框
+      setFormValues((prev) => {
+        const updatedAttachments = prev.attachments.filter((_, idx) => idx !== index);
+        return { ...prev, attachments: updatedAttachments };
+      });
+    }
+  }, []);
+
   return (
     <CustomizedDialog
       open={open}
@@ -284,16 +339,29 @@ const MallProductCategoryAdd = forwardRef(({ onSubmit }: MallProductCategoryAddP
             error={!!errors.name}
             helperText={errors.name}
           />
-          <TextField
-            required
-            size="small"
-            label={t("page.mall.product.category.title.pic.url")}
-            name='pic_url'
-            value={formValues.pic_url}
-            onChange={handleInputChange}
-            error={!!errors.pic_url}
-            helperText={errors.pic_url}
-          />
+        </FormControl>
+        {/* <TextField
+          required
+          size="small"
+          label={t("page.mall.product.category.title.pic.url")}
+          name='pic_url'
+          value={formValues.pic_url}
+          onChange={handleInputChange}
+          error={!!errors.pic_url}
+          helperText={errors.pic_url}
+        /> */}
+        <Grid size={{ xs: 12, md: 4 }}>
+          <CustomizedFileUpload
+            id={'file-upload'}
+            accept=".jpg,jpeg,.png"
+            maxSize={100}
+            onChange={(file, action) => handleFileChange(file, action, formValues.attachments.length)}
+            width={fileWidth}
+            height={fileHeight}
+          >
+          </CustomizedFileUpload>
+        </Grid>
+        <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' } }}>
           <TextField
             size="small"
             type="number"

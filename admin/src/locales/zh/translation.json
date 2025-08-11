@@ -467,8 +467,8 @@
     "error.delivery.types": "请输入配送方式数组",
     "error.give.integral": "请输入赠送积分",
     "category": {
-      "title.pic.url": "移动端分类图",
-      "error.pic.url": "请输入移动端分类图"
+      "title.pic.url": "分类图片",
+      "error.pic.url": "请选择分类图片"
     },
     "brand": {
       "title.pic.url": "品牌图片",
