@@ -18,7 +18,7 @@ export interface MallProductSkuRequest {
   market_price: number; // 市场价，单位：分
   cost_price: number; // 成本价，单位： 分
   bar_code: string; // SKU 的条形码
-  pic_url: string; // 图片地址
+  file_id: number; // 图片ID
   stock: number; // 库存
   weight: number; // 商品重量，单位：kg 千克
   volume: number; // 商品体积，单位：m^3 平米
@@ -35,7 +35,7 @@ export interface MallProductSkuResponse {
   market_price: number; // 市场价，单位：分
   cost_price: number; // 成本价，单位： 分
   bar_code: string; // SKU 的条形码
-  pic_url: string; // 图片地址
+  file_id: number; // 图片ID
   stock: number; // 库存
   weight: number; // 商品重量，单位：kg 千克
   volume: number; // 商品体积，单位：m^3 平米

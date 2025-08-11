@@ -15,7 +15,7 @@ export interface MallPromotionDiyPageRequest {
   template_id: number; // 装修模板编号
   name: string; // 页面名称
   remark: string; // 备注
-  preview_pic_urls: string; // 预览图，多个逗号分隔
+  preview_file_ids: string; // 预览图id,多个逗号分隔
   property: string; // 页面属性，JSON 格式
   }
 
@@ -24,7 +24,7 @@ export interface MallPromotionDiyPageResponse {
   template_id: number; // 装修模板编号
   name: string; // 页面名称
   remark: string; // 备注
-  preview_pic_urls: string; // 预览图，多个逗号分隔
+  preview_file_ids: string; // 预览图id,多个逗号分隔
   property: string; // 页面属性，JSON 格式
   creator: number; // 创建者ID
   create_time: string; // 创建时间

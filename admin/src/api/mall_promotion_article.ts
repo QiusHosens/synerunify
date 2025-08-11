@@ -18,7 +18,7 @@ export interface MallPromotionArticleRequest {
   spu_id: number; // 关联商品编号
   title: string; // 文章标题
   author: string; // 文章作者
-  pic_url: string; // 文章封面图片地址
+  file_id: number; // 文章封面图片ID
   introduction: string; // 文章简介
   browse_count: string; // 浏览次数
   sort: number; // 排序
@@ -34,7 +34,7 @@ export interface MallPromotionArticleResponse {
   spu_id: number; // 关联商品编号
   title: string; // 文章标题
   author: string; // 文章作者
-  pic_url: string; // 文章封面图片地址
+  file_id: number; // 文章封面图片ID
   introduction: string; // 文章简介
   browse_count: string; // 浏览次数
   sort: number; // 排序

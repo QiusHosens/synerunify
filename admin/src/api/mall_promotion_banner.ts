@@ -15,7 +15,7 @@ const apis = {
 export interface MallPromotionBannerRequest {
   id: number; // Banner 编号
   title: string; // Banner 标题
-  pic_url: string; // 图片 URL
+  file_id: number; // 图片ID
   url: string; // 跳转地址
   status: number; // 状态
   sort: number; // 排序
@@ -27,7 +27,7 @@ export interface MallPromotionBannerRequest {
 export interface MallPromotionBannerResponse {
   id: number; // Banner 编号
   title: string; // Banner 标题
-  pic_url: string; // 图片 URL
+  file_id: number; // 图片ID
   url: string; // 跳转地址
   status: number; // 状态
   sort: number; // 排序

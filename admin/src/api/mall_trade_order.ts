@@ -59,7 +59,7 @@ export interface MallTradeOrderRequest {
   vip_price: number; // VIP 减免金额，单位：分
   give_coupon_template_counts: string; // 赠送的优惠劵
   give_coupon_ids: string; // 赠送的优惠劵编号
-  seckill_activity_id: number; // 秒杀活动编号
+  flash_activity_id: number; // 秒杀活动编号
   bargain_activity_id: number; // 砍价活动编号
   bargain_record_id: number; // 砍价记录编号
   combination_activity_id: number; // 拼团活动编号
@@ -115,7 +115,7 @@ export interface MallTradeOrderResponse {
   vip_price: number; // VIP 减免金额，单位：分
   give_coupon_template_counts: string; // 赠送的优惠劵
   give_coupon_ids: string; // 赠送的优惠劵编号
-  seckill_activity_id: number; // 秒杀活动编号
+  flash_activity_id: number; // 秒杀活动编号
   bargain_activity_id: number; // 砍价活动编号
   bargain_record_id: number; // 砍价记录编号
   combination_activity_id: number; // 拼团活动编号

@@ -21,14 +21,14 @@ export interface MallProductCommentRequest {
   spu_id: number; // 商品 SPU 编号，关联 ProductSpuDO 的 id
   spu_name: string; // 商品 SPU 名称
   sku_id: number; // 商品 SKU 编号，关联 ProductSkuDO 的 id 编号
-  sku_pic_url: string; // 图片地址
+  file_id: number; // 图片ID
   sku_properties: string; // 属性数组，JSON 格式 [{propertId: , valueId: }, {propertId: , valueId: }]
   visible: boolean; // 是否可见，true:显示false:隐藏
   scores: number; // 评分星级1-5分
   description_scores: number; // 描述星级 1-5 星
   benefit_scores: number; // 服务星级 1-5 星
   content: string; // 评论内容
-  pic_urls: string; // 评论图片地址数组
+  file_ids: string; // 评论图片id数组
   reply_status: boolean; // 商家是否回复
   reply_user_id: number; // 回复管理员编号，关联 AdminUserDO 的 id 编号
   reply_content: string; // 商家回复内容
@@ -46,14 +46,14 @@ export interface MallProductCommentResponse {
   spu_id: number; // 商品 SPU 编号，关联 ProductSpuDO 的 id
   spu_name: string; // 商品 SPU 名称
   sku_id: number; // 商品 SKU 编号，关联 ProductSkuDO 的 id 编号
-  sku_pic_url: string; // 图片地址
+  file_id: number; // 图片ID
   sku_properties: string; // 属性数组，JSON 格式 [{propertId: , valueId: }, {propertId: , valueId: }]
   visible: boolean; // 是否可见，true:显示false:隐藏
   scores: number; // 评分星级1-5分
   description_scores: number; // 描述星级 1-5 星
   benefit_scores: number; // 服务星级 1-5 星
   content: string; // 评论内容
-  pic_urls: string; // 评论图片地址数组
+  file_ids: string; // 评论图片id数组
   reply_status: boolean; // 商家是否回复
   reply_user_id: number; // 回复管理员编号，关联 AdminUserDO 的 id 编号
   reply_content: string; // 商家回复内容

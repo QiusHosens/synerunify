@@ -20,8 +20,8 @@ export interface MallProductSpuRequest {
   description: string; // 商品详情
   category_id: number; // 商品分类编号
   brand_id: number; // 商品品牌编号
-  pic_url: string; // 商品封面图
-  slider_pic_urls: string; // 商品轮播图地址数组，以逗号分隔最多上传15张
+  file_id: number; // 商品封面ID
+  slider_file_ids: string; // 商品轮播图id数组，以逗号分隔最多上传15张
   sort: number; // 排序字段
   status: number; // 商品状态: 0 上架（开启） 1 下架（禁用） -1 回收
   spec_type: boolean; // 规格类型：0 单规格 1 多规格
@@ -46,8 +46,8 @@ export interface MallProductSpuResponse {
   description: string; // 商品详情
   category_id: number; // 商品分类编号
   brand_id: number; // 商品品牌编号
-  pic_url: string; // 商品封面图
-  slider_pic_urls: string; // 商品轮播图地址数组，以逗号分隔最多上传15张
+  file_id: number; // 商品封面ID
+  slider_file_ids: string; // 商品轮播图id数组，以逗号分隔最多上传15张
   sort: number; // 排序字段
   status: number; // 商品状态: 0 上架（开启） 1 下架（禁用） -1 回收
   spec_type: boolean; // 规格类型：0 单规格 1 多规格

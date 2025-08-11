@@ -16,7 +16,7 @@ export interface MallPromotionCombinationRecordRequest {
   id: number; // 编号
   activity_id: number; // 拼团活动编号
   spu_id: number; // 商品 SPU 编号
-  pic_url: string; // 商品图片
+  file_id: number; // 商品图片ID
   spu_name: string; // 商品名称
   sku_id: number; // 商品 SKU 编号
   count: number; // 购买的商品数量
@@ -39,7 +39,7 @@ export interface MallPromotionCombinationRecordResponse {
   id: number; // 编号
   activity_id: number; // 拼团活动编号
   spu_id: number; // 商品 SPU 编号
-  pic_url: string; // 商品图片
+  file_id: number; // 商品图片ID
   spu_name: string; // 商品名称
   sku_id: number; // 商品 SKU 编号
   count: number; // 购买的商品数量

@@ -19,7 +19,7 @@ export interface MallTradeOrderItemRequest {
   spu_name: string; // 商品 SPU 名称
   sku_id: number; // 商品 SKU 编号
   properties: string; // 商品属性数组，JSON 格式
-  pic_url: string; // 商品图片
+  file_id: number; // 商品图片ID
   count: number; // 购买数量
   comment_status: boolean; // 是否评价
   price: number; // 商品原价（单），单位：分
@@ -45,7 +45,7 @@ export interface MallTradeOrderItemResponse {
   spu_name: string; // 商品 SPU 名称
   sku_id: number; // 商品 SKU 编号
   properties: string; // 商品属性数组，JSON 格式
-  pic_url: string; // 商品图片
+  file_id: number; // 商品图片ID
   count: number; // 购买数量
   comment_status: boolean; // 是否评价
   price: number; // 商品原价（单），单位：分

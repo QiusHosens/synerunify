@@ -21,7 +21,7 @@ export interface MallTradeAfterSaleRequest {
   user_id: number; // 用户编号
   apply_reason: string; // 申请原因
   apply_description: string; // 补充描述
-  apply_pic_urls: string; // 补充凭证图片
+  apply_file_ids: string; // 补充凭证图片
   order_id: number; // 订单编号
   order_no: string; // 订单流水号
   order_item_id: number; // 订单项编号
@@ -29,7 +29,7 @@ export interface MallTradeAfterSaleRequest {
   spu_name: string; // 商品 SPU 名称
   sku_id: number; // 商品 SKU 编号
   properties: string; // 商品属性数组，JSON 格式
-  pic_url: string; // 商品图片
+  file_id: number; // 商品图片ID
   count: number; // 购买数量
   audit_time: string; // 审批时间
   audit_user_id: number; // 审批人
@@ -53,7 +53,7 @@ export interface MallTradeAfterSaleResponse {
   user_id: number; // 用户编号
   apply_reason: string; // 申请原因
   apply_description: string; // 补充描述
-  apply_pic_urls: string; // 补充凭证图片
+  apply_file_ids: string; // 补充凭证图片
   order_id: number; // 订单编号
   order_no: string; // 订单流水号
   order_item_id: number; // 订单项编号
@@ -61,7 +61,7 @@ export interface MallTradeAfterSaleResponse {
   spu_name: string; // 商品 SPU 名称
   sku_id: number; // 商品 SKU 编号
   properties: string; // 商品属性数组，JSON 格式
-  pic_url: string; // 商品图片
+  file_id: number; // 商品图片ID
   count: number; // 购买数量
   audit_time: string; // 审批时间
   audit_user_id: number; // 审批人

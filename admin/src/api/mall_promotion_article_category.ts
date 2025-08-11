@@ -15,7 +15,7 @@ const apis = {
 export interface MallPromotionArticleCategoryRequest {
   id: number; // 文章分类编号
   name: string; // 分类名称
-  pic_url: string; // 图标地址
+  file_id: number; // 图标ID
   status: number; // 状态
   sort: number; // 排序
   }
@@ -23,7 +23,7 @@ export interface MallPromotionArticleCategoryRequest {
 export interface MallPromotionArticleCategoryResponse {
   id: number; // 文章分类编号
   name: string; // 分类名称
-  pic_url: string; // 图标地址
+  file_id: number; // 图标ID
   status: number; // 状态
   sort: number; // 排序
   creator: number; // 创建者ID

@@ -16,7 +16,7 @@ export interface MallProductCategoryRequest {
   id: number; // 分类编号
   parent_id: number; // 父分类编号
   name: string; // 分类名称
-  pic_url: string; // 移动端分类图
+  file_id: number; // 分类图片ID
   sort: number; // 分类排序
   status: number; // 状态
   }
@@ -25,7 +25,7 @@ export interface MallProductCategoryResponse {
   id: number; // 分类编号
   parent_id: number; // 父分类编号
   name: string; // 分类名称
-  pic_url: string; // 移动端分类图
+  file_id: number; // 分类图片ID
   sort: number; // 分类排序
   status: number; // 状态
   creator: number; // 创建者ID
