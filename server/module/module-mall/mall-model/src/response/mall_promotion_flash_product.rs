@@ -5,7 +5,7 @@ use serde_with::{serde_as, DisplayFromStr};
 
 #[serde_as]
 #[derive(Deserialize, Serialize, Debug, Clone, ToSchema)]
-pub struct MallPromotionSeckillProductResponse {
+pub struct MallPromotionFlashProductResponse {
     
     pub id: i64, // 秒杀参与商品编号
     
@@ -17,7 +17,7 @@ pub struct MallPromotionSeckillProductResponse {
     
     pub sku_id: i64, // 商品 sku_id
     
-    pub seckill_price: i32, // 秒杀金额，单位：分
+    pub flash_price: i32, // 秒杀金额，单位：分
     
     pub stock: i32, // 秒杀库存
     

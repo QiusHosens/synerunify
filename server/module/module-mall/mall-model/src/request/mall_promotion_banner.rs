@@ -10,7 +10,7 @@ pub struct CreateMallPromotionBannerRequest {
     
     pub title: String, // Banner 标题
     
-    pub pic_url: String, // 图片 URL
+    pub file_id: i64, // 图片ID
     
     pub url: String, // 跳转地址
     
@@ -33,7 +33,7 @@ pub struct UpdateMallPromotionBannerRequest {
     
     pub title: Option<String>, // Banner 标题
     
-    pub pic_url: Option<String>, // 图片 URL
+    pub file_id: Option<i64>, // 图片ID
     
     pub url: Option<String>, // 跳转地址
     

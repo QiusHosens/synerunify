@@ -21,7 +21,7 @@ pub struct MallProductSkuResponse {
     
     pub bar_code: Option<String>, // SKU 的条形码
     
-    pub pic_url: String, // 图片地址
+    pub file_id: i64, // 图片ID
     
     pub stock: Option<i32>, // 库存
     

@@ -17,7 +17,7 @@ pub struct CreateMallPromotionDiyTemplateRequest {
     
     pub remark: Option<String>, // 备注
     
-    pub preview_pic_urls: Option<String>, // 预览图
+    pub preview_file_ids: Option<String>, // 预览图
     
     pub property: Option<String>, // 模板属性，JSON 格式
     
@@ -37,7 +37,7 @@ pub struct UpdateMallPromotionDiyTemplateRequest {
     
     pub remark: Option<String>, // 备注
     
-    pub preview_pic_urls: Option<String>, // 预览图
+    pub preview_file_ids: Option<String>, // 预览图
     
     pub property: Option<String>, // 模板属性，JSON 格式
     

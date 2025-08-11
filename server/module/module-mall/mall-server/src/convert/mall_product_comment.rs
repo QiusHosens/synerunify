@@ -14,14 +14,14 @@ pub fn create_request_to_model(request: &CreateMallProductCommentRequest) -> Mal
         spu_id: Set(request.spu_id.clone()),
         spu_name: request.spu_name.as_ref().map_or(NotSet, |spu_name| Set(Some(spu_name.clone()))),
         sku_id: Set(request.sku_id.clone()),
-        sku_pic_url: Set(request.sku_pic_url.clone()),
+        file_id: Set(request.file_id.clone()),
         sku_properties: request.sku_properties.as_ref().map_or(NotSet, |sku_properties| Set(Some(sku_properties.clone()))),
         visible: request.visible.as_ref().map_or(NotSet, |visible| Set(Some(visible.clone()))),
         scores: Set(request.scores.clone()),
         description_scores: Set(request.description_scores.clone()),
         benefit_scores: Set(request.benefit_scores.clone()),
         content: Set(request.content.clone()),
-        pic_urls: request.pic_urls.as_ref().map_or(NotSet, |pic_urls| Set(Some(pic_urls.clone()))),
+        file_ids: request.file_ids.as_ref().map_or(NotSet, |file_ids| Set(Some(file_ids.clone()))),
         reply_status: request.reply_status.as_ref().map_or(NotSet, |reply_status| Set(Some(reply_status.clone()))),
         reply_user_id: request.reply_user_id.as_ref().map_or(NotSet, |reply_user_id| Set(Some(reply_user_id.clone()))),
         reply_content: request.reply_content.as_ref().map_or(NotSet, |reply_content| Set(Some(reply_content.clone()))),
@@ -59,8 +59,8 @@ pub fn update_request_to_model(request: &UpdateMallProductCommentRequest, existi
     if let Some(sku_id) = &request.sku_id { 
         active_model.sku_id = Set(sku_id.clone());
     }
-    if let Some(sku_pic_url) = &request.sku_pic_url { 
-        active_model.sku_pic_url = Set(sku_pic_url.clone());
+    if let Some(file_id) = &request.file_id { 
+        active_model.file_id = Set(file_id.clone());
     }
     if let Some(sku_properties) = &request.sku_properties { 
         active_model.sku_properties = Set(Some(sku_properties.clone()));
@@ -80,8 +80,8 @@ pub fn update_request_to_model(request: &UpdateMallProductCommentRequest, existi
     if let Some(content) = &request.content { 
         active_model.content = Set(content.clone());
     }
-    if let Some(pic_urls) = &request.pic_urls { 
-        active_model.pic_urls = Set(Some(pic_urls.clone()));
+    if let Some(file_ids) = &request.file_ids { 
+        active_model.file_ids = Set(Some(file_ids.clone()));
     }
     if let Some(reply_status) = &request.reply_status { 
         active_model.reply_status = Set(Some(reply_status.clone()));
@@ -110,14 +110,14 @@ pub fn model_to_response(model: MallProductComment) -> MallProductCommentRespons
         spu_id: model.spu_id,
         spu_name: model.spu_name,
         sku_id: model.sku_id,
-        sku_pic_url: model.sku_pic_url,
+        file_id: model.file_id,
         sku_properties: model.sku_properties,
         visible: model.visible,
         scores: model.scores,
         description_scores: model.description_scores,
         benefit_scores: model.benefit_scores,
         content: model.content,
-        pic_urls: model.pic_urls,
+        file_ids: model.file_ids,
         reply_status: model.reply_status,
         reply_user_id: model.reply_user_id,
         reply_content: model.reply_content,

@@ -9,7 +9,7 @@ pub fn create_request_to_model(request: &CreateMallPromotionArticleRequest) -> M
         spu_id: Set(request.spu_id.clone()),
         title: Set(request.title.clone()),
         author: request.author.as_ref().map_or(NotSet, |author| Set(Some(author.clone()))),
-        pic_url: Set(request.pic_url.clone()),
+        file_id: Set(request.file_id.clone()),
         introduction: request.introduction.as_ref().map_or(NotSet, |introduction| Set(Some(introduction.clone()))),
         browse_count: request.browse_count.as_ref().map_or(NotSet, |browse_count| Set(Some(browse_count.clone()))),
         sort: Set(request.sort.clone()),
@@ -35,8 +35,8 @@ pub fn update_request_to_model(request: &UpdateMallPromotionArticleRequest, exis
     if let Some(author) = &request.author { 
         active_model.author = Set(Some(author.clone()));
     }
-    if let Some(pic_url) = &request.pic_url { 
-        active_model.pic_url = Set(pic_url.clone());
+    if let Some(file_id) = &request.file_id { 
+        active_model.file_id = Set(file_id.clone());
     }
     if let Some(introduction) = &request.introduction { 
         active_model.introduction = Set(Some(introduction.clone()));
@@ -69,7 +69,7 @@ pub fn model_to_response(model: MallPromotionArticle) -> MallPromotionArticleRes
         spu_id: model.spu_id,
         title: model.title,
         author: model.author,
-        pic_url: model.pic_url,
+        file_id: model.file_id,
         introduction: model.introduction,
         browse_count: model.browse_count,
         sort: model.sort,

@@ -6,7 +6,7 @@ use mall_model::response::mall_promotion_banner::MallPromotionBannerResponse;
 pub fn create_request_to_model(request: &CreateMallPromotionBannerRequest) -> MallPromotionBannerActiveModel {
     MallPromotionBannerActiveModel {
         title: Set(request.title.clone()),
-        pic_url: Set(request.pic_url.clone()),
+        file_id: Set(request.file_id.clone()),
         url: Set(request.url.clone()),
         status: Set(request.status.clone()),
         sort: request.sort.as_ref().map_or(NotSet, |sort| Set(Some(sort.clone()))),
@@ -22,8 +22,8 @@ pub fn update_request_to_model(request: &UpdateMallPromotionBannerRequest, exist
     if let Some(title) = &request.title { 
         active_model.title = Set(title.clone());
     }
-    if let Some(pic_url) = &request.pic_url { 
-        active_model.pic_url = Set(pic_url.clone());
+    if let Some(file_id) = &request.file_id { 
+        active_model.file_id = Set(file_id.clone());
     }
     if let Some(url) = &request.url { 
         active_model.url = Set(url.clone());
@@ -50,7 +50,7 @@ pub fn model_to_response(model: MallPromotionBanner) -> MallPromotionBannerRespo
     MallPromotionBannerResponse { 
         id: model.id,
         title: model.title,
-        pic_url: model.pic_url,
+        file_id: model.file_id,
         url: model.url,
         status: model.status,
         sort: model.sort,

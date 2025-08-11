@@ -5,7 +5,7 @@ use serde_with::{serde_as, DisplayFromStr};
 
 #[serde_as]
 #[derive(Deserialize, Serialize, Debug, Clone, ToSchema)]
-pub struct MallPromotionSeckillActivityResponse {
+pub struct MallPromotionFlashActivityResponse {
     
     pub id: i64, // 秒杀活动编号
     

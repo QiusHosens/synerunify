@@ -14,7 +14,7 @@ pub struct CreateMallPromotionDiyPageRequest {
     
     pub remark: Option<String>, // 备注
     
-    pub preview_pic_urls: Option<String>, // 预览图，多个逗号分隔
+    pub preview_file_ids: Option<String>, // 预览图id,多个逗号分隔
     
     pub property: Option<String>, // 页面属性，JSON 格式
     
@@ -31,7 +31,7 @@ pub struct UpdateMallPromotionDiyPageRequest {
     
     pub remark: Option<String>, // 备注
     
-    pub preview_pic_urls: Option<String>, // 预览图，多个逗号分隔
+    pub preview_file_ids: Option<String>, // 预览图id,多个逗号分隔
     
     pub property: Option<String>, // 页面属性，JSON 格式
     

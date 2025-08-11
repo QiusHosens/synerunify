@@ -4,35 +4,29 @@ use sea_orm::entity::prelude::*;
 use common::interceptor::orm::active_filter::ActiveFilterEntityTrait;
 
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel)]
-#[sea_orm(table_name = "mall_promotion_seckill_activity")]
+#[sea_orm(table_name = "mall_promotion_flash_product")]
 pub struct Model {
     
     #[sea_orm(primary_key)]
-    pub id: i64, // 秒杀活动编号
+    pub id: i64, // 秒杀参与商品编号
     
-    pub spu_id: i64, // 秒杀活动商品
-    
-    pub name: String, // 秒杀活动名称
-    
-    pub status: i8, // 活动状态
-    
-    pub remark: Option<String>, // 备注
-    
-    pub start_time: NaiveDateTime, // 活动开始时间
-    
-    pub end_time: NaiveDateTime, // 活动结束时间
-    
-    pub sort: i32, // 排序
+    pub activity_id: i64, // 秒杀活动 id
     
     pub config_ids: String, // 秒杀时段 id 数组
     
-    pub total_limit_count: Option<i32>, // 总限购数量
+    pub spu_id: i64, // 商品 spu_id
     
-    pub single_limit_count: Option<i32>, // 单次限够数量
+    pub sku_id: i64, // 商品 sku_id
     
-    pub stock: Option<i32>, // 秒杀库存
+    pub flash_price: i32, // 秒杀金额，单位：分
     
-    pub total_stock: Option<i32>, // 秒杀总库存
+    pub stock: i32, // 秒杀库存
+    
+    pub activity_status: i8, // 秒杀商品状态
+    
+    pub activity_start_time: NaiveDateTime, // 活动开始时间点
+    
+    pub activity_end_time: NaiveDateTime, // 活动结束时间点
     
     pub creator: Option<i64>, // 创建者ID
     

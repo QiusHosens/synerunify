@@ -5,25 +5,27 @@ use serde_with::{serde_as, DisplayFromStr};
 
 #[serde_as]
 #[derive(Deserialize, Serialize, Debug, Clone, ToSchema)]
-pub struct MallPromotionKefuMessageResponse {
+pub struct MallPromotionServingConversationResponse {
     
     pub id: i64, // 编号
     
-    pub conversation_id: i64, // 会话编号
+    pub user_id: i64, // 会话所属用户
     
-    pub sender_id: i64, // 发送人编号
+    #[serde_as(as = "common::formatter::string_date_time::StringDateTime")]
+    #[schema(value_type = String, format = Date)]
+    pub last_message_time: NaiveDateTime, // 最后聊天时间
     
-    pub sender_type: i32, // 发送人类型
+    pub last_message_content: String, // 最后聊天内容
     
-    pub receiver_id: Option<i64>, // 接收人编号
+    pub last_message_content_type: i32, // 最后发送的消息类型
     
-    pub receiver_type: Option<i32>, // 接收人类型
+    pub admin_pinned: bool, // 管理端置顶
     
-    pub content_type: i32, // 消息类型
+    pub user_deleted: bool, // 用户是否可见
     
-    pub content: String, // 消息
+    pub admin_deleted: bool, // 管理员是否可见
     
-    pub read_status: bool, // 是否已读
+    pub admin_unread_message_count: i32, // 管理员未读消息数
     
     pub creator: Option<i64>, // 创建者ID
     

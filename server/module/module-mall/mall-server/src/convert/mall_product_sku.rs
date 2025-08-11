@@ -11,7 +11,7 @@ pub fn create_request_to_model(request: &CreateMallProductSkuRequest) -> MallPro
         market_price: request.market_price.as_ref().map_or(NotSet, |market_price| Set(Some(market_price.clone()))),
         cost_price: Set(request.cost_price.clone()),
         bar_code: request.bar_code.as_ref().map_or(NotSet, |bar_code| Set(Some(bar_code.clone()))),
-        pic_url: Set(request.pic_url.clone()),
+        file_id: Set(request.file_id.clone()),
         stock: request.stock.as_ref().map_or(NotSet, |stock| Set(Some(stock.clone()))),
         weight: request.weight.as_ref().map_or(NotSet, |weight| Set(Some(weight.clone()))),
         volume: request.volume.as_ref().map_or(NotSet, |volume| Set(Some(volume.clone()))),
@@ -42,8 +42,8 @@ pub fn update_request_to_model(request: &UpdateMallProductSkuRequest, existing: 
     if let Some(bar_code) = &request.bar_code { 
         active_model.bar_code = Set(Some(bar_code.clone()));
     }
-    if let Some(pic_url) = &request.pic_url { 
-        active_model.pic_url = Set(pic_url.clone());
+    if let Some(file_id) = &request.file_id { 
+        active_model.file_id = Set(file_id.clone());
     }
     if let Some(stock) = &request.stock { 
         active_model.stock = Set(Some(stock.clone()));
@@ -75,7 +75,7 @@ pub fn model_to_response(model: MallProductSku) -> MallProductSkuResponse {
         market_price: model.market_price,
         cost_price: model.cost_price,
         bar_code: model.bar_code,
-        pic_url: model.pic_url,
+        file_id: model.file_id,
         stock: model.stock,
         weight: model.weight,
         volume: model.volume,

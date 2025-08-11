@@ -10,7 +10,7 @@ pub struct CreateMallPromotionArticleCategoryRequest {
     
     pub name: String, // 分类名称
     
-    pub pic_url: Option<String>, // 图标地址
+    pub file_id: i64, // 图标ID
     
     pub status: i8, // 状态
     
@@ -25,7 +25,7 @@ pub struct UpdateMallPromotionArticleCategoryRequest {
     
     pub name: Option<String>, // 分类名称
     
-    pub pic_url: Option<String>, // 图标地址
+    pub file_id: Option<i64>, // 图标ID
     
     pub status: Option<i8>, // 状态
     

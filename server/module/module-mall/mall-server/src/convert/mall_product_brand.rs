@@ -6,7 +6,7 @@ use mall_model::response::mall_product_brand::MallProductBrandResponse;
 pub fn create_request_to_model(request: &CreateMallProductBrandRequest) -> MallProductBrandActiveModel {
     MallProductBrandActiveModel {
         name: Set(request.name.clone()),
-        pic_url: Set(request.pic_url.clone()),
+        file_id: Set(request.file_id.clone()),
         sort: request.sort.as_ref().map_or(NotSet, |sort| Set(Some(sort.clone()))),
         description: request.description.as_ref().map_or(NotSet, |description| Set(Some(description.clone()))),
         status: Set(request.status.clone()),
@@ -19,8 +19,8 @@ pub fn update_request_to_model(request: &UpdateMallProductBrandRequest, existing
     if let Some(name) = &request.name { 
         active_model.name = Set(name.clone());
     }
-    if let Some(pic_url) = &request.pic_url { 
-        active_model.pic_url = Set(pic_url.clone());
+    if let Some(file_id) = &request.file_id { 
+        active_model.file_id = Set(file_id.clone());
     }
     if let Some(sort) = &request.sort { 
         active_model.sort = Set(Some(sort.clone()));
@@ -38,7 +38,7 @@ pub fn model_to_response(model: MallProductBrand) -> MallProductBrandResponse {
     MallProductBrandResponse { 
         id: model.id,
         name: model.name,
-        pic_url: model.pic_url,
+        file_id: model.file_id,
         sort: model.sort,
         description: model.description,
         status: model.status,

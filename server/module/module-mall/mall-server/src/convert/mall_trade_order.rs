@@ -50,7 +50,7 @@ pub fn create_request_to_model(request: &CreateMallTradeOrderRequest) -> MallTra
         vip_price: Set(request.vip_price.clone()),
         give_coupon_template_counts: request.give_coupon_template_counts.as_ref().map_or(NotSet, |give_coupon_template_counts| Set(Some(give_coupon_template_counts.clone()))),
         give_coupon_ids: request.give_coupon_ids.as_ref().map_or(NotSet, |give_coupon_ids| Set(Some(give_coupon_ids.clone()))),
-        seckill_activity_id: request.seckill_activity_id.as_ref().map_or(NotSet, |seckill_activity_id| Set(Some(seckill_activity_id.clone()))),
+        flash_activity_id: request.flash_activity_id.as_ref().map_or(NotSet, |flash_activity_id| Set(Some(flash_activity_id.clone()))),
         bargain_activity_id: request.bargain_activity_id.as_ref().map_or(NotSet, |bargain_activity_id| Set(Some(bargain_activity_id.clone()))),
         bargain_record_id: request.bargain_record_id.as_ref().map_or(NotSet, |bargain_record_id| Set(Some(bargain_record_id.clone()))),
         combination_activity_id: request.combination_activity_id.as_ref().map_or(NotSet, |combination_activity_id| Set(Some(combination_activity_id.clone()))),
@@ -198,8 +198,8 @@ pub fn update_request_to_model(request: &UpdateMallTradeOrderRequest, existing: 
     if let Some(give_coupon_ids) = &request.give_coupon_ids { 
         active_model.give_coupon_ids = Set(Some(give_coupon_ids.clone()));
     }
-    if let Some(seckill_activity_id) = &request.seckill_activity_id { 
-        active_model.seckill_activity_id = Set(Some(seckill_activity_id.clone()));
+    if let Some(flash_activity_id) = &request.flash_activity_id { 
+        active_model.flash_activity_id = Set(Some(flash_activity_id.clone()));
     }
     if let Some(bargain_activity_id) = &request.bargain_activity_id { 
         active_model.bargain_activity_id = Set(Some(bargain_activity_id.clone()));
@@ -270,7 +270,7 @@ pub fn model_to_response(model: MallTradeOrder) -> MallTradeOrderResponse {
         vip_price: model.vip_price,
         give_coupon_template_counts: model.give_coupon_template_counts,
         give_coupon_ids: model.give_coupon_ids,
-        seckill_activity_id: model.seckill_activity_id,
+        flash_activity_id: model.flash_activity_id,
         bargain_activity_id: model.bargain_activity_id,
         bargain_record_id: model.bargain_record_id,
         combination_activity_id: model.combination_activity_id,

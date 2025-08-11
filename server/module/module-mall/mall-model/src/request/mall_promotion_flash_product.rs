@@ -6,7 +6,7 @@ use utoipa::ToSchema;
 use common::base::page::PaginatedRequest;
 
 #[derive(Serialize, Deserialize, Debug, ToSchema)]
-pub struct CreateMallPromotionSeckillProductRequest {
+pub struct CreateMallPromotionFlashProductRequest {
     
     pub activity_id: i64, // 秒杀活动 id
     
@@ -16,7 +16,7 @@ pub struct CreateMallPromotionSeckillProductRequest {
     
     pub sku_id: i64, // 商品 sku_id
     
-    pub seckill_price: i32, // 秒杀金额，单位：分
+    pub flash_price: i32, // 秒杀金额，单位：分
     
     pub stock: i32, // 秒杀库存
     
@@ -31,7 +31,7 @@ pub struct CreateMallPromotionSeckillProductRequest {
 }
 
 #[derive(Serialize, Deserialize, Debug, ToSchema)]
-pub struct UpdateMallPromotionSeckillProductRequest {
+pub struct UpdateMallPromotionFlashProductRequest {
     
     pub id: i64, // 秒杀参与商品编号
     
@@ -43,7 +43,7 @@ pub struct UpdateMallPromotionSeckillProductRequest {
     
     pub sku_id: Option<i64>, // 商品 sku_id
     
-    pub seckill_price: Option<i32>, // 秒杀金额，单位：分
+    pub flash_price: Option<i32>, // 秒杀金额，单位：分
     
     pub stock: Option<i32>, // 秒杀库存
     

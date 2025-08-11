@@ -7,7 +7,7 @@ pub fn create_request_to_model(request: &CreateMallPromotionCombinationRecordReq
     MallPromotionCombinationRecordActiveModel {
         activity_id: request.activity_id.as_ref().map_or(NotSet, |activity_id| Set(Some(activity_id.clone()))),
         spu_id: request.spu_id.as_ref().map_or(NotSet, |spu_id| Set(Some(spu_id.clone()))),
-        pic_url: Set(request.pic_url.clone()),
+        file_id: Set(request.file_id.clone()),
         spu_name: Set(request.spu_name.clone()),
         sku_id: request.sku_id.as_ref().map_or(NotSet, |sku_id| Set(Some(sku_id.clone()))),
         count: request.count.as_ref().map_or(NotSet, |count| Set(Some(count.clone()))),
@@ -36,8 +36,8 @@ pub fn update_request_to_model(request: &UpdateMallPromotionCombinationRecordReq
     if let Some(spu_id) = &request.spu_id { 
         active_model.spu_id = Set(Some(spu_id.clone()));
     }
-    if let Some(pic_url) = &request.pic_url { 
-        active_model.pic_url = Set(pic_url.clone());
+    if let Some(file_id) = &request.file_id { 
+        active_model.file_id = Set(file_id.clone());
     }
     if let Some(spu_name) = &request.spu_name { 
         active_model.spu_name = Set(spu_name.clone());
@@ -95,7 +95,7 @@ pub fn model_to_response(model: MallPromotionCombinationRecord) -> MallPromotion
         id: model.id,
         activity_id: model.activity_id,
         spu_id: model.spu_id,
-        pic_url: model.pic_url,
+        file_id: model.file_id,
         spu_name: model.spu_name,
         sku_id: model.sku_id,
         count: model.count,

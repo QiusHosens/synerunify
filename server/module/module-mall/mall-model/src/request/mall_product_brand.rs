@@ -10,7 +10,7 @@ pub struct CreateMallProductBrandRequest {
     
     pub name: String, // 品牌名称
     
-    pub pic_url: String, // 品牌图片
+    pub file_id: i64, // 品牌图片ID
     
     pub sort: Option<i32>, // 品牌排序
     
@@ -27,7 +27,7 @@ pub struct UpdateMallProductBrandRequest {
     
     pub name: Option<String>, // 品牌名称
     
-    pub pic_url: Option<String>, // 品牌图片
+    pub file_id: Option<i64>, // 品牌图片ID
     
     pub sort: Option<i32>, // 品牌排序
     

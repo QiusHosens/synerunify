@@ -4,29 +4,27 @@ use sea_orm::entity::prelude::*;
 use common::interceptor::orm::active_filter::ActiveFilterEntityTrait;
 
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel)]
-#[sea_orm(table_name = "mall_promotion_seckill_product")]
+#[sea_orm(table_name = "mall_promotion_serving_message")]
 pub struct Model {
     
     #[sea_orm(primary_key)]
-    pub id: i64, // 秒杀参与商品编号
+    pub id: i64, // 编号
     
-    pub activity_id: i64, // 秒杀活动 id
+    pub conversation_id: i64, // 会话编号
     
-    pub config_ids: String, // 秒杀时段 id 数组
+    pub sender_id: i64, // 发送人编号
     
-    pub spu_id: i64, // 商品 spu_id
+    pub sender_type: i32, // 发送人类型
     
-    pub sku_id: i64, // 商品 sku_id
+    pub receiver_id: Option<i64>, // 接收人编号
     
-    pub seckill_price: i32, // 秒杀金额，单位：分
+    pub receiver_type: Option<i32>, // 接收人类型
     
-    pub stock: i32, // 秒杀库存
+    pub content_type: i32, // 消息类型
     
-    pub activity_status: i8, // 秒杀商品状态
+    pub content: String, // 消息
     
-    pub activity_start_time: NaiveDateTime, // 活动开始时间点
-    
-    pub activity_end_time: NaiveDateTime, // 活动结束时间点
+    pub read_status: bool, // 是否已读
     
     pub creator: Option<i64>, // 创建者ID
     

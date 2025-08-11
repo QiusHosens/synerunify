@@ -6,7 +6,7 @@ use mall_model::response::mall_promotion_article_category::MallPromotionArticleC
 pub fn create_request_to_model(request: &CreateMallPromotionArticleCategoryRequest) -> MallPromotionArticleCategoryActiveModel {
     MallPromotionArticleCategoryActiveModel {
         name: Set(request.name.clone()),
-        pic_url: request.pic_url.as_ref().map_or(NotSet, |pic_url| Set(Some(pic_url.clone()))),
+        file_id: Set(request.file_id.clone()),
         status: Set(request.status.clone()),
         sort: Set(request.sort.clone()),
         ..Default::default()
@@ -18,8 +18,8 @@ pub fn update_request_to_model(request: &UpdateMallPromotionArticleCategoryReque
     if let Some(name) = &request.name { 
         active_model.name = Set(name.clone());
     }
-    if let Some(pic_url) = &request.pic_url { 
-        active_model.pic_url = Set(Some(pic_url.clone()));
+    if let Some(file_id) = &request.file_id { 
+        active_model.file_id = Set(file_id.clone());
     }
     if let Some(status) = &request.status { 
         active_model.status = Set(status.clone());
@@ -34,7 +34,7 @@ pub fn model_to_response(model: MallPromotionArticleCategory) -> MallPromotionAr
     MallPromotionArticleCategoryResponse { 
         id: model.id,
         name: model.name,
-        pic_url: model.pic_url,
+        file_id: model.file_id,
         status: model.status,
         sort: model.sort,
         creator: model.creator,

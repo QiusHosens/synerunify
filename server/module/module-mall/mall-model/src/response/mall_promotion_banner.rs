@@ -11,7 +11,7 @@ pub struct MallPromotionBannerResponse {
     
     pub title: String, // Banner 标题
     
-    pub pic_url: String, // 图片 URL
+    pub file_id: i64, // 图片ID
     
     pub url: String, // 跳转地址
     

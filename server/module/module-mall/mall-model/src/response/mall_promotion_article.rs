@@ -17,7 +17,7 @@ pub struct MallPromotionArticleResponse {
     
     pub author: Option<String>, // 文章作者
     
-    pub pic_url: String, // 文章封面图片地址
+    pub file_id: i64, // 文章封面图片ID
     
     pub introduction: Option<String>, // 文章简介
     

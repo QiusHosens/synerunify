@@ -6,7 +6,7 @@ use utoipa::ToSchema;
 use common::base::page::PaginatedRequest;
 
 #[derive(Serialize, Deserialize, Debug, ToSchema)]
-pub struct CreateMallPromotionKefuConversationRequest {
+pub struct CreateMallPromotionServingConversationRequest {
     
     pub user_id: i64, // 会话所属用户
     
@@ -28,7 +28,7 @@ pub struct CreateMallPromotionKefuConversationRequest {
 }
 
 #[derive(Serialize, Deserialize, Debug, ToSchema)]
-pub struct UpdateMallPromotionKefuConversationRequest {
+pub struct UpdateMallPromotionServingConversationRequest {
     
     pub id: i64, // 编号
     

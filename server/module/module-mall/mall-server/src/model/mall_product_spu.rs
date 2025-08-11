@@ -22,9 +22,9 @@ pub struct Model {
     
     pub brand_id: Option<i32>, // 商品品牌编号
     
-    pub pic_url: String, // 商品封面图
+    pub file_id: i64, // 商品封面ID
     
-    pub slider_pic_urls: Option<String>, // 商品轮播图地址数组，以逗号分隔最多上传15张
+    pub slider_file_ids: Option<String>, // 商品轮播图id数组，以逗号分隔最多上传15张
     
     pub sort: i32, // 排序字段
     

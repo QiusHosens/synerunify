@@ -12,7 +12,7 @@ pub fn create_request_to_model(request: &CreateMallTradeAfterSaleRequest) -> Mal
         user_id: Set(request.user_id.clone()),
         apply_reason: Set(request.apply_reason.clone()),
         apply_description: request.apply_description.as_ref().map_or(NotSet, |apply_description| Set(Some(apply_description.clone()))),
-        apply_pic_urls: request.apply_pic_urls.as_ref().map_or(NotSet, |apply_pic_urls| Set(Some(apply_pic_urls.clone()))),
+        apply_file_ids: request.apply_file_ids.as_ref().map_or(NotSet, |apply_file_ids| Set(Some(apply_file_ids.clone()))),
         order_id: Set(request.order_id.clone()),
         order_no: Set(request.order_no.clone()),
         order_item_id: Set(request.order_item_id.clone()),
@@ -20,7 +20,7 @@ pub fn create_request_to_model(request: &CreateMallTradeAfterSaleRequest) -> Mal
         spu_name: Set(request.spu_name.clone()),
         sku_id: Set(request.sku_id.clone()),
         properties: request.properties.as_ref().map_or(NotSet, |properties| Set(Some(properties.clone()))),
-        pic_url: request.pic_url.as_ref().map_or(NotSet, |pic_url| Set(Some(pic_url.clone()))),
+        file_id: Set(request.file_id.clone()),
         count: Set(request.count.clone()),
         audit_time: request.audit_time.as_ref().map_or(NotSet, |audit_time| Set(Some(audit_time.clone()))),
         audit_user_id: request.audit_user_id.as_ref().map_or(NotSet, |audit_user_id| Set(Some(audit_user_id.clone()))),
@@ -60,8 +60,8 @@ pub fn update_request_to_model(request: &UpdateMallTradeAfterSaleRequest, existi
     if let Some(apply_description) = &request.apply_description { 
         active_model.apply_description = Set(Some(apply_description.clone()));
     }
-    if let Some(apply_pic_urls) = &request.apply_pic_urls { 
-        active_model.apply_pic_urls = Set(Some(apply_pic_urls.clone()));
+    if let Some(apply_file_ids) = &request.apply_file_ids { 
+        active_model.apply_file_ids = Set(Some(apply_file_ids.clone()));
     }
     if let Some(order_id) = &request.order_id { 
         active_model.order_id = Set(order_id.clone());
@@ -84,8 +84,8 @@ pub fn update_request_to_model(request: &UpdateMallTradeAfterSaleRequest, existi
     if let Some(properties) = &request.properties { 
         active_model.properties = Set(Some(properties.clone()));
     }
-    if let Some(pic_url) = &request.pic_url { 
-        active_model.pic_url = Set(Some(pic_url.clone()));
+    if let Some(file_id) = &request.file_id { 
+        active_model.file_id = Set(file_id.clone());
     }
     if let Some(count) = &request.count { 
         active_model.count = Set(count.clone());
@@ -136,7 +136,7 @@ pub fn model_to_response(model: MallTradeAfterSale) -> MallTradeAfterSaleRespons
         user_id: model.user_id,
         apply_reason: model.apply_reason,
         apply_description: model.apply_description,
-        apply_pic_urls: model.apply_pic_urls,
+        apply_file_ids: model.apply_file_ids,
         order_id: model.order_id,
         order_no: model.order_no,
         order_item_id: model.order_item_id,
@@ -144,7 +144,7 @@ pub fn model_to_response(model: MallTradeAfterSale) -> MallTradeAfterSaleRespons
         spu_name: model.spu_name,
         sku_id: model.sku_id,
         properties: model.properties,
-        pic_url: model.pic_url,
+        file_id: model.file_id,
         count: model.count,
         audit_time: model.audit_time,
         audit_user_id: model.audit_user_id,

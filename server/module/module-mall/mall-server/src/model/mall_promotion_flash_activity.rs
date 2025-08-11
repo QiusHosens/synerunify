@@ -4,27 +4,35 @@ use sea_orm::entity::prelude::*;
 use common::interceptor::orm::active_filter::ActiveFilterEntityTrait;
 
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel)]
-#[sea_orm(table_name = "mall_promotion_kefu_conversation")]
+#[sea_orm(table_name = "mall_promotion_flash_activity")]
 pub struct Model {
     
     #[sea_orm(primary_key)]
-    pub id: i64, // 编号
+    pub id: i64, // 秒杀活动编号
     
-    pub user_id: i64, // 会话所属用户
+    pub spu_id: i64, // 秒杀活动商品
     
-    pub last_message_time: NaiveDateTime, // 最后聊天时间
+    pub name: String, // 秒杀活动名称
     
-    pub last_message_content: String, // 最后聊天内容
+    pub status: i8, // 活动状态
     
-    pub last_message_content_type: i32, // 最后发送的消息类型
+    pub remark: Option<String>, // 备注
     
-    pub admin_pinned: bool, // 管理端置顶
+    pub start_time: NaiveDateTime, // 活动开始时间
     
-    pub user_deleted: bool, // 用户是否可见
+    pub end_time: NaiveDateTime, // 活动结束时间
     
-    pub admin_deleted: bool, // 管理员是否可见
+    pub sort: i32, // 排序
     
-    pub admin_unread_message_count: i32, // 管理员未读消息数
+    pub config_ids: String, // 秒杀时段 id 数组
+    
+    pub total_limit_count: Option<i32>, // 总限购数量
+    
+    pub single_limit_count: Option<i32>, // 单次限够数量
+    
+    pub stock: Option<i32>, // 秒杀库存
+    
+    pub total_stock: Option<i32>, // 秒杀总库存
     
     pub creator: Option<i64>, // 创建者ID
     

@@ -1,15 +1,15 @@
 use sea_orm::{Set, NotSet};
-use crate::model::mall_promotion_seckill_product::{self, Model as MallPromotionSeckillProduct, ActiveModel as MallPromotionSeckillProductActiveModel};
-use mall_model::request::mall_promotion_seckill_product::{CreateMallPromotionSeckillProductRequest, UpdateMallPromotionSeckillProductRequest};
-use mall_model::response::mall_promotion_seckill_product::MallPromotionSeckillProductResponse;
+use crate::model::mall_promotion_flash_product::{self, Model as MallPromotionFlashProduct, ActiveModel as MallPromotionFlashProductActiveModel};
+use mall_model::request::mall_promotion_flash_product::{CreateMallPromotionFlashProductRequest, UpdateMallPromotionFlashProductRequest};
+use mall_model::response::mall_promotion_flash_product::MallPromotionFlashProductResponse;
 
-pub fn create_request_to_model(request: &CreateMallPromotionSeckillProductRequest) -> MallPromotionSeckillProductActiveModel {
-    MallPromotionSeckillProductActiveModel {
+pub fn create_request_to_model(request: &CreateMallPromotionFlashProductRequest) -> MallPromotionFlashProductActiveModel {
+    MallPromotionFlashProductActiveModel {
         activity_id: Set(request.activity_id.clone()),
         config_ids: Set(request.config_ids.clone()),
         spu_id: Set(request.spu_id.clone()),
         sku_id: Set(request.sku_id.clone()),
-        seckill_price: Set(request.seckill_price.clone()),
+        flash_price: Set(request.flash_price.clone()),
         stock: Set(request.stock.clone()),
         activity_status: Set(request.activity_status.clone()),
         activity_start_time: Set(request.activity_start_time.clone()),
@@ -18,8 +18,8 @@ pub fn create_request_to_model(request: &CreateMallPromotionSeckillProductReques
     }
 }
 
-pub fn update_request_to_model(request: &UpdateMallPromotionSeckillProductRequest, existing: MallPromotionSeckillProduct) -> MallPromotionSeckillProductActiveModel {
-    let mut active_model: MallPromotionSeckillProductActiveModel = existing.into();
+pub fn update_request_to_model(request: &UpdateMallPromotionFlashProductRequest, existing: MallPromotionFlashProduct) -> MallPromotionFlashProductActiveModel {
+    let mut active_model: MallPromotionFlashProductActiveModel = existing.into();
     if let Some(activity_id) = &request.activity_id { 
         active_model.activity_id = Set(activity_id.clone());
     }
@@ -32,8 +32,8 @@ pub fn update_request_to_model(request: &UpdateMallPromotionSeckillProductReques
     if let Some(sku_id) = &request.sku_id { 
         active_model.sku_id = Set(sku_id.clone());
     }
-    if let Some(seckill_price) = &request.seckill_price { 
-        active_model.seckill_price = Set(seckill_price.clone());
+    if let Some(flash_price) = &request.flash_price { 
+        active_model.flash_price = Set(flash_price.clone());
     }
     if let Some(stock) = &request.stock { 
         active_model.stock = Set(stock.clone());
@@ -50,14 +50,14 @@ pub fn update_request_to_model(request: &UpdateMallPromotionSeckillProductReques
     active_model
 }
 
-pub fn model_to_response(model: MallPromotionSeckillProduct) -> MallPromotionSeckillProductResponse {
-    MallPromotionSeckillProductResponse { 
+pub fn model_to_response(model: MallPromotionFlashProduct) -> MallPromotionFlashProductResponse {
+    MallPromotionFlashProductResponse { 
         id: model.id,
         activity_id: model.activity_id,
         config_ids: model.config_ids,
         spu_id: model.spu_id,
         sku_id: model.sku_id,
-        seckill_price: model.seckill_price,
+        flash_price: model.flash_price,
         stock: model.stock,
         activity_status: model.activity_status,
         activity_start_time: model.activity_start_time,

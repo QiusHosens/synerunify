@@ -32,14 +32,14 @@ use crate::api::mall_promotion_discount_activity::{ mall_promotion_discount_acti
 use crate::api::mall_promotion_discount_product::{ mall_promotion_discount_product_route, mall_promotion_discount_product_router };
 use crate::api::mall_promotion_diy_page::{ mall_promotion_diy_page_route, mall_promotion_diy_page_router };
 use crate::api::mall_promotion_diy_template::{ mall_promotion_diy_template_route, mall_promotion_diy_template_router };
-use crate::api::mall_promotion_kefu_conversation::{ mall_promotion_kefu_conversation_route, mall_promotion_kefu_conversation_router };
-use crate::api::mall_promotion_kefu_message::{ mall_promotion_kefu_message_route, mall_promotion_kefu_message_router };
+use crate::api::mall_promotion_flash_activity::{ mall_promotion_flash_activity_route, mall_promotion_flash_activity_router };
+use crate::api::mall_promotion_flash_config::{ mall_promotion_flash_config_route, mall_promotion_flash_config_router };
+use crate::api::mall_promotion_flash_product::{ mall_promotion_flash_product_route, mall_promotion_flash_product_router };
 use crate::api::mall_promotion_point_activity::{ mall_promotion_point_activity_route, mall_promotion_point_activity_router };
 use crate::api::mall_promotion_point_product::{ mall_promotion_point_product_route, mall_promotion_point_product_router };
 use crate::api::mall_promotion_reward_activity::{ mall_promotion_reward_activity_route, mall_promotion_reward_activity_router };
-use crate::api::mall_promotion_seckill_activity::{ mall_promotion_seckill_activity_route, mall_promotion_seckill_activity_router };
-use crate::api::mall_promotion_seckill_config::{ mall_promotion_seckill_config_route, mall_promotion_seckill_config_router };
-use crate::api::mall_promotion_seckill_product::{ mall_promotion_seckill_product_route, mall_promotion_seckill_product_router };
+use crate::api::mall_promotion_serving_conversation::{ mall_promotion_serving_conversation_route, mall_promotion_serving_conversation_router };
+use crate::api::mall_promotion_serving_message::{ mall_promotion_serving_message_route, mall_promotion_serving_message_router };
 use crate::api::mall_trade_after_sale::{ mall_trade_after_sale_route, mall_trade_after_sale_router };
 use crate::api::mall_trade_after_sale_log::{ mall_trade_after_sale_log_route, mall_trade_after_sale_log_router };
 use crate::api::mall_trade_brokerage_record::{ mall_trade_brokerage_record_route, mall_trade_brokerage_record_router };
@@ -92,14 +92,14 @@ use crate::AppState;
         (name = "mall_promotion_discount_product", description = "限时折扣商品"),
         (name = "mall_promotion_diy_page", description = "装修页面"),
         (name = "mall_promotion_diy_template", description = "装修模板"),
-        (name = "mall_promotion_kefu_conversation", description = "客服会话"),
-        (name = "mall_promotion_kefu_message", description = "客服消息"),
+        (name = "mall_promotion_flash_activity", description = "秒杀活动"),
+        (name = "mall_promotion_flash_config", description = "秒杀时段"),
+        (name = "mall_promotion_flash_product", description = "秒杀参与商品"),
         (name = "mall_promotion_point_activity", description = "积分商城活动"),
         (name = "mall_promotion_point_product", description = "积分商城商品"),
         (name = "mall_promotion_reward_activity", description = "满减送活动"),
-        (name = "mall_promotion_seckill_activity", description = "秒杀活动"),
-        (name = "mall_promotion_seckill_config", description = "秒杀时段"),
-        (name = "mall_promotion_seckill_product", description = "秒杀参与商品"),
+        (name = "mall_promotion_serving_conversation", description = "客服会话"),
+        (name = "mall_promotion_serving_message", description = "客服消息"),
         (name = "mall_trade_after_sale", description = "售后订单"),
         (name = "mall_trade_after_sale_log", description = "售后订单日志"),
         (name = "mall_trade_brokerage_record", description = "佣金记录"),
@@ -160,14 +160,14 @@ pub async fn auth_router(state: AppState) -> OpenApiRouter {
         .nest("/mall_promotion_discount_product", mall_promotion_discount_product_router(state.clone()).await)
         .nest("/mall_promotion_diy_page", mall_promotion_diy_page_router(state.clone()).await)
         .nest("/mall_promotion_diy_template", mall_promotion_diy_template_router(state.clone()).await)
-        .nest("/mall_promotion_kefu_conversation", mall_promotion_kefu_conversation_router(state.clone()).await)
-        .nest("/mall_promotion_kefu_message", mall_promotion_kefu_message_router(state.clone()).await)
+        .nest("/mall_promotion_flash_activity", mall_promotion_flash_activity_router(state.clone()).await)
+        .nest("/mall_promotion_flash_config", mall_promotion_flash_config_router(state.clone()).await)
+        .nest("/mall_promotion_flash_product", mall_promotion_flash_product_router(state.clone()).await)
         .nest("/mall_promotion_point_activity", mall_promotion_point_activity_router(state.clone()).await)
         .nest("/mall_promotion_point_product", mall_promotion_point_product_router(state.clone()).await)
         .nest("/mall_promotion_reward_activity", mall_promotion_reward_activity_router(state.clone()).await)
-        .nest("/mall_promotion_seckill_activity", mall_promotion_seckill_activity_router(state.clone()).await)
-        .nest("/mall_promotion_seckill_config", mall_promotion_seckill_config_router(state.clone()).await)
-        .nest("/mall_promotion_seckill_product", mall_promotion_seckill_product_router(state.clone()).await)
+        .nest("/mall_promotion_serving_conversation", mall_promotion_serving_conversation_router(state.clone()).await)
+        .nest("/mall_promotion_serving_message", mall_promotion_serving_message_router(state.clone()).await)
         .nest("/mall_trade_after_sale", mall_trade_after_sale_router(state.clone()).await)
         .nest("/mall_trade_after_sale_log", mall_trade_after_sale_log_router(state.clone()).await)
         .nest("/mall_trade_brokerage_record", mall_trade_brokerage_record_router(state.clone()).await)

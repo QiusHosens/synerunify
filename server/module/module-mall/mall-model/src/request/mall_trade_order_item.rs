@@ -22,7 +22,7 @@ pub struct CreateMallTradeOrderItemRequest {
     
     pub properties: Option<String>, // 商品属性数组，JSON 格式
     
-    pub pic_url: Option<String>, // 商品图片
+    pub file_id: i64, // 商品图片ID
     
     pub count: i32, // 购买数量
     
@@ -73,7 +73,7 @@ pub struct UpdateMallTradeOrderItemRequest {
     
     pub properties: Option<String>, // 商品属性数组，JSON 格式
     
-    pub pic_url: Option<String>, // 商品图片
+    pub file_id: Option<i64>, // 商品图片ID
     
     pub count: Option<i32>, // 购买数量
     

@@ -22,7 +22,7 @@ pub struct CreateMallTradeAfterSaleRequest {
     
     pub apply_description: Option<String>, // 补充描述
     
-    pub apply_pic_urls: Option<String>, // 补充凭证图片
+    pub apply_file_ids: Option<String>, // 补充凭证图片
     
     pub order_id: i64, // 订单编号
     
@@ -38,7 +38,7 @@ pub struct CreateMallTradeAfterSaleRequest {
     
     pub properties: Option<String>, // 商品属性数组，JSON 格式
     
-    pub pic_url: Option<String>, // 商品图片
+    pub file_id: i64, // 商品图片ID
     
     pub count: i32, // 购买数量
     
@@ -89,7 +89,7 @@ pub struct UpdateMallTradeAfterSaleRequest {
     
     pub apply_description: Option<String>, // 补充描述
     
-    pub apply_pic_urls: Option<String>, // 补充凭证图片
+    pub apply_file_ids: Option<String>, // 补充凭证图片
     
     pub order_id: Option<i64>, // 订单编号
     
@@ -105,7 +105,7 @@ pub struct UpdateMallTradeAfterSaleRequest {
     
     pub properties: Option<String>, // 商品属性数组，JSON 格式
     
-    pub pic_url: Option<String>, // 商品图片
+    pub file_id: Option<i64>, // 商品图片ID
     
     pub count: Option<i32>, // 购买数量
     

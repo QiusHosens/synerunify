@@ -12,7 +12,7 @@ pub fn create_request_to_model(request: &CreateMallTradeOrderItemRequest) -> Mal
         spu_name: Set(request.spu_name.clone()),
         sku_id: Set(request.sku_id.clone()),
         properties: request.properties.as_ref().map_or(NotSet, |properties| Set(Some(properties.clone()))),
-        pic_url: request.pic_url.as_ref().map_or(NotSet, |pic_url| Set(Some(pic_url.clone()))),
+        file_id: Set(request.file_id.clone()),
         count: Set(request.count.clone()),
         comment_status: Set(request.comment_status.clone()),
         price: Set(request.price.clone()),
@@ -54,8 +54,8 @@ pub fn update_request_to_model(request: &UpdateMallTradeOrderItemRequest, existi
     if let Some(properties) = &request.properties { 
         active_model.properties = Set(Some(properties.clone()));
     }
-    if let Some(pic_url) = &request.pic_url { 
-        active_model.pic_url = Set(Some(pic_url.clone()));
+    if let Some(file_id) = &request.file_id { 
+        active_model.file_id = Set(file_id.clone());
     }
     if let Some(count) = &request.count { 
         active_model.count = Set(count.clone());
@@ -112,7 +112,7 @@ pub fn model_to_response(model: MallTradeOrderItem) -> MallTradeOrderItemRespons
         spu_name: model.spu_name,
         sku_id: model.sku_id,
         properties: model.properties,
-        pic_url: model.pic_url,
+        file_id: model.file_id,
         count: model.count,
         comment_status: model.comment_status,
         price: model.price,

@@ -5,7 +5,7 @@ use serde_with::{serde_as, DisplayFromStr};
 
 #[serde_as]
 #[derive(Deserialize, Serialize, Debug, Clone, ToSchema)]
-pub struct MallPromotionSeckillConfigResponse {
+pub struct MallPromotionFlashConfigResponse {
     
     pub id: i64, // 编号
     
@@ -15,7 +15,7 @@ pub struct MallPromotionSeckillConfigResponse {
     
     pub end_time: String, // 结束时间点
     
-    pub slider_pic_urls: String, // 秒杀主图
+    pub slider_file_ids: String, // 秒杀主图
     
     pub status: i8, // 活动状态
     

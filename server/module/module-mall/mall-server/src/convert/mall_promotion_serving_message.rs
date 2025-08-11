@@ -1,10 +1,10 @@
 use sea_orm::{Set, NotSet};
-use crate::model::mall_promotion_kefu_message::{self, Model as MallPromotionKefuMessage, ActiveModel as MallPromotionKefuMessageActiveModel};
-use mall_model::request::mall_promotion_kefu_message::{CreateMallPromotionKefuMessageRequest, UpdateMallPromotionKefuMessageRequest};
-use mall_model::response::mall_promotion_kefu_message::MallPromotionKefuMessageResponse;
+use crate::model::mall_promotion_serving_message::{self, Model as MallPromotionServingMessage, ActiveModel as MallPromotionServingMessageActiveModel};
+use mall_model::request::mall_promotion_serving_message::{CreateMallPromotionServingMessageRequest, UpdateMallPromotionServingMessageRequest};
+use mall_model::response::mall_promotion_serving_message::MallPromotionServingMessageResponse;
 
-pub fn create_request_to_model(request: &CreateMallPromotionKefuMessageRequest) -> MallPromotionKefuMessageActiveModel {
-    MallPromotionKefuMessageActiveModel {
+pub fn create_request_to_model(request: &CreateMallPromotionServingMessageRequest) -> MallPromotionServingMessageActiveModel {
+    MallPromotionServingMessageActiveModel {
         conversation_id: Set(request.conversation_id.clone()),
         sender_id: Set(request.sender_id.clone()),
         sender_type: Set(request.sender_type.clone()),
@@ -17,8 +17,8 @@ pub fn create_request_to_model(request: &CreateMallPromotionKefuMessageRequest) 
     }
 }
 
-pub fn update_request_to_model(request: &UpdateMallPromotionKefuMessageRequest, existing: MallPromotionKefuMessage) -> MallPromotionKefuMessageActiveModel {
-    let mut active_model: MallPromotionKefuMessageActiveModel = existing.into();
+pub fn update_request_to_model(request: &UpdateMallPromotionServingMessageRequest, existing: MallPromotionServingMessage) -> MallPromotionServingMessageActiveModel {
+    let mut active_model: MallPromotionServingMessageActiveModel = existing.into();
     if let Some(conversation_id) = &request.conversation_id { 
         active_model.conversation_id = Set(conversation_id.clone());
     }
@@ -46,8 +46,8 @@ pub fn update_request_to_model(request: &UpdateMallPromotionKefuMessageRequest, 
     active_model
 }
 
-pub fn model_to_response(model: MallPromotionKefuMessage) -> MallPromotionKefuMessageResponse {
-    MallPromotionKefuMessageResponse { 
+pub fn model_to_response(model: MallPromotionServingMessage) -> MallPromotionServingMessageResponse {
+    MallPromotionServingMessageResponse { 
         id: model.id,
         conversation_id: model.conversation_id,
         sender_id: model.sender_id,

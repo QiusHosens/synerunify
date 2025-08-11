@@ -1,10 +1,10 @@
 use sea_orm::{Set, NotSet};
-use crate::model::mall_promotion_seckill_activity::{self, Model as MallPromotionSeckillActivity, ActiveModel as MallPromotionSeckillActivityActiveModel};
-use mall_model::request::mall_promotion_seckill_activity::{CreateMallPromotionSeckillActivityRequest, UpdateMallPromotionSeckillActivityRequest};
-use mall_model::response::mall_promotion_seckill_activity::MallPromotionSeckillActivityResponse;
+use crate::model::mall_promotion_flash_activity::{self, Model as MallPromotionFlashActivity, ActiveModel as MallPromotionFlashActivityActiveModel};
+use mall_model::request::mall_promotion_flash_activity::{CreateMallPromotionFlashActivityRequest, UpdateMallPromotionFlashActivityRequest};
+use mall_model::response::mall_promotion_flash_activity::MallPromotionFlashActivityResponse;
 
-pub fn create_request_to_model(request: &CreateMallPromotionSeckillActivityRequest) -> MallPromotionSeckillActivityActiveModel {
-    MallPromotionSeckillActivityActiveModel {
+pub fn create_request_to_model(request: &CreateMallPromotionFlashActivityRequest) -> MallPromotionFlashActivityActiveModel {
+    MallPromotionFlashActivityActiveModel {
         spu_id: Set(request.spu_id.clone()),
         name: Set(request.name.clone()),
         status: Set(request.status.clone()),
@@ -21,8 +21,8 @@ pub fn create_request_to_model(request: &CreateMallPromotionSeckillActivityReque
     }
 }
 
-pub fn update_request_to_model(request: &UpdateMallPromotionSeckillActivityRequest, existing: MallPromotionSeckillActivity) -> MallPromotionSeckillActivityActiveModel {
-    let mut active_model: MallPromotionSeckillActivityActiveModel = existing.into();
+pub fn update_request_to_model(request: &UpdateMallPromotionFlashActivityRequest, existing: MallPromotionFlashActivity) -> MallPromotionFlashActivityActiveModel {
+    let mut active_model: MallPromotionFlashActivityActiveModel = existing.into();
     if let Some(spu_id) = &request.spu_id { 
         active_model.spu_id = Set(spu_id.clone());
     }
@@ -62,8 +62,8 @@ pub fn update_request_to_model(request: &UpdateMallPromotionSeckillActivityReque
     active_model
 }
 
-pub fn model_to_response(model: MallPromotionSeckillActivity) -> MallPromotionSeckillActivityResponse {
-    MallPromotionSeckillActivityResponse { 
+pub fn model_to_response(model: MallPromotionFlashActivity) -> MallPromotionFlashActivityResponse {
+    MallPromotionFlashActivityResponse { 
         id: model.id,
         spu_id: model.spu_id,
         name: model.name,

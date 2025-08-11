@@ -14,7 +14,7 @@ pub struct Model {
     
     pub spu_id: Option<i64>, // 商品 SPU 编号
     
-    pub pic_url: String, // 商品图片
+    pub file_id: i64, // 商品图片ID
     
     pub spu_name: String, // 商品名称
     

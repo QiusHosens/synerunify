@@ -6,7 +6,7 @@ use utoipa::ToSchema;
 use common::base::page::PaginatedRequest;
 
 #[derive(Serialize, Deserialize, Debug, ToSchema)]
-pub struct CreateMallPromotionSeckillConfigRequest {
+pub struct CreateMallPromotionFlashConfigRequest {
     
     pub name: String, // 秒杀时段名称
     
@@ -14,14 +14,14 @@ pub struct CreateMallPromotionSeckillConfigRequest {
     
     pub end_time: String, // 结束时间点
     
-    pub slider_pic_urls: String, // 秒杀主图
+    pub slider_file_ids: String, // 秒杀主图
     
     pub status: i8, // 活动状态
     
 }
 
 #[derive(Serialize, Deserialize, Debug, ToSchema)]
-pub struct UpdateMallPromotionSeckillConfigRequest {
+pub struct UpdateMallPromotionFlashConfigRequest {
     
     pub id: i64, // 编号
     
@@ -31,7 +31,7 @@ pub struct UpdateMallPromotionSeckillConfigRequest {
     
     pub end_time: Option<String>, // 结束时间点
     
-    pub slider_pic_urls: Option<String>, // 秒杀主图
+    pub slider_file_ids: Option<String>, // 秒杀主图
     
     pub status: Option<i8>, // 活动状态
     

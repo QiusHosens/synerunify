@@ -11,8 +11,8 @@ pub fn create_request_to_model(request: &CreateMallProductSpuRequest) -> MallPro
         description: request.description.as_ref().map_or(NotSet, |description| Set(Some(description.clone()))),
         category_id: Set(request.category_id.clone()),
         brand_id: request.brand_id.as_ref().map_or(NotSet, |brand_id| Set(Some(brand_id.clone()))),
-        pic_url: Set(request.pic_url.clone()),
-        slider_pic_urls: request.slider_pic_urls.as_ref().map_or(NotSet, |slider_pic_urls| Set(Some(slider_pic_urls.clone()))),
+        file_id: Set(request.file_id.clone()),
+        slider_file_ids: request.slider_file_ids.as_ref().map_or(NotSet, |slider_file_ids| Set(Some(slider_file_ids.clone()))),
         sort: Set(request.sort.clone()),
         status: Set(request.status.clone()),
         spec_type: request.spec_type.as_ref().map_or(NotSet, |spec_type| Set(Some(spec_type.clone()))),
@@ -51,11 +51,11 @@ pub fn update_request_to_model(request: &UpdateMallProductSpuRequest, existing: 
     if let Some(brand_id) = &request.brand_id { 
         active_model.brand_id = Set(Some(brand_id.clone()));
     }
-    if let Some(pic_url) = &request.pic_url { 
-        active_model.pic_url = Set(pic_url.clone());
+    if let Some(file_id) = &request.file_id { 
+        active_model.file_id = Set(file_id.clone());
     }
-    if let Some(slider_pic_urls) = &request.slider_pic_urls { 
-        active_model.slider_pic_urls = Set(Some(slider_pic_urls.clone()));
+    if let Some(slider_file_ids) = &request.slider_file_ids { 
+        active_model.slider_file_ids = Set(Some(slider_file_ids.clone()));
     }
     if let Some(sort) = &request.sort { 
         active_model.sort = Set(sort.clone());
@@ -111,8 +111,8 @@ pub fn model_to_response(model: MallProductSpu) -> MallProductSpuResponse {
         description: model.description,
         category_id: model.category_id,
         brand_id: model.brand_id,
-        pic_url: model.pic_url,
-        slider_pic_urls: model.slider_pic_urls,
+        file_id: model.file_id,
+        slider_file_ids: model.slider_file_ids,
         sort: model.sort,
         status: model.status,
         spec_type: model.spec_type,

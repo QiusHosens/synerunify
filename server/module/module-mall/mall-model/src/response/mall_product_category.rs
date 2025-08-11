@@ -13,7 +13,7 @@ pub struct MallProductCategoryResponse {
     
     pub name: String, // 分类名称
     
-    pub pic_url: String, // 移动端分类图
+    pub file_id: i64, // 分类图片ID
     
     pub sort: Option<i32>, // 分类排序
     

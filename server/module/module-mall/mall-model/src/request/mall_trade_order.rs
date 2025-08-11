@@ -103,7 +103,7 @@ pub struct CreateMallTradeOrderRequest {
     
     pub give_coupon_ids: Option<String>, // 赠送的优惠劵编号
     
-    pub seckill_activity_id: Option<i64>, // 秒杀活动编号
+    pub flash_activity_id: Option<i64>, // 秒杀活动编号
     
     pub bargain_activity_id: Option<i64>, // 砍价活动编号
     
@@ -219,7 +219,7 @@ pub struct UpdateMallTradeOrderRequest {
     
     pub give_coupon_ids: Option<String>, // 赠送的优惠劵编号
     
-    pub seckill_activity_id: Option<i64>, // 秒杀活动编号
+    pub flash_activity_id: Option<i64>, // 秒杀活动编号
     
     pub bargain_activity_id: Option<i64>, // 砍价活动编号
     

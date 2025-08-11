@@ -26,7 +26,7 @@ pub struct CreateMallProductCommentRequest {
     
     pub sku_id: i64, // 商品 SKU 编号，关联 ProductSkuDO 的 id 编号
     
-    pub sku_pic_url: String, // 图片地址
+    pub file_id: i64, // 图片ID
     
     pub sku_properties: Option<String>, // 属性数组，JSON 格式 [{propertId: , valueId: }, {propertId: , valueId: }]
     
@@ -40,7 +40,7 @@ pub struct CreateMallProductCommentRequest {
     
     pub content: String, // 评论内容
     
-    pub pic_urls: Option<String>, // 评论图片地址数组
+    pub file_ids: Option<String>, // 评论图片id数组
     
     pub reply_status: Option<bool>, // 商家是否回复
     
@@ -76,7 +76,7 @@ pub struct UpdateMallProductCommentRequest {
     
     pub sku_id: Option<i64>, // 商品 SKU 编号，关联 ProductSkuDO 的 id 编号
     
-    pub sku_pic_url: Option<String>, // 图片地址
+    pub file_id: Option<i64>, // 图片ID
     
     pub sku_properties: Option<String>, // 属性数组，JSON 格式 [{propertId: , valueId: }, {propertId: , valueId: }]
     
@@ -90,7 +90,7 @@ pub struct UpdateMallProductCommentRequest {
     
     pub content: Option<String>, // 评论内容
     
-    pub pic_urls: Option<String>, // 评论图片地址数组
+    pub file_ids: Option<String>, // 评论图片id数组
     
     pub reply_status: Option<bool>, // 商家是否回复
     

@@ -1,10 +1,10 @@
 use sea_orm::{Set, NotSet};
-use crate::model::mall_promotion_kefu_conversation::{self, Model as MallPromotionKefuConversation, ActiveModel as MallPromotionKefuConversationActiveModel};
-use mall_model::request::mall_promotion_kefu_conversation::{CreateMallPromotionKefuConversationRequest, UpdateMallPromotionKefuConversationRequest};
-use mall_model::response::mall_promotion_kefu_conversation::MallPromotionKefuConversationResponse;
+use crate::model::mall_promotion_serving_conversation::{self, Model as MallPromotionServingConversation, ActiveModel as MallPromotionServingConversationActiveModel};
+use mall_model::request::mall_promotion_serving_conversation::{CreateMallPromotionServingConversationRequest, UpdateMallPromotionServingConversationRequest};
+use mall_model::response::mall_promotion_serving_conversation::MallPromotionServingConversationResponse;
 
-pub fn create_request_to_model(request: &CreateMallPromotionKefuConversationRequest) -> MallPromotionKefuConversationActiveModel {
-    MallPromotionKefuConversationActiveModel {
+pub fn create_request_to_model(request: &CreateMallPromotionServingConversationRequest) -> MallPromotionServingConversationActiveModel {
+    MallPromotionServingConversationActiveModel {
         user_id: Set(request.user_id.clone()),
         last_message_time: Set(request.last_message_time.clone()),
         last_message_content: Set(request.last_message_content.clone()),
@@ -17,8 +17,8 @@ pub fn create_request_to_model(request: &CreateMallPromotionKefuConversationRequ
     }
 }
 
-pub fn update_request_to_model(request: &UpdateMallPromotionKefuConversationRequest, existing: MallPromotionKefuConversation) -> MallPromotionKefuConversationActiveModel {
-    let mut active_model: MallPromotionKefuConversationActiveModel = existing.into();
+pub fn update_request_to_model(request: &UpdateMallPromotionServingConversationRequest, existing: MallPromotionServingConversation) -> MallPromotionServingConversationActiveModel {
+    let mut active_model: MallPromotionServingConversationActiveModel = existing.into();
     if let Some(user_id) = &request.user_id { 
         active_model.user_id = Set(user_id.clone());
     }
@@ -46,8 +46,8 @@ pub fn update_request_to_model(request: &UpdateMallPromotionKefuConversationRequ
     active_model
 }
 
-pub fn model_to_response(model: MallPromotionKefuConversation) -> MallPromotionKefuConversationResponse {
-    MallPromotionKefuConversationResponse { 
+pub fn model_to_response(model: MallPromotionServingConversation) -> MallPromotionServingConversationResponse {
+    MallPromotionServingConversationResponse { 
         id: model.id,
         user_id: model.user_id,
         last_message_time: model.last_message_time,

@@ -9,7 +9,7 @@ pub fn create_request_to_model(request: &CreateMallPromotionDiyTemplateRequest) 
         used: Set(request.used.clone()),
         used_time: request.used_time.as_ref().map_or(NotSet, |used_time| Set(Some(used_time.clone()))),
         remark: request.remark.as_ref().map_or(NotSet, |remark| Set(Some(remark.clone()))),
-        preview_pic_urls: request.preview_pic_urls.as_ref().map_or(NotSet, |preview_pic_urls| Set(Some(preview_pic_urls.clone()))),
+        preview_file_ids: request.preview_file_ids.as_ref().map_or(NotSet, |preview_file_ids| Set(Some(preview_file_ids.clone()))),
         property: request.property.as_ref().map_or(NotSet, |property| Set(Some(property.clone()))),
         ..Default::default()
     }
@@ -29,8 +29,8 @@ pub fn update_request_to_model(request: &UpdateMallPromotionDiyTemplateRequest, 
     if let Some(remark) = &request.remark { 
         active_model.remark = Set(Some(remark.clone()));
     }
-    if let Some(preview_pic_urls) = &request.preview_pic_urls { 
-        active_model.preview_pic_urls = Set(Some(preview_pic_urls.clone()));
+    if let Some(preview_file_ids) = &request.preview_file_ids { 
+        active_model.preview_file_ids = Set(Some(preview_file_ids.clone()));
     }
     if let Some(property) = &request.property { 
         active_model.property = Set(Some(property.clone()));
@@ -45,7 +45,7 @@ pub fn model_to_response(model: MallPromotionDiyTemplate) -> MallPromotionDiyTem
         used: model.used,
         used_time: model.used_time,
         remark: model.remark,
-        preview_pic_urls: model.preview_pic_urls,
+        preview_file_ids: model.preview_file_ids,
         property: model.property,
         creator: model.creator,
         create_time: model.create_time,

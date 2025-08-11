@@ -16,7 +16,7 @@ pub struct CreateMallPromotionArticleRequest {
     
     pub author: Option<String>, // 文章作者
     
-    pub pic_url: String, // 文章封面图片地址
+    pub file_id: i64, // 文章封面图片ID
     
     pub introduction: Option<String>, // 文章简介
     
@@ -47,7 +47,7 @@ pub struct UpdateMallPromotionArticleRequest {
     
     pub author: Option<String>, // 文章作者
     
-    pub pic_url: Option<String>, // 文章封面图片地址
+    pub file_id: Option<i64>, // 文章封面图片ID
     
     pub introduction: Option<String>, // 文章简介
     
