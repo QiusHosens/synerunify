@@ -1905,10 +1905,10 @@ CREATE TABLE `mall_promotion_diy_template`  (
 -- ----------------------------
 
 -- ----------------------------
--- Table structure for mall_promotion_kefu_conversation
+-- Table structure for mall_promotion_serving_conversation
 -- ----------------------------
-DROP TABLE IF EXISTS `mall_promotion_kefu_conversation`;
-CREATE TABLE `mall_promotion_kefu_conversation`  (
+DROP TABLE IF EXISTS `mall_promotion_serving_conversation`;
+CREATE TABLE `mall_promotion_serving_conversation`  (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '编号',
   `user_id` bigint NOT NULL COMMENT '会话所属用户',
   `last_message_time` datetime NOT NULL COMMENT '最后聊天时间',
@@ -1928,14 +1928,14 @@ CREATE TABLE `mall_promotion_kefu_conversation`  (
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '客服会话' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
--- Records of mall_promotion_kefu_conversation
+-- Records of mall_promotion_serving_conversation
 -- ----------------------------
 
 -- ----------------------------
--- Table structure for mall_promotion_kefu_message
+-- Table structure for mall_promotion_serving_message
 -- ----------------------------
-DROP TABLE IF EXISTS `mall_promotion_kefu_message`;
-CREATE TABLE `mall_promotion_kefu_message`  (
+DROP TABLE IF EXISTS `mall_promotion_serving_message`;
+CREATE TABLE `mall_promotion_serving_message`  (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '编号',
   `conversation_id` bigint NOT NULL COMMENT '会话编号',
   `sender_id` bigint NOT NULL COMMENT '发送人编号',
@@ -1955,7 +1955,7 @@ CREATE TABLE `mall_promotion_kefu_message`  (
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '客服消息' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
--- Records of mall_promotion_kefu_message
+-- Records of mall_promotion_serving_message
 -- ----------------------------
 
 -- ----------------------------
@@ -2039,10 +2039,10 @@ CREATE TABLE `mall_promotion_reward_activity`  (
 -- ----------------------------
 
 -- ----------------------------
--- Table structure for mall_promotion_seckill_activity
+-- Table structure for mall_promotion_flash_activity
 -- ----------------------------
-DROP TABLE IF EXISTS `mall_promotion_seckill_activity`;
-CREATE TABLE `mall_promotion_seckill_activity`  (
+DROP TABLE IF EXISTS `mall_promotion_flash_activity`;
+CREATE TABLE `mall_promotion_flash_activity`  (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '秒杀活动编号',
   `spu_id` bigint NOT NULL DEFAULT 0 COMMENT '秒杀活动商品',
   `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '秒杀活动名称',
@@ -2066,14 +2066,14 @@ CREATE TABLE `mall_promotion_seckill_activity`  (
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '秒杀活动' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
--- Records of mall_promotion_seckill_activity
+-- Records of mall_promotion_flash_activity
 -- ----------------------------
 
 -- ----------------------------
--- Table structure for mall_promotion_seckill_config
+-- Table structure for mall_promotion_flash_config
 -- ----------------------------
-DROP TABLE IF EXISTS `mall_promotion_seckill_config`;
-CREATE TABLE `mall_promotion_seckill_config`  (
+DROP TABLE IF EXISTS `mall_promotion_flash_config`;
+CREATE TABLE `mall_promotion_flash_config`  (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '编号',
   `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '秒杀时段名称',
   `start_time` varchar(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '开始时间点',
@@ -2090,20 +2090,20 @@ CREATE TABLE `mall_promotion_seckill_config`  (
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '秒杀时段' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
--- Records of mall_promotion_seckill_config
+-- Records of mall_promotion_flash_config
 -- ----------------------------
 
 -- ----------------------------
--- Table structure for mall_promotion_seckill_product
+-- Table structure for mall_promotion_flash_product
 -- ----------------------------
-DROP TABLE IF EXISTS `mall_promotion_seckill_product`;
-CREATE TABLE `mall_promotion_seckill_product`  (
+DROP TABLE IF EXISTS `mall_promotion_flash_product`;
+CREATE TABLE `mall_promotion_flash_product`  (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '秒杀参与商品编号',
   `activity_id` bigint NOT NULL DEFAULT 0 COMMENT '秒杀活动 id',
   `config_ids` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '0' COMMENT '秒杀时段 id 数组',
   `spu_id` bigint NOT NULL DEFAULT 0 COMMENT '商品 spu_id',
   `sku_id` bigint NOT NULL DEFAULT 0 COMMENT '商品 sku_id',
-  `seckill_price` int NOT NULL DEFAULT 0 COMMENT '秒杀金额，单位：分',
+  `flash_price` int NOT NULL DEFAULT 0 COMMENT '秒杀金额，单位：分',
   `stock` int NOT NULL DEFAULT 0 COMMENT '秒杀库存',
   `activity_status` tinyint NOT NULL DEFAULT 0 COMMENT '秒杀商品状态',
   `activity_start_time` datetime NOT NULL COMMENT '活动开始时间点',
@@ -2118,7 +2118,7 @@ CREATE TABLE `mall_promotion_seckill_product`  (
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '秒杀参与商品' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
--- Records of mall_promotion_seckill_product
+-- Records of mall_promotion_flash_product
 -- ----------------------------
 
 -- ----------------------------
@@ -2527,7 +2527,7 @@ CREATE TABLE `mall_trade_order`  (
   `vip_price` int NOT NULL DEFAULT 0 COMMENT 'VIP 减免金额，单位：分',
   `give_coupon_template_counts` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '赠送的优惠劵',
   `give_coupon_ids` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '赠送的优惠劵编号',
-  `seckill_activity_id` bigint NULL DEFAULT NULL COMMENT '秒杀活动编号',
+  `flash_activity_id` bigint NULL DEFAULT NULL COMMENT '秒杀活动编号',
   `bargain_activity_id` bigint NULL DEFAULT NULL COMMENT '砍价活动编号',
   `bargain_record_id` bigint NULL DEFAULT NULL COMMENT '砍价记录编号',
   `combination_activity_id` bigint NULL DEFAULT NULL COMMENT '拼团活动编号',
