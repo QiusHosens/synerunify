@@ -131,13 +131,23 @@ export default function MallProductCategory() {
         parentNodes.forEach(node => category.hierarchy.push(node.id.toString()));
       }
       category.hierarchy.push(category.id.toString());
-
-      // 设置图片
-      const file = await downloadSystemFile(category.file_id, (progress) => { })
-      category.previewUrl = window.URL.createObjectURL(file);
     }
     setRecords(result);
+
+    loadImages(result);
   };
+
+  const loadImages = (list: Array<MallProductCategoryResponse>) => {
+    for (let index = 0, len = list.length; index < len; index++) {
+      const category = list[index];
+      // 设置图片
+      downloadSystemFile(category.file_id, (progress) => { }).then(file => {
+        setRecords(prev =>
+          prev.map(item => item.id === category.id ? { ...item, previewUrl: window.URL.createObjectURL(file) } : item)
+        )
+      })
+    }
+  }
 
   const handleClickOpenAdd = () => {
     (addMallProductCategory.current as any).show();

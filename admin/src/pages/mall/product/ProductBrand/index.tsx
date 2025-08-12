@@ -122,15 +122,23 @@ export default function MallProductBrand() {
   const queryRecords = async (condition: MallProductBrandQueryCondition) => {
     const result = await pageMallProductBrand(condition);
     const list = result.list;
+    setRecords(list);
+    setTotal(result.total);
+
+    loadImages(list);
+  };
+
+  const loadImages = (list: Array<MallProductBrandResponse>) => {
     for (let index = 0, len = list.length; index < len; index++) {
       const brand = list[index];
       // 设置图片
-      const file = await downloadSystemFile(brand.file_id, (progress) => { })
-      brand.previewUrl = window.URL.createObjectURL(file);
+      downloadSystemFile(brand.file_id, (progress) => { }).then(file => {
+        setRecords(prev =>
+          prev.map(item => item.id === brand.id ? { ...item, previewUrl: window.URL.createObjectURL(file) } : item)
+        )
+      })
     }
-    setRecords(list);
-    setTotal(result.total);
-  };
+  }
 
   const handleClickOpenAdd = () => {
     (addMallProductBrand.current as any).show();
