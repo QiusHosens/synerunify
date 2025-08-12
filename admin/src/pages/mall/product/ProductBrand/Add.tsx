@@ -222,6 +222,8 @@ const MallProductBrandAdd = forwardRef(({ onSubmit }: MallProductBrandAddProps, 
         </Typography>
         <Grid size={{ xs: 12, md: 4 }}>
           <CustomizedFileUpload
+            canRemove={false}
+            showFilename={false}
             id={'file-upload'}
             accept=".jpg,jpeg,.png"
             maxSize={100}

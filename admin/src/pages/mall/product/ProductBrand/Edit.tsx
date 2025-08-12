@@ -151,6 +151,12 @@ const MallProductBrandEdit = forwardRef(({ onSubmit }: MallProductBrandEditProps
       setMallProductBrand((prev) => {
         return { ...prev, file };
       })
+      setDownloadImage(prev => {
+        return {
+          status: 'downloading',
+          previewUrl: file.previewUrl,
+        };
+      })
 
       // 上传文件
       try {
@@ -158,12 +164,25 @@ const MallProductBrandEdit = forwardRef(({ onSubmit }: MallProductBrandEditProps
           setMallProductBrand((prev) => {
             return { ...prev, file: { ...prev.file!, progress } };
           });
+          setDownloadImage(prev => {
+            return {
+              ...prev,
+              status: 'downloading',
+              progress
+            };
+          })
         });
 
         // 上传完成
         setMallProductBrand((prev) => {
           return { ...prev, file_id: result, file: { ...prev.file!, status: 'done' as const } };
         });
+        setDownloadImage(prev => {
+          return {
+            ...prev,
+            status: 'done',
+          };
+        })
       } catch (error) {
         console.error('upload file error', error);
         // 上传失败
@@ -219,6 +238,8 @@ const MallProductBrandEdit = forwardRef(({ onSubmit }: MallProductBrandEditProps
         </Typography>
         <Grid size={{ xs: 12, md: 4 }}>
           <CustomizedFileUpload
+            canRemove={false}
+            showFilename={false}
             id={'file-upload'}
             accept=".jpg,jpeg,.png"
             maxSize={100}

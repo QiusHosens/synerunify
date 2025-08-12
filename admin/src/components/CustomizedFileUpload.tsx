@@ -83,6 +83,8 @@ export interface DownloadProps {
 // Upload 组件属性
 interface UploadProps {
     canUpload?: boolean;
+    canRemove?: boolean;
+    showFilename?: boolean;
     id?: string;
     accept?: string;
     maxSize?: number;
@@ -95,6 +97,8 @@ interface UploadProps {
 
 const CustomizedFileUpload: React.FC<UploadProps> = ({
     canUpload = true,
+    canRemove = true,
+    showFilename = true,
     id = 'file-upload',
     accept = '*',
     maxSize = 10,
@@ -261,27 +265,27 @@ const CustomizedFileUpload: React.FC<UploadProps> = ({
                         <Box sx={{ width: '100%', position: 'absolute', top: 0, left: 0 }}>
                             <LinearProgress variant="determinate" value={download.progress || 0} />
                         </Box>
-                        <Typography
+                        {showFilename && <Typography
                             variant="caption"
                             color="textPrimary"
                             sx={{ position: 'absolute', bottom: 8, maxWidth: '90%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
                         >
                             {download.filename}
-                        </Typography>
+                        </Typography>}
                     </>
                 ) : (download && download?.status === 'done') ? (
                     <>
                         <PreviewImage src={download.previewUrl} />
-                        <DeleteButton className='file-upload-delete' sx={{ display: 'none' }} onClick={(e) => { e.stopPropagation(); handleRemove(); }}>
+                        {canRemove && <DeleteButton className='file-upload-delete' sx={{ display: 'none' }} onClick={(e) => { e.stopPropagation(); handleRemove(); }}>
                             <DeleteIcon fontSize="small" />
-                        </DeleteButton>
-                        <Typography
+                        </DeleteButton>}
+                        {showFilename && <Typography
                             variant="caption"
                             color="textPrimary"
                             sx={{ position: 'absolute', bottom: 8, maxWidth: '90%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
                         >
                             {download.filename}
-                        </Typography>
+                        </Typography>}
                     </>
                 ) : file?.status === 'uploading' && file?.previewUrl ? (
                     <>
@@ -289,27 +293,27 @@ const CustomizedFileUpload: React.FC<UploadProps> = ({
                         <Box sx={{ width: '100%', position: 'absolute', top: 0, left: 0 }}>
                             <LinearProgress variant="determinate" value={file.progress || 0} />
                         </Box>
-                        <Typography
+                        {showFilename && <Typography
                             variant="caption"
                             color="textPrimary"
                             sx={{ position: 'absolute', bottom: 8, maxWidth: '90%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
                         >
                             {file.filename}
-                        </Typography>
+                        </Typography>}
                     </>
                 ) : file?.status === 'done' ? (
                     <>
                         <PreviewImage src={file.previewUrl} />
-                        <DeleteButton className='file-upload-delete' sx={{ display: 'none' }} onClick={(e) => { e.stopPropagation(); }}>
+                        {canRemove && <DeleteButton className='file-upload-delete' sx={{ display: 'none' }} onClick={(e) => { e.stopPropagation(); }}>
                             <DeleteIcon fontSize="small" />
-                        </DeleteButton>
-                        <Typography
+                        </DeleteButton>}
+                        {showFilename && <Typography
                             variant="caption"
                             color="textPrimary"
                             sx={{ position: 'absolute', bottom: 8, maxWidth: '90%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
                         >
                             {file.filename}
-                        </Typography>
+                        </Typography>}
                     </>
                 ) : (
                     <>
