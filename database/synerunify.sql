@@ -1,17 +1,17 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : 192.168.1.18_synerunify
+ Source Server         : 192.168.0.99_synerunify
  Source Server Type    : MySQL
- Source Server Version : 80200 (8.2.0)
- Source Host           : 192.168.1.18:3306
+ Source Server Version : 80100 (8.1.0)
+ Source Host           : 192.168.0.99:30010
  Source Schema         : synerunify
 
  Target Server Type    : MySQL
- Target Server Version : 80200 (8.2.0)
+ Target Server Version : 80100 (8.1.0)
  File Encoding         : 65001
 
- Date: 09/08/2025 12:22:56
+ Date: 12/08/2025 15:02:01
 */
 
 SET NAMES utf8mb4;
@@ -1201,11 +1201,12 @@ CREATE TABLE `mall_product_brand`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '商品品牌' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '商品品牌' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_product_brand
 -- ----------------------------
+INSERT INTO `mall_product_brand` VALUES (1, '苹果', 75, 0, 'apple', 0, 1, '2025-08-12 06:10:01', 1, '2025-08-12 06:34:37', b'0', 1);
 
 -- ----------------------------
 -- Table structure for mall_product_browse_history
@@ -1249,11 +1250,15 @@ CREATE TABLE `mall_product_category`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '商品分类' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '商品分类' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_product_category
 -- ----------------------------
+INSERT INTO `mall_product_category` VALUES (1, 0, '手机', 71, 0, 0, 1, '2025-08-12 02:20:15', 1, '2025-08-12 05:51:34', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (2, 0, '电脑', 72, 1, 0, 1, '2025-08-12 02:56:31', 1, '2025-08-12 02:56:31', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (3, 1, '普通手机', 73, 0, 0, 1, '2025-08-12 03:00:54', 1, '2025-08-12 03:00:54', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (4, 1, '智能手机', 73, 1, 0, 1, '2025-08-12 03:01:10', 1, '2025-08-12 05:51:46', b'0', 1);
 
 -- ----------------------------
 -- Table structure for mall_product_comment
@@ -1334,11 +1339,12 @@ CREATE TABLE `mall_product_property`  (
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `idx_name`(`name`(32) ASC) USING BTREE COMMENT '规格名称索引'
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '商品属性项' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '商品属性项' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_product_property
 -- ----------------------------
+INSERT INTO `mall_product_property` VALUES (1, '名称', 0, '名称', 1, '2025-08-12 06:58:03', 1, '2025-08-12 06:58:03', b'0', 1);
 
 -- ----------------------------
 -- Table structure for mall_product_property_value
@@ -1905,19 +1911,23 @@ CREATE TABLE `mall_promotion_diy_template`  (
 -- ----------------------------
 
 -- ----------------------------
--- Table structure for mall_promotion_serving_conversation
+-- Table structure for mall_promotion_flash_activity
 -- ----------------------------
-DROP TABLE IF EXISTS `mall_promotion_serving_conversation`;
-CREATE TABLE `mall_promotion_serving_conversation`  (
-  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '编号',
-  `user_id` bigint NOT NULL COMMENT '会话所属用户',
-  `last_message_time` datetime NOT NULL COMMENT '最后聊天时间',
-  `last_message_content` varchar(2048) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '最后聊天内容',
-  `last_message_content_type` int NOT NULL COMMENT '最后发送的消息类型',
-  `admin_pinned` bit(1) NOT NULL DEFAULT b'0' COMMENT '管理端置顶',
-  `user_deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '用户是否可见',
-  `admin_deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '管理员是否可见',
-  `admin_unread_message_count` int NOT NULL COMMENT '管理员未读消息数',
+DROP TABLE IF EXISTS `mall_promotion_flash_activity`;
+CREATE TABLE `mall_promotion_flash_activity`  (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '秒杀活动编号',
+  `spu_id` bigint NOT NULL DEFAULT 0 COMMENT '秒杀活动商品',
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '秒杀活动名称',
+  `status` tinyint NOT NULL DEFAULT 0 COMMENT '活动状态',
+  `remark` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '备注',
+  `start_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '活动开始时间',
+  `end_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '活动结束时间',
+  `sort` int NOT NULL DEFAULT 0 COMMENT '排序',
+  `config_ids` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '0' COMMENT '秒杀时段 id 数组',
+  `total_limit_count` int NULL DEFAULT 0 COMMENT '总限购数量',
+  `single_limit_count` int NULL DEFAULT 0 COMMENT '单次限够数量',
+  `stock` int NULL DEFAULT 0 COMMENT '秒杀库存',
+  `total_stock` int NULL DEFAULT 0 COMMENT '秒杀总库存',
   `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updater` bigint NULL DEFAULT NULL COMMENT '更新者ID',
@@ -1925,26 +1935,23 @@ CREATE TABLE `mall_promotion_serving_conversation`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '客服会话' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '秒杀活动' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
--- Records of mall_promotion_serving_conversation
+-- Records of mall_promotion_flash_activity
 -- ----------------------------
 
 -- ----------------------------
--- Table structure for mall_promotion_serving_message
+-- Table structure for mall_promotion_flash_config
 -- ----------------------------
-DROP TABLE IF EXISTS `mall_promotion_serving_message`;
-CREATE TABLE `mall_promotion_serving_message`  (
+DROP TABLE IF EXISTS `mall_promotion_flash_config`;
+CREATE TABLE `mall_promotion_flash_config`  (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '编号',
-  `conversation_id` bigint NOT NULL COMMENT '会话编号',
-  `sender_id` bigint NOT NULL COMMENT '发送人编号',
-  `sender_type` int NOT NULL COMMENT '发送人类型',
-  `receiver_id` bigint NULL DEFAULT NULL COMMENT '接收人编号',
-  `receiver_type` int NULL DEFAULT NULL COMMENT '接收人类型',
-  `content_type` int NOT NULL COMMENT '消息类型',
-  `content` varchar(2048) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '消息',
-  `read_status` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否已读',
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '秒杀时段名称',
+  `start_time` varchar(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '开始时间点',
+  `end_time` varchar(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '结束时间点',
+  `slider_file_ids` varchar(1024) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '秒杀主图',
+  `status` tinyint NOT NULL DEFAULT 0 COMMENT '活动状态',
   `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updater` bigint NULL DEFAULT NULL COMMENT '更新者ID',
@@ -1952,10 +1959,38 @@ CREATE TABLE `mall_promotion_serving_message`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '客服消息' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '秒杀时段' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
--- Records of mall_promotion_serving_message
+-- Records of mall_promotion_flash_config
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for mall_promotion_flash_product
+-- ----------------------------
+DROP TABLE IF EXISTS `mall_promotion_flash_product`;
+CREATE TABLE `mall_promotion_flash_product`  (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '秒杀参与商品编号',
+  `activity_id` bigint NOT NULL DEFAULT 0 COMMENT '秒杀活动 id',
+  `config_ids` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '0' COMMENT '秒杀时段 id 数组',
+  `spu_id` bigint NOT NULL DEFAULT 0 COMMENT '商品 spu_id',
+  `sku_id` bigint NOT NULL DEFAULT 0 COMMENT '商品 sku_id',
+  `flash_price` int NOT NULL DEFAULT 0 COMMENT '秒杀金额，单位：分',
+  `stock` int NOT NULL DEFAULT 0 COMMENT '秒杀库存',
+  `activity_status` tinyint NOT NULL DEFAULT 0 COMMENT '秒杀商品状态',
+  `activity_start_time` datetime NOT NULL COMMENT '活动开始时间点',
+  `activity_end_time` datetime NOT NULL COMMENT '活动结束时间点',
+  `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updater` bigint NULL DEFAULT NULL COMMENT '更新者ID',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+  `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '秒杀参与商品' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of mall_promotion_flash_product
 -- ----------------------------
 
 -- ----------------------------
@@ -2039,47 +2074,19 @@ CREATE TABLE `mall_promotion_reward_activity`  (
 -- ----------------------------
 
 -- ----------------------------
--- Table structure for mall_promotion_flash_activity
+-- Table structure for mall_promotion_serving_conversation
 -- ----------------------------
-DROP TABLE IF EXISTS `mall_promotion_flash_activity`;
-CREATE TABLE `mall_promotion_flash_activity`  (
-  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '秒杀活动编号',
-  `spu_id` bigint NOT NULL DEFAULT 0 COMMENT '秒杀活动商品',
-  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '秒杀活动名称',
-  `status` tinyint NOT NULL DEFAULT 0 COMMENT '活动状态',
-  `remark` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '备注',
-  `start_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '活动开始时间',
-  `end_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '活动结束时间',
-  `sort` int NOT NULL DEFAULT 0 COMMENT '排序',
-  `config_ids` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '0' COMMENT '秒杀时段 id 数组',
-  `total_limit_count` int NULL DEFAULT 0 COMMENT '总限购数量',
-  `single_limit_count` int NULL DEFAULT 0 COMMENT '单次限够数量',
-  `stock` int NULL DEFAULT 0 COMMENT '秒杀库存',
-  `total_stock` int NULL DEFAULT 0 COMMENT '秒杀总库存',
-  `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
-  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `updater` bigint NULL DEFAULT NULL COMMENT '更新者ID',
-  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-  `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
-  `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '秒杀活动' ROW_FORMAT = DYNAMIC;
-
--- ----------------------------
--- Records of mall_promotion_flash_activity
--- ----------------------------
-
--- ----------------------------
--- Table structure for mall_promotion_flash_config
--- ----------------------------
-DROP TABLE IF EXISTS `mall_promotion_flash_config`;
-CREATE TABLE `mall_promotion_flash_config`  (
+DROP TABLE IF EXISTS `mall_promotion_serving_conversation`;
+CREATE TABLE `mall_promotion_serving_conversation`  (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '编号',
-  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '秒杀时段名称',
-  `start_time` varchar(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '开始时间点',
-  `end_time` varchar(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '结束时间点',
-  `slider_file_ids` varchar(1024) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '秒杀主图',
-  `status` tinyint NOT NULL DEFAULT 0 COMMENT '活动状态',
+  `user_id` bigint NOT NULL COMMENT '会话所属用户',
+  `last_message_time` datetime NOT NULL COMMENT '最后聊天时间',
+  `last_message_content` varchar(2048) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '最后聊天内容',
+  `last_message_content_type` int NOT NULL COMMENT '最后发送的消息类型',
+  `admin_pinned` bit(1) NOT NULL DEFAULT b'0' COMMENT '管理端置顶',
+  `user_deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '用户是否可见',
+  `admin_deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '管理员是否可见',
+  `admin_unread_message_count` int NOT NULL COMMENT '管理员未读消息数',
   `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updater` bigint NULL DEFAULT NULL COMMENT '更新者ID',
@@ -2087,27 +2094,26 @@ CREATE TABLE `mall_promotion_flash_config`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '秒杀时段' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '客服会话' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
--- Records of mall_promotion_flash_config
+-- Records of mall_promotion_serving_conversation
 -- ----------------------------
 
 -- ----------------------------
--- Table structure for mall_promotion_flash_product
+-- Table structure for mall_promotion_serving_message
 -- ----------------------------
-DROP TABLE IF EXISTS `mall_promotion_flash_product`;
-CREATE TABLE `mall_promotion_flash_product`  (
-  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '秒杀参与商品编号',
-  `activity_id` bigint NOT NULL DEFAULT 0 COMMENT '秒杀活动 id',
-  `config_ids` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '0' COMMENT '秒杀时段 id 数组',
-  `spu_id` bigint NOT NULL DEFAULT 0 COMMENT '商品 spu_id',
-  `sku_id` bigint NOT NULL DEFAULT 0 COMMENT '商品 sku_id',
-  `flash_price` int NOT NULL DEFAULT 0 COMMENT '秒杀金额，单位：分',
-  `stock` int NOT NULL DEFAULT 0 COMMENT '秒杀库存',
-  `activity_status` tinyint NOT NULL DEFAULT 0 COMMENT '秒杀商品状态',
-  `activity_start_time` datetime NOT NULL COMMENT '活动开始时间点',
-  `activity_end_time` datetime NOT NULL COMMENT '活动结束时间点',
+DROP TABLE IF EXISTS `mall_promotion_serving_message`;
+CREATE TABLE `mall_promotion_serving_message`  (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '编号',
+  `conversation_id` bigint NOT NULL COMMENT '会话编号',
+  `sender_id` bigint NOT NULL COMMENT '发送人编号',
+  `sender_type` int NOT NULL COMMENT '发送人类型',
+  `receiver_id` bigint NULL DEFAULT NULL COMMENT '接收人编号',
+  `receiver_type` int NULL DEFAULT NULL COMMENT '接收人类型',
+  `content_type` int NOT NULL COMMENT '消息类型',
+  `content` varchar(2048) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '消息',
+  `read_status` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否已读',
   `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updater` bigint NULL DEFAULT NULL COMMENT '更新者ID',
@@ -2115,10 +2121,10 @@ CREATE TABLE `mall_promotion_flash_product`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '秒杀参与商品' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '客服消息' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
--- Records of mall_promotion_flash_product
+-- Records of mall_promotion_serving_message
 -- ----------------------------
 
 -- ----------------------------
@@ -2812,7 +2818,7 @@ CREATE TABLE `system_file`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 70 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '文件信息表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 77 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '文件信息表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of system_file
@@ -2886,6 +2892,13 @@ INSERT INTO `system_file` VALUES (66, '增值税发票.jpg', 'image/jpeg', 84093
 INSERT INTO `system_file` VALUES (67, '增值税发票.jpg', 'image/jpeg', 84093, '2025/06/28/64700139549233152_增值税发票.jpg', 0, '0000', 1, 1, '2025-06-28 12:55:16', 1, '2025-06-28 12:55:18', b'0', 1);
 INSERT INTO `system_file` VALUES (68, '增值税发票.jpg', 'image/jpeg', 84093, '2025/07/06/67449632413716480_增值税发票.jpg', 0, '0000', 1, 1, '2025-07-06 03:00:46', 1, '2025-07-06 03:03:54', b'0', 1);
 INSERT INTO `system_file` VALUES (69, '增值税发票.jpg', 'image/jpeg', 84093, '2025/07/06/67459301056188416_增值税发票.jpg', 0, '0000', 1, 1, '2025-07-06 03:39:11', 1, '2025-07-06 03:39:15', b'0', 1);
+INSERT INTO `system_file` VALUES (70, '手机.png', 'image/png', 2741, '2025/08/12/80845267942772736_手机.png', 1, '0000', 1, 1, '2025-08-12 02:10:12', 1, '2025-08-12 02:10:12', b'0', 1);
+INSERT INTO `system_file` VALUES (71, '手机.png', 'image/png', 2741, '2025/08/12/80847785590525952_手机.png', 1, '0000', 1, 1, '2025-08-12 02:20:12', 1, '2025-08-12 02:20:12', b'0', 1);
+INSERT INTO `system_file` VALUES (72, '笔记本.png', 'image/png', 2492, '2025/08/12/80856919526346752_笔记本.png', 1, '0000', 1, 1, '2025-08-12 02:56:30', 1, '2025-08-12 02:56:30', b'0', 1);
+INSERT INTO `system_file` VALUES (73, '手机.png', 'image/png', 2741, '2025/08/12/80858019910389760_手机.png', 1, '0000', 1, 1, '2025-08-12 03:00:52', 1, '2025-08-12 03:00:52', b'0', 1);
+INSERT INTO `system_file` VALUES (74, '手机.png', 'image/png', 2741, '2025/08/12/80903551357816832_手机.png', 1, '0000', 1, 1, '2025-08-12 06:01:50', 1, '2025-08-12 06:01:50', b'0', 1);
+INSERT INTO `system_file` VALUES (75, '手机.png', 'image/png', 2741, '2025/08/12/80905568339890176_手机.png', 1, '0000', 1, 1, '2025-08-12 06:09:52', 1, '2025-08-12 06:09:52', b'0', 1);
+INSERT INTO `system_file` VALUES (76, '笔记本.png', 'image/png', 2492, '2025/08/12/80915939503116288_笔记本.png', 1, '0000', 1, 1, '2025-08-12 06:51:01', 1, '2025-08-12 06:51:01', b'0', 1);
 
 -- ----------------------------
 -- Table structure for system_menu
@@ -2913,7 +2926,7 @@ CREATE TABLE `system_menu`  (
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 390 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '菜单权限表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 396 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '菜单权限表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of system_menu
@@ -3293,6 +3306,12 @@ INSERT INTO `system_menu` VALUES (386, '查看', 'mall:statistics:trade:get', 3,
 INSERT INTO `system_menu` VALUES (387, '新增', 'mall:statistics:trade:add', 3, 1, 261, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:13:19', 1, '2025-06-10 02:13:19', b'0');
 INSERT INTO `system_menu` VALUES (388, '修改', 'mall:statistics:trade:edit', 3, 2, 261, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:13:36', 1, '2025-06-10 02:13:36', b'0');
 INSERT INTO `system_menu` VALUES (389, '删除', 'mall:statistics:trade:delete', 3, 3, 261, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:13:54', 1, '2025-06-10 02:13:54', b'0');
+INSERT INTO `system_menu` VALUES (390, '启用', 'mall:product:category:enable', 3, 4, 218, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-09 12:37:29', 1, '2025-06-09 12:37:29', b'0');
+INSERT INTO `system_menu` VALUES (391, '禁用', 'mall:product:category:disable', 3, 5, 218, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-09 12:37:45', 1, '2025-06-09 12:37:45', b'0');
+INSERT INTO `system_menu` VALUES (392, '启用', 'mall:product:brand:enable', 3, 4, 219, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-09 12:37:29', 1, '2025-06-09 12:37:29', b'0');
+INSERT INTO `system_menu` VALUES (393, '禁用', 'mall:product:brand:disable', 3, 5, 219, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-09 12:37:45', 1, '2025-06-09 12:37:45', b'0');
+INSERT INTO `system_menu` VALUES (394, '启用', 'mall:product:property:enable', 3, 4, 220, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-09 12:37:29', 1, '2025-06-09 12:37:29', b'0');
+INSERT INTO `system_menu` VALUES (395, '禁用', 'mall:product:property:disable', 3, 5, 220, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-09 12:37:45', 1, '2025-06-09 12:37:45', b'0');
 
 -- ----------------------------
 -- Table structure for system_notice
@@ -3389,7 +3408,7 @@ CREATE TABLE `system_role_menu`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 492 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '角色和菜单关联表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 498 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '角色和菜单关联表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of system_role_menu
@@ -3805,6 +3824,12 @@ INSERT INTO `system_role_menu` VALUES (488, 1, 325, 1, '2025-08-09 04:22:33', 1,
 INSERT INTO `system_role_menu` VALUES (489, 1, 323, 1, '2025-08-09 04:22:33', 1, '2025-08-09 04:22:33', b'0', 1);
 INSERT INTO `system_role_menu` VALUES (490, 1, 213, 1, '2025-08-09 04:22:33', 1, '2025-08-09 04:22:33', b'0', 1);
 INSERT INTO `system_role_menu` VALUES (491, 1, 222, 1, '2025-08-09 04:22:33', 1, '2025-08-09 04:22:33', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (492, 1, 390, 1, '2025-08-12 02:25:45', 1, '2025-08-12 02:25:45', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (493, 1, 391, 1, '2025-08-12 02:25:45', 1, '2025-08-12 02:25:45', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (494, 1, 393, 1, '2025-08-12 06:21:59', 1, '2025-08-12 06:21:59', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (495, 1, 392, 1, '2025-08-12 06:21:59', 1, '2025-08-12 06:21:59', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (496, 1, 394, 1, '2025-08-12 06:59:23', 1, '2025-08-12 06:59:23', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (497, 1, 395, 1, '2025-08-12 06:59:23', 1, '2025-08-12 06:59:23', b'0', 1);
 
 -- ----------------------------
 -- Table structure for system_role_menu_data_scope
