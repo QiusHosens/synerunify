@@ -1,4 +1,5 @@
 import { PaginatedRequest, PaginatedResponse } from '@/base/page';
+import { UploadFile } from '@/components/CustomizedFileUpload';
 import { api } from '@/utils/request';
 
 const apis = {
@@ -19,7 +20,9 @@ export interface MallProductCategoryRequest {
   file_id: number; // 分类图片ID
   sort: number; // 分类排序
   status: number; // 状态
-  }
+
+  file?: UploadFile | null;
+}
 
 export interface MallProductCategoryResponse {
   id: number; // 分类编号
@@ -32,10 +35,13 @@ export interface MallProductCategoryResponse {
   create_time: string; // 创建时间
   updater: number; // 更新者ID
   update_time: string; // 更新时间
-  }
+
+  hierarchy: string[];
+  previewUrl?: string; // 图片预览地址
+}
 
 export interface MallProductCategoryQueryCondition extends PaginatedRequest {
-  
+
 }
 
 export const createMallProductCategory = (mall_product_category: MallProductCategoryRequest): Promise<number> => {

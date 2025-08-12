@@ -242,7 +242,7 @@ const CustomizedFileUpload: React.FC<UploadProps> = ({
                 width={width}
                 height={height}
                 onClick={() => {
-                    if (canUpload && file?.status !== 'uploading') {
+                    if (canUpload && (!file || file?.status !== 'uploading')) {
                         document.getElementById(id)?.click();
                     }
                 }}

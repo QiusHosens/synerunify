@@ -1,33 +1,39 @@
-import { Box, Button, Switch } from '@mui/material';
+import { Box, Button, styled, Switch } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { DataGrid, GridCallbackDetails, GridColDef, GridFilterModel, GridRenderCellParams, GridSortModel } from '@mui/x-data-grid';
+import { GridCallbackDetails, GridColDef, GridFilterModel, GridRenderCellParams, GridSortModel } from '@mui/x-data-grid';
 import EditIcon from '@/assets/image/svg/edit.svg';
 import DeleteIcon from '@/assets/image/svg/delete.svg';
-import { disableMallProductCategory, enableMallProductCategory, pageMallProductCategory, MallProductCategoryQueryCondition, MallProductCategoryResponse } from '@/api';
+import { disableMallProductCategory, enableMallProductCategory, MallProductCategoryQueryCondition, MallProductCategoryResponse, listMallProductCategory } from '@/api';
 import MallProductCategoryAdd from './Add';
 import MallProductCategoryEdit from './Edit';
 import MallProductCategoryDelete from './Delete';
 import { useHomeStore } from '@/store';
 import CustomizedAutoMore from '@/components/CustomizedAutoMore';
+import CustomizedDataGridPro from '@/components/CustomizedDataGridPro';
+import { getParentNodeLists, Node } from '@/utils/treeUtils';
+import { downloadSystemFile } from '@/api/system_file';
 
 export default function MallProductCategory() {
   const { t } = useTranslation();
   const { hasOperatePermission } = useHomeStore();
 
-  const [total, setTotal] = useState<number>(0);
-  const [condition, setCondition] = useState<MallProductCategoryQueryCondition>({
-    page: 1,
-    size: 20,
-  });
-
   const [records, setRecords] = useState<Array<MallProductCategoryResponse>>([]);
   const [sortModel, setSortModel] = useState<GridSortModel>([]);
-  const [filterModel, setFilterModel] = useState<GridFilterModel>();
 
   const addMallProductCategory = useRef(null);
   const editMallProductCategory = useRef(null);
   const deleteMallProductCategory = useRef(null);
+
+  const PreviewImage = styled('img')({
+    // width: '100%',
+    // height: '100%',
+    height: '60%',
+    objectFit: 'contain',
+    // position: 'absolute',
+    top: 0,
+    left: 0,
+  });
 
   const handleStatusChange = useCallback(
     async (e: React.ChangeEvent<HTMLInputElement>, checked: boolean, data: MallProductCategoryResponse) => {
@@ -53,8 +59,18 @@ export default function MallProductCategory() {
 
   const columns: GridColDef[] = useMemo(
     () => [
-      { field: 'parent_id', headerName: t("common.title.parent"), flex: 1, minWidth: 100 },
-      { field: 'name', headerName: t("common.title.name"), flex: 1, minWidth: 100 },
+      { field: 'name', headerName: t("common.title.name"), flex: 1, minWidth: 200 },
+      {
+        field: 'file_id',
+        headerName: t("page.mall.product.category.title.file"),
+        flex: 1,
+        minWidth: 200,
+        renderCell: (params: GridRenderCellParams) => (
+          <Box sx={{ height: '100%', display: 'flex', gap: 1, alignItems: 'center' }}>
+            <PreviewImage src={params.row.previewUrl} />
+          </Box>
+        ),
+      },
       { field: 'sort', headerName: t("common.title.sort"), flex: 1, minWidth: 100 },
       {
         field: 'status',
@@ -63,7 +79,7 @@ export default function MallProductCategory() {
         flex: 1,
         minWidth: 80,
         renderCell: (params: GridRenderCellParams) => (
-          <Box sx={ { height: '100%', display: 'flex', gap: 1, alignItems: 'center' } }>
+          <Box sx={{ height: '100%', display: 'flex', gap: 1, alignItems: 'center' }}>
             <Switch name="status" checked={!params.row.status} disabled={statusDisabled(params.row.status)} onChange={(event, checked) => handleStatusChange(event, checked, params.row)} />
           </Box>
         ),
@@ -86,7 +102,7 @@ export default function MallProductCategory() {
               onClick={() => handleClickOpenEdit(params.row)}
             />}
             {hasOperatePermission('mall:product:category:delete') && <Button
-              sx={ {color: 'error.main'} }
+              sx={{ color: 'error.main' }}
               size="small"
               variant='customOperate'
               title={t('global.operate.delete') + t('global.page.mark_translation')}
@@ -100,10 +116,40 @@ export default function MallProductCategory() {
     [t, handleStatusChange]
   );
 
-  const queryRecords = async (condition: MallProductCategoryQueryCondition) => {
-    const result = await pageMallProductCategory(condition);
-    setRecords(result.list);
-    setTotal(result.total);
+  const queryRecords = async () => {
+    const result = await listMallProductCategory();
+    const nodes: Node[] = [];
+    result.forEach(category => {
+      nodes.push({
+        id: category.id,
+        parent_id: category.parent_id == 0 ? undefined : category.parent_id
+      } as Node)
+    });
+    const parentNodeLists = getParentNodeLists(nodes);
+    for (let index = 0, len = result.length; index < len; index++) {
+      const category = result[index];
+      const parentNodes = parentNodeLists.get(category.id);
+      category.hierarchy = [];
+      if (parentNodes && parentNodes.length > 0) {
+        parentNodes.forEach(node => category.hierarchy.push(node.id.toString()));
+      }
+      category.hierarchy.push(category.id.toString());
+
+      const file = await downloadSystemFile(category.file_id, (progress) => { })
+      category.previewUrl = window.URL.createObjectURL(file);
+    }
+    setRecords(result);
+
+    // 设置图片
+    // for (let index = 0, len = result.length; index < len; index ++) {
+    //   const category = result[index];
+    //   const file = await downloadSystemFile(category.file_id, (progress) => { })
+    //   category.previewUrl = window.URL.createObjectURL(file);
+    // }
+    // result.forEach(async (category) => {
+    //   const file = await downloadSystemFile(category.file_id, (progress) => { })
+    //   category.previewUrl = window.URL.createObjectURL(file);
+    // })
   };
 
   const handleClickOpenAdd = () => {
@@ -120,35 +166,23 @@ export default function MallProductCategory() {
 
   useEffect(() => {
     refreshData();
-  }, [condition]);
+  }, []);
 
-  const handleSortModelChange = (model: GridSortModel, details: GridCallbackDetails) => {
-    setSortModel(model);
-    if (model.length > 0) {
-      setCondition((prev) => ({ ...prev, ...{ sort_field: model[0].field, sort: model[0].sort } } as MallProductCategoryQueryCondition));
-    }
-  };
-
-  const handleFilterModelChange = (model: GridFilterModel, _details: GridCallbackDetails) => {
-    setFilterModel(model);
-    if (model.items.length > 0) {
-      setCondition((prev) => ({ ...prev, ...{ filter_field: model.items[0].field, filter_operator: model.items[0].operator, filter_value: model.items[0].value } } as MallProductCategoryQueryCondition));
-    }
-  }
+  const getTreeDataPath = (row: any) => row && row.hierarchy;
 
   const refreshData = () => {
-    queryRecords(condition);
+    queryRecords();
   };
 
   return (
-    <Box sx={ {height: '100%', display: 'flex', flexDirection: 'column'} }>
-      <Box sx={ {mb: 2, display: 'flex', justifyContent: 'space-between'} }>
+    <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+      <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between' }}>
         <Box></Box>
         {hasOperatePermission('mall:product:category:add') && <Button variant="customContained" onClick={handleClickOpenAdd}>
           {t('global.operate.add')}
         </Button>}
       </Box>
-      <DataGrid
+      {/* <DataGrid
         rowCount={total}
         rows={records}
         columns={columns}
@@ -169,6 +203,13 @@ export default function MallProductCategory() {
             size: model.pageSize,
           }));
         }}
+      /> */}
+      <CustomizedDataGridPro
+        columns={columns}
+        initialRows={records}
+        getTreeDataPath={getTreeDataPath}
+        hideFooter={true}
+        initSortModel={sortModel}
       />
       <MallProductCategoryAdd ref={addMallProductCategory} onSubmit={refreshData} />
       <MallProductCategoryEdit ref={editMallProductCategory} onSubmit={refreshData} />
