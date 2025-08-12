@@ -26,11 +26,8 @@ export default function MallProductCategory() {
   const deleteMallProductCategory = useRef(null);
 
   const PreviewImage = styled('img')({
-    // width: '100%',
-    // height: '100%',
     height: '60%',
     objectFit: 'contain',
-    // position: 'absolute',
     top: 0,
     left: 0,
   });
@@ -135,21 +132,11 @@ export default function MallProductCategory() {
       }
       category.hierarchy.push(category.id.toString());
 
+      // 设置图片
       const file = await downloadSystemFile(category.file_id, (progress) => { })
       category.previewUrl = window.URL.createObjectURL(file);
     }
     setRecords(result);
-
-    // 设置图片
-    // for (let index = 0, len = result.length; index < len; index ++) {
-    //   const category = result[index];
-    //   const file = await downloadSystemFile(category.file_id, (progress) => { })
-    //   category.previewUrl = window.URL.createObjectURL(file);
-    // }
-    // result.forEach(async (category) => {
-    //   const file = await downloadSystemFile(category.file_id, (progress) => { })
-    //   category.previewUrl = window.URL.createObjectURL(file);
-    // })
   };
 
   const handleClickOpenAdd = () => {

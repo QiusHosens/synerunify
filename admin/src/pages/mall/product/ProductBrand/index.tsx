@@ -1,4 +1,4 @@
-import { Box, Button, Switch } from '@mui/material';
+import { Box, Button, styled, Switch } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { DataGrid, GridCallbackDetails, GridColDef, GridFilterModel, GridRenderCellParams, GridSortModel } from '@mui/x-data-grid';
@@ -10,6 +10,7 @@ import MallProductBrandEdit from './Edit';
 import MallProductBrandDelete from './Delete';
 import { useHomeStore } from '@/store';
 import CustomizedAutoMore from '@/components/CustomizedAutoMore';
+import { downloadSystemFile } from '@/api/system_file';
 
 export default function MallProductBrand() {
   const { t } = useTranslation();
@@ -28,6 +29,13 @@ export default function MallProductBrand() {
   const addMallProductBrand = useRef(null);
   const editMallProductBrand = useRef(null);
   const deleteMallProductBrand = useRef(null);
+
+  const PreviewImage = styled('img')({
+    height: '60%',
+    objectFit: 'contain',
+    top: 0,
+    left: 0,
+  });
 
   const handleStatusChange = useCallback(
     async (e: React.ChangeEvent<HTMLInputElement>, checked: boolean, data: MallProductBrandResponse) => {
@@ -54,7 +62,17 @@ export default function MallProductBrand() {
   const columns: GridColDef[] = useMemo(
     () => [
       { field: 'name', headerName: t("common.title.name"), flex: 1, minWidth: 100 },
-      { field: 'file_id', headerName: t("page.mall.product.brand.title.pic.url"), flex: 1, minWidth: 100 },
+      {
+        field: 'file_id',
+        headerName: t("page.mall.product.brand.title.file"),
+        flex: 1,
+        minWidth: 100,
+        renderCell: (params: GridRenderCellParams) => (
+          <Box sx={{ height: '100%', display: 'flex', gap: 1, alignItems: 'center' }}>
+            <PreviewImage src={params.row.previewUrl} />
+          </Box>
+        ),
+      },
       { field: 'sort', headerName: t("common.title.sort"), flex: 1, minWidth: 100 },
       { field: 'description', headerName: t("common.title.description"), flex: 1, minWidth: 100 },
       {
@@ -103,7 +121,14 @@ export default function MallProductBrand() {
 
   const queryRecords = async (condition: MallProductBrandQueryCondition) => {
     const result = await pageMallProductBrand(condition);
-    setRecords(result.list);
+    const list = result.list;
+    for (let index = 0, len = list.length; index < len; index++) {
+      const brand = list[index];
+      // 设置图片
+      const file = await downloadSystemFile(brand.file_id, (progress) => { })
+      brand.previewUrl = window.URL.createObjectURL(file);
+    }
+    setRecords(list);
     setTotal(result.total);
   };
 

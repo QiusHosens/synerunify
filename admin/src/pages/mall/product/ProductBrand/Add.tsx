@@ -1,22 +1,33 @@
-import { Box, Button, FormControl, Switch, TextField, Typography } from '@mui/material';
+import { Box, Button, FormControl, Grid, Switch, TextField, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { forwardRef, useImperativeHandle, useState } from 'react';
+import { forwardRef, useCallback, useImperativeHandle, useState } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
 import { createMallProductBrand, MallProductBrandRequest } from '@/api';
 import CustomizedDialog from '@/components/CustomizedDialog';
+import CustomizedFileUpload, { UploadFile } from '@/components/CustomizedFileUpload';
+import { uploadSystemFile } from '@/api/system_file';
 
 interface FormValues {
   name: string; // 品牌名称
-  file_id: string; // 品牌图片
+  file_id?: number; // 品牌图片
   sort: number; // 品牌排序
   description: string; // 品牌描述
   status: number; // 状态
+
+  file?: UploadFile | null;
 }
 
 interface FormErrors {
   name?: string; // 品牌名称
   file_id?: string; // 品牌图片
   status?: string; // 状态
+}
+
+interface TreeNode {
+  id: string | number;
+  parent_id: number;
+  label: string;
+  children: TreeNode[];
 }
 
 interface MallProductBrandAddProps {
@@ -30,12 +41,13 @@ const MallProductBrandAdd = forwardRef(({ onSubmit }: MallProductBrandAddProps, 
   const [maxWidth] = useState<DialogProps['maxWidth']>('sm');
   const [formValues, setFormValues] = useState<FormValues>({
     name: '',
-    file_id: '',
     sort: 0,
     description: '',
     status: 0,
   });
   const [errors, setErrors] = useState<FormErrors>({});
+  const [fileWidth] = useState<number>(240);
+  const [fileHeight] = useState<number>(160);
 
   useImperativeHandle(ref, () => ({
     show() {
@@ -50,11 +62,11 @@ const MallProductBrandAdd = forwardRef(({ onSubmit }: MallProductBrandAddProps, 
     const newErrors: FormErrors = {};
 
     if (!formValues.name.trim()) {
-      newErrors.name = t('common.error.name');
+      newErrors.name = t('global.error.input.please') + t('common.title.name');
     }
 
-    if (!formValues.file_id.trim()) {
-      newErrors.file_id = t('page.mall.product.brand.error.pic.url');
+    if (!formValues.file_id && formValues.file_id != 0) {
+      newErrors.file_id = t('global.error.select.please') + t('page.mall.product.brand.title.file');
     }
 
     setErrors(newErrors);
@@ -74,7 +86,6 @@ const MallProductBrandAdd = forwardRef(({ onSubmit }: MallProductBrandAddProps, 
   const reset = () => {
     setFormValues({
       name: '',
-      file_id: '',
       sort: 0,
       description: '',
       status: 0,
@@ -136,6 +147,40 @@ const MallProductBrandAdd = forwardRef(({ onSubmit }: MallProductBrandAddProps, 
     }
   };
 
+  const handleFileChange = useCallback(async (file: UploadFile | null, action: 'upload' | 'remove') => {
+    if (action === 'upload' && file) {
+      // 更新文件列表,增加一个附件,等待上传完成后在写入信息
+      setFormValues((prev) => {
+        return { ...prev, file };
+      })
+
+      // 上传文件
+      try {
+        const result = await uploadSystemFile(file.file, (progress) => {
+          setFormValues((prev) => {
+            return { ...prev, file: { ...prev.file!, progress } };
+          });
+        });
+
+        // 上传完成
+        setFormValues((prev) => {
+          return { ...prev, file_id: result, file: { ...prev.file!, status: 'done' as const } };
+        });
+      } catch (error) {
+        console.error('upload file error', error);
+        // 上传失败
+        setFormValues((prev) => {
+          return { ...prev, file: { ...prev.file!, status: 'error' as const } };
+        });
+      }
+    } else if (action === 'remove') {
+      // 删除文件并移除上传框
+      setFormValues((prev) => {
+        return { ...prev, file: undefined };
+      });
+    }
+  }, []);
+
   return (
     <CustomizedDialog
       open={open}
@@ -160,7 +205,7 @@ const MallProductBrandAdd = forwardRef(({ onSubmit }: MallProductBrandAddProps, 
           width: 'fit-content',
         }}
       >
-        <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' } }}>
+        <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '240px' } }}>
           <TextField
             required
             size="small"
@@ -171,16 +216,23 @@ const MallProductBrandAdd = forwardRef(({ onSubmit }: MallProductBrandAddProps, 
             error={!!errors.name}
             helperText={errors.name}
           />
-          <TextField
-            required
-            size="small"
-            label={t("page.mall.product.brand.title.pic.url")}
-            name='file_id'
-            value={formValues.file_id}
-            onChange={handleInputChange}
-            error={!!errors.file_id}
-            helperText={errors.file_id}
-          />
+        </FormControl>
+        <Typography sx={{ mt: 2, mb: 1 }}>
+          {t('page.mall.product.category.title.file')}
+        </Typography>
+        <Grid size={{ xs: 12, md: 4 }}>
+          <CustomizedFileUpload
+            id={'file-upload'}
+            accept=".jpg,jpeg,.png"
+            maxSize={100}
+            onChange={(file, action) => handleFileChange(file, action)}
+            file={formValues.file}
+            width={fileWidth}
+            height={fileHeight}
+          >
+          </CustomizedFileUpload>
+        </Grid>
+        <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '240px' } }}>
           <TextField
             size="small"
             type="number"

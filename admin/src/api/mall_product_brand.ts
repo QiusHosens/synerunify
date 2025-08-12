@@ -1,4 +1,5 @@
 import { PaginatedRequest, PaginatedResponse } from '@/base/page';
+import { UploadFile } from '@/components/CustomizedFileUpload';
 import { api } from '@/utils/request';
 
 const apis = {
@@ -19,7 +20,9 @@ export interface MallProductBrandRequest {
   sort: number; // 品牌排序
   description: string; // 品牌描述
   status: number; // 状态
-  }
+
+  file?: UploadFile | null;
+}
 
 export interface MallProductBrandResponse {
   id: number; // 品牌编号
@@ -32,10 +35,12 @@ export interface MallProductBrandResponse {
   create_time: string; // 创建时间
   updater: number; // 更新者ID
   update_time: string; // 更新时间
-  }
+
+  previewUrl?: string; // 图片预览地址
+}
 
 export interface MallProductBrandQueryCondition extends PaginatedRequest {
-  
+
 }
 
 export const createMallProductBrand = (mall_product_brand: MallProductBrandRequest): Promise<number> => {
