@@ -62,7 +62,7 @@ export default function MallProductProperty() {
         flex: 1,
         minWidth: 80,
         renderCell: (params: GridRenderCellParams) => (
-          <Box sx={ { height: '100%', display: 'flex', gap: 1, alignItems: 'center' } }>
+          <Box sx={{ height: '100%', display: 'flex', gap: 1, alignItems: 'center' }}>
             <Switch name="status" checked={!params.row.status} disabled={statusDisabled(params.row.status)} onChange={(event, checked) => handleStatusChange(event, checked, params.row)} />
           </Box>
         ),
@@ -85,7 +85,7 @@ export default function MallProductProperty() {
               onClick={() => handleClickOpenEdit(params.row)}
             />}
             {hasOperatePermission('mall:product:property:delete') && <Button
-              sx={ {color: 'error.main'} }
+              sx={{ color: 'error.main' }}
               size="small"
               variant='customOperate'
               title={t('global.operate.delete') + t('global.common')}
@@ -140,8 +140,8 @@ export default function MallProductProperty() {
   };
 
   return (
-    <Box sx={ {height: '100%', display: 'flex', flexDirection: 'column'} }>
-      <Box sx={ {mb: 2, display: 'flex', justifyContent: 'space-between'} }>
+    <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+      <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between' }}>
         <Box></Box>
         {hasOperatePermission('mall:product:property:add') && <Button variant="customContained" onClick={handleClickOpenAdd}>
           {t('global.operate.add')}
@@ -160,7 +160,7 @@ export default function MallProductProperty() {
         filterModel={filterModel}
         onFilterModelChange={handleFilterModelChange}
         pageSizeOptions={[10, 20, 50, 100]}
-        paginationModel={ {page: condition.page - 1, pageSize: condition.size} }
+        paginationModel={{ page: condition.page - 1, pageSize: condition.size }}
         onPaginationModelChange={(model) => {
           setCondition((prev) => ({
             ...prev,

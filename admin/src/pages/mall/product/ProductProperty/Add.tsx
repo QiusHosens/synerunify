@@ -9,9 +9,9 @@ interface FormValues {
   name: string; // 名称
   status: number; // 状态
   remark: string; // 备注
-  }
+}
 
-interface FormErrors { 
+interface FormErrors {
   status?: string; // 状态
 }
 
@@ -28,7 +28,7 @@ const MallProductPropertyAdd = forwardRef(({ onSubmit }: MallProductPropertyAddP
     name: '',
     status: 0,
     remark: '',
-    });
+  });
   const [errors, setErrors] = useState<FormErrors>({});
 
   useImperativeHandle(ref, () => ({
@@ -42,11 +42,11 @@ const MallProductPropertyAdd = forwardRef(({ onSubmit }: MallProductPropertyAddP
 
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
-    
+
     if (!formValues.status && formValues.status != 0) {
       newErrors.status = t('common.error.status');
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -66,7 +66,7 @@ const MallProductPropertyAdd = forwardRef(({ onSubmit }: MallProductPropertyAddP
       name: '',
       status: 0,
       remark: '',
-      });
+    });
     setErrors({});
   }
 
@@ -141,12 +141,14 @@ const MallProductPropertyAdd = forwardRef(({ onSubmit }: MallProductPropertyAddP
       <Box
         noValidate
         component="form"
-        sx={ {display: 'flex',
+        sx={{
+          display: 'flex',
           flexDirection: 'column',
           m: 'auto',
-          width: 'fit-content',} }
+          width: 'fit-content',
+        }}
       >
-        <FormControl sx={ {minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' }} }>
+        <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' } }}>
           <TextField
             size="small"
             label={t("common.title.name")}
@@ -156,25 +158,15 @@ const MallProductPropertyAdd = forwardRef(({ onSubmit }: MallProductPropertyAddP
           />
           <TextField
             size="small"
-            type="number"
-            label={t("common.title.status")}
-            name='status'
-            value={formValues.status}
-            onChange={handleInputChange}
-            error={!!errors.status}
-            helperText={errors.status}
-          />
-          <TextField
-            size="small"
             label={t("common.title.remark")}
             name='remark'
             value={formValues.remark}
             onChange={handleInputChange}
           />
-          </FormControl>
-        <Box sx={ {mt: 2, display: 'flex', alignItems: 'center'} }>
-          <Typography sx={ {mr: 4} }>{t("global.title.status")}</Typography>
-          <Switch sx={ {mr: 2} } name='status' checked={!formValues.status} onChange={handleStatusChange} />
+        </FormControl>
+        <Box sx={{ mt: 2, display: 'flex', alignItems: 'center' }}>
+          <Typography sx={{ mr: 4 }}>{t("global.title.status")}</Typography>
+          <Switch sx={{ mr: 2 }} name='status' checked={!formValues.status} onChange={handleStatusChange} />
           <Typography>{formValues.status == 0 ? t('global.switch.status.true') : t('global.switch.status.false')}</Typography>
         </Box>
       </Box>

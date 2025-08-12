@@ -142,16 +142,6 @@ const MallProductPropertyEdit = forwardRef(({ onSubmit }: MallProductPropertyEdi
           />
           <TextField
             size="small"
-            type="number"
-            label={t("common.title.status")}
-            name='status'
-            value={mallProductProperty.status}
-            onChange={handleInputChange}
-            error={!!errors.status}
-            helperText={errors.status}
-          />
-          <TextField
-            size="small"
             label={t("common.title.remark")}
             name='remark'
             value={mallProductProperty.remark}
