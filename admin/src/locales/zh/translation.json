@@ -172,7 +172,7 @@
   "global.page.erp.inventory.transfer": "库存调拨",
   "global.page.erp.payment": "付款",
   "global.page.erp.receipt": "收款",
-  "global.page.mall.product.list": "商品列表",
+  "global.page.mall.product": "商品",
   "global.page.mall.product.category": "商品分类",
   "global.page.mall.product.brand": "商品品牌",
   "global.page.mall.product.property": "商品属性",
@@ -434,6 +434,11 @@
     "request.method": "请求方法"
   },
   "page.mall.product": {
+    "tab.basic.settings": "基础设置",
+    "tab.price.inventory": "价格库存",
+    "tab.logistics.settings": "物流设置",
+    "tab.product.detail": "商品详情",
+    "tab.other.settings": "其他设置",
     "title.name": "商品名称",
     "title.keyword": "关键字",
     "title.introduction": "商品简介",
@@ -456,16 +461,6 @@
     "title.sales.count": "商品销量",
     "title.virtual.sales.count": "虚拟销量",
     "title.browse.count": "商品点击量",
-    "error.name": "请输入商品名称",
-    "error.category": "请选择商品分类",
-    "error.file": "请输入商品封面图",
-    "error.sort": "请输入排序字段",
-    "error.status": "请输入商品状态",
-    "error.price": "请输入商品价格",
-    "error.cost.price": "请输入成本价",
-    "error.stock": "请输入库存",
-    "error.delivery.types": "请输入配送方式数组",
-    "error.give.integral": "请输入赠送积分",
     "category": {
       "title.file": "分类图片"
     },

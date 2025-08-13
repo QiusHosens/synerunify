@@ -28,7 +28,7 @@ pub struct CreateMallProductSpuRequest {
     
     pub status: i8, // 商品状态: 0 上架（开启） 1 下架（禁用） -1 回收
     
-    pub spec_type: Option<bool>, // 规格类型：0 单规格 1 多规格
+    pub spec_type: Option<i8>, // 规格类型：0 单规格 1 多规格
     
     pub price: i32, // 商品价格，单位使用：分
     
@@ -44,7 +44,7 @@ pub struct CreateMallProductSpuRequest {
     
     pub give_integral: i32, // 赠送积分
     
-    pub sub_commission_type: Option<bool>, // 分销类型
+    pub sub_commission_type: Option<i8>, // 分销类型
     
     pub sales_count: Option<i32>, // 商品销量
     
@@ -79,7 +79,7 @@ pub struct UpdateMallProductSpuRequest {
     
     pub status: Option<i8>, // 商品状态: 0 上架（开启） 1 下架（禁用） -1 回收
     
-    pub spec_type: Option<bool>, // 规格类型：0 单规格 1 多规格
+    pub spec_type: Option<i8>, // 规格类型：0 单规格 1 多规格
     
     pub price: Option<i32>, // 商品价格，单位使用：分
     
@@ -95,7 +95,7 @@ pub struct UpdateMallProductSpuRequest {
     
     pub give_integral: Option<i32>, // 赠送积分
     
-    pub sub_commission_type: Option<bool>, // 分销类型
+    pub sub_commission_type: Option<i8>, // 分销类型
     
     pub sales_count: Option<i32>, // 商品销量
     

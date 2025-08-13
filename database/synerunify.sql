@@ -11,7 +11,7 @@
  Target Server Version : 80100 (8.1.0)
  File Encoding         : 65001
 
- Date: 12/08/2025 15:02:01
+ Date: 13/08/2025 14:29:45
 */
 
 SET NAMES utf8mb4;
@@ -1255,7 +1255,7 @@ CREATE TABLE `mall_product_category`  (
 -- ----------------------------
 -- Records of mall_product_category
 -- ----------------------------
-INSERT INTO `mall_product_category` VALUES (1, 0, '手机', 71, 0, 0, 1, '2025-08-12 02:20:15', 1, '2025-08-12 05:51:34', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (1, 0, '手机', 78, 0, 0, 1, '2025-08-12 02:20:15', 1, '2025-08-12 08:07:04', b'0', 1);
 INSERT INTO `mall_product_category` VALUES (2, 0, '电脑', 72, 1, 0, 1, '2025-08-12 02:56:31', 1, '2025-08-12 02:56:31', b'0', 1);
 INSERT INTO `mall_product_category` VALUES (3, 1, '普通手机', 73, 0, 0, 1, '2025-08-12 03:00:54', 1, '2025-08-12 03:00:54', b'0', 1);
 INSERT INTO `mall_product_category` VALUES (4, 1, '智能手机', 73, 1, 0, 1, '2025-08-12 03:01:10', 1, '2025-08-12 05:51:46', b'0', 1);
@@ -1417,7 +1417,7 @@ CREATE TABLE `mall_product_spu`  (
   `slider_file_ids` varchar(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '商品轮播图id数组，以逗号分隔最多上传15张',
   `sort` int NOT NULL DEFAULT 0 COMMENT '排序字段',
   `status` tinyint NOT NULL DEFAULT 0 COMMENT '商品状态: 0 上架（开启） 1 下架（禁用） -1 回收',
-  `spec_type` bit(1) NULL DEFAULT NULL COMMENT '规格类型：0 单规格 1 多规格',
+  `spec_type` tinyint NULL DEFAULT NULL COMMENT '规格类型：0 单规格 1 多规格',
   `price` int NOT NULL DEFAULT -1 COMMENT '商品价格，单位使用：分',
   `market_price` int NULL DEFAULT NULL COMMENT '市场价，单位使用：分',
   `cost_price` int NOT NULL DEFAULT -1 COMMENT '成本价，单位： 分',
@@ -1425,7 +1425,7 @@ CREATE TABLE `mall_product_spu`  (
   `delivery_types` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '配送方式数组',
   `delivery_template_id` bigint NULL DEFAULT NULL COMMENT '物流配置模板编号',
   `give_integral` int NOT NULL DEFAULT 0 COMMENT '赠送积分',
-  `sub_commission_type` bit(1) NULL DEFAULT NULL COMMENT '分销类型',
+  `sub_commission_type` tinyint NULL DEFAULT NULL COMMENT '分销类型',
   `sales_count` int NULL DEFAULT 0 COMMENT '商品销量',
   `virtual_sales_count` int NULL DEFAULT 0 COMMENT '虚拟销量',
   `browse_count` int NULL DEFAULT 0 COMMENT '商品点击量',
@@ -2818,7 +2818,7 @@ CREATE TABLE `system_file`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 77 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '文件信息表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 82 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '文件信息表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of system_file
@@ -2899,6 +2899,11 @@ INSERT INTO `system_file` VALUES (73, '手机.png', 'image/png', 2741, '2025/08/
 INSERT INTO `system_file` VALUES (74, '手机.png', 'image/png', 2741, '2025/08/12/80903551357816832_手机.png', 1, '0000', 1, 1, '2025-08-12 06:01:50', 1, '2025-08-12 06:01:50', b'0', 1);
 INSERT INTO `system_file` VALUES (75, '手机.png', 'image/png', 2741, '2025/08/12/80905568339890176_手机.png', 1, '0000', 1, 1, '2025-08-12 06:09:52', 1, '2025-08-12 06:09:52', b'0', 1);
 INSERT INTO `system_file` VALUES (76, '笔记本.png', 'image/png', 2492, '2025/08/12/80915939503116288_笔记本.png', 1, '0000', 1, 1, '2025-08-12 06:51:01', 1, '2025-08-12 06:51:01', b'0', 1);
+INSERT INTO `system_file` VALUES (77, '笔记本.png', 'image/png', 2492, '2025/08/12/80926952256442368_笔记本.png', 1, '0000', 1, 1, '2025-08-12 07:34:51', 1, '2025-08-12 07:34:51', b'0', 1);
+INSERT INTO `system_file` VALUES (78, '笔记本.png', 'image/png', 2492, '2025/08/12/80935021011013632_笔记本.png', 1, '0000', 1, 1, '2025-08-12 08:06:51', 1, '2025-08-12 08:06:51', b'0', 1);
+INSERT INTO `system_file` VALUES (79, '手机.png', 'image/png', 2741, '2025/08/12/80935196005765120_手机.png', 1, '0000', 1, 1, '2025-08-12 08:07:32', 1, '2025-08-12 08:07:32', b'0', 1);
+INSERT INTO `system_file` VALUES (80, '笔记本.png', 'image/png', 2492, '2025/08/12/80935206671880192_笔记本.png', 1, '0000', 1, 1, '2025-08-12 08:07:35', 1, '2025-08-12 08:07:35', b'0', 1);
+INSERT INTO `system_file` VALUES (81, '笔记本.png', 'image/png', 2492, '2025/08/12/80935635468161024_笔记本.png', 1, '0000', 1, 1, '2025-08-12 08:09:17', 1, '2025-08-12 08:09:17', b'0', 1);
 
 -- ----------------------------
 -- Table structure for system_menu

@@ -1,4 +1,5 @@
 import { PaginatedRequest, PaginatedResponse } from '@/base/page';
+import { UploadFile } from '@/components/CustomizedFileUpload';
 import { api } from '@/utils/request';
 
 const apis = {
@@ -24,7 +25,7 @@ export interface MallProductSpuRequest {
   slider_file_ids: string; // 商品轮播图id数组，以逗号分隔最多上传15张
   sort: number; // 排序字段
   status: number; // 商品状态: 0 上架（开启） 1 下架（禁用） -1 回收
-  spec_type: boolean; // 规格类型：0 单规格 1 多规格
+  spec_type: number; // 规格类型：0 单规格 1 多规格
   price: number; // 商品价格，单位使用：分
   market_price: number; // 市场价，单位使用：分
   cost_price: number; // 成本价，单位： 分
@@ -32,11 +33,14 @@ export interface MallProductSpuRequest {
   delivery_types: string; // 配送方式数组
   delivery_template_id: number; // 物流配置模板编号
   give_integral: number; // 赠送积分
-  sub_commission_type: boolean; // 分销类型
+  sub_commission_type: number; // 分销类型
   sales_count: number; // 商品销量
   virtual_sales_count: number; // 虚拟销量
   browse_count: number; // 商品点击量
-  }
+
+  file?: UploadFile | null; // 商品封面文件
+  slider_files: UploadFile[]; // 商品轮播图文件列表
+}
 
 export interface MallProductSpuResponse {
   id: number; // 商品 SPU 编号，自增
@@ -50,7 +54,7 @@ export interface MallProductSpuResponse {
   slider_file_ids: string; // 商品轮播图id数组，以逗号分隔最多上传15张
   sort: number; // 排序字段
   status: number; // 商品状态: 0 上架（开启） 1 下架（禁用） -1 回收
-  spec_type: boolean; // 规格类型：0 单规格 1 多规格
+  spec_type: number; // 规格类型：0 单规格 1 多规格
   price: number; // 商品价格，单位使用：分
   market_price: number; // 市场价，单位使用：分
   cost_price: number; // 成本价，单位： 分
@@ -58,7 +62,7 @@ export interface MallProductSpuResponse {
   delivery_types: string; // 配送方式数组
   delivery_template_id: number; // 物流配置模板编号
   give_integral: number; // 赠送积分
-  sub_commission_type: boolean; // 分销类型
+  sub_commission_type: number; // 分销类型
   sales_count: number; // 商品销量
   virtual_sales_count: number; // 虚拟销量
   browse_count: number; // 商品点击量
@@ -66,10 +70,13 @@ export interface MallProductSpuResponse {
   create_time: string; // 创建时间
   updater: number; // 更新者ID
   update_time: string; // 更新时间
-  }
+
+  previewUrl?: string; // 商品封面预览地址
+  sliderPreviewUrls: string[]; // 商品轮播图预览地址
+}
 
 export interface MallProductSpuQueryCondition extends PaginatedRequest {
-  
+
 }
 
 export const createMallProductSpu = (mall_product_spu: MallProductSpuRequest): Promise<number> => {
