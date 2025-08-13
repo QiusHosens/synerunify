@@ -9,6 +9,12 @@ import SelectTree from '@/components/SelectTree';
 import { uploadSystemFile } from '@/api/system_file';
 import CustomizedFileUpload, { UploadFile } from '@/components/CustomizedFileUpload';
 
+interface AttachmentValues {
+  file_id?: number; // 文件ID
+
+  file?: UploadFile | null;
+}
+
 interface FormValues {
   name: string; // 商品名称
   keyword: string; // 关键字
@@ -69,6 +75,7 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
   const [brands, setBrands] = useState<MallProductBrandResponse[]>([]);
   const [treeData, setTreeData] = useState<TreeNode[]>([]);
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | number>(0);
+  const [sliderFiles, setSliderFiles] = useState<AttachmentValues[]>([]);
   const [formValues, setFormValues] = useState<FormValues>({
     name: '',
     keyword: '',
@@ -373,6 +380,54 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
     }
   }, []);
 
+  const handleSliderFileChange = useCallback(async (file: UploadFile | null, action: 'upload' | 'remove', index: number) => {
+    // console.log(`Upload ${index} file updated:`, file, `Action: ${action}`);
+
+    if (action === 'upload' && file) {
+      // 更新文件列表,增加一个附件,等待上传完成后在写入信息
+      setSliderFiles((prev) => {
+        return [...prev, { file }];
+      })
+
+      // 上传文件
+      try {
+        const result = await uploadSystemFile(file.file, (progress) => {
+          setSliderFiles((prev) =>
+            prev.map((item, idx) => {
+              if (idx !== index) return item;
+              const updatedItem = { ...item, file: { ...item.file!, progress } };
+              return updatedItem;
+            })
+          );
+        });
+
+        // 上传完成
+        setSliderFiles((prev) =>
+          prev.map((item, idx) => {
+            if (idx !== index) return item;
+            const updatedItem = { ...item, file_id: result, file: { ...item.file!, status: 'done' as const } };
+            return updatedItem;
+          })
+        );
+      } catch (error) {
+        console.error('upload file error', error);
+        // 上传失败
+        setSliderFiles((prev) =>
+          prev.map((item, idx) => {
+            if (idx !== index) return item;
+            const updatedItem = { ...item, file: { ...item.file!, status: 'error' as const } };
+            return updatedItem;
+          })
+        );
+      }
+    } else if (action === 'remove') {
+      // 删除文件并移除上传框
+      setSliderFiles((prev) =>
+        prev.filter((_, idx) => idx !== index)
+      );
+    }
+  }, []);
+
   return (
     <CustomizedDialog
       open={open}
@@ -388,8 +443,8 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
       }
     >
       <Box
-        noValidate
-        component="form"
+        // noValidate
+        // component="form"
         sx={{
           display: 'flex',
           flexDirection: 'column',
@@ -408,63 +463,72 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
             </TabList>
           </Box>
           <TabPanel value={1}>
-            <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '320px' } }}>
-              <TextField
-                required
-                size="small"
-                label={t("page.mall.product.title.name")}
-                name='name'
-                value={formValues.name}
-                onChange={handleInputChange}
-                error={!!errors.name}
-                helperText={errors.name}
-              />
-            </FormControl>
-            <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiSelect-root': { width: '320px' } }}>
-              <SelectTree
-                expandToSelected
-                name='parent_id'
-                size="small"
-                label={t('common.title.parent')}
-                treeData={treeData}
-                value={selectedCategoryId}
-                onChange={(name, node) => handleChange(name, node as TreeNode)}
-              />
-            </FormControl>
-            <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiSelect-root': { width: '320px' } }}>
-              <InputLabel required size="small" id="brand-select-label">{t("page.mall.product.title.brand")}</InputLabel>
-              <Select
-                required
-                size="small"
-                labelId="brand-select-label"
-                label={t("page.mall.product.title.brand")}
-                name='brand_id'
-                value={formValues.brand_id}
-                onChange={(e) => handleSelectChange(e)}
-              >
-                {brands.map(item => (<MenuItem key={item.id} value={item.id}>{item.name}</MenuItem>))}
-              </Select>
-            </FormControl>
-            <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '320px' } }}>
-              <TextField
-                size="small"
-                label={t("page.mall.product.title.keyword")}
-                name='keyword'
-                value={formValues.keyword}
-                onChange={handleInputChange}
-              />
-              <TextField
-                size="small"
-                label={t("page.mall.product.title.introduction")}
-                name='introduction'
-                value={formValues.introduction}
-                onChange={handleInputChange}
-              />
-            </FormControl>
-            <Typography sx={{ mt: 2, mb: 1 }}>
-              {t('page.mall.product.title.file')}
-            </Typography>
-            <Grid size={{ xs: 12, md: 4 }}>
+            <Box
+              noValidate
+              component="form"
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                m: 'auto',
+                width: 'fit-content',
+              }}
+            >
+              <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '240px' } }}>
+                <TextField
+                  required
+                  size="small"
+                  label={t("page.mall.product.title.name")}
+                  name='name'
+                  value={formValues.name}
+                  onChange={handleInputChange}
+                  error={!!errors.name}
+                  helperText={errors.name}
+                />
+              </FormControl>
+              <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiSelect-root': { width: '240px' } }}>
+                <SelectTree
+                  expandToSelected
+                  name='parent_id'
+                  size="small"
+                  label={t('common.title.parent')}
+                  treeData={treeData}
+                  value={selectedCategoryId}
+                  onChange={(name, node) => handleChange(name, node as TreeNode)}
+                />
+              </FormControl>
+              <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiSelect-root': { width: '240px' } }}>
+                <InputLabel required size="small" id="brand-select-label">{t("page.mall.product.title.brand")}</InputLabel>
+                <Select
+                  required
+                  size="small"
+                  labelId="brand-select-label"
+                  label={t("page.mall.product.title.brand")}
+                  name='brand_id'
+                  value={formValues.brand_id}
+                  onChange={(e) => handleSelectChange(e)}
+                >
+                  {brands.map(item => (<MenuItem key={item.id} value={item.id}>{item.name}</MenuItem>))}
+                </Select>
+              </FormControl>
+              <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '240px' } }}>
+                <TextField
+                  size="small"
+                  label={t("page.mall.product.title.keyword")}
+                  name='keyword'
+                  value={formValues.keyword}
+                  onChange={handleInputChange}
+                />
+                <TextField
+                  size="small"
+                  label={t("page.mall.product.title.introduction")}
+                  name='introduction'
+                  value={formValues.introduction}
+                  onChange={handleInputChange}
+                />
+              </FormControl>
+              <Typography sx={{ mt: 2, mb: 1 }}>
+                {t('page.mall.product.title.file')}
+              </Typography>
               <CustomizedFileUpload
                 canRemove={false}
                 showFilename={false}
@@ -477,24 +541,37 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
                 height={fileHeight}
               >
               </CustomizedFileUpload>
-            </Grid>
-            {/* <TextField
-              required
-              size="small"
-              label={t("page.mall.product.title.file_id")}
-              name='file_id'
-              value={formValues.file_id}
-              onChange={handleInputChange}
-              error={!!errors.file_id}
-              helperText={errors.file_id}
-            />
-            <TextField
-              size="small"
-              label={t("page.mall.product.title.slider_pic_urls")}
-              name='slider_pic_urls'
-              value={formValues.slider_file_ids}
-              onChange={handleInputChange}
-            /> */}
+              <Typography sx={{ mt: 2, mb: 1 }}>
+                {t('page.mall.product.title.slider.files')}
+              </Typography>
+              {sliderFiles.map((item, index) => (
+                <Box key={index} sx={{ mt: 1 }}>
+                  <CustomizedFileUpload
+                    showFilename={false}
+                    id={'file-upload-' + index}
+                    accept=".jpg,jpeg,.png"
+                    maxSize={100}
+                    onChange={(files, action) => handleSliderFileChange(files, action, index)}
+                    file={item.file}
+                    width={fileWidth}
+                    height={fileHeight}
+                  >
+                  </CustomizedFileUpload>
+                </Box>
+              ))}
+              <Box sx={{ mt: 1 }}>
+                <CustomizedFileUpload
+                  showFilename={false}
+                  id={'file-upload-' + sliderFiles.length}
+                  accept=".jpg,jpeg,.png"
+                  maxSize={100}
+                  onChange={(file, action) => handleSliderFileChange(file, action, sliderFiles.length)}
+                  width={fileWidth}
+                  height={fileHeight}
+                >
+                </CustomizedFileUpload>
+              </Box>
+            </Box>
           </TabPanel>
           <TabPanel value={2}></TabPanel>
           <TabPanel value={3}></TabPanel>

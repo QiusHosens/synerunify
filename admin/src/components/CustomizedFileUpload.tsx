@@ -153,7 +153,7 @@ const CustomizedFileUpload: React.FC<UploadProps> = ({
 
             onChange?.(newFile, 'upload');
         },
-        [maxSize, onChange]
+        [maxSize, onChange, showMessage, t]
     );
 
     // 处理拖拽上传
@@ -304,7 +304,7 @@ const CustomizedFileUpload: React.FC<UploadProps> = ({
                 ) : file?.status === 'done' ? (
                     <>
                         <PreviewImage src={file.previewUrl} />
-                        {canRemove && <DeleteButton className='file-upload-delete' sx={{ display: 'none' }} onClick={(e) => { e.stopPropagation(); }}>
+                        {canRemove && <DeleteButton className='file-upload-delete' sx={{ display: 'none' }} onClick={(e) => { e.stopPropagation(); handleRemove(); }}>
                             <DeleteIcon fontSize="small" />
                         </DeleteButton>}
                         {showFilename && <Typography

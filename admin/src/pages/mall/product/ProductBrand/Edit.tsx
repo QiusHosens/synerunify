@@ -13,13 +13,6 @@ interface FormErrors {
   status?: string; // 状态
 }
 
-interface TreeNode {
-  id: string | number;
-  parent_id: number;
-  label: string;
-  children: TreeNode[];
-}
-
 interface MallProductBrandEditProps {
   onSubmit: () => void;
 }
@@ -236,21 +229,19 @@ const MallProductBrandEdit = forwardRef(({ onSubmit }: MallProductBrandEditProps
         <Typography sx={{ mt: 2, mb: 1 }}>
           {t('page.mall.product.category.title.file')}
         </Typography>
-        <Grid size={{ xs: 12, md: 4 }}>
-          <CustomizedFileUpload
-            canRemove={false}
-            showFilename={false}
-            id={'file-upload'}
-            accept=".jpg,jpeg,.png"
-            maxSize={100}
-            onChange={(file, action) => handleFileChange(file, action)}
-            file={mallProductBrand.file}
-            width={fileWidth}
-            height={fileHeight}
-            download={downloadImage}
-          >
-          </CustomizedFileUpload>
-        </Grid>
+        <CustomizedFileUpload
+          canRemove={false}
+          showFilename={false}
+          id={'file-upload'}
+          accept=".jpg,jpeg,.png"
+          maxSize={100}
+          onChange={(file, action) => handleFileChange(file, action)}
+          file={mallProductBrand.file}
+          width={fileWidth}
+          height={fileHeight}
+          download={downloadImage}
+        >
+        </CustomizedFileUpload>
         <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '240px' } }}>
           <TextField
             size="small"

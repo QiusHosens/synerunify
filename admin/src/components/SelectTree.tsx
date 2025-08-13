@@ -174,7 +174,7 @@ const SelectTree = ({ required, name, size, label, treeData, expandToSelected, o
               placeholder={t('global.condition.keyword')}
               value={searchTerm}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value)}
-              sx={{ mb: 1 }}
+              sx={{ mb: 1, width: '100%' }}
             />
             <SimpleTreeView
               expandedItems={expandedItems}
