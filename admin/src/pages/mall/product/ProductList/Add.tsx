@@ -1,4 +1,4 @@
-import { Box, Button, FormControl, Grid, InputLabel, MenuItem, Select, SelectChangeEvent, Switch, Tab, Tabs, TextField, Typography } from '@mui/material';
+import { Box, Button, FormControl, FormControlLabel, FormLabel, Grid, InputLabel, MenuItem, Radio, RadioGroup, Select, SelectChangeEvent, Switch, Tab, Tabs, TextField, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { forwardRef, useCallback, useImperativeHandle, useState } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
@@ -573,7 +573,45 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
               </Box>
             </Box>
           </TabPanel>
-          <TabPanel value={2}></TabPanel>
+          <TabPanel value={2}>
+            <Box
+              noValidate
+              component="form"
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                m: 'auto',
+                width: 'fit-content',
+              }}
+            >
+              <FormControl>
+                <FormLabel id="commission-row-radio-buttons-group-label">{t('page.mall.product.title.sub.commission.type')}</FormLabel>
+                <RadioGroup
+                  row
+                  aria-labelledby="commission-row-radio-buttons-group-label"
+                  name='sub_commission_type'
+                  value={formValues.sub_commission_type}
+                  onChange={handleInputChange}
+                >
+                  <FormControlLabel value="female" control={<Radio size="small" />} label="Female" />
+                  <FormControlLabel value="male" control={<Radio size="small" />} label="Male" />
+                </RadioGroup>
+              </FormControl>
+              <FormControl>
+                <FormLabel id="spec-row-radio-buttons-group-label">{t('page.mall.product.title.spec.type')}</FormLabel>
+                <RadioGroup
+                  row
+                  aria-labelledby="spec-row-radio-buttons-group-label"
+                  name='spec_type'
+                  value={formValues.spec_type}
+                  onChange={handleInputChange}
+                >
+                  <FormControlLabel value="female" control={<Radio size="small" />} label="Female" />
+                  <FormControlLabel value="male" control={<Radio size="small" />} label="Male" />
+                </RadioGroup>
+              </FormControl>
+            </Box>
+          </TabPanel>
           <TabPanel value={3}></TabPanel>
           <TabPanel value={4}></TabPanel>
           <TabPanel value={5}></TabPanel>
