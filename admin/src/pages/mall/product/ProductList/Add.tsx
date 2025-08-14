@@ -8,6 +8,7 @@ import { TabContext, TabList, TabPanel } from '@mui/lab';
 import SelectTree from '@/components/SelectTree';
 import { uploadSystemFile } from '@/api/system_file';
 import CustomizedFileUpload, { UploadFile } from '@/components/CustomizedFileUpload';
+import CustomizedDictRadioGroup from '@/components/CustomizedDictRadioGroup';
 
 interface AttachmentValues {
   file_id?: number; // 文件ID
@@ -584,32 +585,22 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
                 width: 'fit-content',
               }}
             >
-              <FormControl>
-                <FormLabel id="commission-row-radio-buttons-group-label">{t('page.mall.product.title.sub.commission.type')}</FormLabel>
-                <RadioGroup
-                  row
-                  aria-labelledby="commission-row-radio-buttons-group-label"
-                  name='sub_commission_type'
-                  value={formValues.sub_commission_type}
-                  onChange={handleInputChange}
-                >
-                  <FormControlLabel value="female" control={<Radio size="small" />} label="Female" />
-                  <FormControlLabel value="male" control={<Radio size="small" />} label="Male" />
-                </RadioGroup>
-              </FormControl>
-              <FormControl>
-                <FormLabel id="spec-row-radio-buttons-group-label">{t('page.mall.product.title.spec.type')}</FormLabel>
-                <RadioGroup
-                  row
-                  aria-labelledby="spec-row-radio-buttons-group-label"
-                  name='spec_type'
-                  value={formValues.spec_type}
-                  onChange={handleInputChange}
-                >
-                  <FormControlLabel value="female" control={<Radio size="small" />} label="Female" />
-                  <FormControlLabel value="male" control={<Radio size="small" />} label="Male" />
-                </RadioGroup>
-              </FormControl>
+              <CustomizedDictRadioGroup
+                id="commission-row-radio-buttons-group-label"
+                name='sub_commission_type'
+                dict_type='sub_commission_type'
+                label={t('page.mall.product.title.sub.commission.type')}
+                value={formValues.sub_commission_type}
+                onChange={handleInputChange}
+              />
+              <CustomizedDictRadioGroup
+                id="spec-row-radio-buttons-group-label"
+                name='spec_type'
+                dict_type='spec_type'
+                label={t('page.mall.product.title.spec.type')}
+                value={formValues.spec_type}
+                onChange={handleInputChange}
+              />
             </Box>
           </TabPanel>
           <TabPanel value={3}></TabPanel>

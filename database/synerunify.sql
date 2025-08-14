@@ -11,7 +11,7 @@
  Target Server Version : 80100 (8.1.0)
  File Encoding         : 65001
 
- Date: 13/08/2025 14:29:45
+ Date: 14/08/2025 16:30:52
 */
 
 SET NAMES utf8mb4;
@@ -2730,7 +2730,7 @@ CREATE TABLE `system_dict_data`  (
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 33 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '字典数据表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 37 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '字典数据表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of system_dict_data
@@ -2766,6 +2766,10 @@ INSERT INTO `system_dict_data` VALUES (29, 0, '已下单', '0', 'sale_return_ord
 INSERT INTO `system_dict_data` VALUES (30, 1, '已收货', '1', 'sale_return_order_status', 0, '', '', '已收货', 1, '2025-06-25 12:57:06', 1, '2025-06-25 12:57:06', b'0');
 INSERT INTO `system_dict_data` VALUES (31, 2, '已完成', '2', 'sale_return_order_status', 0, '', '', '已完成', 1, '2025-06-25 12:57:19', 1, '2025-06-25 12:57:19', b'0');
 INSERT INTO `system_dict_data` VALUES (32, 3, '已取消', '3', 'sale_return_order_status', 0, '', '', '已取消', 1, '2025-06-25 12:57:29', 1, '2025-06-25 12:57:29', b'0');
+INSERT INTO `system_dict_data` VALUES (33, 0, '默认设置', '0', 'sub_commission_type', 0, '', '', '默认设置', 1, '2025-04-30 07:04:27', 1, '2025-04-30 07:04:27', b'0');
+INSERT INTO `system_dict_data` VALUES (34, 1, '单独设置', '1', 'sub_commission_type', 0, '', '', '单独设置', 1, '2025-04-30 07:04:39', 1, '2025-04-30 07:04:39', b'0');
+INSERT INTO `system_dict_data` VALUES (35, 0, '单规格', '0', 'spec_type', 0, '', '', '单规格', 1, '2025-04-30 07:04:27', 1, '2025-04-30 07:04:27', b'0');
+INSERT INTO `system_dict_data` VALUES (36, 1, '多规格', '1', 'spec_type', 0, '', '', '多规格', 1, '2025-04-30 07:04:39', 1, '2025-04-30 07:04:39', b'0');
 
 -- ----------------------------
 -- Table structure for system_dict_type
@@ -2783,7 +2787,7 @@ CREATE TABLE `system_dict_type`  (
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 10 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '字典类型表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 12 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '字典类型表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of system_dict_type
@@ -2797,6 +2801,8 @@ INSERT INTO `system_dict_type` VALUES (6, '采购订单状态', 'purchase_order_
 INSERT INTO `system_dict_type` VALUES (7, '销售订单状态', 'sale_order_status', 0, '销售订单状态', 1, '2025-06-12 02:36:31', 1, '2025-06-12 02:36:31', b'0');
 INSERT INTO `system_dict_type` VALUES (8, '采购退货订单状态', 'purchase_return_order_status', 0, '采购退货订单状态', 1, '2025-06-25 12:53:47', 1, '2025-06-25 12:53:47', b'0');
 INSERT INTO `system_dict_type` VALUES (9, '销售退货订单状态', 'sale_return_order_status', 0, '销售退货订单状态', 1, '2025-06-25 12:54:19', 1, '2025-06-25 12:54:19', b'0');
+INSERT INTO `system_dict_type` VALUES (10, '分销类型', 'sub_commission_type', 0, '分销类型', 1, '2025-06-25 12:54:19', 1, '2025-06-25 12:54:19', b'0');
+INSERT INTO `system_dict_type` VALUES (11, '商品规格类型', 'spec_type', 0, '商品规格类型', 1, '2025-06-25 12:54:19', 1, '2025-06-25 12:54:19', b'0');
 
 -- ----------------------------
 -- Table structure for system_file
