@@ -9,6 +9,7 @@ import SelectTree from '@/components/SelectTree';
 import { uploadSystemFile } from '@/api/system_file';
 import CustomizedFileUpload, { UploadFile } from '@/components/CustomizedFileUpload';
 import CustomizedDictRadioGroup from '@/components/CustomizedDictRadioGroup';
+import CustomizedDictCheckboxGroup from '@/components/CustomizedDictCheckboxGroup';
 
 interface AttachmentValues {
   file_id?: number; // 文件ID
@@ -300,12 +301,15 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
     }
   };
 
-  const handleStatusChange = (e: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
-    const { name } = e.target;
-
+  const handleCheckboxChange = (name: string | undefined, checkedValues: any[]) => {
+    console.log('select change', name, checkedValues);
+    if (!name) {
+      return;
+    }
+    const value = checkedValues.join(',');
     setFormValues(prev => ({
       ...prev,
-      [name]: checked ? 0 : 1
+      [name]: value
     }));
 
     if (errors[name as keyof FormErrors]) {
@@ -603,7 +607,27 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
               />
             </Box>
           </TabPanel>
-          <TabPanel value={3}></TabPanel>
+          <TabPanel value={3}>
+            <Box
+              noValidate
+              component="form"
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                m: 'auto',
+                width: 'fit-content',
+              }}
+            >
+              <CustomizedDictCheckboxGroup
+                id="delivery-row-checkbox-buttons-group-label"
+                label={t("page.mall.product.title.delivery.types")}
+                name='delivery_types'
+                value={formValues.delivery_types}
+                dict_type='delivery_type'
+                onChange={handleCheckboxChange}
+              />
+            </Box>
+          </TabPanel>
           <TabPanel value={4}></TabPanel>
           <TabPanel value={5}></TabPanel>
         </TabContext>

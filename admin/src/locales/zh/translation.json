@@ -454,7 +454,7 @@
     "title.market.price": "市场价",
     "title.cost.price": "成本价",
     "title.stock": "库存",
-    "title.delivery.types": "配送方式数组",
+    "title.delivery.types": "配送方式",
     "title.delivery.template.id": "物流配置模板编号",
     "title.give.integral": "赠送积分",
     "title.sub.commission.type": "分销类型",
