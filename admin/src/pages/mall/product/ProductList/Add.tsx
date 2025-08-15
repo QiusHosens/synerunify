@@ -452,6 +452,7 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
         // component="form"
         sx={{
           display: 'flex',
+          alignItems: 'start',
           flexDirection: 'column',
           m: 'auto',
           width: 'fit-content',
@@ -549,32 +550,40 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
               <Typography sx={{ mt: 2, mb: 1 }}>
                 {t('page.mall.product.title.slider.files')}
               </Typography>
-              {sliderFiles.map((item, index) => (
-                <Box key={index} sx={{ mt: 1 }}>
+              <Box
+                gap={2}
+                sx={{
+                  display: 'flex',
+                  flexWrap: 'wrap',
+                }}
+              >
+                {sliderFiles.map((item, index) => (
+                  <Box key={index}>
+                    <CustomizedFileUpload
+                      showFilename={false}
+                      id={'file-upload-' + index}
+                      accept=".jpg,jpeg,.png"
+                      maxSize={100}
+                      onChange={(files, action) => handleSliderFileChange(files, action, index)}
+                      file={item.file}
+                      width={fileWidth}
+                      height={fileHeight}
+                    >
+                    </CustomizedFileUpload>
+                  </Box>
+                ))}
+                <Box>
                   <CustomizedFileUpload
                     showFilename={false}
-                    id={'file-upload-' + index}
+                    id={'file-upload-' + sliderFiles.length}
                     accept=".jpg,jpeg,.png"
                     maxSize={100}
-                    onChange={(files, action) => handleSliderFileChange(files, action, index)}
-                    file={item.file}
+                    onChange={(file, action) => handleSliderFileChange(file, action, sliderFiles.length)}
                     width={fileWidth}
                     height={fileHeight}
                   >
                   </CustomizedFileUpload>
                 </Box>
-              ))}
-              <Box sx={{ mt: 1 }}>
-                <CustomizedFileUpload
-                  showFilename={false}
-                  id={'file-upload-' + sliderFiles.length}
-                  accept=".jpg,jpeg,.png"
-                  maxSize={100}
-                  onChange={(file, action) => handleSliderFileChange(file, action, sliderFiles.length)}
-                  width={fileWidth}
-                  height={fileHeight}
-                >
-                </CustomizedFileUpload>
               </Box>
             </Box>
           </TabPanel>

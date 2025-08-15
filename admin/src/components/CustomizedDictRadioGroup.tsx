@@ -1,6 +1,6 @@
 import { SystemDictDataResponse } from '@/api/dict';
 import { useDictStore } from '@/store';
-import { FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, RadioPropsSizeOverrides, SelectChangeEvent } from '@mui/material';
+import { FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, RadioPropsSizeOverrides } from '@mui/material';
 import { SxProps, Theme } from '@mui/material/styles';
 import { OverridableStringUnion } from '@mui/types';
 import { useEffect, useState } from 'react';
@@ -34,7 +34,7 @@ const CustomizedDictRadioGroup: React.FC<CustomizedDictRadioGroupProps> = ({
     if (datas) {
       setDicts(datas);
     }
-  }, [dictOfType]);
+  }, [dictOfType, dict_type]);
 
   return (
     <>
@@ -46,6 +46,7 @@ const CustomizedDictRadioGroup: React.FC<CustomizedDictRadioGroupProps> = ({
           name={name}
           value={value}
           onChange={onChange}
+          sx={sx}
         >
           {dicts.map(item => (
             <FormControlLabel key={item.id} value={item.value} control={<Radio size={size} />} label={item.label} />
