@@ -468,7 +468,7 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
               <Tab label={t('page.mall.product.tab.other.settings')} value={5} />
             </TabList>
           </Box>
-          <TabPanel value={1}>
+          <TabPanel keepMounted={true} value={1}>
             <Box
               noValidate
               component="form"
@@ -587,7 +587,7 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
               </Box>
             </Box>
           </TabPanel>
-          <TabPanel value={2}>
+          <TabPanel keepMounted={true} value={2}>
             <Box
               noValidate
               component="form"
@@ -616,7 +616,7 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
               />
             </Box>
           </TabPanel>
-          <TabPanel value={3}>
+          <TabPanel keepMounted={true} value={3}>
             <Box
               noValidate
               component="form"
