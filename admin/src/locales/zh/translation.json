@@ -461,6 +461,21 @@
     "title.sales.count": "商品销量",
     "title.virtual.sales.count": "虚拟销量",
     "title.browse.count": "商品点击量",
+    
+    "sku": {
+      "title.properties": "属性数组",
+      "title.bar.code": "商品条码",
+      "title.price": "销售价",
+      "title.market.price": "市场价",
+      "title.cost.price": "成本价",
+      "title.file": "图片",
+      "title.stock": "库存",
+      "title.weight": "商品重量",
+      "title.volume": "商品体积",
+      "title.first.brokerage.price": "一级分销的佣金",
+      "title.second.brokerage.price": "二级分销的佣金",
+      "title.sales.count": "商品销量"
+    },
     "category": {
       "title.file": "分类图片"
     },

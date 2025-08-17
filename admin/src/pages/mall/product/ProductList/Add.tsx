@@ -1,4 +1,4 @@
-import { Box, Button, FormControl, FormControlLabel, FormLabel, Grid, InputLabel, MenuItem, Radio, RadioGroup, Select, SelectChangeEvent, Switch, Tab, Tabs, TextField, Typography } from '@mui/material';
+import { Box, Button, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Stack, Tab, TextField, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { forwardRef, useCallback, useImperativeHandle, useState } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
@@ -13,6 +13,23 @@ import CustomizedDictCheckboxGroup from '@/components/CustomizedDictCheckboxGrou
 
 interface AttachmentValues {
   file_id?: number; // 文件ID
+
+  file?: UploadFile | null;
+}
+
+interface FormSkuValues {
+  properties?: string; // 属性数组，JSON 格式 [{propertId: , valueId: }, {propertId: , valueId: }]
+  price?: number; // 商品价格，单位：分
+  market_price?: number; // 市场价，单位：分
+  cost_price?: number; // 成本价，单位： 分
+  bar_code?: string; // SKU 的条形码
+  file_id?: number; // 图片
+  stock?: number; // 库存
+  weight?: number; // 商品重量，单位：kg 千克
+  volume?: number; // 商品体积，单位：m^3 平米
+  first_brokerage_price?: number; // 一级分销的佣金，单位：分
+  second_brokerage_price?: number; // 二级分销的佣金，单位：分
+  sales_count?: number; // 商品销量
 
   file?: UploadFile | null;
 }
@@ -41,8 +58,25 @@ interface FormValues {
   virtual_sales_count: number; // 虚拟销量
   browse_count: number; // 商品点击量
 
+  skus: FormSkuValues[]; // sku列表
+
   file?: UploadFile | null; // 商品封面文件
   slider_files: UploadFile[]; // 商品轮播图文件列表
+}
+
+interface FormSkuErrors {
+  properties?: string; // 属性数组，JSON 格式 [{propertId: , valueId: }, {propertId: , valueId: }]
+  price?: string; // 商品价格，单位：分
+  market_price?: string; // 市场价，单位：分
+  cost_price?: string; // 成本价，单位： 分
+  bar_code?: string; // SKU 的条形码
+  file_id?: string; // 图片
+  stock?: string; // 库存
+  weight?: string; // 商品重量，单位：kg 千克
+  volume?: string; // 商品体积，单位：m^3 平米
+  first_brokerage_price?: string; // 一级分销的佣金，单位：分
+  second_brokerage_price?: string; // 二级分销的佣金，单位：分
+  sales_count?: string; // 商品销量
 }
 
 interface FormErrors {
@@ -56,6 +90,8 @@ interface FormErrors {
   stock?: string; // 库存
   delivery_types?: string; // 配送方式数组
   give_integral?: string; // 赠送积分
+
+  skus?: FormSkuErrors[];
 }
 
 interface TreeNode {
@@ -73,7 +109,7 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
   const { t } = useTranslation();
 
   const [open, setOpen] = useState(false);
-  const [maxWidth] = useState<DialogProps['maxWidth']>('sm');
+  const [maxWidth] = useState<DialogProps['maxWidth']>('xl');
   const [brands, setBrands] = useState<MallProductBrandResponse[]>([]);
   const [treeData, setTreeData] = useState<TreeNode[]>([]);
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | number>(0);
@@ -100,6 +136,7 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
     sales_count: 0,
     virtual_sales_count: 0,
     browse_count: 0,
+    skus: [{}],
     slider_files: [],
   });
   const [errors, setErrors] = useState<FormErrors>({});
@@ -194,6 +231,7 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
       sales_count: 0,
       virtual_sales_count: 0,
       browse_count: 0,
+      skus: [],
       slider_files: [],
     });
     setErrors({});
@@ -301,8 +339,30 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
     }
   };
 
+  const handleSkuInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value, type } = e.target;
+    if (type == 'number') {
+      const numberValue = Number(value);
+      setFormValues(prev => ({
+        ...prev,
+        [name]: numberValue
+      }));
+    } else {
+      setFormValues(prev => ({
+        ...prev,
+        [name]: value
+      }));
+    }
+
+    if (errors[name as keyof FormErrors]) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: undefined
+      }));
+    }
+  };
+
   const handleCheckboxChange = (name: string | undefined, checkedValues: any[]) => {
-    console.log('select change', name, checkedValues);
     if (!name) {
       return;
     }
@@ -433,6 +493,100 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
     }
   }, []);
 
+  const ProductBox = (({ sku, index }: { sku: FormSkuValues, index: number }) => {
+    return (
+      <Stack gap={2}>
+        <CustomizedFileUpload
+          canRemove={false}
+          showFilename={false}
+          id={'file-upload'}
+          accept=".jpg,jpeg,.png"
+          maxSize={100}
+          onChange={(file, action) => handleFileChange(file, action)}
+          file={sku.file}
+          width={fileWidth}
+          height={fileHeight}
+        />
+        <TextField
+          required
+          size="small"
+          label={t("page.mall.product.sku.title.bar.code")}
+          name='bar_code'
+          value={sku.bar_code}
+          onChange={handleSkuInputChange}
+          error={!!(errors.skus && errors.skus[index].bar_code)}
+          helperText={errors.skus && errors.skus[index].bar_code}
+        />
+        <TextField
+          required
+          size="small"
+          type="number"
+          label={t("page.mall.product.sku.title.price")}
+          name='price'
+          value={sku.price}
+          onChange={handleSkuInputChange}
+          error={!!(errors.skus && errors.skus[index].price)}
+          helperText={errors.skus && errors.skus[index].price}
+        />
+        <TextField
+          required
+          size="small"
+          type="number"
+          label={t("page.mall.product.sku.title.market.price")}
+          name='market_price'
+          value={sku.market_price}
+          onChange={handleSkuInputChange}
+          error={!!(errors.skus && errors.skus[index].market_price)}
+          helperText={errors.skus && errors.skus[index].market_price}
+        />
+        <TextField
+          required
+          size="small"
+          type="number"
+          label={t("page.mall.product.sku.title.cost.price")}
+          name='cost_price'
+          value={sku.cost_price}
+          onChange={handleSkuInputChange}
+          error={!!(errors.skus && errors.skus[index].cost_price)}
+          helperText={errors.skus && errors.skus[index].cost_price}
+        />
+        <TextField
+          required
+          size="small"
+          type="number"
+          label={t("page.mall.product.sku.title.stock")}
+          name='stock'
+          value={sku.stock}
+          onChange={handleSkuInputChange}
+          error={!!(errors.skus && errors.skus[index].stock)}
+          helperText={errors.skus && errors.skus[index].stock}
+        />
+        <TextField
+          required
+          size="small"
+          type="number"
+          label={t("page.mall.product.sku.title.weight")}
+          name='weight'
+          value={sku.weight}
+          onChange={handleSkuInputChange}
+          error={!!(errors.skus && errors.skus[index].weight)}
+          helperText={errors.skus && errors.skus[index].weight}
+        />
+        <TextField
+          required
+          size="small"
+          type="number"
+          label={t("page.mall.product.sku.title.volume")}
+          name='volume'
+          value={sku.volume}
+          onChange={handleSkuInputChange}
+          error={!!(errors.skus && errors.skus[index].volume)}
+          helperText={errors.skus && errors.skus[index].volume}
+        />
+      </Stack>
+    );
+  });
+
   return (
     <CustomizedDialog
       open={open}
@@ -452,195 +606,202 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
         // component="form"
         sx={{
           display: 'flex',
-          alignItems: 'start',
-          flexDirection: 'column',
-          m: 'auto',
-          width: 'fit-content',
+          justifyContent: 'center',
+          // alignItems: 'start',
+          // flexDirection: 'column',
+          // m: 'auto',
+          // width: 'fit-content',
         }}
       >
-        <TabContext value={step}>
-          <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-            <TabList onChange={handleStepChange} aria-label="tabs">
-              <Tab label={t('page.mall.product.tab.basic.settings')} value={1} />
-              <Tab label={t('page.mall.product.tab.price.inventory')} value={2} />
-              <Tab label={t('page.mall.product.tab.logistics.settings')} value={3} />
-              <Tab label={t('page.mall.product.tab.product.detail')} value={4} />
-              <Tab label={t('page.mall.product.tab.other.settings')} value={5} />
-            </TabList>
-          </Box>
-          <TabPanel keepMounted={true} value={1}>
-            <Box
-              noValidate
-              component="form"
-              sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                m: 'auto',
-                width: 'fit-content',
-              }}
-            >
-              <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '240px' } }}>
-                <TextField
-                  required
-                  size="small"
-                  label={t("page.mall.product.title.name")}
-                  name='name'
-                  value={formValues.name}
-                  onChange={handleInputChange}
-                  error={!!errors.name}
-                  helperText={errors.name}
-                />
-              </FormControl>
-              <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiSelect-root': { width: '240px' } }}>
-                <SelectTree
-                  expandToSelected
-                  name='parent_id'
-                  size="small"
-                  label={t('common.title.parent')}
-                  treeData={treeData}
-                  value={selectedCategoryId}
-                  onChange={(name, node) => handleChange(name, node as TreeNode)}
-                />
-              </FormControl>
-              <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiSelect-root': { width: '240px' } }}>
-                <InputLabel required size="small" id="brand-select-label">{t("page.mall.product.title.brand")}</InputLabel>
-                <Select
-                  required
-                  size="small"
-                  labelId="brand-select-label"
-                  label={t("page.mall.product.title.brand")}
-                  name='brand_id'
-                  value={formValues.brand_id}
-                  onChange={(e) => handleSelectChange(e)}
+        <Stack direction='row' gap={3}>
+          <Box>
+            <TabContext value={step}>
+              <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                <TabList onChange={handleStepChange} aria-label="tabs">
+                  <Tab label={t('page.mall.product.tab.basic.settings')} value={1} />
+                  <Tab label={t('page.mall.product.tab.price.inventory')} value={2} />
+                  <Tab label={t('page.mall.product.tab.logistics.settings')} value={3} />
+                  <Tab label={t('page.mall.product.tab.product.detail')} value={4} />
+                  <Tab label={t('page.mall.product.tab.other.settings')} value={5} />
+                </TabList>
+              </Box>
+              <TabPanel keepMounted={true} value={1}>
+                <Box
+                  noValidate
+                  component="form"
+                  sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    // m: 'auto',
+                    width: 'fit-content',
+                  }}
                 >
-                  {brands.map(item => (<MenuItem key={item.id} value={item.id}>{item.name}</MenuItem>))}
-                </Select>
-              </FormControl>
-              <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '240px' } }}>
-                <TextField
-                  size="small"
-                  label={t("page.mall.product.title.keyword")}
-                  name='keyword'
-                  value={formValues.keyword}
-                  onChange={handleInputChange}
-                />
-                <TextField
-                  size="small"
-                  label={t("page.mall.product.title.introduction")}
-                  name='introduction'
-                  value={formValues.introduction}
-                  onChange={handleInputChange}
-                />
-              </FormControl>
-              <Typography sx={{ mt: 2, mb: 1 }}>
-                {t('page.mall.product.title.file')}
-              </Typography>
-              <CustomizedFileUpload
-                canRemove={false}
-                showFilename={false}
-                id={'file-upload'}
-                accept=".jpg,jpeg,.png"
-                maxSize={100}
-                onChange={(file, action) => handleFileChange(file, action)}
-                file={formValues.file}
-                width={fileWidth}
-                height={fileHeight}
-              >
-              </CustomizedFileUpload>
-              <Typography sx={{ mt: 2, mb: 1 }}>
-                {t('page.mall.product.title.slider.files')}
-              </Typography>
-              <Box
-                gap={2}
-                sx={{
-                  display: 'flex',
-                  flexWrap: 'wrap',
-                }}
-              >
-                {sliderFiles.map((item, index) => (
-                  <Box key={index}>
-                    <CustomizedFileUpload
-                      showFilename={false}
-                      id={'file-upload-' + index}
-                      accept=".jpg,jpeg,.png"
-                      maxSize={100}
-                      onChange={(files, action) => handleSliderFileChange(files, action, index)}
-                      file={item.file}
-                      width={fileWidth}
-                      height={fileHeight}
+                  <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '240px' } }}>
+                    <TextField
+                      required
+                      size="small"
+                      label={t("page.mall.product.title.name")}
+                      name='name'
+                      value={formValues.name}
+                      onChange={handleInputChange}
+                      error={!!errors.name}
+                      helperText={errors.name}
+                    />
+                  </FormControl>
+                  <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiSelect-root': { width: '240px' } }}>
+                    <SelectTree
+                      expandToSelected
+                      name='parent_id'
+                      size="small"
+                      label={t('common.title.parent')}
+                      treeData={treeData}
+                      value={selectedCategoryId}
+                      onChange={(name, node) => handleChange(name, node as TreeNode)}
+                    />
+                  </FormControl>
+                  <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiSelect-root': { width: '240px' } }}>
+                    <InputLabel required size="small" id="brand-select-label">{t("page.mall.product.title.brand")}</InputLabel>
+                    <Select
+                      required
+                      size="small"
+                      labelId="brand-select-label"
+                      label={t("page.mall.product.title.brand")}
+                      name='brand_id'
+                      value={formValues.brand_id}
+                      onChange={(e) => handleSelectChange(e)}
                     >
-                    </CustomizedFileUpload>
-                  </Box>
-                ))}
-                <Box>
+                      {brands.map(item => (<MenuItem key={item.id} value={item.id}>{item.name}</MenuItem>))}
+                    </Select>
+                  </FormControl>
+                  <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '240px' } }}>
+                    <TextField
+                      size="small"
+                      label={t("page.mall.product.title.keyword")}
+                      name='keyword'
+                      value={formValues.keyword}
+                      onChange={handleInputChange}
+                    />
+                    <TextField
+                      size="small"
+                      label={t("page.mall.product.title.introduction")}
+                      name='introduction'
+                      value={formValues.introduction}
+                      onChange={handleInputChange}
+                    />
+                  </FormControl>
+                  <Typography sx={{ mt: 2, mb: 1 }}>
+                    {t('page.mall.product.title.file')}
+                  </Typography>
                   <CustomizedFileUpload
+                    canRemove={false}
                     showFilename={false}
-                    id={'file-upload-' + sliderFiles.length}
+                    id={'file-upload'}
                     accept=".jpg,jpeg,.png"
                     maxSize={100}
-                    onChange={(file, action) => handleSliderFileChange(file, action, sliderFiles.length)}
+                    onChange={(file, action) => handleFileChange(file, action)}
+                    file={formValues.file}
                     width={fileWidth}
                     height={fileHeight}
+                  />
+                  <Typography sx={{ mt: 2, mb: 1 }}>
+                    {t('page.mall.product.title.slider.files')}
+                  </Typography>
+                  <Box
+                    gap={2}
+                    sx={{
+                      display: 'flex',
+                      flexWrap: 'wrap',
+                    }}
                   >
-                  </CustomizedFileUpload>
+                    {sliderFiles.map((item, index) => (
+                      <Box key={index}>
+                        <CustomizedFileUpload
+                          showFilename={false}
+                          id={'file-upload-' + index}
+                          accept=".jpg,jpeg,.png"
+                          maxSize={100}
+                          onChange={(files, action) => handleSliderFileChange(files, action, index)}
+                          file={item.file}
+                          width={fileWidth}
+                          height={fileHeight}
+                        />
+                      </Box>
+                    ))}
+                    <Box>
+                      <CustomizedFileUpload
+                        showFilename={false}
+                        id={'file-upload-' + sliderFiles.length}
+                        accept=".jpg,jpeg,.png"
+                        maxSize={100}
+                        onChange={(file, action) => handleSliderFileChange(file, action, sliderFiles.length)}
+                        width={fileWidth}
+                        height={fileHeight}
+                      />
+                    </Box>
+                  </Box>
                 </Box>
-              </Box>
-            </Box>
-          </TabPanel>
-          <TabPanel keepMounted={true} value={2}>
-            <Box
-              noValidate
-              component="form"
-              sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                m: 'auto',
-                width: 'fit-content',
-              }}
-            >
-              <CustomizedDictRadioGroup
-                id="commission-row-radio-buttons-group-label"
-                name='sub_commission_type'
-                dict_type='sub_commission_type'
-                label={t('page.mall.product.title.sub.commission.type')}
-                value={formValues.sub_commission_type}
-                onChange={handleInputChange}
-              />
-              <CustomizedDictRadioGroup
-                id="spec-row-radio-buttons-group-label"
-                name='spec_type'
-                dict_type='spec_type'
-                label={t('page.mall.product.title.spec.type')}
-                value={formValues.spec_type}
-                onChange={handleInputChange}
-              />
-            </Box>
-          </TabPanel>
-          <TabPanel keepMounted={true} value={3}>
-            <Box
-              noValidate
-              component="form"
-              sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                m: 'auto',
-                width: 'fit-content',
-              }}
-            >
-              <CustomizedDictCheckboxGroup
-                id="delivery-row-checkbox-buttons-group-label"
-                label={t("page.mall.product.title.delivery.types")}
-                name='delivery_types'
-                value={formValues.delivery_types}
-                dict_type='delivery_type'
-                onChange={handleCheckboxChange}
-              />
-            </Box>
-          </TabPanel>
-          <TabPanel value={4}></TabPanel>
-          <TabPanel value={5}></TabPanel>
-        </TabContext>
-
+              </TabPanel>
+              <TabPanel keepMounted={true} value={2}>
+                <Box
+                  noValidate
+                  component="form"
+                  sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    // m: 'auto',
+                    width: 'fit-content',
+                  }}
+                >
+                  <CustomizedDictRadioGroup
+                    id="commission-row-radio-buttons-group-label"
+                    name='sub_commission_type'
+                    dict_type='sub_commission_type'
+                    label={t('page.mall.product.title.sub.commission.type')}
+                    value={formValues.sub_commission_type}
+                    onChange={handleInputChange}
+                  />
+                  <CustomizedDictRadioGroup
+                    id="spec-row-radio-buttons-group-label"
+                    name='spec_type'
+                    dict_type='spec_type'
+                    label={t('page.mall.product.title.spec.type')}
+                    value={formValues.spec_type}
+                    onChange={handleInputChange}
+                  />
+                  {formValues.skus.map((sku, index) => (
+                    <ProductBox sku={sku} index={index}></ProductBox>
+                  ))}
+                </Box>
+              </TabPanel>
+              <TabPanel keepMounted={true} value={3}>
+                <Box
+                  noValidate
+                  component="form"
+                  sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    // m: 'auto',
+                    width: 'fit-content',
+                  }}
+                >
+                  <CustomizedDictCheckboxGroup
+                    id="delivery-row-checkbox-buttons-group-label"
+                    label={t("page.mall.product.title.delivery.types")}
+                    name='delivery_types'
+                    value={formValues.delivery_types}
+                    dict_type='delivery_type'
+                    onChange={handleCheckboxChange}
+                  />
+                </Box>
+              </TabPanel>
+              <TabPanel value={4}></TabPanel>
+              <TabPanel value={5}></TabPanel>
+            </TabContext>
+          </Box>
+          <Box>
+            预览
+          </Box>
+        </Stack>
         {/* <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' } }}>
           <TextField
             required

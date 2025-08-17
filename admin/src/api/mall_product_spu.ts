@@ -1,6 +1,7 @@
 import { PaginatedRequest, PaginatedResponse } from '@/base/page';
 import { UploadFile } from '@/components/CustomizedFileUpload';
 import { api } from '@/utils/request';
+import { MallProductSkuRequest } from './mall_product_sku';
 
 const apis = {
   create: '/mall/mall_product_spu/create', // 新增
@@ -14,7 +15,7 @@ const apis = {
 }
 
 export interface MallProductSpuRequest {
-  id: number; // 商品 SPU 编号，自增
+  id?: number; // 商品 SPU 编号，自增
   name: string; // 商品名称
   keyword: string; // 关键字
   introduction: string; // 商品简介
@@ -37,6 +38,7 @@ export interface MallProductSpuRequest {
   sales_count: number; // 商品销量
   virtual_sales_count: number; // 虚拟销量
   browse_count: number; // 商品点击量
+  skus: MallProductSkuRequest[]; // sku列表
 
   file?: UploadFile | null; // 商品封面文件
   slider_files: UploadFile[]; // 商品轮播图文件列表
