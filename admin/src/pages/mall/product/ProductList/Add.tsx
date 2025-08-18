@@ -231,7 +231,7 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
       sales_count: 0,
       virtual_sales_count: 0,
       browse_count: 0,
-      skus: [],
+      skus: [{}],
       slider_files: [],
     });
     setErrors({});
