@@ -10,6 +10,8 @@ import { uploadSystemFile } from '@/api/system_file';
 import CustomizedFileUpload, { UploadFile } from '@/components/CustomizedFileUpload';
 import CustomizedDictRadioGroup from '@/components/CustomizedDictRadioGroup';
 import CustomizedDictCheckboxGroup from '@/components/CustomizedDictCheckboxGroup';
+import CustomizedAnchor, { AnchorLinkProps } from '@/components/CustomizedAnchor';
+import CustomizedAnchorExample from '@/components/CustomizedAnchor.example';
 
 interface AttachmentValues {
   file_id?: number; // 文件ID
@@ -143,6 +145,29 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
   const [step, setStep] = useState<number>(1);
   const [fileWidth] = useState<number>(240);
   const [fileHeight] = useState<number>(160);
+
+  const anchorItems: AnchorLinkProps[] = [
+    {
+      href: '#basic',
+      title: t('page.mall.product.tab.basic.settings'),
+    },
+    {
+      href: '#price',
+      title: t('page.mall.product.tab.price.inventory'),
+    },
+    {
+      href: '#logistics',
+      title: t('page.mall.product.tab.logistics.settings'),
+    },
+    {
+      href: '#product',
+      title: t('page.mall.product.tab.product.detail'),
+    },
+    {
+      href: '#other',
+      title: t('page.mall.product.tab.other.settings'),
+    },
+  ];
 
   useImperativeHandle(ref, () => ({
     show() {
@@ -800,6 +825,20 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
           </Box>
           <Box>
             预览
+            {/* <CustomizedAnchorExample /> */}
+            <CustomizedAnchor
+              items={anchorItems}
+              fixed
+              position={{ top: 100, right: 20 }}
+              offsetTop={80}
+              showInkInFixed
+              onChange={(activeLink) => {
+                console.log('当前活动锚点:', activeLink);
+              }}
+              onClick={(e, link) => {
+                console.log('点击锚点:', link);
+              }}
+            />
           </Box>
         </Stack>
         {/* <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' } }}>

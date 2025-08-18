@@ -80,8 +80,8 @@ const CustomizedAnchorExample: React.FC = () => {
           {/* 填充内容以便滚动 */}
           {Array.from({ length: 8 }, (_, i) => (
             <Typography key={i} variant="body2" paragraph>
-              这是介绍部分的填充内容 {i + 1}。Lorem ipsum dolor sit amet, 
-              consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore 
+              这是介绍部分的填充内容 {i + 1}。Lorem ipsum dolor sit amet,
+              consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore
               et dolore magna aliqua.
             </Typography>
           ))}
@@ -93,7 +93,7 @@ const CustomizedAnchorExample: React.FC = () => {
           <Typography variant="h3" component="h2" gutterBottom>
             安装
           </Typography>
-          
+
           <Box id="npm-install" sx={{ mb: 4 }}>
             <Typography variant="h5" component="h3" gutterBottom>
               NPM 安装
