@@ -187,7 +187,9 @@ export default function MallProductSpu() {
     //   <MallProductSpuEdit ref={editMallProductSpu} onSubmit={refreshData} />
     //   <MallProductSpuDelete ref={deleteMallProductSpu} onSubmit={refreshData} />
     // </Box>
-    // <CustomizedAnchorExample />
-    <CustomizedAnchorDialogExample />
+    <>
+      <CustomizedAnchorExample />
+      <CustomizedAnchorDialogExample />
+    </>
   );
 }

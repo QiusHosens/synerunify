@@ -410,7 +410,10 @@ const CustomizedAnchor: React.FC<CustomizedAnchorProps> = ({
   return (
     <StyledAnchorContainer ref={containerRef} fixed={fixed} className={className} style={containerStyle} elevation={fixed ? 4 : 0}>
       <Box position="relative">
-        {showInkInFixed && fixed && (
+        {/* {showInkInFixed && fixed && (
+          <StyledInkBar ref={inkBarRef} style={{ top: inkBarStyle.top, height: inkBarStyle.height }} />
+        )} */}
+        {showInkInFixed && (
           <StyledInkBar ref={inkBarRef} style={{ top: inkBarStyle.top, height: inkBarStyle.height }} />
         )}
         <StyledAnchorList>{renderAnchorItems(items)}</StyledAnchorList>

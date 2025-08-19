@@ -90,13 +90,6 @@ const CustomizedAnchorDialogExample: React.FC = () => {
             <Button onClick={handleClose}>关闭</Button>
           </DialogActions>
         }
-        TransitionProps={{
-          onEntered: () => {
-            if (contentAreaRef.current) {
-              setIsMounted(true);
-            }
-          },
-        }}
       >
         <Box display="flex" sx={{ height: '70vh' }}>
           {/* 左侧锚点导航 */}
@@ -114,9 +107,9 @@ const CustomizedAnchorDialogExample: React.FC = () => {
               目录导航
             </Typography>
             {isMounted && contentAreaRef.current && <CustomizedAnchor
+              showInkInFixed
               items={dialogAnchorItems}
               offsetTop={0}
-              showInkInFixed={true}
               getContainer={() => {
                 // 使用ref获取滚动容器，更加准确
                 console.log('获取滚动容器:', contentAreaRef.current);

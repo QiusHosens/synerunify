@@ -305,7 +305,7 @@ const CustomizedAnchorExample: React.FC = () => {
       <Box
         sx={{
           position: 'fixed',
-          left: 20,
+          left: 420,
           top: 100,
           width: 200,
           display: { xs: 'none', lg: 'block' },
