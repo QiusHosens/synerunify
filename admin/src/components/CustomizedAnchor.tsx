@@ -77,7 +77,9 @@ export interface CustomizedAnchorProps {
 }
 
 // 样式化组件
-const StyledAnchorContainer = styled(Paper)<{ fixed?: boolean }>(({ theme, fixed }) => ({
+const StyledAnchorContainer = styled(Paper, {
+  shouldForwardProp: (prop) => prop !== 'fixed',
+})<{ fixed?: boolean }>(({ theme, fixed }) => ({
   ...(fixed && {
     position: 'fixed',
     zIndex: theme.zIndex.drawer,
@@ -122,10 +124,12 @@ const StyledAnchorList = styled(List)(({ theme }) => ({
   },
 }));
 
-const StyledAnchorListItem = styled(ListItem)<{ active?: boolean; level?: number }>(
+const StyledAnchorListItem = styled(ListItem, {
+  shouldForwardProp: (prop) => prop !== 'active' && prop !== 'level',
+})<{ active?: boolean; level?: number }>(
   ({ theme, active, level = 0 }) => ({
     padding: 0,
-          paddingLeft: theme.spacing(level * 2),
+    paddingLeft: theme.spacing(level * 2),
     position: 'relative',
     
     '& .MuiListItemButton-root': {
@@ -226,30 +230,61 @@ const CustomizedAnchor: React.FC<CustomizedAnchorProps> = ({
       const targetId = targetHref.replace('#', '');
       const targetElement = document.getElementById(targetId);
       
-      if (targetElement) {
+      if (targetElement && scrollContainer) {
         const container = scrollContainer;
-        const scrollTop = container === window 
-          ? window.pageYOffset || document.documentElement.scrollTop
-          : (container as HTMLElement).scrollTop;
         
-        const targetTop = container === window
-          ? targetElement.getBoundingClientRect().top + scrollTop
-          : targetElement.offsetTop;
+        console.log('点击锚点:', targetHref, '容器类型:', container === window ? 'window' : 'element');
         
-        const scrollToTop = targetTop - offsetTop;
+        let scrollToTop: number;
+        
+        if (container === window) {
+          const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+          const targetTop = targetElement.getBoundingClientRect().top + scrollTop;
+          scrollToTop = targetTop - offsetTop;
+          
+          console.log('Window滚动到:', scrollToTop);
+        } else {
+          // 对于非window容器，我们需要计算目标元素在容器内的scrollTop位置
+          const containerElement = container as HTMLElement;
+          
+          // 方法1: 使用 offsetTop 计算（更准确）
+          let elementOffsetTop = 0;
+          let element = targetElement;
+          
+          // 累加所有父元素的 offsetTop，直到到达容器元素
+          while (element && element !== containerElement && element.offsetParent) {
+            elementOffsetTop += element.offsetTop;
+            element = element.offsetParent as HTMLElement;
+          }
+          
+          // 如果offsetTop计算失败，使用getBoundingClientRect作为回退
+          if (elementOffsetTop === 0) {
+            const containerRect = containerElement.getBoundingClientRect();
+            const targetRect = targetElement.getBoundingClientRect();
+            elementOffsetTop = targetRect.top - containerRect.top + containerElement.scrollTop;
+          }
+          
+          scrollToTop = elementOffsetTop - offsetTop;
+          
+          console.log('容器滚动到:', scrollToTop, '目标:', targetElement.id);
+        }
         
         // 平滑滚动
         if (container === window) {
+
           window.scrollTo({
             top: scrollToTop,
             behavior: 'smooth',
           });
         } else {
+
           (container as HTMLElement).scrollTo({
             top: scrollToTop,
             behavior: 'smooth',
           });
         }
+      } else {
+        console.warn('滚动失败:', { targetElement, scrollContainer });
       }
     },
     [onClick, replace, scrollContainer, offsetTop]
@@ -258,6 +293,9 @@ const CustomizedAnchor: React.FC<CustomizedAnchorProps> = ({
   // 计算当前活动的锚点
   const getCurrentActiveLink = useCallback(() => {
     const container = scrollContainer;
+    
+    if (!container) return '';
+    
     const scrollTop = container === window 
       ? window.pageYOffset || document.documentElement.scrollTop
       : (container as HTMLElement).scrollTop;
@@ -270,9 +308,17 @@ const CustomizedAnchor: React.FC<CustomizedAnchorProps> = ({
       const element = document.getElementById(targetId);
       
       if (element) {
-        const elementTop = container === window
-          ? element.getBoundingClientRect().top + scrollTop
-          : element.offsetTop;
+        let elementTop: number;
+        
+        if (container === window) {
+          elementTop = element.getBoundingClientRect().top + scrollTop;
+        } else {
+          // 对于非window容器，需要计算相对位置
+          const containerElement = container as HTMLElement;
+          const containerRect = containerElement.getBoundingClientRect();
+          const elementRect = element.getBoundingClientRect();
+          elementTop = elementRect.top - containerRect.top + scrollTop;
+        }
         
         const distance = Math.abs(elementTop - scrollTop - offsetTop);
         
@@ -295,13 +341,20 @@ const CustomizedAnchor: React.FC<CustomizedAnchorProps> = ({
     ) as HTMLElement;
 
     if (activeElement) {
-      const containerRect = containerRef.current.getBoundingClientRect();
-      const activeRect = activeElement.getBoundingClientRect();
+      const container = containerRef.current;
+      const listElement = container.querySelector('.MuiList-root') as HTMLElement;
       
-      const top = activeRect.top - containerRect.top;
-      const height = activeRect.height;
-
-      setInkBarStyle({ top, height });
+      if (listElement) {
+        // 直接使用 activeElement 相对于 listElement 的偏移位置
+        const listRect = listElement.getBoundingClientRect();
+        const activeRect = activeElement.getBoundingClientRect();
+        
+        // 计算相对于列表容器的位置
+        const top = activeRect.top - listRect.top;
+        const height = activeRect.height;
+        
+        setInkBarStyle({ top, height });
+      }
     }
   }, [showInkInFixed]);
 
@@ -321,16 +374,24 @@ const CustomizedAnchor: React.FC<CustomizedAnchorProps> = ({
 
     const container = scrollContainer;
     
+    if (!container) {
+      console.warn('CustomizedAnchor: 滚动容器未找到');
+      return;
+    }
+    
     if (container === window) {
       window.addEventListener('scroll', handleScroll, { passive: true });
     } else {
       (container as HTMLElement).addEventListener('scroll', handleScroll, { passive: true });
     }
 
-    // 初始化
-    handleScroll();
+    // 初始化，延迟执行确保DOM已经准备好
+    const initTimer = setTimeout(() => {
+      handleScroll();
+    }, 100);
 
     return () => {
+      clearTimeout(initTimer);
       if (container === window) {
         window.removeEventListener('scroll', handleScroll);
       } else {

@@ -626,7 +626,7 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
         </>
       }
     >
-      <Box
+      {/* <Box
         // noValidate
         // component="form"
         sx={{
@@ -637,8 +637,8 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
           // m: 'auto',
           // width: 'fit-content',
         }}
-      >
-        <Stack direction='row' gap={3}>
+      > */}
+        {/* <Stack direction='row' gap={3}>
           <Box>
             <TabContext value={step}>
               <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
@@ -825,7 +825,7 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
           </Box>
           <Box>
             预览
-            {/* <CustomizedAnchorExample /> */}
+            <CustomizedAnchorExample />
             <CustomizedAnchor
               items={anchorItems}
               fixed
@@ -840,7 +840,8 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
               }}
             />
           </Box>
-        </Stack>
+        </Stack> */}
+        <CustomizedAnchorExample />
         {/* <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' } }}>
           <TextField
             required
@@ -1044,7 +1045,7 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
           <Switch sx={{ mr: 2 }} name='status' checked={!formValues.status} onChange={handleStatusChange} />
           <Typography>{formValues.status == 0 ? t('global.switch.status.true') : t('global.switch.status.false')}</Typography>
         </Box> */}
-      </Box>
+      {/* </Box> */}
     </CustomizedDialog >
   )
 });

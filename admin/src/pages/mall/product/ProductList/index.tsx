@@ -10,6 +10,8 @@ import MallProductSpuEdit from './Edit';
 import MallProductSpuDelete from './Delete';
 import { useHomeStore } from '@/store';
 import CustomizedAutoMore from '@/components/CustomizedAutoMore';
+import CustomizedAnchorExample from '@/components/CustomizedAnchor.example';
+import CustomizedAnchorDialogExample from '@/components/CustomizedAnchorDialog.example';
 
 export default function MallProductSpu() {
   const { t } = useTranslation();
@@ -152,38 +154,40 @@ export default function MallProductSpu() {
   };
 
   return (
-    <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-      <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between' }}>
-        <Box></Box>
-        {hasOperatePermission('mall:product:list:add') && <Button variant="customContained" onClick={handleClickOpenAdd}>
-          {t('global.operate.add')}
-        </Button>}
-      </Box>
-      <DataGrid
-        rowCount={total}
-        rows={records}
-        columns={columns}
-        getRowId={(row) => row.id}
-        pagination
-        paginationMode="server"
-        sortingMode="server"
-        sortModel={sortModel}
-        onSortModelChange={handleSortModelChange}
-        filterModel={filterModel}
-        onFilterModelChange={handleFilterModelChange}
-        pageSizeOptions={[10, 20, 50, 100]}
-        paginationModel={{ page: condition.page - 1, pageSize: condition.size }}
-        onPaginationModelChange={(model) => {
-          setCondition((prev) => ({
-            ...prev,
-            page: model.page + 1,
-            size: model.pageSize,
-          }));
-        }}
-      />
-      <MallProductSpuAdd ref={addMallProductSpu} onSubmit={refreshData} />
-      <MallProductSpuEdit ref={editMallProductSpu} onSubmit={refreshData} />
-      <MallProductSpuDelete ref={deleteMallProductSpu} onSubmit={refreshData} />
-    </Box>
+    // <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+    //   <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between' }}>
+    //     <Box></Box>
+    //     {hasOperatePermission('mall:product:list:add') && <Button variant="customContained" onClick={handleClickOpenAdd}>
+    //       {t('global.operate.add')}
+    //     </Button>}
+    //   </Box>
+    //   <DataGrid
+    //     rowCount={total}
+    //     rows={records}
+    //     columns={columns}
+    //     getRowId={(row) => row.id}
+    //     pagination
+    //     paginationMode="server"
+    //     sortingMode="server"
+    //     sortModel={sortModel}
+    //     onSortModelChange={handleSortModelChange}
+    //     filterModel={filterModel}
+    //     onFilterModelChange={handleFilterModelChange}
+    //     pageSizeOptions={[10, 20, 50, 100]}
+    //     paginationModel={{ page: condition.page - 1, pageSize: condition.size }}
+    //     onPaginationModelChange={(model) => {
+    //       setCondition((prev) => ({
+    //         ...prev,
+    //         page: model.page + 1,
+    //         size: model.pageSize,
+    //       }));
+    //     }}
+    //   />
+    //   <MallProductSpuAdd ref={addMallProductSpu} onSubmit={refreshData} />
+    //   <MallProductSpuEdit ref={editMallProductSpu} onSubmit={refreshData} />
+    //   <MallProductSpuDelete ref={deleteMallProductSpu} onSubmit={refreshData} />
+    // </Box>
+    // <CustomizedAnchorExample />
+    <CustomizedAnchorDialogExample />
   );
 }
