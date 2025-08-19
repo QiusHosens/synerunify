@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { 
-  Box, 
-  Typography, 
-  Button, 
+import {
+  Box,
+  Typography,
+  Button,
   Divider,
   DialogActions,
   Alert,
@@ -57,10 +57,22 @@ const dialogAnchorItems: AnchorLinkProps[] = [
 
 const CustomizedAnchorDialogExample: React.FC = () => {
   const [open, setOpen] = useState(false);
-  const contentAreaRef = React.useRef<HTMLDivElement>(null);
+  const contentAreaRef = React.useRef<HTMLDivElement | null>(null);
+  const [isMounted, setIsMounted] = useState(false);
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+
+  React.useEffect(() => {
+    console.log('open', open);
+    if (open) {
+      setTimeout(() => {
+        if (contentAreaRef.current) {
+          setIsMounted(true);
+        }
+      })
+    }
+  }, [open, contentAreaRef.current]);
 
   return (
     <Box>
@@ -78,6 +90,13 @@ const CustomizedAnchorDialogExample: React.FC = () => {
             <Button onClick={handleClose}>关闭</Button>
           </DialogActions>
         }
+        TransitionProps={{
+          onEntered: () => {
+            if (contentAreaRef.current) {
+              setIsMounted(true);
+            }
+          },
+        }}
       >
         <Box display="flex" sx={{ height: '70vh' }}>
           {/* 左侧锚点导航 */}
@@ -94,7 +113,7 @@ const CustomizedAnchorDialogExample: React.FC = () => {
             <Typography variant="h6" gutterBottom>
               目录导航
             </Typography>
-            <CustomizedAnchor
+            {isMounted && contentAreaRef.current && <CustomizedAnchor
               items={dialogAnchorItems}
               offsetTop={0}
               showInkInFixed={true}
@@ -103,19 +122,23 @@ const CustomizedAnchorDialogExample: React.FC = () => {
                 console.log('获取滚动容器:', contentAreaRef.current);
                 return contentAreaRef.current || window;
               }}
+              // getContainer={
+              //   contentAreaRef.current ? () => contentAreaRef.current! : undefined
+              // }
+              // getContainer={() => container || window}
               onChange={(activeLink) => {
                 console.log('Dialog中当前活动锚点:', activeLink);
               }}
               onClick={(e, link) => {
                 console.log('Dialog中点击锚点:', link);
               }}
-            />
+            />}
           </Box>
 
           {/* 右侧内容区域 */}
-          <Box 
+          <Box
             ref={contentAreaRef}
-            className="dialog-content-area" 
+            className="dialog-content-area"
             sx={{ flex: 1, overflow: 'auto' }}
           >
             {/* 说明提示 */}
