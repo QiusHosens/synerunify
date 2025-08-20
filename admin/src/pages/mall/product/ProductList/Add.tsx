@@ -891,6 +891,25 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
               <Typography variant="h4" component="h2" gutterBottom>
                 {t('page.mall.product.tab.other.settings')}
               </Typography>
+              <TextField
+                required
+                size="small"
+                type="number"
+                label={t("page.mall.product.title.sort")}
+                name='sort'
+                value={formValues.sort}
+                onChange={handleInputChange}
+                error={!!errors.sort}
+                helperText={errors.sort}
+              />
+              <TextField
+                size="small"
+                type="number"
+                label={t("page.mall.product.title.virtual.sales.count")}
+                name='virtual_sales_count'
+                value={formValues.virtual_sales_count}
+                onChange={handleInputChange}
+              />
             </Box>
           </Box>
           <Box>
