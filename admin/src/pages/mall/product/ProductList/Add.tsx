@@ -11,6 +11,7 @@ import CustomizedDictRadioGroup from '@/components/CustomizedDictRadioGroup';
 import CustomizedDictCheckboxGroup from '@/components/CustomizedDictCheckboxGroup';
 import CustomizedAnchor, { AnchorLinkProps } from '@/components/CustomizedAnchor';
 import { Editor } from '@tinymce/tinymce-react';
+import CustomizedNumberInput from '@/components/CustomizedNumberInput';
 
 interface AttachmentValues {
   file_id?: number; // 文件ID
@@ -364,6 +365,19 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
     }
   };
 
+  const handleNumberChange = (value: number, name?: string) => {
+    if (name) {
+      setFormValues((prev) => ({ ...prev, [name]: value }));
+
+      if (errors[name as keyof FormErrors]) {
+        setErrors(prev => ({
+          ...prev,
+          [name]: undefined
+        }));
+      }
+    }
+  };
+
   const handleSkuInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type } = e.target;
     if (type == 'number') {
@@ -637,7 +651,7 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
           // width: 'fit-content',
         }}
       >
-        <Stack direction='row' gap={3}>
+        <Stack direction='row'>
           <Box
             sx={{
               width: 120,
@@ -853,7 +867,7 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
                 {t('page.mall.product.tab.product.detail')}
               </Typography>
               <Box sx={{
-                width: 800,
+                width: 750,
                 '& .tox-promotion-button': { display: 'none !important' },
                 '& .tox-statusbar__branding': { display: 'none' }
               }}>
@@ -862,7 +876,7 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
                   onInit={(_evt, editor) => (editorRef.current = editor)}
                   initialValue="<p>在这里输入内容...</p>"
                   init={{
-                    height: 400,
+                    height: 600,
                     language: "zh_CN",
                     language_url: "/tinymce/langs/zh_CN.js",
                     plugins: [
@@ -891,25 +905,58 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
               <Typography variant="h4" component="h2" gutterBottom>
                 {t('page.mall.product.tab.other.settings')}
               </Typography>
-              <TextField
-                required
-                size="small"
-                type="number"
-                label={t("page.mall.product.title.sort")}
-                name='sort'
-                value={formValues.sort}
-                onChange={handleInputChange}
-                error={!!errors.sort}
-                helperText={errors.sort}
-              />
-              <TextField
-                size="small"
-                type="number"
-                label={t("page.mall.product.title.virtual.sales.count")}
-                name='virtual_sales_count'
-                value={formValues.virtual_sales_count}
-                onChange={handleInputChange}
-              />
+              <Box
+                noValidate
+                component="form"
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  // m: 'auto',
+                  width: 'fit-content',
+                }}
+              >
+                <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '240px' } }}>
+                  <TextField
+                    required
+                    size="small"
+                    type="number"
+                    label={t("page.mall.product.title.sort")}
+                    name='sort'
+                    value={formValues.sort}
+                    onChange={handleInputChange}
+                    error={!!errors.sort}
+                    helperText={errors.sort}
+                  />
+                  <TextField
+                    required
+                    size="small"
+                    type="number"
+                    label={t("page.mall.product.title.give.integral")}
+                    name='give_integral'
+                    value={formValues.give_integral}
+                    onChange={handleInputChange}
+                    error={!!errors.give_integral}
+                    helperText={errors.give_integral}
+                  />
+                  <TextField
+                    size="small"
+                    type="number"
+                    label={t("page.mall.product.title.virtual.sales.count")}
+                    name='virtual_sales_count'
+                    value={formValues.virtual_sales_count}
+                    onChange={handleInputChange}
+                  />
+                  <CustomizedNumberInput
+                    step={2}
+                    min={0}
+                    max={10}
+                    label={t("page.mall.product.title.virtual.sales.count")}
+                    name='virtual_sales_count'
+                    value={formValues.virtual_sales_count}
+                    onChange={handleNumberChange}
+                  />
+                </FormControl>
+              </Box>
             </Box>
           </Box>
           <Box>
@@ -917,414 +964,6 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
           </Box>
         </Stack>
       </Box>
-      {/* <Stack direction='row' gap={3}>
-          <Box>
-            <TabContext value={step}>
-              <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                <TabList onChange={handleStepChange} aria-label="tabs">
-                  <Tab label={t('page.mall.product.tab.basic.settings')} value={1} />
-                  <Tab label={t('page.mall.product.tab.price.inventory')} value={2} />
-                  <Tab label={t('page.mall.product.tab.logistics.settings')} value={3} />
-                  <Tab label={t('page.mall.product.tab.product.detail')} value={4} />
-                  <Tab label={t('page.mall.product.tab.other.settings')} value={5} />
-                </TabList>
-              </Box>
-              <TabPanel keepMounted={true} value={1}>
-                <Box
-                  noValidate
-                  component="form"
-                  sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    // m: 'auto',
-                    width: 'fit-content',
-                  }}
-                >
-                  <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '240px' } }}>
-                    <TextField
-                      required
-                      size="small"
-                      label={t("page.mall.product.title.name")}
-                      name='name'
-                      value={formValues.name}
-                      onChange={handleInputChange}
-                      error={!!errors.name}
-                      helperText={errors.name}
-                    />
-                  </FormControl>
-                  <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiSelect-root': { width: '240px' } }}>
-                    <SelectTree
-                      expandToSelected
-                      name='parent_id'
-                      size="small"
-                      label={t('common.title.parent')}
-                      treeData={treeData}
-                      value={selectedCategoryId}
-                      onChange={(name, node) => handleChange(name, node as TreeNode)}
-                    />
-                  </FormControl>
-                  <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiSelect-root': { width: '240px' } }}>
-                    <InputLabel required size="small" id="brand-select-label">{t("page.mall.product.title.brand")}</InputLabel>
-                    <Select
-                      required
-                      size="small"
-                      labelId="brand-select-label"
-                      label={t("page.mall.product.title.brand")}
-                      name='brand_id'
-                      value={formValues.brand_id}
-                      onChange={(e) => handleSelectChange(e)}
-                    >
-                      {brands.map(item => (<MenuItem key={item.id} value={item.id}>{item.name}</MenuItem>))}
-                    </Select>
-                  </FormControl>
-                  <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '240px' } }}>
-                    <TextField
-                      size="small"
-                      label={t("page.mall.product.title.keyword")}
-                      name='keyword'
-                      value={formValues.keyword}
-                      onChange={handleInputChange}
-                    />
-                    <TextField
-                      size="small"
-                      label={t("page.mall.product.title.introduction")}
-                      name='introduction'
-                      value={formValues.introduction}
-                      onChange={handleInputChange}
-                    />
-                  </FormControl>
-                  <Typography sx={{ mt: 2, mb: 1 }}>
-                    {t('page.mall.product.title.file')}
-                  </Typography>
-                  <CustomizedFileUpload
-                    canRemove={false}
-                    showFilename={false}
-                    id={'file-upload'}
-                    accept=".jpg,jpeg,.png"
-                    maxSize={100}
-                    onChange={(file, action) => handleFileChange(file, action)}
-                    file={formValues.file}
-                    width={fileWidth}
-                    height={fileHeight}
-                  />
-                  <Typography sx={{ mt: 2, mb: 1 }}>
-                    {t('page.mall.product.title.slider.files')}
-                  </Typography>
-                  <Box
-                    gap={2}
-                    sx={{
-                      display: 'flex',
-                      flexWrap: 'wrap',
-                    }}
-                  >
-                    {sliderFiles.map((item, index) => (
-                      <Box key={index}>
-                        <CustomizedFileUpload
-                          showFilename={false}
-                          id={'file-upload-' + index}
-                          accept=".jpg,jpeg,.png"
-                          maxSize={100}
-                          onChange={(files, action) => handleSliderFileChange(files, action, index)}
-                          file={item.file}
-                          width={fileWidth}
-                          height={fileHeight}
-                        />
-                      </Box>
-                    ))}
-                    <Box>
-                      <CustomizedFileUpload
-                        showFilename={false}
-                        id={'file-upload-' + sliderFiles.length}
-                        accept=".jpg,jpeg,.png"
-                        maxSize={100}
-                        onChange={(file, action) => handleSliderFileChange(file, action, sliderFiles.length)}
-                        width={fileWidth}
-                        height={fileHeight}
-                      />
-                    </Box>
-                  </Box>
-                </Box>
-              </TabPanel>
-              <TabPanel keepMounted={true} value={2}>
-                <Box
-                  noValidate
-                  component="form"
-                  sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    // m: 'auto',
-                    width: 'fit-content',
-                  }}
-                >
-                  <CustomizedDictRadioGroup
-                    id="commission-row-radio-buttons-group-label"
-                    name='sub_commission_type'
-                    dict_type='sub_commission_type'
-                    label={t('page.mall.product.title.sub.commission.type')}
-                    value={formValues.sub_commission_type}
-                    onChange={handleInputChange}
-                  />
-                  <CustomizedDictRadioGroup
-                    id="spec-row-radio-buttons-group-label"
-                    name='spec_type'
-                    dict_type='spec_type'
-                    label={t('page.mall.product.title.spec.type')}
-                    value={formValues.spec_type}
-                    onChange={handleInputChange}
-                  />
-                  {formValues.skus.map((sku, index) => (
-                    <ProductBox sku={sku} index={index}></ProductBox>
-                  ))}
-                </Box>
-              </TabPanel>
-              <TabPanel keepMounted={true} value={3}>
-                <Box
-                  noValidate
-                  component="form"
-                  sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    // m: 'auto',
-                    width: 'fit-content',
-                  }}
-                >
-                  <CustomizedDictCheckboxGroup
-                    id="delivery-row-checkbox-buttons-group-label"
-                    label={t("page.mall.product.title.delivery.types")}
-                    name='delivery_types'
-                    value={formValues.delivery_types}
-                    dict_type='delivery_type'
-                    onChange={handleCheckboxChange}
-                  />
-                </Box>
-              </TabPanel>
-              <TabPanel value={4}></TabPanel>
-              <TabPanel value={5}></TabPanel>
-            </TabContext>
-          </Box>
-          <Box>
-            预览
-            <CustomizedAnchorExample />
-            <CustomizedAnchor
-              items={anchorItems}
-              fixed
-              position={{ top: 100, right: 20 }}
-              offsetTop={80}
-              showInkInFixed
-              onChange={(activeLink) => {
-                console.log('当前活动锚点:', activeLink);
-              }}
-              onClick={(e, link) => {
-                console.log('点击锚点:', link);
-              }}
-            />
-          </Box>
-        </Stack> */}
-      {/* <CustomizedAnchorExample /> */}
-      {/* <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' } }}>
-          <TextField
-            required
-            size="small"
-            label={t("page.mall.product.title.name")}
-            name='name'
-            value={formValues.name}
-            onChange={handleInputChange}
-            error={!!errors.name}
-            helperText={errors.name}
-          />
-          <TextField
-            size="small"
-            label={t("page.mall.product.title.keyword")}
-            name='keyword'
-            value={formValues.keyword}
-            onChange={handleInputChange}
-          />
-          <TextField
-            size="small"
-            label={t("page.mall.product.title.introduction")}
-            name='introduction'
-            value={formValues.introduction}
-            onChange={handleInputChange}
-          />
-          <TextField
-            size="small"
-            label={t("page.mall.product.title.description")}
-            name='description'
-            value={formValues.description}
-            onChange={handleInputChange}
-          />
-          <TextField
-            required
-            size="small"
-            type="number"
-            label={t("page.mall.product.title.category_id")}
-            name='category_id'
-            value={formValues.category_id}
-            onChange={handleInputChange}
-            error={!!errors.category_id}
-            helperText={errors.category_id}
-          />
-          <TextField
-            size="small"
-            type="number"
-            label={t("page.mall.product.title.brand_id")}
-            name='brand_id'
-            value={formValues.brand_id}
-            onChange={handleInputChange}
-          />
-          <TextField
-            required
-            size="small"
-            label={t("page.mall.product.title.file_id")}
-            name='file_id'
-            value={formValues.file_id}
-            onChange={handleInputChange}
-            error={!!errors.file_id}
-            helperText={errors.file_id}
-          />
-          <TextField
-            size="small"
-            label={t("page.mall.product.title.slider_pic_urls")}
-            name='slider_pic_urls'
-            value={formValues.slider_file_ids}
-            onChange={handleInputChange}
-          />
-          <TextField
-            required
-            size="small"
-            type="number"
-            label={t("page.mall.product.title.sort")}
-            name='sort'
-            value={formValues.sort}
-            onChange={handleInputChange}
-            error={!!errors.sort}
-            helperText={errors.sort}
-          />
-          <TextField
-            size="small"
-            type="number"
-            label={t("page.mall.product.title.status")}
-            name='status'
-            value={formValues.status}
-            onChange={handleInputChange}
-            error={!!errors.status}
-            helperText={errors.status}
-          />
-          <TextField
-            size="small"
-            label={t("page.mall.product.title.spec_type")}
-            name='spec_type'
-            value={formValues.spec_type}
-            onChange={handleInputChange}
-          />
-          <TextField
-            required
-            size="small"
-            type="number"
-            label={t("page.mall.product.title.price")}
-            name='price'
-            value={formValues.price}
-            onChange={handleInputChange}
-            error={!!errors.price}
-            helperText={errors.price}
-          />
-          <TextField
-            size="small"
-            type="number"
-            label={t("page.mall.product.title.market_price")}
-            name='market_price'
-            value={formValues.market_price}
-            onChange={handleInputChange}
-          />
-          <TextField
-            required
-            size="small"
-            type="number"
-            label={t("page.mall.product.title.cost_price")}
-            name='cost_price'
-            value={formValues.cost_price}
-            onChange={handleInputChange}
-            error={!!errors.cost_price}
-            helperText={errors.cost_price}
-          />
-          <TextField
-            required
-            size="small"
-            type="number"
-            label={t("page.mall.product.title.stock")}
-            name='stock'
-            value={formValues.stock}
-            onChange={handleInputChange}
-            error={!!errors.stock}
-            helperText={errors.stock}
-          />
-          <TextField
-            required
-            size="small"
-            label={t("page.mall.product.title.delivery_types")}
-            name='delivery_types'
-            value={formValues.delivery_types}
-            onChange={handleInputChange}
-            error={!!errors.delivery_types}
-            helperText={errors.delivery_types}
-          />
-          <TextField
-            size="small"
-            type="number"
-            label={t("page.mall.product.title.delivery_template_id")}
-            name='delivery_template_id'
-            value={formValues.delivery_template_id}
-            onChange={handleInputChange}
-          />
-          <TextField
-            required
-            size="small"
-            type="number"
-            label={t("page.mall.product.title.give_integral")}
-            name='give_integral'
-            value={formValues.give_integral}
-            onChange={handleInputChange}
-            error={!!errors.give_integral}
-            helperText={errors.give_integral}
-          />
-          <TextField
-            size="small"
-            label={t("page.mall.product.title.sub_commission_type")}
-            name='sub_commission_type'
-            value={formValues.sub_commission_type}
-            onChange={handleInputChange}
-          />
-          <TextField
-            size="small"
-            type="number"
-            label={t("page.mall.product.title.sales_count")}
-            name='sales_count'
-            value={formValues.sales_count}
-            onChange={handleInputChange}
-          />
-          <TextField
-            size="small"
-            type="number"
-            label={t("page.mall.product.title.virtual_sales_count")}
-            name='virtual_sales_count'
-            value={formValues.virtual_sales_count}
-            onChange={handleInputChange}
-          />
-          <TextField
-            size="small"
-            type="number"
-            label={t("page.mall.product.title.browse_count")}
-            name='browse_count'
-            value={formValues.browse_count}
-            onChange={handleInputChange}
-          />
-        </FormControl>
-        <Box sx={{ mt: 2, display: 'flex', alignItems: 'center' }}>
-          <Typography sx={{ mr: 4 }}>{t("global.title.status")}</Typography>
-          <Switch sx={{ mr: 2 }} name='status' checked={!formValues.status} onChange={handleStatusChange} />
-          <Typography>{formValues.status == 0 ? t('global.switch.status.true') : t('global.switch.status.false')}</Typography>
-        </Box> */}
-      {/* </Box> */}
     </CustomizedDialog >
   )
 });
