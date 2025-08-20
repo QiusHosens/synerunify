@@ -1,17 +1,16 @@
-import { Box, Button, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Stack, Tab, TextField, Typography } from '@mui/material';
+import { Box, Button, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Stack, TextField, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { forwardRef, useCallback, useImperativeHandle, useState } from 'react';
+import { forwardRef, useCallback, useImperativeHandle, useRef, useState } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
 import { createMallProductSpu, listMallProductBrand, listMallProductCategory, MallProductBrandResponse, MallProductCategoryResponse, MallProductSpuRequest } from '@/api';
 import CustomizedDialog from '@/components/CustomizedDialog';
-import { TabContext, TabList, TabPanel } from '@mui/lab';
 import SelectTree from '@/components/SelectTree';
 import { uploadSystemFile } from '@/api/system_file';
 import CustomizedFileUpload, { UploadFile } from '@/components/CustomizedFileUpload';
 import CustomizedDictRadioGroup from '@/components/CustomizedDictRadioGroup';
 import CustomizedDictCheckboxGroup from '@/components/CustomizedDictCheckboxGroup';
 import CustomizedAnchor, { AnchorLinkProps } from '@/components/CustomizedAnchor';
-import CustomizedAnchorExample from '@/components/CustomizedAnchor.example';
+import { Editor } from '@tinymce/tinymce-react';
 
 interface AttachmentValues {
   file_id?: number; // 文件ID
@@ -142,9 +141,13 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
     slider_files: [],
   });
   const [errors, setErrors] = useState<FormErrors>({});
-  const [step, setStep] = useState<number>(1);
   const [fileWidth] = useState<number>(240);
   const [fileHeight] = useState<number>(160);
+
+  const anchorContainerRef = useRef<HTMLDivElement | null>(null);
+  const [isMounted, setIsMounted] = useState(false);
+
+  const editorRef = useRef<any>(null);
 
   const anchorItems: AnchorLinkProps[] = [
     {
@@ -174,6 +177,12 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
       listBrands();
       initCategorys();
       setOpen(true);
+
+      setTimeout(() => {
+        if (anchorContainerRef.current) {
+          setIsMounted(true);
+        }
+      });
     },
     hide() {
       setOpen(false);
@@ -323,6 +332,9 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
   }
 
   const handleSubmit = async () => {
+    if (editorRef.current) {
+      console.log('editor content', editorRef.current.getContent()); // 获取 HTML 内容
+    }
     if (validateForm()) {
       await createMallProductSpu(formValues as MallProductSpuRequest);
       handleClose();
@@ -337,24 +349,12 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
     }
   };
 
-  const handleStepChange = (event: React.SyntheticEvent, value: number) => {
-    setStep(value);
-  }
-
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type } = e.target;
-    if (type == 'number') {
-      const numberValue = Number(value);
-      setFormValues(prev => ({
-        ...prev,
-        [name]: numberValue
-      }));
-    } else {
-      setFormValues(prev => ({
-        ...prev,
-        [name]: value
-      }));
-    }
+    setFormValues((prev) => ({
+      ...prev,
+      [name]: type === 'number' ? Number(value) : value,
+    }));
 
     if (errors[name as keyof FormErrors]) {
       setErrors(prev => ({
@@ -412,7 +412,6 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
       [name]: value
     }));
 
-    // Clear error when user starts typing
     if (errors[name as keyof FormErrors]) {
       setErrors(prev => ({
         ...prev,
@@ -471,8 +470,6 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
   }, []);
 
   const handleSliderFileChange = useCallback(async (file: UploadFile | null, action: 'upload' | 'remove', index: number) => {
-    // console.log(`Upload ${index} file updated:`, file, `Action: ${action}`);
-
     if (action === 'upload' && file) {
       // 更新文件列表,增加一个附件,等待上传完成后在写入信息
       setSliderFiles((prev) => {
@@ -626,19 +623,282 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
         </>
       }
     >
-      {/* <Box
+
+      <Box
         // noValidate
         // component="form"
         sx={{
           display: 'flex',
           justifyContent: 'center',
+          height: '70vh'
           // alignItems: 'start',
           // flexDirection: 'column',
           // m: 'auto',
           // width: 'fit-content',
         }}
-      > */}
-        {/* <Stack direction='row' gap={3}>
+      >
+        <Stack direction='row' gap={3}>
+          <Box
+            sx={{
+              width: 120,
+              flexShrink: 0,
+              // borderRight: 1,
+              // borderColor: 'divider',
+              pr: 2,
+              mr: 2,
+            }}
+          >
+            {isMounted && anchorContainerRef.current && <CustomizedAnchor
+              showInkInFixed
+              items={anchorItems}
+              offsetTop={0}
+              getContainer={() => {
+                // 使用ref获取滚动容器，更加准确
+                console.debug('container ref:', anchorContainerRef.current);
+                return anchorContainerRef.current || window;
+              }}
+              onChange={(activeLink) => {
+                console.debug('active link:', activeLink);
+              }}
+              onClick={(e, link) => {
+                console.debug('click link:', link);
+              }}
+            />}
+          </Box>
+          <Box ref={anchorContainerRef} sx={{ flex: 1, overflow: 'auto' }}>
+            <Box id="basic" sx={{ mb: 4 }}>
+              <Typography variant="h4" component="h2" gutterBottom>
+                {t('page.mall.product.tab.basic.settings')}
+              </Typography>
+              <Box
+                noValidate
+                component="form"
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  // m: 'auto',
+                  width: 'fit-content',
+                }}
+              >
+                <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '240px' } }}>
+                  <TextField
+                    required
+                    multiline
+                    minRows={2}
+                    size="small"
+                    label={t("page.mall.product.title.name")}
+                    name='name'
+                    value={formValues.name}
+                    onChange={handleInputChange}
+                    error={!!errors.name}
+                    helperText={errors.name}
+                  />
+                </FormControl>
+                <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiSelect-root': { width: '240px' } }}>
+                  <SelectTree
+                    expandToSelected
+                    name='parent_id'
+                    size="small"
+                    label={t('common.title.parent')}
+                    treeData={treeData}
+                    value={selectedCategoryId}
+                    onChange={(name, node) => handleChange(name, node as TreeNode)}
+                  />
+                </FormControl>
+                <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiSelect-root': { width: '240px' } }}>
+                  <InputLabel required size="small" id="brand-select-label">{t("page.mall.product.title.brand")}</InputLabel>
+                  <Select
+                    required
+                    size="small"
+                    labelId="brand-select-label"
+                    label={t("page.mall.product.title.brand")}
+                    name='brand_id'
+                    value={formValues.brand_id}
+                    onChange={(e) => handleSelectChange(e)}
+                  >
+                    {brands.map(item => (<MenuItem key={item.id} value={item.id}>{item.name}</MenuItem>))}
+                  </Select>
+                </FormControl>
+                <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '240px' } }}>
+                  <TextField
+                    size="small"
+                    label={t("page.mall.product.title.keyword")}
+                    name='keyword'
+                    value={formValues.keyword}
+                    onChange={handleInputChange}
+                  />
+                  <TextField
+                    multiline
+                    minRows={2}
+                    size="small"
+                    label={t("page.mall.product.title.introduction")}
+                    name='introduction'
+                    value={formValues.introduction}
+                    onChange={handleInputChange}
+                  />
+                </FormControl>
+                <Typography sx={{ mt: 2, mb: 1 }}>
+                  {t('page.mall.product.title.file')}
+                </Typography>
+                <CustomizedFileUpload
+                  canRemove={false}
+                  showFilename={false}
+                  id={'file-upload'}
+                  accept=".jpg,jpeg,.png"
+                  maxSize={100}
+                  onChange={(file, action) => handleFileChange(file, action)}
+                  file={formValues.file}
+                  width={fileWidth}
+                  height={fileHeight}
+                />
+                <Typography sx={{ mt: 2, mb: 1 }}>
+                  {t('page.mall.product.title.slider.files')}
+                </Typography>
+                <Box
+                  gap={2}
+                  sx={{
+                    display: 'flex',
+                    flexWrap: 'wrap',
+                  }}
+                >
+                  {sliderFiles.map((item, index) => (
+                    <Box key={index}>
+                      <CustomizedFileUpload
+                        showFilename={false}
+                        id={'file-upload-' + index}
+                        accept=".jpg,jpeg,.png"
+                        maxSize={100}
+                        onChange={(files, action) => handleSliderFileChange(files, action, index)}
+                        file={item.file}
+                        width={fileWidth}
+                        height={fileHeight}
+                      />
+                    </Box>
+                  ))}
+                  <Box>
+                    <CustomizedFileUpload
+                      showFilename={false}
+                      id={'file-upload-' + sliderFiles.length}
+                      accept=".jpg,jpeg,.png"
+                      maxSize={100}
+                      onChange={(file, action) => handleSliderFileChange(file, action, sliderFiles.length)}
+                      width={fileWidth}
+                      height={fileHeight}
+                    />
+                  </Box>
+                </Box>
+              </Box>
+            </Box>
+            <Box id="price" sx={{ mb: 4 }}>
+              <Typography variant="h4" component="h2" gutterBottom>
+                {t('page.mall.product.tab.price.inventory')}
+              </Typography>
+              <Box
+                noValidate
+                component="form"
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  // m: 'auto',
+                  width: 'fit-content',
+                }}
+              >
+                <CustomizedDictRadioGroup
+                  id="commission-row-radio-buttons-group-label"
+                  name='sub_commission_type'
+                  dict_type='sub_commission_type'
+                  label={t('page.mall.product.title.sub.commission.type')}
+                  value={formValues.sub_commission_type}
+                  onChange={handleInputChange}
+                />
+                <CustomizedDictRadioGroup
+                  id="spec-row-radio-buttons-group-label"
+                  name='spec_type'
+                  dict_type='spec_type'
+                  label={t('page.mall.product.title.spec.type')}
+                  value={formValues.spec_type}
+                  onChange={handleInputChange}
+                />
+                {formValues.skus.map((sku, index) => (
+                  <ProductBox key={index} sku={sku} index={index}></ProductBox>
+                ))}
+              </Box>
+            </Box>
+            <Box id="logistics" sx={{ mb: 4 }}>
+              <Typography variant="h4" component="h2" gutterBottom>
+                {t('page.mall.product.tab.logistics.settings')}
+              </Typography>
+              <Box
+                noValidate
+                component="form"
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  // m: 'auto',
+                  width: 'fit-content',
+                }}
+              >
+                <CustomizedDictCheckboxGroup
+                  id="delivery-row-checkbox-buttons-group-label"
+                  label={t("page.mall.product.title.delivery.types")}
+                  name='delivery_types'
+                  value={formValues.delivery_types}
+                  dict_type='delivery_type'
+                  onChange={handleCheckboxChange}
+                />
+              </Box>
+            </Box>
+            <Box id="product" sx={{ mb: 4 }}>
+              <Typography variant="h4" component="h2" gutterBottom>
+                {t('page.mall.product.tab.product.detail')}
+              </Typography>
+              <Box sx={{
+                width: 800,
+                '& .tox-promotion-button': { display: 'none !important' },
+                '& .tox-statusbar__branding': { display: 'none' }
+              }}>
+                <Editor
+                  apiKey='f88rshir3x1vuar3lr0tj1vaq6muvonldxm25o6wxr23vy96'
+                  onInit={(_evt, editor) => (editorRef.current = editor)}
+                  initialValue="<p>在这里输入内容...</p>"
+                  init={{
+                    height: 400,
+                    language: "zh_CN",
+                    language_url: "/tinymce/langs/zh_CN.js",
+                    plugins: [
+                      // Core editing features
+                      'anchor', 'autolink', 'charmap', 'codesample', 'emoticons', 'link', 'lists', 'media', 'searchreplace', 'table', 'visualblocks', 'wordcount',
+                      // Your account includes a free trial of TinyMCE premium features
+                      // Try the most popular premium features until Sep 3, 2025:
+                      // 'checklist', 'mediaembed', 'casechange', 'formatpainter', 'pageembed', 'a11ychecker', 'tinymcespellchecker', 'permanentpen', 'powerpaste', 'advtable', 'advcode', 'advtemplate', 'ai', 'uploadcare', 'mentions', 'tinycomments', 'tableofcontents', 'footnotes', 'mergetags', 'autocorrect', 'typography', 'inlinecss', 'markdown', 'importword', 'exportword', 'exportpdf'
+                    ],
+                    toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography uploadcare | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+                    content_style: "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
+                    // tinycomments_mode: 'embedded',
+                    // tinycomments_author: 'Author name',
+                    // mergetags_list: [
+                    //   { value: 'First.Name', title: 'First Name' },
+                    //   { value: 'Email', title: 'Email' },
+                    // ],
+                    // ai_request: (request, respondWith) => respondWith.string(() => Promise.reject('See docs to implement AI Assistant')),
+                    // uploadcare_public_key: '0768186df57eccd6ad6c',
+                  }}
+                // initialValue="Welcome to TinyMCE!"
+                />
+              </Box>
+            </Box>
+            <Box id="other" sx={{ mb: 4 }}>
+              <Typography variant="h4" component="h2" gutterBottom>
+                {t('page.mall.product.tab.other.settings')}
+              </Typography>
+            </Box>
+          </Box>
+          <Box>
+            预览
+          </Box>
+        </Stack>
+      </Box>
+      {/* <Stack direction='row' gap={3}>
           <Box>
             <TabContext value={step}>
               <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
@@ -841,8 +1101,8 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
             />
           </Box>
         </Stack> */}
-        <CustomizedAnchorExample />
-        {/* <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' } }}>
+      {/* <CustomizedAnchorExample /> */}
+      {/* <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' } }}>
           <TextField
             required
             size="small"
