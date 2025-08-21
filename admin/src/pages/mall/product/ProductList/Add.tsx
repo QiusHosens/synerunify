@@ -947,9 +947,8 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
                     onChange={handleInputChange}
                   />
                   <CustomizedNumberInput
-                    step={2}
+                    step={1}
                     min={0}
-                    max={10}
                     label={t("page.mall.product.title.virtual.sales.count")}
                     name='virtual_sales_count'
                     value={formValues.virtual_sales_count}

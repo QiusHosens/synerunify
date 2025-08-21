@@ -56,19 +56,11 @@ export default function MallProductSpu() {
   const columns: GridColDef[] = useMemo(
     () => [
       { field: 'name', headerName: t("page.mall.product.title.name"), flex: 1, minWidth: 100 },
-      { field: 'introduction', headerName: t("page.mall.product.title.introduction"), flex: 1, minWidth: 100 },
-      { field: 'description', headerName: t("page.mall.product.title.description"), flex: 1, minWidth: 100 },
-      { field: 'category_id', headerName: t("page.mall.product.title.category"), flex: 1, minWidth: 100 },
-      { field: 'brand_id', headerName: t("page.mall.product.title.brand"), flex: 1, minWidth: 100 },
-      { field: 'sort', headerName: t("page.mall.product.title.sort"), flex: 1, minWidth: 100 },
       { field: 'price', headerName: t("page.mall.product.title.price"), flex: 1, minWidth: 100 },
-      { field: 'market_price', headerName: t("page.mall.product.title.market.price"), flex: 1, minWidth: 100 },
-      { field: 'cost_price', headerName: t("page.mall.product.title.cost.price"), flex: 1, minWidth: 100 },
-      { field: 'stock', headerName: t("page.mall.product.title.stock"), flex: 1, minWidth: 100 },
-      { field: 'delivery_types', headerName: t("page.mall.product.title.delivery.types"), flex: 1, minWidth: 100 },
-      { field: 'give_integral', headerName: t("page.mall.product.title.give.integral"), flex: 1, minWidth: 100 },
       { field: 'sales_count', headerName: t("page.mall.product.title.sales.count"), flex: 1, minWidth: 100 },
+      { field: 'stock', headerName: t("page.mall.product.title.stock"), flex: 1, minWidth: 100 },
       { field: 'browse_count', headerName: t("page.mall.product.title.browse.count"), flex: 1, minWidth: 100 },
+      { field: 'sort', headerName: t("page.mall.product.title.sort"), flex: 1, minWidth: 100 },
       {
         field: 'status',
         sortable: false,
