@@ -4,6 +4,7 @@ import { forwardRef, useImperativeHandle, useState } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
 import { createDict, listDictType, SystemDictDataRequest, SystemDictTypeResponse } from '@/api/dict';
 import CustomizedDialog from '@/components/CustomizedDialog';
+import CustomizedNumberInput from '@/components/CustomizedNumberInput';
 
 interface FormValues {
   dict_type: string;
@@ -230,10 +231,11 @@ const DictAdd = forwardRef(({ onSubmit }: DictAddProps, ref) => {
             error={!!errors.value}
             helperText={errors.value}
           />
-          <TextField
+          <CustomizedNumberInput
             required
             size="small"
-            type="number"
+            step={1}
+            min={0}
             label={t("common.title.sort")}
             name="sort"
             value={formValues.sort}

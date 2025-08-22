@@ -13,7 +13,7 @@ interface CustomizedNumberInputProps {
   error?: boolean;
   helperText?: string;
   size?: 'small' | 'medium';
-  onChange?: (value: number, name?: string) => void;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 const CustomizedNumberInput: React.FC<CustomizedNumberInputProps> = ({
@@ -31,10 +31,22 @@ const CustomizedNumberInput: React.FC<CustomizedNumberInputProps> = ({
 }) => {
   const [internalValue, setInternalValue] = useState<number>(value);
 
-  const handleChange = (newValue: number) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = Number(e.target.value);
     const clamped = Math.min(Math.max(newValue, min), max);
     setInternalValue(clamped);
-    onChange?.(clamped, name);
+    onChange?.(e);
+  };
+
+  const handleStepChange = (delta: number) => {
+    const newValue = Math.min(Math.max(internalValue + delta, min), max);
+    setInternalValue(newValue);
+
+    // 模拟 input change 事件传给外部
+    const fakeEvent = {
+      target: { type: 'number', value: String(newValue), name: name ?? "" },
+    } as React.ChangeEvent<HTMLInputElement>;
+    onChange?.(fakeEvent);
   };
 
   useEffect(() => {
@@ -50,7 +62,7 @@ const CustomizedNumberInput: React.FC<CustomizedNumberInputProps> = ({
       value={internalValue}
       error={error}
       helperText={helperText}
-      onChange={(e) => handleChange(Number(e.target.value))}
+      onChange={handleChange}
       size={size}
       sx={{
         width: 200,
@@ -89,7 +101,7 @@ const CustomizedNumberInput: React.FC<CustomizedNumberInputProps> = ({
               <IconButton
                 aria-label="decrement"
                 size={size}
-                onClick={() => handleChange(internalValue - step)}
+                onClick={() => handleStepChange(-step)}
                 disabled={internalValue <= min}
                 sx={{
                   // height: '100%',
@@ -102,6 +114,12 @@ const CustomizedNumberInput: React.FC<CustomizedNumberInputProps> = ({
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
+                  '&:hover': {
+                    backgroundColor: 'action.hover',
+                  },
+                  '&:disabled': {
+                    color: 'action.disabled',
+                  },
                 }}
               >
                 <Minus fontSize={size} />
@@ -122,7 +140,7 @@ const CustomizedNumberInput: React.FC<CustomizedNumberInputProps> = ({
               <IconButton
                 aria-label="increment"
                 size={size}
-                onClick={() => handleChange(internalValue + step)}
+                onClick={() => handleStepChange(step)}
                 disabled={internalValue >= max}
                 sx={{
                   // height: '100%',
@@ -135,6 +153,12 @@ const CustomizedNumberInput: React.FC<CustomizedNumberInputProps> = ({
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
+                  '&:hover': {
+                    backgroundColor: 'action.hover',
+                  },
+                  '&:disabled': {
+                    color: 'action.disabled',
+                  },
                 }}
               >
                 <Plus fontSize={size} />

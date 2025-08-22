@@ -365,19 +365,6 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
     }
   };
 
-  const handleNumberChange = (value: number, name?: string) => {
-    if (name) {
-      setFormValues((prev) => ({ ...prev, [name]: value }));
-
-      if (errors[name as keyof FormErrors]) {
-        setErrors(prev => ({
-          ...prev,
-          [name]: undefined
-        }));
-      }
-    }
-  };
-
   const handleSkuInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type } = e.target;
     if (type == 'number') {
@@ -924,7 +911,7 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
                     label={t("page.mall.product.title.sort")}
                     name='sort'
                     value={formValues.sort}
-                    onChange={handleNumberChange}
+                    onChange={handleInputChange}
                     error={!!errors.sort}
                     helperText={errors.sort}
                   />
@@ -936,7 +923,7 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
                     label={t("page.mall.product.title.give.integral")}
                     name='give_integral'
                     value={formValues.give_integral}
-                    onChange={handleNumberChange}
+                    onChange={handleInputChange}
                     error={!!errors.give_integral}
                     helperText={errors.give_integral}
                   />
@@ -947,7 +934,7 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
                     label={t("page.mall.product.title.virtual.sales.count")}
                     name='virtual_sales_count'
                     value={formValues.virtual_sales_count}
-                    onChange={handleNumberChange}
+                    onChange={handleInputChange}
                   />
                 </FormControl>
               </Box>
