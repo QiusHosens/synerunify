@@ -916,37 +916,32 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
                 }}
               >
                 <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '240px' } }}>
-                  <TextField
+                  <CustomizedNumberInput
                     required
                     size="small"
-                    type="number"
+                    step={1}
+                    min={0}
                     label={t("page.mall.product.title.sort")}
                     name='sort'
                     value={formValues.sort}
-                    onChange={handleInputChange}
+                    onChange={handleNumberChange}
                     error={!!errors.sort}
                     helperText={errors.sort}
                   />
-                  <TextField
+                  <CustomizedNumberInput
                     required
                     size="small"
-                    type="number"
+                    step={1}
+                    min={0}
                     label={t("page.mall.product.title.give.integral")}
                     name='give_integral'
                     value={formValues.give_integral}
-                    onChange={handleInputChange}
+                    onChange={handleNumberChange}
                     error={!!errors.give_integral}
                     helperText={errors.give_integral}
                   />
-                  <TextField
-                    size="small"
-                    type="number"
-                    label={t("page.mall.product.title.virtual.sales.count")}
-                    name='virtual_sales_count'
-                    value={formValues.virtual_sales_count}
-                    onChange={handleInputChange}
-                  />
                   <CustomizedNumberInput
+                    size="small"
                     step={1}
                     min={0}
                     label={t("page.mall.product.title.virtual.sales.count")}
@@ -963,7 +958,7 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
           </Box>
         </Stack>
       </Box>
-    </CustomizedDialog >
+    </CustomizedDialog>
   )
 });
 

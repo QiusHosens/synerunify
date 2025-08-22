@@ -1,24 +1,32 @@
 import React, { useEffect, useState } from "react";
 import { TextField, IconButton, InputAdornment } from "@mui/material";
-import { Add, Remove } from "@mui/icons-material";
+import { Minus, Plus } from 'lucide-react';
 
 interface CustomizedNumberInputProps {
+  required?: boolean;
   value?: number;
   step?: number;
   min?: number;
   max?: number;
   label?: string;
   name?: string;
+  error?: boolean;
+  helperText?: string;
+  size?: 'small' | 'medium';
   onChange?: (value: number, name?: string) => void;
 }
 
 const CustomizedNumberInput: React.FC<CustomizedNumberInputProps> = ({
+  required = false,
   value = 0,
   step = 1,
   min = Number.NEGATIVE_INFINITY,
   max = Number.POSITIVE_INFINITY,
   label,
   name,
+  error,
+  helperText,
+  size = 'small',
   onChange,
 }) => {
   const [internalValue, setInternalValue] = useState<number>(value);
@@ -35,12 +43,15 @@ const CustomizedNumberInput: React.FC<CustomizedNumberInputProps> = ({
 
   return (
     <TextField
+      required={required}
       label={label}
       name={name}
       type="number"
       value={internalValue}
+      error={error}
+      helperText={helperText}
       onChange={(e) => handleChange(Number(e.target.value))}
-      size="small"
+      size={size}
       sx={{
         width: 200,
         '& .MuiOutlinedInput-root': {
@@ -65,24 +76,25 @@ const CustomizedNumberInput: React.FC<CustomizedNumberInputProps> = ({
       slotProps={{
         input: {
           startAdornment: (
-            <InputAdornment 
-              position="start" 
-              sx={{ 
-                m: 0, 
+            <InputAdornment
+              position="start"
+              sx={{
+                m: 0,
                 height: '100%',
                 display: 'flex',
                 alignItems: 'stretch',
               }}
             >
+              <span className="notranslate" aria-hidden="true">​</span>
               <IconButton
                 aria-label="decrement"
-                size="small"
+                size={size}
                 onClick={() => handleChange(internalValue - step)}
                 disabled={internalValue <= min}
                 sx={{
                   // height: '100%',
                   minWidth: 36,
-                  border: 1,
+                  border: 0,
                   borderColor: 'divider',
                   borderRadius: 0,
                   p: 0,
@@ -92,29 +104,30 @@ const CustomizedNumberInput: React.FC<CustomizedNumberInputProps> = ({
                   justifyContent: 'center',
                 }}
               >
-                <Remove fontSize="small" />
+                <Minus fontSize={size} />
               </IconButton>
             </InputAdornment>
           ),
           endAdornment: (
-            <InputAdornment 
-              position="end" 
-              sx={{ 
-                m: 0, 
+            <InputAdornment
+              position="end"
+              sx={{
+                m: 0,
                 height: '100%',
                 display: 'flex',
                 alignItems: 'stretch',
               }}
             >
+              <span className="notranslate" aria-hidden="true">​</span>
               <IconButton
                 aria-label="increment"
-                size="small"
+                size={size}
                 onClick={() => handleChange(internalValue + step)}
                 disabled={internalValue >= max}
                 sx={{
                   // height: '100%',
                   minWidth: 36,
-                  border: 1,
+                  border: 0,
                   borderColor: 'divider',
                   borderRadius: 0,
                   p: 0,
@@ -124,7 +137,7 @@ const CustomizedNumberInput: React.FC<CustomizedNumberInputProps> = ({
                   justifyContent: 'center',
                 }}
               >
-                <Add fontSize="small" />
+                <Plus fontSize={size} />
               </IconButton>
             </InputAdornment>
           ),
