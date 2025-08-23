@@ -472,8 +472,8 @@
       "title.stock": "库存",
       "title.weight": "商品重量",
       "title.volume": "商品体积",
-      "title.first.brokerage.price": "一级分销的佣金",
-      "title.second.brokerage.price": "二级分销的佣金",
+      "title.first.brokerage.price": "一级返佣(元)",
+      "title.second.brokerage.price": "二级返佣(元)",
       "title.sales.count": "商品销量"
     },
     "category": {

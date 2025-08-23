@@ -1,4 +1,4 @@
-import { Box, Button, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Stack, TextField, Typography } from '@mui/material';
+import { Box, Button, FormControl, Grid, InputLabel, MenuItem, Select, SelectChangeEvent, Stack, TextField, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { forwardRef, useCallback, useImperativeHandle, useRef, useState } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
@@ -144,6 +144,7 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
   const [errors, setErrors] = useState<FormErrors>({});
   const [fileWidth] = useState<number>(240);
   const [fileHeight] = useState<number>(160);
+  const [size] = useState({ xs: 12, md: 4 });
 
   const anchorContainerRef = useRef<HTMLDivElement | null>(null);
   const [isMounted, setIsMounted] = useState(false);
@@ -518,7 +519,7 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
 
   const ProductBox = (({ sku, index }: { sku: FormSkuValues, index: number }) => {
     return (
-      <Stack gap={2}>
+      <Stack direction='row' gap={2} sx={{ pr: 4 }}>
         <CustomizedFileUpload
           canRemove={false}
           showFilename={false}
@@ -530,82 +531,125 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
           width={fileWidth}
           height={fileHeight}
         />
-        <TextField
-          required
-          size="small"
-          label={t("page.mall.product.sku.title.bar.code")}
-          name='bar_code'
-          value={sku.bar_code}
-          onChange={handleSkuInputChange}
-          error={!!(errors.skus && errors.skus[index].bar_code)}
-          helperText={errors.skus && errors.skus[index].bar_code}
-        />
-        <TextField
-          required
-          size="small"
-          type="number"
-          label={t("page.mall.product.sku.title.price")}
-          name='price'
-          value={sku.price}
-          onChange={handleSkuInputChange}
-          error={!!(errors.skus && errors.skus[index].price)}
-          helperText={errors.skus && errors.skus[index].price}
-        />
-        <TextField
-          required
-          size="small"
-          type="number"
-          label={t("page.mall.product.sku.title.market.price")}
-          name='market_price'
-          value={sku.market_price}
-          onChange={handleSkuInputChange}
-          error={!!(errors.skus && errors.skus[index].market_price)}
-          helperText={errors.skus && errors.skus[index].market_price}
-        />
-        <TextField
-          required
-          size="small"
-          type="number"
-          label={t("page.mall.product.sku.title.cost.price")}
-          name='cost_price'
-          value={sku.cost_price}
-          onChange={handleSkuInputChange}
-          error={!!(errors.skus && errors.skus[index].cost_price)}
-          helperText={errors.skus && errors.skus[index].cost_price}
-        />
-        <TextField
-          required
-          size="small"
-          type="number"
-          label={t("page.mall.product.sku.title.stock")}
-          name='stock'
-          value={sku.stock}
-          onChange={handleSkuInputChange}
-          error={!!(errors.skus && errors.skus[index].stock)}
-          helperText={errors.skus && errors.skus[index].stock}
-        />
-        <TextField
-          required
-          size="small"
-          type="number"
-          label={t("page.mall.product.sku.title.weight")}
-          name='weight'
-          value={sku.weight}
-          onChange={handleSkuInputChange}
-          error={!!(errors.skus && errors.skus[index].weight)}
-          helperText={errors.skus && errors.skus[index].weight}
-        />
-        <TextField
-          required
-          size="small"
-          type="number"
-          label={t("page.mall.product.sku.title.volume")}
-          name='volume'
-          value={sku.volume}
-          onChange={handleSkuInputChange}
-          error={!!(errors.skus && errors.skus[index].volume)}
-          helperText={errors.skus && errors.skus[index].volume}
-        />
+        <Grid container rowSpacing={2} columnSpacing={2} sx={{ '& .MuiGrid-root': { display: 'flex', justifyContent: 'center', alignItems: 'center' } }}>
+          <Grid size={{ xs: 12, md: 6 }}>
+            <TextField
+              required
+              size="small"
+              label={t("page.mall.product.sku.title.bar.code")}
+              name='bar_code'
+              value={sku.bar_code}
+              onChange={handleSkuInputChange}
+              error={!!(errors.skus && errors.skus[index].bar_code)}
+              helperText={errors.skus && errors.skus[index].bar_code}
+              sx={{ width: '100%' }}
+            />
+          </Grid>
+          <Grid size={{ xs: 12, md: 3 }}>
+            <TextField
+              required
+              size="small"
+              type="number"
+              label={t("page.mall.product.sku.title.price")}
+              name='price'
+              value={sku.price}
+              onChange={handleSkuInputChange}
+              error={!!(errors.skus && errors.skus[index].price)}
+              helperText={errors.skus && errors.skus[index].price}
+            />
+          </Grid>
+          <Grid size={{ xs: 12, md: 3 }}>
+            <TextField
+              required
+              size="small"
+              type="number"
+              label={t("page.mall.product.sku.title.market.price")}
+              name='market_price'
+              value={sku.market_price}
+              onChange={handleSkuInputChange}
+              error={!!(errors.skus && errors.skus[index].market_price)}
+              helperText={errors.skus && errors.skus[index].market_price}
+            />
+          </Grid>
+          <Grid size={size}>
+            <TextField
+              required
+              size="small"
+              type="number"
+              label={t("page.mall.product.sku.title.cost.price")}
+              name='cost_price'
+              value={sku.cost_price}
+              onChange={handleSkuInputChange}
+              error={!!(errors.skus && errors.skus[index].cost_price)}
+              helperText={errors.skus && errors.skus[index].cost_price}
+            />
+          </Grid>
+          <Grid size={size}>
+            <TextField
+              required
+              size="small"
+              type="number"
+              label={t("page.mall.product.sku.title.stock")}
+              name='stock'
+              value={sku.stock}
+              onChange={handleSkuInputChange}
+              error={!!(errors.skus && errors.skus[index].stock)}
+              helperText={errors.skus && errors.skus[index].stock}
+            />
+          </Grid>
+          <Grid size={size}>
+            <TextField
+              required
+              size="small"
+              type="number"
+              label={t("page.mall.product.sku.title.weight")}
+              name='weight'
+              value={sku.weight}
+              onChange={handleSkuInputChange}
+              error={!!(errors.skus && errors.skus[index].weight)}
+              helperText={errors.skus && errors.skus[index].weight}
+            />
+          </Grid>
+          <Grid size={size}>
+            <TextField
+              required
+              size="small"
+              type="number"
+              label={t("page.mall.product.sku.title.volume")}
+              name='volume'
+              value={sku.volume}
+              onChange={handleSkuInputChange}
+              error={!!(errors.skus && errors.skus[index].volume)}
+              helperText={errors.skus && errors.skus[index].volume}
+            />
+          </Grid>
+          <Grid size={size}>
+            {formValues.sub_commission_type == 1 && <TextField
+              required
+              size="small"
+              type="number"
+              label={t("page.mall.product.sku.title.first.brokerage.price")}
+              name='first_brokerage_price'
+              value={sku.first_brokerage_price}
+              onChange={handleSkuInputChange}
+              error={!!(errors.skus && errors.skus[index].first_brokerage_price)}
+              helperText={errors.skus && errors.skus[index].first_brokerage_price}
+            />}
+          </Grid>
+          <Grid size={size}>
+            {formValues.sub_commission_type == 1 && <TextField
+              required
+              size="small"
+              type="number"
+              label={t("page.mall.product.sku.title.second.brokerage.price")}
+              name='second_brokerage_price'
+              value={sku.second_brokerage_price}
+              onChange={handleSkuInputChange}
+              error={!!(errors.skus && errors.skus[index].second_brokerage_price)}
+              helperText={errors.skus && errors.skus[index].second_brokerage_price}
+            />}
+          </Grid>
+        </Grid>
       </Stack>
     );
   });
@@ -655,7 +699,7 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
               offsetTop={0}
               getContainer={() => {
                 // 使用ref获取滚动容器，更加准确
-                console.debug('container ref:', anchorContainerRef.current);
+                // console.debug('container ref:', anchorContainerRef.current);
                 return anchorContainerRef.current || window;
               }}
               onChange={(activeLink) => {
@@ -666,7 +710,7 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
               }}
             />}
           </Box>
-          <Box ref={anchorContainerRef} sx={{ flex: 1, overflow: 'auto' }}>
+          <Box ref={anchorContainerRef} sx={{ width: 800, overflow: 'auto' }}>  {/* sx={{ flex: 1 }} */}
             <Box id="basic" sx={{ mb: 4 }}>
               <Typography variant="h4" component="h2" gutterBottom>
                 {t('page.mall.product.tab.basic.settings')}
@@ -854,7 +898,7 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
                 {t('page.mall.product.tab.product.detail')}
               </Typography>
               <Box sx={{
-                width: 750,
+                width: 760,
                 '& .tox-promotion-button': { display: 'none !important' },
                 '& .tox-statusbar__branding': { display: 'none' }
               }}>
@@ -884,7 +928,6 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
                     // ai_request: (request, respondWith) => respondWith.string(() => Promise.reject('See docs to implement AI Assistant')),
                     // uploadcare_public_key: '0768186df57eccd6ad6c',
                   }}
-                // initialValue="Welcome to TinyMCE!"
                 />
               </Box>
             </Box>
