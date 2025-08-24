@@ -100,7 +100,7 @@ export default function MallProductBrand() {
             {hasOperatePermission('mall:product:brand:edit') && <Button
               size="small"
               variant='customOperate'
-              title={t('global.operate.edit') + t('global.common')}
+              title={t('global.operate.edit') + t('global.page.mall.product.brand')}
               startIcon={<EditIcon />}
               onClick={() => handleClickOpenEdit(params.row)}
             />}
@@ -108,7 +108,7 @@ export default function MallProductBrand() {
               sx={{ color: 'error.main' }}
               size="small"
               variant='customOperate'
-              title={t('global.operate.delete') + t('global.common')}
+              title={t('global.operate.delete') + t('global.page.mall.product.brand')}
               startIcon={<DeleteIcon />}
               onClick={() => handleClickOpenDelete(params.row)}
             />}

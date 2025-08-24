@@ -668,7 +668,6 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
         </>
       }
     >
-
       <Box
         // noValidate
         // component="form"

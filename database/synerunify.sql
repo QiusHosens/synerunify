@@ -1,17 +1,17 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : 192.168.0.99_synerunify
+ Source Server         : 192.168.1.18_synerunify
  Source Server Type    : MySQL
- Source Server Version : 80100 (8.1.0)
- Source Host           : 192.168.0.99:30010
+ Source Server Version : 80200 (8.2.0)
+ Source Host           : 192.168.1.18:3306
  Source Schema         : synerunify
 
  Target Server Type    : MySQL
- Target Server Version : 80100 (8.1.0)
+ Target Server Version : 80200 (8.2.0)
  File Encoding         : 65001
 
- Date: 15/08/2025 15:43:35
+ Date: 24/08/2025 21:52:35
 */
 
 SET NAMES utf8mb4;
@@ -1339,12 +1339,13 @@ CREATE TABLE `mall_product_property`  (
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `idx_name`(`name`(32) ASC) USING BTREE COMMENT '规格名称索引'
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '商品属性项' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '商品属性项' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_product_property
 -- ----------------------------
 INSERT INTO `mall_product_property` VALUES (1, '名称', 0, '名称', 1, '2025-08-12 06:58:03', 1, '2025-08-12 06:58:03', b'0', 1);
+INSERT INTO `mall_product_property` VALUES (2, '颜色', 0, '颜色', 1, '2025-08-24 12:49:35', 1, '2025-08-24 12:49:35', b'0', 1);
 
 -- ----------------------------
 -- Table structure for mall_product_property_value
@@ -2827,7 +2828,7 @@ CREATE TABLE `system_file`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 82 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '文件信息表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 89 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '文件信息表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of system_file
@@ -2913,6 +2914,13 @@ INSERT INTO `system_file` VALUES (78, '笔记本.png', 'image/png', 2492, '2025/
 INSERT INTO `system_file` VALUES (79, '手机.png', 'image/png', 2741, '2025/08/12/80935196005765120_手机.png', 1, '0000', 1, 1, '2025-08-12 08:07:32', 1, '2025-08-12 08:07:32', b'0', 1);
 INSERT INTO `system_file` VALUES (80, '笔记本.png', 'image/png', 2492, '2025/08/12/80935206671880192_笔记本.png', 1, '0000', 1, 1, '2025-08-12 08:07:35', 1, '2025-08-12 08:07:35', b'0', 1);
 INSERT INTO `system_file` VALUES (81, '笔记本.png', 'image/png', 2492, '2025/08/12/80935635468161024_笔记本.png', 1, '0000', 1, 1, '2025-08-12 08:09:17', 1, '2025-08-12 08:09:17', b'0', 1);
+INSERT INTO `system_file` VALUES (82, '微信图片_20240704102239.jpg', 'image/jpeg', 59107, '2025/08/15/82125573194780672_微信图片_20240704102239.jpg', 1, '0000', 1, 1, '2025-08-15 14:57:42', 1, '2025-08-15 14:57:42', b'0', 1);
+INSERT INTO `system_file` VALUES (83, '下载.jpg', 'image/jpeg', 5879, '2025/08/15/82127932503363584_下载.jpg', 1, '0000', 1, 1, '2025-08-15 15:07:05', 1, '2025-08-15 15:07:05', b'0', 1);
+INSERT INTO `system_file` VALUES (84, '微信图片_20240704102239.jpg', 'image/jpeg', 59107, '2025/08/15/82128718394298368_微信图片_20240704102239.jpg', 1, '0000', 1, 1, '2025-08-15 15:10:12', 1, '2025-08-15 15:10:12', b'0', 1);
+INSERT INTO `system_file` VALUES (85, '下载.jpg', 'image/jpeg', 5879, '2025/08/15/82128736207507456_下载.jpg', 1, '0000', 1, 1, '2025-08-15 15:10:16', 1, '2025-08-15 15:10:16', b'0', 1);
+INSERT INTO `system_file` VALUES (86, '微信图片_20240704102239.jpg', 'image/jpeg', 59107, '2025/08/15/82128738086555648_微信图片_20240704102239.jpg', 1, '0000', 1, 1, '2025-08-15 15:10:17', 1, '2025-08-15 15:10:17', b'0', 1);
+INSERT INTO `system_file` VALUES (87, '微信图片_20240704102239.jpg', 'image/jpeg', 59107, '2025/08/16/82346631592153088_微信图片_20240704102239.jpg', 1, '0000', 1, 1, '2025-08-16 05:36:07', 1, '2025-08-16 05:36:07', b'0', 1);
+INSERT INTO `system_file` VALUES (88, '微信图片_20240704102239.jpg', 'image/jpeg', 59107, '2025/08/17/82720930463223808_微信图片_20240704102239.jpg', 1, '0000', 1, 1, '2025-08-17 06:23:27', 1, '2025-08-17 06:23:27', b'0', 1);
 
 -- ----------------------------
 -- Table structure for system_menu
@@ -2940,7 +2948,7 @@ CREATE TABLE `system_menu`  (
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 396 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '菜单权限表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 401 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '菜单权限表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of system_menu
@@ -3326,6 +3334,11 @@ INSERT INTO `system_menu` VALUES (392, '启用', 'mall:product:brand:enable', 3,
 INSERT INTO `system_menu` VALUES (393, '禁用', 'mall:product:brand:disable', 3, 5, 219, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-09 12:37:45', 1, '2025-06-09 12:37:45', b'0');
 INSERT INTO `system_menu` VALUES (394, '启用', 'mall:product:property:enable', 3, 4, 220, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-09 12:37:29', 1, '2025-06-09 12:37:29', b'0');
 INSERT INTO `system_menu` VALUES (395, '禁用', 'mall:product:property:disable', 3, 5, 220, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-09 12:37:45', 1, '2025-06-09 12:37:45', b'0');
+INSERT INTO `system_menu` VALUES (396, '编辑属性值', 'mall:product:property:edit:value', 3, 4, 220, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:13:54', 1, '2025-06-10 02:13:54', b'0');
+INSERT INTO `system_menu` VALUES (397, '查看属性值', 'mall:product:property:value:get', 3, 5, 220, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:12:20', 1, '2025-06-10 02:12:20', b'0');
+INSERT INTO `system_menu` VALUES (398, '新增属性值', 'mall:product:property:value:add', 3, 6, 220, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:13:19', 1, '2025-06-10 02:13:19', b'0');
+INSERT INTO `system_menu` VALUES (399, '修改属性值', 'mall:product:property:value:edit', 3, 7, 220, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:13:36', 1, '2025-06-10 02:13:36', b'0');
+INSERT INTO `system_menu` VALUES (400, '删除属性值', 'mall:product:property:value:delete', 3, 8, 220, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:13:54', 1, '2025-06-10 02:13:54', b'0');
 
 -- ----------------------------
 -- Table structure for system_notice
@@ -3422,7 +3435,7 @@ CREATE TABLE `system_role_menu`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 498 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '角色和菜单关联表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 503 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '角色和菜单关联表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of system_role_menu
@@ -3844,6 +3857,11 @@ INSERT INTO `system_role_menu` VALUES (494, 1, 393, 1, '2025-08-12 06:21:59', 1,
 INSERT INTO `system_role_menu` VALUES (495, 1, 392, 1, '2025-08-12 06:21:59', 1, '2025-08-12 06:21:59', b'0', 1);
 INSERT INTO `system_role_menu` VALUES (496, 1, 394, 1, '2025-08-12 06:59:23', 1, '2025-08-12 06:59:23', b'0', 1);
 INSERT INTO `system_role_menu` VALUES (497, 1, 395, 1, '2025-08-12 06:59:23', 1, '2025-08-12 06:59:23', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (498, 1, 396, 1, '2025-08-24 13:04:08', 1, '2025-08-24 13:04:08', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (499, 1, 400, 1, '2025-08-24 13:52:25', 1, '2025-08-24 13:52:25', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (500, 1, 397, 1, '2025-08-24 13:52:25', 1, '2025-08-24 13:52:25', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (501, 1, 398, 1, '2025-08-24 13:52:25', 1, '2025-08-24 13:52:25', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (502, 1, 399, 1, '2025-08-24 13:52:25', 1, '2025-08-24 13:52:25', b'0', 1);
 
 -- ----------------------------
 -- Table structure for system_role_menu_data_scope
@@ -3950,7 +3968,7 @@ CREATE TABLE `system_user`  (
 -- ----------------------------
 -- Records of system_user
 -- ----------------------------
-INSERT INTO `system_user` VALUES (1, 'admin', '$2b$06$Ohq86rDIvNuy/4ZvsTF4dOw.7I7QJj620LC25PwgYDmrKqKmKsJz6', '超级管理员', '超级管理员', '123@qq.com', '18888888888', 0, '', 0, '127.0.0.1', '2025-08-09 04:22:10', '0000', 1, 1, '2025-03-08 10:14:52', 1, '2025-08-09 04:22:10', b'0', 1);
+INSERT INTO `system_user` VALUES (1, 'admin', '$2b$06$Ohq86rDIvNuy/4ZvsTF4dOw.7I7QJj620LC25PwgYDmrKqKmKsJz6', '超级管理员', '超级管理员', '123@qq.com', '18888888888', 0, '', 0, '127.0.0.1', '2025-08-24 08:41:01', '0000', 1, 1, '2025-03-08 10:14:52', 1, '2025-08-24 08:41:01', b'0', 1);
 INSERT INTO `system_user` VALUES (11, 'test', '$2b$06$S2yMOy4Mp5gImLOEl8X3K.T8XAWrfXVwGXK/vOBL.30PGNnnGIDzy', '测试管理员', NULL, '', '15555555555', 0, '', 0, '127.0.0.1', '2025-05-23 08:16:27', '0000-0000', 7, 1, '2025-05-23 08:16:00', 1, '2025-05-23 08:16:25', b'0', 2);
 
 -- ----------------------------

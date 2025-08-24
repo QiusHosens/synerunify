@@ -482,6 +482,9 @@
     "brand": {
       "title.file": "品牌图片"
     },
+    "property": {
+      "value": "属性值"
+    },
     "comment": {
       "title.user.nickname": "评价人",
       "title.user.avatar": "头像",
@@ -491,7 +494,7 @@
       "title.spu.name": "商品 SPU 名称",
       "title.sku.id": "商品 SKU 编号，关联 ProductSkuDO 的 id 编号",
       "title.sku.file": "图片",
-      "title.sku.properties": "属性数组，JSON 格式 [{propertId: , valueId: }, {propertId: , valueId: }]",
+      "title.sku.properties": "属性数组",
       "title.visible": "是否可见",
       "title.scores": "评分星级1-5分",
       "title.description.scores": "描述星级 1-5 星",

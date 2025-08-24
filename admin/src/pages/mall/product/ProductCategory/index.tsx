@@ -1,10 +1,10 @@
 import { Box, Button, styled, Switch } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { GridCallbackDetails, GridColDef, GridFilterModel, GridRenderCellParams, GridSortModel } from '@mui/x-data-grid';
+import { GridColDef, GridRenderCellParams, GridSortModel } from '@mui/x-data-grid';
 import EditIcon from '@/assets/image/svg/edit.svg';
 import DeleteIcon from '@/assets/image/svg/delete.svg';
-import { disableMallProductCategory, enableMallProductCategory, MallProductCategoryQueryCondition, MallProductCategoryResponse, listMallProductCategory } from '@/api';
+import { disableMallProductCategory, enableMallProductCategory, MallProductCategoryResponse, listMallProductCategory } from '@/api';
 import MallProductCategoryAdd from './Add';
 import MallProductCategoryEdit from './Edit';
 import MallProductCategoryDelete from './Delete';
@@ -19,7 +19,7 @@ export default function MallProductCategory() {
   const { hasOperatePermission } = useHomeStore();
 
   const [records, setRecords] = useState<Array<MallProductCategoryResponse>>([]);
-  const [sortModel, setSortModel] = useState<GridSortModel>([]);
+  const [sortModel] = useState<GridSortModel>([]);
 
   const addMallProductCategory = useRef(null);
   const editMallProductCategory = useRef(null);
@@ -94,7 +94,7 @@ export default function MallProductCategory() {
             {hasOperatePermission('mall:product:category:edit') && <Button
               size="small"
               variant='customOperate'
-              title={t('global.operate.edit') + t('global.page.mark_translation')}
+              title={t('global.operate.edit') + t('global.page.mall.product.category')}
               startIcon={<EditIcon />}
               onClick={() => handleClickOpenEdit(params.row)}
             />}
@@ -102,7 +102,7 @@ export default function MallProductCategory() {
               sx={{ color: 'error.main' }}
               size="small"
               variant='customOperate'
-              title={t('global.operate.delete') + t('global.page.mark_translation')}
+              title={t('global.operate.delete') + t('global.page.mall.product.category')}
               startIcon={<DeleteIcon />}
               onClick={() => handleClickOpenDelete(params.row)}
             />}

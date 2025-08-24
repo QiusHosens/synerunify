@@ -2,6 +2,7 @@ import { Box, Button, Switch } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { DataGrid, GridCallbackDetails, GridColDef, GridFilterModel, GridRenderCellParams, GridSortModel } from '@mui/x-data-grid';
+import ViewIcon from '@/assets/image/svg/view.svg';
 import EditIcon from '@/assets/image/svg/edit.svg';
 import DeleteIcon from '@/assets/image/svg/delete.svg';
 import { disableMallProductProperty, enableMallProductProperty, pageMallProductProperty, MallProductPropertyQueryCondition, MallProductPropertyResponse } from '@/api';
@@ -10,6 +11,7 @@ import MallProductPropertyEdit from './Edit';
 import MallProductPropertyDelete from './Delete';
 import { useHomeStore } from '@/store';
 import CustomizedAutoMore from '@/components/CustomizedAutoMore';
+import MallProductPropertyEditValue from './EditValue';
 
 export default function MallProductProperty() {
   const { t } = useTranslation();
@@ -25,8 +27,10 @@ export default function MallProductProperty() {
   const [sortModel, setSortModel] = useState<GridSortModel>([]);
   const [filterModel, setFilterModel] = useState<GridFilterModel>();
 
+  const viewMallProductProperty = useRef(null);
   const addMallProductProperty = useRef(null);
   const editMallProductProperty = useRef(null);
+  const editMallProductPropertyValue = useRef(null);
   const deleteMallProductProperty = useRef(null);
 
   const handleStatusChange = useCallback(
@@ -77,18 +81,32 @@ export default function MallProductProperty() {
         minWidth: 100,
         renderCell: (params: GridRenderCellParams) => (
           <CustomizedAutoMore>
+            {hasOperatePermission('mall:product:comment:get') && <Button
+              size="small"
+              variant='customOperate'
+              title={t('global.operate.view') + t('global.page.mall.product.property')}
+              startIcon={<ViewIcon />}
+              onClick={() => handleClickOpenView(params.row)}
+            />}
             {hasOperatePermission('mall:product:property:edit') && <Button
               size="small"
               variant='customOperate'
-              title={t('global.operate.edit') + t('global.common')}
+              title={t('global.operate.edit') + t('global.page.mall.product.property')}
               startIcon={<EditIcon />}
               onClick={() => handleClickOpenEdit(params.row)}
+            />}
+            {hasOperatePermission('mall:product:property:edit:value') && <Button
+              size="small"
+              variant='customOperate'
+              title={t('global.operate.edit') + t('page.mall.product.property.value')}
+              startIcon={<EditIcon />}
+              onClick={() => handleClickOpenEditValue(params.row)}
             />}
             {hasOperatePermission('mall:product:property:delete') && <Button
               sx={{ color: 'error.main' }}
               size="small"
               variant='customOperate'
-              title={t('global.operate.delete') + t('global.common')}
+              title={t('global.operate.delete') + t('global.page.mall.product.property')}
               startIcon={<DeleteIcon />}
               onClick={() => handleClickOpenDelete(params.row)}
             />}
@@ -105,12 +123,20 @@ export default function MallProductProperty() {
     setTotal(result.total);
   };
 
+  const handleClickOpenView = (erpInboundOrder: MallProductPropertyResponse) => {
+    (viewMallProductProperty.current as any).show(erpInboundOrder);
+  }
+
   const handleClickOpenAdd = () => {
     (addMallProductProperty.current as any).show();
   }
 
   const handleClickOpenEdit = (mallProductProperty: MallProductPropertyResponse) => {
     (editMallProductProperty.current as any).show(mallProductProperty);
+  };
+
+  const handleClickOpenEditValue = (mallProductProperty: MallProductPropertyResponse) => {
+    (editMallProductPropertyValue.current as any).show(mallProductProperty);
   };
 
   const handleClickOpenDelete = (mallProductProperty: MallProductPropertyResponse) => {
@@ -171,6 +197,7 @@ export default function MallProductProperty() {
       />
       <MallProductPropertyAdd ref={addMallProductProperty} onSubmit={refreshData} />
       <MallProductPropertyEdit ref={editMallProductProperty} onSubmit={refreshData} />
+      <MallProductPropertyEditValue ref={editMallProductPropertyValue} onSubmit={refreshData} />
       <MallProductPropertyDelete ref={deleteMallProductProperty} onSubmit={refreshData} />
     </Box>
   );
