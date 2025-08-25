@@ -1,22 +1,31 @@
 use common::interceptor::orm::simple_support::SimpleSupport;
-use sea_orm::{DatabaseConnection, EntityTrait, Order, ColumnTrait, ActiveModelTrait, PaginatorTrait, QueryOrder, QueryFilter, Condition};
+use sea_orm::{DatabaseConnection, EntityTrait, Order, ColumnTrait, ActiveModelTrait, PaginatorTrait, QueryOrder, QueryFilter, Condition, TransactionTrait};
 use crate::model::mall_product_property::{Model as MallProductPropertyModel, ActiveModel as MallProductPropertyActiveModel, Entity as MallProductPropertyEntity, Column};
 use mall_model::request::mall_product_property::{CreateMallProductPropertyRequest, UpdateMallProductPropertyRequest, PaginatedKeywordRequest};
 use mall_model::response::mall_product_property::MallProductPropertyResponse;
 use crate::convert::mall_product_property::{create_request_to_model, update_request_to_model, model_to_response};
-use anyhow::{Result, anyhow};
+use anyhow::{Result, anyhow, Context};
 use sea_orm::ActiveValue::Set;
 use common::constants::enum_constants::{STATUS_DISABLE, STATUS_ENABLE};
 use common::base::page::PaginatedResponse;
 use common::context::context::LoginUserContext;
 use common::interceptor::orm::active_filter::ActiveFilterEntityTrait;
+use crate::service::mall_product_property_value;
 
 pub async fn create(db: &DatabaseConnection, login_user: LoginUserContext, request: CreateMallProductPropertyRequest) -> Result<i64> {
     let mut mall_product_property = create_request_to_model(&request);
     mall_product_property.creator = Set(Some(login_user.id));
     mall_product_property.updater = Set(Some(login_user.id));
     mall_product_property.tenant_id = Set(login_user.tenant_id);
-    let mall_product_property = mall_product_property.insert(db).await?;
+
+    // 开启事务
+    let txn = db.begin().await?;
+    // 创建属性
+    let mall_product_property = mall_product_property.insert(&txn).await?;
+    // 创建属性值
+    mall_product_property_value::create_batch(&db, &txn, login_user.clone(), mall_product_property.id, request.values).await?;
+    // 提交事务
+    txn.commit().await.with_context(|| "Failed to commit transaction")?;
     Ok(mall_product_property.id)
 }
 
@@ -27,9 +36,18 @@ pub async fn update(db: &DatabaseConnection, login_user: LoginUserContext, reque
         .await?
         .ok_or_else(|| anyhow!("记录未找到"))?;
 
+    let product_property = mall_product_property.clone();
+
     let mut mall_product_property = update_request_to_model(&request, mall_product_property);
     mall_product_property.updater = Set(Some(login_user.id));
-    mall_product_property.update(db).await?;
+    // 开启事务
+    let txn = db.begin().await?;
+    // 修改属性
+    mall_product_property.update(&txn).await?;
+    // 修改属性值
+    mall_product_property_value::update_batch(&db, &txn, login_user.clone(), product_property, request.values).await?;
+    // 提交事务
+    txn.commit().await.with_context(|| "Failed to commit transaction")?;
     Ok(())
 }
 

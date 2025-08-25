@@ -13,11 +13,11 @@ const apis = {
 }
 
 export interface MallProductPropertyValueRequest {
-  id: number; // 编号
-  property_id: number; // 属性项的编号
+  id?: number; // 编号
+  property_id?: number; // 属性项的编号
   name: string; // 名称
-  status: number; // 状态
-  remark: string; // 备注
+  status?: number; // 状态
+  remark?: string; // 备注
   }
 
 export interface MallProductPropertyValueResponse {

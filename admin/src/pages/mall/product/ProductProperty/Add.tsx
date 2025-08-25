@@ -2,13 +2,15 @@ import { Box, Button, FormControl, Switch, TextField, Typography } from '@mui/ma
 import { useTranslation } from 'react-i18next';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
-import { createMallProductProperty, MallProductPropertyRequest } from '@/api';
+import { createMallProductProperty, MallProductPropertyRequest, MallProductPropertyValueRequest } from '@/api';
 import CustomizedDialog from '@/components/CustomizedDialog';
+import CustomizedTagsInput, { Tag } from '@/components/CustomizedTagsInput';
 
 interface FormValues {
   name: string; // 名称
   status: number; // 状态
   remark: string; // 备注
+  values: MallProductPropertyValueRequest[]; // 属性值列表
 }
 
 interface FormErrors {
@@ -24,10 +26,12 @@ const MallProductPropertyAdd = forwardRef(({ onSubmit }: MallProductPropertyAddP
 
   const [open, setOpen] = useState(false);
   const [maxWidth] = useState<DialogProps['maxWidth']>('sm');
+  const [tags, setTags] = useState<Tag[]>([]);
   const [formValues, setFormValues] = useState<FormValues>({
     name: '',
     status: 0,
     remark: '',
+    values: [],
   });
   const [errors, setErrors] = useState<FormErrors>({});
 
@@ -66,6 +70,7 @@ const MallProductPropertyAdd = forwardRef(({ onSubmit }: MallProductPropertyAddP
       name: '',
       status: 0,
       remark: '',
+      values: [],
     });
     setErrors({});
   }
@@ -124,6 +129,10 @@ const MallProductPropertyAdd = forwardRef(({ onSubmit }: MallProductPropertyAddP
     }
   };
 
+  const handleTagsChange = (newTags: Tag[]) => {
+    setTags(newTags);
+  };
+
   return (
     <CustomizedDialog
       open={open}
@@ -169,6 +178,11 @@ const MallProductPropertyAdd = forwardRef(({ onSubmit }: MallProductPropertyAddP
           <Switch sx={{ mr: 2 }} name='status' checked={!formValues.status} onChange={handleStatusChange} />
           <Typography>{formValues.status == 0 ? t('global.switch.status.true') : t('global.switch.status.false')}</Typography>
         </Box>
+        <CustomizedTagsInput
+          tags={tags}
+          onTagsChange={handleTagsChange}
+          placeholder="简单标签输入..."
+        />
       </Box>
     </CustomizedDialog>
   )

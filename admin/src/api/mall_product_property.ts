@@ -1,5 +1,6 @@
 import { PaginatedRequest, PaginatedResponse } from '@/base/page';
 import { api } from '@/utils/request';
+import { MallProductPropertyValueRequest } from './mall_product_property_value';
 
 const apis = {
   create: '/mall/mall_product_property/create', // 新增
@@ -17,7 +18,9 @@ export interface MallProductPropertyRequest {
   name: string; // 名称
   status: number; // 状态
   remark: string; // 备注
-  }
+
+  values: MallProductPropertyValueRequest[]; // 属性值列表
+}
 
 export interface MallProductPropertyResponse {
   id: number; // 编号
@@ -28,10 +31,12 @@ export interface MallProductPropertyResponse {
   create_time: string; // 创建时间
   updater: number; // 更新者ID
   update_time: string; // 更新时间
-  }
+
+
+}
 
 export interface MallProductPropertyQueryCondition extends PaginatedRequest {
-  
+
 }
 
 export const createMallProductProperty = (mall_product_property: MallProductPropertyRequest): Promise<number> => {

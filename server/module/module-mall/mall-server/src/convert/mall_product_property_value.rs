@@ -1,4 +1,5 @@
 use sea_orm::{Set, NotSet};
+use common::constants::enum_constants::STATUS_ENABLE;
 use crate::model::mall_product_property_value::{self, Model as MallProductPropertyValue, ActiveModel as MallProductPropertyValueActiveModel};
 use mall_model::request::mall_product_property_value::{CreateMallProductPropertyValueRequest, UpdateMallProductPropertyValueRequest};
 use mall_model::response::mall_product_property_value::MallProductPropertyValueResponse;
@@ -7,7 +8,17 @@ pub fn create_request_to_model(request: &CreateMallProductPropertyValueRequest) 
     MallProductPropertyValueActiveModel {
         property_id: request.property_id.as_ref().map_or(NotSet, |property_id| Set(Some(property_id.clone()))),
         name: request.name.as_ref().map_or(NotSet, |name| Set(Some(name.clone()))),
-        status: Set(request.status.clone()),
+        status: Set(STATUS_ENABLE),
+        remark: request.remark.as_ref().map_or(NotSet, |remark| Set(Some(remark.clone()))),
+        ..Default::default()
+    }
+}
+
+pub fn update_add_request_to_model(request: &UpdateMallProductPropertyValueRequest) -> MallProductPropertyValueActiveModel {
+    MallProductPropertyValueActiveModel {
+        property_id: request.property_id.as_ref().map_or(NotSet, |property_id| Set(Some(property_id.clone()))),
+        name: request.name.as_ref().map_or(NotSet, |name| Set(Some(name.clone()))),
+        status: Set(STATUS_ENABLE),
         remark: request.remark.as_ref().map_or(NotSet, |remark| Set(Some(remark.clone()))),
         ..Default::default()
     }

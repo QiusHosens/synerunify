@@ -4,6 +4,7 @@
 use serde::{Serialize, Deserialize};
 use utoipa::ToSchema;
 use common::base::page::PaginatedRequest;
+use crate::request::mall_product_property_value::{CreateMallProductPropertyValueRequest, UpdateMallProductPropertyValueRequest};
 
 #[derive(Serialize, Deserialize, Debug, ToSchema)]
 pub struct CreateMallProductPropertyRequest {
@@ -13,6 +14,8 @@ pub struct CreateMallProductPropertyRequest {
     pub status: i8, // 状态
     
     pub remark: Option<String>, // 备注
+
+    pub values: Vec<CreateMallProductPropertyValueRequest>, // 属性值列表
     
 }
 
@@ -26,6 +29,8 @@ pub struct UpdateMallProductPropertyRequest {
     pub status: Option<i8>, // 状态
     
     pub remark: Option<String>, // 备注
+
+    pub values: Vec<UpdateMallProductPropertyValueRequest>, // 属性值列表
     
 }
 

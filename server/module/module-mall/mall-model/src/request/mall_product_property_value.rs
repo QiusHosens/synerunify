@@ -12,7 +12,7 @@ pub struct CreateMallProductPropertyValueRequest {
     
     pub name: Option<String>, // 名称
     
-    pub status: i8, // 状态
+    pub status: Option<i8>, // 状态
     
     pub remark: Option<String>, // 备注
     
@@ -21,7 +21,7 @@ pub struct CreateMallProductPropertyValueRequest {
 #[derive(Serialize, Deserialize, Debug, ToSchema)]
 pub struct UpdateMallProductPropertyValueRequest {
     
-    pub id: i64, // 编号
+    pub id: Option<i64>, // 编号
     
     pub property_id: Option<i64>, // 属性项的编号
     
