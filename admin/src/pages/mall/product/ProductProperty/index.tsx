@@ -11,7 +11,7 @@ import MallProductPropertyEdit from './Edit';
 import MallProductPropertyDelete from './Delete';
 import { useHomeStore } from '@/store';
 import CustomizedAutoMore from '@/components/CustomizedAutoMore';
-import MallProductPropertyEditValue from './EditValue';
+import MallProductPropertyInfo from './Info';
 
 export default function MallProductProperty() {
   const { t } = useTranslation();
@@ -183,6 +183,7 @@ export default function MallProductProperty() {
           }));
         }}
       />
+      <MallProductPropertyInfo ref={viewMallProductProperty} />
       <MallProductPropertyAdd ref={addMallProductProperty} onSubmit={refreshData} />
       <MallProductPropertyEdit ref={editMallProductProperty} onSubmit={refreshData} />
       <MallProductPropertyDelete ref={deleteMallProductProperty} onSubmit={refreshData} />

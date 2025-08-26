@@ -9,8 +9,9 @@ export interface Tag {
 }
 
 interface CustomizedTagsInputProps {
+  canEdit?: boolean
   tags: Tag[];
-  onTagsChange: (name: string, tags: Tag[]) => void;
+  onTagsChange?: (name: string, tags: Tag[]) => void;
   name?: string;
   tagName?: string;
   placeholder?: string;
@@ -23,6 +24,7 @@ interface CustomizedTagsInputProps {
 
 // 标签输入组件
 const CustomizedTagsInput: React.FC<CustomizedTagsInputProps> = ({
+  canEdit = true,
   tags,
   onTagsChange,
   name = '',
@@ -62,7 +64,7 @@ const CustomizedTagsInput: React.FC<CustomizedTagsInputProps> = ({
     };
 
     const newTags = [...tags, newTag];
-    onTagsChange(name, newTags);
+    onTagsChange?.(name, newTags);
     setInputValue('');
     setShowInput(false);
 
@@ -74,7 +76,7 @@ const CustomizedTagsInput: React.FC<CustomizedTagsInputProps> = ({
   // 删除标签
   const removeTag = (tagId: string): void => {
     const newTags = tags.filter(tag => tag.key !== tagId);
-    onTagsChange(name, newTags);
+    onTagsChange?.(name, newTags);
   };
 
   // 处理键盘事件
@@ -137,7 +139,7 @@ const CustomizedTagsInput: React.FC<CustomizedTagsInputProps> = ({
           }}
         >
           {tag.label}
-          {!disabled && (
+          {canEdit && !disabled && (
             <Button
               onClick={() => removeTag(tag.key)}
               sx={{
@@ -162,7 +164,7 @@ const CustomizedTagsInput: React.FC<CustomizedTagsInputProps> = ({
       ))}
 
       {/* 输入框或添加按钮 */}
-      {!isMaxReached && (
+      {canEdit && !isMaxReached && (
         <>
           {showInput ? (
             <TextField
