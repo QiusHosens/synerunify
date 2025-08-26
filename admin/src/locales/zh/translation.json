@@ -461,6 +461,7 @@
     "title.sales.count": "商品销量",
     "title.virtual.sales.count": "虚拟销量",
     "title.browse.count": "商品点击量",
+    "title.property.list": "商品属性列表",
     
     "sku": {
       "title.properties": "属性数组",
@@ -484,7 +485,8 @@
     },
     "property": {
       "value": "属性值",
-      "placeholder.value": "请输入属性值,按enter键确定"
+      "placeholder.value": "请输入属性值,按enter键确定",
+      "operate.add": "添加属性"
     },
     "comment": {
       "title.user.nickname": "评价人",

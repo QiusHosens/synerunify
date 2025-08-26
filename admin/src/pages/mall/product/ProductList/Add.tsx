@@ -2,7 +2,7 @@ import { Box, Button, FormControl, Grid, InputLabel, MenuItem, Select, SelectCha
 import { useTranslation } from 'react-i18next';
 import { forwardRef, useCallback, useImperativeHandle, useRef, useState } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
-import { createMallProductSpu, listMallProductBrand, listMallProductCategory, MallProductBrandResponse, MallProductCategoryResponse, MallProductSpuRequest } from '@/api';
+import { createMallProductSpu, getBaseMallProductProperty, listMallProductBrand, listMallProductCategory, MallProductBrandResponse, MallProductCategoryResponse, MallProductPropertyBaseResponse, MallProductSpuRequest } from '@/api';
 import CustomizedDialog from '@/components/CustomizedDialog';
 import SelectTree from '@/components/SelectTree';
 import { uploadSystemFile } from '@/api/system_file';
@@ -12,6 +12,8 @@ import CustomizedDictCheckboxGroup from '@/components/CustomizedDictCheckboxGrou
 import CustomizedAnchor, { AnchorLinkProps } from '@/components/CustomizedAnchor';
 import { Editor } from '@tinymce/tinymce-react';
 import CustomizedNumberInput from '@/components/CustomizedNumberInput';
+import PropertySelect from './PropertySelect';
+import CustomizedTag from '@/components/CustomizedTag';
 
 interface AttachmentValues {
   file_id?: number; // 文件ID
@@ -19,8 +21,15 @@ interface AttachmentValues {
   file?: UploadFile | null;
 }
 
+interface PropertyValues {
+  propertName: string,
+  propertId?: number,
+  valueId?: number,
+}
+
 interface FormSkuValues {
   properties?: string; // 属性数组，JSON 格式 [{propertId: , valueId: }, {propertId: , valueId: }]
+  properties_list?: PropertyValues[]; // 属性数组
   price?: number; // 商品价格，单位：分
   market_price?: number; // 市场价，单位：分
   cost_price?: number; // 成本价，单位： 分
@@ -116,6 +125,7 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
   const [treeData, setTreeData] = useState<TreeNode[]>([]);
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | number>(0);
   const [sliderFiles, setSliderFiles] = useState<AttachmentValues[]>([]);
+  const [selectedProperties, setSelectedProperties] = useState<MallProductPropertyBaseResponse[]>([]);
   const [formValues, setFormValues] = useState<FormValues>({
     name: '',
     keyword: '',
@@ -150,6 +160,7 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
   const [isMounted, setIsMounted] = useState(false);
 
   const editorRef = useRef<any>(null);
+  const selectProperty = useRef(null);
 
   const anchorItems: AnchorLinkProps[] = [
     {
@@ -517,6 +528,15 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
     }
   }, []);
 
+  const handleOpenPropertySelect = () => {
+    (selectProperty.current as any).show();
+  }
+
+  const selectedProperty = async (id: number) => {
+    const result = await getBaseMallProductProperty(id);
+    setSelectedProperties(prev => [...prev, result])
+  }
+
   const ProductBox = (({ sku, index }: { sku: FormSkuValues, index: number }) => {
     return (
       <Stack direction='row' gap={2} sx={{ pr: 4 }}>
@@ -863,6 +883,14 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
                   value={formValues.spec_type}
                   onChange={handleInputChange}
                 />
+                {formValues.spec_type == 1 && <Button variant="customContained" onClick={handleOpenPropertySelect} sx={{ mt: 2, width: 240 }}>
+                  {t('page.mall.product.property.operate.add')}
+                </Button>}
+                {formValues.spec_type == 1 && selectedProperties.map((item) => (
+                  <>
+                    <CustomizedTag label={item.name} color='primary' />
+                  </>
+                ))}
                 {formValues.skus.map((sku, index) => (
                   <ProductBox key={index} sku={sku} index={index}></ProductBox>
                 ))}
@@ -987,6 +1015,7 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
           </Box>
         </Stack>
       </Box>
+      <PropertySelect ref={selectProperty} onSubmit={selectedProperty} />
     </CustomizedDialog>
   )
 });

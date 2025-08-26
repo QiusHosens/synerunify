@@ -1,6 +1,6 @@
 import React, { useState, KeyboardEvent, FocusEvent, useRef, useEffect } from 'react';
 import { X, Plus } from 'lucide-react';
-import { Box, Button, SxProps, TextField, Theme } from '@mui/material';
+import { alpha, Box, Button, SxProps, TextField, Theme, useTheme } from '@mui/material';
 
 export interface Tag {
   id?: number;
@@ -36,6 +36,7 @@ const CustomizedTagsInput: React.FC<CustomizedTagsInputProps> = ({
   size = 'small',
   sx,
 }) => {
+  const theme = useTheme();
   const [inputValue, setInputValue] = useState<string>('');
   const [showInput, setShowInput] = useState<boolean>(true);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -124,37 +125,36 @@ const CustomizedTagsInput: React.FC<CustomizedTagsInputProps> = ({
       {tags.map((tag) => (
         <Box
           key={tag.key}
-          sx={{
+          sx={(theme) => ({
             display: 'inline-flex',
             alignItems: 'center',
             px: 1.5,
-            py: 0.75,
-            borderRadius: 16,
+            py: 0.5,
+            borderRadius: (3 * theme.shape.borderRadius) + 'px',
             fontSize: 14,
             fontWeight: 500,
-            bgcolor: '#dbeafe',
-            color: '#1e40af',
-            border: '1px solid #bfdbfe',
+            bgcolor: alpha(theme.palette.primary.main, 0.8),
+            color: '#fff',
             animation: 'fadeIn 0.3s ease-out',
-          }}
+          })}
         >
           {tag.label}
           {canEdit && !disabled && (
             <Button
               onClick={() => removeTag(tag.key)}
-              sx={{
+              sx={(theme) => ({
                 minWidth: 'auto',
                 height: 'auto',
-                ml: 0.75,
-                p: 0.5,
+                ml: 0.5,
+                p: 0.25,
                 bgcolor: 'transparent',
                 borderRadius: '50%',
-                color: '#1e40af',
+                color: '#fff',
                 '&:hover': {
-                  bgcolor: '#bfdbfe',
-                  color: '#1e3a8a',
+                  bgcolor: '#fff',
+                  color: alpha(theme.palette.primary.main, 0.8),
                 },
-              }}
+              })}
               title={`${removeTitle} ${tag.label}`}
             >
               <X size={12} />
