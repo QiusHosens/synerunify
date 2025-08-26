@@ -2,8 +2,9 @@ import { Box, Button, FormControl, Switch, TextField, Typography } from '@mui/ma
 import { useTranslation } from 'react-i18next';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
-import { MallProductPropertyRequest, MallProductPropertyResponse, updateMallProductProperty } from '@/api';
+import { getBaseMallProductProperty, MallProductPropertyRequest, MallProductPropertyResponse, updateMallProductProperty } from '@/api';
 import CustomizedDialog from '@/components/CustomizedDialog';
+import CustomizedTagsInput, { Tag } from '@/components/CustomizedTagsInput';
 
 interface FormErrors {
   status?: string; // 状态
@@ -18,11 +19,13 @@ const MallProductPropertyEdit = forwardRef(({ onSubmit }: MallProductPropertyEdi
 
   const [open, setOpen] = useState(false);
   const [maxWidth] = useState<DialogProps['maxWidth']>('sm');
+  const [tags, setTags] = useState<Tag[]>([]);
   const [mallProductProperty, setMallProductProperty] = useState<MallProductPropertyRequest>({
     id: 0,
     name: '',
     status: 0,
     remark: '',
+    values: [],
   });
   const [errors, setErrors] = useState<FormErrors>({});
 
@@ -55,10 +58,18 @@ const MallProductPropertyEdit = forwardRef(({ onSubmit }: MallProductPropertyEdi
     setOpen(false);
   };
 
-  const initForm = (mallProductProperty: MallProductPropertyResponse) => {
+  const initForm = async (mallProductProperty: MallProductPropertyResponse) => {
+    const result = await getBaseMallProductProperty(mallProductProperty.id);
     setMallProductProperty({
-      ...mallProductProperty,
+      ...result,
     })
+    setTags(result.values.map(value => {
+      return {
+        id: value.id,
+        key: String(value.id),
+        label: value.name,
+      } as Tag;
+    }))
     setErrors({});
   }
 
@@ -72,18 +83,10 @@ const MallProductPropertyEdit = forwardRef(({ onSubmit }: MallProductPropertyEdi
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type } = e.target;
-    if (type == 'number') {
-      const numberValue = Number(value);
-      setMallProductProperty(prev => ({
-        ...prev,
-        [name]: numberValue
-      }));
-    } else {
-      setMallProductProperty(prev => ({
-        ...prev,
-        [name]: value
-      }));
-    }
+    setMallProductProperty((prev) => ({
+      ...prev,
+      [name]: type === 'number' ? Number(value) : value,
+    }));
 
     if (errors[name as keyof FormErrors]) {
       setErrors(prev => ({
@@ -91,6 +94,17 @@ const MallProductPropertyEdit = forwardRef(({ onSubmit }: MallProductPropertyEdi
         [name]: undefined
       }));
     }
+  };
+
+  const handleTagsChange = (name: string, newTags: Tag[]) => {
+    setTags(newTags);
+    const values = newTags.map(tag => {
+      return { id: tag.id, name: tag.label }
+    });
+    setMallProductProperty(prev => ({
+      ...prev,
+      [name]: values
+    }));
   };
 
   const handleStatusChange = (e: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
@@ -153,6 +167,15 @@ const MallProductPropertyEdit = forwardRef(({ onSubmit }: MallProductPropertyEdi
           <Switch sx={{ mr: 2 }} name='status' checked={!mallProductProperty.status} onChange={handleStatusChange} />
           <Typography>{mallProductProperty.status == 0 ? t('global.switch.status.true') : t('global.switch.status.false')}</Typography>
         </Box>
+        <CustomizedTagsInput
+          size="small"
+          name='values'
+          tags={tags}
+          onTagsChange={handleTagsChange}
+          tagName={t("page.mall.product.property.value")}
+          placeholder={t("page.mall.product.property.placeholder.value")}
+          sx={{ mt: 2, width: '240px' }}
+        />
       </Box>
     </CustomizedDialog>
   )

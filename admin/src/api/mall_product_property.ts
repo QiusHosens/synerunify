@@ -1,12 +1,13 @@
 import { PaginatedRequest, PaginatedResponse } from '@/base/page';
 import { api } from '@/utils/request';
-import { MallProductPropertyValueRequest } from './mall_product_property_value';
+import { MallProductPropertyValueRequest, MallProductPropertyValueResponse } from './mall_product_property_value';
 
 const apis = {
   create: '/mall/mall_product_property/create', // 新增
   update: '/mall/mall_product_property/update', // 修改
   delete: '/mall/mall_product_property/delete', // 删除
   get: '/mall/mall_product_property/get', // 单条查询
+  get_base: '/mall/mall_product_property/get_base', // 单条查询
   list: '/mall/mall_product_property/list', // 列表查询
   page: '/mall/mall_product_property/page', // 分页查询
   enable: '/mall/mall_product_property/enable', // 启用
@@ -31,8 +32,19 @@ export interface MallProductPropertyResponse {
   create_time: string; // 创建时间
   updater: number; // 更新者ID
   update_time: string; // 更新时间
+}
 
+export interface MallProductPropertyBaseResponse {
+  id: number; // 编号
+  name: string; // 名称
+  status: number; // 状态
+  remark: string; // 备注
+  creator: number; // 创建者ID
+  create_time: string; // 创建时间
+  updater: number; // 更新者ID
+  update_time: string; // 更新时间
 
+  values: MallProductPropertyValueResponse[]; // 属性值列表
 }
 
 export interface MallProductPropertyQueryCondition extends PaginatedRequest {
@@ -53,6 +65,10 @@ export const deleteMallProductProperty = (id: number): Promise<void> => {
 
 export const getMallProductProperty = (id: number): Promise<MallProductPropertyResponse> => {
   return api.get<MallProductPropertyResponse>(`${apis.get}/${id}`);
+}
+
+export const getBaseMallProductProperty = (id: number): Promise<MallProductPropertyBaseResponse> => {
+  return api.get<MallProductPropertyBaseResponse>(`${apis.get_base}/${id}`);
 }
 
 export const listMallProductProperty = (): Promise<Array<MallProductPropertyResponse>> => {

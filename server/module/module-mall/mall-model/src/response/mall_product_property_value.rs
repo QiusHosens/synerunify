@@ -30,3 +30,19 @@ pub struct MallProductPropertyValueResponse {
     pub update_time: NaiveDateTime, // 更新时间
     
 }
+
+#[serde_as]
+#[derive(Deserialize, Serialize, Debug, Clone, ToSchema)]
+pub struct MallProductPropertyValueBaseResponse {
+
+    pub id: i64, // 编号
+
+    pub property_id: Option<i64>, // 属性项的编号
+
+    pub name: Option<String>, // 名称
+
+    pub status: i8, // 状态
+
+    pub remark: Option<String>, // 备注
+
+}

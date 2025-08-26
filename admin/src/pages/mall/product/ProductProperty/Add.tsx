@@ -92,18 +92,10 @@ const MallProductPropertyAdd = forwardRef(({ onSubmit }: MallProductPropertyAddP
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type } = e.target;
-    if (type == 'number') {
-      const numberValue = Number(value);
-      setFormValues(prev => ({
-        ...prev,
-        [name]: numberValue
-      }));
-    } else {
-      setFormValues(prev => ({
-        ...prev,
-        [name]: value
-      }));
-    }
+    setFormValues((prev) => ({
+      ...prev,
+      [name]: type === 'number' ? Number(value) : value,
+    }));
 
     if (errors[name as keyof FormErrors]) {
       setErrors(prev => ({

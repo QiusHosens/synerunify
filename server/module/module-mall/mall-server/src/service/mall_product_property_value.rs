@@ -4,8 +4,8 @@ use sea_orm::{DatabaseConnection, EntityTrait, Order, ColumnTrait, ActiveModelTr
 use crate::model::mall_product_property_value::{Model as MallProductPropertyValueModel, ActiveModel as MallProductPropertyValueActiveModel, Entity as MallProductPropertyValueEntity, Column};
 use crate::model::mall_product_property::{Model as MallProductPropertyModel};
 use mall_model::request::mall_product_property_value::{CreateMallProductPropertyValueRequest, UpdateMallProductPropertyValueRequest, PaginatedKeywordRequest};
-use mall_model::response::mall_product_property_value::MallProductPropertyValueResponse;
-use crate::convert::mall_product_property_value::{create_request_to_model, update_request_to_model, model_to_response, update_add_request_to_model};
+use mall_model::response::mall_product_property_value::{MallProductPropertyValueBaseResponse, MallProductPropertyValueResponse};
+use crate::convert::mall_product_property_value::{create_request_to_model, update_request_to_model, model_to_response, update_add_request_to_model, model_to_base_response};
 use anyhow::{Result, anyhow, Context};
 use sea_orm::ActiveValue::Set;
 use sea_orm::prelude::Expr;
@@ -183,6 +183,14 @@ pub async fn list(db: &DatabaseConnection, login_user: LoginUserContext) -> Resu
     let condition = Condition::all().add(Column::TenantId.eq(login_user.tenant_id));let list = MallProductPropertyValueEntity::find_active_with_condition(condition)
         .all(db).await?;
     Ok(list.into_iter().map(model_to_response).collect())
+}
+
+pub async fn list_by_property_id(db: &DatabaseConnection, login_user: LoginUserContext, property_id: i64) -> Result<Vec<MallProductPropertyValueBaseResponse>> {
+    let list = MallProductPropertyValueEntity::find_active()
+        .filter(Column::TenantId.eq(login_user.tenant_id))
+        .filter(Column::PropertyId.eq(property_id))
+        .all(db).await?;
+    Ok(list.into_iter().map(model_to_base_response).collect())
 }
 
 pub async fn enable(db: &DatabaseConnection, login_user: LoginUserContext, id: i64) -> Result<()> {

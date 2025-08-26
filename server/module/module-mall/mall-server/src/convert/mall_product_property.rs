@@ -1,7 +1,8 @@
 use sea_orm::{Set, NotSet};
 use crate::model::mall_product_property::{self, Model as MallProductProperty, ActiveModel as MallProductPropertyActiveModel};
 use mall_model::request::mall_product_property::{CreateMallProductPropertyRequest, UpdateMallProductPropertyRequest};
-use mall_model::response::mall_product_property::MallProductPropertyResponse;
+use mall_model::response::mall_product_property::{MallProductPropertyBaseResponse, MallProductPropertyResponse};
+use mall_model::response::mall_product_property_value::MallProductPropertyValueBaseResponse;
 
 pub fn create_request_to_model(request: &CreateMallProductPropertyRequest) -> MallProductPropertyActiveModel {
     MallProductPropertyActiveModel {
@@ -36,5 +37,15 @@ pub fn model_to_response(model: MallProductProperty) -> MallProductPropertyRespo
         create_time: model.create_time,
         updater: model.updater,
         update_time: model.update_time,
+    }
+}
+
+pub fn model_to_base_response(model: MallProductProperty, values: Vec<MallProductPropertyValueBaseResponse>) -> MallProductPropertyBaseResponse {
+    MallProductPropertyBaseResponse {
+        id: model.id,
+        name: model.name,
+        status: model.status,
+        remark: model.remark,
+        values,
     }
 }

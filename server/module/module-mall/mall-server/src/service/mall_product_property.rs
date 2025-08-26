@@ -2,8 +2,8 @@ use common::interceptor::orm::simple_support::SimpleSupport;
 use sea_orm::{DatabaseConnection, EntityTrait, Order, ColumnTrait, ActiveModelTrait, PaginatorTrait, QueryOrder, QueryFilter, Condition, TransactionTrait};
 use crate::model::mall_product_property::{Model as MallProductPropertyModel, ActiveModel as MallProductPropertyActiveModel, Entity as MallProductPropertyEntity, Column};
 use mall_model::request::mall_product_property::{CreateMallProductPropertyRequest, UpdateMallProductPropertyRequest, PaginatedKeywordRequest};
-use mall_model::response::mall_product_property::MallProductPropertyResponse;
-use crate::convert::mall_product_property::{create_request_to_model, update_request_to_model, model_to_response};
+use mall_model::response::mall_product_property::{MallProductPropertyBaseResponse, MallProductPropertyResponse};
+use crate::convert::mall_product_property::{create_request_to_model, update_request_to_model, model_to_response, model_to_base_response};
 use anyhow::{Result, anyhow, Context};
 use sea_orm::ActiveValue::Set;
 use common::constants::enum_constants::{STATUS_DISABLE, STATUS_ENABLE};
@@ -70,6 +70,23 @@ pub async fn get_by_id(db: &DatabaseConnection, login_user: LoginUserContext, id
     let mall_product_property = MallProductPropertyEntity::find_active_with_condition(condition)
         .one(db).await?;
     Ok(mall_product_property.map(model_to_response))
+}
+
+pub async fn get_base_by_id(db: &DatabaseConnection, login_user: LoginUserContext, id: i64) -> Result<Option<MallProductPropertyBaseResponse>> {
+    let condition = Condition::all()
+        .add(Column::Id.eq(id))
+        .add(Column::TenantId.eq(login_user.tenant_id));
+
+    let mall_product_property = MallProductPropertyEntity::find_active_with_condition(condition)
+        .one(db).await?;
+    if mall_product_property.is_none() {
+        return Ok(None);
+    }
+    let mall_product_property = mall_product_property.unwrap();
+
+    let values = mall_product_property_value::list_by_property_id(&db, login_user.clone(), id).await?;
+
+    Ok(Some(model_to_base_response(mall_product_property, values)))
 }
 
 pub async fn get_paginated(db: &DatabaseConnection, login_user: LoginUserContext, params: PaginatedKeywordRequest) -> Result<PaginatedResponse<MallProductPropertyResponse>> {

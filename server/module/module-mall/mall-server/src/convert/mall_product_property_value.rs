@@ -2,7 +2,7 @@ use sea_orm::{Set, NotSet};
 use common::constants::enum_constants::STATUS_ENABLE;
 use crate::model::mall_product_property_value::{self, Model as MallProductPropertyValue, ActiveModel as MallProductPropertyValueActiveModel};
 use mall_model::request::mall_product_property_value::{CreateMallProductPropertyValueRequest, UpdateMallProductPropertyValueRequest};
-use mall_model::response::mall_product_property_value::MallProductPropertyValueResponse;
+use mall_model::response::mall_product_property_value::{MallProductPropertyValueBaseResponse, MallProductPropertyValueResponse};
 
 pub fn create_request_to_model(request: &CreateMallProductPropertyValueRequest) -> MallProductPropertyValueActiveModel {
     MallProductPropertyValueActiveModel {
@@ -52,5 +52,15 @@ pub fn model_to_response(model: MallProductPropertyValue) -> MallProductProperty
         create_time: model.create_time,
         updater: model.updater,
         update_time: model.update_time,
+    }
+}
+
+pub fn model_to_base_response(model: MallProductPropertyValue) -> MallProductPropertyValueBaseResponse {
+    MallProductPropertyValueBaseResponse {
+        id: model.id,
+        property_id: model.property_id,
+        name: model.name,
+        status: model.status,
+        remark: model.remark,
     }
 }

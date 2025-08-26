@@ -30,7 +30,6 @@ export default function MallProductProperty() {
   const viewMallProductProperty = useRef(null);
   const addMallProductProperty = useRef(null);
   const editMallProductProperty = useRef(null);
-  const editMallProductPropertyValue = useRef(null);
   const deleteMallProductProperty = useRef(null);
 
   const handleStatusChange = useCallback(
@@ -95,13 +94,6 @@ export default function MallProductProperty() {
               startIcon={<EditIcon />}
               onClick={() => handleClickOpenEdit(params.row)}
             />}
-            {hasOperatePermission('mall:product:property:edit:value') && <Button
-              size="small"
-              variant='customOperate'
-              title={t('global.operate.edit') + t('page.mall.product.property.value')}
-              startIcon={<EditIcon />}
-              onClick={() => handleClickOpenEditValue(params.row)}
-            />}
             {hasOperatePermission('mall:product:property:delete') && <Button
               sx={{ color: 'error.main' }}
               size="small"
@@ -133,10 +125,6 @@ export default function MallProductProperty() {
 
   const handleClickOpenEdit = (mallProductProperty: MallProductPropertyResponse) => {
     (editMallProductProperty.current as any).show(mallProductProperty);
-  };
-
-  const handleClickOpenEditValue = (mallProductProperty: MallProductPropertyResponse) => {
-    (editMallProductPropertyValue.current as any).show(mallProductProperty);
   };
 
   const handleClickOpenDelete = (mallProductProperty: MallProductPropertyResponse) => {
@@ -197,7 +185,6 @@ export default function MallProductProperty() {
       />
       <MallProductPropertyAdd ref={addMallProductProperty} onSubmit={refreshData} />
       <MallProductPropertyEdit ref={editMallProductProperty} onSubmit={refreshData} />
-      <MallProductPropertyEditValue ref={editMallProductPropertyValue} onSubmit={refreshData} />
       <MallProductPropertyDelete ref={deleteMallProductProperty} onSubmit={refreshData} />
     </Box>
   );

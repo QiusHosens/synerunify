@@ -7,7 +7,7 @@ use macros::require_authorize;
 use axum::{routing::{get, post}, Router, extract::{State, Path, Json, Query}, response::IntoResponse, Extension};
 use common::base::page::PaginatedResponse;
 use mall_model::request::mall_product_property::{CreateMallProductPropertyRequest, UpdateMallProductPropertyRequest, PaginatedKeywordRequest};
-use mall_model::response::mall_product_property::MallProductPropertyResponse;
+use mall_model::response::mall_product_property::{MallProductPropertyBaseResponse, MallProductPropertyResponse};
 use common::base::response::CommonResult;
 use common::context::context::LoginUserContext;
 use crate::service;
@@ -19,6 +19,7 @@ pub async fn mall_product_property_router(state: AppState) -> OpenApiRouter {
         .routes(routes!(update))
         .routes(routes!(delete))
         .routes(routes!(get_by_id))
+        .routes(routes!(get_base_by_id))
         .routes(routes!(list))
         .routes(routes!(page))
         .routes(routes!(enable))
@@ -136,6 +137,34 @@ async fn get_by_id(
     Path(id): Path<i64>,
 ) -> CommonResult<MallProductPropertyResponse> {
     match service::mall_product_property::get_by_id(&state.db, login_user, id).await {
+        Ok(Some(data)) => {CommonResult::with_data(data)}
+        Ok(None) => {CommonResult::with_none()}
+        Err(e) => {CommonResult::with_err(&e.to_string())}
+    }
+}
+
+#[utoipa::path(
+    get,
+    path = "/get_base/{id}",
+    operation_id = "mall_product_property_get_base_by_id",
+    params(
+        ("id" = i64, Path, description = "id")
+    ),
+    responses(
+        (status = 200, description = "get base by id", body = CommonResult<MallProductPropertyBaseResponse>)
+    ),
+    tag = "mall_product_property",
+    security(
+        ("bearerAuth" = [])
+    )
+)]
+#[require_authorize(operation_id = "mall_product_property_get_base_by_id", authorize = "")]
+async fn get_base_by_id(
+    State(state): State<AppState>,
+    Extension(login_user): Extension<LoginUserContext>,
+    Path(id): Path<i64>,
+) -> CommonResult<MallProductPropertyBaseResponse> {
+    match service::mall_product_property::get_base_by_id(&state.db, login_user, id).await {
         Ok(Some(data)) => {CommonResult::with_data(data)}
         Ok(None) => {CommonResult::with_none()}
         Err(e) => {CommonResult::with_err(&e.to_string())}
