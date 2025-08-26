@@ -539,7 +539,7 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
 
   const ProductBox = (({ sku, index }: { sku: FormSkuValues, index: number }) => {
     return (
-      <Stack direction='row' gap={2} sx={{ pr: 4 }}>
+      <Stack direction='row' gap={2} sx={{ mt: 2, pr: 4 }}>
         <CustomizedFileUpload
           canRemove={false}
           showFilename={false}
@@ -883,13 +883,13 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
                   value={formValues.spec_type}
                   onChange={handleInputChange}
                 />
-                {formValues.spec_type == 1 && <Button variant="customContained" onClick={handleOpenPropertySelect} sx={{ mt: 2, width: 240 }}>
+                {formValues.spec_type == 1 && <Button variant="customContained" onClick={handleOpenPropertySelect} sx={{ width: 240 }}>
                   {t('page.mall.product.property.operate.add')}
                 </Button>}
                 {formValues.spec_type == 1 && selectedProperties.map((item) => (
-                  <>
+                  <Stack direction='row' gap={2} sx={{ mt: 2, pr: 4 }}>
                     <CustomizedTag label={item.name} color='primary' />
-                  </>
+                  </Stack>
                 ))}
                 {formValues.skus.map((sku, index) => (
                   <ProductBox key={index} sku={sku} index={index}></ProductBox>

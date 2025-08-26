@@ -19,15 +19,15 @@ const CustomTag = styled(Chip)<{ color?: 'primary' | 'secondary' | 'default' }>(
     // padding: '0 8px',
     backgroundColor:
       color === 'primary'
-        ? theme.palette.primary.light
-        : color === 'secondary'
-          ? theme.palette.secondary.light
-          : theme.palette.grey[200],
-    color:
-      color === 'primary'
         ? theme.palette.primary.main
         : color === 'secondary'
           ? theme.palette.secondary.main
+          : theme.palette.grey[200],
+    color:
+      color === 'primary'
+        ? '#fff'
+        : color === 'secondary'
+          ? '#fff'
           : theme.palette.text.primary,
     // '&:hover': {
     //   backgroundColor:
