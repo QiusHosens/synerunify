@@ -129,8 +129,15 @@ const MallProductPropertyAdd = forwardRef(({ onSubmit }: MallProductPropertyAddP
     }
   };
 
-  const handleTagsChange = (newTags: Tag[]) => {
+  const handleTagsChange = (name: string, newTags: Tag[]) => {
     setTags(newTags);
+    const values = newTags.map(tag => {
+      return { name: tag.label }
+    });
+    setFormValues(prev => ({
+      ...prev,
+      [name]: values
+    }));
   };
 
   return (
@@ -157,7 +164,7 @@ const MallProductPropertyAdd = forwardRef(({ onSubmit }: MallProductPropertyAddP
           width: 'fit-content',
         }}
       >
-        <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' } }}>
+        <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '240px' } }}>
           <TextField
             size="small"
             label={t("common.title.name")}
@@ -179,9 +186,13 @@ const MallProductPropertyAdd = forwardRef(({ onSubmit }: MallProductPropertyAddP
           <Typography>{formValues.status == 0 ? t('global.switch.status.true') : t('global.switch.status.false')}</Typography>
         </Box>
         <CustomizedTagsInput
+          size="small"
+          name='values'
           tags={tags}
           onTagsChange={handleTagsChange}
-          placeholder="简单标签输入..."
+          tagName={t("page.mall.product.property.value")}
+          placeholder={t("page.mall.product.property.placeholder.value")}
+          sx={{ mt: 2, width: '240px' }}
         />
       </Box>
     </CustomizedDialog>

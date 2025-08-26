@@ -483,7 +483,8 @@
       "title.file": "品牌图片"
     },
     "property": {
-      "value": "属性值"
+      "value": "属性值",
+      "placeholder.value": "请输入属性值,按enter键确定"
     },
     "comment": {
       "title.user.nickname": "评价人",

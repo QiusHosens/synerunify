@@ -1,41 +1,52 @@
 import React, { useState, KeyboardEvent, FocusEvent, useRef, useEffect } from 'react';
 import { X, Plus } from 'lucide-react';
+import { Box, Button, SxProps, TextField, Theme } from '@mui/material';
 
 export interface Tag {
-  id: string;
+  id?: number;
+  key: string;
   label: string;
 }
 
 interface CustomizedTagsInputProps {
   tags: Tag[];
-  onTagsChange: (tags: Tag[]) => void;
+  onTagsChange: (name: string, tags: Tag[]) => void;
+  name?: string;
+  tagName?: string;
   placeholder?: string;
+  removeTitle?: string;
   maxTags?: number;
   disabled?: boolean;
+  size?: 'small' | 'medium';
+  sx?: SxProps<Theme>;
 }
 
 // 标签输入组件
 const CustomizedTagsInput: React.FC<CustomizedTagsInputProps> = ({
   tags,
   onTagsChange,
-  placeholder = "输入标签内容...",
+  name = '',
+  tagName = "标签",
+  placeholder = `输入${tagName}内容...`,
+  removeTitle = `删除${tagName}:`,
   maxTags,
-  disabled = false
+  disabled = false,
+  size = 'small',
+  sx,
 }) => {
   const [inputValue, setInputValue] = useState<string>('');
   const [showInput, setShowInput] = useState<boolean>(true);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // 生成唯一ID
-  const generateId = (): string => {
-    return Date.now().toString() + Math.random().toString(36).substr(2, 9);
+  // 生成唯一Key
+  const generateKey = (): string => {
+    return Date.now().toString() + Math.random().toString(36).substring(2, 9);
   };
 
   // 添加标签
   const addTag = (value: string): void => {
     const trimmedValue = value.trim();
 
-    // 检查是否为空、已存在或超过最大数量
     if (
       trimmedValue === '' ||
       tags.some(tag => tag.label === trimmedValue) ||
@@ -46,16 +57,15 @@ const CustomizedTagsInput: React.FC<CustomizedTagsInputProps> = ({
     }
 
     const newTag: Tag = {
-      id: generateId(),
+      key: generateKey(),
       label: trimmedValue
     };
 
     const newTags = [...tags, newTag];
-    onTagsChange(newTags);
+    onTagsChange(name, newTags);
     setInputValue('');
     setShowInput(false);
 
-    // 延迟显示新的输入框，创造替换效果
     setTimeout(() => {
       setShowInput(true);
     }, 150);
@@ -63,8 +73,8 @@ const CustomizedTagsInput: React.FC<CustomizedTagsInputProps> = ({
 
   // 删除标签
   const removeTag = (tagId: string): void => {
-    const newTags = tags.filter(tag => tag.id !== tagId);
-    onTagsChange(newTags);
+    const newTags = tags.filter(tag => tag.key !== tagId);
+    onTagsChange(name, newTags);
   };
 
   // 处理键盘事件
@@ -88,172 +98,117 @@ const CustomizedTagsInput: React.FC<CustomizedTagsInputProps> = ({
     }, 100);
   };
 
-  // 当输入框重新显示时自动聚焦
   useEffect(() => {
     if (showInput && inputRef.current) {
       inputRef.current.focus();
     }
   }, [showInput]);
 
-  // 检查是否达到最大标签数量
   const isMaxReached = maxTags && tags.length >= maxTags;
 
   return (
-    <div
-      style={{
-        minHeight: '60px',
-        padding: '12px',
-        border: '2px dashed #d1d5db',
-        borderRadius: '8px',
-        backgroundColor: '#f9fafb',
+    <Box
+      sx={{
+        // minHeight: 60,
+        borderRadius: 2,
         display: 'flex',
         flexWrap: 'wrap',
-        gap: '8px',
-        alignItems: 'center'
+        gap: 1,
+        alignItems: 'center',
+        ...sx,
       }}
     >
       {/* 渲染现有标签 */}
-      {tags.map((tag, index) => (
-        <span
-          key={tag.id}
-          style={{
+      {tags.map((tag) => (
+        <Box
+          key={tag.key}
+          sx={{
             display: 'inline-flex',
             alignItems: 'center',
-            padding: '6px 12px',
-            borderRadius: '20px',
-            fontSize: '14px',
-            fontWeight: '500',
-            backgroundColor: '#dbeafe',
+            px: 1.5,
+            py: 0.75,
+            borderRadius: 16,
+            fontSize: 14,
+            fontWeight: 500,
+            bgcolor: '#dbeafe',
             color: '#1e40af',
             border: '1px solid #bfdbfe',
-            animation: 'fadeIn 0.3s ease-out'
+            animation: 'fadeIn 0.3s ease-out',
           }}
         >
           {tag.label}
           {!disabled && (
-            <button
-              onClick={() => removeTag(tag.id)}
-              style={{
-                marginLeft: '6px',
-                padding: '2px',
-                backgroundColor: 'transparent',
-                border: 'none',
+            <Button
+              onClick={() => removeTag(tag.key)}
+              sx={{
+                minWidth: 'auto',
+                height: 'auto',
+                ml: 0.75,
+                p: 0.5,
+                bgcolor: 'transparent',
                 borderRadius: '50%',
-                cursor: 'pointer',
                 color: '#1e40af',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                transition: 'all 0.2s'
+                '&:hover': {
+                  bgcolor: '#bfdbfe',
+                  color: '#1e3a8a',
+                },
               }}
-              onMouseOver={(e) => {
-                e.currentTarget.style.backgroundColor = '#bfdbfe';
-                e.currentTarget.style.color = '#1e3a8a';
-              }}
-              onMouseOut={(e) => {
-                e.currentTarget.style.backgroundColor = 'transparent';
-                e.currentTarget.style.color = '#1e40af';
-              }}
-              title={`删除标签: ${tag.label}`}
+              title={`${removeTitle} ${tag.label}`}
             >
               <X size={12} />
-            </button>
+            </Button>
           )}
-        </span>
+        </Box>
       ))}
 
       {/* 输入框或添加按钮 */}
       {!isMaxReached && (
         <>
           {showInput ? (
-            <input
-              ref={inputRef}
-              type="text"
+            <TextField
+              size={size}
+              inputRef={inputRef}
               placeholder={placeholder}
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               onKeyDown={handleKeyDown}
-              // onBlur={handleBlur}
+              onBlur={handleBlur}
               disabled={disabled}
-              style={{
+              sx={{
                 flexGrow: 1,
-                minWidth: '120px',
-                padding: '8px 12px',
-                border: '1px solid #3b82f6',
-                borderRadius: '16px',
-                backgroundColor: '#ffffff',
-                fontSize: '14px',
-                outline: 'none',
-                transition: 'all 0.2s'
-              }}
-              onFocus={(e) => {
-                e.target.style.boxShadow = '0 0 0 2px rgba(59, 130, 246, 0.3)';
-              }}
-              onBlur={(e) => {
-                e.target.style.boxShadow = 'none';
-                handleBlur(e);
+                // minWidth: 120,
               }}
               autoFocus
             />
           ) : (
-            <button
+            <Button
+              size={size}
               onClick={addNewInput}
               disabled={disabled}
-              style={{
+              sx={{
                 display: 'inline-flex',
                 alignItems: 'center',
-                padding: '8px 12px',
-                border: '2px dashed #3b82f6',
-                borderRadius: '16px',
-                backgroundColor: 'transparent',
-                color: '#3b82f6',
-                cursor: disabled ? 'not-allowed' : 'pointer',
-                fontSize: '14px',
-                textTransform: 'none',
-                transition: 'all 0.2s'
-              }}
-              onMouseOver={(e) => {
-                if (!disabled) {
-                  e.currentTarget.style.backgroundColor = '#dbeafe';
-                  e.currentTarget.style.borderColor = '#2563eb';
-                }
-              }}
-              onMouseOut={(e) => {
-                if (!disabled) {
-                  e.currentTarget.style.backgroundColor = 'transparent';
-                  e.currentTarget.style.borderColor = '#3b82f6';
-                }
               }}
             >
-              <Plus size={16} style={{ marginRight: '4px' }} />
-              添加标签
-            </button>
+              <Plus size={16} style={{ marginRight: 4 }} />
+              添加${tagName}
+            </Button>
           )}
         </>
       )}
 
-      {/* 空状态或最大数量提示 */}
       {tags.length === 0 && !showInput && (
-        <span style={{
-          fontSize: '14px',
-          color: '#6b7280',
-          fontStyle: 'italic'
-        }}>
-          点击"添加标签"开始创建标签
-        </span>
+        <Box sx={{ fontSize: 14, color: '#6b7280', fontStyle: 'italic' }}>
+          点击"添加${tagName}"开始创建${tagName}
+        </Box>
       )}
 
       {isMaxReached && (
-        <span style={{
-          fontSize: '14px',
-          color: '#d97706',
-          fontStyle: 'italic'
-        }}>
-          已达到最大标签数量 ({maxTags})
-        </span>
+        <Box sx={{ fontSize: 14, color: '#d97706', fontStyle: 'italic' }}>
+          已达到最大${tagName}数量 ({maxTags})
+        </Box>
       )}
 
-      {/* CSS动画 */}
       <style>{`
         @keyframes fadeIn {
           from {
@@ -266,7 +221,7 @@ const CustomizedTagsInput: React.FC<CustomizedTagsInputProps> = ({
           }
         }
       `}</style>
-    </div>
+    </Box>
   );
 };
 
