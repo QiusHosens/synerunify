@@ -27,6 +27,7 @@ const PropertySelect = forwardRef(({ onSubmit }: PropertySelectProps, ref) => {
   const [records, setRecords] = useState<Array<MallProductPropertyResponse>>([]);
   const [sortModel, setSortModel] = useState<GridSortModel>([]);
   const [filterModel, setFilterModel] = useState<GridFilterModel>();
+  const [selectedIds, setSelectedIds] = useState<number[]>([]);
 
   const columns: GridColDef[] = useMemo(
     () => [
@@ -42,22 +43,23 @@ const PropertySelect = forwardRef(({ onSubmit }: PropertySelectProps, ref) => {
         minWidth: 100,
         renderCell: (params: GridRenderCellParams) => (
           <CustomizedAutoMore>
-            <Button
+            {!selectedIds.includes(params.row.id) && <Button
               size="small"
               variant='customOperate'
               title={t('global.operate.select') + t('global.page.erp.purchase.order')}
               startIcon={<CheckIcon />}
               onClick={() => handleClickSelect(params.row)}
-            />
+            />}
           </CustomizedAutoMore>
         ),
       },
     ],
-    [t]
+    [t, selectedIds]
   );
 
   useImperativeHandle(ref, () => ({
-    show() {
+    show(selectedIds: number[]) {
+      setSelectedIds(selectedIds);
       setOpen(true);
     },
     hide() {

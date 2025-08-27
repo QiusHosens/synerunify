@@ -1,8 +1,8 @@
-import { Box, Button, FormControl, Grid, InputLabel, MenuItem, Select, SelectChangeEvent, Stack, TextField, Typography } from '@mui/material';
+import { Box, Button, FormControl, Grid, InputLabel, lighten, MenuItem, rgbToHex, Select, SelectChangeEvent, Stack, TextField, Typography, useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { forwardRef, useCallback, useImperativeHandle, useRef, useState } from 'react';
+import { forwardRef, useCallback, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
-import { createMallProductSpu, getBaseMallProductProperty, listMallProductBrand, listMallProductCategory, MallProductBrandResponse, MallProductCategoryResponse, MallProductPropertyBaseResponse, MallProductSpuRequest } from '@/api';
+import { createMallProductSpu, getBaseMallProductProperty, listMallProductBrand, listMallProductCategory, MallProductBrandResponse, MallProductCategoryResponse, MallProductPropertyBaseResponse, MallProductPropertyValueResponse, MallProductSpuRequest } from '@/api';
 import CustomizedDialog from '@/components/CustomizedDialog';
 import SelectTree from '@/components/SelectTree';
 import { uploadSystemFile } from '@/api/system_file';
@@ -22,14 +22,15 @@ interface AttachmentValues {
 }
 
 interface PropertyValues {
-  propertName: string,
-  propertId?: number,
-  valueId?: number,
+  propertyId: number,
+  propertyName: string,
+  valueId: number,
+  valueName: string;
 }
 
 interface FormSkuValues {
   properties?: string; // 属性数组，JSON 格式 [{propertId: , valueId: }, {propertId: , valueId: }]
-  properties_list?: PropertyValues[]; // 属性数组
+  property_list?: PropertyValues[];
   price?: number; // 商品价格，单位：分
   market_price?: number; // 市场价，单位：分
   cost_price?: number; // 成本价，单位： 分
@@ -118,6 +119,7 @@ interface MallProductSpuAddProps {
 
 const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref) => {
   const { t } = useTranslation();
+  const theme = useTheme();
 
   const [open, setOpen] = useState(false);
   const [maxWidth] = useState<DialogProps['maxWidth']>('xl');
@@ -126,6 +128,8 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | number>(0);
   const [sliderFiles, setSliderFiles] = useState<AttachmentValues[]>([]);
   const [selectedProperties, setSelectedProperties] = useState<MallProductPropertyBaseResponse[]>([]);
+  const [selectedPropertyValueIds, setSelectedPropertyValueIds] = useState<number[]>([]);
+  const [selectedPropertyValues, setSelectedPropertyValues] = useState<MallProductPropertyValueResponse[]>([]);
   const [formValues, setFormValues] = useState<FormValues>({
     name: '',
     keyword: '',
@@ -379,18 +383,10 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
 
   const handleSkuInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type } = e.target;
-    if (type == 'number') {
-      const numberValue = Number(value);
-      setFormValues(prev => ({
-        ...prev,
-        [name]: numberValue
-      }));
-    } else {
-      setFormValues(prev => ({
-        ...prev,
-        [name]: value
-      }));
-    }
+    setFormValues((prev) => ({
+      ...prev,
+      [name]: type === 'number' ? Number(value) : value,
+    }));
 
     if (errors[name as keyof FormErrors]) {
       setErrors(prev => ({
@@ -529,13 +525,69 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
   }, []);
 
   const handleOpenPropertySelect = () => {
-    (selectProperty.current as any).show();
+    (selectProperty.current as any).show(selectedProperties.map(item => item.id));
   }
 
-  const selectedProperty = async (id: number) => {
+  const handlePropertySelectedCallback = async (id: number) => {
     const result = await getBaseMallProductProperty(id);
     setSelectedProperties(prev => [...prev, result])
+  };
+
+  const handlePropertyRemove = (property: MallProductPropertyBaseResponse) => {
+    setSelectedProperties(prev => prev.filter(item => item.id != property.id));
+    // 移除选中属性值
+    const valueIds = property.values.map(item => item.id);
+    setSelectedPropertyValueIds(prev => prev.filter(item => valueIds.includes(item)));
+    setSelectedPropertyValues(prev => prev.filter(item => valueIds.includes(item.id)));
   }
+
+  const handleClickPropertyValue = (value: MallProductPropertyValueResponse) => {
+    if (selectedPropertyValueIds.includes(value.id)) {
+      setSelectedPropertyValueIds(prev => prev.filter(item => item != value.id));
+      setSelectedPropertyValues(prev => prev.filter(item => item.id != value.id));
+    } else {
+      setSelectedPropertyValueIds(prev => [...prev, value.id]);
+      setSelectedPropertyValues(prev => [...prev, value]);
+    }
+  }
+
+  const useSkuGenerator = (properties: MallProductPropertyBaseResponse[], values: MallProductPropertyValueResponse[]) => {
+    return useMemo(() => {
+      // 按property分组value
+      const groupedValues = properties.map((property) => {
+        return values
+          .filter((v) => v.property_id === property.id)
+          .map((v) => ({
+            propertyId: property.id,
+            propertyName: property.name,
+            valueId: v.id,
+            valueName: v.name,
+          } as PropertyValues));
+      });
+
+      // 生成组合
+      const cartesian = (arr: PropertyValues[][]): PropertyValues[][] => {
+        if (arr.length === 0) return [];
+        return arr.reduce<PropertyValues[][]>(
+          (acc, curr) =>
+            acc.flatMap((a) => curr.map((c) => [...a, c])),
+          [[]]
+        );
+      };
+
+      const combinations = cartesian(groupedValues);
+
+      // 生成sku
+      let skus: FormSkuValues[] = combinations.map((combo) => ({
+        property_list: combo,
+      }));
+      setFormValues(prev => ({
+        ...prev,
+        skus
+      }))
+    }, [selectedProperties, selectedPropertyValues]);
+  }
+  useSkuGenerator(selectedProperties, selectedPropertyValues);
 
   const ProductBox = (({ sku, index }: { sku: FormSkuValues, index: number }) => {
     return (
@@ -552,6 +604,17 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
           height={fileHeight}
         />
         <Grid container rowSpacing={2} columnSpacing={2} sx={{ '& .MuiGrid-root': { display: 'flex', justifyContent: 'center', alignItems: 'center' } }}>
+          {sku.property_list && sku.property_list.map((property) => (
+            <Grid size={{ xs: 12, md: 3 }}>
+              <TextField
+                required
+                size="small"
+                label={property.propertyName}
+                value={property.valueName}
+                sx={{ width: '100%' }}
+              />
+            </Grid>)
+          )}
           <Grid size={{ xs: 12, md: 6 }}>
             <TextField
               required
@@ -887,10 +950,16 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
                   {t('page.mall.product.property.operate.add')}
                 </Button>}
                 {formValues.spec_type == 1 && selectedProperties.map((item) => (
-                  <Stack direction='row' gap={2} sx={{ mt: 2, pr: 4 }}>
-                    <CustomizedTag label={item.name} color='primary' />
+                  <Stack key={'property' + item.id} direction='row' gap={4} sx={{ mt: 2, pr: 4 }}>
+                    <CustomizedTag label={item.name} color='primary' onDelete={() => handlePropertyRemove(item)} />
+                    <Stack direction='row' gap={2}>
+                      {item.values && item.values.map((value) => (
+                        <CustomizedTag key={'value-' + value.id} clickable label={value.name} color={selectedPropertyValueIds.includes(value.id) ? 'primary' : 'default'} onClick={() => handleClickPropertyValue(value)} />
+                      ))}
+                    </Stack>
                   </Stack>
                 ))}
+                <ProductBox sku={{}} index={0}></ProductBox>
                 {formValues.skus.map((sku, index) => (
                   <ProductBox key={index} sku={sku} index={index}></ProductBox>
                 ))}
@@ -1015,7 +1084,7 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
           </Box>
         </Stack>
       </Box>
-      <PropertySelect ref={selectProperty} onSubmit={selectedProperty} />
+      <PropertySelect ref={selectProperty} onSubmit={handlePropertySelectedCallback} />
     </CustomizedDialog>
   )
 });

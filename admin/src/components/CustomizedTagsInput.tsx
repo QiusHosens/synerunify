@@ -1,6 +1,7 @@
 import React, { useState, KeyboardEvent, FocusEvent, useRef, useEffect } from 'react';
-import { X, Plus } from 'lucide-react';
-import { alpha, Box, Button, SxProps, TextField, Theme, useTheme } from '@mui/material';
+import { Plus } from 'lucide-react';
+import { Box, Button, SxProps, TextField, Theme, useTheme } from '@mui/material';
+import CustomizedTag from './CustomizedTag';
 
 export interface Tag {
   id?: number;
@@ -15,7 +16,6 @@ interface CustomizedTagsInputProps {
   name?: string;
   tagName?: string;
   placeholder?: string;
-  removeTitle?: string;
   maxTags?: number;
   disabled?: boolean;
   size?: 'small' | 'medium';
@@ -30,7 +30,6 @@ const CustomizedTagsInput: React.FC<CustomizedTagsInputProps> = ({
   name = '',
   tagName = "标签",
   placeholder = `输入${tagName}内容...`,
-  removeTitle = `删除${tagName}:`,
   maxTags,
   disabled = false,
   size = 'small',
@@ -123,44 +122,7 @@ const CustomizedTagsInput: React.FC<CustomizedTagsInputProps> = ({
     >
       {/* 渲染现有标签 */}
       {tags.map((tag) => (
-        <Box
-          key={tag.key}
-          sx={(theme) => ({
-            display: 'inline-flex',
-            alignItems: 'center',
-            px: 1.5,
-            py: 0.5,
-            borderRadius: (3 * theme.shape.borderRadius) + 'px',
-            fontSize: 14,
-            fontWeight: 500,
-            bgcolor: alpha(theme.palette.primary.main, 0.8),
-            color: '#fff',
-            animation: 'fadeIn 0.3s ease-out',
-          })}
-        >
-          {tag.label}
-          {canEdit && !disabled && (
-            <Button
-              onClick={() => removeTag(tag.key)}
-              sx={(theme) => ({
-                minWidth: 'auto',
-                height: 'auto',
-                ml: 0.5,
-                p: 0.25,
-                bgcolor: 'transparent',
-                borderRadius: '50%',
-                color: '#fff',
-                '&:hover': {
-                  bgcolor: '#fff',
-                  color: alpha(theme.palette.primary.main, 0.8),
-                },
-              })}
-              title={`${removeTitle} ${tag.label}`}
-            >
-              <X size={12} />
-            </Button>
-          )}
-        </Box>
+        <CustomizedTag label={tag.label} color='primary' onDelete={(canEdit && !disabled) ? () => removeTag(tag.key) : undefined} />
       ))}
 
       {/* 输入框或添加按钮 */}
