@@ -462,6 +462,7 @@
     "title.virtual.sales.count": "虚拟销量",
     "title.browse.count": "商品点击量",
     "title.property.list": "商品属性列表",
+    "placeholder.description": "请输入商品详情...",
     
     "sku": {
       "title.properties": "属性数组",

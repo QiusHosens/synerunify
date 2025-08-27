@@ -584,7 +584,7 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
       setFormValues(prev => ({
         ...prev,
         skus
-      }))
+      }));
     }, [selectedProperties, selectedPropertyValues]);
   }
   useSkuGenerator(selectedProperties, selectedPropertyValues);
@@ -607,7 +607,6 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
           {sku.property_list && sku.property_list.map((property) => (
             <Grid size={{ xs: 12, md: 3 }}>
               <TextField
-                required
                 size="small"
                 label={property.propertyName}
                 value={property.valueName}
@@ -1001,28 +1000,16 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
                 <Editor
                   apiKey='f88rshir3x1vuar3lr0tj1vaq6muvonldxm25o6wxr23vy96'
                   onInit={(_evt, editor) => (editorRef.current = editor)}
-                  initialValue="<p>在这里输入内容...</p>"
+                  initialValue={"<p>" + t("page.mall.product.placeholder.description") + "</p>"}
                   init={{
                     height: 600,
                     language: "zh_CN",
                     language_url: "/tinymce/langs/zh_CN.js",
                     plugins: [
-                      // Core editing features
                       'anchor', 'autolink', 'charmap', 'codesample', 'emoticons', 'link', 'lists', 'media', 'searchreplace', 'table', 'visualblocks', 'wordcount',
-                      // Your account includes a free trial of TinyMCE premium features
-                      // Try the most popular premium features until Sep 3, 2025:
-                      // 'checklist', 'mediaembed', 'casechange', 'formatpainter', 'pageembed', 'a11ychecker', 'tinymcespellchecker', 'permanentpen', 'powerpaste', 'advtable', 'advcode', 'advtemplate', 'ai', 'uploadcare', 'mentions', 'tinycomments', 'tableofcontents', 'footnotes', 'mergetags', 'autocorrect', 'typography', 'inlinecss', 'markdown', 'importword', 'exportword', 'exportpdf'
                     ],
                     toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography uploadcare | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
                     content_style: "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
-                    // tinycomments_mode: 'embedded',
-                    // tinycomments_author: 'Author name',
-                    // mergetags_list: [
-                    //   { value: 'First.Name', title: 'First Name' },
-                    //   { value: 'Email', title: 'Email' },
-                    // ],
-                    // ai_request: (request, respondWith) => respondWith.string(() => Promise.reject('See docs to implement AI Assistant')),
-                    // uploadcare_public_key: '0768186df57eccd6ad6c',
                   }}
                 />
               </Box>
