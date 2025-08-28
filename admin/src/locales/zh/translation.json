@@ -463,6 +463,7 @@
     "title.browse.count": "商品点击量",
     "title.property.list": "商品属性列表",
     "placeholder.description": "请输入商品详情...",
+    "title.batch.setting": "批量设置",
     
     "sku": {
       "title.properties": "属性数组",

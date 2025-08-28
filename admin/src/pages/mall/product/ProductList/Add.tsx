@@ -14,6 +14,7 @@ import { Editor } from '@tinymce/tinymce-react';
 import CustomizedNumberInput from '@/components/CustomizedNumberInput';
 import PropertySelect from './PropertySelect';
 import CustomizedTag from '@/components/CustomizedTag';
+import CustomizedLabeledBox from '@/components/CustomizedLabeledBox';
 
 interface AttachmentValues {
   file_id?: number; // 文件ID
@@ -30,7 +31,6 @@ interface PropertyValues {
 
 interface FormSkuValues {
   properties?: string; // 属性数组，JSON 格式 [{propertId: , valueId: }, {propertId: , valueId: }]
-  property_list?: PropertyValues[];
   price?: number; // 商品价格，单位：分
   market_price?: number; // 市场价，单位：分
   cost_price?: number; // 成本价，单位： 分
@@ -44,6 +44,8 @@ interface FormSkuValues {
   sales_count?: number; // 商品销量
 
   file?: UploadFile | null;
+  property_list?: PropertyValues[]; // 属性数组
+  property_title?: string; // 
 }
 
 interface FormValues {
@@ -537,8 +539,8 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
     setSelectedProperties(prev => prev.filter(item => item.id != property.id));
     // 移除选中属性值
     const valueIds = property.values.map(item => item.id);
-    setSelectedPropertyValueIds(prev => prev.filter(item => valueIds.includes(item)));
-    setSelectedPropertyValues(prev => prev.filter(item => valueIds.includes(item.id)));
+    setSelectedPropertyValueIds(prev => prev.filter(item => !valueIds.includes(item)));
+    setSelectedPropertyValues(prev => prev.filter(item => item.property_id != property.id));
   }
 
   const handleClickPropertyValue = (value: MallProductPropertyValueResponse) => {
@@ -567,8 +569,9 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
 
       // 生成组合
       const cartesian = (arr: PropertyValues[][]): PropertyValues[][] => {
-        if (arr.length === 0) return [];
-        return arr.reduce<PropertyValues[][]>(
+        const filtered = arr.filter(a => a.length > 0);
+        if (filtered.length === 0) return [];
+        return filtered.reduce<PropertyValues[][]>(
           (acc, curr) =>
             acc.flatMap((a) => curr.map((c) => [...a, c])),
           [[]]
@@ -578,9 +581,13 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
       const combinations = cartesian(groupedValues);
 
       // 生成sku
-      let skus: FormSkuValues[] = combinations.map((combo) => ({
-        property_list: combo,
-      }));
+      let skus: FormSkuValues[] = combinations.map((combo) => {
+        return {
+          property_list: combo,
+          properties: JSON.stringify(combo),
+          property_title: combo.map(c => c.valueName).join(' * ')
+        }
+      });
       setFormValues(prev => ({
         ...prev,
         skus
@@ -589,150 +596,153 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
   }
   useSkuGenerator(selectedProperties, selectedPropertyValues);
 
-  const ProductBox = (({ sku, index }: { sku: FormSkuValues, index: number }) => {
+  const ProductBox = (({ sku, index, title }: { sku: FormSkuValues, index: number, title?: string }) => {
     return (
-      <Stack direction='row' gap={2} sx={{ mt: 2, pr: 4 }}>
-        <CustomizedFileUpload
-          canRemove={false}
-          showFilename={false}
-          id={'file-upload'}
-          accept=".jpg,jpeg,.png"
-          maxSize={100}
-          onChange={(file, action) => handleFileChange(file, action)}
-          file={sku.file}
-          width={fileWidth}
-          height={fileHeight}
-        />
-        <Grid container rowSpacing={2} columnSpacing={2} sx={{ '& .MuiGrid-root': { display: 'flex', justifyContent: 'center', alignItems: 'center' } }}>
-          {sku.property_list && sku.property_list.map((property) => (
-            <Grid size={{ xs: 12, md: 3 }}>
+      <CustomizedLabeledBox label={title ?? undefined} sx={{ mt: 2, mr: 2 }}>
+        <Stack direction='row' gap={2}>
+          <CustomizedFileUpload
+            canRemove={false}
+            showFilename={false}
+            id={'file-upload'}
+            accept=".jpg,jpeg,.png"
+            maxSize={100}
+            onChange={(file, action) => handleFileChange(file, action)}
+            file={sku.file}
+            width={fileWidth}
+            height={fileHeight}
+          />
+          <Grid container rowSpacing={2} columnSpacing={2} sx={{ '& .MuiGrid-root': { display: 'flex', justifyContent: 'center', alignItems: 'center' } }}>
+            {sku.property_list && sku.property_list.map((property) => (
+              <Grid size={{ xs: 12, md: 3 }}>
+                <TextField
+                  disabled
+                  size="small"
+                  label={property.propertyName}
+                  value={property.valueName}
+                  sx={{ width: '100%' }}
+                />
+              </Grid>)
+            )}
+            <Grid size={{ xs: 12, md: 6 }}>
               <TextField
+                required
                 size="small"
-                label={property.propertyName}
-                value={property.valueName}
+                label={t("page.mall.product.sku.title.bar.code")}
+                name='bar_code'
+                value={sku.bar_code}
+                onChange={handleSkuInputChange}
+                error={!!(errors.skus && errors.skus[index].bar_code)}
+                helperText={errors.skus && errors.skus[index].bar_code}
                 sx={{ width: '100%' }}
               />
-            </Grid>)
-          )}
-          <Grid size={{ xs: 12, md: 6 }}>
-            <TextField
-              required
-              size="small"
-              label={t("page.mall.product.sku.title.bar.code")}
-              name='bar_code'
-              value={sku.bar_code}
-              onChange={handleSkuInputChange}
-              error={!!(errors.skus && errors.skus[index].bar_code)}
-              helperText={errors.skus && errors.skus[index].bar_code}
-              sx={{ width: '100%' }}
-            />
+            </Grid>
+            <Grid size={{ xs: 12, md: 3 }}>
+              <TextField
+                required
+                size="small"
+                type="number"
+                label={t("page.mall.product.sku.title.price")}
+                name='price'
+                value={sku.price}
+                onChange={handleSkuInputChange}
+                error={!!(errors.skus && errors.skus[index].price)}
+                helperText={errors.skus && errors.skus[index].price}
+              />
+            </Grid>
+            <Grid size={{ xs: 12, md: 3 }}>
+              <TextField
+                required
+                size="small"
+                type="number"
+                label={t("page.mall.product.sku.title.market.price")}
+                name='market_price'
+                value={sku.market_price}
+                onChange={handleSkuInputChange}
+                error={!!(errors.skus && errors.skus[index].market_price)}
+                helperText={errors.skus && errors.skus[index].market_price}
+              />
+            </Grid>
+            <Grid size={size}>
+              <TextField
+                required
+                size="small"
+                type="number"
+                label={t("page.mall.product.sku.title.cost.price")}
+                name='cost_price'
+                value={sku.cost_price}
+                onChange={handleSkuInputChange}
+                error={!!(errors.skus && errors.skus[index].cost_price)}
+                helperText={errors.skus && errors.skus[index].cost_price}
+              />
+            </Grid>
+            <Grid size={size}>
+              <TextField
+                required
+                size="small"
+                type="number"
+                label={t("page.mall.product.sku.title.stock")}
+                name='stock'
+                value={sku.stock}
+                onChange={handleSkuInputChange}
+                error={!!(errors.skus && errors.skus[index].stock)}
+                helperText={errors.skus && errors.skus[index].stock}
+              />
+            </Grid>
+            <Grid size={size}>
+              <TextField
+                required
+                size="small"
+                type="number"
+                label={t("page.mall.product.sku.title.weight")}
+                name='weight'
+                value={sku.weight}
+                onChange={handleSkuInputChange}
+                error={!!(errors.skus && errors.skus[index].weight)}
+                helperText={errors.skus && errors.skus[index].weight}
+              />
+            </Grid>
+            <Grid size={size}>
+              <TextField
+                required
+                size="small"
+                type="number"
+                label={t("page.mall.product.sku.title.volume")}
+                name='volume'
+                value={sku.volume}
+                onChange={handleSkuInputChange}
+                error={!!(errors.skus && errors.skus[index].volume)}
+                helperText={errors.skus && errors.skus[index].volume}
+              />
+            </Grid>
+            <Grid size={size}>
+              {formValues.sub_commission_type == 1 && <TextField
+                required
+                size="small"
+                type="number"
+                label={t("page.mall.product.sku.title.first.brokerage.price")}
+                name='first_brokerage_price'
+                value={sku.first_brokerage_price}
+                onChange={handleSkuInputChange}
+                error={!!(errors.skus && errors.skus[index].first_brokerage_price)}
+                helperText={errors.skus && errors.skus[index].first_brokerage_price}
+              />}
+            </Grid>
+            <Grid size={size}>
+              {formValues.sub_commission_type == 1 && <TextField
+                required
+                size="small"
+                type="number"
+                label={t("page.mall.product.sku.title.second.brokerage.price")}
+                name='second_brokerage_price'
+                value={sku.second_brokerage_price}
+                onChange={handleSkuInputChange}
+                error={!!(errors.skus && errors.skus[index].second_brokerage_price)}
+                helperText={errors.skus && errors.skus[index].second_brokerage_price}
+              />}
+            </Grid>
           </Grid>
-          <Grid size={{ xs: 12, md: 3 }}>
-            <TextField
-              required
-              size="small"
-              type="number"
-              label={t("page.mall.product.sku.title.price")}
-              name='price'
-              value={sku.price}
-              onChange={handleSkuInputChange}
-              error={!!(errors.skus && errors.skus[index].price)}
-              helperText={errors.skus && errors.skus[index].price}
-            />
-          </Grid>
-          <Grid size={{ xs: 12, md: 3 }}>
-            <TextField
-              required
-              size="small"
-              type="number"
-              label={t("page.mall.product.sku.title.market.price")}
-              name='market_price'
-              value={sku.market_price}
-              onChange={handleSkuInputChange}
-              error={!!(errors.skus && errors.skus[index].market_price)}
-              helperText={errors.skus && errors.skus[index].market_price}
-            />
-          </Grid>
-          <Grid size={size}>
-            <TextField
-              required
-              size="small"
-              type="number"
-              label={t("page.mall.product.sku.title.cost.price")}
-              name='cost_price'
-              value={sku.cost_price}
-              onChange={handleSkuInputChange}
-              error={!!(errors.skus && errors.skus[index].cost_price)}
-              helperText={errors.skus && errors.skus[index].cost_price}
-            />
-          </Grid>
-          <Grid size={size}>
-            <TextField
-              required
-              size="small"
-              type="number"
-              label={t("page.mall.product.sku.title.stock")}
-              name='stock'
-              value={sku.stock}
-              onChange={handleSkuInputChange}
-              error={!!(errors.skus && errors.skus[index].stock)}
-              helperText={errors.skus && errors.skus[index].stock}
-            />
-          </Grid>
-          <Grid size={size}>
-            <TextField
-              required
-              size="small"
-              type="number"
-              label={t("page.mall.product.sku.title.weight")}
-              name='weight'
-              value={sku.weight}
-              onChange={handleSkuInputChange}
-              error={!!(errors.skus && errors.skus[index].weight)}
-              helperText={errors.skus && errors.skus[index].weight}
-            />
-          </Grid>
-          <Grid size={size}>
-            <TextField
-              required
-              size="small"
-              type="number"
-              label={t("page.mall.product.sku.title.volume")}
-              name='volume'
-              value={sku.volume}
-              onChange={handleSkuInputChange}
-              error={!!(errors.skus && errors.skus[index].volume)}
-              helperText={errors.skus && errors.skus[index].volume}
-            />
-          </Grid>
-          <Grid size={size}>
-            {formValues.sub_commission_type == 1 && <TextField
-              required
-              size="small"
-              type="number"
-              label={t("page.mall.product.sku.title.first.brokerage.price")}
-              name='first_brokerage_price'
-              value={sku.first_brokerage_price}
-              onChange={handleSkuInputChange}
-              error={!!(errors.skus && errors.skus[index].first_brokerage_price)}
-              helperText={errors.skus && errors.skus[index].first_brokerage_price}
-            />}
-          </Grid>
-          <Grid size={size}>
-            {formValues.sub_commission_type == 1 && <TextField
-              required
-              size="small"
-              type="number"
-              label={t("page.mall.product.sku.title.second.brokerage.price")}
-              name='second_brokerage_price'
-              value={sku.second_brokerage_price}
-              onChange={handleSkuInputChange}
-              error={!!(errors.skus && errors.skus[index].second_brokerage_price)}
-              helperText={errors.skus && errors.skus[index].second_brokerage_price}
-            />}
-          </Grid>
-        </Grid>
-      </Stack>
+        </Stack>
+      </CustomizedLabeledBox>
     );
   });
 
@@ -958,9 +968,9 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
                     </Stack>
                   </Stack>
                 ))}
-                <ProductBox sku={{}} index={0}></ProductBox>
+                <ProductBox sku={{}} index={0} title={formValues.spec_type == 1 ? t("page.mall.product.title.batch.setting") : undefined} ></ProductBox>
                 {formValues.skus.map((sku, index) => (
-                  <ProductBox key={index} sku={sku} index={index}></ProductBox>
+                  <ProductBox key={index} sku={sku} index={index} title={sku.property_title}></ProductBox>
                 ))}
               </Box>
             </Box>
