@@ -154,9 +154,10 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
     sales_count: 0,
     virtual_sales_count: 0,
     browse_count: 0,
-    skus: [{}],
+    skus: [],
     slider_files: [],
   });
+  const [sku, setSku] = useState<FormSkuValues>({});
   const [errors, setErrors] = useState<FormErrors>({});
   const [fileWidth] = useState<number>(240);
   const [fileHeight] = useState<number>(160);
@@ -284,9 +285,10 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
       sales_count: 0,
       virtual_sales_count: 0,
       browse_count: 0,
-      skus: [{}],
+      skus: [],
       slider_files: [],
     });
+    setSku({});
     setErrors({});
   }
 
@@ -383,12 +385,37 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
     }
   };
 
-  const handleSkuInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSkuInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>, index: number) => {
     const { name, value, type } = e.target;
-    setFormValues((prev) => ({
-      ...prev,
-      [name]: type === 'number' ? Number(value) : value,
-    }));
+
+    if (index == 0) {
+      setSku((prev) => ({
+        ...prev,
+        [name]: type === 'number' ? Number(value) : value,
+      }));
+      if (formValues.spec_type == 1) {
+        // 多规格 批量设置
+        setFormValues((prev) => ({
+          ...prev,
+          skus: prev.skus.map((item) => ({ ...item, [name]: type === 'number' ? Number(value) : value }))
+        }));
+      } else {
+        // 单规格
+        setFormValues((prev) => ({
+          ...prev,
+          skus: [{ ...sku, [name]: type === 'number' ? Number(value) : value }]
+        }));
+      }
+    } else {
+      // 多规格 单独设置
+      setFormValues((prev) => ({
+        ...prev,
+        skus: prev.skus.map((item, idx) => {
+          if (idx !== index - 1) return item;
+          return { ...item, [name]: type === 'number' ? Number(value) : value }
+        })
+      }));
+    }
 
     if (errors[name as keyof FormErrors]) {
       setErrors(prev => ({
@@ -396,7 +423,7 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
         [name]: undefined
       }));
     }
-  };
+  }, []);
 
   const handleCheckboxChange = (name: string | undefined, checkedValues: any[]) => {
     if (!name) {
@@ -630,7 +657,7 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
                 label={t("page.mall.product.sku.title.bar.code")}
                 name='bar_code'
                 value={sku.bar_code}
-                onChange={handleSkuInputChange}
+                onChange={(e) => handleSkuInputChange(e as React.ChangeEvent<HTMLInputElement>, index)}
                 error={!!(errors.skus && errors.skus[index].bar_code)}
                 helperText={errors.skus && errors.skus[index].bar_code}
                 sx={{ width: '100%' }}
@@ -644,7 +671,7 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
                 label={t("page.mall.product.sku.title.price")}
                 name='price'
                 value={sku.price}
-                onChange={handleSkuInputChange}
+                onChange={(e) => handleSkuInputChange(e as React.ChangeEvent<HTMLInputElement>, index)}
                 error={!!(errors.skus && errors.skus[index].price)}
                 helperText={errors.skus && errors.skus[index].price}
               />
@@ -657,7 +684,7 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
                 label={t("page.mall.product.sku.title.market.price")}
                 name='market_price'
                 value={sku.market_price}
-                onChange={handleSkuInputChange}
+                onChange={(e) => handleSkuInputChange(e as React.ChangeEvent<HTMLInputElement>, index)}
                 error={!!(errors.skus && errors.skus[index].market_price)}
                 helperText={errors.skus && errors.skus[index].market_price}
               />
@@ -670,7 +697,7 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
                 label={t("page.mall.product.sku.title.cost.price")}
                 name='cost_price'
                 value={sku.cost_price}
-                onChange={handleSkuInputChange}
+                onChange={(e) => handleSkuInputChange(e as React.ChangeEvent<HTMLInputElement>, index)}
                 error={!!(errors.skus && errors.skus[index].cost_price)}
                 helperText={errors.skus && errors.skus[index].cost_price}
               />
@@ -683,7 +710,7 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
                 label={t("page.mall.product.sku.title.stock")}
                 name='stock'
                 value={sku.stock}
-                onChange={handleSkuInputChange}
+                onChange={(e) => handleSkuInputChange(e as React.ChangeEvent<HTMLInputElement>, index)}
                 error={!!(errors.skus && errors.skus[index].stock)}
                 helperText={errors.skus && errors.skus[index].stock}
               />
@@ -696,7 +723,7 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
                 label={t("page.mall.product.sku.title.weight")}
                 name='weight'
                 value={sku.weight}
-                onChange={handleSkuInputChange}
+                onChange={(e) => handleSkuInputChange(e as React.ChangeEvent<HTMLInputElement>, index)}
                 error={!!(errors.skus && errors.skus[index].weight)}
                 helperText={errors.skus && errors.skus[index].weight}
               />
@@ -709,7 +736,7 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
                 label={t("page.mall.product.sku.title.volume")}
                 name='volume'
                 value={sku.volume}
-                onChange={handleSkuInputChange}
+                onChange={(e) => handleSkuInputChange(e as React.ChangeEvent<HTMLInputElement>, index)}
                 error={!!(errors.skus && errors.skus[index].volume)}
                 helperText={errors.skus && errors.skus[index].volume}
               />
@@ -722,7 +749,7 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
                 label={t("page.mall.product.sku.title.first.brokerage.price")}
                 name='first_brokerage_price'
                 value={sku.first_brokerage_price}
-                onChange={handleSkuInputChange}
+                onChange={(e) => handleSkuInputChange(e as React.ChangeEvent<HTMLInputElement>, index)}
                 error={!!(errors.skus && errors.skus[index].first_brokerage_price)}
                 helperText={errors.skus && errors.skus[index].first_brokerage_price}
               />}
@@ -735,7 +762,7 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
                 label={t("page.mall.product.sku.title.second.brokerage.price")}
                 name='second_brokerage_price'
                 value={sku.second_brokerage_price}
-                onChange={handleSkuInputChange}
+                onChange={(e) => handleSkuInputChange(e as React.ChangeEvent<HTMLInputElement>, index)}
                 error={!!(errors.skus && errors.skus[index].second_brokerage_price)}
                 helperText={errors.skus && errors.skus[index].second_brokerage_price}
               />}
@@ -968,9 +995,9 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
                     </Stack>
                   </Stack>
                 ))}
-                <ProductBox sku={{}} index={0} title={formValues.spec_type == 1 ? t("page.mall.product.title.batch.setting") : undefined} ></ProductBox>
-                {formValues.skus.map((sku, index) => (
-                  <ProductBox key={index} sku={sku} index={index} title={sku.property_title}></ProductBox>
+                <ProductBox sku={sku} index={0} title={formValues.spec_type == 1 ? t("page.mall.product.title.batch.setting") : undefined} ></ProductBox>
+                {formValues.spec_type == 1 && formValues.skus.map((sku, index) => (
+                  <ProductBox key={'sku-' + index} sku={sku} index={index + 1} title={sku.property_title}></ProductBox>
                 ))}
               </Box>
             </Box>
