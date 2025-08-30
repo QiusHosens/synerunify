@@ -1,8 +1,8 @@
-import { Box, Button, FormControl, Grid, InputLabel, lighten, MenuItem, rgbToHex, Select, SelectChangeEvent, Stack, TextField, Typography, useTheme } from '@mui/material';
+import { Box, Button, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Stack, TextField, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { forwardRef, useCallback, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
-import { createMallProductSpu, getBaseMallProductProperty, listMallProductBrand, listMallProductCategory, MallProductBrandResponse, MallProductCategoryResponse, MallProductPropertyBaseResponse, MallProductPropertyValueResponse, MallProductSpuRequest } from '@/api';
+import { createMallProductSpu, getBaseMallProductProperty, listMallProductBrand, listMallProductCategory, MallProductBrandResponse, MallProductCategoryResponse, MallProductPropertyBaseResponse, MallProductPropertyValueResponse, MallProductSkuRequest, MallProductSpuRequest } from '@/api';
 import CustomizedDialog from '@/components/CustomizedDialog';
 import SelectTree from '@/components/SelectTree';
 import { uploadSystemFile } from '@/api/system_file';
@@ -14,7 +14,7 @@ import { Editor } from '@tinymce/tinymce-react';
 import CustomizedNumberInput from '@/components/CustomizedNumberInput';
 import PropertySelect from './PropertySelect';
 import CustomizedTag from '@/components/CustomizedTag';
-import CustomizedLabeledBox from '@/components/CustomizedLabeledBox';
+import ProductSku from './ProductSku';
 
 interface AttachmentValues {
   file_id?: number; // 文件ID
@@ -29,24 +29,24 @@ interface PropertyValues {
   valueName: string;
 }
 
-interface FormSkuValues {
-  properties?: string; // 属性数组，JSON 格式 [{propertId: , valueId: }, {propertId: , valueId: }]
-  price?: number; // 商品价格，单位：分
-  market_price?: number; // 市场价，单位：分
-  cost_price?: number; // 成本价，单位： 分
-  bar_code?: string; // SKU 的条形码
-  file_id?: number; // 图片
-  stock?: number; // 库存
-  weight?: number; // 商品重量，单位：kg 千克
-  volume?: number; // 商品体积，单位：m^3 平米
-  first_brokerage_price?: number; // 一级分销的佣金，单位：分
-  second_brokerage_price?: number; // 二级分销的佣金，单位：分
-  sales_count?: number; // 商品销量
+// interface FormSkuValues {
+//   properties?: string; // 属性数组，JSON 格式 [{propertId: , valueId: }, {propertId: , valueId: }]
+//   price?: number; // 商品价格，单位：分
+//   market_price?: number; // 市场价，单位：分
+//   cost_price?: number; // 成本价，单位： 分
+//   bar_code?: string; // SKU 的条形码
+//   file_id?: number; // 图片
+//   stock?: number; // 库存
+//   weight?: number; // 商品重量，单位：kg 千克
+//   volume?: number; // 商品体积，单位：m^3 平米
+//   first_brokerage_price?: number; // 一级分销的佣金，单位：分
+//   second_brokerage_price?: number; // 二级分销的佣金，单位：分
+//   sales_count?: number; // 商品销量
 
-  file?: UploadFile | null;
-  property_list?: PropertyValues[]; // 属性数组
-  property_title?: string; // 
-}
+//   file?: UploadFile | null;
+//   property_list?: PropertyValues[]; // 属性数组
+//   property_title?: string; // 
+// }
 
 interface FormValues {
   name: string; // 商品名称
@@ -72,7 +72,7 @@ interface FormValues {
   virtual_sales_count: number; // 虚拟销量
   browse_count: number; // 商品点击量
 
-  skus: FormSkuValues[]; // sku列表
+  skus: MallProductSkuRequest[]; // sku列表
 
   file?: UploadFile | null; // 商品封面文件
   slider_files: UploadFile[]; // 商品轮播图文件列表
@@ -121,7 +121,6 @@ interface MallProductSpuAddProps {
 
 const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref) => {
   const { t } = useTranslation();
-  const theme = useTheme();
 
   const [open, setOpen] = useState(false);
   const [maxWidth] = useState<DialogProps['maxWidth']>('xl');
@@ -154,10 +153,34 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
     sales_count: 0,
     virtual_sales_count: 0,
     browse_count: 0,
-    skus: [],
+    skus: [{
+      properties: '',
+      price: 0,
+      market_price: 0,
+      cost_price: 0,
+      bar_code: '',
+      stock: 0,
+      weight: 0,
+      volume: 0,
+      first_brokerage_price: 0,
+      second_brokerage_price: 0,
+      sales_count: 0,
+    }],
     slider_files: [],
   });
-  const [sku, setSku] = useState<FormSkuValues>({});
+  // const [sku, setSku] = useState<MallProductSkuRequest>({
+  //   properties: '',
+  //   price: 0,
+  //   market_price: 0,
+  //   cost_price: 0,
+  //   bar_code: '',
+  //   stock: 0,
+  //   weight: 0,
+  //   volume: 0,
+  //   first_brokerage_price: 0,
+  //   second_brokerage_price: 0,
+  //   sales_count: 0,
+  // });
   const [errors, setErrors] = useState<FormErrors>({});
   const [fileWidth] = useState<number>(240);
   const [fileHeight] = useState<number>(160);
@@ -285,10 +308,34 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
       sales_count: 0,
       virtual_sales_count: 0,
       browse_count: 0,
-      skus: [],
+      skus: [{
+        properties: '',
+        price: 0,
+        market_price: 0,
+        cost_price: 0,
+        bar_code: '',
+        stock: 0,
+        weight: 0,
+        volume: 0,
+        first_brokerage_price: 0,
+        second_brokerage_price: 0,
+        sales_count: 0,
+      }],
       slider_files: [],
     });
-    setSku({});
+    // setSku({
+    //   properties: '',
+    //   price: 0,
+    //   market_price: 0,
+    //   cost_price: 0,
+    //   bar_code: '',
+    //   stock: 0,
+    //   weight: 0,
+    //   volume: 0,
+    //   first_brokerage_price: 0,
+    //   second_brokerage_price: 0,
+    //   sales_count: 0,
+    // });
     setErrors({});
   }
 
@@ -389,10 +436,10 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
     const { name, value, type } = e.target;
 
     if (index == 0) {
-      setSku((prev) => ({
-        ...prev,
-        [name]: type === 'number' ? Number(value) : value,
-      }));
+      // setSku((prev) => ({
+      //   ...prev,
+      //   [name]: type === 'number' ? Number(value) : value,
+      // }));
       if (formValues.spec_type == 1) {
         // 多规格 批量设置
         setFormValues((prev) => ({
@@ -403,7 +450,11 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
         // 单规格
         setFormValues((prev) => ({
           ...prev,
-          skus: [{ ...sku, [name]: type === 'number' ? Number(value) : value }]
+          // skus: [{ ...sku, [name]: type === 'number' ? Number(value) : value }]
+          skus: prev.skus.map((item, idx) => {
+            if (idx !== index) return item;
+            return { ...item, [name]: type === 'number' ? Number(value) : value }
+          })
         }));
       }
     } else {
@@ -411,19 +462,19 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
       setFormValues((prev) => ({
         ...prev,
         skus: prev.skus.map((item, idx) => {
-          if (idx !== index - 1) return item;
+          if (idx !== index) return item;
           return { ...item, [name]: type === 'number' ? Number(value) : value }
         })
       }));
     }
 
-    if (errors[name as keyof FormErrors]) {
-      setErrors(prev => ({
-        ...prev,
-        [name]: undefined
-      }));
-    }
-  }, []);
+    // if (errors[name as keyof FormErrors]) {
+    //   setErrors(prev => ({
+    //     ...prev,
+    //     [name]: undefined
+    //   }));
+    // }
+  }, [formValues]);
 
   const handleCheckboxChange = (name: string | undefined, checkedValues: any[]) => {
     if (!name) {
@@ -608,170 +659,183 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
       const combinations = cartesian(groupedValues);
 
       // 生成sku
-      let skus: FormSkuValues[] = combinations.map((combo) => {
+      const skus: MallProductSkuRequest[] = combinations.map((combo) => {
         return {
+          ...formValues.skus[0],
+
           property_list: combo,
           properties: JSON.stringify(combo),
-          property_title: combo.map(c => c.valueName).join(' * ')
+          property_title: combo.map(c => c.valueName).join(' * '),
+
+          // price: 0,
+          // market_price: 0,
+          // cost_price: 0,
+          // bar_code: '',
+          // stock: 0,
+          // weight: 0,
+          // volume: 0,
+          // first_brokerage_price: 0,
+          // second_brokerage_price: 0,
+          // sales_count: 0,
         }
       });
       setFormValues(prev => ({
         ...prev,
-        skus
+        skus: [formValues.skus[0], ...skus]
       }));
-    }, [selectedProperties, selectedPropertyValues]);
+    }, [properties, values]);
   }
   useSkuGenerator(selectedProperties, selectedPropertyValues);
 
-  const ProductBox = (({ sku, index, title }: { sku: FormSkuValues, index: number, title?: string }) => {
-    return (
-      <CustomizedLabeledBox label={title ?? undefined} sx={{ mt: 2, mr: 2 }}>
-        <Stack direction='row' gap={2}>
-          <CustomizedFileUpload
-            canRemove={false}
-            showFilename={false}
-            id={'file-upload'}
-            accept=".jpg,jpeg,.png"
-            maxSize={100}
-            onChange={(file, action) => handleFileChange(file, action)}
-            file={sku.file}
-            width={fileWidth}
-            height={fileHeight}
-          />
-          <Grid container rowSpacing={2} columnSpacing={2} sx={{ '& .MuiGrid-root': { display: 'flex', justifyContent: 'center', alignItems: 'center' } }}>
-            {sku.property_list && sku.property_list.map((property) => (
-              <Grid size={{ xs: 12, md: 3 }}>
-                <TextField
-                  disabled
-                  size="small"
-                  label={property.propertyName}
-                  value={property.valueName}
-                  sx={{ width: '100%' }}
-                />
-              </Grid>)
-            )}
-            <Grid size={{ xs: 12, md: 6 }}>
-              <TextField
-                required
-                size="small"
-                label={t("page.mall.product.sku.title.bar.code")}
-                name='bar_code'
-                value={sku.bar_code}
-                onChange={(e) => handleSkuInputChange(e as React.ChangeEvent<HTMLInputElement>, index)}
-                error={!!(errors.skus && errors.skus[index].bar_code)}
-                helperText={errors.skus && errors.skus[index].bar_code}
-                sx={{ width: '100%' }}
-              />
-            </Grid>
-            <Grid size={{ xs: 12, md: 3 }}>
-              <TextField
-                required
-                size="small"
-                type="number"
-                label={t("page.mall.product.sku.title.price")}
-                name='price'
-                value={sku.price}
-                onChange={(e) => handleSkuInputChange(e as React.ChangeEvent<HTMLInputElement>, index)}
-                error={!!(errors.skus && errors.skus[index].price)}
-                helperText={errors.skus && errors.skus[index].price}
-              />
-            </Grid>
-            <Grid size={{ xs: 12, md: 3 }}>
-              <TextField
-                required
-                size="small"
-                type="number"
-                label={t("page.mall.product.sku.title.market.price")}
-                name='market_price'
-                value={sku.market_price}
-                onChange={(e) => handleSkuInputChange(e as React.ChangeEvent<HTMLInputElement>, index)}
-                error={!!(errors.skus && errors.skus[index].market_price)}
-                helperText={errors.skus && errors.skus[index].market_price}
-              />
-            </Grid>
-            <Grid size={size}>
-              <TextField
-                required
-                size="small"
-                type="number"
-                label={t("page.mall.product.sku.title.cost.price")}
-                name='cost_price'
-                value={sku.cost_price}
-                onChange={(e) => handleSkuInputChange(e as React.ChangeEvent<HTMLInputElement>, index)}
-                error={!!(errors.skus && errors.skus[index].cost_price)}
-                helperText={errors.skus && errors.skus[index].cost_price}
-              />
-            </Grid>
-            <Grid size={size}>
-              <TextField
-                required
-                size="small"
-                type="number"
-                label={t("page.mall.product.sku.title.stock")}
-                name='stock'
-                value={sku.stock}
-                onChange={(e) => handleSkuInputChange(e as React.ChangeEvent<HTMLInputElement>, index)}
-                error={!!(errors.skus && errors.skus[index].stock)}
-                helperText={errors.skus && errors.skus[index].stock}
-              />
-            </Grid>
-            <Grid size={size}>
-              <TextField
-                required
-                size="small"
-                type="number"
-                label={t("page.mall.product.sku.title.weight")}
-                name='weight'
-                value={sku.weight}
-                onChange={(e) => handleSkuInputChange(e as React.ChangeEvent<HTMLInputElement>, index)}
-                error={!!(errors.skus && errors.skus[index].weight)}
-                helperText={errors.skus && errors.skus[index].weight}
-              />
-            </Grid>
-            <Grid size={size}>
-              <TextField
-                required
-                size="small"
-                type="number"
-                label={t("page.mall.product.sku.title.volume")}
-                name='volume'
-                value={sku.volume}
-                onChange={(e) => handleSkuInputChange(e as React.ChangeEvent<HTMLInputElement>, index)}
-                error={!!(errors.skus && errors.skus[index].volume)}
-                helperText={errors.skus && errors.skus[index].volume}
-              />
-            </Grid>
-            <Grid size={size}>
-              {formValues.sub_commission_type == 1 && <TextField
-                required
-                size="small"
-                type="number"
-                label={t("page.mall.product.sku.title.first.brokerage.price")}
-                name='first_brokerage_price'
-                value={sku.first_brokerage_price}
-                onChange={(e) => handleSkuInputChange(e as React.ChangeEvent<HTMLInputElement>, index)}
-                error={!!(errors.skus && errors.skus[index].first_brokerage_price)}
-                helperText={errors.skus && errors.skus[index].first_brokerage_price}
-              />}
-            </Grid>
-            <Grid size={size}>
-              {formValues.sub_commission_type == 1 && <TextField
-                required
-                size="small"
-                type="number"
-                label={t("page.mall.product.sku.title.second.brokerage.price")}
-                name='second_brokerage_price'
-                value={sku.second_brokerage_price}
-                onChange={(e) => handleSkuInputChange(e as React.ChangeEvent<HTMLInputElement>, index)}
-                error={!!(errors.skus && errors.skus[index].second_brokerage_price)}
-                helperText={errors.skus && errors.skus[index].second_brokerage_price}
-              />}
-            </Grid>
-          </Grid>
-        </Stack>
-      </CustomizedLabeledBox>
-    );
-  });
+  // const ProductBox = (({ sku, index, title }: { sku: FormSkuValues, index: number, title?: string }) => {
+  //   return (
+  //     <CustomizedLabeledBox label={title ?? undefined} sx={{ mt: 2, mr: 2 }}>
+  //       <Stack direction='row' gap={2}>
+  //         <CustomizedFileUpload
+  //           canRemove={false}
+  //           showFilename={false}
+  //           id={'file-upload'}
+  //           accept=".jpg,jpeg,.png"
+  //           maxSize={100}
+  //           onChange={(file, action) => handleFileChange(file, action)}
+  //           file={sku.file}
+  //           width={fileWidth}
+  //           height={fileHeight}
+  //         />
+  //         <Grid container rowSpacing={2} columnSpacing={2} sx={{ '& .MuiGrid-root': { display: 'flex', justifyContent: 'center', alignItems: 'center' } }}>
+  //           {sku.property_list && sku.property_list.map((property) => (
+  //             <Grid size={{ xs: 12, md: 3 }}>
+  //               <TextField
+  //                 disabled
+  //                 size="small"
+  //                 label={property.propertyName}
+  //                 value={property.valueName}
+  //                 sx={{ width: '100%' }}
+  //               />
+  //             </Grid>)
+  //           )}
+  //           <Grid size={{ xs: 12, md: 6 }}>
+  //             <TextField
+  //               required
+  //               size="small"
+  //               label={t("page.mall.product.sku.title.bar.code")}
+  //               name='bar_code'
+  //               value={sku.bar_code}
+  //               onChange={(e) => handleSkuInputChange(e as React.ChangeEvent<HTMLInputElement>, index)}
+  //               error={!!(errors.skus && errors.skus[index].bar_code)}
+  //               helperText={errors.skus && errors.skus[index].bar_code}
+  //               sx={{ width: '100%' }}
+  //             />
+  //           </Grid>
+  //           <Grid size={{ xs: 12, md: 3 }}>
+  //             <TextField
+  //               required
+  //               size="small"
+  //               type="number"
+  //               label={t("page.mall.product.sku.title.price")}
+  //               name='price'
+  //               value={sku.price}
+  //               onChange={(e) => handleSkuInputChange(e as React.ChangeEvent<HTMLInputElement>, index)}
+  //               error={!!(errors.skus && errors.skus[index].price)}
+  //               helperText={errors.skus && errors.skus[index].price}
+  //             />
+  //           </Grid>
+  //           <Grid size={{ xs: 12, md: 3 }}>
+  //             <TextField
+  //               required
+  //               size="small"
+  //               type="number"
+  //               label={t("page.mall.product.sku.title.market.price")}
+  //               name='market_price'
+  //               value={sku.market_price}
+  //               onChange={(e) => handleSkuInputChange(e as React.ChangeEvent<HTMLInputElement>, index)}
+  //               error={!!(errors.skus && errors.skus[index].market_price)}
+  //               helperText={errors.skus && errors.skus[index].market_price}
+  //             />
+  //           </Grid>
+  //           <Grid size={size}>
+  //             <TextField
+  //               required
+  //               size="small"
+  //               type="number"
+  //               label={t("page.mall.product.sku.title.cost.price")}
+  //               name='cost_price'
+  //               value={sku.cost_price}
+  //               onChange={(e) => handleSkuInputChange(e as React.ChangeEvent<HTMLInputElement>, index)}
+  //               error={!!(errors.skus && errors.skus[index].cost_price)}
+  //               helperText={errors.skus && errors.skus[index].cost_price}
+  //             />
+  //           </Grid>
+  //           <Grid size={size}>
+  //             <TextField
+  //               required
+  //               size="small"
+  //               type="number"
+  //               label={t("page.mall.product.sku.title.stock")}
+  //               name='stock'
+  //               value={sku.stock}
+  //               onChange={(e) => handleSkuInputChange(e as React.ChangeEvent<HTMLInputElement>, index)}
+  //               error={!!(errors.skus && errors.skus[index].stock)}
+  //               helperText={errors.skus && errors.skus[index].stock}
+  //             />
+  //           </Grid>
+  //           <Grid size={size}>
+  //             <TextField
+  //               required
+  //               size="small"
+  //               type="number"
+  //               label={t("page.mall.product.sku.title.weight")}
+  //               name='weight'
+  //               value={sku.weight}
+  //               onChange={(e) => handleSkuInputChange(e as React.ChangeEvent<HTMLInputElement>, index)}
+  //               error={!!(errors.skus && errors.skus[index].weight)}
+  //               helperText={errors.skus && errors.skus[index].weight}
+  //             />
+  //           </Grid>
+  //           <Grid size={size}>
+  //             <TextField
+  //               required
+  //               size="small"
+  //               type="number"
+  //               label={t("page.mall.product.sku.title.volume")}
+  //               name='volume'
+  //               value={sku.volume}
+  //               onChange={(e) => handleSkuInputChange(e as React.ChangeEvent<HTMLInputElement>, index)}
+  //               error={!!(errors.skus && errors.skus[index].volume)}
+  //               helperText={errors.skus && errors.skus[index].volume}
+  //             />
+  //           </Grid>
+  //           <Grid size={size}>
+  //             {formValues.sub_commission_type == 1 && <TextField
+  //               required
+  //               size="small"
+  //               type="number"
+  //               label={t("page.mall.product.sku.title.first.brokerage.price")}
+  //               name='first_brokerage_price'
+  //               value={sku.first_brokerage_price}
+  //               onChange={(e) => handleSkuInputChange(e as React.ChangeEvent<HTMLInputElement>, index)}
+  //               error={!!(errors.skus && errors.skus[index].first_brokerage_price)}
+  //               helperText={errors.skus && errors.skus[index].first_brokerage_price}
+  //             />}
+  //           </Grid>
+  //           <Grid size={size}>
+  //             {formValues.sub_commission_type == 1 && <TextField
+  //               required
+  //               size="small"
+  //               type="number"
+  //               label={t("page.mall.product.sku.title.second.brokerage.price")}
+  //               name='second_brokerage_price'
+  //               value={sku.second_brokerage_price}
+  //               onChange={(e) => handleSkuInputChange(e as React.ChangeEvent<HTMLInputElement>, index)}
+  //               error={!!(errors.skus && errors.skus[index].second_brokerage_price)}
+  //               helperText={errors.skus && errors.skus[index].second_brokerage_price}
+  //             />}
+  //           </Grid>
+  //         </Grid>
+  //       </Stack>
+  //     </CustomizedLabeledBox>
+  //   );
+  // });
 
   return (
     <CustomizedDialog
@@ -995,9 +1059,36 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
                     </Stack>
                   </Stack>
                 ))}
-                <ProductBox sku={sku} index={0} title={formValues.spec_type == 1 ? t("page.mall.product.title.batch.setting") : undefined} ></ProductBox>
-                {formValues.spec_type == 1 && formValues.skus.map((sku, index) => (
-                  <ProductBox key={'sku-' + index} sku={sku} index={index + 1} title={sku.property_title}></ProductBox>
+                {/* <ProductBox sku={sku} index={0} title={formValues.spec_type == 1 ? t("page.mall.product.title.batch.setting") : undefined} ></ProductBox> */}
+                {/* <ProductSku
+                  sku={sku}
+                  index={0}
+                  title={formValues.spec_type == 1 ? t("page.mall.product.title.batch.setting") : undefined}
+                  onSkuChange={handleSkuInputChange}
+                  onFileChange={handleFileChange}
+                  errors={errors.skus?.[0]}
+                  fileWidth={fileWidth}
+                  fileHeight={fileHeight}
+                  size={size}
+                  subCommissionType={formValues.sub_commission_type}
+                  t={t}
+                /> */}
+                {formValues.skus.map((sku, index) => (
+                  // <ProductBox key={'sku-' + index} sku={sku} index={index + 1} title={sku.property_title}></ProductBox>
+                  <ProductSku
+                    key={'sku-' + index}
+                    sku={sku}
+                    index={index}
+                    title={formValues.spec_type == 0 ? undefined : index == 0 ? t("page.mall.product.title.batch.setting") : sku.property_title}
+                    onSkuChange={handleSkuInputChange}
+                    onFileChange={handleFileChange}
+                    errors={errors.skus?.[0]}
+                    fileWidth={fileWidth}
+                    fileHeight={fileHeight}
+                    size={size}
+                    subCommissionType={formValues.sub_commission_type}
+                    t={t}
+                  />
                 ))}
               </Box>
             </Box>

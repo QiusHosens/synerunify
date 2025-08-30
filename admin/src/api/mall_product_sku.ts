@@ -1,4 +1,5 @@
 import { PaginatedRequest, PaginatedResponse } from "@/base/page";
+import { UploadFile } from "@/components/CustomizedFileUpload";
 import { api } from "@/utils/request";
 
 const apis = {
@@ -10,6 +11,13 @@ const apis = {
   page: "/mall/mall_product_sku/page", // 分页查询
 };
 
+export interface PropertyValues {
+  propertyId: number,
+  propertyName: string,
+  valueId: number,
+  valueName: string;
+}
+
 export interface MallProductSkuRequest {
   id?: number; // 主键
   spu_id?: number; // spu编号
@@ -18,13 +26,17 @@ export interface MallProductSkuRequest {
   market_price: number; // 市场价，单位：分
   cost_price: number; // 成本价，单位： 分
   bar_code: string; // SKU 的条形码
-  file_id: number; // 图片ID
+  file_id?: number; // 图片ID
   stock: number; // 库存
   weight: number; // 商品重量，单位：kg 千克
   volume: number; // 商品体积，单位：m^3 平米
   first_brokerage_price: number; // 一级分销的佣金，单位：分
   second_brokerage_price: number; // 二级分销的佣金，单位：分
   sales_count: number; // 商品销量
+
+  file?: UploadFile | null;
+  property_list?: PropertyValues[]; // 属性数组
+  property_title?: string; // 
 }
 
 export interface MallProductSkuResponse {
