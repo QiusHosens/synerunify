@@ -83,3 +83,25 @@ pub async fn list(db: &DatabaseConnection, login_user: LoginUserContext) -> Resu
         .all(db).await?;
     Ok(list.into_iter().map(model_to_response).collect())
 }
+
+pub async fn enable(db: &DatabaseConnection, login_user: LoginUserContext, id: i64) -> Result<()> {
+    let mall_trade_delivery_express_template = MallTradeDeliveryExpressTemplateActiveModel {
+        id: Set(id),
+        updater: Set(Some(login_user.id)),
+        status: Set(STATUS_ENABLE),
+        ..Default::default()
+    };
+    mall_trade_delivery_express_template.update(db).await?;
+    Ok(())
+}
+
+pub async fn disable(db: &DatabaseConnection, login_user: LoginUserContext, id: i64) -> Result<()> {
+    let mall_trade_delivery_express_template = MallTradeDeliveryExpressTemplateActiveModel {
+        id: Set(id),
+        updater: Set(Some(login_user.id)),
+        status: Set(STATUS_DISABLE),
+        ..Default::default()
+    };
+    mall_trade_delivery_express_template.update(db).await?;
+    Ok(())
+}

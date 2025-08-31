@@ -11,7 +11,7 @@
  Target Server Version : 80200 (8.2.0)
  File Encoding         : 65001
 
- Date: 24/08/2025 21:52:35
+ Date: 31/08/2025 16:23:44
 */
 
 SET NAMES utf8mb4;
@@ -1339,13 +1339,14 @@ CREATE TABLE `mall_product_property`  (
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `idx_name`(`name`(32) ASC) USING BTREE COMMENT '规格名称索引'
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '商品属性项' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '商品属性项' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_product_property
 -- ----------------------------
 INSERT INTO `mall_product_property` VALUES (1, '名称', 0, '名称', 1, '2025-08-12 06:58:03', 1, '2025-08-12 06:58:03', b'0', 1);
 INSERT INTO `mall_product_property` VALUES (2, '颜色', 0, '颜色', 1, '2025-08-24 12:49:35', 1, '2025-08-24 12:49:35', b'0', 1);
+INSERT INTO `mall_product_property` VALUES (3, '尺寸', 0, '尺寸', 1, '2025-08-26 14:36:48', 1, '2025-08-26 14:36:48', b'0', 1);
 
 -- ----------------------------
 -- Table structure for mall_product_property_value
@@ -1364,11 +1365,21 @@ CREATE TABLE `mall_product_property_value`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '商品属性值' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 11 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '商品属性值' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_product_property_value
 -- ----------------------------
+INSERT INTO `mall_product_property_value` VALUES (1, 2, '白色', 0, NULL, 1, '2025-08-26 14:36:07', 1, '2025-08-26 14:36:07', b'0', 1);
+INSERT INTO `mall_product_property_value` VALUES (2, 2, '黑色', 0, NULL, 1, '2025-08-26 14:36:07', 1, '2025-08-26 14:36:07', b'0', 1);
+INSERT INTO `mall_product_property_value` VALUES (3, 2, '黄色', 0, NULL, 1, '2025-08-26 14:36:07', 1, '2025-08-26 14:36:07', b'0', 1);
+INSERT INTO `mall_product_property_value` VALUES (4, 2, '绿色', 0, NULL, 1, '2025-08-26 14:36:07', 1, '2025-08-26 14:36:07', b'0', 1);
+INSERT INTO `mall_product_property_value` VALUES (5, 2, '蓝色', 0, NULL, 1, '2025-08-26 14:36:07', 1, '2025-08-26 14:36:07', b'0', 1);
+INSERT INTO `mall_product_property_value` VALUES (6, 3, '1*1', 0, NULL, 1, '2025-08-26 14:36:48', 1, '2025-08-26 14:36:48', b'0', 1);
+INSERT INTO `mall_product_property_value` VALUES (7, 3, '1*2', 0, NULL, 1, '2025-08-26 14:36:48', 1, '2025-08-26 14:36:48', b'0', 1);
+INSERT INTO `mall_product_property_value` VALUES (8, 3, '1*3', 0, NULL, 1, '2025-08-26 14:36:48', 1, '2025-08-26 14:36:48', b'0', 1);
+INSERT INTO `mall_product_property_value` VALUES (9, 3, '2*1', 0, NULL, 1, '2025-08-26 14:36:48', 1, '2025-08-26 14:36:48', b'0', 1);
+INSERT INTO `mall_product_property_value` VALUES (10, 3, '2*2', 0, NULL, 1, '2025-08-26 14:36:48', 1, '2025-08-26 14:36:48', b'0', 1);
 
 -- ----------------------------
 -- Table structure for mall_product_sku
@@ -2390,6 +2401,7 @@ CREATE TABLE `mall_trade_delivery_express_template`  (
   `name` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '模板名称',
   `charge_mode` tinyint NOT NULL COMMENT '配送计费方式',
   `sort` int NOT NULL DEFAULT 0 COMMENT '排序',
+  `status` tinyint NOT NULL DEFAULT 0 COMMENT '状态',
   `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updater` bigint NULL DEFAULT NULL COMMENT '更新者ID',
@@ -2731,7 +2743,7 @@ CREATE TABLE `system_dict_data`  (
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 39 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '字典数据表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 42 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '字典数据表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of system_dict_data
@@ -2773,6 +2785,9 @@ INSERT INTO `system_dict_data` VALUES (35, 0, '单规格', '0', 'spec_type', 0, 
 INSERT INTO `system_dict_data` VALUES (36, 1, '多规格', '1', 'spec_type', 0, '', '', '多规格', 1, '2025-04-30 07:04:39', 1, '2025-04-30 07:04:39', b'0');
 INSERT INTO `system_dict_data` VALUES (37, 0, '快递发货', '0', 'delivery_type', 0, '', '', '快递发货', 1, '2025-04-30 07:04:27', 1, '2025-04-30 07:04:27', b'0');
 INSERT INTO `system_dict_data` VALUES (38, 1, '用户自提', '1', 'delivery_type', 0, '', '', '用户自提', 1, '2025-04-30 07:04:39', 1, '2025-04-30 07:04:39', b'0');
+INSERT INTO `system_dict_data` VALUES (39, 0, '按件', '0', 'charge_type', 0, '', '', '按件', 1, '2025-04-30 07:04:27', 1, '2025-04-30 07:04:27', b'0');
+INSERT INTO `system_dict_data` VALUES (40, 1, '按重量', '1', 'charge_type', 0, '', '', '按重量', 1, '2025-04-30 07:04:39', 1, '2025-04-30 07:04:39', b'0');
+INSERT INTO `system_dict_data` VALUES (41, 1, '按体积', '1', 'charge_type', 0, '', '', '按体积', 1, '2025-04-30 07:04:39', 1, '2025-04-30 07:04:39', b'0');
 
 -- ----------------------------
 -- Table structure for system_dict_type
@@ -2790,7 +2805,7 @@ CREATE TABLE `system_dict_type`  (
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 13 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '字典类型表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 14 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '字典类型表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of system_dict_type
@@ -2807,6 +2822,7 @@ INSERT INTO `system_dict_type` VALUES (9, '销售退货订单状态', 'sale_retu
 INSERT INTO `system_dict_type` VALUES (10, '分销类型', 'sub_commission_type', 0, '分销类型', 1, '2025-06-25 12:54:19', 1, '2025-06-25 12:54:19', b'0');
 INSERT INTO `system_dict_type` VALUES (11, '商品规格类型', 'spec_type', 0, '商品规格类型', 1, '2025-06-25 12:54:19', 1, '2025-06-25 12:54:19', b'0');
 INSERT INTO `system_dict_type` VALUES (12, '配送方式', 'delivery_type', 0, '配送方式', 1, '2025-06-25 12:54:19', 1, '2025-06-25 12:54:19', b'0');
+INSERT INTO `system_dict_type` VALUES (13, '计费方式', 'charge_type', 0, '计费方式', 1, '2025-06-25 12:54:19', 1, '2025-06-25 12:54:19', b'0');
 
 -- ----------------------------
 -- Table structure for system_file

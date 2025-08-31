@@ -16,6 +16,8 @@ pub struct Model {
     
     pub sort: i32, // 排序
     
+    pub status: i8, // 状态
+    
     pub creator: Option<i64>, // 创建者ID
     
     pub create_time: NaiveDateTime, // 创建时间

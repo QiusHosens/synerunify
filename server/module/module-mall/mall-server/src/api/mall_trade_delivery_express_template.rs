@@ -21,6 +21,8 @@ pub async fn mall_trade_delivery_express_template_router(state: AppState) -> Ope
         .routes(routes!(get_by_id))
         .routes(routes!(list))
         .routes(routes!(page))
+        .routes(routes!(enable))
+        .routes(routes!(disable))
         .with_state(state)
 }
 
@@ -188,6 +190,60 @@ async fn list(
 ) -> CommonResult<Vec<MallTradeDeliveryExpressTemplateResponse>> {
     match service::mall_trade_delivery_express_template::list(&state.db, login_user).await {
         Ok(data) => {CommonResult::with_data(data)}
+        Err(e) => {CommonResult::with_err(&e.to_string())}
+    }
+}
+
+#[utoipa::path(
+    post,
+    path = "/enable/{id}",
+    operation_id = "mall_trade_delivery_express_template_enable",
+    params(
+        ("id" = i64, Path, description = "id")
+    ),
+    responses(
+        (status = 204, description = "enable")
+    ),
+    tag = "mall_trade_delivery_express_template",
+    security(
+        ("bearerAuth" = [])
+    )
+)]
+#[require_authorize(operation_id = "mall_trade_delivery_express_template_enable", authorize = "")]
+async fn enable(
+    State(state): State<AppState>,
+    Extension(login_user): Extension<LoginUserContext>,
+    Path(id): Path<i64>,
+) -> CommonResult<()> {
+    match service::mall_trade_delivery_express_template::enable(&state.db, login_user, id).await {
+        Ok(_) => {CommonResult::with_none()}
+        Err(e) => {CommonResult::with_err(&e.to_string())}
+    }
+}
+
+#[utoipa::path(
+    post,
+    path = "/disable/{id}",
+    operation_id = "mall_trade_delivery_express_template_disable",
+    params(
+        ("id" = i64, Path, description = "id")
+    ),
+    responses(
+        (status = 204, description = "disable")
+    ),
+    tag = "mall_trade_delivery_express_template",
+    security(
+        ("bearerAuth" = [])
+    )
+)]
+#[require_authorize(operation_id = "mall_trade_delivery_express_template_disable", authorize = "")]
+async fn disable(
+    State(state): State<AppState>,
+    Extension(login_user): Extension<LoginUserContext>,
+    Path(id): Path<i64>,
+) -> CommonResult<()> {
+    match service::mall_trade_delivery_express_template::disable(&state.db, login_user, id).await {
+        Ok(_) => {CommonResult::with_none()}
         Err(e) => {CommonResult::with_err(&e.to_string())}
     }
 }

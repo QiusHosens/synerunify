@@ -14,6 +14,8 @@ pub struct CreateMallTradeDeliveryExpressTemplateRequest {
     
     pub sort: i32, // 排序
     
+    pub status: i8, // 状态
+    
 }
 
 #[derive(Serialize, Deserialize, Debug, ToSchema)]
@@ -26,6 +28,8 @@ pub struct UpdateMallTradeDeliveryExpressTemplateRequest {
     pub charge_mode: Option<i8>, // 配送计费方式
     
     pub sort: Option<i32>, // 排序
+    
+    pub status: Option<i8>, // 状态
     
 }
 

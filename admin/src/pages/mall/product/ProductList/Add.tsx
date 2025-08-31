@@ -1037,6 +1037,7 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
                   label={t('page.mall.product.title.sub.commission.type')}
                   value={formValues.sub_commission_type}
                   onChange={handleInputChange}
+                  sx={{ mt: 2 }}
                 />
                 <CustomizedDictRadioGroup
                   id="spec-row-radio-buttons-group-label"
@@ -1045,6 +1046,7 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
                   label={t('page.mall.product.title.spec.type')}
                   value={formValues.spec_type}
                   onChange={handleInputChange}
+                  sx={{ mt: 2 }}
                 />
                 {formValues.spec_type == 1 && <Button variant="customContained" onClick={handleOpenPropertySelect} sx={{ width: 240 }}>
                   {t('page.mall.product.property.operate.add')}

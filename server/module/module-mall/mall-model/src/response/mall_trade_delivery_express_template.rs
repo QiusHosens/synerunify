@@ -15,6 +15,8 @@ pub struct MallTradeDeliveryExpressTemplateResponse {
     
     pub sort: i32, // 排序
     
+    pub status: i8, // 状态
+    
     pub creator: Option<i64>, // 创建者ID
     
     #[serde_as(as = "common::formatter::string_date_time::StringDateTime")]

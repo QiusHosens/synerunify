@@ -38,7 +38,7 @@ const CustomizedDictRadioGroup: React.FC<CustomizedDictRadioGroupProps> = ({
 
   return (
     <>
-      <FormControl>
+      <FormControl sx={sx}>
         <FormLabel id={id}>{label}</FormLabel>
         <RadioGroup
           row
@@ -46,7 +46,6 @@ const CustomizedDictRadioGroup: React.FC<CustomizedDictRadioGroupProps> = ({
           name={name}
           value={value}
           onChange={onChange}
-          sx={sx}
         >
           {dicts.map(item => (
             <FormControlLabel key={item.id} value={item.value} control={<Radio size={size} />} label={item.label} />
