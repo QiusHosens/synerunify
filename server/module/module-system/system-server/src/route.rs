@@ -1,3 +1,4 @@
+use crate::api::system_area::system_area_router;
 use crate::api::system_auth::{system_auth_need_router, system_auth_router};
 use crate::api::system_data_scope_rule::system_data_scope_rule_router;
 use crate::api::system_department::system_department_router;
@@ -48,6 +49,7 @@ use common::utils::jwt_utils::AccessClaims;
         (name = "system_user", description = "用户信息"),
         (name = "system_user_post", description = "用户职位"),
         (name = "system_user_role", description = "用户和角色关联"),
+        (name = "system_area", description = "区域管理"),
     ),
     modifiers(&SecurityAddon)
 )]
@@ -69,6 +71,7 @@ pub async fn api(state: AppState) -> Router {
 pub async fn no_auth_router(state: AppState) -> OpenApiRouter {
     OpenApiRouter::new()
         .nest("/system_auth", system_auth_router(state.clone()).await)
+        .nest("/system_area", system_area_router().await)
         .layer(axum::middleware::from_fn(authorize_handler))
         .layer(axum::middleware::from_fn(operation_logger_handler))
         .layer(axum::middleware::from_fn_with_state(state.clone(), request_context_handler))

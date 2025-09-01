@@ -26,6 +26,7 @@ mod task;
 mod route;
 mod initializer;
 mod grpc;
+mod utils;
 
 #[tokio::main]
 async fn main() -> Result<(), anyhow::Error> {

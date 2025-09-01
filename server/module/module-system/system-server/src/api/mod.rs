@@ -1,3 +1,4 @@
+pub mod system_area;
 pub mod system_data_scope_rule;
 pub mod system_department;
 pub mod system_dict_data;

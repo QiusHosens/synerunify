@@ -13,3 +13,4 @@ pub mod system_tenant_package;
 pub mod system_user;
 pub mod system_user_post;
 pub mod system_user_role;
+pub mod system_area;
