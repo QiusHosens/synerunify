@@ -17,6 +17,7 @@ use crate::{
     utils::area_utils::{get_area_cache, Area, AreaType, CacheStats},
 };
 use crate::convert::system_area::model_to_response;
+use crate::service::system_area;
 
 /// 区域查询参数
 // #[derive(Debug, Deserialize, ToSchema, utoipa::IntoParams)]
@@ -68,9 +69,7 @@ pub async fn system_area_router() -> OpenApiRouter {
     tag = "system_area"
 )]
 async fn get_areas() -> CommonResult<Vec<AreaResponse>> {
-    let cache = get_area_cache();
-    let areas = cache.get_all_children(1);
-    CommonResult::with_data(areas.into_iter().map(model_to_response).collect())
+    CommonResult::with_data(system_area::get_tree().unwrap())
 
     // let areas = if let Some(parent_id) = params.parent_id {
     //     // 获取指定父级下的区域
