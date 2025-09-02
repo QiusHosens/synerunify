@@ -139,6 +139,194 @@ impl AreaCache {
         }
     }
 
+    /// 从平铺的 Vec<Area> 构建层级结构
+    // pub fn build_hierarchy_from_vec(&self, areas: Vec<Area>) -> Vec<Area> {
+    //     use std::collections::{HashMap, HashSet};
+    //
+    //     // 构造 id -> Area map，并清空 children 确保重新构建
+    //     let mut area_map: HashMap<i32, Area> = areas
+    //         .into_iter()
+    //         .map(|mut a| {
+    //             a.children = Vec::new();
+    //             (a.id, a)
+    //         })
+    //         .collect();
+    //
+    //     // 构建 parent_id -> Vec<child_id>
+    //     let mut child_map: HashMap<i32, Vec<i32>> = HashMap::new();
+    //     for area in area_map.values() {
+    //         child_map.entry(area.parent_id).or_default().push(area.id);
+    //     }
+    //
+    //     // 所有 id 集合（用于判定 parent 是否存在）
+    //     let ids: HashSet<i32> = area_map.keys().copied().collect();
+    //
+    //     // 根：parent_id 不在 ids 的节点
+    //     let mut root_ids: Vec<i32> = area_map
+    //         .values()
+    //         .filter(|a| !ids.contains(&a.parent_id))
+    //         .map(|a| a.id)
+    //         .collect();
+    //
+    //     // 为了稳定输出，按 id 排序
+    //     root_ids.sort_unstable();
+    //
+    //     // DFS 构建子树，同时做路径级别的环检测（visited 用于当前递归栈）
+    //     let mut visited: HashSet<i32> = HashSet::new();
+    //
+    //     fn attach_children(
+    //         id: i32,
+    //         area_map: &mut HashMap<i32, Area>,
+    //         child_map: &HashMap<i32, Vec<i32>>,
+    //         visited: &mut HashSet<i32>,
+    //     ) -> Option<Area> {
+    //         if visited.contains(&id) {
+    //             // 检测到环，停止继续下钻以避免死循环
+    //             return None;
+    //         }
+    //
+    //         // 取走节点以取得所有权（已清空 children）
+    //         let mut node = match area_map.remove(&id) {
+    //             Some(n) => n,
+    //             None => return None, // 节点已被其它分支处理或不存在
+    //         };
+    //
+    //         visited.insert(id);
+    //
+    //         if let Some(child_ids) = child_map.get(&id) {
+    //             // 保持孩子 id 的原始顺序
+    //             let mut children_vec = Vec::with_capacity(child_ids.len());
+    //             for &cid in child_ids {
+    //                 if let Some(child) = attach_children(cid, area_map, child_map, visited) {
+    //                     children_vec.push(child);
+    //                 }
+    //                 // 如果 child 为 None（缺失或检测到环），就跳过
+    //             }
+    //             node.children = children_vec;
+    //         }
+    //
+    //         visited.remove(&id);
+    //         Some(node)
+    //     }
+    //
+    //     // 构建根列表
+    //     let mut roots = Vec::with_capacity(root_ids.len());
+    //     for rid in root_ids {
+    //         if let Some(root) = attach_children(rid, &mut area_map, &child_map, &mut visited) {
+    //             roots.push(root);
+    //         }
+    //     }
+    //
+    //     // 如果还有剩余未处理的节点（其祖先都缺失或被环阻断），把它们也构建出来作为独立根
+    //     if !area_map.is_empty() {
+    //         let mut remaining_ids: Vec<i32> = area_map.keys().copied().collect();
+    //         remaining_ids.sort_unstable();
+    //         for id in remaining_ids {
+    //             if let Some(node) = attach_children(id, &mut area_map, &child_map, &mut visited) {
+    //                 roots.push(node);
+    //             }
+    //         }
+    //     }
+    //
+    //     roots
+    // }
+
+    pub fn build_hierarchy_from_vec(&self, mut areas: Vec<Area>) -> Vec<Area> {
+        use std::collections::{HashMap, HashSet};
+
+        // 构造 id -> Area map，并清空 children
+        let mut area_map: HashMap<i32, Area> = areas
+            .drain(..)
+            .map(|mut a| {
+                a.children = Vec::new();
+                (a.id, a)
+            })
+            .collect();
+
+        // 构建 parent_id -> Vec<child_id> 映射
+        let mut child_map: HashMap<i32, Vec<i32>> = HashMap::new();
+        for area in area_map.values() {
+            child_map.entry(area.parent_id).or_default().push(area.id);
+        }
+
+        let ids: HashSet<i32> = area_map.keys().copied().collect();
+
+        // 根节点判定：parent_id 不在 ids 集合中
+        let mut root_ids: Vec<i32> = area_map
+            .values()
+            .filter(|a| !ids.contains(&a.parent_id))
+            .map(|a| a.id)
+            .collect();
+
+        // 回退策略：如果没有根节点，尝试 parent_id == 0
+        // if root_ids.is_empty() {
+        //     root_ids = area_map
+        //         .values()
+        //         .filter(|a| a.parent_id == 0)
+        //         .map(|a| a.id)
+        //         .collect();
+        // }
+        //
+        // // 再回退：仍然没有根，使用所有 id
+        // if root_ids.is_empty() {
+        //     root_ids = ids.iter().copied().collect();
+        // }
+
+        // 根节点排序
+        root_ids.sort_unstable();
+
+        let mut visited: HashSet<i32> = HashSet::new();
+
+        // 递归构建子树并排序
+        fn attach_children(
+            id: i32,
+            area_map: &mut HashMap<i32, Area>,
+            child_map: &HashMap<i32, Vec<i32>>,
+            visited: &mut HashSet<i32>,
+        ) -> Option<Area> {
+            if visited.contains(&id) {
+                return None; // 检测到环
+            }
+
+            let mut node = area_map.remove(&id)?;
+            visited.insert(id);
+
+            if let Some(child_ids) = child_map.get(&id) {
+                let mut children: Vec<Area> = child_ids
+                    .iter()
+                    .filter_map(|&cid| attach_children(cid, area_map, child_map, visited))
+                    .collect();
+
+                // 按 id 排序
+                children.sort_unstable_by_key(|a| a.id);
+                node.children = children;
+            }
+
+            visited.remove(&id);
+            Some(node)
+        }
+
+        let mut roots = Vec::with_capacity(root_ids.len());
+        for rid in root_ids {
+            if let Some(root) = attach_children(rid, &mut area_map, &child_map, &mut visited) {
+                roots.push(root);
+            }
+        }
+
+        // 剩余节点也构建出来并排序
+        if !area_map.is_empty() {
+            let mut remaining_ids: Vec<i32> = area_map.keys().copied().collect();
+            remaining_ids.sort_unstable();
+            for id in remaining_ids {
+                if let Some(node) = attach_children(id, &mut area_map, &child_map, &mut visited) {
+                    roots.push(node);
+                }
+            }
+        }
+
+        roots
+    }
+
     /// 根据ID获取区域信息
     pub fn get_by_id(&self, id: i32) -> Option<Area> {
         self.areas.read().unwrap().get(&id).cloned()
@@ -335,9 +523,6 @@ lazy_static::lazy_static! {
 /// 初始化区域缓存
 pub async fn init_area_cache() -> Result<()> {
     let mut path = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
-    // info!("path: {:?}", path);
-    // let csv_path = "resources/area.csv";
-    // path.push(csv_path);
     path.push("resources");
     path.push("area.csv");
     info!("path: {:?}", path);
