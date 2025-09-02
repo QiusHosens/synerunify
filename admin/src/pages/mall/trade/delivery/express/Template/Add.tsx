@@ -5,6 +5,7 @@ import { DialogProps } from '@mui/material/Dialog';
 import { createMallTradeDeliveryExpressTemplate, MallTradeDeliveryExpressTemplateRequest } from '@/api';
 import CustomizedDialog from '@/components/CustomizedDialog';
 import CustomizedDictRadioGroup from '@/components/CustomizedDictRadioGroup';
+import AreaCascader from '@/components/AreaCascader';
 
 interface FormValues {
   name: string; // 模板名称
@@ -143,6 +144,13 @@ const MallTradeDeliveryExpressTemplateAdd = forwardRef(({ onSubmit }: MallTradeD
     }
   };
 
+  const handleAreaChange = (name: string, value: string[]) => {
+    setFormValues(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
   return (
     <CustomizedDialog
       open={open}
@@ -210,6 +218,7 @@ const MallTradeDeliveryExpressTemplateAdd = forwardRef(({ onSubmit }: MallTradeD
             helperText={errors.sort}
           />
         </FormControl>
+        <AreaCascader name='area' onChange={handleAreaChange} />
         <Box sx={{ mt: 2, display: 'flex', alignItems: 'center' }}>
           <Typography sx={{ mr: 4 }}>{t("global.title.status")}</Typography>
           <Switch sx={{ mr: 2 }} name='status' checked={!formValues.status} onChange={handleStatusChange} />
