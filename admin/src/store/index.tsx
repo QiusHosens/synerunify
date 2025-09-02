@@ -1,4 +1,5 @@
 import { getHome, HomeMenuResponse } from '@/api';
+import { AreaResponse, getAreaTree } from '@/api/area';
 import { listDict, SystemDictDataResponse } from '@/api/dict';
 import { systemColorSchemes } from '@/theme/themePrimitives';
 import { deepClone } from '@/utils/objectUtils';
@@ -211,6 +212,28 @@ export const useDictStore = create<DictState>((set) => ({
       console.error('Failed to fetch dictionary data:', error);
       // 可以根据需要添加错误处理逻辑
       set({ dictOfType: new Map() });
+    }
+  }
+}));
+
+// 区域
+interface AreaState {
+  areaTree: AreaResponse[]; // 区域列表
+  setAreaTree: (areaTree: AreaResponse[]) => void;
+  fetchAndSetAreaTree: () => Promise<void>;
+}
+
+export const useAreaStore = create<AreaState>((set) => ({
+  areaTree: [],
+  setAreaTree: (areaTree) => set({ areaTree }),
+  fetchAndSetAreaTree: async () => {
+    try {
+      const data = await getAreaTree();
+
+      set({ areaTree: data });
+    } catch (error) {
+      console.error('Failed to fetch area data:', error);
+      set({ areaTree: [] });
     }
   }
 }));

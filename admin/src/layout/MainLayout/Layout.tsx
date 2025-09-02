@@ -1,6 +1,6 @@
 import Box from "@mui/material/Box";
 import SideMenu from "./SideMenu";
-import { useDictStore, useThemeStore } from "@/store";
+import { useAreaStore, useDictStore, useThemeStore } from "@/store";
 import { useEffect, useRef } from "react";
 import Header from "./Header";
 import TopMenu from "./TopMenu";
@@ -22,6 +22,7 @@ export default function Layout({ routeTree, children }: LayoutProps) {
   const sideMenuWidth = 288; // 左侧导航栏宽度
 
   const { fetchAndSetDict } = useDictStore();
+  const { fetchAndSetAreaTree } = useAreaStore();
 
   const hasInit = useRef(false);
 
@@ -39,6 +40,7 @@ export default function Layout({ routeTree, children }: LayoutProps) {
     }
     hasInit.current = true;
     fetchAndSetDict();
+    fetchAndSetAreaTree();
   }, []);
 
   return (

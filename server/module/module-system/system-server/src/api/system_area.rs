@@ -28,6 +28,7 @@ async fn get_tree() -> CommonResult<Vec<AreaResponse>> {
     CommonResult::with_data(system_area::get_tree().unwrap())
 }
 
+/// 获取区域
 #[utoipa::path(
     get,
     path = "/get/{id}",
@@ -50,6 +51,7 @@ async fn get_by_id(
     }
 }
 
+/// 获取区域路径
 #[utoipa::path(
     get,
     path = "/path/{id}",
