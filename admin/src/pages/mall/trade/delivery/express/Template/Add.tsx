@@ -43,7 +43,6 @@ interface FormChargeErrors {
 }
 
 interface FormFreeErrors {
-  template_id?: string; // 快递运费模板编号
   area_ids?: string; // 包邮区域 id
   free_price?: string; // 包邮金额，单位：分
   free_count?: string; // 包邮件数,
@@ -83,6 +82,8 @@ const MallTradeDeliveryExpressTemplateAdd = forwardRef(({ onSubmit }: MallTradeD
 
   useImperativeHandle(ref, () => ({
     show() {
+      handleChargeAdd();
+      handleFreeAdd();
       setOpen(true);
     },
     hide() {
@@ -92,28 +93,81 @@ const MallTradeDeliveryExpressTemplateAdd = forwardRef(({ onSubmit }: MallTradeD
 
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {
-      charges: [],
-      frees: [],
+      charges: formValues.charges.map(() => ({
+        area_ids: undefined,
+        start_count: undefined,
+        start_price: undefined,
+        extra_count: undefined,
+        extra_price: undefined
+      })),
+      frees: formValues.frees.map(() => ({
+        area_ids: undefined,
+        free_price: undefined,
+        free_count: undefined
+      })),
     };
 
     if (!formValues.name.trim()) {
-      newErrors.name = t('page.mall.trade.delivery.express.template.error.name');
+      newErrors.name = t('global.error.input.please') + t('page.mall.trade.delivery.express.template.title.name');
     }
 
     if (!formValues.charge_mode && formValues.charge_mode != 0) {
-      newErrors.charge_mode = t('page.mall.trade.delivery.express.template.error.charge.mode');
+      newErrors.charge_mode = t('global.error.select.please') + t('page.mall.trade.delivery.express.template.title.charge.mode');
     }
 
     if (!formValues.sort && formValues.sort != 0) {
-      newErrors.sort = t('page.mall.trade.delivery.express.template.error.sort');
+      newErrors.sort = t('global.error.input.please') + t('page.mall.trade.delivery.express.template.title.sort');
     }
 
-    if (!formValues.status && formValues.status != 0) {
-      newErrors.status = t('page.mall.trade.delivery.express.template.error.status');
-    }
+    formValues.charges.forEach((charge, index) => {
+      if (!charge.area_ids || charge.area_ids.length == 0) {
+        newErrors.charges[index].area_ids = t('global.error.select.please') + t('page.mall.trade.delivery.express.template.charge.title.area');
+      }
+
+      if (!charge.start_count && charge.start_count != 0) {
+        newErrors.charges[index].start_count = t('global.error.input.please') + t('page.mall.trade.delivery.express.template.charge.title.start.count');
+      }
+
+      if (!charge.start_price && charge.start_price != 0) {
+        newErrors.charges[index].start_price = t('global.error.input.please') + t('page.mall.trade.delivery.express.template.charge.title.start.price');
+      }
+
+      if (!charge.extra_count && charge.extra_count != 0) {
+        newErrors.charges[index].extra_count = t('global.error.input.please') + t('page.mall.trade.delivery.express.template.charge.title.extra.count');
+      }
+
+      if (!charge.extra_price && charge.extra_price != 0) {
+        newErrors.charges[index].extra_price = t('global.error.input.please') + t('page.mall.trade.delivery.express.template.charge.title.extra.price');
+      }
+    });
+
+    formValues.frees.forEach((free, index) => {
+      if (!free.area_ids || free.area_ids.length == 0) {
+        newErrors.frees[index].area_ids = t('global.error.select.please') + t('page.mall.trade.delivery.express.template.free.title.area');
+      }
+
+      if (!free.free_count && free.free_count != 0) {
+        newErrors.frees[index].free_count = t('global.error.input.please') + t('page.mall.trade.delivery.express.template.free.title.free.count');
+      }
+
+      if (!free.free_price && free.free_price != 0) {
+        newErrors.frees[index].free_price = t('global.error.input.please') + t('page.mall.trade.delivery.express.template.free.title.free.price');
+      }
+    });
 
     setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    return !Object.keys(newErrors).some((key) => {
+      if (key === 'charges') {
+        return newErrors.charges.some((err) =>
+          Object.values(err).some((value) => value !== undefined)
+        );
+      } else if (key === 'frees') {
+        return newErrors.frees.some((err) =>
+          Object.values(err).some((value) => value !== undefined)
+        );
+      }
+      return newErrors[key as keyof FormErrors];
+    });
   };
 
   const handleCancel = () => {
@@ -143,15 +197,23 @@ const MallTradeDeliveryExpressTemplateAdd = forwardRef(({ onSubmit }: MallTradeD
 
   const handleSubmit = async () => {
     if (validateForm()) {
-      await createMallTradeDeliveryExpressTemplate(formValues as MallTradeDeliveryExpressTemplateRequest);
+      const request = {
+        ...formValues,
+        charges: formValues.charges.map(charge => {
+          return {
+            ...charge,
+            area_ids: charge.area_ids.join(',')
+          }
+        }),
+        frees: formValues.frees.map(free => {
+          return {
+            ...free,
+            area_ids: free.area_ids.join(',')
+          }
+        })
+      } as MallTradeDeliveryExpressTemplateRequest;
+      await createMallTradeDeliveryExpressTemplate(request);
       handleClose();
-      onSubmit();
-    }
-  };
-
-  const handleSubmitAndContinue = async () => {
-    if (validateForm()) {
-      await createMallTradeDeliveryExpressTemplate(formValues as MallTradeDeliveryExpressTemplateRequest);
       onSubmit();
     }
   };
@@ -333,7 +395,6 @@ const MallTradeDeliveryExpressTemplateAdd = forwardRef(({ onSubmit }: MallTradeD
       maxWidth={maxWidth}
       actions={
         <>
-          <Button onClick={handleSubmitAndContinue}>{t('global.operate.confirm.continue')}</Button>
           <Button onClick={handleSubmit}>{t('global.operate.confirm')}</Button>
           <Button onClick={handleCancel}>{t('global.operate.cancel')}</Button>
         </>
@@ -387,9 +448,15 @@ const MallTradeDeliveryExpressTemplateAdd = forwardRef(({ onSubmit }: MallTradeD
             {formValues.charges.map((item, index) => (
               <Box className='table-row' key={index}>
                 <Box className='table-cell' sx={{ width: 240 }}>
-                  <AreaCascader name='area_ids' value={item.area_ids} onChange={(name, value) => handleChargeAreaChange(name, value, index)} />
+                  <AreaCascader
+                    name='area_ids'
+                    value={item.area_ids}
+                    onChange={(name, value) => handleChargeAreaChange(name, value, index)}
+                    error={!!(errors.charges[index]?.area_ids)}
+                    helperText={errors.charges[index]?.area_ids}
+                  />
                 </Box>
-                <Box className='table-cell' sx={{ width: 80 }}>
+                <Box className='table-cell' sx={{ width: 150 }}>
                   <CustomizedNumberInput
                     size="small"
                     step={1}
@@ -397,9 +464,11 @@ const MallTradeDeliveryExpressTemplateAdd = forwardRef(({ onSubmit }: MallTradeD
                     name='start_count'
                     value={item.start_count}
                     onChange={(e) => handleChargeInputChange(e, index)}
+                    error={!!(errors.charges[index]?.start_count)}
+                    helperText={errors.charges[index]?.start_count}
                   />
                 </Box>
-                <Box className='table-cell' sx={{ width: 80 }}>
+                <Box className='table-cell' sx={{ width: 150 }}>
                   <CustomizedNumberInput
                     size="small"
                     step={1}
@@ -407,9 +476,11 @@ const MallTradeDeliveryExpressTemplateAdd = forwardRef(({ onSubmit }: MallTradeD
                     name='start_price'
                     value={item.start_price}
                     onChange={(e) => handleChargeInputChange(e, index)}
+                    error={!!(errors.charges[index]?.start_price)}
+                    helperText={errors.charges[index]?.start_price}
                   />
                 </Box>
-                <Box className='table-cell' sx={{ width: 80 }}>
+                <Box className='table-cell' sx={{ width: 150 }}>
                   <CustomizedNumberInput
                     size="small"
                     step={1}
@@ -417,9 +488,11 @@ const MallTradeDeliveryExpressTemplateAdd = forwardRef(({ onSubmit }: MallTradeD
                     name='extra_count'
                     value={item.extra_count}
                     onChange={(e) => handleChargeInputChange(e, index)}
+                    error={!!(errors.charges[index]?.extra_count)}
+                    helperText={errors.charges[index]?.extra_count}
                   />
                 </Box>
-                <Box className='table-cell' sx={{ width: 80 }}>
+                <Box className='table-cell' sx={{ width: 150 }}>
                   <CustomizedNumberInput
                     size="small"
                     step={1}
@@ -427,6 +500,8 @@ const MallTradeDeliveryExpressTemplateAdd = forwardRef(({ onSubmit }: MallTradeD
                     name='extra_price'
                     value={item.extra_price}
                     onChange={(e) => handleChargeInputChange(e, index)}
+                    error={!!(errors.charges[index]?.extra_price)}
+                    helperText={errors.charges[index]?.extra_price}
                   />
                 </Box>
                 <Box className='table-cell' sx={{ width: 50, verticalAlign: 'middle' }}>
@@ -463,9 +538,15 @@ const MallTradeDeliveryExpressTemplateAdd = forwardRef(({ onSubmit }: MallTradeD
             {formValues.frees.map((item, index) => (
               <Box className='table-row' key={index}>
                 <Box className='table-cell' sx={{ width: 240 }}>
-                  <AreaCascader name='area_ids' value={item.area_ids} onChange={(name, value) => handleFreeAreaChange(name, value, index)} />
+                  <AreaCascader
+                    name='area_ids'
+                    value={item.area_ids}
+                    onChange={(name, value) => handleFreeAreaChange(name, value, index)}
+                    error={!!(errors.frees[index]?.area_ids)}
+                    helperText={errors.frees[index]?.area_ids}
+                  />
                 </Box>
-                <Box className='table-cell' sx={{ width: 50 }}>
+                <Box className='table-cell' sx={{ width: 150 }}>
                   <CustomizedNumberInput
                     size="small"
                     step={1}
@@ -473,9 +554,11 @@ const MallTradeDeliveryExpressTemplateAdd = forwardRef(({ onSubmit }: MallTradeD
                     name='free_count'
                     value={item.free_count}
                     onChange={(e) => handleFreeInputChange(e, index)}
+                    error={!!(errors.frees[index]?.free_count)}
+                    helperText={errors.frees[index]?.free_count}
                   />
                 </Box>
-                <Box className='table-cell' sx={{ width: 50 }}>
+                <Box className='table-cell' sx={{ width: 150 }}>
                   <CustomizedNumberInput
                     size="small"
                     step={1}
@@ -483,6 +566,8 @@ const MallTradeDeliveryExpressTemplateAdd = forwardRef(({ onSubmit }: MallTradeD
                     name='free_price'
                     value={item.free_price}
                     onChange={(e) => handleFreeInputChange(e, index)}
+                    error={!!(errors.frees[index]?.free_price)}
+                    helperText={errors.frees[index]?.free_price}
                   />
                 </Box>
                 <Box className='table-cell' sx={{ width: 50, verticalAlign: 'middle' }}>

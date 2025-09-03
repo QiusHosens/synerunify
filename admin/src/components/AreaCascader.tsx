@@ -8,9 +8,18 @@ interface AreaCascaderProps {
   name?: string;
   value?: string[];
   onChange?: (name: string, value: string[]) => void;
+  error?: boolean;
+  helperText?: React.ReactNode;
 }
 
-const AreaCascader: React.FC<AreaCascaderProps> = ({ name, label, value, onChange }) => {
+const AreaCascader: React.FC<AreaCascaderProps> = ({
+  name, 
+  label, 
+  value, 
+  onChange, 
+  error,
+  helperText,
+}) => {
   const { t } = useTranslation();
   const { areaTree, fetchAndSetAreaTree } = useAreaStore();
 
@@ -42,6 +51,8 @@ const AreaCascader: React.FC<AreaCascaderProps> = ({ name, label, value, onChang
     options={options}
     placeholder={t('common.placeholder.area')}
     onChange={handleChange}
+    error={error}
+    helperText={helperText}
   />;
 };
 

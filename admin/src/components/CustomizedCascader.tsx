@@ -22,6 +22,8 @@ export interface CascaderProps {
   fullWidth?: boolean;
   size?: "small" | "medium";
   separator?: string;
+  error?: boolean;
+  helperText?: React.ReactNode;
 }
 
 const findOptionByValue = (options: CascaderOption[], value: string | undefined): CascaderOption | undefined => {
@@ -65,6 +67,8 @@ const CustomizedCascader: React.FC<CascaderProps> = ({
   fullWidth,
   size = "medium",
   separator = " / ",
+  error,
+  helperText,
 }) => {
   const [open, setOpen] = useState(false);
   const [over, setOver] = useState(false);
@@ -179,6 +183,8 @@ const CustomizedCascader: React.FC<CascaderProps> = ({
         disabled={disabled}
         fullWidth={fullWidth}
         size={size}
+        error={error}
+        helperText={helperText}
         slotProps={{
           input: {
             readOnly: !open && over,
