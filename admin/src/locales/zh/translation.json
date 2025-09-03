@@ -207,8 +207,10 @@
     "title.phone": "电话",
     "title.email": "邮箱",
     "title.address": "地址",
+    "title.area": "地区",
     "switch.status.true": "开启",
-    "switch.status.false": "关闭"
+    "switch.status.false": "关闭",
+    "placeholder.area": "请选择区域"
   },
   "erp.common": {
     "title.order.number": "订单编号",
@@ -529,8 +531,10 @@
       "title.sort": "排序",
       "title.status": "状态",
       "charge": {
+        "list.title": "运费",
+        "operate.add": "添加区域",
         "title.template": "快递运费模板",
-        "title.area": "配送区域",
+        "title.area": "区域",
         "title.charge.mode": "配送计费方式",
         "title.start.count": "首件数量",
         "title.start.price": "起步价",
@@ -538,6 +542,8 @@
         "title.extra.price": "额外价"
       },
       "free": {
+        "list.title": "包邮区域",
+        "operate.add": "添加区域",
         "title.template": "快递运费模板",
         "title.area": "包邮区域",
         "title.free.price": "包邮金额",

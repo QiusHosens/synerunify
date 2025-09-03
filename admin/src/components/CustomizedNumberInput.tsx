@@ -65,7 +65,8 @@ const CustomizedNumberInput: React.FC<CustomizedNumberInputProps> = ({
       onChange={handleChange}
       size={size}
       sx={{
-        width: 200,
+        // width: 200,
+        minWidth: 120,
         '& .MuiOutlinedInput-root': {
           p: 0,
         },

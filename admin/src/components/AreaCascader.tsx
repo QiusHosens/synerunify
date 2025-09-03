@@ -1,14 +1,17 @@
 import React, { useEffect, useMemo } from "react";
 import { useAreaStore } from "@/store";
 import CustomizedCascader, { CascaderOption } from "./CustomizedCascader";
+import { useTranslation } from "react-i18next";
 
 interface AreaCascaderProps {
+  label?: string;
   name?: string;
   value?: string[];
   onChange?: (name: string, value: string[]) => void;
 }
 
-const AreaCascader: React.FC<AreaCascaderProps> = ({ name, value, onChange }) => {
+const AreaCascader: React.FC<AreaCascaderProps> = ({ name, label, value, onChange }) => {
+  const { t } = useTranslation();
   const { areaTree, fetchAndSetAreaTree } = useAreaStore();
 
   useEffect(() => {
@@ -33,8 +36,11 @@ const AreaCascader: React.FC<AreaCascaderProps> = ({ name, value, onChange }) =>
 
   return <CustomizedCascader
     size="small"
+    fullWidth
+    label={label}
+    value={value}
     options={options}
-    placeholder="请选择区域"
+    placeholder={t('common.placeholder.area')}
     onChange={handleChange}
   />;
 };

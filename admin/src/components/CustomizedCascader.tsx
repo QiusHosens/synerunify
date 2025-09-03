@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { TextField, InputAdornment, IconButton, Popover, List, ListItemButton, ListItemText, Box } from "@mui/material";
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { X } from "lucide-react";
 
 export interface CascaderOption {
   label: string;
@@ -13,6 +13,7 @@ export interface CascaderOption {
 
 export interface CascaderProps {
   options: CascaderOption[];
+  label?: string;
   value?: string[];
   defaultValue?: string[];
   onChange?: (value: string[], selectedOptions: CascaderOption[]) => void;
@@ -55,6 +56,7 @@ const flattenPaths = (options: CascaderOption[], base: CascaderOption[] = []): C
 
 const CustomizedCascader: React.FC<CascaderProps> = ({
   options,
+  label,
   value,
   defaultValue,
   onChange,
@@ -65,6 +67,7 @@ const CustomizedCascader: React.FC<CascaderProps> = ({
   separator = " / ",
 }) => {
   const [open, setOpen] = useState(false);
+  const [over, setOver] = useState(false);
   const anchorRef = useRef<HTMLDivElement | null>(null);
 
   const isControlled = value !== undefined;
@@ -165,27 +168,27 @@ const CustomizedCascader: React.FC<CascaderProps> = ({
   return (
     <>
       <TextField
+        label={label}
         inputRef={(el) => (anchorRef.current = el)}
         value={open ? search : displayLabel}
         onChange={(e) => setSearch(e.target.value)}
         onClick={handleOpen}
+        onMouseEnter={() => setOver(true)}
+        onMouseLeave={() => setOver(false)}
         placeholder={placeholder}
         disabled={disabled}
         fullWidth={fullWidth}
         size={size}
         slotProps={{
           input: {
-            readOnly: !open,
+            readOnly: !open && over,
             endAdornment: (
               <InputAdornment position="end">
-                {displayLabel && !open ? (
-                  <IconButton size="small" onClick={handleClear} disabled={disabled}>
-                    ✕
+                {displayLabel && !open && over ? (
+                  <IconButton size="small" onClick={handleClear} disabled={disabled} sx={{ ':hover': { backgroundColor: 'transparent' } }}>
+                    <X />
                   </IconButton>
                 ) : null}
-                <IconButton size="small" onClick={handleOpen} disabled={disabled}>
-                  <ArrowDropDownIcon />
-                </IconButton>
               </InputAdornment>
             ),
           },
@@ -197,6 +200,11 @@ const CustomizedCascader: React.FC<CascaderProps> = ({
           if (e.key === "Escape") {
             handleClose();
           }
+        }}
+        sx={{
+          '& .MuiInputBase-root': {
+            paddingRight: 0,
+          },
         }}
       />
 

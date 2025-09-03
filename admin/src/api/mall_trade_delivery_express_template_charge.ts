@@ -19,7 +19,7 @@ export interface MallTradeDeliveryExpressTemplateChargeRequest {
   start_price: number; // 起步价，单位：分
   extra_count: number; // 续件数量
   extra_price: number; // 额外价，单位：分
-  }
+}
 
 export interface MallTradeDeliveryExpressTemplateChargeResponse {
   id: number; // 编号，自增
@@ -34,10 +34,10 @@ export interface MallTradeDeliveryExpressTemplateChargeResponse {
   create_time: string; // 创建时间
   updater: number; // 更新者ID
   update_time: string; // 更新时间
-  }
+}
 
 export interface MallTradeDeliveryExpressTemplateChargeQueryCondition extends PaginatedRequest {
-  
+
 }
 
 export const createMallTradeDeliveryExpressTemplateCharge = (mall_trade_delivery_express_template_charge: MallTradeDeliveryExpressTemplateChargeRequest): Promise<number> => {

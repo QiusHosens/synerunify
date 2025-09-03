@@ -1,5 +1,7 @@
 import { PaginatedRequest, PaginatedResponse } from "@/base/page";
 import { api } from "@/utils/request";
+import { MallTradeDeliveryExpressTemplateChargeRequest, MallTradeDeliveryExpressTemplateChargeResponse } from "./mall_trade_delivery_express_template_charge";
+import { MallTradeDeliveryExpressTemplateFreeRequest, MallTradeDeliveryExpressTemplateFreeResponse } from "./mall_trade_delivery_express_template_free";
 
 const apis = {
   create: "/mall/mall_trade_delivery_express_template/create", // 新增
@@ -18,6 +20,9 @@ export interface MallTradeDeliveryExpressTemplateRequest {
   charge_mode: number; // 配送计费方式
   sort: number; // 排序
   status: number; // 状态
+
+  charges: MallTradeDeliveryExpressTemplateChargeRequest[]; // 运费列表
+  frees: MallTradeDeliveryExpressTemplateFreeRequest[]; // 包邮列表
 }
 
 export interface MallTradeDeliveryExpressTemplateResponse {
@@ -30,6 +35,9 @@ export interface MallTradeDeliveryExpressTemplateResponse {
   create_time: string; // 创建时间
   updater: number; // 更新者ID
   update_time: string; // 更新时间
+
+  charges: MallTradeDeliveryExpressTemplateChargeResponse[]; // 运费列表
+  frees: MallTradeDeliveryExpressTemplateFreeResponse[]; // 包邮列表
 }
 
 export interface MallTradeDeliveryExpressTemplateQueryCondition
