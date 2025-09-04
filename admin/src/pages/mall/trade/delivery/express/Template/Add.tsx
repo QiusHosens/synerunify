@@ -202,7 +202,8 @@ const MallTradeDeliveryExpressTemplateAdd = forwardRef(({ onSubmit }: MallTradeD
         charges: formValues.charges.map(charge => {
           return {
             ...charge,
-            area_ids: charge.area_ids.join(',')
+            area_ids: charge.area_ids.join(','),
+            charge_mode: formValues.charge_mode
           }
         }),
         frees: formValues.frees.map(free => {

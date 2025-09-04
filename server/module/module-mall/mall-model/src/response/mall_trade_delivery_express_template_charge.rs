@@ -15,11 +15,11 @@ pub struct MallTradeDeliveryExpressTemplateChargeResponse {
     
     pub charge_mode: i8, // 配送计费方式
     
-    pub start_count: f64, // 首件数量
+    pub start_count: i32, // 首件数量
     
     pub start_price: i32, // 起步价，单位：分
     
-    pub extra_count: f64, // 续件数量
+    pub extra_count: i32, // 续件数量
     
     pub extra_price: i32, // 额外价，单位：分
     

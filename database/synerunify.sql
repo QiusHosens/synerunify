@@ -1,17 +1,17 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : 192.168.1.18_synerunify
+ Source Server         : 192.168.0.99_synerunify
  Source Server Type    : MySQL
- Source Server Version : 80200 (8.2.0)
- Source Host           : 192.168.1.18:3306
+ Source Server Version : 80100 (8.1.0)
+ Source Host           : 192.168.0.99:30010
  Source Schema         : synerunify
 
  Target Server Type    : MySQL
- Target Server Version : 80200 (8.2.0)
+ Target Server Version : 80100 (8.1.0)
  File Encoding         : 65001
 
- Date: 31/08/2025 16:23:44
+ Date: 04/09/2025 11:06:30
 */
 
 SET NAMES utf8mb4;
@@ -2409,11 +2409,12 @@ CREATE TABLE `mall_trade_delivery_express_template`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '快递运费模板' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '快递运费模板' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_trade_delivery_express_template
 -- ----------------------------
+INSERT INTO `mall_trade_delivery_express_template` VALUES (1, '测试运费模板', 0, 0, 0, 1, '2025-09-04 03:04:47', 1, '2025-09-04 03:04:47', b'0', 1);
 
 -- ----------------------------
 -- Table structure for mall_trade_delivery_express_template_charge
@@ -2424,9 +2425,9 @@ CREATE TABLE `mall_trade_delivery_express_template_charge`  (
   `template_id` bigint NOT NULL COMMENT '快递运费模板编号',
   `area_ids` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '配送区域 id',
   `charge_mode` tinyint NOT NULL COMMENT '配送计费方式',
-  `start_count` double NOT NULL COMMENT '首件数量',
+  `start_count` int NOT NULL COMMENT '首件数量',
   `start_price` int NOT NULL COMMENT '起步价，单位：分',
-  `extra_count` double NOT NULL COMMENT '续件数量',
+  `extra_count` int NOT NULL COMMENT '续件数量',
   `extra_price` int NOT NULL COMMENT '额外价，单位：分',
   `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
@@ -2435,11 +2436,13 @@ CREATE TABLE `mall_trade_delivery_express_template_charge`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '快递运费模板计费配置' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '快递运费模板计费配置' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_trade_delivery_express_template_charge
 -- ----------------------------
+INSERT INTO `mall_trade_delivery_express_template_charge` VALUES (1, 1, '110000,110100,110101', 0, 2, 1, 2, 1, 1, '2025-09-04 03:04:47', 1, '2025-09-04 03:04:47', b'0', 1);
+INSERT INTO `mall_trade_delivery_express_template_charge` VALUES (2, 1, '510000,510100,510104', 0, 1, 2, 1, 2, 1, '2025-09-04 03:04:47', 1, '2025-09-04 03:04:47', b'0', 1);
 
 -- ----------------------------
 -- Table structure for mall_trade_delivery_express_template_free
@@ -2458,11 +2461,13 @@ CREATE TABLE `mall_trade_delivery_express_template_free`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '快递运费模板包邮配置' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '快递运费模板包邮配置' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_trade_delivery_express_template_free
 -- ----------------------------
+INSERT INTO `mall_trade_delivery_express_template_free` VALUES (1, 1, '110000,110100,110102', 2, 2, 1, '2025-09-04 03:04:47', 1, '2025-09-04 03:04:47', b'0', 1);
+INSERT INTO `mall_trade_delivery_express_template_free` VALUES (2, 1, '510000,510100,510104', 1, 1, 1, '2025-09-04 03:04:47', 1, '2025-09-04 03:04:47', b'0', 1);
 
 -- ----------------------------
 -- Table structure for mall_trade_delivery_pick_up_store
@@ -3984,7 +3989,7 @@ CREATE TABLE `system_user`  (
 -- ----------------------------
 -- Records of system_user
 -- ----------------------------
-INSERT INTO `system_user` VALUES (1, 'admin', '$2b$06$Ohq86rDIvNuy/4ZvsTF4dOw.7I7QJj620LC25PwgYDmrKqKmKsJz6', '超级管理员', '超级管理员', '123@qq.com', '18888888888', 0, '', 0, '127.0.0.1', '2025-08-24 08:41:01', '0000', 1, 1, '2025-03-08 10:14:52', 1, '2025-08-24 08:41:01', b'0', 1);
+INSERT INTO `system_user` VALUES (1, 'admin', '$2b$06$Ohq86rDIvNuy/4ZvsTF4dOw.7I7QJj620LC25PwgYDmrKqKmKsJz6', '超级管理员', '超级管理员', '123@qq.com', '18888888888', 0, '', 0, '127.0.0.1', '2025-09-03 01:28:41', '0000', 1, 1, '2025-03-08 10:14:52', 1, '2025-09-03 01:28:37', b'0', 1);
 INSERT INTO `system_user` VALUES (11, 'test', '$2b$06$S2yMOy4Mp5gImLOEl8X3K.T8XAWrfXVwGXK/vOBL.30PGNnnGIDzy', '测试管理员', NULL, '', '15555555555', 0, '', 0, '127.0.0.1', '2025-05-23 08:16:27', '0000-0000', 7, 1, '2025-05-23 08:16:00', 1, '2025-05-23 08:16:25', b'0', 2);
 
 -- ----------------------------

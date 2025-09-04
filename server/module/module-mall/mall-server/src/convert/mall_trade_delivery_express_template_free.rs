@@ -5,7 +5,15 @@ use mall_model::response::mall_trade_delivery_express_template_free::MallTradeDe
 
 pub fn create_request_to_model(request: &CreateMallTradeDeliveryExpressTemplateFreeRequest) -> MallTradeDeliveryExpressTemplateFreeActiveModel {
     MallTradeDeliveryExpressTemplateFreeActiveModel {
-        template_id: Set(request.template_id.clone()),
+        area_ids: Set(request.area_ids.clone()),
+        free_price: Set(request.free_price.clone()),
+        free_count: Set(request.free_count.clone()),
+        ..Default::default()
+    }
+}
+
+pub fn update_add_request_to_model(request: &UpdateMallTradeDeliveryExpressTemplateFreeRequest) -> MallTradeDeliveryExpressTemplateFreeActiveModel {
+    MallTradeDeliveryExpressTemplateFreeActiveModel {
         area_ids: Set(request.area_ids.clone()),
         free_price: Set(request.free_price.clone()),
         free_count: Set(request.free_count.clone()),
@@ -15,16 +23,13 @@ pub fn create_request_to_model(request: &CreateMallTradeDeliveryExpressTemplateF
 
 pub fn update_request_to_model(request: &UpdateMallTradeDeliveryExpressTemplateFreeRequest, existing: MallTradeDeliveryExpressTemplateFree) -> MallTradeDeliveryExpressTemplateFreeActiveModel {
     let mut active_model: MallTradeDeliveryExpressTemplateFreeActiveModel = existing.into();
-    if let Some(template_id) = &request.template_id { 
-        active_model.template_id = Set(template_id.clone());
-    }
-    if let Some(area_ids) = &request.area_ids { 
+    if let area_ids = &request.area_ids {
         active_model.area_ids = Set(area_ids.clone());
     }
-    if let Some(free_price) = &request.free_price { 
+    if let free_price = &request.free_price {
         active_model.free_price = Set(free_price.clone());
     }
-    if let Some(free_count) = &request.free_count { 
+    if let free_count = &request.free_count {
         active_model.free_count = Set(free_count.clone());
     }
     active_model
