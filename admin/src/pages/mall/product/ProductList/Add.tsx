@@ -962,7 +962,7 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
               offsetTop={0}
               getContainer={() => {
                 // 使用ref获取滚动容器，更加准确
-                // console.debug('container ref:', anchorContainerRef.current);
+                console.debug('container ref:', anchorContainerRef.current);
                 return anchorContainerRef.current || window;
               }}
               onChange={(activeLink) => {
@@ -973,7 +973,7 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
               }}
             />}
           </Box>
-          <Box ref={anchorContainerRef}>
+          <Box ref={anchorContainerRef} sx={{ overflow: 'auto' }}>
             <Box id="basic" sx={{ mb: 4 }}>
               <Typography variant="h4" component="h2" gutterBottom>
                 {t('page.mall.product.tab.basic.settings')}
