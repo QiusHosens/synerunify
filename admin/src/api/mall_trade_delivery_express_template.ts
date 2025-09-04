@@ -8,6 +8,7 @@ const apis = {
   update: "/mall/mall_trade_delivery_express_template/update", // 修改
   delete: "/mall/mall_trade_delivery_express_template/delete", // 删除
   get: "/mall/mall_trade_delivery_express_template/get", // 单条查询
+  get_base: "/mall/mall_trade_delivery_express_template/get_base", // 单条查询
   list: "/mall/mall_trade_delivery_express_template/list", // 列表查询
   page: "/mall/mall_trade_delivery_express_template/page", // 分页查询
   enable: "/mall/mall_trade_delivery_express_template/enable", // 启用
@@ -65,6 +66,12 @@ export const getMallTradeDeliveryExpressTemplate = (
   id: number
 ): Promise<MallTradeDeliveryExpressTemplateResponse> => {
   return api.get<MallTradeDeliveryExpressTemplateResponse>(`${apis.get}/${id}`);
+};
+
+export const getBaseMallTradeDeliveryExpressTemplate = (
+  id: number
+): Promise<MallTradeDeliveryExpressTemplateResponse> => {
+  return api.get<MallTradeDeliveryExpressTemplateResponse>(`${apis.get_base}/${id}`);
 };
 
 export const listMallTradeDeliveryExpressTemplate = (): Promise<

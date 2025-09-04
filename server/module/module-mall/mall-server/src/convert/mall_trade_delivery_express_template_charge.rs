@@ -1,7 +1,7 @@
 use sea_orm::{Set, NotSet};
 use crate::model::mall_trade_delivery_express_template_charge::{self, Model as MallTradeDeliveryExpressTemplateCharge, ActiveModel as MallTradeDeliveryExpressTemplateChargeActiveModel};
 use mall_model::request::mall_trade_delivery_express_template_charge::{CreateMallTradeDeliveryExpressTemplateChargeRequest, UpdateMallTradeDeliveryExpressTemplateChargeRequest};
-use mall_model::response::mall_trade_delivery_express_template_charge::MallTradeDeliveryExpressTemplateChargeResponse;
+use mall_model::response::mall_trade_delivery_express_template_charge::{MallTradeDeliveryExpressTemplateChargeBaseResponse, MallTradeDeliveryExpressTemplateChargeResponse};
 
 pub fn create_request_to_model(request: &CreateMallTradeDeliveryExpressTemplateChargeRequest) -> MallTradeDeliveryExpressTemplateChargeActiveModel {
     MallTradeDeliveryExpressTemplateChargeActiveModel {
@@ -64,5 +64,18 @@ pub fn model_to_response(model: MallTradeDeliveryExpressTemplateCharge) -> MallT
         create_time: model.create_time,
         updater: model.updater,
         update_time: model.update_time,
+    }
+}
+
+pub fn model_to_base_response(model: MallTradeDeliveryExpressTemplateCharge) -> MallTradeDeliveryExpressTemplateChargeBaseResponse {
+    MallTradeDeliveryExpressTemplateChargeBaseResponse {
+        id: model.id,
+        template_id: model.template_id,
+        area_ids: model.area_ids,
+        charge_mode: model.charge_mode,
+        start_count: model.start_count,
+        start_price: model.start_price,
+        extra_count: model.extra_count,
+        extra_price: model.extra_price,
     }
 }

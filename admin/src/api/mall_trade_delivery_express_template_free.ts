@@ -11,8 +11,8 @@ const apis = {
 }
 
 export interface MallTradeDeliveryExpressTemplateFreeRequest {
-  id: number; // 编号
-  template_id: number; // 快递运费模板编号
+  id?: number; // 编号
+  template_id?: number; // 快递运费模板编号
   area_ids: string; // 包邮区域 id
   free_price: number; // 包邮金额，单位：分
   free_count: number; // 包邮件数,

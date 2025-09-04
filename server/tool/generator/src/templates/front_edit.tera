@@ -78,18 +78,10 @@ const {{ model_name }}Edit = forwardRef(({ onSubmit }: {{ model_name }}EditProps
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type } = e.target;
-    if (type == 'number') {
-      const numberValue = Number(value);
-      set{{ model_name }}(prev => ({
-        ...prev,
-        [name]: numberValue
-      }));
-    } else {
-      set{{ model_name }}(prev => ({
-        ...prev,
-        [name]: value
-      }));
-    }
+    set{{ model_name }}(prev => ({
+      ...prev,
+      [name]: type === 'number' ? Number(value) : value,
+    }));
 
     if (errors[name as keyof FormErrors]) {
       setErrors(prev => ({

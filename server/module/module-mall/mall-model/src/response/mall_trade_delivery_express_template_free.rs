@@ -30,3 +30,18 @@ pub struct MallTradeDeliveryExpressTemplateFreeResponse {
     pub update_time: NaiveDateTime, // 更新时间
     
 }
+
+#[derive(Deserialize, Serialize, Debug, Clone, ToSchema)]
+pub struct MallTradeDeliveryExpressTemplateFreeBaseResponse {
+
+    pub id: i64, // 编号
+
+    pub template_id: i64, // 快递运费模板编号
+
+    pub area_ids: String, // 包邮区域 id
+
+    pub free_price: i32, // 包邮金额，单位：分
+
+    pub free_count: i32, // 包邮件数,
+
+}

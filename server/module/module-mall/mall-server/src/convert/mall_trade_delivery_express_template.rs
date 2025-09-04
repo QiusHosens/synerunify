@@ -1,7 +1,9 @@
 use sea_orm::{Set, NotSet};
 use crate::model::mall_trade_delivery_express_template::{self, Model as MallTradeDeliveryExpressTemplate, ActiveModel as MallTradeDeliveryExpressTemplateActiveModel};
 use mall_model::request::mall_trade_delivery_express_template::{CreateMallTradeDeliveryExpressTemplateRequest, UpdateMallTradeDeliveryExpressTemplateRequest};
-use mall_model::response::mall_trade_delivery_express_template::MallTradeDeliveryExpressTemplateResponse;
+use mall_model::response::mall_trade_delivery_express_template::{MallTradeDeliveryExpressTemplateBaseResponse, MallTradeDeliveryExpressTemplateResponse};
+use mall_model::response::mall_trade_delivery_express_template_charge::MallTradeDeliveryExpressTemplateChargeBaseResponse;
+use mall_model::response::mall_trade_delivery_express_template_free::MallTradeDeliveryExpressTemplateFreeBaseResponse;
 
 pub fn create_request_to_model(request: &CreateMallTradeDeliveryExpressTemplateRequest) -> MallTradeDeliveryExpressTemplateActiveModel {
     MallTradeDeliveryExpressTemplateActiveModel {
@@ -41,5 +43,18 @@ pub fn model_to_response(model: MallTradeDeliveryExpressTemplate) -> MallTradeDe
         create_time: model.create_time,
         updater: model.updater,
         update_time: model.update_time,
+    }
+}
+
+pub fn model_to_base_response(model: MallTradeDeliveryExpressTemplate, charges: Vec<MallTradeDeliveryExpressTemplateChargeBaseResponse>, frees: Vec<MallTradeDeliveryExpressTemplateFreeBaseResponse>) -> MallTradeDeliveryExpressTemplateBaseResponse {
+    MallTradeDeliveryExpressTemplateBaseResponse {
+        id: model.id,
+        name: model.name,
+        charge_mode: model.charge_mode,
+        sort: model.sort,
+        status: model.status,
+
+        charges,
+        frees,
     }
 }

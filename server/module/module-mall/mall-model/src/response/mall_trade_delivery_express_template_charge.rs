@@ -36,3 +36,24 @@ pub struct MallTradeDeliveryExpressTemplateChargeResponse {
     pub update_time: NaiveDateTime, // 更新时间
     
 }
+
+#[derive(Deserialize, Serialize, Debug, Clone, ToSchema)]
+pub struct MallTradeDeliveryExpressTemplateChargeBaseResponse {
+
+    pub id: i64, // 编号，自增
+
+    pub template_id: i64, // 快递运费模板编号
+
+    pub area_ids: String, // 配送区域 id
+
+    pub charge_mode: i8, // 配送计费方式
+
+    pub start_count: i32, // 首件数量
+
+    pub start_price: i32, // 起步价，单位：分
+
+    pub extra_count: i32, // 续件数量
+
+    pub extra_price: i32, // 额外价，单位：分
+
+}

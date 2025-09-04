@@ -2,8 +2,8 @@ use common::interceptor::orm::simple_support::SimpleSupport;
 use sea_orm::{DatabaseConnection, EntityTrait, Order, ColumnTrait, ActiveModelTrait, PaginatorTrait, QueryOrder, QueryFilter, Condition, TransactionTrait};
 use crate::model::mall_trade_delivery_express_template::{Model as MallTradeDeliveryExpressTemplateModel, ActiveModel as MallTradeDeliveryExpressTemplateActiveModel, Entity as MallTradeDeliveryExpressTemplateEntity, Column};
 use mall_model::request::mall_trade_delivery_express_template::{CreateMallTradeDeliveryExpressTemplateRequest, UpdateMallTradeDeliveryExpressTemplateRequest, PaginatedKeywordRequest};
-use mall_model::response::mall_trade_delivery_express_template::MallTradeDeliveryExpressTemplateResponse;
-use crate::convert::mall_trade_delivery_express_template::{create_request_to_model, update_request_to_model, model_to_response};
+use mall_model::response::mall_trade_delivery_express_template::{MallTradeDeliveryExpressTemplateBaseResponse, MallTradeDeliveryExpressTemplateResponse};
+use crate::convert::mall_trade_delivery_express_template::{create_request_to_model, update_request_to_model, model_to_response, model_to_base_response};
 use anyhow::{Result, anyhow, Context};
 use sea_orm::ActiveValue::Set;
 use common::constants::enum_constants::{STATUS_DISABLE, STATUS_ENABLE};
@@ -75,6 +75,22 @@ pub async fn get_by_id(db: &DatabaseConnection, login_user: LoginUserContext, id
     let mall_trade_delivery_express_template = MallTradeDeliveryExpressTemplateEntity::find_active_with_condition(condition)
         .one(db).await?;
     Ok(mall_trade_delivery_express_template.map(model_to_response))
+}
+
+pub async fn get_base_by_id(db: &DatabaseConnection, login_user: LoginUserContext, id: i64) -> Result<Option<MallTradeDeliveryExpressTemplateBaseResponse>> {
+    let condition = Condition::all()
+        .add(Column::Id.eq(id))
+        .add(Column::TenantId.eq(login_user.tenant_id));
+
+    let mall_trade_delivery_express_template = MallTradeDeliveryExpressTemplateEntity::find_active_with_condition(condition)
+        .one(db).await?;
+    if mall_trade_delivery_express_template.is_none() {
+        return Ok(None);
+    }
+    let mall_trade_delivery_express_template = mall_trade_delivery_express_template.unwrap();
+    let charges = mall_trade_delivery_express_template_charge::list_base_by_template_id(&db, login_user.clone(), id).await?;
+    let frees = mall_trade_delivery_express_template_free::list_base_by_template_id(&db, login_user.clone(), id).await?;
+    Ok(Some(model_to_base_response(mall_trade_delivery_express_template, charges, frees)))
 }
 
 pub async fn get_paginated(db: &DatabaseConnection, login_user: LoginUserContext, params: PaginatedKeywordRequest) -> Result<PaginatedResponse<MallTradeDeliveryExpressTemplateResponse>> {

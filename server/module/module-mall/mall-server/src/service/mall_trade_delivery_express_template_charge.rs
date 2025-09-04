@@ -4,8 +4,8 @@ use sea_orm::{DatabaseConnection, EntityTrait, Order, ColumnTrait, ActiveModelTr
 use crate::model::mall_trade_delivery_express_template_charge::{Model as MallTradeDeliveryExpressTemplateChargeModel, ActiveModel as MallTradeDeliveryExpressTemplateChargeActiveModel, Entity as MallTradeDeliveryExpressTemplateChargeEntity, Column};
 use crate::model::mall_trade_delivery_express_template::{Model as MallTradeDeliveryExpressTemplateModel, ActiveModel as MallTradeDeliveryExpressTemplateActiveModel};
 use mall_model::request::mall_trade_delivery_express_template_charge::{CreateMallTradeDeliveryExpressTemplateChargeRequest, UpdateMallTradeDeliveryExpressTemplateChargeRequest, PaginatedKeywordRequest};
-use mall_model::response::mall_trade_delivery_express_template_charge::MallTradeDeliveryExpressTemplateChargeResponse;
-use crate::convert::mall_trade_delivery_express_template_charge::{create_request_to_model, update_request_to_model, model_to_response, update_add_request_to_model};
+use mall_model::response::mall_trade_delivery_express_template_charge::{MallTradeDeliveryExpressTemplateChargeBaseResponse, MallTradeDeliveryExpressTemplateChargeResponse};
+use crate::convert::mall_trade_delivery_express_template_charge::{create_request_to_model, update_request_to_model, model_to_response, update_add_request_to_model, model_to_base_response};
 use anyhow::{Result, anyhow, Context};
 use sea_orm::ActiveValue::Set;
 use sea_orm::prelude::Expr;
@@ -162,7 +162,16 @@ pub async fn get_paginated(db: &DatabaseConnection, login_user: LoginUserContext
 }
 
 pub async fn list(db: &DatabaseConnection, login_user: LoginUserContext) -> Result<Vec<MallTradeDeliveryExpressTemplateChargeResponse>> {
-    let condition = Condition::all().add(Column::TenantId.eq(login_user.tenant_id));let list = MallTradeDeliveryExpressTemplateChargeEntity::find_active_with_condition(condition)
+    let condition = Condition::all().add(Column::TenantId.eq(login_user.tenant_id));
+    let list = MallTradeDeliveryExpressTemplateChargeEntity::find_active_with_condition(condition)
         .all(db).await?;
     Ok(list.into_iter().map(model_to_response).collect())
+}
+
+pub async fn list_base_by_template_id(db: &DatabaseConnection, login_user: LoginUserContext, template_id: i64) -> Result<Vec<MallTradeDeliveryExpressTemplateChargeBaseResponse>> {
+    let list = MallTradeDeliveryExpressTemplateChargeEntity::find_active()
+        .filter(Column::TenantId.eq(login_user.tenant_id))
+        .filter(Column::TemplateId.eq(template_id))
+        .all(db).await?;
+    Ok(list.into_iter().map(model_to_base_response).collect())
 }

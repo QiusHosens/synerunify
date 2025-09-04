@@ -11,10 +11,10 @@ const apis = {
 }
 
 export interface MallTradeDeliveryExpressTemplateChargeRequest {
-  id: number; // 编号，自增
-  template_id: number; // 快递运费模板编号
+  id?: number; // 编号，自增
+  template_id?: number; // 快递运费模板编号
   area_ids: string; // 配送区域 id
-  charge_mode: number; // 配送计费方式
+  charge_mode?: number; // 配送计费方式
   start_count: number; // 首件数量
   start_price: number; // 起步价，单位：分
   extra_count: number; // 续件数量

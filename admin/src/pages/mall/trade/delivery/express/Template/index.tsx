@@ -2,6 +2,7 @@ import { Box, Button, Switch } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { DataGrid, GridCallbackDetails, GridColDef, GridFilterModel, GridRenderCellParams, GridSortModel } from '@mui/x-data-grid';
+import ViewIcon from '@/assets/image/svg/view.svg';
 import EditIcon from '@/assets/image/svg/edit.svg';
 import DeleteIcon from '@/assets/image/svg/delete.svg';
 import { disableMallTradeDeliveryExpressTemplate, enableMallTradeDeliveryExpressTemplate, pageMallTradeDeliveryExpressTemplate, MallTradeDeliveryExpressTemplateQueryCondition, MallTradeDeliveryExpressTemplateResponse } from '@/api';
@@ -11,6 +12,7 @@ import MallTradeDeliveryExpressTemplateDelete from './Delete';
 import { useHomeStore } from '@/store';
 import CustomizedAutoMore from '@/components/CustomizedAutoMore';
 import CustomizedDictTag from '@/components/CustomizedDictTag';
+import MallTradeDeliveryExpressTemplateInfo from './Info';
 
 export default function MallTradeDeliveryExpressTemplate() {
   const { t } = useTranslation();
@@ -26,6 +28,7 @@ export default function MallTradeDeliveryExpressTemplate() {
   const [sortModel, setSortModel] = useState<GridSortModel>([]);
   const [filterModel, setFilterModel] = useState<GridFilterModel>();
 
+  const viewMallTradeDeliveryExpressTemplate = useRef(null);
   const addMallTradeDeliveryExpressTemplate = useRef(null);
   const editMallTradeDeliveryExpressTemplate = useRef(null);
   const deleteMallTradeDeliveryExpressTemplate = useRef(null);
@@ -89,6 +92,13 @@ export default function MallTradeDeliveryExpressTemplate() {
         minWidth: 100,
         renderCell: (params: GridRenderCellParams) => (
           <CustomizedAutoMore>
+            {hasOperatePermission('mall:trade:delivery:express:template:get') && <Button
+              size="small"
+              variant='customOperate'
+              title={t('global.operate.view') + t('global.page.mall.trade.delivery.express.template')}
+              startIcon={<ViewIcon />}
+              onClick={() => handleClickOpenView(params.row)}
+            />}
             {hasOperatePermission('mall:trade:delivery:express:template:edit') && <Button
               size="small"
               variant='customOperate'
@@ -120,6 +130,10 @@ export default function MallTradeDeliveryExpressTemplate() {
   const handleClickOpenAdd = () => {
     (addMallTradeDeliveryExpressTemplate.current as any).show();
   }
+
+  const handleClickOpenView = (mallTradeDeliveryExpressTemplate: MallTradeDeliveryExpressTemplateResponse) => {
+    (viewMallTradeDeliveryExpressTemplate.current as any).show(mallTradeDeliveryExpressTemplate);
+  };
 
   const handleClickOpenEdit = (mallTradeDeliveryExpressTemplate: MallTradeDeliveryExpressTemplateResponse) => {
     (editMallTradeDeliveryExpressTemplate.current as any).show(mallTradeDeliveryExpressTemplate);
@@ -181,6 +195,7 @@ export default function MallTradeDeliveryExpressTemplate() {
           }));
         }}
       />
+      <MallTradeDeliveryExpressTemplateInfo ref={viewMallTradeDeliveryExpressTemplate} />
       <MallTradeDeliveryExpressTemplateAdd ref={addMallTradeDeliveryExpressTemplate} onSubmit={refreshData} />
       <MallTradeDeliveryExpressTemplateEdit ref={editMallTradeDeliveryExpressTemplate} onSubmit={refreshData} />
       <MallTradeDeliveryExpressTemplateDelete ref={deleteMallTradeDeliveryExpressTemplate} onSubmit={refreshData} />
