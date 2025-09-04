@@ -11,7 +11,7 @@
  Target Server Version : 80100 (8.1.0)
  File Encoding         : 65001
 
- Date: 04/09/2025 11:06:30
+ Date: 04/09/2025 11:25:58
 */
 
 SET NAMES utf8mb4;
@@ -2792,7 +2792,7 @@ INSERT INTO `system_dict_data` VALUES (37, 0, '快递发货', '0', 'delivery_typ
 INSERT INTO `system_dict_data` VALUES (38, 1, '用户自提', '1', 'delivery_type', 0, '', '', '用户自提', 1, '2025-04-30 07:04:39', 1, '2025-04-30 07:04:39', b'0');
 INSERT INTO `system_dict_data` VALUES (39, 0, '按件', '0', 'charge_type', 0, '', '', '按件', 1, '2025-04-30 07:04:27', 1, '2025-04-30 07:04:27', b'0');
 INSERT INTO `system_dict_data` VALUES (40, 1, '按重量', '1', 'charge_type', 0, '', '', '按重量', 1, '2025-04-30 07:04:39', 1, '2025-04-30 07:04:39', b'0');
-INSERT INTO `system_dict_data` VALUES (41, 1, '按体积', '1', 'charge_type', 0, '', '', '按体积', 1, '2025-04-30 07:04:39', 1, '2025-04-30 07:04:39', b'0');
+INSERT INTO `system_dict_data` VALUES (41, 2, '按体积', '2', 'charge_type', 0, '', '', '按体积', 1, '2025-04-30 07:04:39', 1, '2025-09-04 03:17:58', b'0');
 
 -- ----------------------------
 -- Table structure for system_dict_type
@@ -2969,7 +2969,7 @@ CREATE TABLE `system_menu`  (
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 401 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '菜单权限表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 403 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '菜单权限表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of system_menu
@@ -3360,6 +3360,8 @@ INSERT INTO `system_menu` VALUES (397, '查看属性值', 'mall:product:property
 INSERT INTO `system_menu` VALUES (398, '新增属性值', 'mall:product:property:value:add', 3, 6, 220, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:13:19', 1, '2025-06-10 02:13:19', b'0');
 INSERT INTO `system_menu` VALUES (399, '修改属性值', 'mall:product:property:value:edit', 3, 7, 220, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:13:36', 1, '2025-06-10 02:13:36', b'0');
 INSERT INTO `system_menu` VALUES (400, '删除属性值', 'mall:product:property:value:delete', 3, 8, 220, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:13:54', 1, '2025-06-10 02:13:54', b'0');
+INSERT INTO `system_menu` VALUES (401, '启用', 'mall:trade:delivery:express:template:enable', 3, 4, 230, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:13:54', 1, '2025-06-10 02:13:54', b'0');
+INSERT INTO `system_menu` VALUES (402, '禁用', 'mall:trade:delivery:express:template:disable', 3, 5, 230, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:13:54', 1, '2025-06-10 02:13:54', b'0');
 
 -- ----------------------------
 -- Table structure for system_notice

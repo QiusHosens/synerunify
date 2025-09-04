@@ -10,6 +10,7 @@ import MallTradeDeliveryExpressTemplateEdit from './Edit';
 import MallTradeDeliveryExpressTemplateDelete from './Delete';
 import { useHomeStore } from '@/store';
 import CustomizedAutoMore from '@/components/CustomizedAutoMore';
+import CustomizedDictTag from '@/components/CustomizedDictTag';
 
 export default function MallTradeDeliveryExpressTemplate() {
   const { t } = useTranslation();
@@ -54,10 +55,18 @@ export default function MallTradeDeliveryExpressTemplate() {
   const columns: GridColDef[] = useMemo(
     () => [
       { field: 'name', headerName: t("page.mall.trade.delivery.express.template.title.name"), flex: 1, minWidth: 100 },
-      { field: 'charge_mode', headerName: t("page.mall.trade.delivery.express.template.title.charge.mode"), flex: 1, minWidth: 100 },
+      {
+        field: 'charge_mode',
+        headerName: t("page.mall.trade.delivery.express.template.title.charge.mode"),
+        flex: 1,
+        minWidth: 100,
+        renderCell: (params: GridRenderCellParams) => (
+          <>
+            <CustomizedDictTag type='charge_type' value={params.row.charge_mode} />
+          </>
+        )
+      },
       { field: 'sort', headerName: t("page.mall.trade.delivery.express.template.title.sort"), flex: 1, minWidth: 100 },
-      { field: 'status', headerName: t("page.mall.trade.delivery.express.template.title.status"), flex: 1, minWidth: 100 },
-      
       {
         field: 'status',
         sortable: false,
@@ -65,7 +74,7 @@ export default function MallTradeDeliveryExpressTemplate() {
         flex: 1,
         minWidth: 80,
         renderCell: (params: GridRenderCellParams) => (
-          <Box sx={ { height: '100%', display: 'flex', gap: 1, alignItems: 'center' } }>
+          <Box sx={{ height: '100%', display: 'flex', gap: 1, alignItems: 'center' }}>
             <Switch name="status" checked={!params.row.status} disabled={statusDisabled(params.row.status)} onChange={(event, checked) => handleStatusChange(event, checked, params.row)} />
           </Box>
         ),
@@ -88,7 +97,7 @@ export default function MallTradeDeliveryExpressTemplate() {
               onClick={() => handleClickOpenEdit(params.row)}
             />}
             {hasOperatePermission('mall:trade:delivery:express:template:delete') && <Button
-              sx={ {color: 'error.main'} }
+              sx={{ color: 'error.main' }}
               size="small"
               variant='customOperate'
               title={t('global.operate.delete') + t('global.page.mall.trade.delivery.express.template')}
@@ -143,8 +152,8 @@ export default function MallTradeDeliveryExpressTemplate() {
   };
 
   return (
-    <Box sx={ {height: '100%', display: 'flex', flexDirection: 'column'} }>
-      <Box sx={ {mb: 2, display: 'flex', justifyContent: 'space-between'} }>
+    <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+      <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between' }}>
         <Box></Box>
         {hasOperatePermission('mall:trade:delivery:express:template:add') && <Button variant="customContained" onClick={handleClickOpenAdd}>
           {t('global.operate.add')}
@@ -163,7 +172,7 @@ export default function MallTradeDeliveryExpressTemplate() {
         filterModel={filterModel}
         onFilterModelChange={handleFilterModelChange}
         pageSizeOptions={[10, 20, 50, 100]}
-        paginationModel={ {page: condition.page - 1, pageSize: condition.size} }
+        paginationModel={{ page: condition.page - 1, pageSize: condition.size }}
         onPaginationModelChange={(model) => {
           setCondition((prev) => ({
             ...prev,

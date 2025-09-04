@@ -440,9 +440,9 @@ const MallTradeDeliveryExpressTemplateAdd = forwardRef(({ onSubmit }: MallTradeD
           <Box sx={{ display: 'table', width: '100%', "& .table-row": { display: 'table-row', "& .table-cell": { display: 'table-cell', padding: 1, textAlign: 'center', } } }}>
             <Box className='table-row'>
               <Box className='table-cell' sx={{ width: 240 }}><Typography variant="body1">{t('page.mall.trade.delivery.express.template.charge.title.area')}</Typography></Box>
-              <Box className='table-cell' sx={{ width: 150 }}><Typography variant="body1">{t('page.mall.trade.delivery.express.template.charge.title.start.count')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 150 }}><Typography variant="body1">{formValues.charge_mode == 0 ? t('page.mall.trade.delivery.express.template.charge.title.start.count.count') : formValues.charge_mode == 1 ? t('page.mall.trade.delivery.express.template.charge.title.start.count.weight') : t('page.mall.trade.delivery.express.template.charge.title.start.count.volume')}</Typography></Box>
               <Box className='table-cell' sx={{ width: 150 }}><Typography variant="body1">{t('page.mall.trade.delivery.express.template.charge.title.start.price')}</Typography></Box>
-              <Box className='table-cell' sx={{ width: 150 }}><Typography variant="body1">{t('page.mall.trade.delivery.express.template.charge.title.extra.count')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 150 }}><Typography variant="body1">{formValues.charge_mode == 0 ? t('page.mall.trade.delivery.express.template.charge.title.extra.count.count') : formValues.charge_mode == 1 ? t('page.mall.trade.delivery.express.template.charge.title.extra.count.weight') : t('page.mall.trade.delivery.express.template.charge.title.extra.count.volume')}</Typography></Box>
               <Box className='table-cell' sx={{ width: 150 }}><Typography variant="body1">{t('page.mall.trade.delivery.express.template.charge.title.extra.price')}</Typography></Box>
               <Box className='table-cell' sx={{ width: 50 }}><Typography variant="body1">{t('global.operate.actions')}</Typography></Box>
             </Box>
@@ -532,7 +532,7 @@ const MallTradeDeliveryExpressTemplateAdd = forwardRef(({ onSubmit }: MallTradeD
           <Box sx={{ display: 'table', width: '100%', "& .table-row": { display: 'table-row', "& .table-cell": { display: 'table-cell', padding: 1, textAlign: 'center', } } }}>
             <Box className='table-row'>
               <Box className='table-cell' sx={{ width: 240 }}><Typography variant="body1">{t('page.mall.trade.delivery.express.template.free.title.area')}</Typography></Box>
-              <Box className='table-cell' sx={{ width: 150 }}><Typography variant="body1">{t('page.mall.trade.delivery.express.template.free.title.free.count')}</Typography></Box>
+              <Box className='table-cell' sx={{ width: 150 }}><Typography variant="body1">{formValues.charge_mode == 0 ? t('page.mall.trade.delivery.express.template.free.title.free.count.count') : formValues.charge_mode == 1 ? t('page.mall.trade.delivery.express.template.free.title.free.count.weight') : t('page.mall.trade.delivery.express.template.free.title.free.count.volume')}</Typography></Box>
               <Box className='table-cell' sx={{ width: 150 }}><Typography variant="body1">{t('page.mall.trade.delivery.express.template.free.title.free.price')}</Typography></Box>
               <Box className='table-cell' sx={{ width: 50 }}><Typography variant="body1">{t('global.operate.actions')}</Typography></Box>
             </Box>
