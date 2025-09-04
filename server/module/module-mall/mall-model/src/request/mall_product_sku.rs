@@ -8,8 +8,6 @@ use common::base::page::PaginatedRequest;
 #[derive(Serialize, Deserialize, Debug, ToSchema)]
 pub struct CreateMallProductSkuRequest {
     
-    pub spu_id: i64, // spu编号
-    
     pub properties: Option<String>, // 属性数组，JSON 格式 [{propertId: , valueId: }, {propertId: , valueId: }]
     
     pub price: i32, // 商品价格，单位：分
@@ -39,9 +37,7 @@ pub struct CreateMallProductSkuRequest {
 #[derive(Serialize, Deserialize, Debug, ToSchema)]
 pub struct UpdateMallProductSkuRequest {
     
-    pub id: i64, // 主键
-    
-    pub spu_id: Option<i64>, // spu编号
+    pub id: Option<i64>, // 主键
     
     pub properties: Option<String>, // 属性数组，JSON 格式 [{propertId: , valueId: }, {propertId: , valueId: }]
     

@@ -32,7 +32,6 @@ export interface MallProductSkuRequest {
   volume: number; // 商品体积，单位：m^3 平米
   first_brokerage_price: number; // 一级分销的佣金，单位：分
   second_brokerage_price: number; // 二级分销的佣金，单位：分
-  sales_count: number; // 商品销量
 
   file?: UploadFile | null;
   property_list?: PropertyValues[]; // 属性数组

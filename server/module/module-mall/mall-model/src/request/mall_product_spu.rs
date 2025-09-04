@@ -4,7 +4,7 @@
 use serde::{Serialize, Deserialize};
 use utoipa::ToSchema;
 use common::base::page::PaginatedRequest;
-use crate::request::mall_product_sku::CreateMallProductSkuRequest;
+use crate::request::mall_product_sku::{CreateMallProductSkuRequest, UpdateMallProductSkuRequest};
 
 #[derive(Serialize, Deserialize, Debug, ToSchema)]
 pub struct CreateMallProductSpuRequest {
@@ -53,7 +53,7 @@ pub struct CreateMallProductSpuRequest {
     
     pub browse_count: Option<i32>, // 商品点击量
 
-    pub skus: Vec<CreateMallProductSkuRequest>, // sku
+    pub skus: Vec<CreateMallProductSkuRequest>, // sku列表
     
 }
 
@@ -105,6 +105,8 @@ pub struct UpdateMallProductSpuRequest {
     pub virtual_sales_count: Option<i32>, // 虚拟销量
     
     pub browse_count: Option<i32>, // 商品点击量
+
+    pub skus: Vec<UpdateMallProductSkuRequest>, // sku列表
     
 }
 

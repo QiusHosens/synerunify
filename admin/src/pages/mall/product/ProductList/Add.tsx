@@ -54,7 +54,6 @@ interface FormValues {
   skus: MallProductSkuRequest[]; // sku列表
 
   file?: UploadFile | null; // 商品封面文件
-  slider_files: UploadFile[]; // 商品轮播图文件列表
 }
 
 interface FormSkuErrors {
@@ -144,9 +143,7 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
       volume: 0,
       first_brokerage_price: 0,
       second_brokerage_price: 0,
-      sales_count: 0,
     }],
-    slider_files: [],
   });
   const [errors, setErrors] = useState<FormErrors>({
     skus: [{
@@ -364,9 +361,7 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
         volume: 0,
         first_brokerage_price: 0,
         second_brokerage_price: 0,
-        sales_count: 0,
       }],
-      slider_files: [],
     });
     setErrors({
       skus: [{
@@ -380,7 +375,6 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
         volume: undefined,
         first_brokerage_price: undefined,
         second_brokerage_price: undefined,
-        sales_count: undefined,
       }]
     });
   }
@@ -469,7 +463,6 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
           volume: sku.volume,
           first_brokerage_price: sku.first_brokerage_price,
           second_brokerage_price: sku.second_brokerage_price,
-          sales_count: sku.sales_count,
         });
       }
       const request: MallProductSpuRequest = {
@@ -962,14 +955,14 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
               offsetTop={0}
               getContainer={() => {
                 // 使用ref获取滚动容器，更加准确
-                console.debug('container ref:', anchorContainerRef.current);
+                // console.debug('container ref:', anchorContainerRef.current);
                 return anchorContainerRef.current || window;
               }}
               onChange={(activeLink) => {
-                console.debug('active link:', activeLink);
+                // console.debug('active link:', activeLink);
               }}
               onClick={(e, link) => {
-                console.debug('click link:', link);
+                // console.debug('click link:', link);
               }}
             />}
           </Box>
