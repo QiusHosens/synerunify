@@ -469,6 +469,8 @@
     "title.batch.setting": "批量设置",
     
     "sku": {
+      "list.title.batch": "批量设置",
+      "list.title": "规格列表",
       "title.properties": "属性数组",
       "title.bar.code": "商品条码",
       "title.price": "销售价",
