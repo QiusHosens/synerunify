@@ -93,6 +93,8 @@ interface UploadProps {
     width?: string | number;
     height?: string | number;
     download?: DownloadProps;
+    error?: boolean;
+    helperText?: React.ReactNode;
 }
 
 const CustomizedFileUpload: React.FC<UploadProps> = ({
@@ -107,6 +109,8 @@ const CustomizedFileUpload: React.FC<UploadProps> = ({
     width,
     height,
     download,
+    error = false,
+    helperText,
 }) => {
     const { t } = useTranslation();
     const { showMessage } = useMessage();
@@ -327,6 +331,11 @@ const CustomizedFileUpload: React.FC<UploadProps> = ({
                     </>
                 )}
             </UploadArea>
+            {helperText && (
+                <Typography variant="caption" color={error ? 'error' : 'textSecondary'} sx={{ mt: 0.5, display: 'block' }}>
+                    {helperText}
+                </Typography>
+            )}
             <Modal
                 open={openModal}
                 onClose={handleCloseModal}

@@ -29,25 +29,6 @@ interface PropertyValues {
   valueName: string;
 }
 
-// interface FormSkuValues {
-//   properties?: string; // 属性数组，JSON 格式 [{propertId: , valueId: }, {propertId: , valueId: }]
-//   price?: number; // 商品价格，单位：分
-//   market_price?: number; // 市场价，单位：分
-//   cost_price?: number; // 成本价，单位： 分
-//   bar_code?: string; // SKU 的条形码
-//   file_id?: number; // 图片
-//   stock?: number; // 库存
-//   weight?: number; // 商品重量，单位：kg 千克
-//   volume?: number; // 商品体积，单位：m^3 平米
-//   first_brokerage_price?: number; // 一级分销的佣金，单位：分
-//   second_brokerage_price?: number; // 二级分销的佣金，单位：分
-//   sales_count?: number; // 商品销量
-
-//   file?: UploadFile | null;
-//   property_list?: PropertyValues[]; // 属性数组
-//   property_title?: string; // 
-// }
-
 interface FormValues {
   name: string; // 商品名称
   keyword: string; // 关键字
@@ -68,9 +49,7 @@ interface FormValues {
   delivery_template_id: number; // 物流配置模板编号
   give_integral: number; // 赠送积分
   sub_commission_type: number; // 分销类型
-  sales_count: number; // 商品销量
   virtual_sales_count: number; // 虚拟销量
-  browse_count: number; // 商品点击量
 
   skus: MallProductSkuRequest[]; // sku列表
 
@@ -153,9 +132,7 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
     delivery_template_id: 0,
     give_integral: 0,
     sub_commission_type: 0,
-    sales_count: 0,
     virtual_sales_count: 0,
-    browse_count: 0,
     skus: [{
       properties: '',
       price: 0,
@@ -263,7 +240,7 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
     }
 
     if (!formValues.file_id && formValues.file_id != 0) {
-      newErrors.file_id = t('global.error.select.please') + t('page.mall.product.title.fil');
+      newErrors.file_id = t('global.error.select.please') + t('page.mall.product.title.file');
     }
 
     if (!formValues.sort && formValues.sort != 0) {
@@ -292,7 +269,7 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
 
     formValues.skus.forEach((sku, index) => {
       if (!sku.file_id && sku.file_id != 0) {
-        newErrors.skus[index].file_id = t('global.error.input.please') + t('page.mall.product.sku.title.file');
+        newErrors.skus[index].file_id = t('global.error.select.please') + t('page.mall.product.sku.title.file');
       }
 
       if (!sku.bar_code || sku.bar_code.length == 0) {
@@ -323,12 +300,14 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
         newErrors.skus[index].volume = t('global.error.input.please') + t('page.mall.product.sku.title.volume');
       }
 
-      if (!sku.first_brokerage_price && sku.first_brokerage_price != 0) {
-        newErrors.skus[index].first_brokerage_price = t('global.error.input.please') + t('page.mall.product.sku.title.first.brokerage.price');
-      }
+      if (formValues.sub_commission_type == 1) {
+        if (!sku.first_brokerage_price && sku.first_brokerage_price != 0) {
+          newErrors.skus[index].first_brokerage_price = t('global.error.input.please') + t('page.mall.product.sku.title.first.brokerage.price');
+        }
 
-      if (!sku.second_brokerage_price && sku.second_brokerage_price != 0) {
-        newErrors.skus[index].second_brokerage_price = t('global.error.input.please') + t('page.mall.product.sku.title.second.brokerage.price');
+        if (!sku.second_brokerage_price && sku.second_brokerage_price != 0) {
+          newErrors.skus[index].second_brokerage_price = t('global.error.input.please') + t('page.mall.product.sku.title.second.brokerage.price');
+        }
       }
     });
 
@@ -373,9 +352,7 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
       delivery_template_id: 0,
       give_integral: 0,
       sub_commission_type: 0,
-      sales_count: 0,
       virtual_sales_count: 0,
-      browse_count: 0,
       skus: [{
         properties: '',
         price: 0,
@@ -478,14 +455,54 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
       console.log('editor content', editorRef.current.getContent()); // 获取 HTML 内容
     }
     if (validateForm()) {
-      await createMallProductSpu(formValues as MallProductSpuRequest);
+      const skus: MallProductSkuRequest[] = [];
+      for (const sku of formValues.skus) {
+        skus.push({
+          properties: sku.properties,
+          price: sku.price,
+          market_price: sku.market_price,
+          cost_price: sku.cost_price,
+          bar_code: sku.bar_code,
+          file_id: sku.file_id,
+          stock: sku.stock,
+          weight: sku.weight,
+          volume: sku.volume,
+          first_brokerage_price: sku.first_brokerage_price,
+          second_brokerage_price: sku.second_brokerage_price,
+          sales_count: sku.sales_count,
+        });
+      }
+      const request: MallProductSpuRequest = {
+        name: formValues.name,
+        keyword: formValues.keyword,
+        introduction: formValues.introduction,
+        description: editorRef.current.getContent(),
+        category_id: formValues.category_id,
+        brand_id: formValues.brand_id,
+        file_id: formValues.file_id!,
+        slider_file_ids: sliderFiles.map(item => item.file_id).join(','),
+        sort: formValues.sort,
+        status: formValues.status,
+        spec_type: formValues.spec_type,
+        price: formValues.skus[0].price,
+        market_price: formValues.skus[0].market_price,
+        cost_price: formValues.skus[0].cost_price,
+        stock: formValues.skus[0].stock,
+        delivery_types: formValues.delivery_types,
+        delivery_template_id: formValues.delivery_template_id,
+        give_integral: formValues.give_integral,
+        sub_commission_type: formValues.sub_commission_type,
+        virtual_sales_count: formValues.virtual_sales_count,
+        skus,
+      }
+      await createMallProductSpu(request);
       handleClose();
       onSubmit();
     }
   };
 
   const handlePreview = async () => {
-    
+    // TODO
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -653,24 +670,12 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
   const handleSkuInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>, index: number) => {
     const { name, value, type } = e.target;
 
-    if (index == 0) {
-      if (formValues.spec_type == 1) {
-        // 多规格 批量设置
-        setFormValues((prev) => ({
-          ...prev,
-          skus: prev.skus.map((item) => ({ ...item, [name]: type === 'number' ? Number(value) : value }))
-        }));
-      } else {
-        // 单规格
-        setFormValues((prev) => ({
-          ...prev,
-          // skus: [{ ...sku, [name]: type === 'number' ? Number(value) : value }]
-          skus: prev.skus.map((item, idx) => {
-            if (idx !== index) return item;
-            return { ...item, [name]: type === 'number' ? Number(value) : value }
-          })
-        }));
-      }
+    if (formValues.spec_type == 1 && index == 0) {
+      // 多规格 批量设置
+      setFormValues((prev) => ({
+        ...prev,
+        skus: prev.skus.map((item) => ({ ...item, [name]: type === 'number' ? Number(value) : value }))
+      }));
     } else {
       // 多规格 单独设置
       setFormValues((prev) => ({
@@ -682,7 +687,15 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
       }));
     }
 
-    if (errors[name as keyof FormErrors]) {
+    if (formValues.spec_type == 1 && index == 0) {
+      // 多规格 批量设置
+      setErrors(prev => ({
+        ...prev,
+        skus: prev.skus.map(item =>
+          ({ ...item, [name]: undefined })
+        ),
+      }));
+    } else {
       setErrors(prev => ({
         ...prev,
         skus: prev.skus.map((item, idx) =>
@@ -690,61 +703,129 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
         ),
       }));
     }
-  }, [errors, formValues.spec_type]);
+  }, [formValues.spec_type]);
 
   const handleSkuFileChange = useCallback(async (file: UploadFile | null, action: 'upload' | 'remove', index: number) => {
     if (action === 'upload' && file) {
       // 更新文件列表,增加一个附件,等待上传完成后在写入信息
-      setFormValues((prev) => ({
-        ...prev,
-        skus: formValues.skus.map((item, idx) => {
-          if (idx !== index) return item;
-          return { ...item, file }
-        })
-      }))
+      if (formValues.spec_type == 1 && index == 0) {
+        // 多规格 批量设置
+        setFormValues((prev) => ({
+          ...prev,
+          skus: formValues.skus.map(item => {
+            return { ...item, file }
+          })
+        }))
+      } else {
+        setFormValues((prev) => ({
+          ...prev,
+          skus: formValues.skus.map((item, idx) => {
+            if (idx !== index) return item;
+            return { ...item, file }
+          })
+        }))
+      }
+
 
       // 上传文件
       try {
         const result = await uploadSystemFile(file.file, (progress) => {
+          if (formValues.spec_type == 1 && index == 0) {
+            // 多规格 批量设置
+            setFormValues((prev) => ({
+              ...prev,
+              skus: formValues.skus.map(item => {
+                return { ...item, file: { ...item.file!, progress } }
+              })
+            }))
+          } else {
+            setFormValues((prev) => ({
+              ...prev,
+              skus: formValues.skus.map((item, idx) => {
+                if (idx !== index) return item;
+                return { ...item, file: { ...item.file!, progress } }
+              })
+            }))
+          }
+        });
+
+        // 上传完成
+        if (formValues.spec_type == 1 && index == 0) {
+          // 多规格 批量设置
+          setFormValues((prev) => ({
+            ...prev,
+            skus: formValues.skus.map(item => {
+              return { ...item, file_id: result, file: { ...item.file!, status: 'done' as const } }
+            })
+          }))
+        } else {
           setFormValues((prev) => ({
             ...prev,
             skus: formValues.skus.map((item, idx) => {
               if (idx !== index) return item;
-              return { ...item, file: { ...item.file!, progress } }
+              return { ...item, file_id: result, file: { ...item.file!, status: 'done' as const } }
             })
           }))
-        });
+        }
 
-        // 上传完成
-        setFormValues((prev) => ({
-          ...prev,
-          skus: formValues.skus.map((item, idx) => {
-            if (idx !== index) return item;
-            return { ...item, file_id: result, file: { ...item.file!, status: 'done' as const } }
-          })
-        }))
+        if (formValues.spec_type == 1 && index == 0) {
+          // 多规格 批量设置
+          setErrors(prev => ({
+            ...prev,
+            skus: prev.skus.map(item =>
+              ({ ...item, file_id: undefined })
+            ),
+          }));
+        } else {
+          setErrors(prev => ({
+            ...prev,
+            skus: prev.skus.map((item, idx) =>
+              idx === index ? { ...item, file_id: undefined } : item
+            ),
+          }));
+        }
       } catch (error) {
         console.error('upload file error', error);
         // 上传失败
+        if (formValues.spec_type == 1 && index == 0) {
+          // 多规格 批量设置
+          setFormValues((prev) => ({
+            ...prev,
+            skus: formValues.skus.map(item => {
+              return { ...item, file: { ...item.file!, status: 'error' as const } }
+            })
+          }))
+        } else {
+          setFormValues((prev) => ({
+            ...prev,
+            skus: formValues.skus.map((item, idx) => {
+              if (idx !== index) return item;
+              return { ...item, file: { ...item.file!, status: 'error' as const } }
+            })
+          }))
+        }
+      }
+    } else if (action === 'remove') {
+      // 删除文件并移除上传框
+      if (formValues.spec_type == 1 && index == 0) {
+        // 多规格 批量设置
+        setFormValues((prev) => ({
+          ...prev,
+          skus: formValues.skus.map(item => {
+            return { ...item, file: undefined }
+          })
+        }))
+      } else {
         setFormValues((prev) => ({
           ...prev,
           skus: formValues.skus.map((item, idx) => {
             if (idx !== index) return item;
-            return { ...item, file: { ...item.file!, status: 'error' as const } }
+            return { ...item, file: undefined }
           })
         }))
       }
-    } else if (action === 'remove') {
-      // 删除文件并移除上传框
-      setFormValues((prev) => ({
-        ...prev,
-        skus: formValues.skus.map((item, idx) => {
-          if (idx !== index) return item;
-          return { ...item, file: undefined }
-        })
-      }))
     }
-  }, []);
+  }, [formValues.skus, formValues.spec_type]);
 
   const handleOpenPropertySelect = () => {
     (selectProperty.current as any).show(selectedProperties.map(item => item.id));
@@ -944,7 +1025,7 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
                     onChange={(e) => handleSelectChange(e)}
                     error={!!errors.brand_id}
                   >
-                    {brands.map(item => (<MenuItem key={item.id} value={item.id}>{item.name}</MenuItem>))}
+                    {brands.map(item => (<MenuItem key={`'brand-'${item.id}`} value={item.id}>{item.name}</MenuItem>))}
                   </Select>
                   <FormHelperText sx={{ color: 'error.main' }}>{errors.brand_id}</FormHelperText>
                 </FormControl>
@@ -979,6 +1060,8 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
                   file={formValues.file}
                   width={fileWidth}
                   height={fileHeight}
+                  error={!!(errors.file_id)}
+                  helperText={errors.file_id}
                 />
                 <Typography sx={{ mt: 2, mb: 1 }}>
                   {t('page.mall.product.title.slider.files')}
@@ -1098,6 +1181,8 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
                               file={item.file}
                               width={fileWidth}
                               height={fileHeight}
+                              error={!!(errors.skus[index]?.file_id)}
+                              helperText={errors.skus[index]?.file_id}
                             />
                           </Box>
                           {item.property_list && item.property_list.map((property) => (
@@ -1262,6 +1347,8 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
                                 file={item.file}
                                 width={fileWidth}
                                 height={fileHeight}
+                                error={!!(errors.skus[index]?.file_id)}
+                                helperText={errors.skus[index]?.file_id}
                               />
                             </Box>
                             {item.property_list && item.property_list.map((property) => (
@@ -1433,7 +1520,7 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
                     onChange={(e) => handleSelectChange(e)}
                     error={!!errors.delivery_template_id}
                   >
-                    {templates.map(item => (<MenuItem key={item.id} value={item.id}>{item.name}</MenuItem>))}
+                    {templates.map(item => (<MenuItem key={`"template-"${item.id}`} value={item.id}>{item.name}</MenuItem>))}
                   </Select>
                   <FormHelperText sx={{ color: 'error.main' }}>{errors.delivery_template_id}</FormHelperText>
                 </FormControl>}

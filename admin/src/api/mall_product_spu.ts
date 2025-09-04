@@ -35,13 +35,10 @@ export interface MallProductSpuRequest {
   delivery_template_id: number; // 物流配置模板编号
   give_integral: number; // 赠送积分
   sub_commission_type: number; // 分销类型
-  sales_count: number; // 商品销量
   virtual_sales_count: number; // 虚拟销量
-  browse_count: number; // 商品点击量
   skus: MallProductSkuRequest[]; // sku列表
 
   file?: UploadFile | null; // 商品封面文件
-  slider_files: UploadFile[]; // 商品轮播图文件列表
 }
 
 export interface MallProductSpuResponse {
