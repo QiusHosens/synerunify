@@ -14,8 +14,6 @@ import { Editor } from '@tinymce/tinymce-react';
 import CustomizedNumberInput from '@/components/CustomizedNumberInput';
 import PropertySelect from './PropertySelect';
 import CustomizedTag from '@/components/CustomizedTag';
-import ProductSku from './ProductSku';
-import AddCircleSharpIcon from '@mui/icons-material/AddCircleSharp';
 import DeleteIcon from '@/assets/image/svg/delete.svg';
 
 interface AttachmentValues {
@@ -453,61 +451,6 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
     }
   };
 
-  const handleClickSkuDelete = useCallback((index: number) => {
-    setFormValues((prev) => ({
-      ...prev,
-      charges: prev.skus.filter((_, idx) => idx !== index),
-    }));
-    setErrors((prev) => ({
-      ...prev,
-      charges: prev.skus.filter((_, idx) => idx !== index),
-    }));
-  }, []);
-
-  const handleSkuInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>, index: number) => {
-    const { name, value, type } = e.target;
-
-    if (index == 0) {
-      // setSku((prev) => ({
-      //   ...prev,
-      //   [name]: type === 'number' ? Number(value) : value,
-      // }));
-      if (formValues.spec_type == 1) {
-        // 多规格 批量设置
-        setFormValues((prev) => ({
-          ...prev,
-          skus: prev.skus.map((item) => ({ ...item, [name]: type === 'number' ? Number(value) : value }))
-        }));
-      } else {
-        // 单规格
-        setFormValues((prev) => ({
-          ...prev,
-          // skus: [{ ...sku, [name]: type === 'number' ? Number(value) : value }]
-          skus: prev.skus.map((item, idx) => {
-            if (idx !== index) return item;
-            return { ...item, [name]: type === 'number' ? Number(value) : value }
-          })
-        }));
-      }
-    } else {
-      // 多规格 单独设置
-      setFormValues((prev) => ({
-        ...prev,
-        skus: prev.skus.map((item, idx) => {
-          if (idx !== index) return item;
-          return { ...item, [name]: type === 'number' ? Number(value) : value }
-        })
-      }));
-    }
-
-    // if (errors[name as keyof FormErrors]) {
-    //   setErrors(prev => ({
-    //     ...prev,
-    //     [name]: undefined
-    //   }));
-    // }
-  }, [formValues]);
-
   const handleCheckboxChange = (name: string | undefined, checkedValues: any[]) => {
     if (!name) {
       return;
@@ -636,6 +579,111 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
     }
   }, []);
 
+  const handleClickSkuDelete = useCallback((index: number) => {
+    setFormValues((prev) => ({
+      ...prev,
+      charges: prev.skus.filter((_, idx) => idx !== index),
+    }));
+    setErrors((prev) => ({
+      ...prev,
+      charges: prev.skus.filter((_, idx) => idx !== index),
+    }));
+  }, []);
+
+  const handleSkuInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>, index: number) => {
+    const { name, value, type } = e.target;
+
+    if (index == 0) {
+      if (formValues.spec_type == 1) {
+        // 多规格 批量设置
+        setFormValues((prev) => ({
+          ...prev,
+          skus: prev.skus.map((item) => ({ ...item, [name]: type === 'number' ? Number(value) : value }))
+        }));
+      } else {
+        // 单规格
+        setFormValues((prev) => ({
+          ...prev,
+          // skus: [{ ...sku, [name]: type === 'number' ? Number(value) : value }]
+          skus: prev.skus.map((item, idx) => {
+            if (idx !== index) return item;
+            return { ...item, [name]: type === 'number' ? Number(value) : value }
+          })
+        }));
+      }
+    } else {
+      // 多规格 单独设置
+      setFormValues((prev) => ({
+        ...prev,
+        skus: prev.skus.map((item, idx) => {
+          if (idx !== index) return item;
+          return { ...item, [name]: type === 'number' ? Number(value) : value }
+        })
+      }));
+    }
+
+    // if (errors[name as keyof FormErrors]) {
+    //   setErrors(prev => ({
+    //     ...prev,
+    //     [name]: undefined
+    //   }));
+    // }
+  }, [formValues]);
+
+  const handleSkuFileChange = useCallback(async (file: UploadFile | null, action: 'upload' | 'remove', index: number) => {
+    if (action === 'upload' && file) {
+      // 更新文件列表,增加一个附件,等待上传完成后在写入信息
+      setFormValues((prev) => ({
+        ...prev,
+        skus: formValues.skus.map((item, idx) => {
+          if (idx !== index) return item;
+          return { ...item, file }
+        })
+      }))
+
+      // 上传文件
+      try {
+        const result = await uploadSystemFile(file.file, (progress) => {
+          setFormValues((prev) => ({
+            ...prev,
+            skus: formValues.skus.map((item, idx) => {
+              if (idx !== index) return item;
+              return { ...item, file: { ...item.file!, progress } }
+            })
+          }))
+        });
+
+        // 上传完成
+        setFormValues((prev) => ({
+          ...prev,
+          skus: formValues.skus.map((item, idx) => {
+            if (idx !== index) return item;
+            return { ...item, file_id: result, file: { ...item.file!, status: 'done' as const } }
+          })
+        }))
+      } catch (error) {
+        console.error('upload file error', error);
+        // 上传失败
+        setFormValues((prev) => ({
+          ...prev,
+          skus: formValues.skus.map((item, idx) => {
+            if (idx !== index) return item;
+            return { ...item, file: { ...item.file!, status: 'error' as const } }
+          })
+        }))
+      }
+    } else if (action === 'remove') {
+      // 删除文件并移除上传框
+      setFormValues((prev) => ({
+        ...prev,
+        skus: formValues.skus.map((item, idx) => {
+          if (idx !== index) return item;
+          return { ...item, file: undefined }
+        })
+      }))
+    }
+  }, []);
+
   const handleOpenPropertySelect = () => {
     (selectProperty.current as any).show(selectedProperties.map(item => item.id));
   }
@@ -698,17 +746,6 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
           property_list: combo,
           properties: JSON.stringify(combo),
           property_title: combo.map(c => c.valueName).join(' * '),
-
-          // price: 0,
-          // market_price: 0,
-          // cost_price: 0,
-          // bar_code: '',
-          // stock: 0,
-          // weight: 0,
-          // volume: 0,
-          // first_brokerage_price: 0,
-          // second_brokerage_price: 0,
-          // sales_count: 0,
         }
       });
       setFormValues(prev => ({
@@ -718,156 +755,6 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
     }, [properties, values]);
   }
   useSkuGenerator(selectedProperties, selectedPropertyValues);
-
-  // const ProductBox = (({ sku, index, title }: { sku: FormSkuValues, index: number, title?: string }) => {
-  //   return (
-  //     <CustomizedLabeledBox label={title ?? undefined} sx={{ mt: 2, mr: 2 }}>
-  //       <Stack direction='row' gap={2}>
-  //         <CustomizedFileUpload
-  //           canRemove={false}
-  //           showFilename={false}
-  //           id={'file-upload'}
-  //           accept=".jpg,jpeg,.png"
-  //           maxSize={100}
-  //           onChange={(file, action) => handleFileChange(file, action)}
-  //           file={sku.file}
-  //           width={fileWidth}
-  //           height={fileHeight}
-  //         />
-  //         <Grid container rowSpacing={2} columnSpacing={2} sx={{ '& .MuiGrid-root': { display: 'flex', justifyContent: 'center', alignItems: 'center' } }}>
-  //           {sku.property_list && sku.property_list.map((property) => (
-  //             <Grid size={{ xs: 12, md: 3 }}>
-  //               <TextField
-  //                 disabled
-  //                 size="small"
-  //                 label={property.propertyName}
-  //                 value={property.valueName}
-  //                 sx={{ width: '100%' }}
-  //               />
-  //             </Grid>)
-  //           )}
-  //           <Grid size={{ xs: 12, md: 6 }}>
-  //             <TextField
-  //               required
-  //               size="small"
-  //               label={t("page.mall.product.sku.title.bar.code")}
-  //               name='bar_code'
-  //               value={sku.bar_code}
-  //               onChange={(e) => handleSkuInputChange(e as React.ChangeEvent<HTMLInputElement>, index)}
-  //               error={!!(errors.skus && errors.skus[index].bar_code)}
-  //               helperText={errors.skus && errors.skus[index].bar_code}
-  //               sx={{ width: '100%' }}
-  //             />
-  //           </Grid>
-  //           <Grid size={{ xs: 12, md: 3 }}>
-  //             <TextField
-  //               required
-  //               size="small"
-  //               type="number"
-  //               label={t("page.mall.product.sku.title.price")}
-  //               name='price'
-  //               value={sku.price}
-  //               onChange={(e) => handleSkuInputChange(e as React.ChangeEvent<HTMLInputElement>, index)}
-  //               error={!!(errors.skus && errors.skus[index].price)}
-  //               helperText={errors.skus && errors.skus[index].price}
-  //             />
-  //           </Grid>
-  //           <Grid size={{ xs: 12, md: 3 }}>
-  //             <TextField
-  //               required
-  //               size="small"
-  //               type="number"
-  //               label={t("page.mall.product.sku.title.market.price")}
-  //               name='market_price'
-  //               value={sku.market_price}
-  //               onChange={(e) => handleSkuInputChange(e as React.ChangeEvent<HTMLInputElement>, index)}
-  //               error={!!(errors.skus && errors.skus[index].market_price)}
-  //               helperText={errors.skus && errors.skus[index].market_price}
-  //             />
-  //           </Grid>
-  //           <Grid size={size}>
-  //             <TextField
-  //               required
-  //               size="small"
-  //               type="number"
-  //               label={t("page.mall.product.sku.title.cost.price")}
-  //               name='cost_price'
-  //               value={sku.cost_price}
-  //               onChange={(e) => handleSkuInputChange(e as React.ChangeEvent<HTMLInputElement>, index)}
-  //               error={!!(errors.skus && errors.skus[index].cost_price)}
-  //               helperText={errors.skus && errors.skus[index].cost_price}
-  //             />
-  //           </Grid>
-  //           <Grid size={size}>
-  //             <TextField
-  //               required
-  //               size="small"
-  //               type="number"
-  //               label={t("page.mall.product.sku.title.stock")}
-  //               name='stock'
-  //               value={sku.stock}
-  //               onChange={(e) => handleSkuInputChange(e as React.ChangeEvent<HTMLInputElement>, index)}
-  //               error={!!(errors.skus && errors.skus[index].stock)}
-  //               helperText={errors.skus && errors.skus[index].stock}
-  //             />
-  //           </Grid>
-  //           <Grid size={size}>
-  //             <TextField
-  //               required
-  //               size="small"
-  //               type="number"
-  //               label={t("page.mall.product.sku.title.weight")}
-  //               name='weight'
-  //               value={sku.weight}
-  //               onChange={(e) => handleSkuInputChange(e as React.ChangeEvent<HTMLInputElement>, index)}
-  //               error={!!(errors.skus && errors.skus[index].weight)}
-  //               helperText={errors.skus && errors.skus[index].weight}
-  //             />
-  //           </Grid>
-  //           <Grid size={size}>
-  //             <TextField
-  //               required
-  //               size="small"
-  //               type="number"
-  //               label={t("page.mall.product.sku.title.volume")}
-  //               name='volume'
-  //               value={sku.volume}
-  //               onChange={(e) => handleSkuInputChange(e as React.ChangeEvent<HTMLInputElement>, index)}
-  //               error={!!(errors.skus && errors.skus[index].volume)}
-  //               helperText={errors.skus && errors.skus[index].volume}
-  //             />
-  //           </Grid>
-  //           <Grid size={size}>
-  //             {formValues.sub_commission_type == 1 && <TextField
-  //               required
-  //               size="small"
-  //               type="number"
-  //               label={t("page.mall.product.sku.title.first.brokerage.price")}
-  //               name='first_brokerage_price'
-  //               value={sku.first_brokerage_price}
-  //               onChange={(e) => handleSkuInputChange(e as React.ChangeEvent<HTMLInputElement>, index)}
-  //               error={!!(errors.skus && errors.skus[index].first_brokerage_price)}
-  //               helperText={errors.skus && errors.skus[index].first_brokerage_price}
-  //             />}
-  //           </Grid>
-  //           <Grid size={size}>
-  //             {formValues.sub_commission_type == 1 && <TextField
-  //               required
-  //               size="small"
-  //               type="number"
-  //               label={t("page.mall.product.sku.title.second.brokerage.price")}
-  //               name='second_brokerage_price'
-  //               value={sku.second_brokerage_price}
-  //               onChange={(e) => handleSkuInputChange(e as React.ChangeEvent<HTMLInputElement>, index)}
-  //               error={!!(errors.skus && errors.skus[index].second_brokerage_price)}
-  //               helperText={errors.skus && errors.skus[index].second_brokerage_price}
-  //             />}
-  //           </Grid>
-  //         </Grid>
-  //       </Stack>
-  //     </CustomizedLabeledBox>
-  //   );
-  // });
 
   return (
     <CustomizedDialog
@@ -1024,7 +911,7 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
                     <Box key={index}>
                       <CustomizedFileUpload
                         showFilename={false}
-                        id={'file-upload-' + index}
+                        id={'file-upload-slider-' + index}
                         accept=".jpg,jpeg,.png"
                         maxSize={100}
                         onChange={(files, action) => handleSliderFileChange(files, action, index)}
@@ -1121,10 +1008,10 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
                             <CustomizedFileUpload
                               canRemove={false}
                               showFilename={false}
-                              id={'file-upload'}
+                              id={'file-upload-sku-' + index}
                               accept=".jpg,jpeg,.png"
                               maxSize={100}
-                              onChange={(file, action) => handleFileChange(file, action)}
+                              onChange={(file, action) => handleSkuFileChange(file, action, index)}
                               file={item.file}
                               width={fileWidth}
                               height={fileHeight}
@@ -1285,10 +1172,10 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
                               <CustomizedFileUpload
                                 canRemove={false}
                                 showFilename={false}
-                                id={'file-upload'}
+                                id={'file-upload-sku-' + index}
                                 accept=".jpg,jpeg,.png"
                                 maxSize={100}
-                                onChange={(file, action) => handleFileChange(file, action)}
+                                onChange={(file, action) => handleSkuFileChange(file, action, index)}
                                 file={item.file}
                                 width={fileWidth}
                                 height={fileHeight}
@@ -1427,24 +1314,6 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
                     </Box>
                   </Card>
                 </>}
-
-                {/* {formValues.skus.map((sku, index) => (
-                  // <ProductBox key={'sku-' + index} sku={sku} index={index + 1} title={sku.property_title}></ProductBox>
-                  <ProductSku
-                    key={'sku-' + index}
-                    sku={sku}
-                    index={index}
-                    title={formValues.spec_type == 0 ? undefined : index == 0 ? t("page.mall.product.title.batch.setting") : sku.property_title}
-                    onSkuChange={handleSkuInputChange}
-                    onFileChange={handleFileChange}
-                    errors={errors.skus?.[0]}
-                    fileWidth={fileWidth}
-                    fileHeight={fileHeight}
-                    size={size}
-                    subCommissionType={formValues.sub_commission_type}
-                    t={t}
-                  />
-                ))} */}
               </Box>
             </Box>
             <Box id="logistics" sx={{ mb: 4 }}>
