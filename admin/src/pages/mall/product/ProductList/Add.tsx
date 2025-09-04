@@ -924,7 +924,7 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
                   <Box>
                     <CustomizedFileUpload
                       showFilename={false}
-                      id={'file-upload-' + sliderFiles.length}
+                      id={'file-upload-slider-' + sliderFiles.length}
                       accept=".jpg,jpeg,.png"
                       maxSize={100}
                       onChange={(file, action) => handleSliderFileChange(file, action, sliderFiles.length)}
