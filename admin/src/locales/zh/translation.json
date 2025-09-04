@@ -121,6 +121,7 @@
   "global.operate.select": "选择",
   "global.operate.copy": "复制",
   "global.operate.copied": "已复制",
+  "global.operate.preview": "预览",
 
   "global.title.name": "名称",
   "global.title.status": "状态",
@@ -458,7 +459,7 @@
     "title.cost.price": "成本价",
     "title.stock": "库存",
     "title.delivery.types": "配送方式",
-    "title.delivery.template.id": "物流配置模板编号",
+    "title.delivery.template": "运费模板",
     "title.give.integral": "赠送积分",
     "title.sub.commission.type": "分销类型",
     "title.sales.count": "商品销量",

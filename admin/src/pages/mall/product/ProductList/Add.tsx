@@ -1,8 +1,8 @@
-import { Box, Button, Card, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Stack, TextField, Typography } from '@mui/material';
+import { Box, Button, Card, FormControl, FormHelperText, InputLabel, MenuItem, Select, SelectChangeEvent, Stack, TextField, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { forwardRef, useCallback, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
-import { createMallProductSpu, getBaseMallProductProperty, listMallProductBrand, listMallProductCategory, MallProductBrandResponse, MallProductCategoryResponse, MallProductPropertyBaseResponse, MallProductPropertyValueResponse, MallProductSkuRequest, MallProductSpuRequest } from '@/api';
+import { createMallProductSpu, getBaseMallProductProperty, listMallProductBrand, listMallProductCategory, listMallTradeDeliveryExpressTemplate, MallProductBrandResponse, MallProductCategoryResponse, MallProductPropertyBaseResponse, MallProductPropertyValueResponse, MallProductSkuRequest, MallProductSpuRequest, MallTradeDeliveryExpressTemplateResponse } from '@/api';
 import CustomizedDialog from '@/components/CustomizedDialog';
 import SelectTree from '@/components/SelectTree';
 import { uploadSystemFile } from '@/api/system_file';
@@ -96,6 +96,7 @@ interface FormSkuErrors {
 interface FormErrors {
   name?: string; // 商品名称
   category_id?: string; // 商品分类编号
+  brand_id?: string; // 商品品牌编号
   file_id?: string; // 商品封面图
   sort?: string; // 排序字段
   status?: string; // 商品状态: 0 上架（开启） 1 下架（禁用） -1 回收
@@ -104,6 +105,7 @@ interface FormErrors {
   stock?: string; // 库存
   delivery_types?: string; // 配送方式数组
   give_integral?: string; // 赠送积分
+  delivery_template_id?: string; // 运费模板
 
   skus: FormSkuErrors[];
 }
@@ -128,6 +130,7 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
   const [treeData, setTreeData] = useState<TreeNode[]>([]);
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | number>(0);
   const [sliderFiles, setSliderFiles] = useState<AttachmentValues[]>([]);
+  const [templates, setTemplates] = useState<MallTradeDeliveryExpressTemplateResponse[]>([]);
   const [selectedProperties, setSelectedProperties] = useState<MallProductPropertyBaseResponse[]>([]);
   const [selectedPropertyValueIds, setSelectedPropertyValueIds] = useState<number[]>([]);
   const [selectedPropertyValues, setSelectedPropertyValues] = useState<MallProductPropertyValueResponse[]>([]);
@@ -168,25 +171,23 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
     }],
     slider_files: [],
   });
-  // const [sku, setSku] = useState<MallProductSkuRequest>({
-  //   properties: '',
-  //   price: 0,
-  //   market_price: 0,
-  //   cost_price: 0,
-  //   bar_code: '',
-  //   stock: 0,
-  //   weight: 0,
-  //   volume: 0,
-  //   first_brokerage_price: 0,
-  //   second_brokerage_price: 0,
-  //   sales_count: 0,
-  // });
   const [errors, setErrors] = useState<FormErrors>({
-    skus: [],
+    skus: [{
+      properties: undefined,
+      price: undefined,
+      market_price: undefined,
+      cost_price: undefined,
+      bar_code: undefined,
+      stock: undefined,
+      weight: undefined,
+      volume: undefined,
+      first_brokerage_price: undefined,
+      second_brokerage_price: undefined,
+      sales_count: undefined,
+    }],
   });
   const [fileWidth] = useState<number>(240);
   const [fileHeight] = useState<number>(160);
-  const [size] = useState({ xs: 12, md: 4 });
 
   const anchorContainerRef = useRef<HTMLDivElement | null>(null);
   const [isMounted, setIsMounted] = useState(false);
@@ -221,6 +222,7 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
     show() {
       listBrands();
       initCategorys();
+      initTemplates();
       setOpen(true);
 
       setTimeout(() => {
@@ -288,8 +290,57 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
       newErrors.give_integral = t('global.error.input.please') + t('page.mall.product.title.give.integral');
     }
 
+    formValues.skus.forEach((sku, index) => {
+      if (!sku.file_id && sku.file_id != 0) {
+        newErrors.skus[index].file_id = t('global.error.input.please') + t('page.mall.product.sku.title.file');
+      }
+
+      if (!sku.bar_code || sku.bar_code.length == 0) {
+        newErrors.skus[index].bar_code = t('global.error.input.please') + t('page.mall.product.sku.title.bar.code');
+      }
+
+      if (!sku.price && sku.price != 0) {
+        newErrors.skus[index].price = t('global.error.input.please') + t('page.mall.product.sku.title.price');
+      }
+
+      if (!sku.market_price && sku.market_price != 0) {
+        newErrors.skus[index].market_price = t('global.error.input.please') + t('page.mall.product.sku.title.market.price');
+      }
+
+      if (!sku.cost_price && sku.cost_price != 0) {
+        newErrors.skus[index].cost_price = t('global.error.input.please') + t('page.mall.product.sku.title.cost.price');
+      }
+
+      if (!sku.stock && sku.stock != 0) {
+        newErrors.skus[index].stock = t('global.error.input.please') + t('page.mall.product.sku.title.stock');
+      }
+
+      if (!sku.weight && sku.weight != 0) {
+        newErrors.skus[index].weight = t('global.error.input.please') + t('page.mall.product.sku.title.weight');
+      }
+
+      if (!sku.volume && sku.volume != 0) {
+        newErrors.skus[index].volume = t('global.error.input.please') + t('page.mall.product.sku.title.volume');
+      }
+
+      if (!sku.first_brokerage_price && sku.first_brokerage_price != 0) {
+        newErrors.skus[index].first_brokerage_price = t('global.error.input.please') + t('page.mall.product.sku.title.first.brokerage.price');
+      }
+
+      if (!sku.second_brokerage_price && sku.second_brokerage_price != 0) {
+        newErrors.skus[index].second_brokerage_price = t('global.error.input.please') + t('page.mall.product.sku.title.second.brokerage.price');
+      }
+    });
+
     setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    return !Object.keys(newErrors).some((key) => {
+      if (key === 'skus') {
+        return newErrors.skus.some((err) =>
+          Object.values(err).some((value) => value !== undefined)
+        );
+      }
+      return newErrors[key as keyof FormErrors];
+    });
   };
 
   const handleCancel = () => {
@@ -340,21 +391,20 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
       }],
       slider_files: [],
     });
-    // setSku({
-    //   properties: '',
-    //   price: 0,
-    //   market_price: 0,
-    //   cost_price: 0,
-    //   bar_code: '',
-    //   stock: 0,
-    //   weight: 0,
-    //   volume: 0,
-    //   first_brokerage_price: 0,
-    //   second_brokerage_price: 0,
-    //   sales_count: 0,
-    // });
     setErrors({
-      skus: []
+      skus: [{
+        properties: undefined,
+        price: undefined,
+        market_price: undefined,
+        cost_price: undefined,
+        bar_code: undefined,
+        stock: undefined,
+        weight: undefined,
+        volume: undefined,
+        first_brokerage_price: undefined,
+        second_brokerage_price: undefined,
+        sales_count: undefined,
+      }]
     });
   }
 
@@ -367,6 +417,11 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
       }));
     }
     setBrands(result);
+  }
+
+  const initTemplates = async () => {
+    const result = await listMallTradeDeliveryExpressTemplate();
+    setTemplates(result);
   }
 
   const initCategorys = async () => {
@@ -429,11 +484,8 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
     }
   };
 
-  const handleSubmitAndContinue = async () => {
-    if (validateForm()) {
-      await createMallProductSpu(formValues as MallProductSpuRequest);
-      onSubmit();
-    }
+  const handlePreview = async () => {
+    
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -451,7 +503,7 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
     }
   };
 
-  const handleCheckboxChange = (name: string | undefined, checkedValues: any[]) => {
+  const handleCheckboxChange = useCallback((name: string | undefined, checkedValues: any[]) => {
     if (!name) {
       return;
     }
@@ -461,13 +513,21 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
       [name]: value
     }));
 
+    // 默认选中运费模板
+    if (value.indexOf('0') >= 0 && templates.length > 0) {
+      setFormValues(prev => ({
+        ...prev,
+        delivery_template_id: templates[0].id
+      }));
+    }
+
     if (errors[name as keyof FormErrors]) {
       setErrors(prev => ({
         ...prev,
         [name]: undefined
       }));
     }
-  };
+  }, [errors, templates]);
 
   const handleSelectChange = (e: SelectChangeEvent<number>) => {
     const { name, value } = e.target;
@@ -582,11 +642,11 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
   const handleClickSkuDelete = useCallback((index: number) => {
     setFormValues((prev) => ({
       ...prev,
-      charges: prev.skus.filter((_, idx) => idx !== index),
+      skus: prev.skus.filter((_, idx) => idx !== index),
     }));
     setErrors((prev) => ({
       ...prev,
-      charges: prev.skus.filter((_, idx) => idx !== index),
+      skus: prev.skus.filter((_, idx) => idx !== index),
     }));
   }, []);
 
@@ -622,13 +682,15 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
       }));
     }
 
-    // if (errors[name as keyof FormErrors]) {
-    //   setErrors(prev => ({
-    //     ...prev,
-    //     [name]: undefined
-    //   }));
-    // }
-  }, [formValues]);
+    if (errors[name as keyof FormErrors]) {
+      setErrors(prev => ({
+        ...prev,
+        skus: prev.skus.map((item, idx) =>
+          idx === index ? { ...item, [name]: undefined } : item
+        ),
+      }));
+    }
+  }, [errors, formValues.spec_type]);
 
   const handleSkuFileChange = useCallback(async (file: UploadFile | null, action: 'upload' | 'remove', index: number) => {
     if (action === 'upload' && file) {
@@ -752,6 +814,25 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
         ...prev,
         skus: [formValues.skus[0], ...skus]
       }));
+
+      const skuErrors = skus.map(() => ({
+        properties: undefined,
+        price: undefined,
+        market_price: undefined,
+        cost_price: undefined,
+        bar_code: undefined,
+        stock: undefined,
+        weight: undefined,
+        volume: undefined,
+        first_brokerage_price: undefined,
+        second_brokerage_price: undefined,
+        sales_count: undefined,
+      }))
+
+      setErrors((prev) => ({
+        ...prev,
+        skus: [errors.skus[0], ...skuErrors],
+      }));
     }, [properties, values]);
   }
   useSkuGenerator(selectedProperties, selectedPropertyValues);
@@ -764,7 +845,7 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
       maxWidth={maxWidth}
       actions={
         <>
-          <Button onClick={handleSubmitAndContinue}>{t('global.operate.confirm.continue')}</Button>
+          <Button onClick={handlePreview}>{t('global.operate.preview')}</Button>
           <Button onClick={handleSubmit}>{t('global.operate.confirm')}</Button>
           <Button onClick={handleCancel}>{t('global.operate.cancel')}</Button>
         </>
@@ -845,7 +926,7 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
                     expandToSelected
                     name='parent_id'
                     size="small"
-                    label={t('common.title.parent')}
+                    label={t('page.mall.product.title.category')}
                     treeData={treeData}
                     value={selectedCategoryId}
                     onChange={(name, node) => handleChange(name, node as TreeNode)}
@@ -861,9 +942,11 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
                     name='brand_id'
                     value={formValues.brand_id}
                     onChange={(e) => handleSelectChange(e)}
+                    error={!!errors.brand_id}
                   >
                     {brands.map(item => (<MenuItem key={item.id} value={item.id}>{item.name}</MenuItem>))}
                   </Select>
+                  <FormHelperText sx={{ color: 'error.main' }}>{errors.brand_id}</FormHelperText>
                 </FormControl>
                 <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '240px' } }}>
                   <TextField
@@ -1338,6 +1421,22 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
                   dict_type='delivery_type'
                   onChange={handleCheckboxChange}
                 />
+                {formValues.delivery_types.indexOf('0') >= 0 && <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiSelect-root': { width: '240px' } }}>
+                  <InputLabel required size="small" id="template-select-label">{t("page.mall.product.title.delivery.template")}</InputLabel>
+                  <Select
+                    required
+                    size="small"
+                    labelId="template-select-label"
+                    label={t("page.mall.product.title.delivery.template")}
+                    name='delivery_template_id'
+                    value={formValues.delivery_template_id}
+                    onChange={(e) => handleSelectChange(e)}
+                    error={!!errors.delivery_template_id}
+                  >
+                    {templates.map(item => (<MenuItem key={item.id} value={item.id}>{item.name}</MenuItem>))}
+                  </Select>
+                  <FormHelperText sx={{ color: 'error.main' }}>{errors.delivery_template_id}</FormHelperText>
+                </FormControl>}
               </Box>
             </Box>
             <Box id="product" sx={{ mb: 4 }}>
@@ -1345,7 +1444,7 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
                 {t('page.mall.product.tab.product.detail')}
               </Typography>
               <Box sx={{
-                width: 760,
+                // width: 760,
                 '& .tox-promotion-button': { display: 'none !important' },
                 '& .tox-statusbar__branding': { display: 'none' }
               }}>
