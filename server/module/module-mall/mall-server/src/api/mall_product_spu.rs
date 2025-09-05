@@ -19,6 +19,7 @@ pub async fn mall_product_spu_router(state: AppState) -> OpenApiRouter {
         .routes(routes!(update))
         .routes(routes!(delete))
         .routes(routes!(get_by_id))
+        .routes(routes!(get_base_by_id))
         .routes(routes!(list))
         .routes(routes!(page))
         .routes(routes!(enable))

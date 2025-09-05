@@ -38,7 +38,7 @@ const CustomizedDictCheckboxGroup: React.FC<CustomizedDictCheckboxGroupProps> = 
     if (datas) {
       setDicts(datas);
     }
-  }, [dictOfType]);
+  }, [dictOfType, dict_type, value]);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
     const { value } = event.target as HTMLInputElement;

@@ -68,7 +68,6 @@ interface FormSkuErrors {
   volume?: string; // 商品体积，单位：m^3 平米
   first_brokerage_price?: string; // 一级分销的佣金，单位：分
   second_brokerage_price?: string; // 二级分销的佣金，单位：分
-  sales_count?: string; // 商品销量
 }
 
 interface FormErrors {
@@ -157,7 +156,6 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
       volume: undefined,
       first_brokerage_price: undefined,
       second_brokerage_price: undefined,
-      sales_count: undefined,
     }],
   });
   const [fileWidth] = useState<number>(240);
@@ -445,9 +443,6 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
   }
 
   const handleSubmit = async () => {
-    if (editorRef.current) {
-      console.log('editor content', editorRef.current.getContent()); // 获取 HTML 内容
-    }
     if (validateForm()) {
       const skus: MallProductSkuRequest[] = [];
       const sources = formValues.spec_type == 0 ? formValues.skus.slice(0, 1) : formValues.skus.slice(1);

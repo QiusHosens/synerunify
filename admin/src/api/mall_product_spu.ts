@@ -1,13 +1,14 @@
 import { PaginatedRequest, PaginatedResponse } from '@/base/page';
 import { UploadFile } from '@/components/CustomizedFileUpload';
 import { api } from '@/utils/request';
-import { MallProductSkuRequest } from './mall_product_sku';
+import { MallProductSkuRequest, MallProductSkuResponse } from './mall_product_sku';
 
 const apis = {
   create: '/mall/mall_product_spu/create', // 新增
   update: '/mall/mall_product_spu/update', // 修改
   delete: '/mall/mall_product_spu/delete', // 删除
   get: '/mall/mall_product_spu/get', // 单条查询
+  get_base: '/mall/mall_product_spu/get_base', // 单条查询
   list: '/mall/mall_product_spu/list', // 列表查询
   page: '/mall/mall_product_spu/page', // 分页查询
   enable: '/mall/mall_product_spu/enable', // 启用
@@ -69,6 +70,7 @@ export interface MallProductSpuResponse {
   create_time: string; // 创建时间
   updater: number; // 更新者ID
   update_time: string; // 更新时间
+  skus: MallProductSkuResponse[]; // sku列表
 
   previewUrl?: string; // 商品封面预览地址
   sliderPreviewUrls: string[]; // 商品轮播图预览地址
@@ -92,6 +94,10 @@ export const deleteMallProductSpu = (id: number): Promise<void> => {
 
 export const getMallProductSpu = (id: number): Promise<MallProductSpuResponse> => {
   return api.get<MallProductSpuResponse>(`${apis.get}/${id}`);
+}
+
+export const getBaseMallProductSpu = (id: number): Promise<MallProductSpuResponse> => {
+  return api.get<MallProductSpuResponse>(`${apis.get_base}/${id}`);
 }
 
 export const listMallProductSpu = (): Promise<Array<MallProductSpuResponse>> => {
