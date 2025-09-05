@@ -7,7 +7,7 @@ use macros::require_authorize;
 use axum::{routing::{get, post}, Router, extract::{State, Path, Json, Query}, response::IntoResponse, Extension};
 use common::base::page::PaginatedResponse;
 use mall_model::request::mall_product_spu::{CreateMallProductSpuRequest, UpdateMallProductSpuRequest, PaginatedKeywordRequest};
-use mall_model::response::mall_product_spu::MallProductSpuResponse;
+use mall_model::response::mall_product_spu::{MallProductSpuBaseResponse, MallProductSpuResponse};
 use common::base::response::CommonResult;
 use common::context::context::LoginUserContext;
 use crate::service;
@@ -32,6 +32,7 @@ pub async fn mall_product_spu_route(state: AppState) -> Router {
         .route("/update", post(update))
         .route("/delete/{id}", post(delete))
         .route("/get/{id}", get(get_by_id))
+        .route("/get/{id}", get(get_base_by_id))
         .route("/list", get(list))
         .route("/page", get(page))
         .with_state(state)
@@ -136,6 +137,34 @@ async fn get_by_id(
     Path(id): Path<i64>,
 ) -> CommonResult<MallProductSpuResponse> {
     match service::mall_product_spu::get_by_id(&state.db, login_user, id).await {
+        Ok(Some(data)) => {CommonResult::with_data(data)}
+        Ok(None) => {CommonResult::with_none()}
+        Err(e) => {CommonResult::with_err(&e.to_string())}
+    }
+}
+
+#[utoipa::path(
+    get,
+    path = "/get_base/{id}",
+    operation_id = "mall_product_spu_get_base_by_id",
+    params(
+        ("id" = i64, Path, description = "id")
+    ),
+    responses(
+        (status = 200, description = "get base by id", body = CommonResult<MallProductSpuBaseResponse>)
+    ),
+    tag = "mall_product_spu",
+    security(
+        ("bearerAuth" = [])
+    )
+)]
+#[require_authorize(operation_id = "mall_product_spu_get_base_by_id", authorize = "")]
+async fn get_base_by_id(
+    State(state): State<AppState>,
+    Extension(login_user): Extension<LoginUserContext>,
+    Path(id): Path<i64>,
+) -> CommonResult<MallProductSpuBaseResponse> {
+    match service::mall_product_spu::get_base_by_id(&state.db, login_user, id).await {
         Ok(Some(data)) => {CommonResult::with_data(data)}
         Ok(None) => {CommonResult::with_none()}
         Err(e) => {CommonResult::with_err(&e.to_string())}

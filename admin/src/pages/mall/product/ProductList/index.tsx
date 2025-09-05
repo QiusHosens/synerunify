@@ -10,8 +10,6 @@ import MallProductSpuEdit from './Edit';
 import MallProductSpuDelete from './Delete';
 import { useHomeStore } from '@/store';
 import CustomizedAutoMore from '@/components/CustomizedAutoMore';
-import CustomizedAnchorExample from '@/components/CustomizedAnchor.example';
-import CustomizedAnchorDialogExample from '@/components/CustomizedAnchorDialog.example';
 
 export default function MallProductSpu() {
   const { t } = useTranslation();

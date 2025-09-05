@@ -31,14 +31,6 @@ pub struct CreateMallProductSpuRequest {
     
     pub spec_type: Option<i8>, // 规格类型：0 单规格 1 多规格
     
-    pub price: i32, // 商品价格，单位使用：分
-    
-    pub market_price: Option<i32>, // 市场价，单位使用：分
-    
-    pub cost_price: i32, // 成本价，单位： 分
-    
-    pub stock: i32, // 库存
-    
     pub delivery_types: String, // 配送方式数组
     
     pub delivery_template_id: Option<i64>, // 物流配置模板编号
@@ -83,14 +75,6 @@ pub struct UpdateMallProductSpuRequest {
     pub status: Option<i8>, // 商品状态: 0 上架（开启） 1 下架（禁用） -1 回收
     
     pub spec_type: Option<i8>, // 规格类型：0 单规格 1 多规格
-    
-    pub price: Option<i32>, // 商品价格，单位使用：分
-    
-    pub market_price: Option<i32>, // 市场价，单位使用：分
-    
-    pub cost_price: Option<i32>, // 成本价，单位： 分
-    
-    pub stock: Option<i32>, // 库存
     
     pub delivery_types: Option<String>, // 配送方式数组
     

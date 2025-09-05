@@ -1,35 +1,60 @@
 use common::interceptor::orm::simple_support::SimpleSupport;
-use sea_orm::{DatabaseConnection, EntityTrait, Order, ColumnTrait, ActiveModelTrait, PaginatorTrait, QueryOrder, QueryFilter, Condition};
+use sea_orm::{DatabaseConnection, EntityTrait, Order, ColumnTrait, ActiveModelTrait, PaginatorTrait, QueryOrder, QueryFilter, Condition, TransactionTrait};
 use crate::model::mall_product_spu::{Model as MallProductSpuModel, ActiveModel as MallProductSpuActiveModel, Entity as MallProductSpuEntity, Column};
 use mall_model::request::mall_product_spu::{CreateMallProductSpuRequest, UpdateMallProductSpuRequest, PaginatedKeywordRequest};
-use mall_model::response::mall_product_spu::MallProductSpuResponse;
-use crate::convert::mall_product_spu::{create_request_to_model, update_request_to_model, model_to_response};
-use anyhow::{Result, anyhow};
+use mall_model::response::mall_product_spu::{MallProductSpuBaseResponse, MallProductSpuResponse};
+use crate::convert::mall_product_spu::{create_request_to_model, update_request_to_model, model_to_response, model_to_base_response};
+use anyhow::{Result, anyhow, Context};
 use sea_orm::ActiveValue::Set;
 use common::constants::enum_constants::{STATUS_DISABLE, STATUS_ENABLE};
 use common::base::page::PaginatedResponse;
 use common::context::context::LoginUserContext;
 use common::interceptor::orm::active_filter::ActiveFilterEntityTrait;
+use crate::service::mall_product_sku;
 
 pub async fn create(db: &DatabaseConnection, login_user: LoginUserContext, request: CreateMallProductSpuRequest) -> Result<i64> {
-    let mut mall_product_spu = create_request_to_model(&request);
+    if request.skus.is_empty() {
+        return Err(anyhow!("请填写规格信息"));
+    }
+    let mut mall_product_spu = create_request_to_model(&request, request.skus.get(0).unwrap());
     mall_product_spu.creator = Set(Some(login_user.id));
     mall_product_spu.updater = Set(Some(login_user.id));
     mall_product_spu.tenant_id = Set(login_user.tenant_id);
-    let mall_product_spu = mall_product_spu.insert(db).await?;
+
+    // 开启事务
+    let txn = db.begin().await?;
+    // 创建spu
+    let mall_product_spu = mall_product_spu.insert(&txn).await?;
+    // 创建sku
+    mall_product_sku::create_batch(&db, &txn, login_user.clone(), mall_product_spu.id, request.skus).await?;
+    // 提交事务
+    txn.commit().await.with_context(|| "Failed to commit transaction")?;
     Ok(mall_product_spu.id)
 }
 
 pub async fn update(db: &DatabaseConnection, login_user: LoginUserContext, request: UpdateMallProductSpuRequest) -> Result<()> {
+    if request.skus.is_empty() {
+        return Err(anyhow!("请填写规格信息"));
+    }
     let mall_product_spu = MallProductSpuEntity::find_by_id(request.id)
         .filter(Column::TenantId.eq(login_user.tenant_id))
         .one(db)
         .await?
         .ok_or_else(|| anyhow!("记录未找到"))?;
 
-    let mut mall_product_spu = update_request_to_model(&request, mall_product_spu);
+    let spu = mall_product_spu.clone();
+
+    let mut mall_product_spu = update_request_to_model(&request, request.skus.get(0).unwrap(), mall_product_spu);
     mall_product_spu.updater = Set(Some(login_user.id));
-    mall_product_spu.update(db).await?;
+
+    // 开启事务
+    let txn = db.begin().await?;
+    // 更新spu
+    mall_product_spu.update(&txn).await?;
+    // 更新sku
+    mall_product_sku::update_batch(&db, &txn, login_user.clone(), spu, request.skus).await?;
+    // 提交事务
+    txn.commit().await.with_context(|| "Failed to commit transaction")?;
     Ok(())
 }
 
@@ -52,6 +77,22 @@ pub async fn get_by_id(db: &DatabaseConnection, login_user: LoginUserContext, id
     let mall_product_spu = MallProductSpuEntity::find_active_with_condition(condition)
         .one(db).await?;
     Ok(mall_product_spu.map(model_to_response))
+}
+
+pub async fn get_base_by_id(db: &DatabaseConnection, login_user: LoginUserContext, id: i64) -> Result<Option<MallProductSpuBaseResponse>> {
+    let condition = Condition::all()
+        .add(Column::Id.eq(id))
+        .add(Column::TenantId.eq(login_user.tenant_id));
+
+    let mall_product_spu = MallProductSpuEntity::find_active_with_condition(condition)
+        .one(db).await?;
+
+    if mall_product_spu.is_none() {
+        return Ok(None);
+    }
+    let mall_product_spu = mall_product_spu.unwrap();
+    let skus = mall_product_sku::list_base_by_spu_id(&db, login_user, id).await?;
+    Ok(Some(model_to_base_response(mall_product_spu, skus)))
 }
 
 pub async fn get_paginated(db: &DatabaseConnection, login_user: LoginUserContext, params: PaginatedKeywordRequest) -> Result<PaginatedResponse<MallProductSpuResponse>> {

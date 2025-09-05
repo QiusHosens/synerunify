@@ -1,9 +1,11 @@
 use sea_orm::{Set, NotSet};
+use mall_model::request::mall_product_sku::{CreateMallProductSkuRequest, UpdateMallProductSkuRequest};
 use crate::model::mall_product_spu::{self, Model as MallProductSpu, ActiveModel as MallProductSpuActiveModel};
 use mall_model::request::mall_product_spu::{CreateMallProductSpuRequest, UpdateMallProductSpuRequest};
-use mall_model::response::mall_product_spu::MallProductSpuResponse;
+use mall_model::response::mall_product_sku::MallProductSkuBaseResponse;
+use mall_model::response::mall_product_spu::{MallProductSpuBaseResponse, MallProductSpuResponse};
 
-pub fn create_request_to_model(request: &CreateMallProductSpuRequest) -> MallProductSpuActiveModel {
+pub fn create_request_to_model(request: &CreateMallProductSpuRequest, sku: &CreateMallProductSkuRequest) -> MallProductSpuActiveModel {
     MallProductSpuActiveModel {
         name: Set(request.name.clone()),
         keyword: request.keyword.as_ref().map_or(NotSet, |keyword| Set(Some(keyword.clone()))),
@@ -16,10 +18,10 @@ pub fn create_request_to_model(request: &CreateMallProductSpuRequest) -> MallPro
         sort: Set(request.sort.clone()),
         status: Set(request.status.clone()),
         spec_type: request.spec_type.as_ref().map_or(NotSet, |spec_type| Set(Some(spec_type.clone()))),
-        price: Set(request.price.clone()),
-        market_price: request.market_price.as_ref().map_or(NotSet, |market_price| Set(Some(market_price.clone()))),
-        cost_price: Set(request.cost_price.clone()),
-        stock: Set(request.stock.clone()),
+        price: Set(sku.price.clone()),
+        market_price: sku.market_price.as_ref().map_or(NotSet, |market_price| Set(Some(market_price.clone()))),
+        cost_price: Set(sku.cost_price.clone()),
+        stock: sku.stock.as_ref().map_or(Set(0), |stock| Set(stock.clone())),
         delivery_types: Set(request.delivery_types.clone()),
         delivery_template_id: request.delivery_template_id.as_ref().map_or(NotSet, |delivery_template_id| Set(Some(delivery_template_id.clone()))),
         give_integral: Set(request.give_integral.clone()),
@@ -31,7 +33,7 @@ pub fn create_request_to_model(request: &CreateMallProductSpuRequest) -> MallPro
     }
 }
 
-pub fn update_request_to_model(request: &UpdateMallProductSpuRequest, existing: MallProductSpu) -> MallProductSpuActiveModel {
+pub fn update_request_to_model(request: &UpdateMallProductSpuRequest, sku: &UpdateMallProductSkuRequest, existing: MallProductSpu) -> MallProductSpuActiveModel {
     let mut active_model: MallProductSpuActiveModel = existing.into();
     if let Some(name) = &request.name { 
         active_model.name = Set(name.clone());
@@ -66,16 +68,16 @@ pub fn update_request_to_model(request: &UpdateMallProductSpuRequest, existing: 
     if let Some(spec_type) = &request.spec_type { 
         active_model.spec_type = Set(Some(spec_type.clone()));
     }
-    if let Some(price) = &request.price { 
+    if let price = &sku.price {
         active_model.price = Set(price.clone());
     }
-    if let Some(market_price) = &request.market_price { 
+    if let Some(market_price) = &sku.market_price {
         active_model.market_price = Set(Some(market_price.clone()));
     }
-    if let Some(cost_price) = &request.cost_price { 
+    if let cost_price = &sku.cost_price {
         active_model.cost_price = Set(cost_price.clone());
     }
-    if let Some(stock) = &request.stock { 
+    if let Some(stock) = &sku.stock {
         active_model.stock = Set(stock.clone());
     }
     if let Some(delivery_types) = &request.delivery_types { 
@@ -131,5 +133,35 @@ pub fn model_to_response(model: MallProductSpu) -> MallProductSpuResponse {
         create_time: model.create_time,
         updater: model.updater,
         update_time: model.update_time,
+    }
+}
+
+pub fn model_to_base_response(model: MallProductSpu, skus: Vec<MallProductSkuBaseResponse>) -> MallProductSpuBaseResponse {
+    MallProductSpuBaseResponse {
+        id: model.id,
+        name: model.name,
+        keyword: model.keyword,
+        introduction: model.introduction,
+        description: model.description,
+        category_id: model.category_id,
+        brand_id: model.brand_id,
+        file_id: model.file_id,
+        slider_file_ids: model.slider_file_ids,
+        sort: model.sort,
+        status: model.status,
+        spec_type: model.spec_type,
+        price: model.price,
+        market_price: model.market_price,
+        cost_price: model.cost_price,
+        stock: model.stock,
+        delivery_types: model.delivery_types,
+        delivery_template_id: model.delivery_template_id,
+        give_integral: model.give_integral,
+        sub_commission_type: model.sub_commission_type,
+        sales_count: model.sales_count,
+        virtual_sales_count: model.virtual_sales_count,
+        browse_count: model.browse_count,
+
+        skus,
     }
 }

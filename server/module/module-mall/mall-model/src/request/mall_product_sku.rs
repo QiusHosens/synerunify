@@ -41,15 +41,15 @@ pub struct UpdateMallProductSkuRequest {
     
     pub properties: Option<String>, // 属性数组，JSON 格式 [{propertId: , valueId: }, {propertId: , valueId: }]
     
-    pub price: Option<i32>, // 商品价格，单位：分
+    pub price: i32, // 商品价格，单位：分
     
     pub market_price: Option<i32>, // 市场价，单位：分
     
-    pub cost_price: Option<i32>, // 成本价，单位： 分
+    pub cost_price: i32, // 成本价，单位： 分
     
     pub bar_code: Option<String>, // SKU 的条形码
     
-    pub file_id: Option<i64>, // 图片ID
+    pub file_id: i64, // 图片ID
     
     pub stock: Option<i32>, // 库存
     

@@ -450,7 +450,8 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
     }
     if (validateForm()) {
       const skus: MallProductSkuRequest[] = [];
-      for (const sku of formValues.skus) {
+      const sources = formValues.spec_type == 0 ? formValues.skus.slice(0, 1) : formValues.skus.slice(1);
+      for (const sku of sources) {
         skus.push({
           properties: sku.properties,
           price: sku.price,
@@ -476,7 +477,7 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
         slider_file_ids: sliderFiles.map(item => item.file_id).join(','),
         sort: formValues.sort,
         status: formValues.status,
-        spec_type: formValues.spec_type,
+        spec_type: Number(formValues.spec_type),
         price: formValues.skus[0].price,
         market_price: formValues.skus[0].market_price,
         cost_price: formValues.skus[0].cost_price,
@@ -484,7 +485,7 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
         delivery_types: formValues.delivery_types,
         delivery_template_id: formValues.delivery_template_id,
         give_integral: formValues.give_integral,
-        sub_commission_type: formValues.sub_commission_type,
+        sub_commission_type: Number(formValues.sub_commission_type),
         virtual_sales_count: formValues.virtual_sales_count,
         skus,
       }
@@ -876,11 +877,17 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
 
       // 生成sku
       const skus: MallProductSkuRequest[] = combinations.map((combo) => {
+        const properties = [];
+        for (const property of combo) {
+          properties.push({
+            propertyId: property.propertyId,
+            valueId: property.valueId,
+          })
+        }
         return {
           ...formValues.skus[0],
-
           property_list: combo,
-          properties: JSON.stringify(combo),
+          properties: JSON.stringify(properties),
           property_title: combo.map(c => c.valueName).join(' * '),
         }
       });
