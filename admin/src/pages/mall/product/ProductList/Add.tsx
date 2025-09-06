@@ -45,8 +45,8 @@ interface FormValues {
   market_price: number; // 市场价，单位使用：分
   cost_price: number; // 成本价，单位： 分
   stock: number; // 库存
-  delivery_types: string; // 配送方式数组
-  delivery_template_id: number; // 物流配置模板编号
+  delivery_types: string[]; // 配送方式数组
+  delivery_template_id?: number; // 物流配置模板编号
   give_integral: number; // 赠送积分
   sub_commission_type: number; // 分销类型
   virtual_sales_count: number; // 虚拟销量
@@ -126,8 +126,7 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
     market_price: 0,
     cost_price: 0,
     stock: 0,
-    delivery_types: '',
-    delivery_template_id: 0,
+    delivery_types: [],
     give_integral: 0,
     sub_commission_type: 0,
     virtual_sales_count: 0,
@@ -254,7 +253,7 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
       newErrors.stock = t('global.error.input.please') + t('page.mall.product.title.stock');
     }
 
-    if (!formValues.delivery_types.trim()) {
+    if (!formValues.delivery_types || formValues.delivery_types.length == 0) {
       newErrors.delivery_types = t('global.error.input.please') + t('page.mall.product.title.delivery.types');
     }
 
@@ -343,8 +342,7 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
       market_price: 0,
       cost_price: 0,
       stock: 0,
-      delivery_types: '',
-      delivery_template_id: 0,
+      delivery_types: [],
       give_integral: 0,
       sub_commission_type: 0,
       virtual_sales_count: 0,
@@ -477,7 +475,7 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
         market_price: formValues.skus[0].market_price,
         cost_price: formValues.skus[0].cost_price,
         stock: formValues.skus[0].stock,
-        delivery_types: formValues.delivery_types,
+        delivery_types: formValues.delivery_types.join(','),
         delivery_template_id: formValues.delivery_template_id,
         give_integral: formValues.give_integral,
         sub_commission_type: Number(formValues.sub_commission_type),
@@ -513,14 +511,19 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
     if (!name) {
       return;
     }
-    const value = checkedValues.join(',');
     setFormValues(prev => ({
       ...prev,
-      [name]: value
+      [name]: checkedValues
     }));
 
-    // 默认选中运费模板
-    if (value.indexOf('0') >= 0 && templates.length > 0) {
+    // 取消选中运费模板
+    if (!checkedValues.includes('0')) {
+      setFormValues(prev => ({
+        ...prev,
+        delivery_template_id: undefined
+      }));
+    } else if (!formValues.delivery_template_id && formValues.delivery_template_id != 0 && templates.length > 0) {
+      // 默认选中运费模板
       setFormValues(prev => ({
         ...prev,
         delivery_template_id: templates[0].id
@@ -533,7 +536,7 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
         [name]: undefined
       }));
     }
-  }, [errors, templates]);
+  }, [errors, formValues.delivery_template_id, templates]);
 
   const handleSelectChange = (e: SelectChangeEvent<number>) => {
     const { name, value } = e.target;
@@ -612,8 +615,7 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
           setSliderFiles((prev) =>
             prev.map((item, idx) => {
               if (idx !== index) return item;
-              const updatedItem = { ...item, file: { ...item.file!, progress } };
-              return updatedItem;
+              return { ...item, file: { ...item.file!, progress } };
             })
           );
         });
@@ -622,8 +624,7 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
         setSliderFiles((prev) =>
           prev.map((item, idx) => {
             if (idx !== index) return item;
-            const updatedItem = { ...item, file_id: result, file: { ...item.file!, status: 'done' as const } };
-            return updatedItem;
+            return { ...item, file_id: result, file: { ...item.file!, status: 'done' as const } };
           })
         );
       } catch (error) {
@@ -632,8 +633,7 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
         setSliderFiles((prev) =>
           prev.map((item, idx) => {
             if (idx !== index) return item;
-            const updatedItem = { ...item, file: { ...item.file!, status: 'error' as const } };
-            return updatedItem;
+            return { ...item, file: { ...item.file!, status: 'error' as const } };
           })
         );
       }
@@ -701,14 +701,14 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
         // 多规格 批量设置
         setFormValues((prev) => ({
           ...prev,
-          skus: formValues.skus.map(item => {
+          skus: prev.skus.map(item => {
             return { ...item, file }
           })
         }))
       } else {
         setFormValues((prev) => ({
           ...prev,
-          skus: formValues.skus.map((item, idx) => {
+          skus: prev.skus.map((item, idx) => {
             if (idx !== index) return item;
             return { ...item, file }
           })
@@ -723,14 +723,14 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
             // 多规格 批量设置
             setFormValues((prev) => ({
               ...prev,
-              skus: formValues.skus.map(item => {
+              skus: prev.skus.map(item => {
                 return { ...item, file: { ...item.file!, progress } }
               })
             }))
           } else {
             setFormValues((prev) => ({
               ...prev,
-              skus: formValues.skus.map((item, idx) => {
+              skus: prev.skus.map((item, idx) => {
                 if (idx !== index) return item;
                 return { ...item, file: { ...item.file!, progress } }
               })
@@ -743,14 +743,14 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
           // 多规格 批量设置
           setFormValues((prev) => ({
             ...prev,
-            skus: formValues.skus.map(item => {
+            skus: prev.skus.map(item => {
               return { ...item, file_id: result, file: { ...item.file!, status: 'done' as const } }
             })
           }))
         } else {
           setFormValues((prev) => ({
             ...prev,
-            skus: formValues.skus.map((item, idx) => {
+            skus: prev.skus.map((item, idx) => {
               if (idx !== index) return item;
               return { ...item, file_id: result, file: { ...item.file!, status: 'done' as const } }
             })
@@ -780,14 +780,14 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
           // 多规格 批量设置
           setFormValues((prev) => ({
             ...prev,
-            skus: formValues.skus.map(item => {
+            skus: prev.skus.map(item => {
               return { ...item, file: { ...item.file!, status: 'error' as const } }
             })
           }))
         } else {
           setFormValues((prev) => ({
             ...prev,
-            skus: formValues.skus.map((item, idx) => {
+            skus: prev.skus.map((item, idx) => {
               if (idx !== index) return item;
               return { ...item, file: { ...item.file!, status: 'error' as const } }
             })
@@ -800,21 +800,21 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
         // 多规格 批量设置
         setFormValues((prev) => ({
           ...prev,
-          skus: formValues.skus.map(item => {
+          skus: prev.skus.map(item => {
             return { ...item, file: undefined }
           })
         }))
       } else {
         setFormValues((prev) => ({
           ...prev,
-          skus: formValues.skus.map((item, idx) => {
+          skus: prev.skus.map((item, idx) => {
             if (idx !== index) return item;
             return { ...item, file: undefined }
           })
         }))
       }
     }
-  }, [formValues.skus, formValues.spec_type]);
+  }, [formValues.spec_type]);
 
   const handleOpenPropertySelect = () => {
     (selectProperty.current as any).show(selectedProperties.map(item => item.id));
@@ -1146,7 +1146,7 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
                   {t('page.mall.product.sku.list.title.batch')}
                 </Typography>}
                 <Card variant="outlined" sx={{ mt: 2, width: '100%' }}>
-                  <Box sx={{ display: 'table', width: '100%', "& .table-row": { display: 'table-row', "& .table-cell": { display: 'table-cell', padding: 1, textAlign: 'center', } } }}>
+                  <Box sx={{ display: 'table', width: '100%', "& .table-row": { display: 'table-row', "& .table-cell": { display: 'table-cell', padding: 1, textAlign: 'center', verticalAlign: 'middle' } } }}>
                     <Box className='table-row'>
                       <Box className='table-cell' sx={{ width: 240 }}><Typography variant="body1">{t('page.mall.product.sku.title.file')}</Typography></Box>
                       <Box className='table-cell' sx={{ width: 240 }}><Typography variant="body1">{t('page.mall.product.sku.title.bar.code')}</Typography></Box>
@@ -1161,7 +1161,7 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
                     </Box>
                     {formValues.skus.map((item, index) => {
                       if (index > 0) {
-                        return (<></>)
+                        return (<Box key={index}></Box>)
                       }
                       return (
                         <Box className='table-row' key={index}>
@@ -1308,7 +1308,7 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
                     {t('page.mall.product.sku.list.title')}
                   </Typography>
                   <Card variant="outlined" sx={{ mt: 2, width: '100%' }}>
-                    <Box sx={{ display: 'table', width: '100%', "& .table-row": { display: 'table-row', "& .table-cell": { display: 'table-cell', padding: 1, textAlign: 'center', } } }}>
+                    <Box sx={{ display: 'table', width: '100%', "& .table-row": { display: 'table-row', "& .table-cell": { display: 'table-cell', padding: 1, textAlign: 'center', verticalAlign: 'middle' } } }}>
                       <Box className='table-row'>
                         <Box className='table-cell' sx={{ width: 240 }}><Typography variant="body1">{t('page.mall.product.sku.title.file')}</Typography></Box>
                         {selectedProperties.map((item) => (
@@ -1503,7 +1503,7 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
                   dict_type='delivery_type'
                   onChange={handleCheckboxChange}
                 />
-                {formValues.delivery_types.indexOf('0') >= 0 && <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiSelect-root': { width: '240px' } }}>
+                {formValues.delivery_types.includes('0') && <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiSelect-root': { width: '240px' } }}>
                   <InputLabel required size="small" id="template-select-label">{t("page.mall.product.title.delivery.template")}</InputLabel>
                   <Select
                     required

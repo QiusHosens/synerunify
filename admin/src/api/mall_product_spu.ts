@@ -33,7 +33,7 @@ export interface MallProductSpuRequest {
   cost_price: number; // 成本价，单位： 分
   stock: number; // 库存
   delivery_types: string; // 配送方式数组
-  delivery_template_id: number; // 物流配置模板编号
+  delivery_template_id?: number; // 物流配置模板编号
   give_integral: number; // 赠送积分
   sub_commission_type: number; // 分销类型
   virtual_sales_count: number; // 虚拟销量

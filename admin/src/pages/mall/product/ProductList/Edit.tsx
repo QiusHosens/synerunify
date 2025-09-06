@@ -73,6 +73,7 @@ const MallProductSpuEdit = forwardRef(({ onSubmit }: MallProductSpuEditProps, re
   const [treeData, setTreeData] = useState<TreeNode[]>([]);
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | number>(0);
   const [sliderFiles, setSliderFiles] = useState<AttachmentValues[]>([]);
+  const [deliveryTypes, setDeliveryTypes] = useState<string[]>([]);
   const [templates, setTemplates] = useState<MallTradeDeliveryExpressTemplateResponse[]>([]);
   const [selectedProperties, setSelectedProperties] = useState<MallProductPropertyBaseResponse[]>([]);
   const [selectedPropertyValueIds, setSelectedPropertyValueIds] = useState<number[]>([]);
@@ -289,6 +290,7 @@ const MallProductSpuEdit = forwardRef(({ onSubmit }: MallProductSpuEditProps, re
     setMallProductSpu({
       ...result,
     })
+    setDeliveryTypes(result.delivery_types.split(','));
     // 设置封面图片
     downloadSystemFile(result.file_id, (progress) => {
       setDownloadImages(prev => {
@@ -480,7 +482,7 @@ const MallProductSpuEdit = forwardRef(({ onSubmit }: MallProductSpuEditProps, re
         market_price: mallProductSpu.skus[0].market_price,
         cost_price: mallProductSpu.skus[0].cost_price,
         stock: mallProductSpu.skus[0].stock,
-        delivery_types: mallProductSpu.delivery_types,
+        delivery_types: deliveryTypes.join(','),
         delivery_template_id: mallProductSpu.delivery_template_id,
         give_integral: mallProductSpu.give_integral,
         sub_commission_type: Number(mallProductSpu.sub_commission_type),
@@ -512,14 +514,21 @@ const MallProductSpuEdit = forwardRef(({ onSubmit }: MallProductSpuEditProps, re
     if (!name) {
       return;
     }
+    setDeliveryTypes(checkedValues);
     const value = checkedValues.join(',');
     setMallProductSpu(prev => ({
       ...prev,
       [name]: value
     }));
 
-    // 默认选中运费模板
-    if (value.indexOf('0') >= 0 && templates.length > 0) {
+    // 取消选中运费模板
+    if (!checkedValues.includes('0')) {
+      setMallProductSpu(prev => ({
+        ...prev,
+        delivery_template_id: undefined
+      }));
+    } else if (!mallProductSpu.delivery_template_id && mallProductSpu.delivery_template_id != 0 && templates.length > 0) {
+      // 默认选中运费模板
       setMallProductSpu(prev => ({
         ...prev,
         delivery_template_id: templates[0].id
@@ -532,7 +541,7 @@ const MallProductSpuEdit = forwardRef(({ onSubmit }: MallProductSpuEditProps, re
         [name]: undefined
       }));
     }
-  }, [errors, templates]);
+  }, [errors, mallProductSpu.delivery_template_id, templates]);
 
   const handleSelectChange = (e: SelectChangeEvent<number>) => {
     const { name, value } = e.target;
@@ -611,8 +620,7 @@ const MallProductSpuEdit = forwardRef(({ onSubmit }: MallProductSpuEditProps, re
           setSliderFiles((prev) =>
             prev.map((item, idx) => {
               if (idx !== index) return item;
-              const updatedItem = { ...item, file: { ...item.file!, progress } };
-              return updatedItem;
+              return { ...item, file: { ...item.file!, progress } };
             })
           );
         });
@@ -621,8 +629,7 @@ const MallProductSpuEdit = forwardRef(({ onSubmit }: MallProductSpuEditProps, re
         setSliderFiles((prev) =>
           prev.map((item, idx) => {
             if (idx !== index) return item;
-            const updatedItem = { ...item, file_id: result, file: { ...item.file!, status: 'done' as const } };
-            return updatedItem;
+            return { ...item, file_id: result, file: { ...item.file!, status: 'done' as const } };
           })
         );
       } catch (error) {
@@ -631,8 +638,7 @@ const MallProductSpuEdit = forwardRef(({ onSubmit }: MallProductSpuEditProps, re
         setSliderFiles((prev) =>
           prev.map((item, idx) => {
             if (idx !== index) return item;
-            const updatedItem = { ...item, file: { ...item.file!, status: 'error' as const } };
-            return updatedItem;
+            return { ...item, file: { ...item.file!, status: 'error' as const } };
           })
         );
       }
@@ -700,14 +706,14 @@ const MallProductSpuEdit = forwardRef(({ onSubmit }: MallProductSpuEditProps, re
         // 多规格 批量设置
         setMallProductSpu((prev) => ({
           ...prev,
-          skus: mallProductSpu.skus.map(item => {
+          skus: prev.skus.map(item => {
             return { ...item, file }
           })
         }))
       } else {
         setMallProductSpu((prev) => ({
           ...prev,
-          skus: mallProductSpu.skus.map((item, idx) => {
+          skus: prev.skus.map((item, idx) => {
             if (idx !== index) return item;
             return { ...item, file }
           })
@@ -722,14 +728,14 @@ const MallProductSpuEdit = forwardRef(({ onSubmit }: MallProductSpuEditProps, re
             // 多规格 批量设置
             setMallProductSpu((prev) => ({
               ...prev,
-              skus: mallProductSpu.skus.map(item => {
+              skus: prev.skus.map(item => {
                 return { ...item, file: { ...item.file!, progress } }
               })
             }))
           } else {
             setMallProductSpu((prev) => ({
               ...prev,
-              skus: mallProductSpu.skus.map((item, idx) => {
+              skus: prev.skus.map((item, idx) => {
                 if (idx !== index) return item;
                 return { ...item, file: { ...item.file!, progress } }
               })
@@ -742,14 +748,14 @@ const MallProductSpuEdit = forwardRef(({ onSubmit }: MallProductSpuEditProps, re
           // 多规格 批量设置
           setMallProductSpu((prev) => ({
             ...prev,
-            skus: mallProductSpu.skus.map(item => {
+            skus: prev.skus.map(item => {
               return { ...item, file_id: result, file: { ...item.file!, status: 'done' as const } }
             })
           }))
         } else {
           setMallProductSpu((prev) => ({
             ...prev,
-            skus: mallProductSpu.skus.map((item, idx) => {
+            skus: prev.skus.map((item, idx) => {
               if (idx !== index) return item;
               return { ...item, file_id: result, file: { ...item.file!, status: 'done' as const } }
             })
@@ -779,14 +785,14 @@ const MallProductSpuEdit = forwardRef(({ onSubmit }: MallProductSpuEditProps, re
           // 多规格 批量设置
           setMallProductSpu((prev) => ({
             ...prev,
-            skus: mallProductSpu.skus.map(item => {
+            skus: prev.skus.map(item => {
               return { ...item, file: { ...item.file!, status: 'error' as const } }
             })
           }))
         } else {
           setMallProductSpu((prev) => ({
             ...prev,
-            skus: mallProductSpu.skus.map((item, idx) => {
+            skus: prev.skus.map((item, idx) => {
               if (idx !== index) return item;
               return { ...item, file: { ...item.file!, status: 'error' as const } }
             })
@@ -799,21 +805,21 @@ const MallProductSpuEdit = forwardRef(({ onSubmit }: MallProductSpuEditProps, re
         // 多规格 批量设置
         setMallProductSpu((prev) => ({
           ...prev,
-          skus: mallProductSpu.skus.map(item => {
+          skus: prev.skus.map(item => {
             return { ...item, file: undefined }
           })
         }))
       } else {
         setMallProductSpu((prev) => ({
           ...prev,
-          skus: mallProductSpu.skus.map((item, idx) => {
+          skus: prev.skus.map((item, idx) => {
             if (idx !== index) return item;
             return { ...item, file: undefined }
           })
         }))
       }
     }
-  }, [mallProductSpu.skus, mallProductSpu.spec_type]);
+  }, [mallProductSpu.spec_type]);
 
   const handleOpenPropertySelect = () => {
     (selectProperty.current as any).show(selectedProperties.map(item => item.id));
@@ -1146,7 +1152,7 @@ const MallProductSpuEdit = forwardRef(({ onSubmit }: MallProductSpuEditProps, re
                   {t('page.mall.product.sku.list.title.batch')}
                 </Typography>}
                 <Card variant="outlined" sx={{ mt: 2, width: '100%' }}>
-                  <Box sx={{ display: 'table', width: '100%', "& .table-row": { display: 'table-row', "& .table-cell": { display: 'table-cell', padding: 1, textAlign: 'center', } } }}>
+                  <Box sx={{ display: 'table', width: '100%', "& .table-row": { display: 'table-row', "& .table-cell": { display: 'table-cell', padding: 1, textAlign: 'center', verticalAlign: 'middle' } } }}>
                     <Box className='table-row'>
                       <Box className='table-cell' sx={{ width: 240 }}><Typography variant="body1">{t('page.mall.product.sku.title.file')}</Typography></Box>
                       <Box className='table-cell' sx={{ width: 240 }}><Typography variant="body1">{t('page.mall.product.sku.title.bar.code')}</Typography></Box>
@@ -1309,7 +1315,7 @@ const MallProductSpuEdit = forwardRef(({ onSubmit }: MallProductSpuEditProps, re
                     {t('page.mall.product.sku.list.title')}
                   </Typography>
                   <Card variant="outlined" sx={{ mt: 2, width: '100%' }}>
-                    <Box sx={{ display: 'table', width: '100%', "& .table-row": { display: 'table-row', "& .table-cell": { display: 'table-cell', padding: 1, textAlign: 'center', } } }}>
+                    <Box sx={{ display: 'table', width: '100%', "& .table-row": { display: 'table-row', "& .table-cell": { display: 'table-cell', padding: 1, textAlign: 'center', verticalAlign: 'middle' } } }}>
                       <Box className='table-row'>
                         <Box className='table-cell' sx={{ width: 240 }}><Typography variant="body1">{t('page.mall.product.sku.title.file')}</Typography></Box>
                         {selectedProperties.map((item) => (
@@ -1501,11 +1507,11 @@ const MallProductSpuEdit = forwardRef(({ onSubmit }: MallProductSpuEditProps, re
                   id="delivery-row-checkbox-buttons-group-label"
                   label={t("page.mall.product.title.delivery.types")}
                   name='delivery_types'
-                  value={mallProductSpu.delivery_types}
+                  value={deliveryTypes}
                   dict_type='delivery_type'
                   onChange={handleCheckboxChange}
                 />
-                {mallProductSpu.delivery_types.indexOf('0') >= 0 && <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiSelect-root': { width: '240px' } }}>
+                {deliveryTypes.includes('0') && <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiSelect-root': { width: '240px' } }}>
                   <InputLabel required size="small" id="template-select-label">{t("page.mall.product.title.delivery.template")}</InputLabel>
                   <Select
                     required

@@ -10,7 +10,7 @@ interface CustomizedDictCheckboxGroupProps {
   id?: string;
   name?: string;
   dict_type: string;
-  value: any;
+  value: any[];
   label: string;
   onChange: (name: string | undefined, checkedValues: any[]) => void;
   sx?: SxProps<Theme>;
@@ -32,7 +32,7 @@ const CustomizedDictCheckboxGroup: React.FC<CustomizedDictCheckboxGroupProps> = 
 
   useEffect(() => {
     if (value) {
-      setCheckedValues(value.split(','));
+      setCheckedValues(value);
     }
     const datas = dictOfType.get(dict_type);
     if (datas) {
