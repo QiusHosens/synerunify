@@ -1128,7 +1128,7 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
                   onChange={handleInputChange}
                   sx={{ mt: 2 }}
                 />
-                {formValues.spec_type == 1 && <Button variant="customContained" onClick={handleOpenPropertySelect} sx={{ width: 240 }}>
+                {formValues.spec_type == 1 && <Button variant="customContained" onClick={handleOpenPropertySelect} sx={{ mt: 2, width: 240 }}>
                   {t('page.mall.product.property.operate.add')}
                 </Button>}
                 {formValues.spec_type == 1 && selectedProperties.map((item) => (
@@ -1142,7 +1142,7 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
                   </Stack>
                 ))}
 
-                {formValues.spec_type == 1 && <Typography variant="body1" sx={{ mt: 3, fontSize: '1rem', fontWeight: 500 }}>
+                {formValues.spec_type == 1 && <Typography variant="body1" sx={{ mt: 2, fontSize: '1rem', fontWeight: 500 }}>
                   {t('page.mall.product.sku.list.title.batch')}
                 </Typography>}
                 <Card variant="outlined" sx={{ mt: 2, width: '100%' }}>
@@ -1304,7 +1304,7 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
                 </Card>
 
                 {formValues.spec_type == 1 && selectedProperties.length > 0 && <>
-                  <Typography variant="body1" sx={{ mt: 3, fontSize: '1rem', fontWeight: 500 }}>
+                  <Typography variant="body1" sx={{ mt: 2, fontSize: '1rem', fontWeight: 500 }}>
                     {t('page.mall.product.sku.list.title')}
                   </Typography>
                   <Card variant="outlined" sx={{ mt: 2, width: '100%' }}>
@@ -1327,7 +1327,7 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
                       </Box>
                       {formValues.skus.map((item, index) => {
                         if (index == 0) {
-                          return (<></>);
+                          return (<Box key={index}></Box>);
                         }
                         return (
                           <Box className='table-row' key={index}>

@@ -144,3 +144,13 @@ pub async fn disable(db: &DatabaseConnection, login_user: LoginUserContext, id: 
     mall_trade_delivery_express_template.update(db).await?;
     Ok(())
 }
+
+pub async fn find_by_id(db: &DatabaseConnection, login_user: LoginUserContext, id: i64) -> Result<Option<MallTradeDeliveryExpressTemplateModel>> {
+    let condition = Condition::all()
+        .add(Column::Id.eq(id))
+        .add(Column::TenantId.eq(login_user.tenant_id));
+
+    let mall_trade_delivery_express_template = MallTradeDeliveryExpressTemplateEntity::find_active_with_condition(condition)
+        .one(db).await?;
+    Ok(mall_trade_delivery_express_template)
+}

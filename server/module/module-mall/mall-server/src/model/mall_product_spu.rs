@@ -2,6 +2,7 @@ use chrono::NaiveDateTime;
 use sea_orm::Condition;
 use sea_orm::entity::prelude::*;
 use common::interceptor::orm::active_filter::ActiveFilterEntityTrait;
+use crate::model::{mall_product_category, mall_product_brand};
 
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel)]
 #[sea_orm(table_name = "mall_product_spu")]
@@ -69,7 +70,21 @@ pub struct Model {
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
-pub enum Relation {}
+pub enum Relation {
+    #[sea_orm(
+        belongs_to = "super::mall_product_category::Entity",
+        from = "Column::CategoryId",
+        to = "mall_product_category::Column::Id"
+    )]
+    ProductCategory,
+
+    #[sea_orm(
+        belongs_to = "super::mall_product_brand::Entity",
+        from = "Column::BrandId",
+        to = "mall_product_brand::Column::Id"
+    )]
+    ProductBrand,
+}
 
 impl Related<Entity> for Entity {
     fn to() -> RelationDef {

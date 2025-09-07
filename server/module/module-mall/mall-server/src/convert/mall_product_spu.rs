@@ -1,9 +1,12 @@
 use sea_orm::{Set, NotSet};
 use mall_model::request::mall_product_sku::{CreateMallProductSkuRequest, UpdateMallProductSkuRequest};
 use crate::model::mall_product_spu::{self, Model as MallProductSpu, ActiveModel as MallProductSpuActiveModel};
+use crate::model::mall_product_category::{Model as MallProductCategoryModel};
+use crate::model::mall_product_brand::{Model as MallProductBrandModel};
+use crate::model::mall_trade_delivery_express_template::{Model as MallTradeDeliveryExpressTemplateModel};
 use mall_model::request::mall_product_spu::{CreateMallProductSpuRequest, UpdateMallProductSpuRequest};
 use mall_model::response::mall_product_sku::MallProductSkuBaseResponse;
-use mall_model::response::mall_product_spu::{MallProductSpuBaseResponse, MallProductSpuResponse};
+use mall_model::response::mall_product_spu::{MallProductSpuBaseResponse, MallProductSpuInfoResponse, MallProductSpuResponse};
 
 pub fn create_request_to_model(request: &CreateMallProductSpuRequest, sku: &CreateMallProductSkuRequest) -> MallProductSpuActiveModel {
     MallProductSpuActiveModel {
@@ -161,6 +164,44 @@ pub fn model_to_base_response(model: MallProductSpu, skus: Vec<MallProductSkuBas
         sales_count: model.sales_count,
         virtual_sales_count: model.virtual_sales_count,
         browse_count: model.browse_count,
+
+        skus,
+    }
+}
+
+pub fn model_to_info_response(model: MallProductSpu, model_category: Option<MallProductCategoryModel>, model_brand: Option<MallProductBrandModel>, model_delivery_template: Option<MallTradeDeliveryExpressTemplateModel>, skus: Vec<MallProductSkuBaseResponse>) -> MallProductSpuInfoResponse {
+    let category_name = model_category.map(|category| category.name.clone());
+    let brand_name = model_brand.map(|brand| brand.name.clone());
+    let delivery_template_name = model_delivery_template.map(|delivery_template| delivery_template.name.clone());
+
+    MallProductSpuInfoResponse {
+        id: model.id,
+        name: model.name,
+        keyword: model.keyword,
+        introduction: model.introduction,
+        description: model.description,
+        category_id: model.category_id,
+        brand_id: model.brand_id,
+        file_id: model.file_id,
+        slider_file_ids: model.slider_file_ids,
+        sort: model.sort,
+        status: model.status,
+        spec_type: model.spec_type,
+        price: model.price,
+        market_price: model.market_price,
+        cost_price: model.cost_price,
+        stock: model.stock,
+        delivery_types: model.delivery_types,
+        delivery_template_id: model.delivery_template_id,
+        give_integral: model.give_integral,
+        sub_commission_type: model.sub_commission_type,
+        sales_count: model.sales_count,
+        virtual_sales_count: model.virtual_sales_count,
+        browse_count: model.browse_count,
+
+        category_name,
+        brand_name,
+        delivery_template_name,
 
         skus,
     }

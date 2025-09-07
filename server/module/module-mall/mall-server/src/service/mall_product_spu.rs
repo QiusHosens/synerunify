@@ -1,16 +1,19 @@
 use common::interceptor::orm::simple_support::SimpleSupport;
-use sea_orm::{DatabaseConnection, EntityTrait, Order, ColumnTrait, ActiveModelTrait, PaginatorTrait, QueryOrder, QueryFilter, Condition, TransactionTrait};
-use crate::model::mall_product_spu::{Model as MallProductSpuModel, ActiveModel as MallProductSpuActiveModel, Entity as MallProductSpuEntity, Column};
+use sea_orm::{DatabaseConnection, EntityTrait, Order, ColumnTrait, ActiveModelTrait, PaginatorTrait, QueryOrder, QueryFilter, Condition, TransactionTrait, QuerySelect, JoinType, RelationTrait};
+use crate::model::mall_product_spu::{Model as MallProductSpuModel, ActiveModel as MallProductSpuActiveModel, Entity as MallProductSpuEntity, Column, Relation};
 use mall_model::request::mall_product_spu::{CreateMallProductSpuRequest, UpdateMallProductSpuRequest, PaginatedKeywordRequest};
-use mall_model::response::mall_product_spu::{MallProductSpuBaseResponse, MallProductSpuResponse};
-use crate::convert::mall_product_spu::{create_request_to_model, update_request_to_model, model_to_response, model_to_base_response};
+use mall_model::response::mall_product_spu::{MallProductSpuBaseResponse, MallProductSpuInfoResponse, MallProductSpuResponse};
+use crate::model::mall_product_category::{Entity as MallProductCategoryEntity};
+use crate::model::mall_product_brand::{Entity as MallProductBrandEntity};
+use crate::model::mall_trade_delivery_express_template::{Entity as MallTradeDeliveryExpressTemplateEntity};
+use crate::convert::mall_product_spu::{create_request_to_model, update_request_to_model, model_to_response, model_to_base_response, model_to_info_response};
 use anyhow::{Result, anyhow, Context};
 use sea_orm::ActiveValue::Set;
 use common::constants::enum_constants::{STATUS_DISABLE, STATUS_ENABLE};
 use common::base::page::PaginatedResponse;
 use common::context::context::LoginUserContext;
 use common::interceptor::orm::active_filter::ActiveFilterEntityTrait;
-use crate::service::mall_product_sku;
+use crate::service::{mall_product_sku, mall_trade_delivery_express_template};
 
 pub async fn create(db: &DatabaseConnection, login_user: LoginUserContext, request: CreateMallProductSpuRequest) -> Result<i64> {
     if request.skus.is_empty() {
@@ -93,6 +96,31 @@ pub async fn get_base_by_id(db: &DatabaseConnection, login_user: LoginUserContex
     let mall_product_spu = mall_product_spu.unwrap();
     let skus = mall_product_sku::list_base_by_spu_id(&db, login_user, id).await?;
     Ok(Some(model_to_base_response(mall_product_spu, skus)))
+}
+
+pub async fn get_info_by_id(db: &DatabaseConnection, login_user: LoginUserContext, id: i64) -> Result<Option<MallProductSpuInfoResponse>> {
+    let condition = Condition::all()
+        .add(Column::Id.eq(id))
+        .add(Column::TenantId.eq(login_user.tenant_id));
+
+    let mall_product_spu = MallProductSpuEntity::find_active_with_data_permission(login_user.clone())
+        .filter(condition)
+        .select_also(MallProductCategoryEntity)
+        .select_also(MallProductBrandEntity)
+        .join(JoinType::LeftJoin, Relation::ProductCategory.def())
+        .join(JoinType::LeftJoin, Relation::ProductBrand.def())
+        .one(db).await?;
+
+    if mall_product_spu.is_none() {
+        return Ok(None);
+    }
+    let (product_spu, category, brand) = mall_product_spu.unwrap();
+    let mut delivery_template = None;
+    if let Some(delivery_template_id) = product_spu.delivery_template_id {
+        delivery_template = mall_trade_delivery_express_template::find_by_id(&db, login_user.clone(), delivery_template_id).await?;
+    }
+    let skus = mall_product_sku::list_base_by_spu_id(&db, login_user, id).await?;
+    Ok(Some(model_to_info_response(product_spu, category, brand, delivery_template, skus)))
 }
 
 pub async fn get_paginated(db: &DatabaseConnection, login_user: LoginUserContext, params: PaginatedKeywordRequest) -> Result<PaginatedResponse<MallProductSpuResponse>> {

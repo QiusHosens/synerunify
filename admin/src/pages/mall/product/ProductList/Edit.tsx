@@ -1134,7 +1134,7 @@ const MallProductSpuEdit = forwardRef(({ onSubmit }: MallProductSpuEditProps, re
                   onChange={handleInputChange}
                   sx={{ mt: 2 }}
                 />
-                {mallProductSpu.spec_type == 1 && <Button variant="customContained" onClick={handleOpenPropertySelect} sx={{ width: 240 }}>
+                {mallProductSpu.spec_type == 1 && <Button variant="customContained" onClick={handleOpenPropertySelect} sx={{ mt: 2, width: 240 }}>
                   {t('page.mall.product.property.operate.add')}
                 </Button>}
                 {mallProductSpu.spec_type == 1 && selectedProperties.map((item) => (
@@ -1148,7 +1148,7 @@ const MallProductSpuEdit = forwardRef(({ onSubmit }: MallProductSpuEditProps, re
                   </Stack>
                 ))}
 
-                {mallProductSpu.spec_type == 1 && <Typography variant="body1" sx={{ mt: 3, fontSize: '1rem', fontWeight: 500 }}>
+                {mallProductSpu.spec_type == 1 && <Typography variant="body1" sx={{ mt: 2, fontSize: '1rem', fontWeight: 500 }}>
                   {t('page.mall.product.sku.list.title.batch')}
                 </Typography>}
                 <Card variant="outlined" sx={{ mt: 2, width: '100%' }}>
@@ -1167,7 +1167,7 @@ const MallProductSpuEdit = forwardRef(({ onSubmit }: MallProductSpuEditProps, re
                     </Box>
                     {mallProductSpu.skus.map((item, index) => {
                       if (index > 0) {
-                        return (<></>)
+                        return (<Box key={index}></Box>)
                       }
                       return (
                         <Box className='table-row' key={index}>
@@ -1311,7 +1311,7 @@ const MallProductSpuEdit = forwardRef(({ onSubmit }: MallProductSpuEditProps, re
                 </Card>
 
                 {mallProductSpu.spec_type == 1 && selectedProperties.length > 0 && <>
-                  <Typography variant="body1" sx={{ mt: 3, fontSize: '1rem', fontWeight: 500 }}>
+                  <Typography variant="body1" sx={{ mt: 2, fontSize: '1rem', fontWeight: 500 }}>
                     {t('page.mall.product.sku.list.title')}
                   </Typography>
                   <Card variant="outlined" sx={{ mt: 2, width: '100%' }}>
@@ -1334,7 +1334,7 @@ const MallProductSpuEdit = forwardRef(({ onSubmit }: MallProductSpuEditProps, re
                       </Box>
                       {mallProductSpu.skus.map((item, index) => {
                         if (index == 0) {
-                          return (<></>);
+                          return (<Box key={index}></Box>);
                         }
                         return (
                           <Box className='table-row' key={index}>

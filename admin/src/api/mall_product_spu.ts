@@ -1,19 +1,23 @@
-import { PaginatedRequest, PaginatedResponse } from '@/base/page';
-import { UploadFile } from '@/components/CustomizedFileUpload';
-import { api } from '@/utils/request';
-import { MallProductSkuRequest, MallProductSkuResponse } from './mall_product_sku';
+import { PaginatedRequest, PaginatedResponse } from "@/base/page";
+import { UploadFile } from "@/components/CustomizedFileUpload";
+import { api } from "@/utils/request";
+import {
+  MallProductSkuRequest,
+  MallProductSkuResponse,
+} from "./mall_product_sku";
 
 const apis = {
-  create: '/mall/mall_product_spu/create', // 新增
-  update: '/mall/mall_product_spu/update', // 修改
-  delete: '/mall/mall_product_spu/delete', // 删除
-  get: '/mall/mall_product_spu/get', // 单条查询
-  get_base: '/mall/mall_product_spu/get_base', // 单条查询
-  list: '/mall/mall_product_spu/list', // 列表查询
-  page: '/mall/mall_product_spu/page', // 分页查询
-  enable: '/mall/mall_product_spu/enable', // 启用
-  disable: '/mall/mall_product_spu/disable', // 禁用
-}
+  create: "/mall/mall_product_spu/create", // 新增
+  update: "/mall/mall_product_spu/update", // 修改
+  delete: "/mall/mall_product_spu/delete", // 删除
+  get: "/mall/mall_product_spu/get", // 单条查询
+  get_base: "/mall/mall_product_spu/get_base", // 单条查询
+  get_info: "/mall/mall_product_spu/get_info", // 单条查询
+  list: "/mall/mall_product_spu/list", // 列表查询
+  page: "/mall/mall_product_spu/page", // 分页查询
+  enable: "/mall/mall_product_spu/enable", // 启用
+  disable: "/mall/mall_product_spu/disable", // 禁用
+};
 
 export interface MallProductSpuRequest {
   id?: number; // 商品 SPU 编号，自增
@@ -72,46 +76,69 @@ export interface MallProductSpuResponse {
   update_time: string; // 更新时间
   skus: MallProductSkuResponse[]; // sku列表
 
+  category_name?: string; // 商品分类名称
+  brand_name?: string; // 商品品牌名称
+  delivery_template_name?: string; // 物流配置模板名称
+
   previewUrl?: string; // 商品封面预览地址
   sliderPreviewUrls: string[]; // 商品轮播图预览地址
 }
 
-export interface MallProductSpuQueryCondition extends PaginatedRequest {
+export interface MallProductSpuQueryCondition extends PaginatedRequest {}
 
-}
-
-export const createMallProductSpu = (mall_product_spu: MallProductSpuRequest): Promise<number> => {
+export const createMallProductSpu = (
+  mall_product_spu: MallProductSpuRequest
+): Promise<number> => {
   return api.post<number>(apis.create, mall_product_spu);
-}
+};
 
-export const updateMallProductSpu = (mall_product_spu: MallProductSpuRequest): Promise<void> => {
+export const updateMallProductSpu = (
+  mall_product_spu: MallProductSpuRequest
+): Promise<void> => {
   return api.post<void>(apis.update, mall_product_spu);
-}
+};
 
 export const deleteMallProductSpu = (id: number): Promise<void> => {
   return api.post<void>(`${apis.delete}/${id}`);
-}
+};
 
-export const getMallProductSpu = (id: number): Promise<MallProductSpuResponse> => {
+export const getMallProductSpu = (
+  id: number
+): Promise<MallProductSpuResponse> => {
   return api.get<MallProductSpuResponse>(`${apis.get}/${id}`);
-}
+};
 
-export const getBaseMallProductSpu = (id: number): Promise<MallProductSpuResponse> => {
+export const getBaseMallProductSpu = (
+  id: number
+): Promise<MallProductSpuResponse> => {
   return api.get<MallProductSpuResponse>(`${apis.get_base}/${id}`);
-}
+};
 
-export const listMallProductSpu = (): Promise<Array<MallProductSpuResponse>> => {
+export const getInfoMallProductSpu = (
+  id: number
+): Promise<MallProductSpuResponse> => {
+  return api.get<MallProductSpuResponse>(`${apis.get_info}/${id}`);
+};
+
+export const listMallProductSpu = (): Promise<
+  Array<MallProductSpuResponse>
+> => {
   return api.get<Array<MallProductSpuResponse>>(apis.list);
-}
+};
 
-export const pageMallProductSpu = (condition: MallProductSpuQueryCondition): Promise<PaginatedResponse<MallProductSpuResponse>> => {
-  return api.get<PaginatedResponse<MallProductSpuResponse>>(apis.page, condition);
-}
+export const pageMallProductSpu = (
+  condition: MallProductSpuQueryCondition
+): Promise<PaginatedResponse<MallProductSpuResponse>> => {
+  return api.get<PaginatedResponse<MallProductSpuResponse>>(
+    apis.page,
+    condition
+  );
+};
 
 export const enableMallProductSpu = (id: number): Promise<void> => {
   return api.post<void>(`${apis.enable}/${id}`);
-}
+};
 
 export const disableMallProductSpu = (id: number): Promise<void> => {
   return api.post<void>(`${apis.disable}/${id}`);
-}
+};

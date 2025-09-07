@@ -12,7 +12,7 @@ interface CustomizedDictRadioGroupProps {
   dict_type: string;
   value: any;
   label: string;
-  onChange: (event: React.ChangeEvent<HTMLInputElement>, value: any) => void;
+  onChange?: (event: React.ChangeEvent<HTMLInputElement>, value: any) => void;
   sx?: SxProps<Theme>;
 }
 

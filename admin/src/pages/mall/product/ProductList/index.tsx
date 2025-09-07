@@ -2,6 +2,7 @@ import { Box, Button, Switch } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { DataGrid, GridCallbackDetails, GridColDef, GridFilterModel, GridRenderCellParams, GridSortModel } from '@mui/x-data-grid';
+import ViewIcon from '@/assets/image/svg/view.svg';
 import EditIcon from '@/assets/image/svg/edit.svg';
 import DeleteIcon from '@/assets/image/svg/delete.svg';
 import { disableMallProductSpu, enableMallProductSpu, pageMallProductSpu, MallProductSpuQueryCondition, MallProductSpuResponse } from '@/api';
@@ -10,6 +11,7 @@ import MallProductSpuEdit from './Edit';
 import MallProductSpuDelete from './Delete';
 import { useHomeStore } from '@/store';
 import CustomizedAutoMore from '@/components/CustomizedAutoMore';
+import MallProductSpuInfo from './Info';
 
 export default function MallProductSpu() {
   const { t } = useTranslation();
@@ -25,6 +27,7 @@ export default function MallProductSpu() {
   const [sortModel, setSortModel] = useState<GridSortModel>([]);
   const [filterModel, setFilterModel] = useState<GridFilterModel>();
 
+  const viewMallProductSpu = useRef(null);
   const addMallProductSpu = useRef(null);
   const editMallProductSpu = useRef(null);
   const deleteMallProductSpu = useRef(null);
@@ -81,6 +84,13 @@ export default function MallProductSpu() {
         minWidth: 100,
         renderCell: (params: GridRenderCellParams) => (
           <CustomizedAutoMore>
+            {hasOperatePermission('mall:product:list:get') && <Button
+              size="small"
+              variant='customOperate'
+              title={t('global.operate.view') + t('global.page.mall.product')}
+              startIcon={<ViewIcon />}
+              onClick={() => handleClickOpenView(params.row)}
+            />}
             {hasOperatePermission('mall:product:list:edit') && <Button
               size="small"
               variant='customOperate'
@@ -112,6 +122,10 @@ export default function MallProductSpu() {
   const handleClickOpenAdd = () => {
     (addMallProductSpu.current as any).show();
   }
+
+  const handleClickOpenView = (mallProductSpu: MallProductSpuResponse) => {
+    (viewMallProductSpu.current as any).show(mallProductSpu);
+  };
 
   const handleClickOpenEdit = (mallProductSpu: MallProductSpuResponse) => {
     (editMallProductSpu.current as any).show(mallProductSpu);
@@ -173,6 +187,7 @@ export default function MallProductSpu() {
           }));
         }}
       />
+      <MallProductSpuInfo ref={addMallProductSpu} />
       <MallProductSpuAdd ref={addMallProductSpu} onSubmit={refreshData} />
       <MallProductSpuEdit ref={editMallProductSpu} onSubmit={refreshData} />
       <MallProductSpuDelete ref={deleteMallProductSpu} onSubmit={refreshData} />
