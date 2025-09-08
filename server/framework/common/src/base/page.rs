@@ -32,3 +32,26 @@ pub struct PaginatedResponse<T> {
     pub size: u64,
     pub total: u64,
 }
+
+fn de_vec_or_single<'de, D>(deserializer: D) -> Result<Vec<i64>, D::Error>
+where
+    D: serde::Deserializer<'de>,
+{
+    #[derive(Deserialize)]
+    #[serde(untagged)]
+    enum OneOrMany<T> {
+        One(T),
+        Many(Vec<T>),
+    }
+
+    match OneOrMany::deserialize(deserializer)? {
+        OneOrMany::One(x) => Ok(vec![x]),
+        OneOrMany::Many(xs) => Ok(xs),
+    }
+}
+
+#[derive(Serialize, Deserialize, Debug, ToSchema)]
+pub struct IdsRequest {
+    #[serde(deserialize_with = "de_vec_or_single")]
+    pub ids: Vec<i64>,
+}

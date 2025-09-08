@@ -46,3 +46,23 @@ pub struct MallProductPropertyValueBaseResponse {
     pub remark: Option<String>, // 备注
 
 }
+
+#[serde_as]
+#[derive(Deserialize, Serialize, Debug, Clone, ToSchema)]
+pub struct MallProductPropertyValueInfoResponse {
+
+    pub id: i64, // 编号
+
+    pub property_id: Option<i64>, // 属性项的编号
+
+    pub name: Option<String>, // 名称
+
+    pub status: i8, // 状态
+
+    pub remark: Option<String>, // 备注
+
+    /****************** 信息 ******************/
+
+    pub property_name: Option<String>, // 属性项的名称
+
+}

@@ -2,7 +2,7 @@ import { Box, Card, FormControl, Stack, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { forwardRef, useImperativeHandle, useRef, useState } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
-import { getBaseMallProductSpu, MallProductPropertyBaseResponse, MallProductPropertyValueResponse, MallProductSpuResponse } from '@/api';
+import { getBaseMallProductSpu, listInfoMallProductPropertyValue, MallProductPropertyBaseResponse, MallProductPropertyValueResponse, MallProductSpuResponse, PropertyValues } from '@/api';
 import CustomizedDialog from '@/components/CustomizedDialog';
 import CustomizedFileUpload, { DownloadProps, UploadFile } from '@/components/CustomizedFileUpload';
 import CustomizedAnchor, { AnchorLinkProps } from '@/components/CustomizedAnchor';
@@ -80,10 +80,35 @@ const MallProductSpuInfo = forwardRef(({ }, ref) => {
 
     const initForm = async (mallProductSpu: MallProductSpuResponse) => {
         const result = await getBaseMallProductSpu(mallProductSpu.id);
+        setDeliveryTypes(result.delivery_types.split(','));
+        // 获取属性
+        const propertyValueId = [];
+        for (const sku of result.skus) {
+            sku.property_list = [];
+            if (sku.properties) {
+                const properties = JSON.parse(sku.properties)
+                for (const property of properties) {
+                    propertyValueId.push(property.valueId);
+                    sku.property_list.push(property as PropertyValues)
+                }
+            }
+        }
+        // 查询属性值
+        const values = await listInfoMallProductPropertyValue(propertyValueId);
+        const valueMap = new Map(values.map(value => [value.id, value]))
+        for (const sku of result.skus) {
+            for (const property of sku.property_list!) {
+                const value = valueMap.get(property.valueId);
+                if (value) {
+                    property.propertyName = value.property_name;
+                    property.valueName = value.name;
+                }
+            }
+        }
         setMallProductSpu({
             ...result,
         })
-        setDeliveryTypes(result.delivery_types.split(','));
+
         // 设置封面图片
         downloadSystemFile(result.file_id, (progress) => {
             setDownloadImages(prev => {

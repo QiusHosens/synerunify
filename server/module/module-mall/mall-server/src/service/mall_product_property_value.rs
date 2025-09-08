@@ -1,11 +1,11 @@
 use std::collections::{HashMap, HashSet};
 use common::interceptor::orm::simple_support::SimpleSupport;
-use sea_orm::{DatabaseConnection, EntityTrait, Order, ColumnTrait, ActiveModelTrait, PaginatorTrait, QueryOrder, QueryFilter, Condition, DatabaseTransaction};
-use crate::model::mall_product_property_value::{Model as MallProductPropertyValueModel, ActiveModel as MallProductPropertyValueActiveModel, Entity as MallProductPropertyValueEntity, Column};
-use crate::model::mall_product_property::{Model as MallProductPropertyModel};
+use sea_orm::{DatabaseConnection, EntityTrait, Order, ColumnTrait, ActiveModelTrait, PaginatorTrait, QueryOrder, QueryFilter, Condition, DatabaseTransaction, QuerySelect, JoinType, RelationTrait};
+use crate::model::mall_product_property_value::{Model as MallProductPropertyValueModel, ActiveModel as MallProductPropertyValueActiveModel, Entity as MallProductPropertyValueEntity, Column, Relation};
+use crate::model::mall_product_property::{Model as MallProductPropertyModel, Entity as MallProductPropertyEntity};
 use mall_model::request::mall_product_property_value::{CreateMallProductPropertyValueRequest, UpdateMallProductPropertyValueRequest, PaginatedKeywordRequest};
-use mall_model::response::mall_product_property_value::{MallProductPropertyValueBaseResponse, MallProductPropertyValueResponse};
-use crate::convert::mall_product_property_value::{create_request_to_model, update_request_to_model, model_to_response, update_add_request_to_model, model_to_base_response};
+use mall_model::response::mall_product_property_value::{MallProductPropertyValueBaseResponse, MallProductPropertyValueInfoResponse, MallProductPropertyValueResponse};
+use crate::convert::mall_product_property_value::{create_request_to_model, update_request_to_model, model_to_response, update_add_request_to_model, model_to_base_response, model_to_info_response};
 use anyhow::{Result, anyhow, Context};
 use sea_orm::ActiveValue::Set;
 use sea_orm::prelude::Expr;
@@ -183,6 +183,16 @@ pub async fn list(db: &DatabaseConnection, login_user: LoginUserContext) -> Resu
     let condition = Condition::all().add(Column::TenantId.eq(login_user.tenant_id));let list = MallProductPropertyValueEntity::find_active_with_condition(condition)
         .all(db).await?;
     Ok(list.into_iter().map(model_to_response).collect())
+}
+
+pub async fn list_by_ids(db: &DatabaseConnection, login_user: LoginUserContext, ids: Vec<i64>) -> Result<Vec<MallProductPropertyValueInfoResponse>> {
+    let list = MallProductPropertyValueEntity::find_active()
+        .filter(Column::TenantId.eq(login_user.tenant_id))
+        .filter(Column::Id.is_in(ids))
+        .select_also(MallProductPropertyEntity)
+        .join(JoinType::LeftJoin, Relation::Property.def())
+        .all(db).await?;
+    Ok(list.into_iter().map(|(model, model_property)|model_to_info_response(model, model_property)).collect())
 }
 
 pub async fn list_by_property_id(db: &DatabaseConnection, login_user: LoginUserContext, property_id: i64) -> Result<Vec<MallProductPropertyValueBaseResponse>> {

@@ -1,8 +1,9 @@
 use sea_orm::{Set, NotSet};
 use common::constants::enum_constants::STATUS_ENABLE;
 use crate::model::mall_product_property_value::{self, Model as MallProductPropertyValue, ActiveModel as MallProductPropertyValueActiveModel};
+use crate::model::mall_product_property::{Model as MallProductProperty};
 use mall_model::request::mall_product_property_value::{CreateMallProductPropertyValueRequest, UpdateMallProductPropertyValueRequest};
-use mall_model::response::mall_product_property_value::{MallProductPropertyValueBaseResponse, MallProductPropertyValueResponse};
+use mall_model::response::mall_product_property_value::{MallProductPropertyValueBaseResponse, MallProductPropertyValueInfoResponse, MallProductPropertyValueResponse};
 
 pub fn create_request_to_model(request: &CreateMallProductPropertyValueRequest) -> MallProductPropertyValueActiveModel {
     MallProductPropertyValueActiveModel {
@@ -62,5 +63,19 @@ pub fn model_to_base_response(model: MallProductPropertyValue) -> MallProductPro
         name: model.name,
         status: model.status,
         remark: model.remark,
+    }
+}
+
+pub fn model_to_info_response(model: MallProductPropertyValue, model_property: Option<MallProductProperty>) -> MallProductPropertyValueInfoResponse {
+    let property_name = model_property.map(|property| property.name.clone()).and_then(|name| name);
+
+    MallProductPropertyValueInfoResponse {
+        id: model.id,
+        property_id: model.property_id,
+        name: model.name,
+        status: model.status,
+        remark: model.remark,
+
+        property_name,
     }
 }

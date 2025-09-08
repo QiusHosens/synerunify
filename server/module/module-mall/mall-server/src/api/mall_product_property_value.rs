@@ -5,9 +5,9 @@ use utoipa_axum::routes;
 use ctor;
 use macros::require_authorize;
 use axum::{routing::{get, post}, Router, extract::{State, Path, Json, Query}, response::IntoResponse, Extension};
-use common::base::page::PaginatedResponse;
+use common::base::page::{IdsRequest, PaginatedResponse};
 use mall_model::request::mall_product_property_value::{CreateMallProductPropertyValueRequest, UpdateMallProductPropertyValueRequest, PaginatedKeywordRequest};
-use mall_model::response::mall_product_property_value::MallProductPropertyValueResponse;
+use mall_model::response::mall_product_property_value::{MallProductPropertyValueInfoResponse, MallProductPropertyValueResponse};
 use common::base::response::CommonResult;
 use common::context::context::LoginUserContext;
 use crate::service;
@@ -20,6 +20,7 @@ pub async fn mall_product_property_value_router(state: AppState) -> OpenApiRoute
         .routes(routes!(delete))
         .routes(routes!(get_by_id))
         .routes(routes!(list))
+        .routes(routes!(list_by_ids))
         .routes(routes!(page))
         .routes(routes!(enable))
         .routes(routes!(disable))
@@ -189,6 +190,33 @@ async fn list(
     Extension(login_user): Extension<LoginUserContext>,
 ) -> CommonResult<Vec<MallProductPropertyValueResponse>> {
     match service::mall_product_property_value::list(&state.db, login_user).await {
+        Ok(data) => {CommonResult::with_data(data)}
+        Err(e) => {CommonResult::with_err(&e.to_string())}
+    }
+}
+
+#[utoipa::path(
+    get,
+    path = "/list_by_ids",
+    params(
+        ("ids" = Vec<i64>, Query, description = "ids")
+    ),
+    operation_id = "mall_product_property_value_list_by_ids",
+    responses(
+        (status = 200, description = "list by ids", body = CommonResult<Vec<MallProductPropertyValueInfoResponse>>)
+    ),
+    tag = "mall_product_property_value",
+    security(
+        ("bearerAuth" = [])
+    )
+)]
+#[require_authorize(operation_id = "mall_product_property_value_list_by_ids", authorize = "")]
+async fn list_by_ids(
+    State(state): State<AppState>,
+    Extension(login_user): Extension<LoginUserContext>,
+    Query(params): Query<IdsRequest>,
+) -> CommonResult<Vec<MallProductPropertyValueInfoResponse>> {
+    match service::mall_product_property_value::list_by_ids(&state.db, login_user, params.ids).await {
         Ok(data) => {CommonResult::with_data(data)}
         Err(e) => {CommonResult::with_err(&e.to_string())}
     }
