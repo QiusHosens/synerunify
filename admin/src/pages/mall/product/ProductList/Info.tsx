@@ -1,32 +1,20 @@
-import { Box, Button, Card, FormControl, FormHelperText, InputLabel, MenuItem, Select, SelectChangeEvent, Stack, Switch, TextField, Typography } from '@mui/material';
+import { Box, Card, FormControl, Stack, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { forwardRef, useCallback, useImperativeHandle, useMemo, useRef, useState } from 'react';
+import { forwardRef, useImperativeHandle, useRef, useState } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
-import { getBaseMallProductProperty, getBaseMallProductSpu, listMallProductBrand, listMallProductCategory, listMallTradeDeliveryExpressTemplate, MallProductBrandResponse, MallProductCategoryResponse, MallProductPropertyBaseResponse, MallProductPropertyValueResponse, MallProductSkuRequest, MallProductSpuRequest, MallProductSpuResponse, MallTradeDeliveryExpressTemplateResponse, PropertyValues, updateMallProductSpu } from '@/api';
+import { getBaseMallProductSpu, MallProductPropertyBaseResponse, MallProductPropertyValueResponse, MallProductSpuResponse } from '@/api';
 import CustomizedDialog from '@/components/CustomizedDialog';
 import CustomizedFileUpload, { DownloadProps, UploadFile } from '@/components/CustomizedFileUpload';
 import CustomizedAnchor, { AnchorLinkProps } from '@/components/CustomizedAnchor';
-import PropertySelect from './PropertySelect';
-import CustomizedNumberInput from '@/components/CustomizedNumberInput';
-import { Editor } from '@tinymce/tinymce-react';
 import CustomizedDictCheckboxGroup from '@/components/CustomizedDictCheckboxGroup';
 import CustomizedDictRadioGroup from '@/components/CustomizedDictRadioGroup';
-import SelectTree from '@/components/SelectTree';
-import DeleteIcon from '@/assets/image/svg/delete.svg';
-import { downloadSystemFile, uploadSystemFile } from '@/api/system_file';
+import { downloadSystemFile } from '@/api/system_file';
 import CustomizedTag from '@/components/CustomizedTag';
 
 interface AttachmentValues {
     file_id?: number; // 文件ID
 
     file?: UploadFile | null;
-}
-
-interface TreeNode {
-    id: string | number;
-    parent_id: number; // 父菜单ID
-    label: string;
-    children: TreeNode[];
 }
 
 const MallProductSpuInfo = forwardRef(({ }, ref) => {
@@ -46,9 +34,6 @@ const MallProductSpuInfo = forwardRef(({ }, ref) => {
 
     const anchorContainerRef = useRef<HTMLDivElement | null>(null);
     const [isMounted, setIsMounted] = useState(false);
-
-    const editorRef = useRef<any>(null);
-    const selectProperty = useRef(null);
 
     const anchorItems: AnchorLinkProps[] = [
         {
@@ -264,6 +249,8 @@ const MallProductSpuInfo = forwardRef(({ }, ref) => {
                                     {t('page.mall.product.title.file')}
                                 </Typography>
                                 {mallProductSpu && <CustomizedFileUpload
+                                    canUpload={false}
+                                    canRemove={false}
                                     showFilename={false}
                                     id={'file-upload'}
                                     accept=".jpg,jpeg,.png"
@@ -285,6 +272,8 @@ const MallProductSpuInfo = forwardRef(({ }, ref) => {
                                     {sliderFiles.map((item, index) => (
                                         <Box key={index}>
                                             <CustomizedFileUpload
+                                                canUpload={false}
+                                                canRemove={false}
                                                 showFilename={false}
                                                 id={'file-upload-slider-' + index}
                                                 accept=".jpg,jpeg,.png"
@@ -328,19 +317,6 @@ const MallProductSpuInfo = forwardRef(({ }, ref) => {
                                     value={mallProductSpu.spec_type}
                                     sx={{ mt: 2 }}
                                 />}
-                                {mallProductSpu && mallProductSpu.spec_type == 1 && <Button variant="customContained" onClick={handleOpenPropertySelect} sx={{ mt: 2, width: 240 }}>
-                                    {t('page.mall.product.property.operate.add')}
-                                </Button>}
-                                {mallProductSpu && mallProductSpu.spec_type == 1 && selectedProperties.map((item) => (
-                                    <Stack key={'property' + item.id} direction='row' gap={4} sx={{ mt: 2, pr: 4 }}>
-                                        <CustomizedTag label={item.name} color='primary' onDelete={() => handlePropertyRemove(item)} />
-                                        <Stack direction='row' gap={2}>
-                                            {item.values && item.values.map((value) => (
-                                                <CustomizedTag key={'value-' + value.id} clickable label={value.name} color={selectedPropertyValueIds.includes(value.id) ? 'primary' : 'default'} onClick={() => handleClickPropertyValue(value)} />
-                                            ))}
-                                        </Stack>
-                                    </Stack>
-                                ))}
 
                                 {mallProductSpu && mallProductSpu.spec_type == 1 && <Typography variant="body1" sx={{ mt: 2, fontSize: '1rem', fontWeight: 500 }}>
                                     {t('page.mall.product.sku.list.title.batch')}
@@ -356,10 +332,10 @@ const MallProductSpuInfo = forwardRef(({ }, ref) => {
                                             <Box className='table-cell' sx={{ width: 150 }}><Typography variant="body1">{t('page.mall.product.sku.title.stock')}</Typography></Box>
                                             <Box className='table-cell' sx={{ width: 150 }}><Typography variant="body1">{t('page.mall.product.sku.title.weight')}</Typography></Box>
                                             <Box className='table-cell' sx={{ width: 150 }}><Typography variant="body1">{t('page.mall.product.sku.title.volume')}</Typography></Box>
-                                            {mallProductSpu.sub_commission_type == 1 && <Box className='table-cell' sx={{ width: 150 }}><Typography variant="body1">{t('page.mall.product.sku.title.first.brokerage.price')}</Typography></Box>}
-                                            {mallProductSpu.sub_commission_type == 1 && <Box className='table-cell' sx={{ width: 150 }}><Typography variant="body1">{t('page.mall.product.sku.title.second.brokerage.price')}</Typography></Box>}
+                                            {mallProductSpu && mallProductSpu.sub_commission_type == 1 && <Box className='table-cell' sx={{ width: 150 }}><Typography variant="body1">{t('page.mall.product.sku.title.first.brokerage.price')}</Typography></Box>}
+                                            {mallProductSpu && mallProductSpu.sub_commission_type == 1 && <Box className='table-cell' sx={{ width: 150 }}><Typography variant="body1">{t('page.mall.product.sku.title.second.brokerage.price')}</Typography></Box>}
                                         </Box>
-                                        {mallProductSpu.skus.map((item, index) => {
+                                        {mallProductSpu && mallProductSpu.skus.map((item, index) => {
                                             if (index > 0) {
                                                 return (<Box key={index}></Box>)
                                             }
@@ -367,18 +343,15 @@ const MallProductSpuInfo = forwardRef(({ }, ref) => {
                                                 <Box className='table-row' key={index}>
                                                     <Box className='table-cell' sx={{ width: 240 }}>
                                                         <CustomizedFileUpload
+                                                            canUpload={false}
                                                             canRemove={false}
                                                             showFilename={false}
                                                             id={'file-upload-sku-' + index}
                                                             accept=".jpg,jpeg,.png"
                                                             maxSize={100}
-                                                            onChange={(file, action) => handleSkuFileChange(file, action, index)}
-                                                            file={item.file}
                                                             width={fileWidth}
                                                             height={fileHeight}
                                                             download={downloadImages?.get(item.file_id!)}
-                                                            error={!!(errors.skus[index]?.file_id)}
-                                                            helperText={errors.skus[index]?.file_id}
                                                         />
                                                     </Box>
                                                     {item.property_list && item.property_list.map((property) => (
@@ -387,115 +360,34 @@ const MallProductSpuInfo = forwardRef(({ }, ref) => {
                                                         </Box>)
                                                     )}
                                                     <Box className='table-cell' sx={{ width: 240 }}>
-                                                        <TextField
-                                                            required
-                                                            size="small"
-                                                            name='bar_code'
-                                                            value={item.bar_code}
-                                                            onChange={(e) => handleSkuInputChange(e as React.ChangeEvent<HTMLInputElement>, index)}
-                                                            error={!!(errors.skus[index]?.bar_code)}
-                                                            helperText={errors.skus[index]?.bar_code}
-                                                            sx={{ width: '100%' }}
-                                                        />
+                                                        <Typography variant="body1">{item.bar_code}</Typography>
                                                     </Box>
                                                     <Box className='table-cell' sx={{ width: 150 }}>
-                                                        <TextField
-                                                            required
-                                                            size="small"
-                                                            type="number"
-                                                            name='price'
-                                                            value={item.price}
-                                                            onChange={(e) => handleSkuInputChange(e as React.ChangeEvent<HTMLInputElement>, index)}
-                                                            error={!!(errors.skus[index]?.price)}
-                                                            helperText={errors.skus[index]?.price}
-                                                        />
+                                                        <Typography variant="body1">{item.price}</Typography>
                                                     </Box>
                                                     <Box className='table-cell' sx={{ width: 150 }}>
-                                                        <TextField
-                                                            required
-                                                            size="small"
-                                                            type="number"
-                                                            name='market_price'
-                                                            value={item.market_price}
-                                                            onChange={(e) => handleSkuInputChange(e as React.ChangeEvent<HTMLInputElement>, index)}
-                                                            error={!!(errors.skus[index]?.market_price)}
-                                                            helperText={errors.skus[index]?.market_price}
-                                                        />
+                                                        <Typography variant="body1">{item.market_price}</Typography>
                                                     </Box>
                                                     <Box className='table-cell' sx={{ width: 150 }}>
-                                                        <TextField
-                                                            required
-                                                            size="small"
-                                                            type="number"
-                                                            name='cost_price'
-                                                            value={item.cost_price}
-                                                            onChange={(e) => handleSkuInputChange(e as React.ChangeEvent<HTMLInputElement>, index)}
-                                                            error={!!(errors.skus[index]?.cost_price)}
-                                                            helperText={errors.skus[index]?.cost_price}
-                                                        />
+                                                        <Typography variant="body1">{item.cost_price}</Typography>
                                                     </Box>
                                                     <Box className='table-cell' sx={{ width: 150 }}>
-                                                        <TextField
-                                                            required
-                                                            size="small"
-                                                            type="number"
-                                                            name='stock'
-                                                            value={item.stock}
-                                                            onChange={(e) => handleSkuInputChange(e as React.ChangeEvent<HTMLInputElement>, index)}
-                                                            error={!!(errors.skus[index]?.stock)}
-                                                            helperText={errors.skus[index]?.stock}
-                                                        />
+                                                        <Typography variant="body1">{item.stock}</Typography>
                                                     </Box>
                                                     <Box className='table-cell' sx={{ width: 150 }}>
-                                                        <TextField
-                                                            required
-                                                            size="small"
-                                                            type="number"
-                                                            name='weight'
-                                                            value={item.weight}
-                                                            onChange={(e) => handleSkuInputChange(e as React.ChangeEvent<HTMLInputElement>, index)}
-                                                            error={!!(errors.skus[index]?.weight)}
-                                                            helperText={errors.skus[index]?.weight}
-                                                        />
+                                                        <Typography variant="body1">{item.weight}</Typography>
                                                     </Box>
                                                     <Box className='table-cell' sx={{ width: 150 }}>
-                                                        <TextField
-                                                            required
-                                                            size="small"
-                                                            type="number"
-                                                            name='volume'
-                                                            value={item.volume}
-                                                            onChange={(e) => handleSkuInputChange(e as React.ChangeEvent<HTMLInputElement>, index)}
-                                                            error={!!(errors.skus[index]?.volume)}
-                                                            helperText={errors.skus[index]?.volume}
-                                                        />
+                                                        <Typography variant="body1">{item.volume}</Typography>
                                                     </Box>
                                                     {mallProductSpu.sub_commission_type == 1 &&
                                                         <Box className='table-cell' sx={{ width: 150 }}>
-                                                            <TextField
-                                                                required
-                                                                size="small"
-                                                                type="number"
-                                                                name='first_brokerage_price'
-                                                                value={item.first_brokerage_price}
-                                                                onChange={(e) => handleSkuInputChange(e as React.ChangeEvent<HTMLInputElement>, index)}
-                                                                error={!!(errors.skus[index]?.first_brokerage_price)}
-                                                                helperText={errors.skus[index]?.first_brokerage_price}
-                                                            />
+                                                            <Typography variant="body1">{item.first_brokerage_price}</Typography>
                                                         </Box>
                                                     }
                                                     {mallProductSpu.sub_commission_type == 1 &&
                                                         <Box className='table-cell' sx={{ width: 150 }}>
-                                                            <TextField
-                                                                required
-                                                                size="small"
-                                                                type="number"
-                                                                name='second_brokerage_price'
-                                                                value={item.second_brokerage_price}
-                                                                onChange={(e) => handleSkuInputChange(e as React.ChangeEvent<HTMLInputElement>, index)}
-                                                                error={!!(errors.skus[index]?.second_brokerage_price)}
-                                                                helperText={errors.skus[index]?.second_brokerage_price}
-                                                            />
+                                                            <Typography variant="body1">{item.second_brokerage_price}</Typography>
                                                         </Box>
                                                     }
                                                 </Box>
@@ -504,7 +396,7 @@ const MallProductSpuInfo = forwardRef(({ }, ref) => {
                                     </Box>
                                 </Card>
 
-                                {mallProductSpu.spec_type == 1 && selectedProperties.length > 0 && <>
+                                {mallProductSpu && mallProductSpu.spec_type == 1 && selectedProperties.length > 0 && <>
                                     <Typography variant="body1" sx={{ mt: 2, fontSize: '1rem', fontWeight: 500 }}>
                                         {t('page.mall.product.sku.list.title')}
                                     </Typography>
@@ -522,9 +414,8 @@ const MallProductSpuInfo = forwardRef(({ }, ref) => {
                                                 <Box className='table-cell' sx={{ width: 150 }}><Typography variant="body1">{t('page.mall.product.sku.title.stock')}</Typography></Box>
                                                 <Box className='table-cell' sx={{ width: 150 }}><Typography variant="body1">{t('page.mall.product.sku.title.weight')}</Typography></Box>
                                                 <Box className='table-cell' sx={{ width: 150 }}><Typography variant="body1">{t('page.mall.product.sku.title.volume')}</Typography></Box>
-                                                {mallProductSpu.sub_commission_type == 1 && <Box className='table-cell' sx={{ width: 150 }}><Typography variant="body1">{t('page.mall.product.sku.title.first.brokerage.price')}</Typography></Box>}
-                                                {mallProductSpu.sub_commission_type == 1 && <Box className='table-cell' sx={{ width: 150 }}><Typography variant="body1">{t('page.mall.product.sku.title.second.brokerage.price')}</Typography></Box>}
-                                                <Box className='table-cell' sx={{ width: 50 }}><Typography variant="body1">{t('global.operate.actions')}</Typography></Box>
+                                                {mallProductSpu && mallProductSpu.sub_commission_type == 1 && <Box className='table-cell' sx={{ width: 150 }}><Typography variant="body1">{t('page.mall.product.sku.title.first.brokerage.price')}</Typography></Box>}
+                                                {mallProductSpu && mallProductSpu.sub_commission_type == 1 && <Box className='table-cell' sx={{ width: 150 }}><Typography variant="body1">{t('page.mall.product.sku.title.second.brokerage.price')}</Typography></Box>}
                                             </Box>
                                             {mallProductSpu.skus.map((item, index) => {
                                                 if (index == 0) {
@@ -534,18 +425,15 @@ const MallProductSpuInfo = forwardRef(({ }, ref) => {
                                                     <Box className='table-row' key={index}>
                                                         <Box className='table-cell' sx={{ width: 240 }}>
                                                             <CustomizedFileUpload
+                                                                canUpload={false}
                                                                 canRemove={false}
                                                                 showFilename={false}
                                                                 id={'file-upload-sku-' + index}
                                                                 accept=".jpg,jpeg,.png"
                                                                 maxSize={100}
-                                                                onChange={(file, action) => handleSkuFileChange(file, action, index)}
-                                                                file={item.file}
                                                                 width={fileWidth}
                                                                 height={fileHeight}
                                                                 download={downloadImages?.get(item.file_id!)}
-                                                                error={!!(errors.skus[index]?.file_id)}
-                                                                helperText={errors.skus[index]?.file_id}
                                                             />
                                                         </Box>
                                                         {item.property_list && item.property_list.map((property) => (
@@ -554,127 +442,36 @@ const MallProductSpuInfo = forwardRef(({ }, ref) => {
                                                             </Box>)
                                                         )}
                                                         <Box className='table-cell' sx={{ width: 240 }}>
-                                                            <TextField
-                                                                required
-                                                                size="small"
-                                                                name='bar_code'
-                                                                value={item.bar_code}
-                                                                onChange={(e) => handleSkuInputChange(e as React.ChangeEvent<HTMLInputElement>, index)}
-                                                                error={!!(errors.skus[index]?.bar_code)}
-                                                                helperText={errors.skus[index]?.bar_code}
-                                                                sx={{ width: '100%' }}
-                                                            />
+                                                            <Typography variant="body1">{item.bar_code}</Typography>
                                                         </Box>
                                                         <Box className='table-cell' sx={{ width: 150 }}>
-                                                            <TextField
-                                                                required
-                                                                size="small"
-                                                                type="number"
-                                                                name='price'
-                                                                value={item.price}
-                                                                onChange={(e) => handleSkuInputChange(e as React.ChangeEvent<HTMLInputElement>, index)}
-                                                                error={!!(errors.skus[index]?.price)}
-                                                                helperText={errors.skus[index]?.price}
-                                                            />
+                                                            <Typography variant="body1">{item.price}</Typography>
                                                         </Box>
                                                         <Box className='table-cell' sx={{ width: 150 }}>
-                                                            <TextField
-                                                                required
-                                                                size="small"
-                                                                type="number"
-                                                                name='market_price'
-                                                                value={item.market_price}
-                                                                onChange={(e) => handleSkuInputChange(e as React.ChangeEvent<HTMLInputElement>, index)}
-                                                                error={!!(errors.skus[index]?.market_price)}
-                                                                helperText={errors.skus[index]?.market_price}
-                                                            />
+                                                            <Typography variant="body1">{item.market_price}</Typography>
                                                         </Box>
                                                         <Box className='table-cell' sx={{ width: 150 }}>
-                                                            <TextField
-                                                                required
-                                                                size="small"
-                                                                type="number"
-                                                                name='cost_price'
-                                                                value={item.cost_price}
-                                                                onChange={(e) => handleSkuInputChange(e as React.ChangeEvent<HTMLInputElement>, index)}
-                                                                error={!!(errors.skus[index]?.cost_price)}
-                                                                helperText={errors.skus[index]?.cost_price}
-                                                            />
+                                                            <Typography variant="body1">{item.cost_price}</Typography>
                                                         </Box>
                                                         <Box className='table-cell' sx={{ width: 150 }}>
-                                                            <TextField
-                                                                required
-                                                                size="small"
-                                                                type="number"
-                                                                name='stock'
-                                                                value={item.stock}
-                                                                onChange={(e) => handleSkuInputChange(e as React.ChangeEvent<HTMLInputElement>, index)}
-                                                                error={!!(errors.skus[index]?.stock)}
-                                                                helperText={errors.skus[index]?.stock}
-                                                            />
+                                                            <Typography variant="body1">{item.stock}</Typography>
                                                         </Box>
                                                         <Box className='table-cell' sx={{ width: 150 }}>
-                                                            <TextField
-                                                                required
-                                                                size="small"
-                                                                type="number"
-                                                                name='weight'
-                                                                value={item.weight}
-                                                                onChange={(e) => handleSkuInputChange(e as React.ChangeEvent<HTMLInputElement>, index)}
-                                                                error={!!(errors.skus[index]?.weight)}
-                                                                helperText={errors.skus[index]?.weight}
-                                                            />
+                                                            <Typography variant="body1">{item.weight}</Typography>
                                                         </Box>
                                                         <Box className='table-cell' sx={{ width: 150 }}>
-                                                            <TextField
-                                                                required
-                                                                size="small"
-                                                                type="number"
-                                                                name='volume'
-                                                                value={item.volume}
-                                                                onChange={(e) => handleSkuInputChange(e as React.ChangeEvent<HTMLInputElement>, index)}
-                                                                error={!!(errors.skus[index]?.volume)}
-                                                                helperText={errors.skus[index]?.volume}
-                                                            />
+                                                            <Typography variant="body1">{item.volume}</Typography>
                                                         </Box>
                                                         {mallProductSpu.sub_commission_type == 1 &&
                                                             <Box className='table-cell' sx={{ width: 150 }}>
-                                                                <TextField
-                                                                    required
-                                                                    size="small"
-                                                                    type="number"
-                                                                    name='first_brokerage_price'
-                                                                    value={item.first_brokerage_price}
-                                                                    onChange={(e) => handleSkuInputChange(e as React.ChangeEvent<HTMLInputElement>, index)}
-                                                                    error={!!(errors.skus[index]?.first_brokerage_price)}
-                                                                    helperText={errors.skus[index]?.first_brokerage_price}
-                                                                />
+                                                                <Typography variant="body1">{item.first_brokerage_price}</Typography>
                                                             </Box>
                                                         }
                                                         {mallProductSpu.sub_commission_type == 1 &&
                                                             <Box className='table-cell' sx={{ width: 150 }}>
-                                                                <TextField
-                                                                    required
-                                                                    size="small"
-                                                                    type="number"
-                                                                    name='second_brokerage_price'
-                                                                    value={item.second_brokerage_price}
-                                                                    onChange={(e) => handleSkuInputChange(e as React.ChangeEvent<HTMLInputElement>, index)}
-                                                                    error={!!(errors.skus[index]?.second_brokerage_price)}
-                                                                    helperText={errors.skus[index]?.second_brokerage_price}
-                                                                />
+                                                                <Typography variant="body1">{item.second_brokerage_price}</Typography>
                                                             </Box>
                                                         }
-                                                        <Box className='table-cell' sx={{ width: 50, verticalAlign: 'middle' }}>
-                                                            <Button
-                                                                sx={{ color: 'error.main' }}
-                                                                size="small"
-                                                                variant="customOperate"
-                                                                title={t('global.operate.delete') + t('global.page.erp.purchase.order')}
-                                                                startIcon={<DeleteIcon />}
-                                                                onClick={() => handleClickSkuDelete(index)}
-                                                            />
-                                                        </Box>
                                                     </Box>
                                                 )
                                             })}
@@ -703,23 +500,12 @@ const MallProductSpuInfo = forwardRef(({ }, ref) => {
                                     name='delivery_types'
                                     value={deliveryTypes}
                                     dict_type='delivery_type'
-                                    onChange={handleCheckboxChange}
                                 />
-                                {deliveryTypes.includes('0') && <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiSelect-root': { width: '240px' } }}>
-                                    <InputLabel required size="small" id="template-select-label">{t("page.mall.product.title.delivery.template")}</InputLabel>
-                                    <Select
-                                        required
-                                        size="small"
-                                        labelId="template-select-label"
-                                        label={t("page.mall.product.title.delivery.template")}
-                                        name='delivery_template_id'
-                                        value={mallProductSpu.delivery_template_id}
-                                        onChange={(e) => handleSelectChange(e)}
-                                        error={!!errors.delivery_template_id}
-                                    >
-                                        {templates.map(item => (<MenuItem key={`"template-"${item.id}`} value={item.id}>{item.name}</MenuItem>))}
-                                    </Select>
-                                    <FormHelperText sx={{ color: 'error.main' }}>{errors.delivery_template_id}</FormHelperText>
+                                {deliveryTypes.includes('0') && <FormControl sx={{ minWidth: 120, '& .MuiStack-root': { mt: 2 } }}>
+                                    <Stack direction="row" spacing={2} sx={{ display: "flex", alignItems: "center" }}>
+                                        <Box>{t("page.mall.product.title.delivery.template")}</Box>
+                                        <Box>{mallProductSpu && <CustomizedTag label={mallProductSpu.delivery_template_name ?? ''} />}</Box>
+                                    </Stack>
                                 </FormControl>}
                             </Box>
                         </Box>
@@ -727,26 +513,8 @@ const MallProductSpuInfo = forwardRef(({ }, ref) => {
                             <Typography variant="h4" component="h2" gutterBottom>
                                 {t('page.mall.product.tab.product.detail')}
                             </Typography>
-                            <Box sx={{
-                                // width: 760,
-                                '& .tox-promotion-button': { display: 'none !important' },
-                                '& .tox-statusbar__branding': { display: 'none' }
-                            }}>
-                                <Editor
-                                    apiKey='f88rshir3x1vuar3lr0tj1vaq6muvonldxm25o6wxr23vy96'
-                                    onInit={(_evt, editor) => (editorRef.current = editor)}
-                                    initialValue={mallProductSpu.description}
-                                    init={{
-                                        height: 600,
-                                        language: "zh_CN",
-                                        language_url: "/tinymce/langs/zh_CN.js",
-                                        plugins: [
-                                            'anchor', 'autolink', 'charmap', 'codesample', 'emoticons', 'link', 'lists', 'media', 'searchreplace', 'table', 'visualblocks', 'wordcount',
-                                        ],
-                                        toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography uploadcare | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
-                                        content_style: "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
-                                    }}
-                                />
+                            <Box>
+                                {mallProductSpu && <Typography component="div" dangerouslySetInnerHTML={{ __html: mallProductSpu.description }} />}
                             </Box>
                         </Box>
                         <Box id="other" sx={{ mb: 4 }}>
@@ -763,40 +531,19 @@ const MallProductSpuInfo = forwardRef(({ }, ref) => {
                                     width: 'fit-content',
                                 }}
                             >
-                                <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '240px' } }}>
-                                    <CustomizedNumberInput
-                                        required
-                                        size="small"
-                                        step={1}
-                                        min={0}
-                                        label={t("page.mall.product.title.sort")}
-                                        name='sort'
-                                        value={mallProductSpu.sort}
-                                        onChange={handleInputChange}
-                                        error={!!errors.sort}
-                                        helperText={errors.sort}
-                                    />
-                                    <CustomizedNumberInput
-                                        required
-                                        size="small"
-                                        step={1}
-                                        min={0}
-                                        label={t("page.mall.product.title.give.integral")}
-                                        name='give_integral'
-                                        value={mallProductSpu.give_integral}
-                                        onChange={handleInputChange}
-                                        error={!!errors.give_integral}
-                                        helperText={errors.give_integral}
-                                    />
-                                    <CustomizedNumberInput
-                                        size="small"
-                                        step={1}
-                                        min={0}
-                                        label={t("page.mall.product.title.virtual.sales.count")}
-                                        name='virtual_sales_count'
-                                        value={mallProductSpu.virtual_sales_count}
-                                        onChange={handleInputChange}
-                                    />
+                                <FormControl sx={{ minWidth: 120, '& .MuiStack-root': { mt: 2 } }}>
+                                    <Stack direction="row" spacing={2} sx={{ display: "flex", alignItems: "center" }}>
+                                        <Box>{t('page.mall.product.title.sort')}</Box>
+                                        <Box>{mallProductSpu && <CustomizedTag label={mallProductSpu.sort} />}</Box>
+                                    </Stack>
+                                    <Stack direction="row" spacing={2} sx={{ display: "flex", alignItems: "center" }}>
+                                        <Box>{t('page.mall.product.title.give.integral')}</Box>
+                                        <Box>{mallProductSpu && <CustomizedTag label={mallProductSpu.give_integral} />}</Box>
+                                    </Stack>
+                                    <Stack direction="row" spacing={2} sx={{ display: "flex", alignItems: "center" }}>
+                                        <Box>{t('page.mall.product.title.virtual.sales.count')}</Box>
+                                        <Box>{mallProductSpu && <CustomizedTag label={mallProductSpu.virtual_sales_count} />}</Box>
+                                    </Stack>
                                 </FormControl>
                             </Box>
                         </Box>

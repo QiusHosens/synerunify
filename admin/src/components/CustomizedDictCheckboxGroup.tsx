@@ -12,7 +12,7 @@ interface CustomizedDictCheckboxGroupProps {
   dict_type: string;
   value: any[];
   label: string;
-  onChange: (name: string | undefined, checkedValues: any[]) => void;
+  onChange?: (name: string | undefined, checkedValues: any[]) => void;
   sx?: SxProps<Theme>;
 }
 
@@ -44,7 +44,7 @@ const CustomizedDictCheckboxGroup: React.FC<CustomizedDictCheckboxGroupProps> = 
     const { value } = event.target as HTMLInputElement;
     const values = checkedValues.includes(value) ? checkedValues.filter(item => item !== value) : [...checkedValues, value];
     setCheckedValues(values);
-    onChange(name, values);
+    onChange?.(name, values);
   }
 
   return (

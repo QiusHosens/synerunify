@@ -57,6 +57,8 @@ export interface MallProductSkuResponse {
   create_time: string; // 创建时间
   updater: number; // 更新者ID
   update_time: string; // 更新时间
+
+  property_list?: PropertyValues[]; // 属性数组
 }
 
 export interface MallProductSkuQueryCondition extends PaginatedRequest {}

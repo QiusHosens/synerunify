@@ -110,7 +110,7 @@ export default function MallProductSpu() {
         ),
       },
     ],
-    [t, handleStatusChange]
+    [t, statusDisabled, handleStatusChange, hasOperatePermission]
   );
 
   const queryRecords = async (condition: MallProductSpuQueryCondition) => {
@@ -187,14 +187,10 @@ export default function MallProductSpu() {
           }));
         }}
       />
-      <MallProductSpuInfo ref={addMallProductSpu} />
+      <MallProductSpuInfo ref={viewMallProductSpu} />
       <MallProductSpuAdd ref={addMallProductSpu} onSubmit={refreshData} />
       <MallProductSpuEdit ref={editMallProductSpu} onSubmit={refreshData} />
       <MallProductSpuDelete ref={deleteMallProductSpu} onSubmit={refreshData} />
     </Box>
-    // <>
-    //   <CustomizedAnchorExample />
-    //   <CustomizedAnchorDialogExample />
-    // </>
   );
 }
