@@ -203,6 +203,14 @@ pub async fn list_by_property_id(db: &DatabaseConnection, login_user: LoginUserC
     Ok(list.into_iter().map(model_to_base_response).collect())
 }
 
+pub async fn list_by_property_ids(db: &DatabaseConnection, login_user: LoginUserContext, property_ids: Vec<i64>) -> Result<Vec<MallProductPropertyValueBaseResponse>> {
+    let list = MallProductPropertyValueEntity::find_active()
+        .filter(Column::TenantId.eq(login_user.tenant_id))
+        .filter(Column::PropertyId.is_in(property_ids))
+        .all(db).await?;
+    Ok(list.into_iter().map(model_to_base_response).collect())
+}
+
 pub async fn enable(db: &DatabaseConnection, login_user: LoginUserContext, id: i64) -> Result<()> {
     let mall_product_property_value = MallProductPropertyValueActiveModel {
         id: Set(id),

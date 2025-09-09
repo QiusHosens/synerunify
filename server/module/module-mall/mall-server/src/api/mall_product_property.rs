@@ -5,7 +5,7 @@ use utoipa_axum::routes;
 use ctor;
 use macros::require_authorize;
 use axum::{routing::{get, post}, Router, extract::{State, Path, Json, Query}, response::IntoResponse, Extension};
-use common::base::page::PaginatedResponse;
+use common::base::page::{IdsRequest, PaginatedResponse};
 use mall_model::request::mall_product_property::{CreateMallProductPropertyRequest, UpdateMallProductPropertyRequest, PaginatedKeywordRequest};
 use mall_model::response::mall_product_property::{MallProductPropertyBaseResponse, MallProductPropertyResponse};
 use common::base::response::CommonResult;
@@ -21,6 +21,7 @@ pub async fn mall_product_property_router(state: AppState) -> OpenApiRouter {
         .routes(routes!(get_by_id))
         .routes(routes!(get_base_by_id))
         .routes(routes!(list))
+        .routes(routes!(list_by_ids))
         .routes(routes!(page))
         .routes(routes!(enable))
         .routes(routes!(disable))
@@ -218,6 +219,31 @@ async fn list(
     Extension(login_user): Extension<LoginUserContext>,
 ) -> CommonResult<Vec<MallProductPropertyResponse>> {
     match service::mall_product_property::list(&state.db, login_user).await {
+        Ok(data) => {CommonResult::with_data(data)}
+        Err(e) => {CommonResult::with_err(&e.to_string())}
+    }
+}
+
+#[utoipa::path(
+    post,
+    path = "/list_by_ids",
+    operation_id = "mall_product_property_list_by_ids",
+    request_body(content = IdsRequest, description = "ids", content_type = "application/json"),
+    responses(
+        (status = 200, description = "list by ids", body = CommonResult<Vec<MallProductPropertyBaseResponse>>)
+    ),
+    tag = "mall_product_property",
+    security(
+        ("bearerAuth" = [])
+    )
+)]
+#[require_authorize(operation_id = "mall_product_property_list_by_ids", authorize = "")]
+async fn list_by_ids(
+    State(state): State<AppState>,
+    Extension(login_user): Extension<LoginUserContext>,
+    Json(payload): Json<IdsRequest>,
+) -> CommonResult<Vec<MallProductPropertyBaseResponse>> {
+    match service::mall_product_property::list_by_ids(&state.db, login_user, payload.ids).await {
         Ok(data) => {CommonResult::with_data(data)}
         Err(e) => {CommonResult::with_err(&e.to_string())}
     }

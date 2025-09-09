@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use common::interceptor::orm::simple_support::SimpleSupport;
 use sea_orm::{DatabaseConnection, EntityTrait, Order, ColumnTrait, ActiveModelTrait, PaginatorTrait, QueryOrder, QueryFilter, Condition, TransactionTrait};
 use crate::model::mall_product_property::{Model as MallProductPropertyModel, ActiveModel as MallProductPropertyActiveModel, Entity as MallProductPropertyEntity, Column};
@@ -10,6 +11,7 @@ use common::constants::enum_constants::{STATUS_DISABLE, STATUS_ENABLE};
 use common::base::page::PaginatedResponse;
 use common::context::context::LoginUserContext;
 use common::interceptor::orm::active_filter::ActiveFilterEntityTrait;
+use mall_model::response::mall_product_property_value::MallProductPropertyValueBaseResponse;
 use crate::service::mall_product_property_value;
 
 pub async fn create(db: &DatabaseConnection, login_user: LoginUserContext, request: CreateMallProductPropertyRequest) -> Result<i64> {
@@ -117,6 +119,24 @@ pub async fn list(db: &DatabaseConnection, login_user: LoginUserContext) -> Resu
     let condition = Condition::all().add(Column::TenantId.eq(login_user.tenant_id));let list = MallProductPropertyEntity::find_active_with_condition(condition)
         .all(db).await?;
     Ok(list.into_iter().map(model_to_response).collect())
+}
+
+pub async fn list_by_ids(db: &DatabaseConnection, login_user: LoginUserContext, ids: Vec<i64>) -> Result<Vec<MallProductPropertyBaseResponse>> {
+    let list = MallProductPropertyEntity::find_active()
+        .filter(Column::TenantId.eq(login_user.tenant_id))
+        .filter(Column::Id.is_in(ids))
+        .all(db).await?;
+    let ids = list.iter().map(|model| model.id).collect();
+    let values = mall_product_property_value::list_by_property_ids(&db, login_user.clone(), ids).await?;
+    // 按 property_id 分组
+    let mut grouped: HashMap<i64, Vec<MallProductPropertyValueBaseResponse>> = HashMap::new();
+    for v in values {
+        grouped.entry(v.property_id.unwrap()).or_default().push(v);
+    }
+    Ok(list.into_iter().map(|model| {
+        let vals = grouped.remove(&model.id).unwrap_or_default();
+        model_to_base_response(model, vals)
+    }).collect())
 }
 
 pub async fn enable(db: &DatabaseConnection, login_user: LoginUserContext, id: i64) -> Result<()> {

@@ -1,8 +1,8 @@
-import { Box, Button, Card, FormControl, FormHelperText, InputLabel, MenuItem, Select, SelectChangeEvent, Stack, Switch, TextField, Typography } from '@mui/material';
+import { Box, Button, Card, FormControl, FormHelperText, InputLabel, MenuItem, Select, SelectChangeEvent, Stack, TextField, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { forwardRef, useCallback, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
-import { getBaseMallProductProperty, getBaseMallProductSpu, listMallProductBrand, listMallProductCategory, listMallTradeDeliveryExpressTemplate, MallProductBrandResponse, MallProductCategoryResponse, MallProductPropertyBaseResponse, MallProductPropertyValueResponse, MallProductSkuRequest, MallProductSpuRequest, MallProductSpuResponse, MallTradeDeliveryExpressTemplateResponse, PropertyValues, updateMallProductSpu } from '@/api';
+import { getBaseMallProductProperty, getBaseMallProductSpu, listInfoMallProductPropertyValue, listMallProductBrand, listMallProductCategory, listMallProductPropertyByIds, listMallTradeDeliveryExpressTemplate, MallProductBrandResponse, MallProductCategoryResponse, MallProductPropertyBaseResponse, MallProductPropertyValueResponse, MallProductSkuRequest, MallProductSpuRequest, MallProductSpuResponse, MallTradeDeliveryExpressTemplateResponse, PropertyValues, updateMallProductSpu } from '@/api';
 import CustomizedDialog from '@/components/CustomizedDialog';
 import CustomizedFileUpload, { DownloadProps, UploadFile } from '@/components/CustomizedFileUpload';
 import CustomizedAnchor, { AnchorLinkProps } from '@/components/CustomizedAnchor';
@@ -287,10 +287,42 @@ const MallProductSpuEdit = forwardRef(({ onSubmit }: MallProductSpuEditProps, re
 
   const initForm = async (mallProductSpu: MallProductSpuResponse) => {
     const result = await getBaseMallProductSpu(mallProductSpu.id);
+    setDeliveryTypes(result.delivery_types.split(','));
+    // 获取属性
+    const propertyIds: number[] = [];
+    const propertyValueId = [];
+    for (const sku of result.skus) {
+      sku.property_list = [];
+      if (sku.properties) {
+        const properties = JSON.parse(sku.properties)
+        for (const property of properties) {
+          if (!propertyIds.includes(property.propertyId)) {
+            propertyIds.push(property.propertyId);
+          }
+          propertyValueId.push(property.valueId);
+          sku.property_list.push(property as PropertyValues)
+        }
+      }
+    }
+    // 查询属性列表
+    const properties = await listMallProductPropertyByIds(propertyIds);
+    setSelectedProperties(properties);
+    // 查询属性值
+    const values = await listInfoMallProductPropertyValue(propertyValueId);
+    const valueMap = new Map(values.map(value => [value.id, value]))
+    for (const sku of result.skus) {
+      for (const property of sku.property_list!) {
+        const value = valueMap.get(property.valueId);
+        if (value) {
+          property.propertyName = value.property_name;
+          property.valueName = value.name;
+        }
+      }
+    }
     setMallProductSpu({
       ...result,
     })
-    setDeliveryTypes(result.delivery_types.split(','));
+
     // 设置封面图片
     downloadSystemFile(result.file_id, (progress) => {
       setDownloadImages(prev => {
