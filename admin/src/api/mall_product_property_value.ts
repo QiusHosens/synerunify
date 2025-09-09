@@ -69,7 +69,9 @@ export const listMallProductPropertyValue = (): Promise<
 export const listInfoMallProductPropertyValue = (
   ids: number[]
 ): Promise<Array<MallProductPropertyValueResponse>> => {
-  return api.get<Array<MallProductPropertyValueResponse>>(`${apis.list_by_ids}?${ids.map(id => `ids=${id}`).join('&')}`);
+  return api.post<Array<MallProductPropertyValueResponse>>(apis.list_by_ids, {
+    ids,
+  });
 };
 
 export const pageMallProductPropertyValue = (

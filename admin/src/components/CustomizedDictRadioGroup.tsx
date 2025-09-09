@@ -13,6 +13,7 @@ interface CustomizedDictRadioGroupProps {
   value: any;
   label: string;
   onChange?: (event: React.ChangeEvent<HTMLInputElement>, value: any) => void;
+  disabled?: boolean;
   sx?: SxProps<Theme>;
 }
 
@@ -24,6 +25,7 @@ const CustomizedDictRadioGroup: React.FC<CustomizedDictRadioGroupProps> = ({
   value,
   label,
   onChange,
+  disabled = false,
   sx
 }) => {
   const { dictOfType } = useDictStore();
@@ -38,7 +40,7 @@ const CustomizedDictRadioGroup: React.FC<CustomizedDictRadioGroupProps> = ({
 
   return (
     <>
-      <FormControl sx={sx}>
+      <FormControl disabled={disabled} sx={sx}>
         <FormLabel id={id}>{label}</FormLabel>
         <RadioGroup
           row

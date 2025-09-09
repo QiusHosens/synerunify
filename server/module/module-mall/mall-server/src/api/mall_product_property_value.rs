@@ -196,12 +196,10 @@ async fn list(
 }
 
 #[utoipa::path(
-    get,
+    post,
     path = "/list_by_ids",
-    params(
-        ("ids" = Vec<i64>, Query, description = "ids")
-    ),
     operation_id = "mall_product_property_value_list_by_ids",
+    request_body(content = IdsRequest, description = "ids", content_type = "application/json"),
     responses(
         (status = 200, description = "list by ids", body = CommonResult<Vec<MallProductPropertyValueInfoResponse>>)
     ),
@@ -214,9 +212,9 @@ async fn list(
 async fn list_by_ids(
     State(state): State<AppState>,
     Extension(login_user): Extension<LoginUserContext>,
-    Query(params): Query<IdsRequest>,
+    Json(payload): Json<IdsRequest>,
 ) -> CommonResult<Vec<MallProductPropertyValueInfoResponse>> {
-    match service::mall_product_property_value::list_by_ids(&state.db, login_user, params.ids).await {
+    match service::mall_product_property_value::list_by_ids(&state.db, login_user, payload.ids).await {
         Ok(data) => {CommonResult::with_data(data)}
         Err(e) => {CommonResult::with_err(&e.to_string())}
     }

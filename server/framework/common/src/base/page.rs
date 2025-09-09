@@ -52,6 +52,6 @@ where
 
 #[derive(Serialize, Deserialize, Debug, ToSchema)]
 pub struct IdsRequest {
-    #[serde(deserialize_with = "de_vec_or_single")]
+    // #[serde(deserialize_with = "de_vec_or_single")]
     pub ids: Vec<i64>,
 }

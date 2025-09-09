@@ -2,7 +2,7 @@ import { Box, Card, FormControl, Stack, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { forwardRef, useImperativeHandle, useRef, useState } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
-import { getBaseMallProductSpu, listInfoMallProductPropertyValue, MallProductPropertyBaseResponse, MallProductPropertyValueResponse, MallProductSpuResponse, PropertyValues } from '@/api';
+import { getInfoMallProductSpu, listInfoMallProductPropertyValue, MallProductSpuResponse, PropertyValues } from '@/api';
 import CustomizedDialog from '@/components/CustomizedDialog';
 import CustomizedFileUpload, { DownloadProps, UploadFile } from '@/components/CustomizedFileUpload';
 import CustomizedAnchor, { AnchorLinkProps } from '@/components/CustomizedAnchor';
@@ -24,9 +24,7 @@ const MallProductSpuInfo = forwardRef(({ }, ref) => {
     const [maxWidth] = useState<DialogProps['maxWidth']>('xl');
     const [sliderFiles, setSliderFiles] = useState<AttachmentValues[]>([]);
     const [deliveryTypes, setDeliveryTypes] = useState<string[]>([]);
-    const [selectedProperties, setSelectedProperties] = useState<MallProductPropertyBaseResponse[]>([]);
-    const [selectedPropertyValueIds, setSelectedPropertyValueIds] = useState<number[]>([]);
-    const [selectedPropertyValues, setSelectedPropertyValues] = useState<MallProductPropertyValueResponse[]>([]);
+    const [propertyNames, setPropertyNames] = useState<string[]>([]);
     const [mallProductSpu, setMallProductSpu] = useState<MallProductSpuResponse>();
     const [fileWidth] = useState<number>(240);
     const [fileHeight] = useState<number>(160);
@@ -79,7 +77,7 @@ const MallProductSpuInfo = forwardRef(({ }, ref) => {
     };
 
     const initForm = async (mallProductSpu: MallProductSpuResponse) => {
-        const result = await getBaseMallProductSpu(mallProductSpu.id);
+        const result = await getInfoMallProductSpu(mallProductSpu.id);
         setDeliveryTypes(result.delivery_types.split(','));
         // 获取属性
         const propertyValueId = [];
@@ -96,15 +94,20 @@ const MallProductSpuInfo = forwardRef(({ }, ref) => {
         // 查询属性值
         const values = await listInfoMallProductPropertyValue(propertyValueId);
         const valueMap = new Map(values.map(value => [value.id, value]))
+        const propertyNames: string[] = [];
         for (const sku of result.skus) {
             for (const property of sku.property_list!) {
                 const value = valueMap.get(property.valueId);
                 if (value) {
                     property.propertyName = value.property_name;
                     property.valueName = value.name;
+                    if (!propertyNames.includes(value.property_name)) {
+                        propertyNames.push(value.property_name);
+                    }
                 }
             }
         }
+        setPropertyNames(propertyNames);
         setMallProductSpu({
             ...result,
         })
@@ -327,6 +330,7 @@ const MallProductSpuInfo = forwardRef(({ }, ref) => {
                                 }}
                             >
                                 {mallProductSpu && <CustomizedDictRadioGroup
+                                    disabled
                                     id="commission-row-radio-buttons-group-label"
                                     name='sub_commission_type'
                                     dict_type='sub_commission_type'
@@ -335,6 +339,7 @@ const MallProductSpuInfo = forwardRef(({ }, ref) => {
                                     sx={{ mt: 2 }}
                                 />}
                                 {mallProductSpu && <CustomizedDictRadioGroup
+                                    disabled
                                     id="spec-row-radio-buttons-group-label"
                                     name='spec_type'
                                     dict_type='spec_type'
@@ -344,12 +349,15 @@ const MallProductSpuInfo = forwardRef(({ }, ref) => {
                                 />}
 
                                 {mallProductSpu && mallProductSpu.spec_type == 1 && <Typography variant="body1" sx={{ mt: 2, fontSize: '1rem', fontWeight: 500 }}>
-                                    {t('page.mall.product.sku.list.title.batch')}
+                                    {t('page.mall.product.sku.list.title')}
                                 </Typography>}
                                 <Card variant="outlined" sx={{ mt: 2, width: '100%' }}>
                                     <Box sx={{ display: 'table', width: '100%', "& .table-row": { display: 'table-row', "& .table-cell": { display: 'table-cell', padding: 1, textAlign: 'center', verticalAlign: 'middle' } } }}>
                                         <Box className='table-row'>
                                             <Box className='table-cell' sx={{ width: 240 }}><Typography variant="body1">{t('page.mall.product.sku.title.file')}</Typography></Box>
+                                            {propertyNames.map((item) => (
+                                                <Box className='table-cell' sx={{ width: 80 }}><Typography variant="body1">{item}</Typography></Box>
+                                            ))}
                                             <Box className='table-cell' sx={{ width: 240 }}><Typography variant="body1">{t('page.mall.product.sku.title.bar.code')}</Typography></Box>
                                             <Box className='table-cell' sx={{ width: 150 }}><Typography variant="body1">{t('page.mall.product.sku.title.price')}</Typography></Box>
                                             <Box className='table-cell' sx={{ width: 150 }}><Typography variant="body1">{t('page.mall.product.sku.title.market.price')}</Typography></Box>
@@ -361,9 +369,6 @@ const MallProductSpuInfo = forwardRef(({ }, ref) => {
                                             {mallProductSpu && mallProductSpu.sub_commission_type == 1 && <Box className='table-cell' sx={{ width: 150 }}><Typography variant="body1">{t('page.mall.product.sku.title.second.brokerage.price')}</Typography></Box>}
                                         </Box>
                                         {mallProductSpu && mallProductSpu.skus.map((item, index) => {
-                                            if (index > 0) {
-                                                return (<Box key={index}></Box>)
-                                            }
                                             return (
                                                 <Box className='table-row' key={index}>
                                                     <Box className='table-cell' sx={{ width: 240 }}>
@@ -420,89 +425,6 @@ const MallProductSpuInfo = forwardRef(({ }, ref) => {
                                         })}
                                     </Box>
                                 </Card>
-
-                                {mallProductSpu && mallProductSpu.spec_type == 1 && selectedProperties.length > 0 && <>
-                                    <Typography variant="body1" sx={{ mt: 2, fontSize: '1rem', fontWeight: 500 }}>
-                                        {t('page.mall.product.sku.list.title')}
-                                    </Typography>
-                                    <Card variant="outlined" sx={{ mt: 2, width: '100%' }}>
-                                        <Box sx={{ display: 'table', width: '100%', "& .table-row": { display: 'table-row', "& .table-cell": { display: 'table-cell', padding: 1, textAlign: 'center', verticalAlign: 'middle' } } }}>
-                                            <Box className='table-row'>
-                                                <Box className='table-cell' sx={{ width: 240 }}><Typography variant="body1">{t('page.mall.product.sku.title.file')}</Typography></Box>
-                                                {selectedProperties.map((item) => (
-                                                    <Box className='table-cell' sx={{ width: 80 }}><Typography variant="body1">{item.name}</Typography></Box>
-                                                ))}
-                                                <Box className='table-cell' sx={{ width: 240 }}><Typography variant="body1">{t('page.mall.product.sku.title.bar.code')}</Typography></Box>
-                                                <Box className='table-cell' sx={{ width: 150 }}><Typography variant="body1">{t('page.mall.product.sku.title.price')}</Typography></Box>
-                                                <Box className='table-cell' sx={{ width: 150 }}><Typography variant="body1">{t('page.mall.product.sku.title.market.price')}</Typography></Box>
-                                                <Box className='table-cell' sx={{ width: 150 }}><Typography variant="body1">{t('page.mall.product.sku.title.cost.price')}</Typography></Box>
-                                                <Box className='table-cell' sx={{ width: 150 }}><Typography variant="body1">{t('page.mall.product.sku.title.stock')}</Typography></Box>
-                                                <Box className='table-cell' sx={{ width: 150 }}><Typography variant="body1">{t('page.mall.product.sku.title.weight')}</Typography></Box>
-                                                <Box className='table-cell' sx={{ width: 150 }}><Typography variant="body1">{t('page.mall.product.sku.title.volume')}</Typography></Box>
-                                                {mallProductSpu && mallProductSpu.sub_commission_type == 1 && <Box className='table-cell' sx={{ width: 150 }}><Typography variant="body1">{t('page.mall.product.sku.title.first.brokerage.price')}</Typography></Box>}
-                                                {mallProductSpu && mallProductSpu.sub_commission_type == 1 && <Box className='table-cell' sx={{ width: 150 }}><Typography variant="body1">{t('page.mall.product.sku.title.second.brokerage.price')}</Typography></Box>}
-                                            </Box>
-                                            {mallProductSpu.skus.map((item, index) => {
-                                                if (index == 0) {
-                                                    return (<Box key={index}></Box>);
-                                                }
-                                                return (
-                                                    <Box className='table-row' key={index}>
-                                                        <Box className='table-cell' sx={{ width: 240 }}>
-                                                            <CustomizedFileUpload
-                                                                canUpload={false}
-                                                                canRemove={false}
-                                                                showFilename={false}
-                                                                id={'file-upload-sku-' + index}
-                                                                accept=".jpg,jpeg,.png"
-                                                                maxSize={100}
-                                                                width={fileWidth}
-                                                                height={fileHeight}
-                                                                download={downloadImages?.get(item.file_id!)}
-                                                            />
-                                                        </Box>
-                                                        {item.property_list && item.property_list.map((property) => (
-                                                            <Box className='table-cell' sx={{ width: 80 }}>
-                                                                <Typography variant="body1">{property.valueName}</Typography>
-                                                            </Box>)
-                                                        )}
-                                                        <Box className='table-cell' sx={{ width: 240 }}>
-                                                            <Typography variant="body1">{item.bar_code}</Typography>
-                                                        </Box>
-                                                        <Box className='table-cell' sx={{ width: 150 }}>
-                                                            <Typography variant="body1">{item.price}</Typography>
-                                                        </Box>
-                                                        <Box className='table-cell' sx={{ width: 150 }}>
-                                                            <Typography variant="body1">{item.market_price}</Typography>
-                                                        </Box>
-                                                        <Box className='table-cell' sx={{ width: 150 }}>
-                                                            <Typography variant="body1">{item.cost_price}</Typography>
-                                                        </Box>
-                                                        <Box className='table-cell' sx={{ width: 150 }}>
-                                                            <Typography variant="body1">{item.stock}</Typography>
-                                                        </Box>
-                                                        <Box className='table-cell' sx={{ width: 150 }}>
-                                                            <Typography variant="body1">{item.weight}</Typography>
-                                                        </Box>
-                                                        <Box className='table-cell' sx={{ width: 150 }}>
-                                                            <Typography variant="body1">{item.volume}</Typography>
-                                                        </Box>
-                                                        {mallProductSpu.sub_commission_type == 1 &&
-                                                            <Box className='table-cell' sx={{ width: 150 }}>
-                                                                <Typography variant="body1">{item.first_brokerage_price}</Typography>
-                                                            </Box>
-                                                        }
-                                                        {mallProductSpu.sub_commission_type == 1 &&
-                                                            <Box className='table-cell' sx={{ width: 150 }}>
-                                                                <Typography variant="body1">{item.second_brokerage_price}</Typography>
-                                                            </Box>
-                                                        }
-                                                    </Box>
-                                                )
-                                            })}
-                                        </Box>
-                                    </Card>
-                                </>}
                             </Box>
                         </Box>
                         <Box id="logistics" sx={{ mb: 4 }}>
@@ -520,6 +442,7 @@ const MallProductSpuInfo = forwardRef(({ }, ref) => {
                                 }}
                             >
                                 <CustomizedDictCheckboxGroup
+                                    disabled
                                     id="delivery-row-checkbox-buttons-group-label"
                                     label={t("page.mall.product.title.delivery.types")}
                                     name='delivery_types'

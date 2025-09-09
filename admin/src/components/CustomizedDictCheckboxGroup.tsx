@@ -13,6 +13,7 @@ interface CustomizedDictCheckboxGroupProps {
   value: any[];
   label: string;
   onChange?: (name: string | undefined, checkedValues: any[]) => void;
+  disabled?: boolean;
   sx?: SxProps<Theme>;
 }
 
@@ -24,6 +25,7 @@ const CustomizedDictCheckboxGroup: React.FC<CustomizedDictCheckboxGroupProps> = 
   value,
   label,
   onChange,
+  disabled = false,
   sx
 }) => {
   const { dictOfType } = useDictStore();
@@ -49,7 +51,7 @@ const CustomizedDictCheckboxGroup: React.FC<CustomizedDictCheckboxGroupProps> = 
 
   return (
     <>
-      <FormControl>
+      <FormControl disabled={disabled}>
         <FormLabel id={id}>{label}</FormLabel>
         <FormGroup row={true}>
           {dicts.map(item => (
