@@ -289,26 +289,27 @@ const MallProductSpuEdit = forwardRef(({ onSubmit }: MallProductSpuEditProps, re
     const result = await getBaseMallProductSpu(mallProductSpu.id);
     setDeliveryTypes(result.delivery_types.split(','));
     // 获取属性
-    const propertyIds: number[] = [];
-    const propertyValueId = [];
+    const propertyIds = new Set<number>();
+    const propertyValueId = new Set<number>();
     for (const sku of result.skus) {
       sku.property_list = [];
       if (sku.properties) {
         const properties = JSON.parse(sku.properties)
         for (const property of properties) {
-          if (!propertyIds.includes(property.propertyId)) {
-            propertyIds.push(property.propertyId);
-          }
-          propertyValueId.push(property.valueId);
+          propertyIds.add(property.propertyId);
+          propertyValueId.add(property.valueId);
           sku.property_list.push(property as PropertyValues)
         }
       }
     }
     // 查询属性列表
-    const properties = await listMallProductPropertyByIds(propertyIds);
+    const properties = await listMallProductPropertyByIds([...propertyIds]);
     setSelectedProperties(properties);
     // 查询属性值
-    const values = await listInfoMallProductPropertyValue(propertyValueId);
+    const values = await listInfoMallProductPropertyValue([...propertyValueId]);
+    // 设置选中属性值
+    setSelectedPropertyValueIds([...propertyValueId]);
+    setSelectedPropertyValues(values);
     const valueMap = new Map(values.map(value => [value.id, value]))
     for (const sku of result.skus) {
       for (const property of sku.property_list!) {
@@ -318,6 +319,21 @@ const MallProductSpuEdit = forwardRef(({ onSubmit }: MallProductSpuEditProps, re
           property.valueName = value.name;
         }
       }
+    }
+    // 多规格,增加批量设置sku
+    if (result.spec_type == 1) {
+      result.skus.splice(0, 0, {
+        properties: '',
+        price: 0,
+        market_price: 0,
+        cost_price: 0,
+        bar_code: '',
+        stock: 0,
+        weight: 0,
+        volume: 0,
+        first_brokerage_price: 0,
+        second_brokerage_price: 0,
+      });
     }
     setMallProductSpu({
       ...result,
@@ -375,6 +391,9 @@ const MallProductSpuEdit = forwardRef(({ onSubmit }: MallProductSpuEditProps, re
     // 设置sku图片
     for (const sku of result.skus) {
       const file_id = sku.file_id;
+      if (!file_id) {
+        continue;
+      }
       downloadSystemFile(file_id, (progress) => {
         setDownloadImages(prev => {
           const data: DownloadProps = {
@@ -1214,7 +1233,6 @@ const MallProductSpuEdit = forwardRef(({ onSubmit }: MallProductSpuEditProps, re
                               file={item.file}
                               width={fileWidth}
                               height={fileHeight}
-                              download={downloadImages?.get(item.file_id!)}
                               error={!!(errors.skus[index]?.file_id)}
                               helperText={errors.skus[index]?.file_id}
                             />
