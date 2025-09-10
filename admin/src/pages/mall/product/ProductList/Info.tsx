@@ -80,34 +80,32 @@ const MallProductSpuInfo = forwardRef(({ }, ref) => {
         const result = await getInfoMallProductSpu(mallProductSpu.id);
         setDeliveryTypes(result.delivery_types.split(','));
         // 获取属性
-        const propertyValueId = [];
+        const propertyValueId = new Set<number>();
         for (const sku of result.skus) {
             sku.property_list = [];
             if (sku.properties) {
                 const properties = JSON.parse(sku.properties)
                 for (const property of properties) {
-                    propertyValueId.push(property.valueId);
+                    propertyValueId.add(property.valueId);
                     sku.property_list.push(property as PropertyValues)
                 }
             }
         }
         // 查询属性值
-        const values = await listInfoMallProductPropertyValue(propertyValueId);
+        const values = await listInfoMallProductPropertyValue([...propertyValueId]);
         const valueMap = new Map(values.map(value => [value.id, value]))
-        const propertyNames: string[] = [];
+        const propertyNames = new Set<string>();
         for (const sku of result.skus) {
             for (const property of sku.property_list!) {
                 const value = valueMap.get(property.valueId);
                 if (value) {
                     property.propertyName = value.property_name;
                     property.valueName = value.name;
-                    if (!propertyNames.includes(value.property_name)) {
-                        propertyNames.push(value.property_name);
-                    }
+                    propertyNames.add(value.property_name);
                 }
             }
         }
-        setPropertyNames(propertyNames);
+        setPropertyNames([...propertyNames]);
         setMallProductSpu({
             ...result,
         })

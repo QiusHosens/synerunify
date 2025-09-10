@@ -942,6 +942,10 @@ const MallProductSpuEdit = forwardRef(({ onSubmit }: MallProductSpuEditProps, re
           property_title: combo.map(c => c.valueName).join(' * '),
         }
       });
+      // 如果长度没变化,则不更新
+      if (mallProductSpu.skus.length == skus.length + 1) {
+        return;
+      }
       setMallProductSpu(prev => ({
         ...prev,
         skus: [mallProductSpu.skus[0], ...skus]
