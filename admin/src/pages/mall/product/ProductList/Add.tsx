@@ -373,6 +373,10 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
         second_brokerage_price: undefined,
       }]
     });
+    setSliderFiles([]);
+    setSelectedProperties([]);
+    setSelectedPropertyValueIds([]);
+    setSelectedPropertyValues([]);
   }
 
   const listBrands = async () => {
