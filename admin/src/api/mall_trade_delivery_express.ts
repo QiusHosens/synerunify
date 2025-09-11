@@ -1,4 +1,5 @@
 import { PaginatedRequest, PaginatedResponse } from '@/base/page';
+import { UploadFile } from '@/components/CustomizedFileUpload';
 import { api } from '@/utils/request';
 
 const apis = {
@@ -16,26 +17,30 @@ export interface MallTradeDeliveryExpressRequest {
   id: number; // 编号
   code: string; // 快递公司编码
   name: string; // 快递公司名称
-  logo: string; // 快递公司 logo
+  file_id?: number; // 快递公司 logo id
   sort: number; // 排序
   status: number; // 状态
-  }
+
+  file?: UploadFile | null;
+}
 
 export interface MallTradeDeliveryExpressResponse {
   id: number; // 编号
   code: string; // 快递公司编码
   name: string; // 快递公司名称
-  logo: string; // 快递公司 logo
+  file_id: number; // 快递公司 logo id
   sort: number; // 排序
   status: number; // 状态
   creator: number; // 创建者ID
   create_time: string; // 创建时间
   updater: number; // 更新者ID
   update_time: string; // 更新时间
-  }
+
+  previewUrl?: string; // 图片预览地址
+}
 
 export interface MallTradeDeliveryExpressQueryCondition extends PaginatedRequest {
-  
+
 }
 
 export const createMallTradeDeliveryExpress = (mall_trade_delivery_express: MallTradeDeliveryExpressRequest): Promise<number> => {

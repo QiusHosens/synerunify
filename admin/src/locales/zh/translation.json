@@ -178,6 +178,7 @@
   "global.page.mall.product.brand": "商品品牌",
   "global.page.mall.product.property": "商品属性",
   "global.page.mall.product.comment": "商品评论",
+  "global.page.mall.trade.delivery.express": "快递公司",
   "global.page.mall.trade.delivery.express.template": "运费模板",
 
   "global.order.placeholder.order.number": "订单编号,由系统自动生成",
@@ -528,6 +529,12 @@
     }
   },
   "page.mall.trade.delivery.express": {
+    "title.code": "公司编码",
+    "title.name": "公司名称",
+    "title.file": "公司logo",
+    "title.sort": "排序",
+    "title.status": "状态",
+
     "template": {
       "title.name": "模板名称",
       "title.charge.mode": "配送计费方式",

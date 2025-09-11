@@ -11,7 +11,7 @@
  Target Server Version : 80100 (8.1.0)
  File Encoding         : 65001
 
- Date: 05/09/2025 15:14:15
+ Date: 11/09/2025 15:46:52
 */
 
 SET NAMES utf8mb4;
@@ -1407,7 +1407,7 @@ CREATE TABLE `mall_product_sku`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '商品sku' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '商品sku' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_product_sku
@@ -1415,6 +1415,10 @@ CREATE TABLE `mall_product_sku`  (
 INSERT INTO `mall_product_sku` VALUES (1, 1, '', 9, 8, 7, '1234', 100, 6, 5, 4, 3, 2, 0, 1, '2025-09-05 07:10:18', 1, '2025-09-05 07:10:18', b'0', 1);
 INSERT INTO `mall_product_sku` VALUES (2, 1, '[{\"propertyId\":2,\"propertyName\":\"颜色\",\"valueId\":1,\"valueName\":\"白色\"}]', 9, 8, 7, '1234', 100, 6, 5, 4, 3, 2, 0, 1, '2025-09-05 07:10:18', 1, '2025-09-05 07:10:18', b'0', 1);
 INSERT INTO `mall_product_sku` VALUES (3, 1, '[{\"propertyId\":2,\"propertyName\":\"颜色\",\"valueId\":2,\"valueName\":\"黑色\"}]', 9, 8, 7, '1234', 100, 6, 5, 4, 3, 2, 0, 1, '2025-09-05 07:10:18', 1, '2025-09-05 07:10:18', b'0', 1);
+INSERT INTO `mall_product_sku` VALUES (4, 2, '[{\"propertyId\":2,\"propertyName\":\"颜色\",\"valueId\":1,\"valueName\":\"白色\"}]', 9, 8, 7, '123', 104, 6, 5, 4, 0, 0, 0, 1, '2025-09-05 07:27:13', 1, '2025-09-05 07:27:13', b'0', 1);
+INSERT INTO `mall_product_sku` VALUES (5, 2, '[{\"propertyId\":2,\"propertyName\":\"颜色\",\"valueId\":2,\"valueName\":\"黑色\"}]', 9, 8, 7, '123', 104, 6, 5, 4, 0, 0, 0, 1, '2025-09-05 07:27:13', 1, '2025-09-05 07:27:13', b'0', 1);
+INSERT INTO `mall_product_sku` VALUES (6, 3, '[{\"propertyId\":2,\"valueId\":1}]', 9, 8, 7, '123', 108, 6, 5, 4, 0, 0, 0, 1, '2025-09-05 07:37:13', 1, '2025-09-05 07:37:13', b'0', 1);
+INSERT INTO `mall_product_sku` VALUES (7, 3, '[{\"propertyId\":2,\"valueId\":2}]', 9, 8, 7, '123', 108, 6, 5, 4, 0, 0, 0, 1, '2025-09-05 07:37:13', 1, '2025-09-05 07:37:13', b'0', 1);
 
 -- ----------------------------
 -- Table structure for mall_product_spu
@@ -1451,12 +1455,14 @@ CREATE TABLE `mall_product_spu`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '商品spu' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '商品spu' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_product_spu
 -- ----------------------------
 INSERT INTO `mall_product_spu` VALUES (1, 'iPhone 15 Plus', 'iPhone', 'iPhone 15 Plus', '<p>iPhone 15 Plus 商品详情</p>', 1, 1, 97, '98,99', 0, 0, 1, 9, 8, 7, 6, '0', 1, 100, 1, 0, 5, 0, 1, '2025-09-05 07:10:18', 1, '2025-09-05 07:13:57', b'0', 1);
+INSERT INTO `mall_product_spu` VALUES (2, 'iPhone 15 Pro', 'iPhone', 'iPhone 15 Pro', '<p>iPhone 15 Pro 商品详情</p>', 1, 1, 101, '103,102', 0, 0, 1, 9, 8, 7, 6, '0', 1, 100, 0, 0, 10, 0, 1, '2025-09-05 07:27:13', 1, '2025-09-05 07:27:13', b'0', 1);
+INSERT INTO `mall_product_spu` VALUES (3, 'iPhone 15 Pro Max', 'iPhone', 'iPhone 15 Pro Max', '<p>iPhone 15 Pro Max 商品详情</p>', 1, 1, 105, '107,106', 0, 0, 1, 9, 8, 7, 6, '0', 1, 100, 0, 0, 20, 0, 1, '2025-09-05 07:37:13', 1, '2025-09-05 07:37:13', b'0', 1);
 
 -- ----------------------------
 -- Table structure for mall_product_statistics
@@ -2380,7 +2386,7 @@ CREATE TABLE `mall_trade_delivery_express`  (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '编号',
   `code` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '快递公司编码',
   `name` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '快递公司名称',
-  `logo` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '快递公司 logo',
+  `file_id` bigint NULL DEFAULT NULL COMMENT '快递公司 logo id',
   `sort` int NOT NULL DEFAULT 0 COMMENT '排序',
   `status` tinyint NOT NULL DEFAULT 0 COMMENT '状态',
   `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
@@ -2390,11 +2396,12 @@ CREATE TABLE `mall_trade_delivery_express`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '快递公司' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '快递公司' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_trade_delivery_express
 -- ----------------------------
+INSERT INTO `mall_trade_delivery_express` VALUES (1, 'SF', '顺丰', 109, 0, 0, 1, '2025-09-11 07:37:18', 1, '2025-09-11 07:37:18', b'0', 1);
 
 -- ----------------------------
 -- Table structure for mall_trade_delivery_express_template
@@ -2854,7 +2861,7 @@ CREATE TABLE `system_file`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 101 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '文件信息表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 110 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '文件信息表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of system_file
@@ -2959,6 +2966,15 @@ INSERT INTO `system_file` VALUES (97, '手机.png', 'image/png', 2741, '2025/09/
 INSERT INTO `system_file` VALUES (98, '笔记本.png', 'image/png', 2492, '2025/09/05/89617884531134464_笔记本.png', 1, '0000', 1, 1, '2025-09-05 07:09:28', 1, '2025-09-05 07:09:28', b'0', 1);
 INSERT INTO `system_file` VALUES (99, '手机.png', 'image/png', 2741, '2025/09/05/89617885105754112_手机.png', 1, '0000', 1, 1, '2025-09-05 07:09:28', 1, '2025-09-05 07:09:28', b'0', 1);
 INSERT INTO `system_file` VALUES (100, '手机.png', 'image/png', 2741, '2025/09/05/89618009454284800_手机.png', 1, '0000', 1, 1, '2025-09-05 07:09:58', 1, '2025-09-05 07:09:58', b'0', 1);
+INSERT INTO `system_file` VALUES (101, '手机.png', 'image/png', 2741, '2025/09/05/89621724236091392_手机.png', 1, '0000', 1, 1, '2025-09-05 07:24:44', 1, '2025-09-05 07:24:44', b'0', 1);
+INSERT INTO `system_file` VALUES (102, '手机.png', 'image/png', 2741, '2025/09/05/89621742594560000_手机.png', 1, '0000', 1, 1, '2025-09-05 07:24:48', 1, '2025-09-05 07:24:48', b'0', 1);
+INSERT INTO `system_file` VALUES (103, '笔记本.png', 'image/png', 2492, '2025/09/05/89621744851095552_笔记本.png', 1, '0000', 1, 1, '2025-09-05 07:24:49', 1, '2025-09-05 07:24:49', b'0', 1);
+INSERT INTO `system_file` VALUES (104, '手机.png', 'image/png', 2741, '2025/09/05/89622301267464192_手机.png', 1, '0000', 1, 1, '2025-09-05 07:27:01', 1, '2025-09-05 07:27:01', b'0', 1);
+INSERT INTO `system_file` VALUES (105, '手机.png', 'image/png', 2741, '2025/09/05/89624707262844928_手机.png', 1, '0000', 1, 1, '2025-09-05 07:36:35', 1, '2025-09-05 07:36:35', b'0', 1);
+INSERT INTO `system_file` VALUES (106, '手机.png', 'image/png', 2741, '2025/09/05/89624720370044928_手机.png', 1, '0000', 1, 1, '2025-09-05 07:36:38', 1, '2025-09-05 07:36:38', b'0', 1);
+INSERT INTO `system_file` VALUES (107, '笔记本.png', 'image/png', 2492, '2025/09/05/89624721355706368_笔记本.png', 1, '0000', 1, 1, '2025-09-05 07:36:38', 1, '2025-09-05 07:36:38', b'0', 1);
+INSERT INTO `system_file` VALUES (108, '手机.png', 'image/png', 2741, '2025/09/05/89624804289679360_手机.png', 1, '0000', 1, 1, '2025-09-05 07:36:58', 1, '2025-09-05 07:36:58', b'0', 1);
+INSERT INTO `system_file` VALUES (109, '手机.png', 'image/png', 2741, '2025/09/11/91799217550397440_手机.png', 1, '0000', 1, 1, '2025-09-11 07:37:16', 1, '2025-09-11 07:37:16', b'0', 1);
 
 -- ----------------------------
 -- Table structure for system_menu
@@ -2986,7 +3002,7 @@ CREATE TABLE `system_menu`  (
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 405 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '菜单权限表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 407 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '菜单权限表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of system_menu
@@ -3381,6 +3397,8 @@ INSERT INTO `system_menu` VALUES (401, '启用', 'mall:trade:delivery:express:te
 INSERT INTO `system_menu` VALUES (402, '禁用', 'mall:trade:delivery:express:template:disable', 3, 5, 230, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:13:54', 1, '2025-06-10 02:13:54', b'0');
 INSERT INTO `system_menu` VALUES (403, '启用', 'mall:product:list:enable', 3, 4, 217, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:13:36', 1, '2025-06-10 02:13:36', b'0');
 INSERT INTO `system_menu` VALUES (404, '禁用', 'mall:product:list:disable', 3, 5, 217, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:13:54', 1, '2025-06-10 02:13:54', b'0');
+INSERT INTO `system_menu` VALUES (405, '启用', 'mall:trade:delivery:express:company:enable', 3, 4, 229, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:13:36', 1, '2025-06-10 02:13:36', b'0');
+INSERT INTO `system_menu` VALUES (406, '禁用', 'mall:trade:delivery:express:company:disable', 3, 5, 229, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:13:54', 1, '2025-06-10 02:13:54', b'0');
 
 -- ----------------------------
 -- Table structure for system_notice
@@ -3477,7 +3495,7 @@ CREATE TABLE `system_role_menu`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 507 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '角色和菜单关联表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 509 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '角色和菜单关联表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of system_role_menu
@@ -3908,6 +3926,8 @@ INSERT INTO `system_role_menu` VALUES (503, 1, 402, 1, '2025-09-04 03:26:36', 1,
 INSERT INTO `system_role_menu` VALUES (504, 1, 401, 1, '2025-09-04 03:26:36', 1, '2025-09-04 03:26:36', b'0', 1);
 INSERT INTO `system_role_menu` VALUES (505, 1, 404, 1, '2025-09-05 07:13:42', 1, '2025-09-05 07:13:42', b'0', 1);
 INSERT INTO `system_role_menu` VALUES (506, 1, 403, 1, '2025-09-05 07:13:42', 1, '2025-09-05 07:13:42', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (507, 1, 405, 1, '2025-09-11 07:05:34', 1, '2025-09-11 07:05:34', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (508, 1, 406, 1, '2025-09-11 07:05:34', 1, '2025-09-11 07:05:34', b'0', 1);
 
 -- ----------------------------
 -- Table structure for system_role_menu_data_scope
@@ -4014,7 +4034,7 @@ CREATE TABLE `system_user`  (
 -- ----------------------------
 -- Records of system_user
 -- ----------------------------
-INSERT INTO `system_user` VALUES (1, 'admin', '$2b$06$Ohq86rDIvNuy/4ZvsTF4dOw.7I7QJj620LC25PwgYDmrKqKmKsJz6', '超级管理员', '超级管理员', '123@qq.com', '18888888888', 0, '', 0, '127.0.0.1', '2025-09-03 01:28:41', '0000', 1, 1, '2025-03-08 10:14:52', 1, '2025-09-03 01:28:37', b'0', 1);
+INSERT INTO `system_user` VALUES (1, 'admin', '$2b$06$Ohq86rDIvNuy/4ZvsTF4dOw.7I7QJj620LC25PwgYDmrKqKmKsJz6', '超级管理员', '超级管理员', '123@qq.com', '18888888888', 0, '', 0, '127.0.0.1', '2025-09-11 01:34:13', '0000', 1, 1, '2025-03-08 10:14:52', 1, '2025-09-11 01:34:10', b'0', 1);
 INSERT INTO `system_user` VALUES (11, 'test', '$2b$06$S2yMOy4Mp5gImLOEl8X3K.T8XAWrfXVwGXK/vOBL.30PGNnnGIDzy', '测试管理员', NULL, '', '15555555555', 0, '', 0, '127.0.0.1', '2025-05-23 08:16:27', '0000-0000', 7, 1, '2025-05-23 08:16:00', 1, '2025-05-23 08:16:25', b'0', 2);
 
 -- ----------------------------

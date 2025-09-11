@@ -7,7 +7,7 @@ pub fn create_request_to_model(request: &CreateMallTradeDeliveryExpressRequest) 
     MallTradeDeliveryExpressActiveModel {
         code: Set(request.code.clone()),
         name: Set(request.name.clone()),
-        logo: request.logo.as_ref().map_or(NotSet, |logo| Set(Some(logo.clone()))),
+        file_id: request.file_id.as_ref().map_or(NotSet, |file_id| Set(Some(file_id.clone()))),
         sort: Set(request.sort.clone()),
         status: Set(request.status.clone()),
         ..Default::default()
@@ -22,8 +22,8 @@ pub fn update_request_to_model(request: &UpdateMallTradeDeliveryExpressRequest, 
     if let Some(name) = &request.name { 
         active_model.name = Set(name.clone());
     }
-    if let Some(logo) = &request.logo { 
-        active_model.logo = Set(Some(logo.clone()));
+    if let Some(logo) = &request.file_id {
+        active_model.file_id = Set(Some(logo.clone()));
     }
     if let Some(sort) = &request.sort { 
         active_model.sort = Set(sort.clone());
@@ -39,7 +39,7 @@ pub fn model_to_response(model: MallTradeDeliveryExpress) -> MallTradeDeliveryEx
         id: model.id,
         code: model.code,
         name: model.name,
-        logo: model.logo,
+        file_id: model.file_id,
         sort: model.sort,
         status: model.status,
         creator: model.creator,

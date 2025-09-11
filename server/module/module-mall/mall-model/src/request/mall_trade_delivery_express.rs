@@ -11,8 +11,8 @@ pub struct CreateMallTradeDeliveryExpressRequest {
     pub code: String, // 快递公司编码
     
     pub name: String, // 快递公司名称
-    
-    pub logo: Option<String>, // 快递公司 logo
+
+    pub file_id: Option<i64>, // 快递公司 logo id
     
     pub sort: i32, // 排序
     
@@ -28,8 +28,8 @@ pub struct UpdateMallTradeDeliveryExpressRequest {
     pub code: Option<String>, // 快递公司编码
     
     pub name: Option<String>, // 快递公司名称
-    
-    pub logo: Option<String>, // 快递公司 logo
+
+    pub file_id: Option<i64>, // 快递公司 logo id
     
     pub sort: Option<i32>, // 排序
     
