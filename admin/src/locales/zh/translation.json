@@ -180,6 +180,7 @@
   "global.page.mall.product.comment": "商品评论",
   "global.page.mall.trade.delivery.express": "快递公司",
   "global.page.mall.trade.delivery.express.template": "运费模板",
+  "global.page.mall.trade.delivery.store": "门店",
 
   "global.order.placeholder.order.number": "订单编号,由系统自动生成",
   "global.title.erp.purchase.list": "采购订单列表",
@@ -528,43 +529,59 @@
       "error.content": "请输入评论内容"
     }
   },
-  "page.mall.trade.delivery.express": {
-    "title.code": "公司编码",
-    "title.name": "公司名称",
-    "title.file": "公司logo",
-    "title.sort": "排序",
-    "title.status": "状态",
-
-    "template": {
-      "title.name": "模板名称",
-      "title.charge.mode": "配送计费方式",
+  "page.mall.trade.delivery": {
+    "express": {
+      "title.code": "公司编码",
+      "title.name": "公司名称",
+      "title.file": "公司logo",
       "title.sort": "排序",
       "title.status": "状态",
-      "charge": {
-        "list.title": "运费",
-        "operate.add": "添加区域",
-        "title.template": "快递运费模板",
-        "title.area": "区域",
+
+      "template": {
+        "title.name": "模板名称",
         "title.charge.mode": "配送计费方式",
-        "title.start.price": "运费(元)",
-        "title.extra.price": "续费(元)",
-        "title.start.count.count": "首件数量",
-        "title.extra.count.count": "续件数量",
-        "title.start.count.weight": "首件重量(kg)",
-        "title.extra.count.weight": "续件重量(kg)",
-        "title.start.count.volume": "首件体积(m³)",
-        "title.extra.count.volume": "续件体积(m³)"
-      },
-      "free": {
-        "list.title": "包邮区域",
-        "operate.add": "添加区域",
-        "title.template": "快递运费模板",
-        "title.area": "包邮区域",
-        "title.free.price": "包邮金额(元)",
-        "title.free.count.count": "包邮件数",
-        "title.free.count.weight": "包邮重量(kg)",
-        "title.free.count.volume": "包邮体积(m³)"
+        "title.sort": "排序",
+        "title.status": "状态",
+        "charge": {
+          "list.title": "运费",
+          "operate.add": "添加区域",
+          "title.template": "快递运费模板",
+          "title.area": "区域",
+          "title.charge.mode": "配送计费方式",
+          "title.start.price": "运费(元)",
+          "title.extra.price": "续费(元)",
+          "title.start.count.count": "首件数量",
+          "title.extra.count.count": "续件数量",
+          "title.start.count.weight": "首件重量(kg)",
+          "title.extra.count.weight": "续件重量(kg)",
+          "title.start.count.volume": "首件体积(m³)",
+          "title.extra.count.volume": "续件体积(m³)"
+        },
+        "free": {
+          "list.title": "包邮区域",
+          "operate.add": "添加区域",
+          "title.template": "快递运费模板",
+          "title.area": "包邮区域",
+          "title.free.price": "包邮金额(元)",
+          "title.free.count.count": "包邮件数",
+          "title.free.count.weight": "包邮重量(kg)",
+          "title.free.count.volume": "包邮体积(m³)"
+        }
       }
+    },
+    "store": {
+      "title.name": "门店名称",
+      "title.introduction": "门店简介",
+      "title.phone": "门店手机",
+      "title.area": "区域编号",
+      "title.detail.address": "门店详细地址",
+      "title.logo": "门店logo",
+      "title.opening.time": "营业开始时间",
+      "title.closing.time": "营业结束时间",
+      "title.latitude": "纬度",
+      "title.longitude": "经度",
+      "title.verify.user.ids": "核销用户编号数组",
+      "title.status": "门店状态"
     }
   }
 }
