@@ -58,7 +58,7 @@ export default function MallTradeDeliveryPickUpStore() {
       { field: 'phone', headerName: t("page.mall.trade.delivery.store.title.phone"), flex: 1, minWidth: 100 },
       { field: 'area_id', headerName: t("page.mall.trade.delivery.store.title.area"), flex: 1, minWidth: 100 },
       { field: 'detail_address', headerName: t("page.mall.trade.delivery.store.title.detail.address"), flex: 1, minWidth: 100 },
-      { field: 'logo', headerName: t("page.mall.trade.delivery.store.title.logo"), flex: 1, minWidth: 100 },
+      { field: 'file_id', headerName: t("page.mall.trade.delivery.store.title.file"), flex: 1, minWidth: 100 },
       { field: 'opening_time', headerName: t("page.mall.trade.delivery.store.title.opening.time"), flex: 1, minWidth: 100 },
       { field: 'closing_time', headerName: t("page.mall.trade.delivery.store.title.closing.time"), flex: 1, minWidth: 100 },
       { field: 'latitude', headerName: t("page.mall.trade.delivery.store.title.latitude"), flex: 1, minWidth: 100 },

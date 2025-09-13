@@ -19,7 +19,7 @@ export interface MallTradeDeliveryPickUpStoreRequest {
   phone: string; // 门店手机
   area_id: number; // 区域编号
   detail_address: string; // 门店详细地址
-  logo: string; // 门店 logo
+  file_id: number; // 门店 logo
   opening_time: string; // 营业开始时间
   closing_time: string; // 营业结束时间
   latitude: number; // 纬度
@@ -35,7 +35,7 @@ export interface MallTradeDeliveryPickUpStoreResponse {
   phone: string; // 门店手机
   area_id: number; // 区域编号
   detail_address: string; // 门店详细地址
-  logo: string; // 门店 logo
+  file_id: number; // 门店 logo
   opening_time: string; // 营业开始时间
   closing_time: string; // 营业结束时间
   latitude: number; // 纬度

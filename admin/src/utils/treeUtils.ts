@@ -143,3 +143,64 @@ export const getSelectedIds = (selectedId: string[], tree: TreeNode[]): string[]
   collectSelectedIds(tree);
   return result;
 };
+
+// 区域树相关接口
+interface AreaNode {
+  id: number;
+  name: string;
+  children?: AreaNode[];
+}
+
+/**
+ * 根据区域ID查找从根节点到目标节点的完整路径
+ * @param areaTree 区域树
+ * @param targetId 目标区域ID
+ * @returns 路径数组，包含从根到目标节点的所有ID
+ */
+export const findAreaPathById = (areaTree: AreaNode[], targetId: number): string[] => {
+  const path: string[] = [];
+  
+  const findPath = (nodes: AreaNode[], currentPath: string[]): boolean => {
+    for (const node of nodes) {
+      const newPath = [...currentPath, String(node.id)];
+      
+      if (node.id === targetId) {
+        path.push(...newPath);
+        return true;
+      }
+      
+      if (node.children && node.children.length > 0) {
+        if (findPath(node.children, newPath)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  };
+  
+  findPath(areaTree, []);
+  return path;
+};
+
+/**
+ * 根据区域ID查找对应的区域节点
+ * @param areaTree 区域树
+ * @param targetId 目标区域ID
+ * @returns 找到的区域节点，未找到返回null
+ */
+export const findAreaNodeById = (areaTree: AreaNode[], targetId: number): AreaNode | null => {
+  for (const node of areaTree) {
+    if (node.id === targetId) {
+      return node;
+    }
+    
+    if (node.children && node.children.length > 0) {
+      const found = findAreaNodeById(node.children, targetId);
+      if (found) {
+        return found;
+      }
+    }
+  }
+  
+  return null;
+};

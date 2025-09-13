@@ -10,7 +10,7 @@ interface FormErrors {
   phone?: string; // 门店手机
   area_id?: string; // 区域编号
   detail_address?: string; // 门店详细地址
-  logo?: string; // 门店 logo
+  file_id?: string; // 门店 file_id
   opening_time?: string; // 营业开始时间
   closing_time?: string; // 营业结束时间
   latitude?: string; // 纬度
@@ -34,7 +34,7 @@ const MallTradeDeliveryPickUpStoreEdit = forwardRef(({ onSubmit }: MallTradeDeli
     phone: '',
     area_id: 0,
     detail_address: '',
-    logo: '',
+    file_id: 0,
     opening_time: '',
     closing_time: '',
     latitude: 0,
@@ -73,8 +73,8 @@ const MallTradeDeliveryPickUpStoreEdit = forwardRef(({ onSubmit }: MallTradeDeli
       newErrors.detail_address = t('page.mall.trade.delivery.store.error.detail_address');
     }
     
-    if (!mallTradeDeliveryPickUpStore.logo.trim()) {
-      newErrors.logo = t('page.mall.trade.delivery.store.error.logo');
+    if (!mallTradeDeliveryPickUpStore.file_id.trim()) {
+      newErrors.file_id = t('page.mall.trade.delivery.store.error.file_id');
     }
     
     if (!mallTradeDeliveryPickUpStore.opening_time.trim()) {
@@ -236,12 +236,12 @@ const MallTradeDeliveryPickUpStoreEdit = forwardRef(({ onSubmit }: MallTradeDeli
           <TextField
             required
             size="small"
-            label={t("page.mall.trade.delivery.store.title.logo")}
-            name='logo'
-            value={ mallTradeDeliveryPickUpStore.logo}
+            label={t("page.mall.trade.delivery.store.title.file_id")}
+            name='file_id'
+            value={ mallTradeDeliveryPickUpStore.file_id}
             onChange={handleInputChange}
-            error={!!errors.logo}
-            helperText={errors.logo}
+            error={!!errors.file_id}
+            helperText={errors.file_id}
           />
           <TextField
             required

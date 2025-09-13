@@ -10,7 +10,7 @@ pub fn create_request_to_model(request: &CreateMallTradeDeliveryPickUpStoreReque
         phone: Set(request.phone.clone()),
         area_id: Set(request.area_id.clone()),
         detail_address: Set(request.detail_address.clone()),
-        logo: Set(request.logo.clone()),
+        file_id: Set(request.file_id.clone()),
         opening_time: Set(request.opening_time.clone()),
         closing_time: Set(request.closing_time.clone()),
         latitude: Set(request.latitude.clone()),
@@ -38,8 +38,8 @@ pub fn update_request_to_model(request: &UpdateMallTradeDeliveryPickUpStoreReque
     if let Some(detail_address) = &request.detail_address { 
         active_model.detail_address = Set(detail_address.clone());
     }
-    if let Some(logo) = &request.logo { 
-        active_model.logo = Set(logo.clone());
+    if let Some(file_id) = &request.file_id {
+        active_model.file_id = Set(file_id.clone());
     }
     if let Some(opening_time) = &request.opening_time { 
         active_model.opening_time = Set(opening_time.clone());
@@ -70,7 +70,7 @@ pub fn model_to_response(model: MallTradeDeliveryPickUpStore) -> MallTradeDelive
         phone: model.phone,
         area_id: model.area_id,
         detail_address: model.detail_address,
-        logo: model.logo,
+        file_id: model.file_id,
         opening_time: model.opening_time,
         closing_time: model.closing_time,
         latitude: model.latitude,

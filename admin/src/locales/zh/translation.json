@@ -575,13 +575,12 @@
       "title.phone": "门店手机",
       "title.area": "区域编号",
       "title.detail.address": "门店详细地址",
-      "title.logo": "门店logo",
+      "title.file": "门店logo",
       "title.opening.time": "营业开始时间",
       "title.closing.time": "营业结束时间",
       "title.latitude": "纬度",
       "title.longitude": "经度",
-      "title.verify.user.ids": "核销用户编号数组",
-      "title.status": "门店状态"
+      "title.verify.user.ids": "核销用户编号数组"
     }
   }
 }

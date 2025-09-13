@@ -19,8 +19,8 @@ pub struct MallTradeDeliveryPickUpStoreResponse {
     pub area_id: i32, // 区域编号
     
     pub detail_address: String, // 门店详细地址
-    
-    pub logo: String, // 门店 logo
+
+    pub file_id: i64, // 门店 logo id
     
     #[serde_as(as = "common::formatter::string_date_time::StringTime")]
     #[schema(value_type = String, format = Date)]

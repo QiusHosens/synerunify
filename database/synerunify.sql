@@ -1,17 +1,17 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : 192.168.0.99_synerunify
+ Source Server         : 192.168.1.18_synerunify
  Source Server Type    : MySQL
- Source Server Version : 80100 (8.1.0)
- Source Host           : 192.168.0.99:30010
+ Source Server Version : 80200 (8.2.0)
+ Source Host           : 192.168.1.18:3306
  Source Schema         : synerunify
 
  Target Server Type    : MySQL
- Target Server Version : 80100 (8.1.0)
+ Target Server Version : 80200 (8.2.0)
  File Encoding         : 65001
 
- Date: 11/09/2025 15:46:52
+ Date: 13/09/2025 14:08:12
 */
 
 SET NAMES utf8mb4;
@@ -2492,7 +2492,7 @@ CREATE TABLE `mall_trade_delivery_pick_up_store`  (
   `phone` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '门店手机',
   `area_id` int NOT NULL COMMENT '区域编号',
   `detail_address` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '门店详细地址',
-  `logo` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '门店 logo',
+  `file_id` bigint NOT NULL COMMENT '门店 logo id',
   `opening_time` time NOT NULL COMMENT '营业开始时间',
   `closing_time` time NOT NULL COMMENT '营业结束时间',
   `latitude` double NOT NULL COMMENT '纬度',
@@ -3002,7 +3002,7 @@ CREATE TABLE `system_menu`  (
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 407 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '菜单权限表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 409 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '菜单权限表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of system_menu
@@ -3399,6 +3399,8 @@ INSERT INTO `system_menu` VALUES (403, '启用', 'mall:product:list:enable', 3, 
 INSERT INTO `system_menu` VALUES (404, '禁用', 'mall:product:list:disable', 3, 5, 217, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:13:54', 1, '2025-06-10 02:13:54', b'0');
 INSERT INTO `system_menu` VALUES (405, '启用', 'mall:trade:delivery:express:company:enable', 3, 4, 229, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:13:36', 1, '2025-06-10 02:13:36', b'0');
 INSERT INTO `system_menu` VALUES (406, '禁用', 'mall:trade:delivery:express:company:disable', 3, 5, 229, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:13:54', 1, '2025-06-10 02:13:54', b'0');
+INSERT INTO `system_menu` VALUES (407, '启用', 'mall:trade:delivery:store:store:enable', 3, 4, 231, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:13:36', 1, '2025-06-10 02:13:36', b'0');
+INSERT INTO `system_menu` VALUES (408, '禁用', 'mall:trade:delivery:store:store:disable', 3, 5, 231, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:13:54', 1, '2025-06-10 02:13:54', b'0');
 
 -- ----------------------------
 -- Table structure for system_notice
@@ -3495,7 +3497,7 @@ CREATE TABLE `system_role_menu`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 509 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '角色和菜单关联表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 511 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '角色和菜单关联表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of system_role_menu
@@ -3928,6 +3930,8 @@ INSERT INTO `system_role_menu` VALUES (505, 1, 404, 1, '2025-09-05 07:13:42', 1,
 INSERT INTO `system_role_menu` VALUES (506, 1, 403, 1, '2025-09-05 07:13:42', 1, '2025-09-05 07:13:42', b'0', 1);
 INSERT INTO `system_role_menu` VALUES (507, 1, 405, 1, '2025-09-11 07:05:34', 1, '2025-09-11 07:05:34', b'0', 1);
 INSERT INTO `system_role_menu` VALUES (508, 1, 406, 1, '2025-09-11 07:05:34', 1, '2025-09-11 07:05:34', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (509, 1, 407, 1, '2025-09-12 14:20:25', 1, '2025-09-12 14:20:25', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (510, 1, 408, 1, '2025-09-12 14:20:25', 1, '2025-09-12 14:20:25', b'0', 1);
 
 -- ----------------------------
 -- Table structure for system_role_menu_data_scope

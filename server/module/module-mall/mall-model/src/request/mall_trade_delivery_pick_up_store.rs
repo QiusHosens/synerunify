@@ -17,8 +17,8 @@ pub struct CreateMallTradeDeliveryPickUpStoreRequest {
     pub area_id: i32, // 区域编号
     
     pub detail_address: String, // 门店详细地址
-    
-    pub logo: String, // 门店 logo
+
+    pub file_id: i64, // 门店 logo id
     
     #[schema(value_type = String, format = Date)]
     pub opening_time: NaiveTime, // 营业开始时间
@@ -50,8 +50,8 @@ pub struct UpdateMallTradeDeliveryPickUpStoreRequest {
     pub area_id: Option<i32>, // 区域编号
     
     pub detail_address: Option<String>, // 门店详细地址
-    
-    pub logo: Option<String>, // 门店 logo
+
+    pub file_id: Option<i64>, // 门店 logo id
     
     #[schema(value_type = String, format = Date)]
     pub opening_time: Option<NaiveTime>, // 营业开始时间

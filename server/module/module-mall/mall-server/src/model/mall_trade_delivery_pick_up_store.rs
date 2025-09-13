@@ -20,8 +20,8 @@ pub struct Model {
     pub area_id: i32, // 区域编号
     
     pub detail_address: String, // 门店详细地址
-    
-    pub logo: String, // 门店 logo
+
+    pub file_id: i64, // 门店 logo id
     
     pub opening_time: NaiveTime, // 营业开始时间
     
