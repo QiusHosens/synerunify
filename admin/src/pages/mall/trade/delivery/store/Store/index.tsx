@@ -1,4 +1,4 @@
-import { Box, Button, Switch } from '@mui/material';
+import { Box, Button, styled, Switch } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { DataGrid, GridCallbackDetails, GridColDef, GridFilterModel, GridRenderCellParams, GridSortModel } from '@mui/x-data-grid';
@@ -10,6 +10,7 @@ import MallTradeDeliveryPickUpStoreEdit from './Edit';
 import MallTradeDeliveryPickUpStoreDelete from './Delete';
 import { useHomeStore } from '@/store';
 import CustomizedAutoMore from '@/components/CustomizedAutoMore';
+import { downloadSystemFile } from '@/api/system_file';
 
 export default function MallTradeDeliveryPickUpStore() {
   const { t } = useTranslation();
@@ -28,6 +29,13 @@ export default function MallTradeDeliveryPickUpStore() {
   const addMallTradeDeliveryPickUpStore = useRef(null);
   const editMallTradeDeliveryPickUpStore = useRef(null);
   const deleteMallTradeDeliveryPickUpStore = useRef(null);
+
+  const PreviewImage = styled('img')({
+    height: '60%',
+    objectFit: 'contain',
+    top: 0,
+    left: 0,
+  });
 
   const handleStatusChange = useCallback(
     async (e: React.ChangeEvent<HTMLInputElement>, checked: boolean, data: MallTradeDeliveryPickUpStoreResponse) => {
@@ -54,16 +62,21 @@ export default function MallTradeDeliveryPickUpStore() {
   const columns: GridColDef[] = useMemo(
     () => [
       { field: 'name', headerName: t("page.mall.trade.delivery.store.title.name"), flex: 1, minWidth: 100 },
-      { field: 'introduction', headerName: t("page.mall.trade.delivery.store.title.introduction"), flex: 1, minWidth: 100 },
+      {
+        field: 'file_id',
+        headerName: t("page.mall.trade.delivery.store.title.file"),
+        flex: 1,
+        minWidth: 100,
+        renderCell: (params: GridRenderCellParams) => (
+          <Box sx={{ height: '100%', display: 'flex', gap: 1, alignItems: 'center' }}>
+            <PreviewImage src={params.row.previewUrl} />
+          </Box>
+        ),
+      },
       { field: 'phone', headerName: t("page.mall.trade.delivery.store.title.phone"), flex: 1, minWidth: 100 },
-      { field: 'area_id', headerName: t("page.mall.trade.delivery.store.title.area"), flex: 1, minWidth: 100 },
       { field: 'detail_address', headerName: t("page.mall.trade.delivery.store.title.detail.address"), flex: 1, minWidth: 100 },
-      { field: 'file_id', headerName: t("page.mall.trade.delivery.store.title.file"), flex: 1, minWidth: 100 },
       { field: 'opening_time', headerName: t("page.mall.trade.delivery.store.title.opening.time"), flex: 1, minWidth: 100 },
       { field: 'closing_time', headerName: t("page.mall.trade.delivery.store.title.closing.time"), flex: 1, minWidth: 100 },
-      { field: 'latitude', headerName: t("page.mall.trade.delivery.store.title.latitude"), flex: 1, minWidth: 100 },
-      { field: 'longitude', headerName: t("page.mall.trade.delivery.store.title.longitude"), flex: 1, minWidth: 100 },
-      { field: 'verify_user_ids', headerName: t("page.mall.trade.delivery.store.title.verify.user.ids"), flex: 1, minWidth: 100 },
       {
         field: 'status',
         sortable: false,
@@ -112,7 +125,21 @@ export default function MallTradeDeliveryPickUpStore() {
     const result = await pageMallTradeDeliveryPickUpStore(condition);
     setRecords(result.list);
     setTotal(result.total);
+
+    loadImages(result.list);
   };
+
+  const loadImages = (list: Array<MallTradeDeliveryPickUpStoreResponse>) => {
+    for (let index = 0, len = list.length; index < len; index++) {
+      const brand = list[index];
+      // 设置图片
+      downloadSystemFile(brand.file_id, (progress) => { }).then(file => {
+        setRecords(prev =>
+          prev.map(item => item.id === brand.id ? { ...item, previewUrl: window.URL.createObjectURL(file) } : item)
+        )
+      })
+    }
+  }
 
   const handleClickOpenAdd = () => {
     (addMallTradeDeliveryPickUpStore.current as any).show();

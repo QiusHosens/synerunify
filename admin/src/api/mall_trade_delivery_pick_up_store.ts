@@ -1,16 +1,17 @@
-import { PaginatedRequest, PaginatedResponse } from '@/base/page';
-import { api } from '@/utils/request';
+import { PaginatedRequest, PaginatedResponse } from "@/base/page";
+import { UploadFile } from "@/components/CustomizedFileUpload";
+import { api } from "@/utils/request";
 
 const apis = {
-  create: '/mall/mall_trade_delivery_pick_up_store/create', // 新增
-  update: '/mall/mall_trade_delivery_pick_up_store/update', // 修改
-  delete: '/mall/mall_trade_delivery_pick_up_store/delete', // 删除
-  get: '/mall/mall_trade_delivery_pick_up_store/get', // 单条查询
-  list: '/mall/mall_trade_delivery_pick_up_store/list', // 列表查询
-  page: '/mall/mall_trade_delivery_pick_up_store/page', // 分页查询
-  enable: '/mall/mall_trade_delivery_pick_up_store/enable', // 启用
-  disable: '/mall/mall_trade_delivery_pick_up_store/disable', // 禁用
-}
+  create: "/mall/mall_trade_delivery_pick_up_store/create", // 新增
+  update: "/mall/mall_trade_delivery_pick_up_store/update", // 修改
+  delete: "/mall/mall_trade_delivery_pick_up_store/delete", // 删除
+  get: "/mall/mall_trade_delivery_pick_up_store/get", // 单条查询
+  list: "/mall/mall_trade_delivery_pick_up_store/list", // 列表查询
+  page: "/mall/mall_trade_delivery_pick_up_store/page", // 分页查询
+  enable: "/mall/mall_trade_delivery_pick_up_store/enable", // 启用
+  disable: "/mall/mall_trade_delivery_pick_up_store/disable", // 禁用
+};
 
 export interface MallTradeDeliveryPickUpStoreRequest {
   id: number; // 编号
@@ -26,7 +27,9 @@ export interface MallTradeDeliveryPickUpStoreRequest {
   longitude: number; // 经度
   verify_user_ids: string; // 核销用户编号数组
   status: number; // 门店状态
-  }
+
+  file?: UploadFile | null;
+}
 
 export interface MallTradeDeliveryPickUpStoreResponse {
   id: number; // 编号
@@ -46,40 +49,60 @@ export interface MallTradeDeliveryPickUpStoreResponse {
   create_time: string; // 创建时间
   updater: number; // 更新者ID
   update_time: string; // 更新时间
-  }
 
-export interface MallTradeDeliveryPickUpStoreQueryCondition extends PaginatedRequest {
-  
+  previewUrl?: string; // 图片预览地址
 }
 
-export const createMallTradeDeliveryPickUpStore = (mall_trade_delivery_pick_up_store: MallTradeDeliveryPickUpStoreRequest): Promise<number> => {
+export interface MallTradeDeliveryPickUpStoreQueryCondition
+  extends PaginatedRequest {}
+
+export const createMallTradeDeliveryPickUpStore = (
+  mall_trade_delivery_pick_up_store: MallTradeDeliveryPickUpStoreRequest
+): Promise<number> => {
   return api.post<number>(apis.create, mall_trade_delivery_pick_up_store);
-}
+};
 
-export const updateMallTradeDeliveryPickUpStore = (mall_trade_delivery_pick_up_store: MallTradeDeliveryPickUpStoreRequest): Promise<void> => {
+export const updateMallTradeDeliveryPickUpStore = (
+  mall_trade_delivery_pick_up_store: MallTradeDeliveryPickUpStoreRequest
+): Promise<void> => {
   return api.post<void>(apis.update, mall_trade_delivery_pick_up_store);
-}
+};
 
-export const deleteMallTradeDeliveryPickUpStore = (id: number): Promise<void> => {
+export const deleteMallTradeDeliveryPickUpStore = (
+  id: number
+): Promise<void> => {
   return api.post<void>(`${apis.delete}/${id}`);
-}
+};
 
-export const getMallTradeDeliveryPickUpStore = (id: number): Promise<MallTradeDeliveryPickUpStoreResponse> => {
+export const getMallTradeDeliveryPickUpStore = (
+  id: number
+): Promise<MallTradeDeliveryPickUpStoreResponse> => {
   return api.get<MallTradeDeliveryPickUpStoreResponse>(`${apis.get}/${id}`);
-}
+};
 
-export const listMallTradeDeliveryPickUpStore = (): Promise<Array<MallTradeDeliveryPickUpStoreResponse>> => {
+export const listMallTradeDeliveryPickUpStore = (): Promise<
+  Array<MallTradeDeliveryPickUpStoreResponse>
+> => {
   return api.get<Array<MallTradeDeliveryPickUpStoreResponse>>(apis.list);
-}
+};
 
-export const pageMallTradeDeliveryPickUpStore = (condition: MallTradeDeliveryPickUpStoreQueryCondition): Promise<PaginatedResponse<MallTradeDeliveryPickUpStoreResponse>> => {
-  return api.get<PaginatedResponse<MallTradeDeliveryPickUpStoreResponse>>(apis.page, condition);
-}
+export const pageMallTradeDeliveryPickUpStore = (
+  condition: MallTradeDeliveryPickUpStoreQueryCondition
+): Promise<PaginatedResponse<MallTradeDeliveryPickUpStoreResponse>> => {
+  return api.get<PaginatedResponse<MallTradeDeliveryPickUpStoreResponse>>(
+    apis.page,
+    condition
+  );
+};
 
-export const enableMallTradeDeliveryPickUpStore = (id: number): Promise<void> => {
+export const enableMallTradeDeliveryPickUpStore = (
+  id: number
+): Promise<void> => {
   return api.post<void>(`${apis.enable}/${id}`);
-}
+};
 
-export const disableMallTradeDeliveryPickUpStore = (id: number): Promise<void> => {
+export const disableMallTradeDeliveryPickUpStore = (
+  id: number
+): Promise<void> => {
   return api.post<void>(`${apis.disable}/${id}`);
-}
+};

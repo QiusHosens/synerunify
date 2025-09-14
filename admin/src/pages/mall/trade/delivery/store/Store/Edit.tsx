@@ -1,11 +1,18 @@
 import { Box, Button, FormControl, Switch, TextField, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { forwardRef, useImperativeHandle, useState } from 'react';
+import { forwardRef, useCallback, useImperativeHandle, useState } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
 import { MallTradeDeliveryPickUpStoreRequest, MallTradeDeliveryPickUpStoreResponse, updateMallTradeDeliveryPickUpStore } from '@/api';
 import CustomizedDialog from '@/components/CustomizedDialog';
+import CustomizedFileUpload, { DownloadProps, UploadFile } from '@/components/CustomizedFileUpload';
+import { downloadSystemFile, uploadSystemFile } from '@/api/system_file';
+import dayjs, { Dayjs } from 'dayjs';
+import { PickerValue } from '@mui/x-date-pickers/internals';
+import { LocalizationProvider, TimePicker } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import AreaCascader from '@/components/AreaCascader';
 
-interface FormErrors { 
+interface FormErrors {
   name?: string; // 门店名称
   phone?: string; // 门店手机
   area_id?: string; // 区域编号
@@ -27,6 +34,8 @@ const MallTradeDeliveryPickUpStoreEdit = forwardRef(({ onSubmit }: MallTradeDeli
 
   const [open, setOpen] = useState(false);
   const [maxWidth] = useState<DialogProps['maxWidth']>('sm');
+  const [openingTime, setOpeningTime] = useState<Dayjs | null>(dayjs('2022-04-17T9:00'));
+  const [closingTime, setClosingTime] = useState<Dayjs | null>(dayjs('2022-04-17T22:00'));
   const [mallTradeDeliveryPickUpStore, setMallTradeDeliveryPickUpStore] = useState<MallTradeDeliveryPickUpStoreRequest>({
     id: 0,
     name: '',
@@ -41,8 +50,11 @@ const MallTradeDeliveryPickUpStoreEdit = forwardRef(({ onSubmit }: MallTradeDeli
     longitude: 0,
     verify_user_ids: '',
     status: 0,
-    });
+  });
   const [errors, setErrors] = useState<FormErrors>({});
+  const [fileWidth] = useState<number>(240);
+  const [fileHeight] = useState<number>(160);
+  const [downloadImage, setDownloadImage] = useState<DownloadProps>();
 
   useImperativeHandle(ref, () => ({
     show(mallTradeDeliveryPickUpStore: MallTradeDeliveryPickUpStoreResponse) {
@@ -56,47 +68,43 @@ const MallTradeDeliveryPickUpStoreEdit = forwardRef(({ onSubmit }: MallTradeDeli
 
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
-    
+
     if (!mallTradeDeliveryPickUpStore.name.trim()) {
-      newErrors.name = t('page.mall.trade.delivery.store.error.name');
+      newErrors.name = t('global.error.input.please') + t('page.mall.trade.delivery.store.title.name');
     }
-    
+
     if (!mallTradeDeliveryPickUpStore.phone.trim()) {
-      newErrors.phone = t('page.mall.trade.delivery.store.error.phone');
+      newErrors.phone = t('global.error.input.please') + t('page.mall.trade.delivery.store.title.phone');
     }
-    
+
     if (!mallTradeDeliveryPickUpStore.area_id && mallTradeDeliveryPickUpStore.area_id != 0) {
-      newErrors.area_id = t('page.mall.trade.delivery.store.error.area_id');
+      newErrors.area_id = t('global.error.select.please') + t('page.mall.trade.delivery.store.title.area');
     }
-    
+
     if (!mallTradeDeliveryPickUpStore.detail_address.trim()) {
-      newErrors.detail_address = t('page.mall.trade.delivery.store.error.detail_address');
+      newErrors.detail_address = t('global.error.input.please') + t('page.mall.trade.delivery.store.title.detail.address');
     }
-    
-    if (!mallTradeDeliveryPickUpStore.file_id.trim()) {
-      newErrors.file_id = t('page.mall.trade.delivery.store.error.file_id');
+
+    if (!mallTradeDeliveryPickUpStore.file_id && mallTradeDeliveryPickUpStore.file_id != 0) {
+      newErrors.file_id = t('global.error.select.please') + t('page.mall.trade.delivery.store.title.file');
     }
-    
+
     if (!mallTradeDeliveryPickUpStore.opening_time.trim()) {
-      newErrors.opening_time = t('page.mall.trade.delivery.store.error.opening_time');
+      newErrors.opening_time = t('global.error.select.please') + t('page.mall.trade.delivery.store.title.opening.time');
     }
-    
+
     if (!mallTradeDeliveryPickUpStore.closing_time.trim()) {
-      newErrors.closing_time = t('page.mall.trade.delivery.store.error.closing_time');
+      newErrors.closing_time = t('global.error.select.please') + t('page.mall.trade.delivery.store.title.closing.time');
     }
-    
+
     if (!mallTradeDeliveryPickUpStore.latitude && mallTradeDeliveryPickUpStore.latitude != 0) {
-      newErrors.latitude = t('page.mall.trade.delivery.store.error.latitude');
+      newErrors.latitude = t('global.error.input.please') + t('page.mall.trade.delivery.store.title.latitude');
     }
-    
+
     if (!mallTradeDeliveryPickUpStore.longitude && mallTradeDeliveryPickUpStore.longitude != 0) {
-      newErrors.longitude = t('page.mall.trade.delivery.store.error.longitude');
+      newErrors.longitude = t('global.error.input.please') + t('page.mall.trade.delivery.store.title.longitude');
     }
-    
-    if (!mallTradeDeliveryPickUpStore.status && mallTradeDeliveryPickUpStore.status != 0) {
-      newErrors.status = t('page.mall.trade.delivery.store.error.status');
-    }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -109,9 +117,25 @@ const MallTradeDeliveryPickUpStoreEdit = forwardRef(({ onSubmit }: MallTradeDeli
     setOpen(false);
   };
 
-  const initForm = (mallTradeDeliveryPickUpStore: MallTradeDeliveryPickUpStoreResponse) => {
+  const initForm = async (mallTradeDeliveryPickUpStore: MallTradeDeliveryPickUpStoreResponse) => {
     setMallTradeDeliveryPickUpStore({
       ...mallTradeDeliveryPickUpStore,
+    })
+    // 设置图片
+    const result = await downloadSystemFile(mallTradeDeliveryPickUpStore.file_id, (progress) => {
+      setDownloadImage(() => {
+        return {
+          status: 'downloading',
+          progress
+        };
+      })
+    })
+
+    setDownloadImage(() => {
+      return {
+        status: 'done',
+        previewUrl: window.URL.createObjectURL(result),
+      };
     })
     setErrors({});
   }
@@ -126,18 +150,10 @@ const MallTradeDeliveryPickUpStoreEdit = forwardRef(({ onSubmit }: MallTradeDeli
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type } = e.target;
-    if (type == 'number') {
-      const numberValue = Number(value);
-      setMallTradeDeliveryPickUpStore(prev => ({
-        ...prev,
-        [name]: numberValue
-      }));
-    } else {
-      setMallTradeDeliveryPickUpStore(prev => ({
-        ...prev,
-        [name]: value
-      }));
-    }
+    setMallTradeDeliveryPickUpStore(prev => ({
+      ...prev,
+      [name]: type === 'number' ? Number(value) : value,
+    }));
 
     if (errors[name as keyof FormErrors]) {
       setErrors(prev => ({
@@ -153,6 +169,94 @@ const MallTradeDeliveryPickUpStoreEdit = forwardRef(({ onSubmit }: MallTradeDeli
     setMallTradeDeliveryPickUpStore(prev => ({
       ...prev,
       [name]: checked ? 0 : 1
+    }));
+
+    if (errors[name as keyof FormErrors]) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: undefined
+      }));
+    }
+  };
+
+  const handleFileChange = useCallback(async (file: UploadFile | null, action: 'upload' | 'remove') => {
+    if (action === 'upload' && file) {
+      // 更新文件列表,增加一个附件,等待上传完成后在写入信息
+      setMallTradeDeliveryPickUpStore((prev) => {
+        return { ...prev, file };
+      })
+
+      // 上传文件
+      try {
+        const result = await uploadSystemFile(file.file, (progress) => {
+          setMallTradeDeliveryPickUpStore((prev) => {
+            return { ...prev, file: { ...prev.file!, progress } };
+          });
+        });
+
+        // 上传完成
+        setMallTradeDeliveryPickUpStore((prev) => {
+          return { ...prev, file_id: result, file: { ...prev.file!, status: 'done' as const } };
+        });
+      } catch (error) {
+        console.error('upload file error', error);
+        // 上传失败
+        setMallTradeDeliveryPickUpStore((prev) => {
+          return { ...prev, file: { ...prev.file!, status: 'error' as const } };
+        });
+      }
+    } else if (action === 'remove') {
+      // 删除文件并移除上传框
+      setMallTradeDeliveryPickUpStore((prev) => {
+        return { ...prev, file: undefined };
+      });
+    }
+  }, []);
+
+  const handleAreaChange = (name: string, value: string[]) => {
+    setMallTradeDeliveryPickUpStore(prev => ({
+      ...prev,
+      [name]: Number(value[value.length - 1])
+    }));
+
+    if (errors[name as keyof FormErrors]) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: undefined
+      }));
+    }
+  };
+
+  const handleOpeningTimeChange = (value: PickerValue) => {
+    setOpeningTime(value);
+    if (!value) {
+      return;
+    }
+    const name = 'opening_time';
+    const time = value.format('HH:mm');
+    setMallTradeDeliveryPickUpStore(prev => ({
+      ...prev,
+      [name]: time
+    }));
+
+    if (errors[name as keyof FormErrors]) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: undefined
+      }));
+    }
+  };
+
+  const handleClosingTimeChange = (value: PickerValue) => {
+    setClosingTime(value);
+    if (!value) {
+      return;
+    }
+    const name = 'closing_time';
+    const time = value.format('HH:mm');
+    setMallTradeDeliveryPickUpStore(prev => ({
+      ...prev,
+      [name]: time
     }));
 
     if (errors[name as keyof FormErrors]) {
@@ -179,27 +283,49 @@ const MallTradeDeliveryPickUpStoreEdit = forwardRef(({ onSubmit }: MallTradeDeli
       <Box
         noValidate
         component="form"
-        sx={ {display: 'flex',
+        sx={{
+          display: 'flex',
           flexDirection: 'column',
           m: 'auto',
-          width: 'fit-content',} }
+          width: 'fit-content',
+        }}
       >
-        <FormControl sx={ {minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' }} }>
+        <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '240px' } }}>
           <TextField
             required
             size="small"
             label={t("page.mall.trade.delivery.store.title.name")}
             name='name'
-            value={ mallTradeDeliveryPickUpStore.name}
+            value={mallTradeDeliveryPickUpStore.name}
             onChange={handleInputChange}
             error={!!errors.name}
             helperText={errors.name}
           />
+        </FormControl>
+        <Typography sx={{ mt: 2, mb: 1 }}>
+          {t('page.mall.trade.delivery.store.title.file')}
+        </Typography>
+        <CustomizedFileUpload
+          canRemove={false}
+          showFilename={false}
+          id={'file-upload'}
+          accept=".jpg,jpeg,.png"
+          maxSize={100}
+          onChange={(file, action) => handleFileChange(file, action)}
+          file={mallTradeDeliveryPickUpStore.file}
+          download={downloadImage}
+          width={fileWidth}
+          height={fileHeight}
+        >
+        </CustomizedFileUpload>
+        <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '240px' } }}>
           <TextField
+            multiline
+            minRows={2}
             size="small"
             label={t("page.mall.trade.delivery.store.title.introduction")}
             name='introduction'
-            value={ mallTradeDeliveryPickUpStore.introduction}
+            value={mallTradeDeliveryPickUpStore.introduction}
             onChange={handleInputChange}
           />
           <TextField
@@ -207,69 +333,87 @@ const MallTradeDeliveryPickUpStoreEdit = forwardRef(({ onSubmit }: MallTradeDeli
             size="small"
             label={t("page.mall.trade.delivery.store.title.phone")}
             name='phone'
-            value={ mallTradeDeliveryPickUpStore.phone}
+            value={mallTradeDeliveryPickUpStore.phone}
             onChange={handleInputChange}
             error={!!errors.phone}
             helperText={errors.phone}
           />
-          <TextField
-            required
-            size="small"
-            type="number"
-            label={t("page.mall.trade.delivery.store.title.area_id")}
+          <AreaCascader
             name='area_id'
-            value={ mallTradeDeliveryPickUpStore.area_id}
-            onChange={handleInputChange}
+            value={mallTradeDeliveryPickUpStore.area_id}
+            onChange={(name, value) => handleAreaChange(name, value)}
             error={!!errors.area_id}
             helperText={errors.area_id}
           />
           <TextField
             required
             size="small"
-            label={t("page.mall.trade.delivery.store.title.detail_address")}
+            label={t("page.mall.trade.delivery.store.title.detail.address")}
             name='detail_address'
-            value={ mallTradeDeliveryPickUpStore.detail_address}
+            value={mallTradeDeliveryPickUpStore.detail_address}
             onChange={handleInputChange}
             error={!!errors.detail_address}
             helperText={errors.detail_address}
           />
-          <TextField
-            required
-            size="small"
-            label={t("page.mall.trade.delivery.store.title.file_id")}
-            name='file_id'
-            value={ mallTradeDeliveryPickUpStore.file_id}
-            onChange={handleInputChange}
-            error={!!errors.file_id}
-            helperText={errors.file_id}
-          />
-          <TextField
-            required
-            size="small"
-            label={t("page.mall.trade.delivery.store.title.opening_time")}
-            name='opening_time'
-            value={ mallTradeDeliveryPickUpStore.opening_time}
-            onChange={handleInputChange}
-            error={!!errors.opening_time}
-            helperText={errors.opening_time}
-          />
-          <TextField
-            required
-            size="small"
-            label={t("page.mall.trade.delivery.store.title.closing_time")}
-            name='closing_time'
-            value={ mallTradeDeliveryPickUpStore.closing_time}
-            onChange={handleInputChange}
-            error={!!errors.closing_time}
-            helperText={errors.closing_time}
-          />
+        </FormControl>
+        <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiPickersTextField-root': { mt: 2, width: '240px' } }}>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <TimePicker
+              label={t("page.mall.trade.delivery.store.title.opening.time")}
+              name='opening_time'
+              value={openingTime}
+              onChange={(value) => handleOpeningTimeChange(value)}
+              slotProps={{
+                textField: {
+                  size: 'small',
+                  required: true,
+                  error: !!errors.opening_time,
+                  helperText: errors.opening_time,
+                },
+                openPickerButton: {
+                  sx: {
+                    mr: -1,
+                    '& .MuiSvgIcon-root': {
+                      fontSize: '1rem',
+                    }
+                  }
+                },
+              }}
+            />
+          </LocalizationProvider>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <TimePicker
+              label={t("page.mall.trade.delivery.store.title.closing.time")}
+              name='closing_time'
+              value={closingTime}
+              onChange={(value) => handleClosingTimeChange(value)}
+              slotProps={{
+                textField: {
+                  size: 'small',
+                  required: true,
+                  error: !!errors.closing_time,
+                  helperText: errors.closing_time,
+                },
+                openPickerButton: {
+                  sx: {
+                    mr: -1,
+                    '& .MuiSvgIcon-root': {
+                      fontSize: '1rem',
+                    }
+                  }
+                },
+              }}
+            />
+          </LocalizationProvider>
+        </FormControl>
+        <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '240px' } }}>
           <TextField
             required
             size="small"
             type="number"
             label={t("page.mall.trade.delivery.store.title.latitude")}
             name='latitude'
-            value={ mallTradeDeliveryPickUpStore.latitude}
+            value={mallTradeDeliveryPickUpStore.latitude}
             onChange={handleInputChange}
             error={!!errors.latitude}
             helperText={errors.latitude}
@@ -280,33 +424,16 @@ const MallTradeDeliveryPickUpStoreEdit = forwardRef(({ onSubmit }: MallTradeDeli
             type="number"
             label={t("page.mall.trade.delivery.store.title.longitude")}
             name='longitude'
-            value={ mallTradeDeliveryPickUpStore.longitude}
+            value={mallTradeDeliveryPickUpStore.longitude}
             onChange={handleInputChange}
             error={!!errors.longitude}
             helperText={errors.longitude}
           />
-          <TextField
-            size="small"
-            label={t("page.mall.trade.delivery.store.title.verify_user_ids")}
-            name='verify_user_ids'
-            value={ mallTradeDeliveryPickUpStore.verify_user_ids}
-            onChange={handleInputChange}
-          />
-          <TextField
-            size="small"
-            type="number"
-            label={t("page.mall.trade.delivery.store.title.status")}
-            name='status'
-            value={ mallTradeDeliveryPickUpStore.status}
-            onChange={handleInputChange}
-            error={!!errors.status}
-            helperText={errors.status}
-          />
-          </FormControl>
-        <Box sx={ {mt: 2, display: 'flex', alignItems: 'center'} }>
-          <Typography sx={ {mr: 4} }>{t("global.title.status")}</Typography>
-          <Switch sx={ {mr: 2} } name='status' checked={!mallTradeDeliveryPickUpStore.status} onChange={handleStatusChange} />
-          <Typography>{ mallTradeDeliveryPickUpStore.status == 0 ? t('global.switch.status.true') : t('global.switch.status.false')}</Typography>
+        </FormControl>
+        <Box sx={{ mt: 2, display: 'flex', alignItems: 'center' }}>
+          <Typography sx={{ mr: 4 }}>{t("global.title.status")}</Typography>
+          <Switch sx={{ mr: 2 }} name='status' checked={!mallTradeDeliveryPickUpStore.status} onChange={handleStatusChange} />
+          <Typography>{mallTradeDeliveryPickUpStore.status == 0 ? t('global.switch.status.true') : t('global.switch.status.false')}</Typography>
         </Box>
       </Box>
     </CustomizedDialog>

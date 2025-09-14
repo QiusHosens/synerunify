@@ -1,4 +1,4 @@
-import { Box, Button, FormControl, Grid, Switch, TextField, Typography } from '@mui/material';
+import { Box, Button, FormControl, Switch, TextField, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { forwardRef, useCallback, useImperativeHandle, useState } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
@@ -74,7 +74,7 @@ const MallProductBrandEdit = forwardRef(({ onSubmit }: MallProductBrandEditProps
     })
     // 设置图片
     const result = await downloadSystemFile(mallProductBrand.file_id, (progress) => {
-      setDownloadImage(prev => {
+      setDownloadImage(() => {
         return {
           status: 'downloading',
           progress
@@ -82,7 +82,7 @@ const MallProductBrandEdit = forwardRef(({ onSubmit }: MallProductBrandEditProps
       })
     })
 
-    setDownloadImage(prev => {
+    setDownloadImage(() => {
       return {
         status: 'done',
         previewUrl: window.URL.createObjectURL(result),
