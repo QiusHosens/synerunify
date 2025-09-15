@@ -18,7 +18,7 @@ class _MainNavigationState extends State<MainNavigation> {
     const Home(),
     const Discover(),
     const Message(),
-    const Mine(),
+    Mine(),
   ];
 
   @override

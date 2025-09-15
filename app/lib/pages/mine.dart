@@ -1,7 +1,63 @@
 import 'package:flutter/material.dart';
+import '../utils/auth_manager.dart';
+import '../services/auth_service.dart';
+import 'login.dart';
 
 class Mine extends StatelessWidget {
-  const Mine({super.key});
+  Mine({super.key});
+
+  final AuthManager _authManager = AuthManager();
+  final AuthService _authService = AuthService();
+
+  /// 处理登出
+  Future<void> _handleLogout(BuildContext context) async {
+    // 显示确认对话框
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('确认登出'),
+        content: const Text('您确定要登出吗？'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('取消'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('确认'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true) {
+      try {
+        // 调用登出API
+        await _authService.logout();
+        
+        // 清除本地认证状态
+        await _authManager.logout();
+        
+        // 跳转到登录页面
+        if (context.mounted) {
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (context) => const Login()),
+            (route) => false,
+          );
+        }
+      } catch (e) {
+        // 即使API调用失败，也要清除本地状态
+        await _authManager.logout();
+        
+        if (context.mounted) {
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (context) => const Login()),
+            (route) => false,
+          );
+        }
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -91,9 +147,7 @@ class Mine extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () {
-                  // 退出登录逻辑
-                },
+                onPressed: () => _handleLogout(context),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.red,
                   foregroundColor: Colors.white,

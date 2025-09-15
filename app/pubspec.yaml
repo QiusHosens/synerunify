@@ -36,6 +36,11 @@ dependencies:
   cupertino_icons: ^1.0.8
   getwidget: ^7.0.0
   shared_preferences: ^2.5.3
+  
+  # HTTP请求相关依赖
+  dio: ^5.9.0
+  json_annotation: ^4.9.0
+  connectivity_plus: ^7.0.0
 
 dev_dependencies:
   flutter_test:
@@ -48,6 +53,8 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^5.0.0
   flutter_launcher_icons: "^0.14.4"
+  json_serializable: ^6.11.1
+  build_runner: ^2.8.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
