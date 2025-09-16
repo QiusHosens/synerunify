@@ -16,7 +16,7 @@ class _LoginState extends State<Login> {
   final _passwordController = TextEditingController();
   final _authService = AuthService();
   final _authManager = AuthManager();
-  
+
   bool _isLoading = false;
   bool _obscurePassword = true;
   String? _errorMessage;
@@ -48,19 +48,17 @@ class _LoginState extends State<Login> {
       if (response.success && response.data != null) {
         // 登录成功，更新认证状态
         _authManager.loginSuccess(response.data!.user);
-        
+
         // 跳转到主页面
         if (mounted) {
           Navigator.of(context).pushReplacement(
-            MaterialPageRoute(
-              builder: (context) => const MainNavigation(),
-            ),
+            MaterialPageRoute(builder: (context) => const MainNavigation()),
           );
         }
       } else {
         setState(() {
-          _errorMessage = response.message.isNotEmpty 
-              ? response.message 
+          _errorMessage = response.message.isNotEmpty
+              ? response.message
               : '登录失败，请检查用户名和密码';
         });
       }
@@ -80,17 +78,17 @@ class _LoginState extends State<Login> {
   /// 处理注册
   void _handleRegister() {
     // TODO: 实现注册页面跳转
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('注册功能开发中...')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('注册功能开发中...')));
   }
 
   /// 处理忘记密码
   void _handleForgotPassword() {
     // TODO: 实现忘记密码页面跳转
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('忘记密码功能开发中...')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('忘记密码功能开发中...')));
   }
 
   @override
@@ -101,10 +99,7 @@ class _LoginState extends State<Login> {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [
-              Color(0xFF667eea),
-              Color(0xFF764ba2),
-            ],
+            colors: [Color(0xFF2826A1), Color(0xFF1797DE)],
           ),
         ),
         child: SafeArea(
@@ -117,11 +112,11 @@ class _LoginState extends State<Login> {
                   // Logo和标题
                   _buildHeader(),
                   const SizedBox(height: 48),
-                  
+
                   // 登录表单
                   _buildLoginForm(),
                   const SizedBox(height: 24),
-                  
+
                   // 其他操作
                   _buildOtherActions(),
                 ],
@@ -138,42 +133,43 @@ class _LoginState extends State<Login> {
     return Column(
       children: [
         Container(
-          width: 80,
+          // width: 80,
           height: 80,
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.1),
+                color: Colors.black.withValues(alpha: 0.1),
                 blurRadius: 20,
                 offset: const Offset(0, 10),
               ),
             ],
           ),
-          child: const Icon(
-            Icons.business,
-            size: 40,
-            color: Color(0xFF667eea),
+          child: Image.asset(
+            "assets/images/logo_image.png",
+            fit: BoxFit.contain,
           ),
+          // child: const Icon(
+          //   Icons.business,
+          //   size: 40,
+          //   color: Color(0xFF667eea),
+          // ),
         ),
-        const SizedBox(height: 24),
-        const Text(
-          'SynerUnify',
-          style: TextStyle(
-            fontSize: 32,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
-        ),
-        const SizedBox(height: 8),
-        const Text(
-          '让协作更简单，让效率更高',
-          style: TextStyle(
-            fontSize: 16,
-            color: Colors.white70,
-          ),
-        ),
+        // const SizedBox(height: 24),
+        // const Text(
+        //   'SynerUnify',
+        //   style: TextStyle(
+        //     fontSize: 32,
+        //     fontWeight: FontWeight.bold,
+        //     color: Colors.white,
+        //   ),
+        // ),
+        // const SizedBox(height: 8),
+        // const Text(
+        //   '让协作更简单，让效率更高',
+        //   style: TextStyle(fontSize: 16, color: Colors.white70),
+        // ),
       ],
     );
   }
@@ -187,7 +183,7 @@ class _LoginState extends State<Login> {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 20,
             offset: const Offset(0, 10),
           ),
@@ -200,27 +196,31 @@ class _LoginState extends State<Login> {
             // 用户名输入框
             _buildUsernameField(),
             const SizedBox(height: 16),
-            
+
             // 密码输入框
             _buildPasswordField(),
             const SizedBox(height: 8),
-            
+
             // 忘记密码
             _buildForgotPassword(),
             const SizedBox(height: 24),
-            
+
             // 错误信息
             if (_errorMessage != null) ...[
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.red.withOpacity(0.1),
+                  color: Colors.red.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.red.withOpacity(0.3)),
+                  border: Border.all(color: Colors.red.withValues(alpha: 0.3)),
                 ),
                 child: Row(
                   children: [
-                    const Icon(Icons.error_outline, color: Colors.red, size: 20),
+                    const Icon(
+                      Icons.error_outline,
+                      color: Colors.red,
+                      size: 20,
+                    ),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
@@ -233,7 +233,7 @@ class _LoginState extends State<Login> {
               ),
               const SizedBox(height: 16),
             ],
-            
+
             // 登录按钮
             _buildLoginButton(),
           ],
@@ -250,9 +250,7 @@ class _LoginState extends State<Login> {
       decoration: InputDecoration(
         labelText: '用户名/邮箱',
         prefixIcon: const Icon(Icons.person_outline),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(color: Color(0xFF667eea), width: 2),
@@ -285,9 +283,7 @@ class _LoginState extends State<Login> {
             });
           },
         ),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(color: Color(0xFF667eea), width: 2),
@@ -311,10 +307,7 @@ class _LoginState extends State<Login> {
       alignment: Alignment.centerRight,
       child: TextButton(
         onPressed: _handleForgotPassword,
-        child: const Text(
-          '忘记密码？',
-          style: TextStyle(color: Color(0xFF667eea)),
-        ),
+        child: const Text('忘记密码？', style: TextStyle(color: Color(0xFF667eea))),
       ),
     );
   }
@@ -345,10 +338,7 @@ class _LoginState extends State<Login> {
               )
             : const Text(
                 '登录',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
       ),
     );
@@ -373,15 +363,12 @@ class _LoginState extends State<Login> {
             ),
             child: const Text(
               '注册新账户',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
           ),
         ),
         const SizedBox(height: 24),
-        
+
         // 其他登录方式
         _buildOtherLoginMethods(),
       ],
@@ -394,10 +381,7 @@ class _LoginState extends State<Login> {
       children: [
         const Text(
           '其他登录方式',
-          style: TextStyle(
-            color: Colors.white70,
-            fontSize: 14,
-          ),
+          style: TextStyle(color: Colors.white70, fontSize: 14),
         ),
         const SizedBox(height: 16),
         Row(
@@ -407,9 +391,9 @@ class _LoginState extends State<Login> {
               icon: Icons.phone,
               label: '手机号',
               onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('手机号登录功能开发中...')),
-                );
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(const SnackBar(content: Text('手机号登录功能开发中...')));
               },
             ),
             const SizedBox(width: 24),
@@ -417,9 +401,9 @@ class _LoginState extends State<Login> {
               icon: Icons.fingerprint,
               label: '指纹',
               onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('指纹登录功能开发中...')),
-                );
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(const SnackBar(content: Text('指纹登录功能开发中...')));
               },
             ),
           ],
@@ -439,9 +423,9 @@ class _LoginState extends State<Login> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.2),
+          color: Colors.white.withValues(alpha: 0.2),
           borderRadius: BorderRadius.circular(25),
-          border: Border.all(color: Colors.white.withOpacity(0.3)),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.3)),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,

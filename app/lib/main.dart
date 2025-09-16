@@ -45,10 +45,12 @@ class AuthWrapper extends StatelessWidget {
         ),
       );
     }
+
+    return const MainNavigation();
     
     // 根据登录状态显示不同页面
-    return authManager.isLoggedIn 
-        ? const MainNavigation() 
-        : const Login();
+    // return authManager.isLoggedIn 
+    //     ? const MainNavigation() 
+    //     : const Login();
   }
 }
