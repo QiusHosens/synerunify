@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'discover.dart';
+import 'message.dart';
 
 class Home extends StatelessWidget {
   const Home({super.key});
@@ -7,10 +9,28 @@ class Home extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('首页'),
+        title: const Text('SynerUnify商城'),
         backgroundColor: Colors.blue,
         foregroundColor: Colors.white,
         elevation: 0,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.search),
+            onPressed: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('搜索功能开发中...')),
+              );
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.notifications_outlined),
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => const Message()),
+              );
+            },
+          ),
+        ],
       ),
       body: Container(
         decoration: const BoxDecoration(
@@ -29,7 +49,7 @@ class Home extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
-                    '欢迎使用 SynerUnify',
+                    '欢迎来到 SynerUnify商城',
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -38,7 +58,7 @@ class Home extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   const Text(
-                    '让协作更简单，让效率更高',
+                    '精选好物，品质生活',
                     style: TextStyle(
                       fontSize: 16,
                       color: Colors.white70,
@@ -66,28 +86,48 @@ class Home extends StatelessWidget {
                     mainAxisSpacing: 16,
                     children: [
                       _buildFeatureCard(
-                        icon: Icons.work,
-                        title: '项目管理',
-                        subtitle: '高效协作',
-                        color: Colors.blue,
+                        icon: Icons.flash_on,
+                        title: '限时秒杀',
+                        subtitle: '超值优惠',
+                        color: Colors.red,
+                        onTap: () {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('限时秒杀功能开发中...')),
+                          );
+                        },
                       ),
                       _buildFeatureCard(
-                        icon: Icons.people,
-                        title: '团队协作',
-                        subtitle: '无缝沟通',
-                        color: Colors.green,
-                      ),
-                      _buildFeatureCard(
-                        icon: Icons.analytics,
-                        title: '数据分析',
-                        subtitle: '洞察决策',
+                        icon: Icons.local_offer,
+                        title: '优惠券',
+                        subtitle: '省钱利器',
                         color: Colors.orange,
+                        onTap: () {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('优惠券功能开发中...')),
+                          );
+                        },
                       ),
                       _buildFeatureCard(
-                        icon: Icons.settings,
-                        title: '系统设置',
-                        subtitle: '个性化配置',
+                        icon: Icons.explore,
+                        title: '发现',
+                        subtitle: '精选内容',
+                        color: Colors.green,
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(builder: (context) => const Discover()),
+                          );
+                        },
+                      ),
+                      _buildFeatureCard(
+                        icon: Icons.message,
+                        title: '消息',
+                        subtitle: '最新资讯',
                         color: Colors.purple,
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(builder: (context) => const Message()),
+                          );
+                        },
                       ),
                     ],
                   ),
@@ -105,6 +145,7 @@ class Home extends StatelessWidget {
     required String title,
     required String subtitle,
     required Color color,
+    VoidCallback? onTap,
   }) {
     return Card(
       elevation: 4,
@@ -112,9 +153,7 @@ class Home extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
       ),
       child: InkWell(
-        onTap: () {
-          // 处理点击事件
-        },
+        onTap: onTap,
         borderRadius: BorderRadius.circular(12),
         child: Padding(
           padding: const EdgeInsets.all(16),

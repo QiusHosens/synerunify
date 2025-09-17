@@ -125,22 +125,74 @@ class Mine extends StatelessWidget {
             _buildMenuItem(
               icon: Icons.person_outline,
               title: '个人信息',
-              onTap: () {},
+              onTap: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('个人信息功能开发中...')),
+                );
+              },
+            ),
+            _buildMenuItem(
+              icon: Icons.shopping_bag_outlined,
+              title: '我的订单',
+              onTap: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('我的订单功能开发中...')),
+                );
+              },
+            ),
+            _buildMenuItem(
+              icon: Icons.favorite_outline,
+              title: '我的收藏',
+              onTap: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('我的收藏功能开发中...')),
+                );
+              },
+            ),
+            _buildMenuItem(
+              icon: Icons.location_on_outlined,
+              title: '收货地址',
+              onTap: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('收货地址功能开发中...')),
+                );
+              },
+            ),
+            _buildMenuItem(
+              icon: Icons.local_offer_outlined,
+              title: '优惠券',
+              onTap: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('优惠券功能开发中...')),
+                );
+              },
             ),
             _buildMenuItem(
               icon: Icons.settings,
               title: '设置',
-              onTap: () {},
+              onTap: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('设置功能开发中...')),
+                );
+              },
             ),
             _buildMenuItem(
               icon: Icons.help_outline,
               title: '帮助与反馈',
-              onTap: () {},
+              onTap: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('帮助与反馈功能开发中...')),
+                );
+              },
             ),
             _buildMenuItem(
               icon: Icons.info_outline,
               title: '关于我们',
-              onTap: () {},
+              onTap: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('关于我们功能开发中...')),
+                );
+              },
             ),
             const SizedBox(height: 20),
             // 退出登录按钮

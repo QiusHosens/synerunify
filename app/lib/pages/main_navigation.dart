@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'home.dart';
-import 'discover.dart';
-import 'message.dart';
+import 'category.dart';
+import 'cart.dart';
 import 'mine.dart';
 
 class MainNavigation extends StatefulWidget {
@@ -16,8 +16,8 @@ class _MainNavigationState extends State<MainNavigation> {
 
   final List<Widget> _pages = [
     const Home(),
-    const Discover(),
-    const Message(),
+    const Category(),
+    const Cart(),
     Mine(),
   ];
 
@@ -44,12 +44,12 @@ class _MainNavigationState extends State<MainNavigation> {
             label: '首页',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.explore),
-            label: '发现',
+            icon: Icon(Icons.category),
+            label: '分类',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.message),
-            label: '消息',
+            icon: Icon(Icons.shopping_cart),
+            label: '购物车',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
