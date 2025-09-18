@@ -101,7 +101,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
           return [
             // 自定义AppBar
             SliverAppBar(
-              expandedHeight: 200,
+              expandedHeight: 128,
               floating: false,
               pinned: true,
               backgroundColor: Colors.blue,
@@ -117,10 +117,10 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                   ),
                   child: Column(
                     children: [
-                      const SizedBox(height: 50),
+                      const SizedBox(height: 30),
                       // Tab切换
                       _buildTabBar(),
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 10),
                       // 搜索框
                       _buildSearchBar(),
                     ],
