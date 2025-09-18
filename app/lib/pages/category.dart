@@ -15,9 +15,9 @@ class Category extends StatelessWidget {
             icon: const Icon(Icons.search),
             onPressed: () {
               // 搜索功能
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('搜索功能开发中...')),
-              );
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(const SnackBar(content: Text('搜索功能开发中...')));
             },
           ),
         ],
@@ -28,7 +28,7 @@ class Category extends StatelessWidget {
             // 分类网格
             _buildCategoryGrid(),
             const SizedBox(height: 20),
-            
+
             // 热门推荐
             _buildHotRecommendations(),
           ],
@@ -97,22 +97,15 @@ class Category extends StatelessWidget {
             width: 50,
             height: 50,
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              color: color.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(25),
             ),
-            child: Icon(
-              icon,
-              color: color,
-              size: 24,
-            ),
+            child: Icon(icon, color: color, size: 24),
           ),
           const SizedBox(height: 8),
           Text(
             name,
-            style: const TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
-            ),
+            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
             textAlign: TextAlign.center,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
@@ -131,10 +124,7 @@ class Category extends StatelessWidget {
         children: [
           const Text(
             '热门推荐',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 16),
           SizedBox(
@@ -151,7 +141,7 @@ class Category extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.grey.withOpacity(0.1),
+                        color: Colors.grey.withValues(alpha: 0.1),
                         blurRadius: 8,
                         offset: const Offset(0, 2),
                       ),
