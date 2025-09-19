@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'message.dart';
+import 'product_detail.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -219,7 +220,8 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
           hintStyle: TextStyle(color: Colors.grey[400]),
           prefixIcon: const Icon(Icons.search, color: Colors.grey),
           border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
         ),
         onTap: () {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -343,8 +345,10 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
   Widget _buildProductCard(Map<String, dynamic> product) {
     return GestureDetector(
       onTap: () {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('查看商品: ${product['name']}')),
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => ProductDetail(product: product),
+          ),
         );
       },
       child: Container(
