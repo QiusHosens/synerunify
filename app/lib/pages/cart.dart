@@ -7,7 +7,7 @@ class Cart extends StatefulWidget {
   State<Cart> createState() => _CartState();
 }
 
-class _CartState extends State<Cart> {
+class _CartState extends State<Cart> with TickerProviderStateMixin {
   // 模拟购物车数据
   final List<Map<String, dynamic>> _cartItems = [
     {
@@ -17,6 +17,7 @@ class _CartState extends State<Cart> {
       'quantity': 1,
       'image': 'https://via.placeholder.com/100',
       'selected': true,
+      'isFrequent': true,
     },
     {
       'id': 2,
@@ -25,6 +26,7 @@ class _CartState extends State<Cart> {
       'quantity': 1,
       'image': 'https://via.placeholder.com/100',
       'selected': true,
+      'isFrequent': false,
     },
     {
       'id': 3,
@@ -33,10 +35,25 @@ class _CartState extends State<Cart> {
       'quantity': 2,
       'image': 'https://via.placeholder.com/100',
       'selected': false,
+      'isFrequent': true,
     },
   ];
 
   bool _selectAll = false;
+  int _selectedTabIndex = 0; // 0: 全部, 1: 常买
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -57,6 +74,21 @@ class _CartState extends State<Cart> {
             ),
           ),
         ],
+        bottom: TabBar(
+          controller: _tabController,
+          indicatorColor: Colors.white,
+          labelColor: Colors.white,
+          unselectedLabelColor: Colors.white70,
+          tabs: const [
+            Tab(text: '全部'),
+            Tab(text: '常买'),
+          ],
+          onTap: (index) {
+            setState(() {
+              _selectedTabIndex = index;
+            });
+          },
+        ),
       ),
       body: _cartItems.isEmpty ? _buildEmptyCart() : _buildCartContent(),
       bottomNavigationBar: _cartItems.isEmpty ? null : _buildBottomBar(),
@@ -110,6 +142,11 @@ class _CartState extends State<Cart> {
 
   /// 构建购物车内容
   Widget _buildCartContent() {
+    // 根据选中的标签过滤商品
+    final filteredItems = _selectedTabIndex == 0 
+        ? _cartItems 
+        : _cartItems.where((item) => item['isFrequent'] == true).toList();
+    
     return Column(
       children: [
         // 全选栏
@@ -125,10 +162,11 @@ class _CartState extends State<Cart> {
             children: [
               Checkbox(
                 value: _selectAll,
+                shape: const CircleBorder(),
                 onChanged: (value) {
                   setState(() {
                     _selectAll = value ?? false;
-                    for (var item in _cartItems) {
+                    for (var item in filteredItems) {
                       item['selected'] = _selectAll;
                     }
                   });
@@ -137,7 +175,7 @@ class _CartState extends State<Cart> {
               const Text('全选'),
               const Spacer(),
               Text(
-                '共${_cartItems.length}件商品',
+                '共${filteredItems.length}件商品',
                 style: TextStyle(
                   color: Colors.grey[600],
                   fontSize: 14,
@@ -150,10 +188,11 @@ class _CartState extends State<Cart> {
         // 商品列表
         Expanded(
           child: ListView.builder(
-            itemCount: _cartItems.length,
+            itemCount: filteredItems.length,
             itemBuilder: (context, index) {
-              final item = _cartItems[index];
-              return _buildCartItem(item, index);
+              final item = filteredItems[index];
+              final originalIndex = _cartItems.indexOf(item);
+              return _buildCartItem(item, originalIndex);
             },
           ),
         ),
@@ -163,116 +202,195 @@ class _CartState extends State<Cart> {
 
   /// 构建购物车商品项
   Widget _buildCartItem(Map<String, dynamic> item, int index) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withValues(alpha: 0.1),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
+    return Dismissible(
+      key: Key(item['id'].toString()),
+      direction: DismissDirection.endToStart,
+      background: Container(
+        alignment: Alignment.centerRight,
+        padding: const EdgeInsets.only(right: 20),
+        decoration: BoxDecoration(
+          color: Colors.red,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: const Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.delete,
+              color: Colors.white,
+              size: 24,
+            ),
+            SizedBox(height: 4),
+            Text(
+              '删除',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
       ),
-      child: Row(
-        children: [
-          // 选择框
-          Checkbox(
-            value: item['selected'] as bool,
-            onChanged: (value) {
-              setState(() {
-                item['selected'] = value ?? false;
-                _updateSelectAll();
-              });
-            },
-          ),
-          
-          // 商品图片
-          Container(
-            width: 80,
-            height: 80,
-            decoration: BoxDecoration(
-              color: Colors.grey[200],
-              borderRadius: BorderRadius.circular(8),
+      confirmDismiss: (direction) async {
+        return await _showDeleteConfirmDialog(item['name'] as String);
+      },
+      onDismissed: (direction) {
+        _removeItem(index);
+      },
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(8),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.1),
+              blurRadius: 4,
+              offset: const Offset(0, 1),
             ),
-            child: const Icon(
-              Icons.image,
-              size: 40,
-              color: Colors.grey,
+          ],
+        ),
+        child: Row(
+          children: [
+            // 选择框
+            Checkbox(
+              value: item['selected'] as bool,
+              shape: const CircleBorder(),
+              onChanged: (value) {
+                setState(() {
+                  item['selected'] = value ?? false;
+                  _updateSelectAll();
+                });
+              },
             ),
-          ),
-          
-          const SizedBox(width: 12),
-          
-          // 商品信息
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  item['name'] as String,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
+            
+            // 商品图片
+            Container(
+              width: 60,
+              height: 60,
+              decoration: BoxDecoration(
+                color: Colors.grey[200],
+                borderRadius: BorderRadius.circular(6),
+              ),
+              child: const Icon(
+                Icons.image,
+                size: 30,
+                color: Colors.grey,
+              ),
+            ),
+            
+            const SizedBox(width: 8),
+            
+            // 商品信息
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    item['name'] as String,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  '¥${item['price'].toString()}',
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.red,
+                  const SizedBox(height: 4),
+                  Text(
+                    '¥${item['price'].toString()}',
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.red,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          
-          // 数量控制
-          Column(
-            children: [
-              IconButton(
-                onPressed: () {
-                  setState(() {
-                    if (item['quantity'] > 1) {
-                      item['quantity']--;
-                    }
-                  });
-                },
-                icon: const Icon(Icons.remove_circle_outline),
+            
+            // 数量控制 - 放在右下角
+            Container(
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey[300]!),
+                borderRadius: BorderRadius.circular(4),
               ),
-              Text(
-                item['quantity'].toString(),
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        if (item['quantity'] > 1) {
+                          item['quantity']--;
+                        }
+                      });
+                    },
+                    child: Container(
+                      width: 24,
+                      height: 24,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[100],
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(4),
+                          bottomLeft: Radius.circular(4),
+                        ),
+                      ),
+                      child: const Icon(
+                        Icons.remove,
+                        size: 16,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ),
+                  Container(
+                    width: 32,
+                    height: 24,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      border: Border.symmetric(
+                        vertical: BorderSide(color: Colors.grey[300]!),
+                      ),
+                    ),
+                    child: Center(
+                      child: Text(
+                        item['quantity'].toString(),
+                        style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        item['quantity']++;
+                      });
+                    },
+                    child: Container(
+                      width: 24,
+                      height: 24,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[100],
+                        borderRadius: const BorderRadius.only(
+                          topRight: Radius.circular(4),
+                          bottomRight: Radius.circular(4),
+                        ),
+                      ),
+                      child: const Icon(
+                        Icons.add,
+                        size: 16,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              IconButton(
-                onPressed: () {
-                  setState(() {
-                    item['quantity']++;
-                  });
-                },
-                icon: const Icon(Icons.add_circle_outline),
-              ),
-            ],
-          ),
-          
-          // 删除按钮
-          IconButton(
-            onPressed: () {
-              _removeItem(index);
-            },
-            icon: const Icon(Icons.delete_outline, color: Colors.red),
-          ),
-        ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -328,31 +446,33 @@ class _CartState extends State<Cart> {
     _selectAll = _cartItems.every((item) => item['selected'] == true);
   }
 
-  /// 删除商品
-  void _removeItem(int index) {
-    showDialog(
+  /// 显示删除确认对话框
+  Future<bool> _showDeleteConfirmDialog(String itemName) async {
+    return await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('确认删除'),
-        content: const Text('确定要删除这个商品吗？'),
+        content: Text('确定要删除"$itemName"吗？'),
         actions: [
           TextButton(
-            onPressed: () => Navigator.of(context).pop(),
+            onPressed: () => Navigator.of(context).pop(false),
             child: const Text('取消'),
           ),
           TextButton(
-            onPressed: () {
-              setState(() {
-                _cartItems.removeAt(index);
-                _updateSelectAll();
-              });
-              Navigator.of(context).pop();
-            },
+            onPressed: () => Navigator.of(context).pop(true),
             child: const Text('确定'),
           ),
         ],
       ),
-    );
+    ) ?? false;
+  }
+
+  /// 删除商品
+  void _removeItem(int index) {
+    setState(() {
+      _cartItems.removeAt(index);
+      _updateSelectAll();
+    });
   }
 
   /// 清空购物车对话框
