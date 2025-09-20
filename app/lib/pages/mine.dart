@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../utils/auth_manager.dart';
 import '../services/auth_service.dart';
 import 'login.dart';
+import 'orders.dart';
 
 class Mine extends StatelessWidget {
   Mine({super.key});
@@ -135,8 +136,10 @@ class Mine extends StatelessWidget {
               icon: Icons.shopping_bag_outlined,
               title: '我的订单',
               onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('我的订单功能开发中...')),
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const Orders(),
+                  ),
                 );
               },
             ),
