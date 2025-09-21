@@ -1,4 +1,7 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'message.dart';
 import 'product_detail.dart';
 
@@ -80,13 +83,19 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
   /// 生成模拟商品数据
   List<Map<String, dynamic>> _generateProducts(int page) {
     final products = <Map<String, dynamic>>[];
+    final random = DateTime.now().millisecondsSinceEpoch;
+    
     for (int i = 0; i < 10; i++) {
+      // 生成随机高度，用于瀑布流布局
+      final imageHeight = 150 + (random + i) % 100; // 150-250之间的随机高度
+      
       products.add({
         'id': (page - 1) * 10 + i + 1,
         'name': '商品名称 ${(page - 1) * 10 + i + 1}',
         'price': (99 + i * 10).toDouble(),
         'originalPrice': (199 + i * 20).toDouble(),
-        'image': 'https://via.placeholder.com/200x200',
+        'image': 'https://via.placeholder.com/200x$imageHeight',
+        'imageHeight': imageHeight.toDouble() * (Random().nextInt(5) / 10 + 0.5),
         'sales': 100 + i * 50,
         'rating': 4.5 + (i % 5) * 0.1,
       });
@@ -308,21 +317,18 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
     );
   }
 
-  /// 构建商品网格
+  /// 构建商品瀑布流
   Widget _buildProductGrid() {
     return RefreshIndicator(
       onRefresh: () async {
         _loadProducts();
       },
-      child: GridView.builder(
+      child: MasonryGridView.count(
         controller: _scrollController,
         padding: const EdgeInsets.all(16),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          crossAxisSpacing: 12,
-          mainAxisSpacing: 12,
-          childAspectRatio: 0.75,
-        ),
+        crossAxisCount: 2,
+        mainAxisSpacing: 12,
+        crossAxisSpacing: 12,
         itemCount: _products.length + (_isLoading ? 1 : 0),
         itemBuilder: (context, index) {
           if (index == _products.length) {
@@ -343,6 +349,8 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
 
   /// 构建商品卡片
   Widget _buildProductCard(Map<String, dynamic> product) {
+    final imageHeight = product['imageHeight'] as double? ?? 200.0;
+    
     return GestureDetector(
       onTap: () {
         Navigator.of(context).push(
@@ -365,95 +373,95 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
           children: [
             // 商品图片
-            Expanded(
-              flex: 3,
-              child: Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: Colors.grey[200],
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(12),
-                    topRight: Radius.circular(12),
-                  ),
+            Container(
+              width: double.infinity,
+              height: imageHeight,
+              decoration: BoxDecoration(
+                color: Colors.grey[200],
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(12),
+                  topRight: Radius.circular(12),
                 ),
-                child: const Center(
-                  child: Icon(
-                    Icons.image,
-                    size: 40,
-                    color: Colors.grey,
-                  ),
+              ),
+              child: const Center(
+                child: Icon(
+                  Icons.image,
+                  size: 40,
+                  color: Colors.grey,
                 ),
               ),
             ),
             // 商品信息
-            Expanded(
-              flex: 2,
-              child: Padding(
-                padding: const EdgeInsets.all(8),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      product['name'] as String,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
+            Padding(
+              padding: const EdgeInsets.all(12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    product['name'] as String,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Text(
+                        '¥${product['price'].toString()}',
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.red,
+                        ),
                       ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 4),
-                    Row(
-                      children: [
-                        Text(
-                          '¥${product['price'].toString()}',
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.red,
-                          ),
+                      const SizedBox(width: 6),
+                      Text(
+                        '¥${product['originalPrice'].toString()}',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey[500],
+                          decoration: TextDecoration.lineThrough,
                         ),
-                        const SizedBox(width: 4),
-                        Text(
-                          '¥${product['originalPrice'].toString()}',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey[500],
-                            decoration: TextDecoration.lineThrough,
-                          ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.star,
+                        size: 14,
+                        color: Colors.orange[300],
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        '${product['rating']}',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey[600],
                         ),
-                      ],
-                    ),
-                    const SizedBox(height: 4),
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.star,
-                          size: 12,
-                          color: Colors.orange[300],
-                        ),
-                        const SizedBox(width: 2),
-                        Text(
-                          '${product['rating']}',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey[600],
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
                           '已售${product['sales']}',
                           style: TextStyle(
                             fontSize: 12,
                             color: Colors.grey[600],
                           ),
+                          overflow: TextOverflow.ellipsis,
                         ),
-                      ],
-                    ),
-                  ],
-                ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
           ],
