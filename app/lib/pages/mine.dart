@@ -3,6 +3,7 @@ import '../utils/auth_manager.dart';
 import '../services/auth_service.dart';
 import 'login.dart';
 import 'orders.dart';
+import 'address_list.dart';
 
 class Mine extends StatelessWidget {
   Mine({super.key});
@@ -156,8 +157,10 @@ class Mine extends StatelessWidget {
               icon: Icons.location_on_outlined,
               title: '收货地址',
               onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('收货地址功能开发中...')),
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const AddressList(),
+                  ),
                 );
               },
             ),
