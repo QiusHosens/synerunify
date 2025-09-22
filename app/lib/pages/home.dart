@@ -84,18 +84,19 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
   List<Map<String, dynamic>> _generateProducts(int page) {
     final products = <Map<String, dynamic>>[];
     final random = DateTime.now().millisecondsSinceEpoch;
-    
+
     for (int i = 0; i < 10; i++) {
       // 生成随机高度，用于瀑布流布局
       final imageHeight = 150 + (random + i) % 100; // 150-250之间的随机高度
-      
+
       products.add({
         'id': (page - 1) * 10 + i + 1,
         'name': '商品名称 ${(page - 1) * 10 + i + 1}',
         'price': (99 + i * 10).toDouble(),
         'originalPrice': (199 + i * 20).toDouble(),
         'image': 'https://via.placeholder.com/200x$imageHeight',
-        'imageHeight': imageHeight.toDouble() * (Random().nextInt(5) / 10 + 0.5),
+        'imageHeight':
+            imageHeight.toDouble() * (Random().nextInt(5) / 10 + 0.5),
         'sales': 100 + i * 50,
         'rating': 4.5 + (i % 5) * 0.1,
       });
@@ -177,7 +178,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.2),
+        color: Colors.white.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(25),
       ),
       child: TabBar(
@@ -190,10 +191,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
         dividerColor: Colors.transparent,
         labelColor: Colors.blue,
         unselectedLabelColor: Colors.white,
-        labelStyle: const TextStyle(
-          fontSize: 14,
-          fontWeight: FontWeight.bold,
-        ),
+        labelStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
         unselectedLabelStyle: const TextStyle(
           fontSize: 14,
           fontWeight: FontWeight.normal,
@@ -217,7 +215,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
         borderRadius: BorderRadius.circular(25),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -229,13 +227,15 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
           hintStyle: TextStyle(color: Colors.grey[400]),
           prefixIcon: const Icon(Icons.search, color: Colors.grey),
           border: InputBorder.none,
-          contentPadding:
-              const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 20,
+            vertical: 15,
+          ),
         ),
         onTap: () {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('搜索功能开发中...')),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(const SnackBar(content: Text('搜索功能开发中...')));
         },
       ),
     );
@@ -260,7 +260,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
               borderRadius: BorderRadius.circular(12),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.grey.withOpacity(0.3),
+                  color: Colors.grey.withValues(alpha: 0.3),
                   blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),
@@ -275,11 +275,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                     height: double.infinity,
                     color: Colors.grey[200],
                     child: const Center(
-                      child: Icon(
-                        Icons.image,
-                        size: 60,
-                        color: Colors.grey,
-                      ),
+                      child: Icon(Icons.image, size: 60, color: Colors.grey),
                     ),
                   ),
                   Positioned(
@@ -294,7 +290,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                           end: Alignment.bottomCenter,
                           colors: [
                             Colors.transparent,
-                            Colors.black.withOpacity(0.7),
+                            Colors.black.withValues(alpha: 0.7),
                           ],
                         ),
                       ),
@@ -350,7 +346,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
   /// 构建商品卡片
   Widget _buildProductCard(Map<String, dynamic> product) {
     final imageHeight = product['imageHeight'] as double? ?? 200.0;
-    
+
     return GestureDetector(
       onTap: () {
         Navigator.of(context).push(
@@ -365,7 +361,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.1),
+              color: Colors.grey.withValues(alpha: 0.1),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -387,11 +383,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                 ),
               ),
               child: const Center(
-                child: Icon(
-                  Icons.image,
-                  size: 40,
-                  color: Colors.grey,
-                ),
+                child: Icon(Icons.image, size: 40, color: Colors.grey),
               ),
             ),
             // 商品信息
@@ -435,18 +427,11 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                   const SizedBox(height: 8),
                   Row(
                     children: [
-                      Icon(
-                        Icons.star,
-                        size: 14,
-                        color: Colors.orange[300],
-                      ),
+                      Icon(Icons.star, size: 14, color: Colors.orange[300]),
                       const SizedBox(width: 4),
                       Text(
                         '${product['rating']}',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey[600],
-                        ),
+                        style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                       ),
                       const SizedBox(width: 8),
                       Expanded(

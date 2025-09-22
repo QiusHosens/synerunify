@@ -32,16 +32,16 @@ class _OrderDetailState extends State<OrderDetail> {
           children: [
             // 订单状态卡片
             _buildOrderStatusCard(),
-            
+
             // 收货地址卡片
             if (_order.shippingAddress != null) _buildShippingAddressCard(),
-            
+
             // 商品列表卡片
             _buildOrderItemsCard(),
-            
+
             // 订单信息卡片
             _buildOrderInfoCard(),
-            
+
             // 底部操作按钮
             _buildBottomActions(),
           ],
@@ -59,7 +59,7 @@ class _OrderDetailState extends State<OrderDetail> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha: 0.1),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -72,7 +72,7 @@ class _OrderDetailState extends State<OrderDetail> {
             width: 60,
             height: 60,
             decoration: BoxDecoration(
-              color: Color(_order.statusColor).withOpacity(0.1),
+              color: Color(_order.statusColor).withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
             child: Icon(
@@ -82,7 +82,7 @@ class _OrderDetailState extends State<OrderDetail> {
             ),
           ),
           const SizedBox(height: 16),
-          
+
           // 状态文本
           Text(
             _order.statusText,
@@ -93,14 +93,11 @@ class _OrderDetailState extends State<OrderDetail> {
             ),
           ),
           const SizedBox(height: 8),
-          
+
           // 状态描述
           Text(
             _getStatusDescription(_order.status),
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey[600],
-            ),
+            style: TextStyle(fontSize: 14, color: Colors.grey[600]),
             textAlign: TextAlign.center,
           ),
         ],
@@ -118,7 +115,7 @@ class _OrderDetailState extends State<OrderDetail> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha: 0.1),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -129,36 +126,23 @@ class _OrderDetailState extends State<OrderDetail> {
         children: [
           Row(
             children: [
-              Icon(
-                Icons.location_on,
-                color: Colors.red[600],
-                size: 20,
-              ),
+              Icon(Icons.location_on, color: Colors.red[600], size: 20),
               const SizedBox(width: 8),
               const Text(
                 '收货地址',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
             ],
           ),
           const SizedBox(height: 12),
           Text(
             '${address.name} ${address.phone}',
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-            ),
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
           ),
           const SizedBox(height: 4),
           Text(
             address.fullAddress,
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey[600],
-            ),
+            style: TextStyle(fontSize: 14, color: Colors.grey[600]),
           ),
         ],
       ),
@@ -174,7 +158,7 @@ class _OrderDetailState extends State<OrderDetail> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha: 0.1),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -185,18 +169,11 @@ class _OrderDetailState extends State<OrderDetail> {
         children: [
           Row(
             children: [
-              Icon(
-                Icons.shopping_bag,
-                color: Colors.blue[600],
-                size: 20,
-              ),
+              Icon(Icons.shopping_bag, color: Colors.blue[600], size: 20),
               const SizedBox(width: 8),
               const Text(
                 '商品清单',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
             ],
           ),
@@ -220,14 +197,10 @@ class _OrderDetailState extends State<OrderDetail> {
               color: Colors.grey[200],
               borderRadius: BorderRadius.circular(8),
             ),
-            child: const Icon(
-              Icons.image,
-              size: 40,
-              color: Colors.grey,
-            ),
+            child: const Icon(Icons.image, size: 40, color: Colors.grey),
           ),
           const SizedBox(width: 12),
-          
+
           // 商品信息
           Expanded(
             child: Column(
@@ -246,10 +219,7 @@ class _OrderDetailState extends State<OrderDetail> {
                   const SizedBox(height: 4),
                   Text(
                     item.specification!,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey[600],
-                    ),
+                    style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                   ),
                 ],
                 const SizedBox(height: 8),
@@ -266,10 +236,7 @@ class _OrderDetailState extends State<OrderDetail> {
                     ),
                     Text(
                       'x${item.quantity}',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey[600],
-                      ),
+                      style: TextStyle(fontSize: 14, color: Colors.grey[600]),
                     ),
                   ],
                 ),
@@ -290,7 +257,7 @@ class _OrderDetailState extends State<OrderDetail> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha: 0.1),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -301,18 +268,11 @@ class _OrderDetailState extends State<OrderDetail> {
         children: [
           Row(
             children: [
-              Icon(
-                Icons.info_outline,
-                color: Colors.green[600],
-                size: 20,
-              ),
+              Icon(Icons.info_outline, color: Colors.green[600], size: 20),
               const SizedBox(width: 8),
               const Text(
                 '订单信息',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
             ],
           ),
@@ -330,7 +290,11 @@ class _OrderDetailState extends State<OrderDetail> {
           const Divider(),
           _buildInfoRow('商品总价', '¥${_order.totalAmount.toStringAsFixed(2)}'),
           _buildInfoRow('运费', '¥0.00'),
-          _buildInfoRow('实付金额', '¥${_order.totalAmount.toStringAsFixed(2)}', isTotal: true),
+          _buildInfoRow(
+            '实付金额',
+            '¥${_order.totalAmount.toStringAsFixed(2)}',
+            isTotal: true,
+          ),
         ],
       ),
     );
@@ -366,15 +330,13 @@ class _OrderDetailState extends State<OrderDetail> {
   Widget _buildBottomActions() {
     return Container(
       margin: const EdgeInsets.all(16),
-      child: Row(
-        children: _buildActionButtons(),
-      ),
+      child: Row(children: _buildActionButtons()),
     );
   }
 
   List<Widget> _buildActionButtons() {
     List<Widget> buttons = [];
-    
+
     switch (_order.status) {
       case 'pending':
         buttons.addAll([
@@ -515,7 +477,7 @@ class _OrderDetailState extends State<OrderDetail> {
         );
         break;
     }
-    
+
     return buttons;
   }
 
@@ -584,9 +546,9 @@ class _OrderDetailState extends State<OrderDetail> {
                 _order.status = 'cancelled';
               });
               Navigator.of(context).pop();
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('订单已取消')),
-              );
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(const SnackBar(content: Text('订单已取消')));
             },
             child: const Text('确定'),
           ),
@@ -596,21 +558,21 @@ class _OrderDetailState extends State<OrderDetail> {
   }
 
   void _payOrder() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('跳转到支付页面...')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('跳转到支付页面...')));
   }
 
   void _refundOrder() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('申请退款功能开发中...')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('申请退款功能开发中...')));
   }
 
   void _viewLogistics() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('查看物流功能开发中...')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('查看物流功能开发中...')));
   }
 
   void _confirmReceive() {
@@ -631,9 +593,9 @@ class _OrderDetailState extends State<OrderDetail> {
                 _order.receiveTime = DateTime.now();
               });
               Navigator.of(context).pop();
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('确认收货成功')),
-              );
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(const SnackBar(content: Text('确认收货成功')));
             },
             child: const Text('确定'),
           ),
@@ -643,14 +605,14 @@ class _OrderDetailState extends State<OrderDetail> {
   }
 
   void _rateOrder() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('评价功能开发中...')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('评价功能开发中...')));
   }
 
   void _buyAgain() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('再次购买功能开发中...')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('再次购买功能开发中...')));
   }
 }

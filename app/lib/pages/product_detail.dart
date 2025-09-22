@@ -3,10 +3,7 @@ import 'package:flutter/material.dart';
 class ProductDetail extends StatefulWidget {
   final Map<String, dynamic> product;
 
-  const ProductDetail({
-    super.key,
-    required this.product,
-  });
+  const ProductDetail({super.key, required this.product});
 
   @override
   State<ProductDetail> createState() => _ProductDetailState();
@@ -56,7 +53,7 @@ class _ProductDetailState extends State<ProductDetail>
       'date': '2024-01-13',
       'images': [
         'https://via.placeholder.com/100x100',
-        'https://via.placeholder.com/100x100'
+        'https://via.placeholder.com/100x100',
       ],
     },
   ];
@@ -129,25 +126,25 @@ class _ProductDetailState extends State<ProductDetail>
             IconButton(
               icon: const Icon(Icons.share, color: Colors.white),
               onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('分享功能开发中...')),
-                );
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(const SnackBar(content: Text('分享功能开发中...')));
               },
             ),
             IconButton(
               icon: const Icon(Icons.favorite_border, color: Colors.white),
               onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('收藏功能开发中...')),
-                );
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(const SnackBar(content: Text('收藏功能开发中...')));
               },
             ),
             IconButton(
               icon: const Icon(Icons.more_vert, color: Colors.white),
               onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('更多功能开发中...')),
-                );
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(const SnackBar(content: Text('更多功能开发中...')));
               },
             ),
           ],
@@ -174,11 +171,7 @@ class _ProductDetailState extends State<ProductDetail>
               return Container(
                 color: Colors.grey[200],
                 child: const Center(
-                  child: Icon(
-                    Icons.image,
-                    size: 80,
-                    color: Colors.grey,
-                  ),
+                  child: Icon(Icons.image, size: 80, color: Colors.grey),
                 ),
               );
             },
@@ -200,7 +193,7 @@ class _ProductDetailState extends State<ProductDetail>
                     shape: BoxShape.circle,
                     color: _currentImageIndex == index
                         ? Colors.white
-                        : Colors.white.withOpacity(0.5),
+                        : Colors.white.withValues(alpha: 0.5),
                   ),
                 ),
               ),
@@ -221,7 +214,7 @@ class _ProductDetailState extends State<ProductDetail>
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha: 0.1),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -233,10 +226,7 @@ class _ProductDetailState extends State<ProductDetail>
           // 商品标题
           Text(
             widget.product['name'] ?? '商品名称',
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
           // 价格信息
@@ -265,26 +255,16 @@ class _ProductDetailState extends State<ProductDetail>
           // 销量和评分
           Row(
             children: [
-              Icon(
-                Icons.star,
-                size: 16,
-                color: Colors.orange[300],
-              ),
+              Icon(Icons.star, size: 16, color: Colors.orange[300]),
               const SizedBox(width: 4),
               Text(
                 '${widget.product['rating']?.toString() ?? '4.5'}',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey[600],
-                ),
+                style: TextStyle(fontSize: 14, color: Colors.grey[600]),
               ),
               const SizedBox(width: 16),
               Text(
                 '已售${widget.product['sales']?.toString() ?? '100'}件',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey[600],
-                ),
+                style: TextStyle(fontSize: 14, color: Colors.grey[600]),
               ),
             ],
           ),
@@ -303,7 +283,7 @@ class _ProductDetailState extends State<ProductDetail>
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha: 0.1),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -315,10 +295,7 @@ class _ProductDetailState extends State<ProductDetail>
           // 颜色选择
           const Text(
             '颜色',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
           Wrap(
@@ -332,8 +309,10 @@ class _ProductDetailState extends State<ProductDetail>
                   });
                 },
                 child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
                   decoration: BoxDecoration(
                     color: _selectedColorIndex == index
                         ? Colors.blue
@@ -362,10 +341,7 @@ class _ProductDetailState extends State<ProductDetail>
           // 尺寸选择
           const Text(
             '尺寸',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
           Wrap(
@@ -379,8 +355,10 @@ class _ProductDetailState extends State<ProductDetail>
                   });
                 },
                 child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
                   decoration: BoxDecoration(
                     color: _selectedSizeIndex == index
                         ? Colors.blue
@@ -411,10 +389,7 @@ class _ProductDetailState extends State<ProductDetail>
             children: [
               const Text(
                 '数量',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
               const Spacer(),
               Row(
@@ -462,7 +437,7 @@ class _ProductDetailState extends State<ProductDetail>
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha: 0.1),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -506,10 +481,7 @@ class _ProductDetailState extends State<ProductDetail>
         children: [
           Text(
             '商品详情',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
           SizedBox(height: 16),
           Text(
@@ -519,27 +491,12 @@ class _ProductDetailState extends State<ProductDetail>
             '• 时尚设计，符合现代审美\n'
             '• 工艺精湛，细节完美\n'
             '• 性价比高，值得购买',
-            style: TextStyle(
-              fontSize: 14,
-              height: 1.6,
-            ),
+            style: TextStyle(fontSize: 14, height: 1.6),
           ),
           SizedBox(height: 20),
-          Center(
-            child: Icon(
-              Icons.image,
-              size: 100,
-              color: Colors.grey,
-            ),
-          ),
+          Center(child: Icon(Icons.image, size: 100, color: Colors.grey)),
           SizedBox(height: 20),
-          Center(
-            child: Icon(
-              Icons.image,
-              size: 100,
-              color: Colors.grey,
-            ),
-          ),
+          Center(child: Icon(Icons.image, size: 100, color: Colors.grey)),
         ],
       ),
     );
@@ -565,39 +522,38 @@ class _ProductDetailState extends State<ProductDetail>
         children: [
           const Text(
             '规格参数',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 16),
           ...specs
-              .map((spec) => Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    child: Row(
-                      children: [
-                        SizedBox(
-                          width: 80,
-                          child: Text(
-                            spec['name']!,
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey[600],
-                            ),
+              .map(
+                (spec) => Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  child: Row(
+                    children: [
+                      SizedBox(
+                        width: 80,
+                        child: Text(
+                          spec['name']!,
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey[600],
                           ),
                         ),
-                        Expanded(
-                          child: Text(
-                            spec['value']!,
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                            ),
+                      ),
+                      Expanded(
+                        child: Text(
+                          spec['value']!,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
-                      ],
-                    ),
-                  ))
+                      ),
+                    ],
+                  ),
+                ),
+              )
               .toList(),
         ],
       ),
@@ -615,96 +571,92 @@ class _ProductDetailState extends State<ProductDetail>
             children: [
               const Text(
                 '用户评价',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
               const Spacer(),
               Text(
                 '(${_reviews.length}条)',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey[600],
-                ),
+                style: TextStyle(fontSize: 14, color: Colors.grey[600]),
               ),
             ],
           ),
           const SizedBox(height: 16),
           ..._reviews
-              .map((review) => Container(
-                    margin: const EdgeInsets.only(bottom: 16),
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: Colors.grey[50],
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Text(
-                              review['user'],
-                              style: const TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                              ),
+              .map(
+                (review) => Container(
+                  margin: const EdgeInsets.only(bottom: 16),
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[50],
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            review['user'],
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
                             ),
-                            const SizedBox(width: 8),
-                            Row(
-                              children: List.generate(
-                                  5,
-                                  (index) => Icon(
-                                        Icons.star,
-                                        size: 12,
-                                        color: index < review['rating']
-                                            ? Colors.orange[300]
-                                            : Colors.grey[300],
-                                      )),
-                            ),
-                            const Spacer(),
-                            Text(
-                              review['date'],
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Colors.grey[500],
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          review['content'],
-                          style: const TextStyle(
-                            fontSize: 14,
-                            height: 1.4,
                           ),
-                        ),
-                        if (review['images'].isNotEmpty) ...[
-                          const SizedBox(height: 8),
-                          Wrap(
-                            spacing: 8,
-                            children: (review['images'] as List)
-                                .map((image) => Container(
-                                      width: 60,
-                                      height: 60,
-                                      decoration: BoxDecoration(
-                                        color: Colors.grey[200],
-                                        borderRadius: BorderRadius.circular(4),
-                                      ),
-                                      child: const Icon(
-                                        Icons.image,
-                                        size: 20,
-                                        color: Colors.grey,
-                                      ),
-                                    ))
-                                .toList(),
+                          const SizedBox(width: 8),
+                          Row(
+                            children: List.generate(
+                              5,
+                              (index) => Icon(
+                                Icons.star,
+                                size: 12,
+                                color: index < review['rating']
+                                    ? Colors.orange[300]
+                                    : Colors.grey[300],
+                              ),
+                            ),
+                          ),
+                          const Spacer(),
+                          Text(
+                            review['date'],
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.grey[500],
+                            ),
                           ),
                         ],
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        review['content'],
+                        style: const TextStyle(fontSize: 14, height: 1.4),
+                      ),
+                      if (review['images'].isNotEmpty) ...[
+                        const SizedBox(height: 8),
+                        Wrap(
+                          spacing: 8,
+                          children: (review['images'] as List)
+                              .map(
+                                (image) => Container(
+                                  width: 60,
+                                  height: 60,
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey[200],
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                  child: const Icon(
+                                    Icons.image,
+                                    size: 20,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                              )
+                              .toList(),
+                        ),
                       ],
-                    ),
-                  ))
+                    ],
+                  ),
+                ),
+              )
               .toList(),
         ],
       ),
@@ -717,9 +669,7 @@ class _ProductDetailState extends State<ProductDetail>
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
-        border: Border(
-          top: BorderSide(color: Colors.grey[200]!),
-        ),
+        border: Border(top: BorderSide(color: Colors.grey[200]!)),
       ),
       child: Row(
         children: [
@@ -804,8 +754,8 @@ class _ProductDetailState extends State<ProductDetail>
 
   /// 立即购买
   void _buyNow() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('跳转到结算页面...')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('跳转到结算页面...')));
   }
 }

@@ -68,10 +68,7 @@ class _CartState extends State<Cart> with TickerProviderStateMixin {
               // 清空购物车
               _showClearCartDialog();
             },
-            child: const Text(
-              '清空',
-              style: TextStyle(color: Colors.white),
-            ),
+            child: const Text('清空', style: TextStyle(color: Colors.white)),
           ),
         ],
         bottom: TabBar(
@@ -109,18 +106,12 @@ class _CartState extends State<Cart> with TickerProviderStateMixin {
           const SizedBox(height: 20),
           Text(
             '购物车是空的',
-            style: TextStyle(
-              fontSize: 18,
-              color: Colors.grey[600],
-            ),
+            style: TextStyle(fontSize: 18, color: Colors.grey[600]),
           ),
           const SizedBox(height: 10),
           Text(
             '快去挑选心仪的商品吧',
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey[500],
-            ),
+            style: TextStyle(fontSize: 14, color: Colors.grey[500]),
           ),
           const SizedBox(height: 30),
           ElevatedButton(
@@ -143,10 +134,10 @@ class _CartState extends State<Cart> with TickerProviderStateMixin {
   /// 构建购物车内容
   Widget _buildCartContent() {
     // 根据选中的标签过滤商品
-    final filteredItems = _selectedTabIndex == 0 
-        ? _cartItems 
+    final filteredItems = _selectedTabIndex == 0
+        ? _cartItems
         : _cartItems.where((item) => item['isFrequent'] == true).toList();
-    
+
     return Column(
       children: [
         // 全选栏
@@ -154,9 +145,7 @@ class _CartState extends State<Cart> with TickerProviderStateMixin {
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             color: Colors.white,
-            border: Border(
-              bottom: BorderSide(color: Colors.grey[200]!),
-            ),
+            border: Border(bottom: BorderSide(color: Colors.grey[200]!)),
           ),
           child: Row(
             children: [
@@ -176,15 +165,12 @@ class _CartState extends State<Cart> with TickerProviderStateMixin {
               const Spacer(),
               Text(
                 '共${filteredItems.length}件商品',
-                style: TextStyle(
-                  color: Colors.grey[600],
-                  fontSize: 14,
-                ),
+                style: TextStyle(color: Colors.grey[600], fontSize: 14),
               ),
             ],
           ),
         ),
-        
+
         // 商品列表
         Expanded(
           child: ListView.builder(
@@ -215,11 +201,7 @@ class _CartState extends State<Cart> with TickerProviderStateMixin {
         child: const Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.delete,
-              color: Colors.white,
-              size: 24,
-            ),
+            Icon(Icons.delete, color: Colors.white, size: 24),
             SizedBox(height: 4),
             Text(
               '删除',
@@ -246,7 +228,7 @@ class _CartState extends State<Cart> with TickerProviderStateMixin {
           borderRadius: BorderRadius.circular(8),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.1),
+              color: Colors.grey.withValues(alpha: 0.1),
               blurRadius: 4,
               offset: const Offset(0, 1),
             ),
@@ -265,7 +247,7 @@ class _CartState extends State<Cart> with TickerProviderStateMixin {
                 });
               },
             ),
-            
+
             // 商品图片
             Container(
               width: 60,
@@ -274,15 +256,11 @@ class _CartState extends State<Cart> with TickerProviderStateMixin {
                 color: Colors.grey[200],
                 borderRadius: BorderRadius.circular(6),
               ),
-              child: const Icon(
-                Icons.image,
-                size: 30,
-                color: Colors.grey,
-              ),
+              child: const Icon(Icons.image, size: 30, color: Colors.grey),
             ),
-            
+
             const SizedBox(width: 8),
-            
+
             // 商品信息
             Expanded(
               child: Column(
@@ -309,7 +287,7 @@ class _CartState extends State<Cart> with TickerProviderStateMixin {
                 ],
               ),
             ),
-            
+
             // 数量控制 - 放在右下角
             Container(
               decoration: BoxDecoration(
@@ -397,19 +375,20 @@ class _CartState extends State<Cart> with TickerProviderStateMixin {
 
   /// 构建底部操作栏
   Widget _buildBottomBar() {
-    final selectedItems = _cartItems.where((item) => item['selected'] == true).toList();
+    final selectedItems = _cartItems
+        .where((item) => item['selected'] == true)
+        .toList();
     final totalPrice = selectedItems.fold<double>(
       0,
-      (sum, item) => sum + (item['price'] as double) * (item['quantity'] as int),
+      (sum, item) =>
+          sum + (item['price'] as double) * (item['quantity'] as int),
     );
 
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
-        border: Border(
-          top: BorderSide(color: Colors.grey[200]!),
-        ),
+        border: Border(top: BorderSide(color: Colors.grey[200]!)),
       ),
       child: Row(
         children: [
@@ -423,9 +402,11 @@ class _CartState extends State<Cart> with TickerProviderStateMixin {
           ),
           const Spacer(),
           ElevatedButton(
-            onPressed: selectedItems.isEmpty ? null : () {
-              _checkout();
-            },
+            onPressed: selectedItems.isEmpty
+                ? null
+                : () {
+                    _checkout();
+                  },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.red,
               foregroundColor: Colors.white,
@@ -449,22 +430,23 @@ class _CartState extends State<Cart> with TickerProviderStateMixin {
   /// 显示删除确认对话框
   Future<bool> _showDeleteConfirmDialog(String itemName) async {
     return await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('确认删除'),
-        content: Text('确定要删除"$itemName"吗？'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('取消'),
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('确认删除'),
+            content: Text('确定要删除"$itemName"吗？'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: const Text('取消'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                child: const Text('确定'),
+              ),
+            ],
           ),
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('确定'),
-          ),
-        ],
-      ),
-    ) ?? false;
+        ) ??
+        false;
   }
 
   /// 删除商品
@@ -504,16 +486,18 @@ class _CartState extends State<Cart> with TickerProviderStateMixin {
 
   /// 结算
   void _checkout() {
-    final selectedItems = _cartItems.where((item) => item['selected'] == true).toList();
+    final selectedItems = _cartItems
+        .where((item) => item['selected'] == true)
+        .toList();
     if (selectedItems.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('请选择要结算的商品')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('请选择要结算的商品')));
       return;
     }
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('跳转到结算页面...')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('跳转到结算页面...')));
   }
 }

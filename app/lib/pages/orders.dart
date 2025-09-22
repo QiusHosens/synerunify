@@ -155,7 +155,9 @@ class _OrdersState extends State<Orders> with TickerProviderStateMixin {
       case 3:
         return _allOrders.where((order) => order.status == 'shipped').toList();
       case 4:
-        return _allOrders.where((order) => order.status == 'completed').toList();
+        return _allOrders
+            .where((order) => order.status == 'completed')
+            .toList();
       default:
         return _allOrders;
     }
@@ -191,26 +193,13 @@ class _OrdersState extends State<Orders> with TickerProviderStateMixin {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.shopping_bag_outlined,
-            size: 100,
-            color: Colors.grey[400],
-          ),
+          Icon(Icons.shopping_bag_outlined, size: 100, color: Colors.grey[400]),
           const SizedBox(height: 20),
-          Text(
-            '暂无订单',
-            style: TextStyle(
-              fontSize: 18,
-              color: Colors.grey[600],
-            ),
-          ),
+          Text('暂无订单', style: TextStyle(fontSize: 18, color: Colors.grey[600])),
           const SizedBox(height: 10),
           Text(
             '快去挑选心仪的商品吧',
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey[500],
-            ),
+            style: TextStyle(fontSize: 14, color: Colors.grey[500]),
           ),
           const SizedBox(height: 30),
           ElevatedButton(
@@ -247,9 +236,7 @@ class _OrdersState extends State<Orders> with TickerProviderStateMixin {
       child: InkWell(
         onTap: () {
           Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) => OrderDetail(order: order),
-            ),
+            MaterialPageRoute(builder: (context) => OrderDetail(order: order)),
           );
         },
         borderRadius: BorderRadius.circular(8),
@@ -264,15 +251,15 @@ class _OrdersState extends State<Orders> with TickerProviderStateMixin {
                 children: [
                   Text(
                     '订单号: ${order.orderNumber}',
-                    style: const TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey,
-                    ),
+                    style: const TextStyle(fontSize: 14, color: Colors.grey),
                   ),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
-                      color: Color(order.statusColor).withOpacity(0.1),
+                      color: Color(order.statusColor).withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
@@ -287,22 +274,19 @@ class _OrdersState extends State<Orders> with TickerProviderStateMixin {
                 ],
               ),
               const SizedBox(height: 12),
-              
+
               // 商品列表
               ...order.items.map((item) => _buildOrderItem(item)),
-              
+
               const SizedBox(height: 12),
-              
+
               // 订单底部信息
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
                     '共${order.items.length}件商品',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey[600],
-                    ),
+                    style: TextStyle(fontSize: 14, color: Colors.grey[600]),
                   ),
                   Text(
                     '¥${order.totalAmount.toStringAsFixed(2)}',
@@ -314,9 +298,9 @@ class _OrdersState extends State<Orders> with TickerProviderStateMixin {
                   ),
                 ],
               ),
-              
+
               const SizedBox(height: 12),
-              
+
               // 操作按钮
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
@@ -342,14 +326,10 @@ class _OrdersState extends State<Orders> with TickerProviderStateMixin {
               color: Colors.grey[200],
               borderRadius: BorderRadius.circular(6),
             ),
-            child: const Icon(
-              Icons.image,
-              size: 30,
-              color: Colors.grey,
-            ),
+            child: const Icon(Icons.image, size: 30, color: Colors.grey),
           ),
           const SizedBox(width: 12),
-          
+
           // 商品信息
           Expanded(
             child: Column(
@@ -368,10 +348,7 @@ class _OrdersState extends State<Orders> with TickerProviderStateMixin {
                   const SizedBox(height: 4),
                   Text(
                     item.specification!,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey[600],
-                    ),
+                    style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                   ),
                 ],
                 const SizedBox(height: 4),
@@ -388,10 +365,7 @@ class _OrdersState extends State<Orders> with TickerProviderStateMixin {
                     ),
                     Text(
                       'x${item.quantity}',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey[600],
-                      ),
+                      style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                     ),
                   ],
                 ),
@@ -405,7 +379,7 @@ class _OrdersState extends State<Orders> with TickerProviderStateMixin {
 
   List<Widget> _buildActionButtons(OrderModel order) {
     List<Widget> buttons = [];
-    
+
     switch (order.status) {
       case 'pending':
         buttons.addAll([
@@ -415,13 +389,19 @@ class _OrdersState extends State<Orders> with TickerProviderStateMixin {
         ]);
         break;
       case 'paid':
-        buttons.add(_buildActionButton('申请退款', Colors.grey, () => _refundOrder(order)));
+        buttons.add(
+          _buildActionButton('申请退款', Colors.grey, () => _refundOrder(order)),
+        );
         break;
       case 'shipped':
         buttons.addAll([
           _buildActionButton('查看物流', Colors.blue, () => _viewLogistics(order)),
           const SizedBox(width: 8),
-          _buildActionButton('确认收货', Colors.green, () => _confirmReceive(order)),
+          _buildActionButton(
+            '确认收货',
+            Colors.green,
+            () => _confirmReceive(order),
+          ),
         ]);
         break;
       case 'delivered':
@@ -439,10 +419,12 @@ class _OrdersState extends State<Orders> with TickerProviderStateMixin {
         ]);
         break;
       case 'cancelled':
-        buttons.add(_buildActionButton('再次购买', Colors.purple, () => _buyAgain(order)));
+        buttons.add(
+          _buildActionButton('再次购买', Colors.purple, () => _buyAgain(order)),
+        );
         break;
     }
-    
+
     return buttons;
   }
 
@@ -456,10 +438,7 @@ class _OrdersState extends State<Orders> with TickerProviderStateMixin {
         minimumSize: Size.zero,
         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
       ),
-      child: Text(
-        text,
-        style: const TextStyle(fontSize: 12),
-      ),
+      child: Text(text, style: const TextStyle(fontSize: 12)),
     );
   }
 
@@ -481,9 +460,9 @@ class _OrdersState extends State<Orders> with TickerProviderStateMixin {
                 order.status = 'cancelled';
               });
               Navigator.of(context).pop();
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('订单已取消')),
-              );
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(const SnackBar(content: Text('订单已取消')));
             },
             child: const Text('确定'),
           ),
@@ -493,21 +472,21 @@ class _OrdersState extends State<Orders> with TickerProviderStateMixin {
   }
 
   void _payOrder(OrderModel order) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('跳转到支付页面...')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('跳转到支付页面...')));
   }
 
   void _refundOrder(OrderModel order) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('申请退款功能开发中...')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('申请退款功能开发中...')));
   }
 
   void _viewLogistics(OrderModel order) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('查看物流功能开发中...')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('查看物流功能开发中...')));
   }
 
   void _confirmReceive(OrderModel order) {
@@ -528,9 +507,9 @@ class _OrdersState extends State<Orders> with TickerProviderStateMixin {
                 order.receiveTime = DateTime.now();
               });
               Navigator.of(context).pop();
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('确认收货成功')),
-              );
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(const SnackBar(content: Text('确认收货成功')));
             },
             child: const Text('确定'),
           ),
@@ -540,14 +519,14 @@ class _OrdersState extends State<Orders> with TickerProviderStateMixin {
   }
 
   void _rateOrder(OrderModel order) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('评价功能开发中...')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('评价功能开发中...')));
   }
 
   void _buyAgain(OrderModel order) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('再次购买功能开发中...')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('再次购买功能开发中...')));
   }
 }
