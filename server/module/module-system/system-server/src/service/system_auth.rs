@@ -12,7 +12,7 @@ use std::time::{Duration, Instant};
 use axum::Json;
 use chrono::Utc;
 use jsonwebtoken::{decode, Algorithm, DecodingKey, Validation};
-use system_model::request::system_auth::LoginRequest;
+use system_model::request::system_auth::{LoginAccountRequest, LoginRequest};
 use tokio::sync::OnceCell;
 use tracing::{error, info};
 use tracing_subscriber::filter::filter_fn;
@@ -39,8 +39,20 @@ pub async fn login(db: &DatabaseConnection, request_context: RequestContext, req
         return Err(anyhow!("验证码校验失败"));
     }
 
+    let auth = _login(db, request_context, request.username, request.password).await?;
+    Ok(auth)
+}
+
+pub async fn login_account(db: &DatabaseConnection, request_context: RequestContext, request: LoginAccountRequest) -> Result<AuthBody> {
+    let auth = _login(db, request_context, request.username, request.password).await?;
+    Ok(auth)
+}
+
+async fn _login(db: &DatabaseConnection, request_context: RequestContext, username: String, password: String) -> Result<AuthBody> {
+    let start = Instant::now();
+
     // 查询用户
-    let user_result = service::system_user::get_by_username(db, request.username).await?;
+    let user_result = service::system_user::get_by_username(db, username).await?;
     let user: SystemUserModel = match user_result {
         Some(user) => {
             if is_enable(user.status) {
@@ -110,7 +122,7 @@ pub async fn login(db: &DatabaseConnection, request_context: RequestContext, req
     }
 
     // 比较密码
-    let is_match = match verify_password(request.password, user.clone().password) {
+    let is_match = match verify_password(password, user.clone().password) {
         Ok(is_match) => {
             is_match
         }

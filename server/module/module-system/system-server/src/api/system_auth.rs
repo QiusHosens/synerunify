@@ -4,7 +4,7 @@ use common::base::response::CommonResult;
 use common::context::context::{LoginUserContext, RequestContext};
 use common::utils::jwt_utils::AuthBody;
 use ctor;
-use system_model::request::system_auth::{LoginRequest, RefreshTokenRequest};
+use system_model::request::system_auth::{LoginAccountRequest, LoginRequest, RefreshTokenRequest};
 use utoipa_axum::router::OpenApiRouter;
 use utoipa_axum::routes;
 use common::state::app_state::AppState;
@@ -13,6 +13,7 @@ use system_model::response::system_auth::HomeResponse;
 pub async fn system_auth_router(state: AppState) -> OpenApiRouter {
     OpenApiRouter::new()
         .routes(routes!(login))
+        .routes(routes!(login_account))
         .routes(routes!(refresh_token))
         .with_state(state)
 }
@@ -46,6 +47,27 @@ async fn login(
     Json(payload): Json<LoginRequest>,
 ) -> CommonResult<AuthBody> {
     match service::system_auth::login(&state.db, request_context, payload).await {
+        Ok(data) => {CommonResult::with_data(data)}
+        Err(e) => {CommonResult::with_err(&e.to_string())}
+    }
+}
+
+#[utoipa::path(
+    post,
+    path = "/login_account",
+    operation_id = "system_auth_login_account",
+    request_body(content = LoginAccountRequest, description = "login", content_type = "application/json"),
+    responses(
+        (status = 200, description = "login success", body = CommonResult<AuthBody>)
+    ),
+    tag = "system_auth"
+)]
+async fn login_account(
+    State(state): State<AppState>,
+    Extension(request_context): Extension<RequestContext>,
+    Json(payload): Json<LoginAccountRequest>,
+) -> CommonResult<AuthBody> {
+    match service::system_auth::login_account(&state.db, request_context, payload).await {
         Ok(data) => {CommonResult::with_data(data)}
         Err(e) => {CommonResult::with_err(&e.to_string())}
     }
