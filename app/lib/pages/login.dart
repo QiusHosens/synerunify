@@ -47,7 +47,7 @@ class _LoginState extends State<Login> {
 
       if (response.success && response.data != null) {
         // 登录成功，更新认证状态
-        _authManager.loginSuccess(response.data!.user);
+        // _authManager.loginSuccess(response.data!.user);
 
         // 跳转到主页面
         if (mounted) {
@@ -246,7 +246,7 @@ class _LoginState extends State<Login> {
   Widget _buildUsernameField() {
     return TextFormField(
       controller: _usernameController,
-      keyboardType: TextInputType.emailAddress,
+      keyboardType: TextInputType.text,
       decoration: InputDecoration(
         labelText: '用户名/邮箱',
         prefixIcon: const Icon(Icons.person_outline),

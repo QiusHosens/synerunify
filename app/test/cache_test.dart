@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 
-import '../lib/utils/cache_utils.dart';
+import 'package:synerunify/utils/cache_utils.dart';
 
 /// 基础数据类型存储示例
 Future<void> basicDataExample() async {

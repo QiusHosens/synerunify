@@ -4,7 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 /// HTTP客户端配置类
 class HttpClientConfig {
-  static const String baseUrl = 'https://api.synerunify.com';
+  static const String baseUrl = 'http://localhost';
   static const int connectTimeout = 30000; // 30秒
   static const int receiveTimeout = 30000; // 30秒
   static const int sendTimeout = 30000; // 30秒

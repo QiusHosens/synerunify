@@ -1,3 +1,7 @@
+import 'dart:convert';
+
+import 'package:crypto/crypto.dart';
+
 import '../utils/http_client.dart';
 import '../models/user_model.dart';
 
@@ -15,8 +19,8 @@ class AuthService {
     required String password,
   }) async {
     return await _httpClient.post<LoginResponse>(
-      '/auth/login',
-      data: LoginRequest(username: username, password: password).toJson(),
+      '/api/system/system_auth/login_account',
+      data: LoginRequest(username: username, password: md5.convert(utf8.encode(password)).toString()).toJson(),
       fromJson: (data) => LoginResponse.fromJson(data),
     );
   }
@@ -40,7 +44,7 @@ class AuthService {
 
   /// 用户登出
   Future<ApiResponse<void>> logout() async {
-    final result = await _httpClient.post<void>('/auth/logout');
+    final result = await _httpClient.post<void>('/api/system/system_auth/logout');
     if (result.success) {
       await _httpClient.clearTokens();
     }

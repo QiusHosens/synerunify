@@ -76,22 +76,29 @@ class LoginRequest {
 class LoginResponse {
   final String accessToken;
   final String refreshToken;
-  final int expiresIn;
-  final UserModel user;
+  final String tokenType;
+  final int exp;
+  final int iat;
+  // final UserModel user;
 
   LoginResponse({
     required this.accessToken,
     required this.refreshToken,
-    required this.expiresIn,
-    required this.user,
+    required this.tokenType,
+    required this.exp,
+    required this.iat,
+    // required this.user,
   });
 
   factory LoginResponse.fromJson(Map<String, dynamic> json) {
     return LoginResponse(
       accessToken: json['access_token'] as String,
       refreshToken: json['refresh_token'] as String,
-      expiresIn: json['expires_in'] as int,
-      user: UserModel.fromJson(json['user'] as Map<String, dynamic>),
+      tokenType: json['token_type'] as String,
+      exp: json['exp'] as int,
+      iat: json['iat'] as int,
+      // user: UserModel.fromJson(json['user'] as Map<String, dynamic>),
+      // user: UserModel.fromJson(json['user'] as Map<String, dynamic>),
     );
   }
 
@@ -99,8 +106,10 @@ class LoginResponse {
     return {
       'access_token': accessToken,
       'refresh_token': refreshToken,
-      'expires_in': expiresIn,
-      'user': user.toJson(),
+      'token_type': tokenType,
+      'exp': exp,
+      'iat': iat,
+      // 'user': user.toJson(),
     };
   }
 }
