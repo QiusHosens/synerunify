@@ -12,7 +12,6 @@ class HttpClientConfig {
   // Token相关配置
   static const String accessTokenKey = 'access_token';
   static const String refreshTokenKey = 'refresh_token';
-  static const String tokenExpireTimeKey = 'token_expire_time';
 }
 
 /// HTTP响应数据模型
@@ -248,9 +247,9 @@ class HttpClient {
       }
 
       final response = await _dio.post(
-        '/auth/refresh',
+        '/system/system_auth/refresh_token',
         data: {'refresh_token': refreshToken},
-        options: Options(headers: {'Authorization': 'Bearer $refreshToken'}),
+        // options: Options(headers: {'Authorization': 'Bearer $refreshToken'}),
       );
 
       if (response.statusCode == 200) {
@@ -258,7 +257,6 @@ class HttpClient {
         if (data is Map<String, dynamic>) {
           final newAccessToken = data['access_token'];
           final newRefreshToken = data['refresh_token'];
-          final expireTime = data['expires_in'];
 
           if (newAccessToken != null) {
             await prefs.setString(
@@ -269,13 +267,6 @@ class HttpClient {
               await prefs.setString(
                 HttpClientConfig.refreshTokenKey,
                 newRefreshToken,
-              );
-            }
-            if (expireTime != null) {
-              await prefs.setInt(
-                HttpClientConfig.tokenExpireTimeKey,
-                DateTime.now().millisecondsSinceEpoch +
-                    ((expireTime as int) * 1000),
               );
             }
             return true;
@@ -296,7 +287,6 @@ class HttpClient {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(HttpClientConfig.accessTokenKey);
     await prefs.remove(HttpClientConfig.refreshTokenKey);
-    await prefs.remove(HttpClientConfig.tokenExpireTimeKey);
   }
 
   /// 检查网络连接
