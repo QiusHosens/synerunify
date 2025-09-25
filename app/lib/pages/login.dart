@@ -46,8 +46,9 @@ class _LoginState extends State<Login> {
       );
 
       if (response.success && response.data != null) {
-        // 登录成功，更新认证状态
-        // _authManager.loginSuccess(response.data!.user);
+        final response = await _authService.getUserInfo();
+        // 登录成功，获取用户信息
+        _authManager.loginSuccess(response.data!);
 
         // 跳转到主页面
         if (mounted) {

@@ -23,7 +23,7 @@ use common::database::redis::RedisManager;
 use common::database::redis_constants::{REDIS_KEY_LOGGER_LOGIN_PREFIX, REDIS_KEY_LOGGER_OPERATION_PREFIX, REDIS_KEY_LOGIN_USER_PREFIX};
 use common::utils::crypt_utils::verify_password;
 use common::utils::jwt_utils::{generate_token_pair, is_valid_tenant, AuthBody, AuthError};
-use system_model::response::system_auth::HomeResponse;
+use system_model::response::system_auth::{HomeResponse, UserResponse};
 use system_model::response::system_department::SystemDepartmentResponse;
 use crate::model::system_user::{Model as SystemUserModel};
 use crate::service::{self, system_data_scope_rule, system_department, system_role, system_tenant, system_tenant_package, system_user_role};
@@ -182,6 +182,25 @@ pub async fn home(db: &DatabaseConnection, login_user: LoginUserContext) -> Resu
     let response = HomeResponse {
         nickname,
         menus
+    };
+    Ok(response)
+}
+
+pub async fn get_user(db: &DatabaseConnection, login_user: LoginUserContext) -> Result<UserResponse> {
+    let system_user = system_user::find_by_id(db, login_user.id).await?;
+    if system_user.is_none() {
+        return Err(anyhow!("用户不存在"));
+    }
+    let user = system_user.unwrap();
+
+    let response = UserResponse {
+        nickname: user.nickname,
+        remark: user.remark,
+        email: user.email,
+        mobile: user.mobile,
+        sex: user.sex,
+        avatar: user.avatar,
+        status: user.status,
     };
     Ok(response)
 }

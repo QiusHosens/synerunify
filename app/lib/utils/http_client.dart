@@ -8,7 +8,7 @@ class HttpClientConfig {
   static const int connectTimeout = 30000; // 30秒
   static const int receiveTimeout = 30000; // 30秒
   static const int sendTimeout = 30000; // 30秒
-  
+
   // Token相关配置
   static const String accessTokenKey = 'access_token';
   static const String refreshTokenKey = 'refresh_token';
@@ -31,11 +31,16 @@ class ApiResponse<T> {
     this.error,
   });
 
-  factory ApiResponse.fromJson(Map<String, dynamic> json, T Function(dynamic)? fromJsonT) {
+  factory ApiResponse.fromJson(
+    Map<String, dynamic> json,
+    T Function(dynamic)? fromJsonT,
+  ) {
     return ApiResponse<T>(
       success: json['success'] ?? false,
       message: json['message'] ?? '',
-      data: json['data'] != null && fromJsonT != null ? fromJsonT(json['data']) : json['data'],
+      data: json['data'] != null && fromJsonT != null
+          ? fromJsonT(json['data'])
+          : json['data'],
       code: json['code'],
       error: json['error'],
     );
@@ -49,23 +54,25 @@ class HttpClient {
   HttpClient._internal();
 
   late Dio _dio;
-  
+
   /// 获取Dio实例（用于下载等特殊操作）
   Dio get dio => _dio;
   bool _isRefreshing = false;
 
   /// 初始化HTTP客户端
   Future<void> init() async {
-    _dio = Dio(BaseOptions(
-      baseUrl: HttpClientConfig.baseUrl,
-      connectTimeout: Duration(milliseconds: HttpClientConfig.connectTimeout),
-      receiveTimeout: Duration(milliseconds: HttpClientConfig.receiveTimeout),
-      sendTimeout: Duration(milliseconds: HttpClientConfig.sendTimeout),
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-      },
-    ));
+    _dio = Dio(
+      BaseOptions(
+        baseUrl: HttpClientConfig.baseUrl,
+        connectTimeout: Duration(milliseconds: HttpClientConfig.connectTimeout),
+        receiveTimeout: Duration(milliseconds: HttpClientConfig.receiveTimeout),
+        sendTimeout: Duration(milliseconds: HttpClientConfig.sendTimeout),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+      ),
+    );
 
     // 添加拦截器
     _dio.interceptors.addAll([
@@ -166,7 +173,10 @@ class HttpClient {
   }
 
   /// 处理响应
-  ApiResponse<T> _handleResponse<T>(Response response, T Function(dynamic)? fromJson) {
+  ApiResponse<T> _handleResponse<T>(
+    Response response,
+    T Function(dynamic)? fromJson,
+  ) {
     if (response.statusCode == 200) {
       final data = response.data;
       if (data is Map<String, dynamic>) {
@@ -232,7 +242,7 @@ class HttpClient {
     try {
       final prefs = await SharedPreferences.getInstance();
       final refreshToken = prefs.getString(HttpClientConfig.refreshTokenKey);
-      
+
       if (refreshToken == null) {
         return false;
       }
@@ -240,9 +250,7 @@ class HttpClient {
       final response = await _dio.post(
         '/auth/refresh',
         data: {'refresh_token': refreshToken},
-        options: Options(
-          headers: {'Authorization': 'Bearer $refreshToken'},
-        ),
+        options: Options(headers: {'Authorization': 'Bearer $refreshToken'}),
       );
 
       if (response.statusCode == 200) {
@@ -253,13 +261,22 @@ class HttpClient {
           final expireTime = data['expires_in'];
 
           if (newAccessToken != null) {
-            await prefs.setString(HttpClientConfig.accessTokenKey, newAccessToken);
+            await prefs.setString(
+              HttpClientConfig.accessTokenKey,
+              newAccessToken,
+            );
             if (newRefreshToken != null) {
-              await prefs.setString(HttpClientConfig.refreshTokenKey, newRefreshToken);
+              await prefs.setString(
+                HttpClientConfig.refreshTokenKey,
+                newRefreshToken,
+              );
             }
             if (expireTime != null) {
-              await prefs.setInt(HttpClientConfig.tokenExpireTimeKey, 
-                  DateTime.now().millisecondsSinceEpoch + ((expireTime as int) * 1000));
+              await prefs.setInt(
+                HttpClientConfig.tokenExpireTimeKey,
+                DateTime.now().millisecondsSinceEpoch +
+                    ((expireTime as int) * 1000),
+              );
             }
             return true;
           }
@@ -292,14 +309,17 @@ class HttpClient {
 /// 认证拦截器
 class _AuthInterceptor extends Interceptor {
   @override
-  void onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
+  void onRequest(
+    RequestOptions options,
+    RequestInterceptorHandler handler,
+  ) async {
     final prefs = await SharedPreferences.getInstance();
     final accessToken = prefs.getString(HttpClientConfig.accessTokenKey);
-    
+
     if (accessToken != null) {
       options.headers['Authorization'] = 'Bearer $accessToken';
     }
-    
+
     handler.next(options);
   }
 
@@ -309,16 +329,17 @@ class _AuthInterceptor extends Interceptor {
       // Token过期，尝试刷新
       final httpClient = HttpClient();
       final refreshed = await httpClient.refreshToken();
-      
+
       if (refreshed) {
         // 重新发送请求
         final prefs = await SharedPreferences.getInstance();
         final newAccessToken = prefs.getString(HttpClientConfig.accessTokenKey);
-        
+
         if (newAccessToken != null) {
-          err.requestOptions.headers['Authorization'] = 'Bearer $newAccessToken';
-        try {
-          final response = await HttpClient().dio.fetch(err.requestOptions);
+          err.requestOptions.headers['Authorization'] =
+              'Bearer $newAccessToken';
+          try {
+            final response = await HttpClient().dio.fetch(err.requestOptions);
             handler.resolve(response);
             return;
           } catch (e) {
@@ -331,7 +352,7 @@ class _AuthInterceptor extends Interceptor {
         await httpClient.clearTokens();
       }
     }
-    
+
     handler.next(err);
   }
 }
@@ -371,15 +392,11 @@ class _ErrorInterceptor extends Interceptor {
     if (err.type == DioExceptionType.connectionTimeout ||
         err.type == DioExceptionType.sendTimeout ||
         err.type == DioExceptionType.receiveTimeout) {
-      err = err.copyWith(
-        message: '网络连接超时，请检查网络设置',
-      );
+      err = err.copyWith(message: '网络连接超时，请检查网络设置');
     } else if (err.type == DioExceptionType.connectionError) {
-      err = err.copyWith(
-        message: '网络连接失败，请检查网络设置',
-      );
+      err = err.copyWith(message: '网络连接失败，请检查网络设置');
     }
-    
+
     handler.next(err);
   }
 }

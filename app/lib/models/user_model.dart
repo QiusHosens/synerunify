@@ -1,48 +1,44 @@
 /// 用户模型
 class UserModel {
-  final int id;
-  final String username;
-  final String email;
+  final String nickname;
+  final int status;
+  final int? sex;
+  final String? email;
   final String? avatar;
-  final String? phone;
-  final DateTime? createdAt;
-  final DateTime? updatedAt;
+  final String? mobile;
+  final String? remark;
 
   UserModel({
-    required this.id,
-    required this.username,
-    required this.email,
+    required this.nickname,
+    required this.status,
+    this.sex,
+    this.email,
     this.avatar,
-    this.phone,
-    this.createdAt,
-    this.updatedAt,
+    this.mobile,
+    this.remark,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
-      id: json['id'] as int,
-      username: json['username'] as String,
-      email: json['email'] as String,
+      nickname: json['nickname'] as String,
+      status: json['status'] as int,
+      sex: json['sex'] as int?,
+      email: json['email'] as String?,
       avatar: json['avatar'] as String?,
-      phone: json['phone'] as String?,
-      createdAt: json['created_at'] != null 
-          ? DateTime.parse(json['created_at'] as String) 
-          : null,
-      updatedAt: json['updated_at'] != null 
-          ? DateTime.parse(json['updated_at'] as String) 
-          : null,
+      mobile: json['mobile'] as String?,
+      remark: json['remark'] as String?,
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
-      'username': username,
+      'nickname': nickname,
+      'status': status,
+      'sex': sex,
       'email': email,
       'avatar': avatar,
-      'phone': phone,
-      'created_at': createdAt?.toIso8601String(),
-      'updated_at': updatedAt?.toIso8601String(),
+      'mobile': mobile,
+      'remark': remark,
     };
   }
 }
@@ -52,10 +48,7 @@ class LoginRequest {
   final String username;
   final String password;
 
-  LoginRequest({
-    required this.username,
-    required this.password,
-  });
+  LoginRequest({required this.username, required this.password});
 
   factory LoginRequest.fromJson(Map<String, dynamic> json) {
     return LoginRequest(
@@ -65,40 +58,33 @@ class LoginRequest {
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'username': username,
-      'password': password,
-    };
+    return {'username': username, 'password': password};
   }
 }
 
-/// 登录响应模型
-class LoginResponse {
+/// 授权响应模型
+class AuthResponse {
   final String accessToken;
   final String refreshToken;
   final String tokenType;
   final int exp;
   final int iat;
-  // final UserModel user;
 
-  LoginResponse({
+  AuthResponse({
     required this.accessToken,
     required this.refreshToken,
     required this.tokenType,
     required this.exp,
     required this.iat,
-    // required this.user,
   });
 
-  factory LoginResponse.fromJson(Map<String, dynamic> json) {
-    return LoginResponse(
+  factory AuthResponse.fromJson(Map<String, dynamic> json) {
+    return AuthResponse(
       accessToken: json['access_token'] as String,
       refreshToken: json['refresh_token'] as String,
       tokenType: json['token_type'] as String,
       exp: json['exp'] as int,
       iat: json['iat'] as int,
-      // user: UserModel.fromJson(json['user'] as Map<String, dynamic>),
-      // user: UserModel.fromJson(json['user'] as Map<String, dynamic>),
     );
   }
 
@@ -109,7 +95,6 @@ class LoginResponse {
       'token_type': tokenType,
       'exp': exp,
       'iat': iat,
-      // 'user': user.toJson(),
     };
   }
 }
@@ -118,48 +103,13 @@ class LoginResponse {
 class RefreshTokenRequest {
   final String refreshToken;
 
-  RefreshTokenRequest({
-    required this.refreshToken,
-  });
+  RefreshTokenRequest({required this.refreshToken});
 
   factory RefreshTokenRequest.fromJson(Map<String, dynamic> json) {
-    return RefreshTokenRequest(
-      refreshToken: json['refresh_token'] as String,
-    );
+    return RefreshTokenRequest(refreshToken: json['refresh_token'] as String);
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'refresh_token': refreshToken,
-    };
-  }
-}
-
-/// Token刷新响应模型
-class RefreshTokenResponse {
-  final String accessToken;
-  final String refreshToken;
-  final int expiresIn;
-
-  RefreshTokenResponse({
-    required this.accessToken,
-    required this.refreshToken,
-    required this.expiresIn,
-  });
-
-  factory RefreshTokenResponse.fromJson(Map<String, dynamic> json) {
-    return RefreshTokenResponse(
-      accessToken: json['access_token'] as String,
-      refreshToken: json['refresh_token'] as String,
-      expiresIn: json['expires_in'] as int,
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'access_token': accessToken,
-      'refresh_token': refreshToken,
-      'expires_in': expiresIn,
-    };
+    return {'refresh_token': refreshToken};
   }
 }

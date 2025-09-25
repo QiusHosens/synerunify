@@ -8,7 +8,7 @@ use system_model::request::system_auth::{LoginAccountRequest, LoginRequest, Refr
 use utoipa_axum::router::OpenApiRouter;
 use utoipa_axum::routes;
 use common::state::app_state::AppState;
-use system_model::response::system_auth::HomeResponse;
+use system_model::response::system_auth::{HomeResponse, UserResponse};
 
 pub async fn system_auth_router(state: AppState) -> OpenApiRouter {
     OpenApiRouter::new()
@@ -22,6 +22,7 @@ pub async fn system_auth_need_router(state: AppState) -> OpenApiRouter {
     OpenApiRouter::new()
         .routes(routes!(logout))
         .routes(routes!(home))
+        .routes(routes!(get_user))
         .with_state(state)
 }
 
@@ -120,7 +121,7 @@ async fn logout(
     path = "/home",
     operation_id = "system_auth_home",
     responses(
-        (status = 200, description = "login success", body = CommonResult<HomeResponse>)
+        (status = 200, description = "web home", body = CommonResult<HomeResponse>)
     ),
     tag = "system_auth",
     security(
@@ -132,6 +133,28 @@ async fn home(
     Extension(login_user): Extension<LoginUserContext>,
 ) -> CommonResult<HomeResponse> {
     match service::system_auth::home(&state.db, login_user).await {
+        Ok(data) => {CommonResult::with_data(data)}
+        Err(e) => {CommonResult::with_err(&e.to_string())}
+    }
+}
+
+#[utoipa::path(
+    get,
+    path = "/get_user",
+    operation_id = "system_auth_get_user",
+    responses(
+        (status = 200, description = "get user", body = CommonResult<HomeResponse>)
+    ),
+    tag = "system_auth",
+    security(
+        ("bearerAuth" = [])
+    )
+)]
+async fn get_user(
+    State(state): State<AppState>,
+    Extension(login_user): Extension<LoginUserContext>,
+) -> CommonResult<UserResponse> {
+    match service::system_auth::get_user(&state.db, login_user).await {
         Ok(data) => {CommonResult::with_data(data)}
         Err(e) => {CommonResult::with_err(&e.to_string())}
     }

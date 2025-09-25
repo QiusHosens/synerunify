@@ -14,14 +14,17 @@ class AuthService {
   final HttpClient _httpClient = HttpClient();
 
   /// 用户登录
-  Future<ApiResponse<LoginResponse>> login({
+  Future<ApiResponse<AuthResponse>> login({
     required String username,
     required String password,
   }) async {
-    return await _httpClient.post<LoginResponse>(
-      '/api/system/system_auth/login_account',
-      data: LoginRequest(username: username, password: md5.convert(utf8.encode(password)).toString()).toJson(),
-      fromJson: (data) => LoginResponse.fromJson(data),
+    return await _httpClient.post<AuthResponse>(
+      '/system/system_auth/login_account',
+      data: LoginRequest(
+        username: username,
+        password: md5.convert(utf8.encode(password)).toString(),
+      ).toJson(),
+      fromJson: (data) => AuthResponse.fromJson(data),
     );
   }
 
@@ -33,18 +36,14 @@ class AuthService {
   }) async {
     return await _httpClient.post<UserModel>(
       '/auth/register',
-      data: {
-        'username': username,
-        'email': email,
-        'password': password,
-      },
+      data: {'username': username, 'email': email, 'password': password},
       fromJson: (data) => UserModel.fromJson(data),
     );
   }
 
   /// 用户登出
   Future<ApiResponse<void>> logout() async {
-    final result = await _httpClient.post<void>('/api/system/system_auth/logout');
+    final result = await _httpClient.post<void>('/system/system_auth/logout');
     if (result.success) {
       await _httpClient.clearTokens();
     }
@@ -54,16 +53,19 @@ class AuthService {
   /// 获取用户信息
   Future<ApiResponse<UserModel>> getUserInfo() async {
     return await _httpClient.get<UserModel>(
-      '/auth/user',
+      '/system/system_auth/get_user',
       fromJson: (data) => UserModel.fromJson(data),
     );
   }
 
   /// 刷新Token
-  Future<ApiResponse<RefreshTokenResponse>> refreshToken() async {
-    return await _httpClient.post<RefreshTokenResponse>(
-      '/auth/refresh',
-      fromJson: (data) => RefreshTokenResponse.fromJson(data),
+  Future<ApiResponse<AuthResponse>> refreshToken({
+    required String refreshToken,
+  }) async {
+    return await _httpClient.post<AuthResponse>(
+      '/system/system_auth/refresh_token',
+      data: RefreshTokenRequest(refreshToken: refreshToken).toJson(),
+      fromJson: (data) => AuthResponse.fromJson(data),
     );
   }
 
@@ -74,17 +76,12 @@ class AuthService {
   }) async {
     return await _httpClient.post<void>(
       '/auth/change-password',
-      data: {
-        'old_password': oldPassword,
-        'new_password': newPassword,
-      },
+      data: {'old_password': oldPassword, 'new_password': newPassword},
     );
   }
 
   /// 忘记密码
-  Future<ApiResponse<void>> forgotPassword({
-    required String email,
-  }) async {
+  Future<ApiResponse<void>> forgotPassword({required String email}) async {
     return await _httpClient.post<void>(
       '/auth/forgot-password',
       data: {'email': email},
@@ -98,10 +95,7 @@ class AuthService {
   }) async {
     return await _httpClient.post<void>(
       '/auth/reset-password',
-      data: {
-        'token': token,
-        'new_password': newPassword,
-      },
+      data: {'token': token, 'new_password': newPassword},
     );
   }
 }
