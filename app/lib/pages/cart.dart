@@ -8,40 +8,79 @@ class Cart extends StatefulWidget {
 }
 
 class _CartState extends State<Cart> with TickerProviderStateMixin {
-  // 模拟购物车数据
+  int _selectedTabIndex = 0; // 0: 全部, 1: 我常买
+  late TabController _tabController;
+
+  // 购物车商品数据
   final List<Map<String, dynamic>> _cartItems = [
     {
       'id': 1,
-      'name': 'iPhone 15 Pro',
-      'price': 7999.0,
+      'name': '【0抗生素】盒马保洁无抗鲜鸡蛋30枚 1.59kg',
+      'price': 17.9,
       'quantity': 1,
-      'image': 'https://via.placeholder.com/100',
+      'image': 'assets/images/eggs.png',
       'selected': true,
       'isFrequent': true,
+      'tag': '中秋节',
+    },
+  ];
+
+  // 换购商品数据
+  final List<Map<String, dynamic>> _redemptionProducts = [
+    {
+      'name': '红罐饮料',
+      'price': 19.9,
+      'originalPrice': 29.9,
+      'discount': '6.7折',
+      'image': 'assets/images/red_can.png',
     },
     {
-      'id': 2,
-      'name': 'MacBook Pro 14寸',
-      'price': 14999.0,
-      'quantity': 1,
-      'image': 'https://via.placeholder.com/100',
-      'selected': true,
-      'isFrequent': false,
+      'name': '茶饮料',
+      'price': 13.8,
+      'originalPrice': 16.8,
+      'discount': '8.3折',
+      'image': 'assets/images/tea.png',
     },
     {
-      'id': 3,
-      'name': 'AirPods Pro',
-      'price': 1999.0,
-      'quantity': 2,
-      'image': 'https://via.placeholder.com/100',
-      'selected': false,
-      'isFrequent': true,
+      'name': '牛奶',
+      'price': 27.5,
+      'originalPrice': 39.9,
+      'discount': '6.9折',
+      'image': 'assets/images/milk.png',
+    },
+    {
+      'name': '糕点',
+      'price': 8.9,
+      'originalPrice': 12.9,
+      'discount': '7折',
+      'image': 'assets/images/pastry.png',
+    },
+    {
+      'name': '包子',
+      'price': 6.9,
+      'originalPrice': 9.9,
+      'discount': '7折',
+      'image': 'assets/images/baozi.png',
+    },
+  ];
+
+  // 推荐商品数据
+  final List<Map<String, dynamic>> _recommendedProducts = [
+    {
+      'name': '梅林 午餐肉罐头 198g',
+      'price': 12.8,
+      'image': 'assets/images/luncheon_meat.png',
+      'weight': '净含量:198克',
+    },
+    {
+      'name': '盒马工坊 鲜河粉 300g',
+      'price': 8.9,
+      'image': 'assets/images/noodles.png',
+      'tag': '冷藏',
     },
   ];
 
   bool _selectAll = false;
-  int _selectedTabIndex = 0; // 0: 全部, 1: 常买
-  late TabController _tabController;
 
   @override
   void initState() {
@@ -58,73 +97,337 @@ class _CartState extends State<Cart> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('购物车'),
-        backgroundColor: Colors.red,
-        foregroundColor: Colors.white,
-        actions: [
-          TextButton(
-            onPressed: () {
-              // 清空购物车
-              _showClearCartDialog();
-            },
-            child: const Text('清空', style: TextStyle(color: Colors.white)),
-          ),
-        ],
-        bottom: TabBar(
-          controller: _tabController,
-          indicatorColor: Colors.white,
-          labelColor: Colors.white,
-          unselectedLabelColor: Colors.white70,
-          tabs: const [
-            Tab(text: '全部'),
-            Tab(text: '常买'),
+      backgroundColor: Colors.grey[50],
+      body: SafeArea(
+        child: Column(
+          children: [
+            // 顶部状态栏和位置信息
+            _buildTopBar(),
+            // 主要内容区域
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    // 会员促销横幅
+                    _buildMembershipBanner(),
+                    // 配送信息
+                    _buildDeliveryInfo(),
+                    // 换购活动
+                    _buildRedemptionBanner(),
+                    // 商品列表
+                    _buildCartContent(),
+                    // 推荐商品
+                    _buildRecommendedSection(),
+                    const SizedBox(height: 100), // 为底部结算栏留出空间
+                  ],
+                ),
+              ),
+            ),
+            // 底部结算栏
+            _buildBottomCheckoutBar(),
           ],
-          onTap: (index) {
-            setState(() {
-              _selectedTabIndex = index;
-            });
-          },
         ),
       ),
-      body: _cartItems.isEmpty ? _buildEmptyCart() : _buildCartContent(),
-      bottomNavigationBar: _cartItems.isEmpty ? null : _buildBottomBar(),
     );
   }
 
-  /// 构建空购物车
-  Widget _buildEmptyCart() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+  /// 构建顶部状态栏和位置信息
+  Widget _buildTopBar() {
+    return Column(
+      children: [
+        // 状态栏
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: Row(
+            children: [
+              // 时间显示
+              const Text(
+                '14:20',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
+              ),
+              const Spacer(),
+              // 店铺位置
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.2),
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: const Text(
+                  '中和锦汇天府店',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black,
+                  ),
+                ),
+              ),
+              const Spacer(),
+              // 状态栏图标
+              Row(
+                children: [
+                  const Icon(
+                    Icons.signal_cellular_4_bar,
+                    size: 16,
+                    color: Colors.black,
+                  ),
+                  const SizedBox(width: 4),
+                  const Icon(Icons.wifi, size: 16, color: Colors.black),
+                  const SizedBox(width: 4),
+                  const Icon(Icons.battery_full, size: 16, color: Colors.black),
+                ],
+              ),
+            ],
+          ),
+        ),
+        // 位置和标签栏
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: Row(
+            children: [
+              const Icon(Icons.location_on, size: 16, color: Colors.grey),
+              const SizedBox(width: 4),
+              const Text(
+                '碧桂园·沁云里',
+                style: TextStyle(fontSize: 14, color: Colors.grey),
+              ),
+              const Icon(
+                Icons.keyboard_arrow_down,
+                size: 16,
+                color: Colors.grey,
+              ),
+              const Spacer(),
+              // 标签切换
+              Row(
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        _selectedTabIndex = 0;
+                      });
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: _selectedTabIndex == 0
+                            ? Colors.blue
+                            : Colors.transparent,
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      child: Text(
+                        '全部',
+                        style: TextStyle(
+                          color: _selectedTabIndex == 0
+                              ? Colors.white
+                              : Colors.grey,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        _selectedTabIndex = 1;
+                      });
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: _selectedTabIndex == 1
+                            ? Colors.blue
+                            : Colors.transparent,
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      child: Text(
+                        '我常买',
+                        style: TextStyle(
+                          color: _selectedTabIndex == 1
+                              ? Colors.white
+                              : Colors.grey,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(width: 16),
+              const Text(
+                '管理',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.blue,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// 构建会员促销横幅
+  Widget _buildMembershipBanner() {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.yellow[100],
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.yellow[300]!),
+      ),
+      child: Row(
         children: [
-          Icon(
-            Icons.shopping_cart_outlined,
-            size: 100,
-            color: Colors.grey[400],
-          ),
-          const SizedBox(height: 20),
-          Text(
-            '购物车是空的',
-            style: TextStyle(fontSize: 18, color: Colors.grey[600]),
-          ),
-          const SizedBox(height: 10),
-          Text(
-            '快去挑选心仪的商品吧',
-            style: TextStyle(fontSize: 14, color: Colors.grey[500]),
-          ),
-          const SizedBox(height: 30),
-          ElevatedButton(
-            onPressed: () {
-              // 跳转到首页
-              Navigator.of(context).pop();
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
+          const Icon(Icons.close, color: Colors.red, size: 20),
+          const SizedBox(width: 8),
+          const Text(
+            '会员日88折, 0门槛免运费',
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              color: Colors.black87,
             ),
-            child: const Text('去逛逛'),
+          ),
+          const Spacer(),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: Colors.blue,
+              borderRadius: BorderRadius.circular(15),
+            ),
+            child: const Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  '立即开通',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(width: 4),
+                Icon(Icons.arrow_forward, color: Colors.white, size: 12),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 构建配送信息
+  Widget _buildDeliveryInfo() {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.check_circle, color: Colors.blue, size: 20),
+          const SizedBox(width: 8),
+          const Text(
+            '盒马鲜生',
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              color: Colors.black87,
+            ),
+          ),
+          const SizedBox(width: 16),
+          const Icon(Icons.flash_on, color: Colors.orange, size: 20),
+          const SizedBox(width: 8),
+          const Text(
+            '最快30分钟达',
+            style: TextStyle(fontSize: 14, color: Colors.grey),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 构建换购活动横幅
+  Widget _buildRedemptionBanner() {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              color: Colors.red,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: const Text(
+              '全场换购',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+          const Expanded(
+            child: Text(
+              '满49元享超值换购, 还差31.1元',
+              style: TextStyle(fontSize: 14, color: Colors.black87),
+            ),
+          ),
+          const Text(
+            '去凑单 >',
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.blue,
+              fontWeight: FontWeight.w500,
+            ),
           ),
         ],
       ),
@@ -133,371 +436,542 @@ class _CartState extends State<Cart> with TickerProviderStateMixin {
 
   /// 构建购物车内容
   Widget _buildCartContent() {
-    // 根据选中的标签过滤商品
-    final filteredItems = _selectedTabIndex == 0
-        ? _cartItems
-        : _cartItems.where((item) => item['isFrequent'] == true).toList();
-
     return Column(
       children: [
-        // 全选栏
-        Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            border: Border(bottom: BorderSide(color: Colors.grey[200]!)),
-          ),
-          child: Row(
-            children: [
-              Checkbox(
-                value: _selectAll,
-                shape: const CircleBorder(),
-                onChanged: (value) {
-                  setState(() {
-                    _selectAll = value ?? false;
-                    for (var item in filteredItems) {
-                      item['selected'] = _selectAll;
-                    }
-                  });
-                },
-              ),
-              const Text('全选'),
-              const Spacer(),
-              Text(
-                '共${filteredItems.length}件商品',
-                style: TextStyle(color: Colors.grey[600], fontSize: 14),
-              ),
-            ],
-          ),
-        ),
-
-        // 商品列表
-        Expanded(
-          child: ListView.builder(
-            itemCount: filteredItems.length,
-            itemBuilder: (context, index) {
-              final item = filteredItems[index];
-              final originalIndex = _cartItems.indexOf(item);
-              return _buildCartItem(item, originalIndex);
-            },
-          ),
-        ),
+        // 换购商品横向滚动
+        _buildRedemptionProducts(),
+        // 主购物车商品
+        _buildMainCartItems(),
       ],
     );
   }
 
-  /// 构建购物车商品项
-  Widget _buildCartItem(Map<String, dynamic> item, int index) {
-    return Dismissible(
-      key: Key(item['id'].toString()),
-      direction: DismissDirection.endToStart,
-      background: Container(
-        alignment: Alignment.centerRight,
-        padding: const EdgeInsets.only(right: 20),
-        decoration: BoxDecoration(
-          color: Colors.red,
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: const Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.delete, color: Colors.white, size: 24),
-            SizedBox(height: 4),
-            Text(
-              '删除',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-              ),
+  /// 构建换购商品
+  Widget _buildRedemptionProducts() {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            '换购商品',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
             ),
-          ],
-        ),
-      ),
-      confirmDismiss: (direction) async {
-        return await _showDeleteConfirmDialog(item['name'] as String);
-      },
-      onDismissed: (direction) {
-        _removeItem(index);
-      },
-      child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(8),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withValues(alpha: 0.1),
-              blurRadius: 4,
-              offset: const Offset(0, 1),
-            ),
-          ],
-        ),
-        child: Row(
-          children: [
-            // 选择框
-            Checkbox(
-              value: item['selected'] as bool,
-              shape: const CircleBorder(),
-              onChanged: (value) {
-                setState(() {
-                  item['selected'] = value ?? false;
-                  _updateSelectAll();
-                });
+          ),
+          const SizedBox(height: 12),
+          SizedBox(
+            height: 120,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: _redemptionProducts.length,
+              itemBuilder: (context, index) {
+                final product = _redemptionProducts[index];
+                return _buildRedemptionProductCard(product);
               },
             ),
-
-            // 商品图片
-            Container(
-              width: 60,
-              height: 60,
-              decoration: BoxDecoration(
-                color: Colors.grey[200],
-                borderRadius: BorderRadius.circular(6),
-              ),
-              child: const Icon(Icons.image, size: 30, color: Colors.grey),
-            ),
-
-            const SizedBox(width: 8),
-
-            // 商品信息
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    item['name'] as String,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                    ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    '¥${item['price'].toString()}',
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.red,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            // 数量控制 - 放在右下角
-            Container(
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey[300]!),
-                borderRadius: BorderRadius.circular(4),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        if (item['quantity'] > 1) {
-                          item['quantity']--;
-                        }
-                      });
-                    },
-                    child: Container(
-                      width: 24,
-                      height: 24,
-                      decoration: BoxDecoration(
-                        color: Colors.grey[100],
-                        borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(4),
-                          bottomLeft: Radius.circular(4),
-                        ),
-                      ),
-                      child: const Icon(
-                        Icons.remove,
-                        size: 16,
-                        color: Colors.grey,
-                      ),
-                    ),
-                  ),
-                  Container(
-                    width: 32,
-                    height: 24,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      border: Border.symmetric(
-                        vertical: BorderSide(color: Colors.grey[300]!),
-                      ),
-                    ),
-                    child: Center(
-                      child: Text(
-                        item['quantity'].toString(),
-                        style: const TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        item['quantity']++;
-                      });
-                    },
-                    child: Container(
-                      width: 24,
-                      height: 24,
-                      decoration: BoxDecoration(
-                        color: Colors.grey[100],
-                        borderRadius: const BorderRadius.only(
-                          topRight: Radius.circular(4),
-                          bottomRight: Radius.circular(4),
-                        ),
-                      ),
-                      child: const Icon(
-                        Icons.add,
-                        size: 16,
-                        color: Colors.grey,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
-  /// 构建底部操作栏
-  Widget _buildBottomBar() {
-    final selectedItems = _cartItems
-        .where((item) => item['selected'] == true)
-        .toList();
-    final totalPrice = selectedItems.fold<double>(
-      0,
-      (sum, item) =>
-          sum + (item['price'] as double) * (item['quantity'] as int),
-    );
-
+  Widget _buildRedemptionProductCard(Map<String, dynamic> product) {
     return Container(
+      width: 80,
+      margin: const EdgeInsets.only(right: 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 商品图片
+          Expanded(
+            child: Container(
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: Colors.grey[200],
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(8),
+                  topRight: Radius.circular(8),
+                ),
+              ),
+              child: const Icon(Icons.image, color: Colors.grey, size: 30),
+            ),
+          ),
+          // 商品信息
+          Padding(
+            padding: const EdgeInsets.all(8),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  product['discount'],
+                  style: const TextStyle(
+                    fontSize: 10,
+                    color: Colors.red,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  '¥${product['price']}',
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
+                ),
+                Text(
+                  '¥${product['originalPrice']}',
+                  style: TextStyle(
+                    fontSize: 10,
+                    color: Colors.grey[500],
+                    decoration: TextDecoration.lineThrough,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Container(
+                  width: 20,
+                  height: 20,
+                  decoration: BoxDecoration(
+                    color: Colors.blue,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const Icon(
+                    Icons.shopping_cart,
+                    color: Colors.white,
+                    size: 12,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 构建主购物车商品
+  Widget _buildMainCartItems() {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Column(
+        children: _cartItems.map((item) => _buildMainCartItem(item)).toList(),
+      ),
+    );
+  }
+
+  Widget _buildMainCartItem(Map<String, dynamic> item) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
-        border: Border(top: BorderSide(color: Colors.grey[200]!)),
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Row(
         children: [
+          // 选择框
+          Icon(
+            Icons.check_circle,
+            color: item['selected'] ? Colors.blue : Colors.grey[300],
+            size: 24,
+          ),
+          const SizedBox(width: 12),
+          // 商品图片
+          Container(
+            width: 60,
+            height: 60,
+            decoration: BoxDecoration(
+              color: Colors.grey[200],
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: const Icon(Icons.image, color: Colors.grey, size: 30),
+          ),
+          const SizedBox(width: 12),
+          // 商品信息
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  item['name'],
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black87,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 4),
+                if (item['tag'] != null)
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 6,
+                      vertical: 2,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.orange,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      item['tag'],
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                const SizedBox(height: 8),
+                Text(
+                  '¥${item['price']}/盒',
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.red,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // 数量控制
+          _buildQuantityControl(item),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildQuantityControl(Map<String, dynamic> item) {
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey[300]!),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          GestureDetector(
+            onTap: () {
+              setState(() {
+                if (item['quantity'] > 1) {
+                  item['quantity']--;
+                }
+              });
+            },
+            child: Container(
+              width: 30,
+              height: 30,
+              decoration: BoxDecoration(
+                color: Colors.grey[100],
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(20),
+                  bottomLeft: Radius.circular(20),
+                ),
+              ),
+              child: const Icon(Icons.remove, size: 16, color: Colors.grey),
+            ),
+          ),
+          Container(
+            width: 40,
+            height: 30,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              border: Border.symmetric(
+                vertical: BorderSide(color: Colors.grey[300]!),
+              ),
+            ),
+            child: Center(
+              child: Text(
+                item['quantity'].toString(),
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+          ),
+          GestureDetector(
+            onTap: () {
+              setState(() {
+                item['quantity']++;
+              });
+            },
+            child: Container(
+              width: 30,
+              height: 30,
+              decoration: BoxDecoration(
+                color: Colors.grey[100],
+                borderRadius: const BorderRadius.only(
+                  topRight: Radius.circular(20),
+                  bottomRight: Radius.circular(20),
+                ),
+              ),
+              child: const Icon(Icons.add, size: 16, color: Colors.grey),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 构建推荐商品区域
+  Widget _buildRecommendedSection() {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Column(
+        children: [
+          // 推荐标题
+          Row(
+            children: [
+              Expanded(child: Container(height: 1, color: Colors.grey[300])),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16),
+                child: Text(
+                  '为你推荐 · RECOMMEND',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+              Expanded(child: Container(height: 1, color: Colors.grey[300])),
+            ],
+          ),
+          const SizedBox(height: 16),
+          // 推荐商品
+          Row(
+            children: _recommendedProducts
+                .map(
+                  (product) =>
+                      Expanded(child: _buildRecommendedProductCard(product)),
+                )
+                .toList(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRecommendedProductCard(Map<String, dynamic> product) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 4),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 商品图片
+          Container(
+            height: 80,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: Colors.grey[200],
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: const Icon(Icons.image, color: Colors.grey, size: 40),
+          ),
+          const SizedBox(height: 8),
+          // 商品信息
           Text(
-            '合计: ¥${totalPrice.toStringAsFixed(2)}',
+            product['name'],
             style: const TextStyle(
-              fontSize: 18,
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+              color: Colors.black87,
+            ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+          if (product['weight'] != null) ...[
+            const SizedBox(height: 4),
+            Text(
+              product['weight'],
+              style: TextStyle(fontSize: 10, color: Colors.grey[600]),
+            ),
+          ],
+          if (product['tag'] != null) ...[
+            const SizedBox(height: 4),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+              decoration: BoxDecoration(
+                color: Colors.blue,
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: Text(
+                product['tag'],
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 8,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+          const SizedBox(height: 8),
+          Text(
+            '¥${product['price']}',
+            style: const TextStyle(
+              fontSize: 14,
               fontWeight: FontWeight.bold,
               color: Colors.red,
             ),
           ),
-          const Spacer(),
-          ElevatedButton(
-            onPressed: selectedItems.isEmpty
-                ? null
-                : () {
-                    _checkout();
-                  },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
-            ),
-            child: Text(
-              '结算(${selectedItems.length})',
-              style: const TextStyle(fontSize: 16),
-            ),
-          ),
         ],
       ),
     );
   }
 
-  /// 更新全选状态
-  void _updateSelectAll() {
-    _selectAll = _cartItems.every((item) => item['selected'] == true);
-  }
-
-  /// 显示删除确认对话框
-  Future<bool> _showDeleteConfirmDialog(String itemName) async {
-    return await showDialog<bool>(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text('确认删除'),
-            content: Text('确定要删除"$itemName"吗？'),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(false),
-                child: const Text('取消'),
+  /// 构建底部结算栏
+  Widget _buildBottomCheckoutBar() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.2),
+            blurRadius: 8,
+            offset: const Offset(0, -2),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          // 凑单助手
+          Row(
+            children: [
+              const Text(
+                '凑单助手',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black87,
+                ),
               ),
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(true),
-                child: const Text('确定'),
+              const SizedBox(width: 8),
+              const Text(
+                '再买31.1元, 即可免盒马鲜生6元运费',
+                style: TextStyle(fontSize: 12, color: Colors.grey),
+              ),
+              const Spacer(),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.red[100],
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                child: const Text(
+                  '去凑单',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.red,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
               ),
             ],
           ),
-        ) ??
-        false;
-  }
-
-  /// 删除商品
-  void _removeItem(int index) {
-    setState(() {
-      _cartItems.removeAt(index);
-      _updateSelectAll();
-    });
-  }
-
-  /// 清空购物车对话框
-  void _showClearCartDialog() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('清空购物车'),
-        content: const Text('确定要清空购物车吗？'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('取消'),
-          ),
-          TextButton(
-            onPressed: () {
-              setState(() {
-                _cartItems.clear();
-                _selectAll = false;
-              });
-              Navigator.of(context).pop();
-            },
-            child: const Text('确定'),
+          const SizedBox(height: 12),
+          // 结算栏
+          Row(
+            children: [
+              // 全选
+              Row(
+                children: [
+                  Icon(
+                    Icons.check_circle,
+                    color: _selectAll ? Colors.blue : Colors.grey[300],
+                    size: 20,
+                  ),
+                  const SizedBox(width: 8),
+                  const Text(
+                    '全选',
+                    style: TextStyle(fontSize: 14, color: Colors.black87),
+                  ),
+                ],
+              ),
+              const Spacer(),
+              // 合计
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  const Text(
+                    '合计: ¥23.9',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.red,
+                    ),
+                  ),
+                  const Text(
+                    '明细 ^',
+                    style: TextStyle(fontSize: 12, color: Colors.grey),
+                  ),
+                  const Text(
+                    '含运费 ¥6',
+                    style: TextStyle(fontSize: 12, color: Colors.grey),
+                  ),
+                ],
+              ),
+              const SizedBox(width: 16),
+              // 结算按钮
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 12,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.blue,
+                  borderRadius: BorderRadius.circular(25),
+                ),
+                child: const Text(
+                  '结算',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),
     );
-  }
-
-  /// 结算
-  void _checkout() {
-    final selectedItems = _cartItems
-        .where((item) => item['selected'] == true)
-        .toList();
-    if (selectedItems.isEmpty) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('请选择要结算的商品')));
-      return;
-    }
-
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text('跳转到结算页面...')));
   }
 }
