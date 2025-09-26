@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'home.dart';
-import 'cart.dart';
-import 'mine.dart';
 
 class Category extends StatefulWidget {
   const Category({super.key});
@@ -11,7 +8,6 @@ class Category extends StatefulWidget {
 }
 
 class _CategoryState extends State<Category> {
-  int _currentIndex = 1; // 分类页面索引
   int _selectedCategoryIndex = 0; // 选中的分类索引
 
   // 主分类数据

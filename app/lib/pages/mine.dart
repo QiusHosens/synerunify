@@ -1,218 +1,426 @@
 import 'package:flutter/material.dart';
-import '../utils/auth_manager.dart';
-import '../services/auth_service.dart';
-import 'login.dart';
 import 'orders.dart';
-import 'address_list.dart';
 
-class Mine extends StatelessWidget {
+class Mine extends StatefulWidget {
   Mine({super.key});
 
-  final AuthManager _authManager = AuthManager();
-  final AuthService _authService = AuthService();
+  @override
+  State<Mine> createState() => _MineState();
+}
 
-  /// 处理登出
-  Future<void> _handleLogout(BuildContext context) async {
-    // 显示确认对话框
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('确认登出'),
-        content: const Text('您确定要登出吗？'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('取消'),
+class _MineState extends State<Mine> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.grey[50],
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              // 顶部状态栏和店铺信息
+              _buildTopBar(),
+              // 用户信息区域
+              _buildUserProfile(),
+              // 会员信息横幅
+              _buildMembershipBanner(),
+              // 促销卡片
+              _buildPromoCards(),
+              // 财务概览
+              _buildFinancialOverview(),
+              // 订单状态
+              _buildOrderStatus(),
+              // 服务工具网格
+              _buildServiceGrid(),
+              // 底部促销横幅
+              _buildBottomBanners(),
+              const SizedBox(height: 100), // 为底部导航栏留出空间
+            ],
           ),
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('确认'),
+        ),
+      ),
+    );
+  }
+
+  /// 构建顶部状态栏和店铺信息
+  Widget _buildTopBar() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Row(
+        children: [
+          // 时间显示
+          const Text(
+            '14:02',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
+          ),
+          const Spacer(),
+          // 店铺位置
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.2),
+                  blurRadius: 4,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: const Text(
+              '中和锦汇天府店',
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                color: Colors.black,
+              ),
+            ),
+          ),
+          const Spacer(),
+          // 状态栏图标
+          Row(
+            children: [
+              const Icon(
+                Icons.signal_cellular_4_bar,
+                size: 16,
+                color: Colors.black,
+              ),
+              const SizedBox(width: 4),
+              const Icon(Icons.wifi, size: 16, color: Colors.black),
+              const SizedBox(width: 4),
+              const Icon(Icons.battery_full, size: 16, color: Colors.black),
+            ],
           ),
         ],
       ),
     );
-
-    if (confirmed == true) {
-      try {
-        // 调用登出API
-        await _authService.logout();
-        
-        // 清除本地认证状态
-        await _authManager.logout();
-        
-        // 跳转到登录页面
-        if (context.mounted) {
-          Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (context) => const Login()),
-            (route) => false,
-          );
-        }
-      } catch (e) {
-        // 即使API调用失败，也要清除本地状态
-        await _authManager.logout();
-        
-        if (context.mounted) {
-          Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (context) => const Login()),
-            (route) => false,
-          );
-        }
-      }
-    }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('我的'),
-        backgroundColor: Colors.purple,
-        foregroundColor: Colors.white,
+  /// 构建用户信息区域
+  Widget _buildUserProfile() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      child: Row(
+        children: [
+          // 用户头像
+          Container(
+            width: 60,
+            height: 60,
+            decoration: BoxDecoration(
+              color: Colors.orange,
+              borderRadius: BorderRadius.circular(30),
+            ),
+            child: const Icon(Icons.pets, size: 30, color: Colors.white),
+          ),
+          const SizedBox(width: 16),
+          // 用户信息
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  '设置昵称',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                const Text(
+                  '会员名:ffsdpzyg',
+                  style: TextStyle(fontSize: 14, color: Colors.grey),
+                ),
+              ],
+            ),
+          ),
+          // 快捷操作
+          Row(
+            children: [
+              _buildQuickAction(Icons.settings, '设置'),
+              const SizedBox(width: 16),
+              _buildQuickAction(Icons.message, '消息', hasNotification: true),
+              const SizedBox(width: 16),
+              _buildQuickAction(Icons.qr_code, '付款码'),
+            ],
+          ),
+        ],
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+    );
+  }
+
+  /// 构建快捷操作按钮
+  Widget _buildQuickAction(
+    IconData icon,
+    String label, {
+    bool hasNotification = false,
+  }) {
+    return Column(
+      children: [
+        Stack(
+          children: [
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: Colors.grey[200],
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Icon(icon, color: Colors.grey[600], size: 20),
+            ),
+            if (hasNotification)
+              Positioned(
+                right: 0,
+                top: 0,
+                child: Container(
+                  width: 12,
+                  height: 12,
+                  decoration: const BoxDecoration(
+                    color: Colors.red,
+                    shape: BoxShape.circle,
+                  ),
+                ),
+              ),
+          ],
+        ),
+        const SizedBox(height: 4),
+        Text(label, style: const TextStyle(fontSize: 10, color: Colors.grey)),
+      ],
+    );
+  }
+
+  /// 构建会员信息横幅
+  Widget _buildMembershipBanner() {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.grey[800],
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.card_membership, color: Colors.white, size: 24),
+          const SizedBox(width: 12),
+          const Text(
+            '错过优惠约97.9元',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          const Spacer(),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: Colors.red,
+              borderRadius: BorderRadius.circular(15),
+            ),
+            child: const Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  '立即开通',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(width: 4),
+                Icon(Icons.arrow_forward, color: Colors.white, size: 12),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 构建促销卡片
+  Widget _buildPromoCards() {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Row(
+        children: [
+          Expanded(
+            child: _buildPromoCard(
+              '免费领菜 天天到店领',
+              [Colors.green, Colors.blue],
+              '¥0 ¥2.9',
+              '¥0 ¥2.8',
+            ),
+          ),
+          const SizedBox(width: 8),
+          Expanded(child: _buildPromoCard('免运费', [Colors.orange], '', '')),
+          const SizedBox(width: 8),
+          Expanded(
+            child: _buildPromoCard('专享券', [Colors.purple], '¥5', '蔬菜肉禽券'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPromoCard(
+    String title,
+    List<Color> colors,
+    String price1,
+    String price2,
+  ) {
+    return Container(
+      height: 120,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: colors,
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const Spacer(),
+            if (price1.isNotEmpty)
+              Text(
+                price1,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            if (price2.isNotEmpty)
+              Text(
+                price2,
+                style: const TextStyle(color: Colors.white, fontSize: 12),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// 构建财务概览
+  Widget _buildFinancialOverview() {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Expanded(child: _buildFinancialItem('6张', '红包卡券')),
+          Container(width: 1, height: 40, color: Colors.grey[300]),
+          Expanded(child: _buildFinancialItem('0.00', '我的积分')),
+          Container(width: 1, height: 40, color: Colors.grey[300]),
+          Expanded(child: _buildFinancialItem('63.79元', '我的钱包')),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFinancialItem(String value, String label) {
+    return Column(
+      children: [
+        Text(
+          value,
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: Colors.black87,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(label, style: const TextStyle(fontSize: 12, color: Colors.grey)),
+      ],
+    );
+  }
+
+  /// 构建订单状态
+  Widget _buildOrderStatus() {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              _buildOrderItem(Icons.payment, '待付款'),
+              _buildOrderItem(Icons.local_shipping, '待发货'),
+              _buildOrderItem(Icons.delivery_dining, '待收货'),
+              _buildOrderItem(Icons.star_border, '待评价'),
+              _buildOrderItem(Icons.assignment_return, '退款/售后'),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              const Text(
+                '全部订单',
+                style: TextStyle(fontSize: 14, color: Colors.grey),
+              ),
+              const SizedBox(width: 4),
+              const Icon(Icons.arrow_forward_ios, size: 12, color: Colors.grey),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildOrderItem(IconData icon, String label) {
+    return Expanded(
+      child: GestureDetector(
+        onTap: () {
+          Navigator.of(
+            context,
+          ).push(MaterialPageRoute(builder: (context) => const Orders()));
+        },
         child: Column(
           children: [
-            // 用户信息卡片
-            Card(
-              elevation: 4,
-              child: Padding(
-                padding: const EdgeInsets.all(20),
-                child: Row(
-                  children: [
-                    const CircleAvatar(
-                      radius: 30,
-                      backgroundColor: Colors.purple,
-                      child: Icon(
-                        Icons.person,
-                        size: 40,
-                        color: Colors.white,
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    const Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            '用户名',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          SizedBox(height: 4),
-                          Text(
-                            'user@example.com',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    IconButton(
-                      onPressed: () {
-                        // 编辑个人信息
-                      },
-                      icon: const Icon(Icons.edit),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 20),
-            // 功能列表
-            _buildMenuItem(
-              icon: Icons.person_outline,
-              title: '个人信息',
-              onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('个人信息功能开发中...')),
-                );
-              },
-            ),
-            _buildMenuItem(
-              icon: Icons.shopping_bag_outlined,
-              title: '我的订单',
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => const Orders(),
-                  ),
-                );
-              },
-            ),
-            _buildMenuItem(
-              icon: Icons.favorite_outline,
-              title: '我的收藏',
-              onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('我的收藏功能开发中...')),
-                );
-              },
-            ),
-            _buildMenuItem(
-              icon: Icons.location_on_outlined,
-              title: '收货地址',
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => const AddressList(),
-                  ),
-                );
-              },
-            ),
-            _buildMenuItem(
-              icon: Icons.local_offer_outlined,
-              title: '优惠券',
-              onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('优惠券功能开发中...')),
-                );
-              },
-            ),
-            _buildMenuItem(
-              icon: Icons.settings,
-              title: '设置',
-              onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('设置功能开发中...')),
-                );
-              },
-            ),
-            _buildMenuItem(
-              icon: Icons.help_outline,
-              title: '帮助与反馈',
-              onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('帮助与反馈功能开发中...')),
-                );
-              },
-            ),
-            _buildMenuItem(
-              icon: Icons.info_outline,
-              title: '关于我们',
-              onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('关于我们功能开发中...')),
-                );
-              },
-            ),
-            const SizedBox(height: 20),
-            // 退出登录按钮
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () => _handleLogout(context),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                ),
-                child: const Text('退出登录'),
-              ),
+            Icon(icon, color: Colors.orange, size: 24),
+            const SizedBox(height: 4),
+            Text(
+              label,
+              style: const TextStyle(fontSize: 12, color: Colors.black87),
             ),
           ],
         ),
@@ -220,18 +428,165 @@ class Mine extends StatelessWidget {
     );
   }
 
-  Widget _buildMenuItem({
-    required IconData icon,
-    required String title,
-    required VoidCallback onTap,
-  }) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 8),
-      child: ListTile(
-        leading: Icon(icon),
-        title: Text(title),
-        trailing: const Icon(Icons.arrow_forward_ios),
-        onTap: onTap,
+  /// 构建服务工具网格
+  Widget _buildServiceGrid() {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          // 第一行服务
+          Row(
+            children: [
+              _buildServiceItem(Icons.shopping_cart, '邀新拼团', '拼团'),
+              _buildServiceItem(Icons.person, '生活服务', '省心省钱'),
+              _buildServiceItem(Icons.park, '盒马小镇'),
+              _buildServiceItem(Icons.school, '健康课堂'),
+              _buildServiceItem(Icons.card_giftcard, '入群抽奖'),
+            ],
+          ),
+          const SizedBox(height: 16),
+          // 第二行服务
+          Row(
+            children: [
+              _buildServiceItem(Icons.location_on, '收货地址'),
+              _buildServiceItem(Icons.headset_mic, '客服小蜜'),
+              _buildServiceItem(Icons.description, '门店证照'),
+              _buildServiceItem(Icons.favorite, '收藏'),
+              _buildServiceItem(Icons.business, '企业商城'),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildServiceItem(IconData icon, String label, [String? tag]) {
+    return Expanded(
+      child: GestureDetector(
+        onTap: () {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text('点击了$label')));
+        },
+        child: Column(
+          children: [
+            Stack(
+              children: [
+                Icon(icon, color: Colors.orange, size: 24),
+                if (tag != null)
+                  Positioned(
+                    right: -2,
+                    top: -2,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 4,
+                        vertical: 2,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.red,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        tag,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 8,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+            const SizedBox(height: 4),
+            Text(
+              label,
+              style: const TextStyle(fontSize: 10, color: Colors.black87),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// 构建底部促销横幅
+  Widget _buildBottomBanners() {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Row(
+        children: [
+          Expanded(
+            child: _buildBottomBanner(
+              '月满中秋',
+              '大闸蟹券买1送1起',
+              '立即抢购>',
+              Colors.orange,
+            ),
+          ),
+          const SizedBox(width: 8),
+          Expanded(child: _buildBottomBanner('冰鲜', '', '', Colors.blue)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBottomBanner(
+    String title,
+    String subtitle,
+    String buttonText,
+    Color color,
+  ) {
+    return Container(
+      height: 100,
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            if (subtitle.isNotEmpty) ...[
+              const SizedBox(height: 4),
+              Text(
+                subtitle,
+                style: const TextStyle(color: Colors.white, fontSize: 12),
+              ),
+            ],
+            const Spacer(),
+            if (buttonText.isNotEmpty)
+              Text(
+                buttonText,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }

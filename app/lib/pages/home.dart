@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'message.dart';
 import 'product_detail.dart';
 import 'category.dart';
-import 'cart.dart';
-import 'mine.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -14,7 +12,6 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   final ScrollController _scrollController = ScrollController();
-  int _currentIndex = 0;
 
   // 商品分类数据
   final List<Map<String, dynamic>> _categories = [
