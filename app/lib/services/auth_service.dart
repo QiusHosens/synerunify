@@ -98,4 +98,29 @@ class AuthService {
       data: {'token': token, 'new_password': newPassword},
     );
   }
+
+  /// 手机号验证码登录
+  Future<ApiResponse<AuthResponse>> loginWithPhone({
+    required String phone,
+    required String code,
+  }) async {
+    return await _httpClient.post<AuthResponse>(
+      '/system/system_auth/login_phone',
+      data: {
+        'phone': phone,
+        'code': code,
+      },
+      fromJson: (data) => AuthResponse.fromJson(data),
+    );
+  }
+
+  /// 发送验证码
+  Future<ApiResponse<void>> sendVerificationCode({
+    required String phone,
+  }) async {
+    return await _httpClient.post<void>(
+      '/system/system_auth/send_code',
+      data: {'phone': phone},
+    );
+  }
 }

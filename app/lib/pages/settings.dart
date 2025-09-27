@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:synerunify/pages/login.dart';
+import 'package:synerunify/utils/auth_manager.dart';
 import '../services/auth_service.dart';
 
 class Settings extends StatefulWidget {
@@ -12,6 +14,9 @@ class Settings extends StatefulWidget {
 class _SettingsState extends State<Settings> {
   bool _elderlyMode = false;
   String _currentStore = '中和锦汇天府店';
+
+  final AuthManager _authManager = AuthManager();
+  final AuthService _authService = AuthService();
 
   @override
   void initState() {
@@ -43,7 +48,6 @@ class _SettingsState extends State<Settings> {
     _saveSettings();
   }
 
-
   /// 清除缓存
   Future<void> _clearCache() async {
     showDialog(
@@ -59,9 +63,9 @@ class _SettingsState extends State<Settings> {
           TextButton(
             onPressed: () {
               Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('缓存已清除')),
-              );
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(const SnackBar(content: Text('缓存已清除')));
             },
             child: const Text('确定'),
           ),
@@ -85,18 +89,43 @@ class _SettingsState extends State<Settings> {
           TextButton(
             onPressed: () async {
               Navigator.pop(context);
+              // try {
+              //   // await AuthService().logout();
+              //   if (mounted) {
+              //     Navigator.of(context).pushNamedAndRemoveUntil(
+              //       '/login',
+              //       (route) => false,
+              //     );
+              //   }
+              // } catch (e) {
+              //   if (mounted) {
+              //     ScaffoldMessenger.of(context).showSnackBar(
+              //       SnackBar(content: Text('退出失败: $e')),
+              //     );
+              //   }
+              // }
               try {
-                await AuthService().logout();
-                if (mounted) {
-                  Navigator.of(context).pushNamedAndRemoveUntil(
-                    '/login',
+                // 调用登出API
+                // await _authService.logout();
+
+                // 清除本地认证状态
+                await _authManager.logout();
+
+                // 跳转到登录页面
+                if (context.mounted) {
+                  Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(builder: (context) => const Login()),
                     (route) => false,
                   );
                 }
               } catch (e) {
-                if (mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('退出失败: $e')),
+                // 即使API调用失败，也要清除本地状态
+                // await _authService.logout();
+
+                if (context.mounted) {
+                  Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(builder: (context) => const Login()),
+                    (route) => false,
                   );
                 }
               }
@@ -318,12 +347,11 @@ class _SettingsState extends State<Settings> {
       leading: Icon(icon, color: Colors.orange, size: 24),
       title: Text(
         title,
-        style: const TextStyle(
-          fontSize: 16,
-          color: Colors.black87,
-        ),
+        style: const TextStyle(fontSize: 16, color: Colors.black87),
       ),
-      trailing: trailing ?? const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+      trailing:
+          trailing ??
+          const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
       onTap: onTap,
     );
   }
@@ -345,17 +373,12 @@ class _SettingsState extends State<Settings> {
           foregroundColor: Colors.grey[600],
           elevation: 0,
           side: BorderSide(color: Colors.grey[300]!),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           padding: const EdgeInsets.symmetric(vertical: 16),
         ),
         child: const Text(
           '退出当前账号',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w500,
-          ),
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
         ),
       ),
     );
@@ -363,8 +386,8 @@ class _SettingsState extends State<Settings> {
 
   /// 显示提示信息
   void _showSnackBar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('点击了$message')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text('点击了$message')));
   }
 }
