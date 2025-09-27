@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../services/auth_service.dart';
 import '../utils/auth_manager.dart';
 import '../utils/http_client.dart';
@@ -57,7 +58,7 @@ class _LoginState extends State<Login> {
 
     try {
       ApiResponse response;
-      
+
       if (_isAccountLogin) {
         // 账号密码登录
         response = await _authService.login(
@@ -73,8 +74,19 @@ class _LoginState extends State<Login> {
       }
 
       if (response.success && response.data != null) {
-        final userResponse = await _authService.getUserInfo();
+        // 设置token
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString(
+          HttpClientConfig.accessTokenKey,
+          response.data!.accessToken,
+        );
+        await prefs.setString(
+          HttpClientConfig.refreshTokenKey,
+          response.data!.refreshToken,
+        );
+        
         // 登录成功，获取用户信息
+        final userResponse = await _authService.getUserInfo();
         _authManager.loginSuccess(userResponse.data!);
 
         // 跳转到主页面
@@ -126,18 +138,18 @@ class _LoginState extends State<Login> {
     try {
       // TODO: 调用获取验证码API
       // await _authService.sendVerificationCode(_phoneController.text.trim());
-      
+
       // 开始倒计时
       setState(() {
         _isCountingDown = true;
         _countdown = 60;
       });
-      
+
       _startCountdown();
-      
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('验证码已发送')),
-      );
+
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('验证码已发送')));
     } catch (e) {
       setState(() {
         _errorMessage = '发送验证码失败，请稍后重试';
@@ -290,16 +302,16 @@ class _LoginState extends State<Login> {
               ),
             ),
           ],
-          
+
           // 输入框
           if (_isAccountLogin) ...[
             _buildAccountInputFields(),
           ] else ...[
             _buildPhoneInputFields(),
           ],
-          
+
           const SizedBox(height: 20),
-          
+
           // 登录按钮
           _buildLoginButton(),
         ],
@@ -324,7 +336,7 @@ class _LoginState extends State<Login> {
           },
         ),
         const SizedBox(height: 16),
-        
+
         // 密码输入框
         _buildInputField(
           controller: _passwordController,
@@ -349,7 +361,7 @@ class _LoginState extends State<Login> {
           },
         ),
         const SizedBox(height: 12),
-        
+
         // 忘记密码链接
         Align(
           alignment: Alignment.centerRight,
@@ -360,18 +372,12 @@ class _LoginState extends State<Login> {
                 onPressed: _handleForgotPassword,
                 child: Text(
                   '忘记了?',
-                  style: TextStyle(
-                    color: Colors.grey[600],
-                    fontSize: 14,
-                  ),
+                  style: TextStyle(color: Colors.grey[600], fontSize: 14),
                 ),
               ),
               Text(
                 '找回密码',
-                style: TextStyle(
-                  color: Colors.grey[600],
-                  fontSize: 14,
-                ),
+                style: TextStyle(color: Colors.grey[600], fontSize: 14),
               ),
             ],
           ),
@@ -400,7 +406,7 @@ class _LoginState extends State<Login> {
           },
         ),
         const SizedBox(height: 16),
-        
+
         // 验证码输入框
         _buildInputField(
           controller: _codeController,
@@ -451,10 +457,7 @@ class _LoginState extends State<Login> {
         validator: validator,
         decoration: InputDecoration(
           hintText: hintText,
-          hintStyle: TextStyle(
-            color: Colors.grey[500],
-            fontSize: 16,
-          ),
+          hintStyle: TextStyle(color: Colors.grey[500], fontSize: 16),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8),
             borderSide: BorderSide.none,
@@ -491,11 +494,7 @@ class _LoginState extends State<Login> {
               color: _agreeTerms ? Colors.orange : Colors.transparent,
             ),
             child: _agreeTerms
-                ? const Icon(
-                    Icons.check,
-                    size: 14,
-                    color: Colors.white,
-                  )
+                ? const Icon(Icons.check, size: 14, color: Colors.white)
                 : null,
           ),
         ),
@@ -503,10 +502,7 @@ class _LoginState extends State<Login> {
         Expanded(
           child: RichText(
             text: TextSpan(
-              style: TextStyle(
-                color: Colors.grey[600],
-                fontSize: 14,
-              ),
+              style: TextStyle(color: Colors.grey[600], fontSize: 14),
               children: [
                 const TextSpan(text: '同意'),
                 TextSpan(
@@ -523,7 +519,9 @@ class _LoginState extends State<Login> {
                     decoration: TextDecoration.underline,
                   ),
                 ),
-                const TextSpan(text: ',并已清晰理解上述文件中免除或限制责任、诉讼管辖等粗体或下划线的条款,愿同步创建支付宝账号'),
+                const TextSpan(
+                  text: ',并已清晰理解上述文件中免除或限制责任、诉讼管辖等粗体或下划线的条款,愿同步创建支付宝账号',
+                ),
               ],
             ),
           ),
@@ -546,10 +544,7 @@ class _LoginState extends State<Login> {
           },
           child: Text(
             _isAccountLogin ? '手机号登录' : '账号密码登录',
-            style: TextStyle(
-              color: Colors.grey[600],
-              fontSize: 16,
-            ),
+            style: TextStyle(color: Colors.grey[600], fontSize: 16),
           ),
         ),
         Container(
@@ -562,10 +557,7 @@ class _LoginState extends State<Login> {
           onPressed: _handleRegister,
           child: Text(
             '立即注册',
-            style: TextStyle(
-              color: Colors.grey[600],
-              fontSize: 16,
-            ),
+            style: TextStyle(color: Colors.grey[600], fontSize: 16),
           ),
         ),
       ],
@@ -582,9 +574,7 @@ class _LoginState extends State<Login> {
         style: ElevatedButton.styleFrom(
           backgroundColor: _agreeTerms ? Colors.grey[300] : Colors.grey[200],
           foregroundColor: Colors.black,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           elevation: 0,
         ),
         child: _isLoading
@@ -603,5 +593,4 @@ class _LoginState extends State<Login> {
       ),
     );
   }
-
 }

@@ -1,10 +1,11 @@
 import 'package:dio/dio.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'type_utils.dart';
 
 /// HTTP客户端配置类
 class HttpClientConfig {
-  static const String baseUrl = 'http://localhost';
+  static const String baseUrl = 'http://192.168.1.4';
   static const int connectTimeout = 30000; // 30秒
   static const int receiveTimeout = 30000; // 30秒
   static const int sendTimeout = 30000; // 30秒
@@ -35,7 +36,7 @@ class ApiResponse<T> {
     T Function(dynamic)? fromJsonT,
   ) {
     return ApiResponse<T>(
-      success: json['success'] ?? false,
+      success: json['code'] == 200 ? true : false,
       message: json['message'] ?? '',
       data: json['data'] != null && fromJsonT != null
           ? fromJsonT(json['data'])
@@ -43,6 +44,16 @@ class ApiResponse<T> {
       code: json['code'],
       error: json['error'],
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'success': success,
+      'message': message,
+      'data': data,
+      'code': code,
+      'error': error,
+    };
   }
 }
 
@@ -119,6 +130,7 @@ class HttpClient {
         options: options,
         cancelToken: cancelToken,
       );
+      print('http client response: ${response.toString()}');
       return _handleResponse<T>(response, fromJson);
     } catch (e) {
       return _handleError<T>(e);
@@ -176,22 +188,71 @@ class HttpClient {
     Response response,
     T Function(dynamic)? fromJson,
   ) {
-    if (response.statusCode == 200) {
+    final statusCode = response.statusCode ?? 0;
+
+    if (statusCode >= 200 && statusCode < 300) {
       final data = response.data;
+
+      print(
+        'http client data: ${data.toString()}, ${data is Map<String, dynamic>}, ${data is String}',
+      );
+      // 确保 data 是 Map，否则直接包装
       if (data is Map<String, dynamic>) {
-        return ApiResponse.fromJson(data, fromJson);
+        final code = TypeUtils.parseInt(data['code']);
+        final success = code == 200;
+
+        final raw = data['data'];
+        final parsed = fromJson != null && raw != null ? fromJson(raw) : raw;
+
+        return ApiResponse<T>(
+          success: success,
+          message: data['message'] ?? '',
+          data: parsed,
+          code: code,
+          error: data['error'] ?? '',
+        );
+      } else if (data is String) {
+        // data 不是 Map<String, dynamic>（可能是 String/数组/空）
+        final dataMap = TypeUtils.stringToMap(data);
+        print(
+          'http string data: ${dataMap.toString()}, ${dataMap is Map<String, dynamic>}, ${dataMap is String}',
+        );
+        final code = TypeUtils.parseInt(dataMap['code']);
+        final success = code == 200;
+        if (success) {
+          // final parsed =
+          //     (fromJson != null ? fromJson(dataMap['data']) : dataMap['data'])
+          //         as T;
+          return ApiResponse.fromJson(dataMap, fromJson);
+          // return ApiResponse<T>(
+          //   success: true,
+          //   message: dataMap['message'] ?? '',
+          //   data: parsed,
+          //   code: dataMap['code'],
+          // );
+        } else {
+          print('http fail data: $data');
+          return ApiResponse<T>(
+            success: false,
+            message: dataMap['message'] ?? '',
+            code: code,
+            error: dataMap['error'] ?? '',
+          );
+        }
       } else {
         return ApiResponse<T>(
           success: true,
           message: '请求成功',
-          data: fromJson != null ? fromJson(data) : data,
+          data: data as T,
+          code: statusCode,
         );
       }
     } else {
       return ApiResponse<T>(
         success: false,
         message: '请求失败',
-        code: response.statusCode,
+        code: statusCode,
+        error: response.statusMessage ?? '未知错误',
       );
     }
   }

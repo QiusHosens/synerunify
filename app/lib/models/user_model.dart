@@ -1,3 +1,5 @@
+import '../utils/type_utils.dart';
+
 /// 用户模型
 class UserModel {
   final String nickname;
@@ -21,8 +23,8 @@ class UserModel {
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
       nickname: json['nickname'] as String,
-      status: json['status'] as int,
-      sex: json['sex'] as int?,
+      status: TypeUtils.parseInt(json['status']),
+      sex: TypeUtils.parseIntNullable(json['sex']),
       email: json['email'] as String?,
       avatar: json['avatar'] as String?,
       mobile: json['mobile'] as String?,
@@ -83,8 +85,8 @@ class AuthResponse {
       accessToken: json['access_token'] as String,
       refreshToken: json['refresh_token'] as String,
       tokenType: json['token_type'] as String,
-      exp: json['exp'] as int,
-      iat: json['iat'] as int,
+      exp: TypeUtils.parseInt(json['exp']),
+      iat: TypeUtils.parseInt(json['iat']),
     );
   }
 
