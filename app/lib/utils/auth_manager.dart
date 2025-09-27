@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/user_model.dart';
+import 'logger.dart';
 
 /// 认证状态管理类
 class AuthManager extends ChangeNotifier {
@@ -35,7 +36,7 @@ class AuthManager extends ChangeNotifier {
       _isInitialized = true;
       notifyListeners();
     } catch (e) {
-      print('初始化认证状态失败: $e');
+      Logger.error('初始化认证状态失败: $e', tag: 'AuthManager');
       _isInitialized = true;
       notifyListeners();
     }
@@ -70,7 +71,7 @@ class AuthManager extends ChangeNotifier {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('current_user', user.toJson().toString());
     } catch (e) {
-      print('保存用户信息失败: $e');
+      Logger.error('保存用户信息失败: $e', tag: 'AuthManager');
     }
   }
 
@@ -80,7 +81,7 @@ class AuthManager extends ChangeNotifier {
       final prefs = await SharedPreferences.getInstance();
       await prefs.remove('current_user');
     } catch (e) {
-      print('清除用户信息失败: $e');
+      Logger.error('清除用户信息失败: $e', tag: 'AuthManager');
     }
   }
 
@@ -97,7 +98,7 @@ class AuthManager extends ChangeNotifier {
       final now = DateTime.now().millisecondsSinceEpoch;
       return now < tokenExpireTime;
     } catch (e) {
-      print('检查Token有效性失败: $e');
+      Logger.error('检查Token有效性失败: $e', tag: 'AuthManager');
       return false;
     }
   }

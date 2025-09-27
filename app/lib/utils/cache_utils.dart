@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'logger.dart';
 
 /// 本地缓存工具类
 /// 提供数据存储、获取、删除等功能，支持过期时间管理
@@ -28,7 +29,7 @@ class CacheUtils {
 
       return result;
     } catch (e) {
-      print('CacheUtils setString error: $e');
+      Logger.error('CacheUtils setString error: $e', tag: 'CacheUtils');
       return false;
     }
   }
@@ -48,7 +49,7 @@ class CacheUtils {
 
       return prefs.getString('$_prefix$key') ?? defaultValue;
     } catch (e) {
-      print('CacheUtils getString error: $e');
+      Logger.error('CacheUtils getString error: $e', tag: 'CacheUtils');
       return defaultValue;
     }
   }
@@ -69,7 +70,7 @@ class CacheUtils {
 
       return result;
     } catch (e) {
-      print('CacheUtils setInt error: $e');
+      Logger.error('CacheUtils setInt error: $e', tag: 'CacheUtils');
       return false;
     }
   }
@@ -86,7 +87,7 @@ class CacheUtils {
 
       return prefs.getInt('$_prefix$key') ?? defaultValue;
     } catch (e) {
-      print('CacheUtils getInt error: $e');
+      Logger.error('CacheUtils getInt error: $e', tag: 'CacheUtils');
       return defaultValue;
     }
   }
@@ -107,7 +108,7 @@ class CacheUtils {
 
       return result;
     } catch (e) {
-      print('CacheUtils setBool error: $e');
+      Logger.error('CacheUtils setBool error: $e', tag: 'CacheUtils');
       return false;
     }
   }
@@ -124,7 +125,7 @@ class CacheUtils {
 
       return prefs.getBool('$_prefix$key') ?? defaultValue;
     } catch (e) {
-      print('CacheUtils getBool error: $e');
+      Logger.error('CacheUtils getBool error: $e', tag: 'CacheUtils');
       return defaultValue;
     }
   }
@@ -145,7 +146,7 @@ class CacheUtils {
 
       return result;
     } catch (e) {
-      print('CacheUtils setDouble error: $e');
+      Logger.error('CacheUtils setDouble error: $e', tag: 'CacheUtils');
       return false;
     }
   }
@@ -162,7 +163,7 @@ class CacheUtils {
 
       return prefs.getDouble('$_prefix$key') ?? defaultValue;
     } catch (e) {
-      print('CacheUtils getDouble error: $e');
+      Logger.error('CacheUtils getDouble error: $e', tag: 'CacheUtils');
       return defaultValue;
     }
   }
@@ -183,7 +184,7 @@ class CacheUtils {
 
       return result;
     } catch (e) {
-      print('CacheUtils setStringList error: $e');
+      Logger.error('CacheUtils setStringList error: $e', tag: 'CacheUtils');
       return false;
     }
   }
@@ -201,7 +202,7 @@ class CacheUtils {
 
       return prefs.getStringList('$_prefix$key') ?? defaultValue;
     } catch (e) {
-      print('CacheUtils getStringList error: $e');
+      Logger.error('CacheUtils getStringList error: $e', tag: 'CacheUtils');
       return defaultValue;
     }
   }
@@ -213,7 +214,7 @@ class CacheUtils {
       final jsonString = jsonEncode(value);
       return await setString(key, jsonString, expireDuration: expireDuration);
     } catch (e) {
-      print('CacheUtils setJson error: $e');
+      Logger.error('CacheUtils setJson error: $e', tag: 'CacheUtils');
       return false;
     }
   }
@@ -228,7 +229,7 @@ class CacheUtils {
       }
       return defaultValue;
     } catch (e) {
-      print('CacheUtils getJson error: $e');
+      Logger.error('CacheUtils getJson error: $e', tag: 'CacheUtils');
       return defaultValue;
     }
   }
@@ -245,7 +246,7 @@ class CacheUtils {
         return await setString(key, jsonString, expireDuration: expireDuration);
       }
     } catch (e) {
-      print('CacheUtils setObject error: $e');
+      Logger.error('CacheUtils setObject error: $e', tag: 'CacheUtils');
       return false;
     }
   }
@@ -261,7 +262,7 @@ class CacheUtils {
       }
       return defaultValue;
     } catch (e) {
-      print('CacheUtils getObject error: $e');
+      Logger.error('CacheUtils getObject error: $e', tag: 'CacheUtils');
       return defaultValue;
     }
   }
@@ -274,7 +275,7 @@ class CacheUtils {
       bool result2 = await prefs.remove('$_expirePrefix$key');
       return result1 || result2;
     } catch (e) {
-      print('CacheUtils remove error: $e');
+      Logger.error('CacheUtils remove error: $e', tag: 'CacheUtils');
       return false;
     }
   }
@@ -293,7 +294,7 @@ class CacheUtils {
 
       return true;
     } catch (e) {
-      print('CacheUtils clear error: $e');
+      Logger.error('CacheUtils clear error: $e', tag: 'CacheUtils');
       return false;
     }
   }
@@ -304,7 +305,7 @@ class CacheUtils {
       final prefs = await SharedPreferences.getInstance();
       return prefs.containsKey('$_prefix$key');
     } catch (e) {
-      print('CacheUtils containsKey error: $e');
+      Logger.error('CacheUtils containsKey error: $e', tag: 'CacheUtils');
       return false;
     }
   }
@@ -319,7 +320,7 @@ class CacheUtils {
           .map((key) => key.substring(_prefix.length))
           .toList();
     } catch (e) {
-      print('CacheUtils getAllKeys error: $e');
+      Logger.error('CacheUtils getAllKeys error: $e', tag: 'CacheUtils');
       return [];
     }
   }
@@ -342,7 +343,7 @@ class CacheUtils {
 
       return cleanedCount;
     } catch (e) {
-      print('CacheUtils cleanExpiredCache error: $e');
+      Logger.error('CacheUtils cleanExpiredCache error: $e', tag: 'CacheUtils');
       return 0;
     }
   }
@@ -372,7 +373,7 @@ class CacheUtils {
         'expireKeysCount': expireKeys.length,
       };
     } catch (e) {
-      print('CacheUtils getCacheStats error: $e');
+      Logger.error('CacheUtils getCacheStats error: $e', tag: 'CacheUtils');
       return {
         'totalCount': 0,
         'expiredCount': 0,
@@ -394,7 +395,7 @@ class CacheUtils {
 
       return DateTime.now().millisecondsSinceEpoch > expireTime;
     } catch (e) {
-      print('CacheUtils _isExpired error: $e');
+      Logger.error('CacheUtils _isExpired error: $e', tag: 'CacheUtils');
       return false;
     }
   }
@@ -413,7 +414,7 @@ class CacheUtils {
           DateTime.now().add(expireDuration).millisecondsSinceEpoch;
       return await prefs.setInt('$_expirePrefix$key', expireTime);
     } catch (e) {
-      print('CacheUtils setExpireTime error: $e');
+      Logger.error('CacheUtils setExpireTime error: $e', tag: 'CacheUtils');
       return false;
     }
   }
@@ -435,7 +436,7 @@ class CacheUtils {
 
       return Duration(milliseconds: remaining);
     } catch (e) {
-      print('CacheUtils getRemainingTime error: $e');
+      Logger.error('CacheUtils getRemainingTime error: $e', tag: 'CacheUtils');
       return null;
     }
   }

@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'type_utils.dart';
+import 'logger.dart';
 
 /// HTTP客户端配置类
 class HttpClientConfig {
@@ -130,7 +131,7 @@ class HttpClient {
         options: options,
         cancelToken: cancelToken,
       );
-      print('http client response: ${response.toString()}');
+      Logger.network('HTTP Client Response: ${response.toString()}', tag: 'HttpClient');
       return _handleResponse<T>(response, fromJson);
     } catch (e) {
       return _handleError<T>(e);
@@ -193,9 +194,10 @@ class HttpClient {
     if (statusCode >= 200 && statusCode < 300) {
       final data = response.data;
 
-      print(
-        'http client data: ${data.toString()}, ${data is Map<String, dynamic>}, ${data is String}',
-      );
+       Logger.network(
+         'HTTP Response Data: ${data.toString()}, isMap: ${data is Map<String, dynamic>}, isString: ${data is String}',
+         tag: 'HttpClient',
+       );
       // 确保 data 是 Map，否则直接包装
       if (data is Map<String, dynamic>) {
         final code = TypeUtils.parseInt(data['code']);
@@ -214,9 +216,10 @@ class HttpClient {
       } else if (data is String) {
         // data 不是 Map<String, dynamic>（可能是 String/数组/空）
         final dataMap = TypeUtils.stringToMap(data);
-        print(
-          'http string data: ${dataMap.toString()}, ${dataMap is Map<String, dynamic>}, ${dataMap is String}',
-        );
+         Logger.network(
+           'HTTP String Data Parsed: ${dataMap.toString()}',
+           tag: 'HttpClient',
+         );
         final code = TypeUtils.parseInt(dataMap['code']);
         final success = code == 200;
         if (success) {
@@ -230,8 +233,8 @@ class HttpClient {
           //   data: parsed,
           //   code: dataMap['code'],
           // );
-        } else {
-          print('http fail data: $data');
+         } else {
+           Logger.error('HTTP Request Failed: $data', tag: 'HttpClient');
           return ApiResponse<T>(
             success: false,
             message: dataMap['message'] ?? '',
@@ -336,7 +339,7 @@ class HttpClient {
       }
       return false;
     } catch (e) {
-      print('刷新Token失败: $e');
+      Logger.error('刷新Token失败: $e', tag: 'AuthInterceptor');
       return false;
     } finally {
       _isRefreshing = false;
@@ -412,25 +415,25 @@ class _AuthInterceptor extends Interceptor {
 class _LogInterceptor extends Interceptor {
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-    print('🚀 请求: ${options.method} ${options.uri}');
-    print('📤 请求头: ${options.headers}');
+    Logger.info('🚀 Request: ${options.method} ${options.uri}', tag: 'RequestInterceptor');
+    Logger.info('📤 Request Headers: ${options.headers}', tag: 'RequestInterceptor');
     if (options.data != null) {
-      print('📤 请求体: ${options.data}');
+      Logger.info('📤 Request Body: ${options.data}', tag: 'RequestInterceptor');
     }
     handler.next(options);
   }
 
   @override
   void onResponse(Response response, ResponseInterceptorHandler handler) {
-    print('✅ 响应: ${response.statusCode} ${response.requestOptions.uri}');
-    print('📥 响应数据: ${response.data}');
+    Logger.network('✅ Response: ${response.statusCode} ${response.requestOptions.uri}', tag: 'ResponseInterceptor');
+    Logger.debug('📥 Response Data: ${response.data}', tag: 'ResponseInterceptor');
     handler.next(response);
   }
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
-    print('❌ 错误: ${err.type} ${err.requestOptions.uri}');
-    print('📥 错误信息: ${err.message}');
+    Logger.error('❌ Error: ${err.type} ${err.requestOptions.uri}', tag: 'ErrorInterceptor');
+    Logger.error('📥 Error Message: ${err.message}', tag: 'ErrorInterceptor');
     handler.next(err);
   }
 }

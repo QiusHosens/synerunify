@@ -2,9 +2,15 @@ import 'package:flutter/material.dart';
 import 'pages/main_navigation.dart';
 import 'utils/app_init.dart';
 import 'utils/auth_manager.dart';
+import 'utils/logger.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
+  // 测试日志系统
+  Logger.info('🚀 应用启动', tag: 'Main');
+  Logger.debug('调试信息测试', tag: 'Main');
+  Logger.warning('警告信息测试', tag: 'Main');
   
   // 初始化应用
   await AppInit.init();
