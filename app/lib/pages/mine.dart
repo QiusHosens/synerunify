@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'orders.dart';
+import 'settings.dart';
 
 class Mine extends StatefulWidget {
   Mine({super.key});
@@ -141,7 +142,12 @@ class _MineState extends State<Mine> {
           // 快捷操作
           Row(
             children: [
-              _buildQuickAction(Icons.settings, '设置'),
+              _buildQuickAction(Icons.settings, '设置', onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const Settings()),
+                );
+              }),
               const SizedBox(width: 16),
               _buildQuickAction(Icons.message, '消息', hasNotification: true),
               const SizedBox(width: 16),
@@ -158,38 +164,42 @@ class _MineState extends State<Mine> {
     IconData icon,
     String label, {
     bool hasNotification = false,
+    VoidCallback? onTap,
   }) {
-    return Column(
-      children: [
-        Stack(
-          children: [
-            Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: Colors.grey[200],
-                borderRadius: BorderRadius.circular(20),
+    return GestureDetector(
+      onTap: onTap,
+      child: Column(
+        children: [
+          Stack(
+            children: [
+              Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: Colors.grey[200],
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Icon(icon, color: Colors.grey[600], size: 20),
               ),
-              child: Icon(icon, color: Colors.grey[600], size: 20),
-            ),
-            if (hasNotification)
-              Positioned(
-                right: 0,
-                top: 0,
-                child: Container(
-                  width: 12,
-                  height: 12,
-                  decoration: const BoxDecoration(
-                    color: Colors.red,
-                    shape: BoxShape.circle,
+              if (hasNotification)
+                Positioned(
+                  right: 0,
+                  top: 0,
+                  child: Container(
+                    width: 12,
+                    height: 12,
+                    decoration: const BoxDecoration(
+                      color: Colors.red,
+                      shape: BoxShape.circle,
+                    ),
                   ),
                 ),
-              ),
-          ],
-        ),
-        const SizedBox(height: 4),
-        Text(label, style: const TextStyle(fontSize: 10, color: Colors.grey)),
-      ],
+            ],
+          ),
+          const SizedBox(height: 4),
+          Text(label, style: const TextStyle(fontSize: 10, color: Colors.grey)),
+        ],
+      ),
     );
   }
 
