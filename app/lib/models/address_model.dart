@@ -7,6 +7,7 @@ class AddressModel {
   String district;
   String address;
   bool isDefault;
+  String tag; // 地址标签
   DateTime createTime;
   DateTime updateTime;
 
@@ -19,6 +20,7 @@ class AddressModel {
     required this.district,
     required this.address,
     this.isDefault = false,
+    this.tag = '家',
     required this.createTime,
     required this.updateTime,
   });
@@ -33,6 +35,7 @@ class AddressModel {
       district: json['district'] ?? '',
       address: json['address'] ?? '',
       isDefault: json['isDefault'] ?? false,
+      tag: json['tag'] ?? '家',
       createTime: DateTime.parse(json['createTime'] ?? DateTime.now().toIso8601String()),
       updateTime: DateTime.parse(json['updateTime'] ?? DateTime.now().toIso8601String()),
     );
@@ -48,6 +51,7 @@ class AddressModel {
       'district': district,
       'address': address,
       'isDefault': isDefault,
+      'tag': tag,
       'createTime': createTime.toIso8601String(),
       'updateTime': updateTime.toIso8601String(),
     };
@@ -69,6 +73,7 @@ class AddressModel {
     String? district,
     String? address,
     bool? isDefault,
+    String? tag,
     DateTime? createTime,
     DateTime? updateTime,
   }) {
@@ -81,6 +86,7 @@ class AddressModel {
       district: district ?? this.district,
       address: address ?? this.address,
       isDefault: isDefault ?? this.isDefault,
+      tag: tag ?? this.tag,
       createTime: createTime ?? this.createTime,
       updateTime: updateTime ?? this.updateTime,
     );

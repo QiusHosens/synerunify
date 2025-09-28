@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../models/address_model.dart';
+import 'address_map.dart';
 
 class AddressEdit extends StatefulWidget {
   final AddressModel? address;
@@ -27,23 +28,10 @@ class _AddressEditState extends State<AddressEdit> {
   String _selectedDistrict = '';
   bool _isDefault = false;
   bool _isEditing = false;
+  String _selectedTag = '家'; // 地址标签
 
-  // 模拟省市区数据
-  final Map<String, List<String>> _regionData = {
-    '北京市': ['北京市'],
-    '上海市': ['上海市'],
-    '广东省': ['广州市', '深圳市', '珠海市', '汕头市', '佛山市', '韶关市', '湛江市', '肇庆市', '江门市', '茂名市', '惠州市', '梅州市', '汕尾市', '河源市', '阳江市', '清远市', '东莞市', '中山市', '潮州市', '揭阳市', '云浮市'],
-    '江苏省': ['南京市', '无锡市', '徐州市', '常州市', '苏州市', '南通市', '连云港市', '淮安市', '盐城市', '扬州市', '镇江市', '泰州市', '宿迁市'],
-    '浙江省': ['杭州市', '宁波市', '温州市', '嘉兴市', '湖州市', '绍兴市', '金华市', '衢州市', '舟山市', '台州市', '丽水市'],
-    '山东省': ['济南市', '青岛市', '淄博市', '枣庄市', '东营市', '烟台市', '潍坊市', '济宁市', '泰安市', '威海市', '日照市', '临沂市', '德州市', '聊城市', '滨州市', '菏泽市'],
-  };
-
-  final Map<String, List<String>> _districtData = {
-    '北京市': ['东城区', '西城区', '朝阳区', '丰台区', '石景山区', '海淀区', '门头沟区', '房山区', '通州区', '顺义区', '昌平区', '大兴区', '怀柔区', '平谷区', '密云区', '延庆区'],
-    '上海市': ['黄浦区', '徐汇区', '长宁区', '静安区', '普陀区', '虹口区', '杨浦区', '闵行区', '宝山区', '嘉定区', '浦东新区', '金山区', '松江区', '青浦区', '奉贤区', '崇明区'],
-    '广州市': ['荔湾区', '越秀区', '海珠区', '天河区', '白云区', '黄埔区', '番禺区', '花都区', '南沙区', '从化区', '增城区'],
-    '深圳市': ['罗湖区', '福田区', '南山区', '宝安区', '龙岗区', '盐田区', '龙华区', '坪山区', '光明区', '大鹏新区'],
-  };
+  // 地址标签选项
+  final List<String> _addressTags = ['家', '公司', '父母家'];
 
   @override
   void initState() {
@@ -72,15 +60,16 @@ class _AddressEditState extends State<AddressEdit> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(_isEditing ? '编辑地址' : '添加地址'),
-        backgroundColor: Colors.purple,
-        foregroundColor: Colors.white,
+        title: Text(_isEditing ? '编辑地址' : '新增收货地址'),
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black,
+        elevation: 0,
         actions: [
           TextButton(
             onPressed: _saveAddress,
             child: const Text(
               '保存',
-              style: TextStyle(color: Colors.white),
+              style: TextStyle(color: Colors.blue),
             ),
           ),
         ],
@@ -132,20 +121,24 @@ class _AddressEditState extends State<AddressEdit> {
             
             // 收货地址
             _buildSectionTitle('收货地址'),
-            _buildRegionSelector(),
+            _buildAddressSelector(),
             const SizedBox(height: 16),
             _buildTextField(
               controller: _addressController,
-              label: '详细地址',
-              hint: '请输入街道、门牌号等详细信息',
-              maxLines: 3,
+              label: '门牌号',
+              hint: '例:8号楼808室',
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return '请输入详细地址';
+                  return '请输入门牌号';
                 }
                 return null;
               },
             ),
+            
+            const SizedBox(height: 24),
+            
+            // 地址标签选择
+            _buildAddressTags(),
             
             const SizedBox(height: 24),
             
@@ -160,16 +153,16 @@ class _AddressEditState extends State<AddressEdit> {
               child: ElevatedButton(
                 onPressed: _saveAddress,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.purple,
+                  backgroundColor: Colors.blue,
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),
-                child: Text(
-                  _isEditing ? '保存修改' : '保存地址',
-                  style: const TextStyle(fontSize: 16),
+                child: const Text(
+                  '保存',
+                  style: TextStyle(fontSize: 16),
                 ),
               ),
             ),
@@ -216,110 +209,124 @@ class _AddressEditState extends State<AddressEdit> {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
-          borderSide: const BorderSide(color: Colors.purple),
+          borderSide: const BorderSide(color: Colors.blue),
         ),
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       ),
     );
   }
 
-  Widget _buildRegionSelector() {
+  Widget _buildAddressSelector() {
+    return GestureDetector(
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => AddressMap(
+              onAddressSelected: (address, province, city, district) {
+                setState(() {
+                  _selectedProvince = province;
+                  _selectedCity = city;
+                  _selectedDistrict = district;
+                  _addressController.text = address;
+                });
+              },
+            ),
+          ),
+        );
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.grey[300]!),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '收货地址',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    _selectedProvince.isNotEmpty 
+                        ? '$_selectedProvince $_selectedCity $_selectedDistrict'
+                        : '小区/写字楼/学校',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: _selectedProvince.isNotEmpty 
+                          ? Colors.black87 
+                          : Colors.grey[500],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Icon(
+              Icons.arrow_forward_ios,
+              size: 16,
+              color: Colors.grey[400],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+
+  Widget _buildAddressTags() {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // 省份选择
-        _buildDropdownField(
-          label: '省份',
-          value: _selectedProvince,
-          items: _regionData.keys.toList(),
-          onChanged: (value) {
-            setState(() {
-              _selectedProvince = value ?? '';
-              _selectedCity = '';
-              _selectedDistrict = '';
-            });
-          },
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return '请选择省份';
-            }
-            return null;
-          },
+        const Text(
+          '标签',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: Colors.black87,
+          ),
         ),
-        const SizedBox(height: 16),
-        
-        // 城市选择
-        _buildDropdownField(
-          label: '城市',
-          value: _selectedCity,
-          items: _selectedProvince.isNotEmpty 
-              ? (_regionData[_selectedProvince] ?? [])
-              : [],
-          onChanged: _selectedProvince.isNotEmpty ? (String? value) {
-            setState(() {
-              _selectedCity = value ?? '';
-              _selectedDistrict = '';
-            });
-          } : null,
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return '请选择城市';
-            }
-            return null;
-          },
-        ),
-        const SizedBox(height: 16),
-        
-        // 区县选择
-        _buildDropdownField(
-          label: '区县',
-          value: _selectedDistrict,
-          items: _selectedCity.isNotEmpty 
-              ? (_districtData[_selectedCity] ?? [])
-              : [],
-          onChanged: _selectedCity.isNotEmpty ? (String? value) {
-            setState(() {
-              _selectedDistrict = value ?? '';
-            });
-          } : null,
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return '请选择区县';
-            }
-            return null;
-          },
+        const SizedBox(height: 12),
+        Row(
+          children: _addressTags.map((tag) {
+            final isSelected = _selectedTag == tag;
+            return Expanded(
+              child: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _selectedTag = tag;
+                  });
+                },
+                child: Container(
+                  margin: const EdgeInsets.only(right: 8),
+                  padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                  decoration: BoxDecoration(
+                    color: isSelected ? Colors.blue : Colors.grey[100],
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: isSelected ? Colors.blue : Colors.grey[300]!,
+                    ),
+                  ),
+                  child: Text(
+                    tag,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: isSelected ? Colors.white : Colors.black87,
+                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                    ),
+                  ),
+                ),
+              ),
+            );
+          }).toList(),
         ),
       ],
-    );
-  }
-
-  Widget _buildDropdownField({
-    required String label,
-    required String value,
-    required List<String> items,
-    ValueChanged<String?>? onChanged,
-    String? Function(String?)? validator,
-  }) {
-    return DropdownButtonFormField<String>(
-      value: value.isEmpty ? null : value,
-      decoration: InputDecoration(
-        labelText: label,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: const BorderSide(color: Colors.purple),
-        ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      ),
-      items: items.map((String item) {
-        return DropdownMenuItem<String>(
-          value: item,
-          child: Text(item),
-        );
-      }).toList(),
-      onChanged: onChanged,
-      validator: validator,
     );
   }
 
@@ -356,7 +363,7 @@ class _AddressEditState extends State<AddressEdit> {
                 _isDefault = value;
               });
             },
-            activeColor: Colors.purple,
+            activeColor: Colors.blue,
           ),
           const SizedBox(width: 16),
         ],
@@ -378,6 +385,7 @@ class _AddressEditState extends State<AddressEdit> {
       district: _selectedDistrict,
       address: _addressController.text.trim(),
       isDefault: _isDefault,
+      tag: _selectedTag,
       createTime: _isEditing ? widget.address!.createTime : DateTime.now(),
       updateTime: DateTime.now(),
     );

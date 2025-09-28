@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'orders.dart';
 import 'settings.dart';
+import 'address_list.dart';
 
 class Mine extends StatefulWidget {
   Mine({super.key});
@@ -486,9 +487,15 @@ class _MineState extends State<Mine> {
     return Expanded(
       child: GestureDetector(
         onTap: () {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text('点击了$label')));
+          if (label == '收货地址') {
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (context) => const AddressList()),
+            );
+          } else {
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text('点击了$label')));
+          }
         },
         child: Column(
           children: [

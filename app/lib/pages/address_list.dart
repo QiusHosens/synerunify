@@ -14,13 +14,14 @@ class _AddressListState extends State<AddressList> {
   List<AddressModel> _addresses = [
     AddressModel(
       id: '1',
-      name: '张三',
-      phone: '13800138000',
-      province: '北京市',
-      city: '北京市',
-      district: '朝阳区',
-      address: '三里屯街道工体北路8号',
+      name: '张哥',
+      phone: '18224017456',
+      province: '四川省',
+      city: '成都市',
+      district: '武侯区',
+      address: '碧桂园·沁云里1栋504',
       isDefault: true,
+      tag: '家',
       createTime: DateTime.now().subtract(const Duration(days: 30)),
       updateTime: DateTime.now().subtract(const Duration(days: 30)),
     ),
@@ -33,6 +34,7 @@ class _AddressListState extends State<AddressList> {
       district: '浦东新区',
       address: '陆家嘴环路1000号',
       isDefault: false,
+      tag: '公司',
       createTime: DateTime.now().subtract(const Duration(days: 15)),
       updateTime: DateTime.now().subtract(const Duration(days: 15)),
     ),
@@ -45,6 +47,7 @@ class _AddressListState extends State<AddressList> {
       district: '南山区',
       address: '科技园南区深南大道10000号',
       isDefault: false,
+      tag: '父母家',
       createTime: DateTime.now().subtract(const Duration(days: 7)),
       updateTime: DateTime.now().subtract(const Duration(days: 7)),
     ),
@@ -54,9 +57,10 @@ class _AddressListState extends State<AddressList> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('收货地址'),
-        backgroundColor: Colors.purple,
-        foregroundColor: Colors.white,
+        title: const Text('我的地址'),
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black,
+        elevation: 0,
         actions: [
           TextButton(
             onPressed: () {
@@ -73,8 +77,8 @@ class _AddressListState extends State<AddressList> {
               );
             },
             child: const Text(
-              '添加',
-              style: TextStyle(color: Colors.white),
+              '新增收货地址',
+              style: TextStyle(color: Colors.blue),
             ),
           ),
         ],
@@ -94,7 +98,7 @@ class _AddressListState extends State<AddressList> {
             ),
           );
         },
-        backgroundColor: Colors.purple,
+        backgroundColor: Colors.blue,
         child: const Icon(Icons.add, color: Colors.white),
       ),
     );
@@ -142,7 +146,7 @@ class _AddressListState extends State<AddressList> {
               );
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.purple,
+              backgroundColor: Colors.blue,
               foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
             ),
@@ -192,6 +196,24 @@ class _AddressListState extends State<AddressList> {
               // 地址头部信息
               Row(
                 children: [
+                  // 地址标签
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: Colors.blue,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Text(
+                      address.tag,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  
                   // 默认标签
                   if (address.isDefault)
                     Container(
