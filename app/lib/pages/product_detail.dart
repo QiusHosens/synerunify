@@ -15,53 +15,103 @@ class _ProductDetailState extends State<ProductDetail>
   late PageController _imagePageController;
 
   int _currentImageIndex = 0;
-  int _selectedColorIndex = 0;
-  int _selectedSizeIndex = 0;
   int _quantity = 1;
+  bool _isFavorite = false;
 
   // 模拟商品详情数据
   final List<String> _productImages = [
-    'https://via.placeholder.com/400x400',
-    'https://via.placeholder.com/400x400',
-    'https://via.placeholder.com/400x400',
-    'https://via.placeholder.com/400x400',
+    'assets/images/chicken_diced_1.jpg',
+    'assets/images/chicken_diced_2.jpg',
+    'assets/images/chicken_diced_3.jpg',
+    'assets/images/chicken_diced_4.jpg',
+    'assets/images/chicken_diced_5.jpg',
   ];
 
-  final List<String> _colors = ['红色', '蓝色', '黑色', '白色'];
-  final List<String> _sizes = ['S', 'M', 'L', 'XL'];
+  // 商品标签
+  final List<Map<String, dynamic>> _productTags = [
+    {'name': '健身食材', 'icon': Icons.fitness_center, 'color': Colors.blue},
+    {'name': '冰鲜', 'icon': Icons.ac_unit, 'color': Colors.cyan},
+    {'name': '免洗免切', 'icon': Icons.cleaning_services, 'color': Colors.green},
+    {'name': '0使用激素', 'icon': Icons.eco, 'color': Colors.orange},
+  ];
 
   // 模拟评价数据
   final List<Map<String, dynamic>> _reviews = [
     {
-      'user': '用户001',
-      'rating': 5.0,
-      'content': '商品质量很好，物流很快，推荐购买！',
+      'user': 't**t',
+      'isMember': true,
+      'purchaseCount': 3,
+      'content': '新鲜直供,适量包装,方便吃,鸡肉嫩滑,无骨鸡腿...',
       'date': '2024-01-15',
-      'images': ['https://via.placeholder.com/100x100'],
+      'images': ['assets/images/review_1.jpg'],
     },
     {
-      'user': '用户002',
-      'rating': 4.0,
-      'content': '整体不错，就是包装有点简陋。',
+      'user': '米**0',
+      'isMember': true,
+      'purchaseCount': 10,
+      'content': '鸡腿肉丁喜欢,份量合适,无骨鸡腿 方便吃!',
       'date': '2024-01-14',
-      'images': [],
+      'images': ['assets/images/review_2.jpg'],
+    },
+  ];
+
+  // 推荐商品数据
+  final List<Map<String, dynamic>> _recommendedProducts = [
+    {
+      'name': '黄瓜 约600g',
+      'price': '¥5.5',
+      'unit': '/份',
+      'sales': '5000+人买了它',
+      'image': 'assets/images/cucumber.jpg',
     },
     {
-      'user': '用户003',
-      'rating': 5.0,
-      'content': '非常满意，会再次购买的！',
-      'date': '2024-01-13',
-      'images': [
-        'https://via.placeholder.com/100x100',
-        'https://via.placeholder.com/100x100',
-      ],
+      'name': '薄皮椒 约300g',
+      'price': '¥3.89',
+      'unit': '/份',
+      'sales': '9000+人买了它',
+      'image': 'assets/images/pepper.jpg',
     },
+    {
+      'name': '卷心菜 约800g',
+      'price': '¥3.5',
+      'unit': '/份',
+      'sales': '4000+人买了它',
+      'image': 'assets/images/cabbage.jpg',
+    },
+    {
+      'name': '盒马 混合菜 400g',
+      'price': '¥7.5',
+      'unit': '/袋',
+      'sales': '1000+人买了它',
+      'image': 'assets/images/mixed_vegetables.jpg',
+    },
+    {
+      'name': '精品冷鲜精肉丝 (盒马日日鲜)',
+      'price': '¥6.8',
+      'unit': '/盒',
+      'sales': '10000+人买了它',
+      'image': 'assets/images/meat_strips.jpg',
+    },
+    {
+      'name': '薄皮二荆条 约250g',
+      'price': '¥3.5',
+      'unit': '/份',
+      'sales': '9000+人买了它',
+      'image': 'assets/images/chili.jpg',
+    },
+  ];
+
+  // 评价关键词
+  final List<Map<String, dynamic>> _reviewKeywords = [
+    {'keyword': '方便吃', 'count': 907},
+    {'keyword': '无骨鸡腿', 'count': 862},
+    {'keyword': '新鲜直供', 'count': 859},
   ];
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 5, vsync: this);
     _imagePageController = PageController();
   }
 
@@ -75,11 +125,12 @@ class _ProductDetailState extends State<ProductDetail>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: Colors.white,
       body: Column(
         children: [
-          // 自定义AppBar
-          _buildCustomAppBar(),
+          // 状态栏和导航栏
+          _buildStatusBar(),
+          _buildNavigationBar(),
           // 商品内容
           Expanded(
             child: SingleChildScrollView(
@@ -89,14 +140,22 @@ class _ProductDetailState extends State<ProductDetail>
                   _buildImageCarousel(),
                   // 商品基本信息
                   _buildProductInfo(),
-                  // 规格选择
-                  _buildSpecificationSelection(),
+                  // 商品标签
+                  _buildProductTags(),
+                  // 商品描述
+                  _buildProductDescription(),
+                  // 品牌信息
+                  _buildBrandInfo(),
+                  // 评价统计
+                  _buildReviewStats(),
                   // Tab切换内容
                   _buildTabContent(),
                 ],
               ),
             ),
           ),
+          // 会员优惠横幅
+          _buildMembershipBanner(),
           // 底部操作栏
           _buildBottomBar(),
         ],
@@ -104,51 +163,85 @@ class _ProductDetailState extends State<ProductDetail>
     );
   }
 
-  /// 构建自定义AppBar
-  Widget _buildCustomAppBar() {
+  /// 构建状态栏
+  Widget _buildStatusBar() {
     return Container(
-      height: 100,
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [Colors.blue, Colors.blueAccent],
-        ),
-      ),
-      child: SafeArea(
-        child: Row(
-          children: [
-            IconButton(
-              icon: const Icon(Icons.arrow_back, color: Colors.white),
-              onPressed: () => Navigator.of(context).pop(),
+      height: MediaQuery.of(context).padding.top,
+      color: Colors.white,
+    );
+  }
+
+  /// 构建导航栏
+  Widget _buildNavigationBar() {
+    return Container(
+      height: 50,
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Row(
+        children: [
+          IconButton(
+            icon: const Icon(Icons.arrow_back, color: Colors.black),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+          Expanded(
+            child: Container(
+              height: 36,
+              decoration: BoxDecoration(
+                color: Colors.grey[100],
+                borderRadius: BorderRadius.circular(18),
+              ),
+              child: const Row(
+                children: [
+                  SizedBox(width: 12),
+                  Icon(Icons.search, color: Colors.grey, size: 20),
+                  SizedBox(width: 8),
+                  Text(
+                    '鲜鸡腿',
+                    style: TextStyle(color: Colors.grey, fontSize: 14),
+                  ),
+                ],
+              ),
             ),
-            const Spacer(),
-            IconButton(
-              icon: const Icon(Icons.share, color: Colors.white),
-              onPressed: () {
-                ScaffoldMessenger.of(
-                  context,
-                ).showSnackBar(const SnackBar(content: Text('分享功能开发中...')));
-              },
-            ),
-            IconButton(
-              icon: const Icon(Icons.favorite_border, color: Colors.white),
-              onPressed: () {
-                ScaffoldMessenger.of(
-                  context,
-                ).showSnackBar(const SnackBar(content: Text('收藏功能开发中...')));
-              },
-            ),
-            IconButton(
-              icon: const Icon(Icons.more_vert, color: Colors.white),
-              onPressed: () {
-                ScaffoldMessenger.of(
-                  context,
-                ).showSnackBar(const SnackBar(content: Text('更多功能开发中...')));
-              },
-            ),
-          ],
-        ),
+          ),
+          const SizedBox(width: 8),
+          IconButton(
+            icon: const Icon(Icons.share, color: Colors.black),
+            onPressed: () {
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(const SnackBar(content: Text('分享功能开发中...')));
+            },
+          ),
+          Stack(
+            children: [
+              IconButton(
+                icon: const Icon(Icons.shopping_cart, color: Colors.black),
+                onPressed: () {
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(const SnackBar(content: Text('查看购物车...')));
+                },
+              ),
+              Positioned(
+                right: 8,
+                top: 8,
+                child: Container(
+                  width: 16,
+                  height: 16,
+                  decoration: const BoxDecoration(
+                    color: Colors.red,
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Center(
+                    child: Text(
+                      '1',
+                      style: TextStyle(color: Colors.white, fontSize: 10),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
@@ -169,33 +262,26 @@ class _ProductDetailState extends State<ProductDetail>
             itemCount: _productImages.length,
             itemBuilder: (context, index) {
               return Container(
-                color: Colors.grey[200],
+                color: Colors.grey[100],
                 child: const Center(
-                  child: Icon(Icons.image, size: 80, color: Colors.grey),
+                  child: Icon(Icons.image, size: 100, color: Colors.grey),
                 ),
               );
             },
           ),
-          // 图片指示器
+          // 图片指示器和评价标签
           Positioned(
             bottom: 20,
-            left: 0,
-            right: 0,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: List.generate(
-                _productImages.length,
-                (index) => Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 4),
-                  width: 8,
-                  height: 8,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: _currentImageIndex == index
-                        ? Colors.white
-                        : Colors.white.withValues(alpha: 0.5),
-                  ),
-                ),
+            right: 16,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                color: Colors.black54,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Text(
+                '${_currentImageIndex + 1}/${_productImages.length} 评价',
+                style: const TextStyle(color: Colors.white, fontSize: 12),
               ),
             ),
           ),
@@ -207,221 +293,203 @@ class _ProductDetailState extends State<ProductDetail>
   /// 构建商品基本信息
   Widget _buildProductInfo() {
     return Container(
-      margin: const EdgeInsets.all(16),
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withValues(alpha: 0.1),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 商品标题
-          Text(
-            widget.product['name'] ?? '商品名称',
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 8),
           // 价格信息
           Row(
             children: [
-              Text(
-                '¥${widget.product['price']?.toString() ?? '0'}',
-                style: const TextStyle(
-                  fontSize: 24,
+              const Text(
+                '¥5.8',
+                style: TextStyle(
+                  fontSize: 28,
                   fontWeight: FontWeight.bold,
                   color: Colors.red,
                 ),
               ),
-              const SizedBox(width: 8),
-              Text(
-                '¥${widget.product['originalPrice']?.toString() ?? '0'}',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey[500],
-                  decoration: TextDecoration.lineThrough,
-                ),
+              const Text(
+                '/盒',
+                style: TextStyle(fontSize: 16, color: Colors.red),
               ),
             ],
           ),
           const SizedBox(height: 8),
-          // 销量和评分
-          Row(
-            children: [
-              Icon(Icons.star, size: 16, color: Colors.orange[300]),
-              const SizedBox(width: 4),
-              Text(
-                '${widget.product['rating']?.toString() ?? '4.5'}',
-                style: TextStyle(fontSize: 14, color: Colors.grey[600]),
-              ),
-              const SizedBox(width: 16),
-              Text(
-                '已售${widget.product['sales']?.toString() ?? '100'}件',
-                style: TextStyle(fontSize: 14, color: Colors.grey[600]),
-              ),
-            ],
+          // 商品名称
+          const Text(
+            '冷鲜 鸡腿肉丁 300g/盒',
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+          ),
+          const SizedBox(height: 8),
+          // 保质期
+          const Text(
+            '保质期6天>',
+            style: TextStyle(fontSize: 14, color: Colors.black87),
           ),
         ],
       ),
     );
   }
 
-  /// 构建规格选择
-  Widget _buildSpecificationSelection() {
+  /// 构建商品标签
+  Widget _buildProductTags() {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Wrap(
+        spacing: 8,
+        runSpacing: 8,
+        children: _productTags.map((tag) {
+          return Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: Colors.grey[100],
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(tag['icon'], size: 16, color: tag['color']),
+                const SizedBox(width: 4),
+                Text(tag['name'], style: const TextStyle(fontSize: 12)),
+              ],
+            ),
+          );
+        }).toList(),
+      ),
+    );
+  }
+
+  /// 构建商品描述
+  Widget _buildProductDescription() {
+    return Container(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withValues(alpha: 0.1),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
+      child: const Text(
+        '高标准养殖,活禽天天鲜宰,精选上腿排肉,肉质鲜嫩,均匀切丁,方便易烹饪,小炒优选',
+        style: TextStyle(fontSize: 14, height: 1.5),
+      ),
+    );
+  }
+
+  /// 构建品牌信息
+  Widget _buildBrandInfo() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Row(
+        children: [
+          const Text(
+            '盒马鲜生',
+            style: TextStyle(fontSize: 14, color: Colors.blue),
+          ),
+          const Spacer(),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              color: Colors.grey[100],
+              borderRadius: BorderRadius.circular(4),
+            ),
+            child: const Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.edit, size: 12, color: Colors.grey),
+                SizedBox(width: 4),
+                Text('反馈', style: TextStyle(fontSize: 12, color: Colors.grey)),
+                SizedBox(width: 4),
+                Icon(Icons.close, size: 12, color: Colors.grey),
+              ],
+            ),
           ),
         ],
       ),
+    );
+  }
+
+  /// 构建评价统计
+  Widget _buildReviewStats() {
+    return Container(
+      padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 颜色选择
-          const Text(
-            '颜色',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 8),
-          Wrap(
-            spacing: 8,
-            children: List.generate(
-              _colors.length,
-              (index) => GestureDetector(
-                onTap: () {
-                  setState(() {
-                    _selectedColorIndex = index;
-                  });
-                },
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 8,
-                  ),
-                  decoration: BoxDecoration(
-                    color: _selectedColorIndex == index
-                        ? Colors.blue
-                        : Colors.grey[100],
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color: _selectedColorIndex == index
-                          ? Colors.blue
-                          : Colors.grey[300]!,
-                    ),
-                  ),
-                  child: Text(
-                    _colors[index],
-                    style: TextStyle(
-                      color: _selectedColorIndex == index
-                          ? Colors.white
-                          : Colors.black87,
-                      fontSize: 14,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(height: 16),
-          // 尺寸选择
-          const Text(
-            '尺寸',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 8),
-          Wrap(
-            spacing: 8,
-            children: List.generate(
-              _sizes.length,
-              (index) => GestureDetector(
-                onTap: () {
-                  setState(() {
-                    _selectedSizeIndex = index;
-                  });
-                },
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 8,
-                  ),
-                  decoration: BoxDecoration(
-                    color: _selectedSizeIndex == index
-                        ? Colors.blue
-                        : Colors.grey[100],
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color: _selectedSizeIndex == index
-                          ? Colors.blue
-                          : Colors.grey[300]!,
-                    ),
-                  ),
-                  child: Text(
-                    _sizes[index],
-                    style: TextStyle(
-                      color: _selectedSizeIndex == index
-                          ? Colors.white
-                          : Colors.black87,
-                      fontSize: 14,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(height: 16),
-          // 数量选择
           Row(
             children: [
               const Text(
-                '数量',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                '评价 (3000+)',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
               ),
               const Spacer(),
-              Row(
-                children: [
-                  IconButton(
-                    onPressed: _quantity > 1
-                        ? () {
-                            setState(() {
-                              _quantity--;
-                            });
-                          }
-                        : null,
-                    icon: const Icon(Icons.remove_circle_outline),
-                  ),
-                  Text(
-                    _quantity.toString(),
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  IconButton(
-                    onPressed: () {
-                      setState(() {
-                        _quantity++;
-                      });
-                    },
-                    icon: const Icon(Icons.add_circle_outline),
-                  ),
-                ],
+              const Text(
+                '查看全部 >',
+                style: TextStyle(fontSize: 14, color: Colors.blue),
               ),
             ],
+          ),
+          const SizedBox(height: 12),
+          // 好评率
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.blue[50],
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Row(
+              children: [
+                const Text(
+                  '97.9% 好评率',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Wrap(
+                    spacing: 8,
+                    children: _reviewKeywords.map((keyword) {
+                      return Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.blue,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          '${keyword['keyword']} ${keyword['count']}人提到',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 构建会员优惠横幅
+  Widget _buildMembershipBanner() {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.orange[100],
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.close, size: 16, color: Colors.grey),
+          const SizedBox(width: 8),
+          const Icon(Icons.card_membership, size: 16, color: Colors.orange),
+          const SizedBox(width: 8),
+          const Text('会员日88折,0门槛免运费', style: TextStyle(fontSize: 14)),
+          const Spacer(),
+          const Text(
+            '立即开通 >',
+            style: TextStyle(fontSize: 14, color: Colors.blue),
           ),
         ],
       ),
@@ -431,39 +499,40 @@ class _ProductDetailState extends State<ProductDetail>
   /// 构建Tab内容
   Widget _buildTabContent() {
     return Container(
-      margin: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withValues(alpha: 0.1),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
       child: Column(
         children: [
-          TabBar(
-            controller: _tabController,
-            labelColor: Colors.blue,
-            unselectedLabelColor: Colors.grey,
-            indicatorColor: Colors.blue,
-            tabs: const [
-              Tab(text: '商品详情'),
-              Tab(text: '规格参数'),
-              Tab(text: '用户评价'),
-            ],
+          // Tab导航
+          Container(
+            decoration: const BoxDecoration(
+              border: Border(
+                bottom: BorderSide(color: Colors.grey, width: 0.5),
+              ),
+            ),
+            child: TabBar(
+              controller: _tabController,
+              labelColor: Colors.blue,
+              unselectedLabelColor: Colors.grey,
+              indicatorColor: Colors.blue,
+              tabs: const [
+                Tab(text: '商品'),
+                Tab(text: '评价'),
+                Tab(text: '精选'),
+                Tab(text: '详情'),
+                Tab(text: '推荐'),
+              ],
+            ),
           ),
+          // Tab内容
           SizedBox(
             height: 400,
             child: TabBarView(
               controller: _tabController,
               children: [
-                _buildProductDescription(),
-                _buildProductSpecs(),
-                _buildProductReviews(),
+                _buildProductTab(),
+                _buildReviewTab(),
+                _buildFeaturedTab(),
+                _buildDetailTab(),
+                _buildRecommendTab(),
               ],
             ),
           ),
@@ -472,115 +541,35 @@ class _ProductDetailState extends State<ProductDetail>
     );
   }
 
-  /// 构建商品描述
-  Widget _buildProductDescription() {
+  /// 构建商品Tab
+  Widget _buildProductTab() {
     return const Padding(
       padding: EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            '商品详情',
+            '商品信息',
             style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
           SizedBox(height: 16),
           Text(
-            '这是一款优质的商品，采用高品质材料制作，工艺精湛，设计时尚。'
-            '商品具有以下特点：\n'
-            '• 高品质材料，经久耐用\n'
-            '• 时尚设计，符合现代审美\n'
-            '• 工艺精湛，细节完美\n'
-            '• 性价比高，值得购买',
+            '这是一款优质的生鲜商品，采用高标准养殖，活禽天天鲜宰，精选上腿排肉，肉质鲜嫩，均匀切丁，方便易烹饪。',
             style: TextStyle(fontSize: 14, height: 1.6),
           ),
-          SizedBox(height: 20),
-          Center(child: Icon(Icons.image, size: 100, color: Colors.grey)),
-          SizedBox(height: 20),
-          Center(child: Icon(Icons.image, size: 100, color: Colors.grey)),
         ],
       ),
     );
   }
 
-  /// 构建商品规格参数
-  Widget _buildProductSpecs() {
-    final specs = [
-      {'name': '品牌', 'value': '示例品牌'},
-      {'name': '型号', 'value': 'ABC-123'},
-      {'name': '材质', 'value': '优质材料'},
-      {'name': '颜色', 'value': _colors[_selectedColorIndex]},
-      {'name': '尺寸', 'value': _sizes[_selectedSizeIndex]},
-      {'name': '重量', 'value': '500g'},
-      {'name': '产地', 'value': '中国'},
-      {'name': '保质期', 'value': '12个月'},
-    ];
-
+  /// 构建评价Tab
+  Widget _buildReviewTab() {
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            '规格参数',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 16),
-          ...specs
-              .map(
-                (spec) => Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8),
-                  child: Row(
-                    children: [
-                      SizedBox(
-                        width: 80,
-                        child: Text(
-                          spec['name']!,
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.grey[600],
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        child: Text(
-                          spec['value']!,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              )
-              .toList(),
-        ],
-      ),
-    );
-  }
-
-  /// 构建用户评价
-  Widget _buildProductReviews() {
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              const Text(
-                '用户评价',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              const Spacer(),
-              Text(
-                '(${_reviews.length}条)',
-                style: TextStyle(fontSize: 14, color: Colors.grey[600]),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
+          // 评价列表
           ..._reviews
               .map(
                 (review) => Container(
@@ -595,6 +584,16 @@ class _ProductDetailState extends State<ProductDetail>
                     children: [
                       Row(
                         children: [
+                          const CircleAvatar(
+                            radius: 16,
+                            backgroundColor: Colors.grey,
+                            child: Icon(
+                              Icons.person,
+                              size: 16,
+                              color: Colors.white,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
                           Text(
                             review['user'],
                             style: const TextStyle(
@@ -602,25 +601,32 @@ class _ProductDetailState extends State<ProductDetail>
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          const SizedBox(width: 8),
-                          Row(
-                            children: List.generate(
-                              5,
-                              (index) => Icon(
-                                Icons.star,
-                                size: 12,
-                                color: index < review['rating']
-                                    ? Colors.orange[300]
-                                    : Colors.grey[300],
+                          if (review['isMember']) ...[
+                            const SizedBox(width: 4),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 4,
+                                vertical: 2,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.orange,
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: const Text(
+                                '会员',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 10,
+                                ),
                               ),
                             ),
-                          ),
-                          const Spacer(),
+                          ],
+                          const SizedBox(width: 8),
                           Text(
-                            review['date'],
-                            style: TextStyle(
+                            '购买${review['purchaseCount']}+次',
+                            style: const TextStyle(
                               fontSize: 12,
-                              color: Colors.grey[500],
+                              color: Colors.grey,
                             ),
                           ),
                         ],
@@ -632,25 +638,18 @@ class _ProductDetailState extends State<ProductDetail>
                       ),
                       if (review['images'].isNotEmpty) ...[
                         const SizedBox(height: 8),
-                        Wrap(
-                          spacing: 8,
-                          children: (review['images'] as List)
-                              .map(
-                                (image) => Container(
-                                  width: 60,
-                                  height: 60,
-                                  decoration: BoxDecoration(
-                                    color: Colors.grey[200],
-                                    borderRadius: BorderRadius.circular(4),
-                                  ),
-                                  child: const Icon(
-                                    Icons.image,
-                                    size: 20,
-                                    color: Colors.grey,
-                                  ),
-                                ),
-                              )
-                              .toList(),
+                        Container(
+                          width: 60,
+                          height: 60,
+                          decoration: BoxDecoration(
+                            color: Colors.grey[200],
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: const Icon(
+                            Icons.image,
+                            size: 20,
+                            color: Colors.grey,
+                          ),
                         ),
                       ],
                     ],
@@ -658,6 +657,178 @@ class _ProductDetailState extends State<ProductDetail>
                 ),
               )
               .toList(),
+        ],
+      ),
+    );
+  }
+
+  /// 构建精选Tab
+  Widget _buildFeaturedTab() {
+    return const Padding(
+      padding: EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            '精选内容',
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
+          SizedBox(height: 16),
+          Center(child: Icon(Icons.star, size: 100, color: Colors.grey)),
+          SizedBox(height: 16),
+          Text(
+            '精选商品推荐和特色内容',
+            style: TextStyle(fontSize: 14, color: Colors.grey),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 构建详情Tab
+  Widget _buildDetailTab() {
+    return const Padding(
+      padding: EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            '详情',
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
+          SizedBox(height: 16),
+          Row(
+            children: [
+              Text('产地: ', style: TextStyle(fontSize: 14)),
+              Text(
+                '见产品外包装',
+                style: TextStyle(fontSize: 14, color: Colors.grey),
+              ),
+            ],
+          ),
+          SizedBox(height: 8),
+          Row(
+            children: [
+              Text('净含量: ', style: TextStyle(fontSize: 14)),
+              Text('300g', style: TextStyle(fontSize: 14, color: Colors.grey)),
+            ],
+          ),
+          SizedBox(height: 8),
+          Row(
+            children: [
+              Text('储存条件: ', style: TextStyle(fontSize: 14)),
+              Text('冷藏', style: TextStyle(fontSize: 14, color: Colors.grey)),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 构建推荐Tab
+  Widget _buildRecommendTab() {
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            '推荐商品',
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 16),
+          GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              childAspectRatio: 0.8,
+              crossAxisSpacing: 8,
+              mainAxisSpacing: 8,
+            ),
+            itemCount: _recommendedProducts.length,
+            itemBuilder: (context, index) {
+              final product = _recommendedProducts[index];
+              return Container(
+                decoration: BoxDecoration(
+                  color: Colors.grey[50],
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.grey[200],
+                          borderRadius: const BorderRadius.vertical(
+                            top: Radius.circular(8),
+                          ),
+                        ),
+                        child: const Icon(
+                          Icons.image,
+                          size: 40,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            product['name'],
+                            style: const TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                            ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            product['sales'],
+                            style: const TextStyle(
+                              fontSize: 10,
+                              color: Colors.grey,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Row(
+                            children: [
+                              Text(
+                                product['price'],
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.red,
+                                ),
+                              ),
+                              Text(
+                                product['unit'],
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.red,
+                                ),
+                              ),
+                              const Spacer(),
+                              const Icon(
+                                Icons.add_shopping_cart,
+                                size: 16,
+                                color: Colors.blue,
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
         ],
       ),
     );
@@ -673,7 +844,35 @@ class _ProductDetailState extends State<ProductDetail>
       ),
       child: Row(
         children: [
-          // 客服按钮
+          // 收藏按钮
+          GestureDetector(
+            onTap: () {
+              setState(() {
+                _isFavorite = !_isFavorite;
+              });
+            },
+            child: Container(
+              width: 60,
+              height: 50,
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey[300]!),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    _isFavorite ? Icons.favorite : Icons.favorite_border,
+                    size: 20,
+                    color: _isFavorite ? Colors.red : Colors.grey,
+                  ),
+                  const Text('收藏', style: TextStyle(fontSize: 12)),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+          // AI小蜜按钮
           Container(
             width: 60,
             height: 50,
@@ -684,8 +883,8 @@ class _ProductDetailState extends State<ProductDetail>
             child: const Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.chat, size: 20),
-                Text('客服', style: TextStyle(fontSize: 12)),
+                Icon(Icons.smart_toy, size: 20),
+                Text('AI小蜜', style: TextStyle(fontSize: 12)),
               ],
             ),
           ),
@@ -697,7 +896,7 @@ class _ProductDetailState extends State<ProductDetail>
                 _addToCart();
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.orange,
+                backgroundColor: Colors.blue,
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(vertical: 15),
                 shape: RoundedRectangleBorder(
@@ -706,27 +905,6 @@ class _ProductDetailState extends State<ProductDetail>
               ),
               child: const Text(
                 '加入购物车',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-            ),
-          ),
-          const SizedBox(width: 12),
-          // 立即购买按钮
-          Expanded(
-            child: ElevatedButton(
-              onPressed: () {
-                _buyNow();
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 15),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-              ),
-              child: const Text(
-                '立即购买',
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
             ),
@@ -740,7 +918,7 @@ class _ProductDetailState extends State<ProductDetail>
   void _addToCart() {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('已加入购物车：${widget.product['name']} x$_quantity'),
+        content: Text('已加入购物车：冷鲜 鸡腿肉丁 300g/盒 x$_quantity'),
         action: SnackBarAction(
           label: '查看购物车',
           onPressed: () {
@@ -750,12 +928,5 @@ class _ProductDetailState extends State<ProductDetail>
         ),
       ),
     );
-  }
-
-  /// 立即购买
-  void _buyNow() {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text('跳转到结算页面...')));
   }
 }
