@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'message.dart';
 import 'product_detail.dart';
-import 'category.dart';
+import 'category_products.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -453,9 +453,14 @@ class _HomeState extends State<Home> {
           final category = _categories[index];
           return GestureDetector(
             onTap: () {
-              Navigator.of(
-                context,
-              ).push(MaterialPageRoute(builder: (context) => const Category()));
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => CategoryProducts(
+                    categoryName: category['name'],
+                    categoryIcon: category['icon'].toString(),
+                  ),
+                ),
+              );
             },
             child: Container(
               decoration: BoxDecoration(
