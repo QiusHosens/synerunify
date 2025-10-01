@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'message.dart';
-import 'product_detail.dart';
+import 'product_list.dart';
 import 'category_products.dart';
 
 class Home extends StatefulWidget {
@@ -781,7 +781,10 @@ class _HomeState extends State<Home> {
       onTap: () {
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (context) => ProductDetail(product: product),
+            builder: (context) => ProductList(
+              category: product['category'] ?? '全部',
+              searchKeyword: product['name'] ?? '',
+            ),
           ),
         );
       },
