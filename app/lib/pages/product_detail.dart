@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../widgets/specification_modal.dart';
 
 class ProductDetail extends StatefulWidget {
   final Map<String, dynamic> product;
@@ -17,6 +18,8 @@ class _ProductDetailState extends State<ProductDetail>
   int _currentImageIndex = 0;
   int _quantity = 1;
   bool _isFavorite = false;
+  int _selectedColorIndex = 0;
+  int _selectedSizeIndex = 0;
 
   // 模拟商品详情数据
   final List<String> _productImages = [
@@ -34,6 +37,10 @@ class _ProductDetailState extends State<ProductDetail>
     {'name': '免洗免切', 'icon': Icons.cleaning_services, 'color': Colors.green},
     {'name': '0使用激素', 'icon': Icons.eco, 'color': Colors.orange},
   ];
+
+  // 颜色和尺寸选项
+  final List<String> _colors = ['红色', '蓝色', '黑色', '白色'];
+  final List<String> _sizes = ['S', 'M', 'L', 'XL'];
 
   // 模拟评价数据
   final List<Map<String, dynamic>> _reviews = [
@@ -909,6 +916,27 @@ class _ProductDetailState extends State<ProductDetail>
               ),
             ),
           ),
+          const SizedBox(width: 12),
+          // 立即购买按钮
+          Expanded(
+            child: ElevatedButton(
+              onPressed: () {
+                _buyNow();
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 15),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              child: const Text(
+                '立即购买',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -916,9 +944,49 @@ class _ProductDetailState extends State<ProductDetail>
 
   /// 加入购物车
   void _addToCart() {
+    _showSpecificationModal('加入购物车');
+  }
+
+  /// 立即购买
+  void _buyNow() {
+    _showSpecificationModal('立即购买');
+  }
+
+  /// 显示规格选择弹窗
+  void _showSpecificationModal(String action) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => SpecificationModal(
+        product: widget.product,
+        selectedColorIndex: _selectedColorIndex,
+        selectedSizeIndex: _selectedSizeIndex,
+        quantity: _quantity,
+        colors: _colors,
+        sizes: _sizes,
+        onConfirm: (colorIndex, sizeIndex, quantity) {
+          setState(() {
+            _selectedColorIndex = colorIndex;
+            _selectedSizeIndex = sizeIndex;
+            _quantity = quantity;
+          });
+
+          if (action == '加入购物车') {
+            _confirmAddToCart();
+          } else {
+            _confirmBuyNow();
+          }
+        },
+      ),
+    );
+  }
+
+  /// 确认加入购物车
+  void _confirmAddToCart() {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('已加入购物车：冷鲜 鸡腿肉丁 300g/盒 x$_quantity'),
+        content: Text('已加入购物车：${widget.product['name']} x$_quantity'),
         action: SnackBarAction(
           label: '查看购物车',
           onPressed: () {
@@ -928,5 +996,12 @@ class _ProductDetailState extends State<ProductDetail>
         ),
       ),
     );
+  }
+
+  /// 确认立即购买
+  void _confirmBuyNow() {
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('跳转到结算页面...')));
   }
 }
