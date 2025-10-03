@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'message.dart';
 import 'product_list.dart';
 import 'category_products.dart';
+import 'store.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -130,25 +131,41 @@ class _HomeState extends State<Home> {
           const Icon(Icons.keyboard_arrow_up, size: 16, color: Colors.black),
           const Spacer(),
           // 店铺位置
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(20),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.2),
-                  blurRadius: 4,
-                  offset: const Offset(0, 2),
+          GestureDetector(
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => Store(
+                    storeInfo: {
+                      'name': '中和锦汇天府店',
+                      'followers': '222.6万',
+                      'category': '生鲜',
+                      'rating': 4.9,
+                    },
+                  ),
                 ),
-              ],
-            ),
-            child: const Text(
-              '中和锦汇天府店',
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                color: Colors.black,
+              );
+            },
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.2),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: const Text(
+                '中和锦汇天府店',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black,
+                ),
               ),
             ),
           ),
