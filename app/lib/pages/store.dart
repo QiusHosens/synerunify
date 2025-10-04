@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'product_detail.dart';
+import 'store_category.dart';
 
 class Store extends StatefulWidget {
   final Map<String, dynamic> storeInfo;
@@ -25,7 +26,7 @@ class _StoreState extends State<Store> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 5, vsync: this);
+    _tabController = TabController(length: 6, vsync: this);
     _loadStoreData();
   }
 
@@ -216,6 +217,7 @@ class _StoreState extends State<Store> with TickerProviderStateMixin {
           controller: _tabController,
           children: [
             _buildFeaturedTab(),
+            StoreCategory(storeInfo: widget.storeInfo),
             _buildProductsTab(),
             _buildActivitiesTab(),
             _buildNewProductsTab(),
@@ -251,6 +253,7 @@ class _StoreState extends State<Store> with TickerProviderStateMixin {
         ),
         tabs: const [
           Tab(text: '精选'),
+          Tab(text: '分类'),
           Tab(text: '商品'),
           Tab(text: '活动'),
           Tab(text: '新品'),
