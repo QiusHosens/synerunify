@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'product_detail.dart';
 import 'store_category.dart';
+import 'store_discover.dart';
+import 'store_grass.dart';
+import 'store_member.dart';
 
 class Store extends StatefulWidget {
   final Map<String, dynamic> storeInfo;
@@ -26,7 +29,7 @@ class _StoreState extends State<Store> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 6, vsync: this);
+    _tabController = TabController(length: 8, vsync: this);
     _loadStoreData();
   }
 
@@ -221,7 +224,9 @@ class _StoreState extends State<Store> with TickerProviderStateMixin {
             _buildProductsTab(),
             _buildActivitiesTab(),
             _buildNewProductsTab(),
-            _buildUserSharesTab(),
+            StoreDiscover(storeInfo: widget.storeInfo),
+            StoreGrass(storeInfo: widget.storeInfo),
+            StoreMember(storeInfo: widget.storeInfo),
           ],
         ),
       ),
@@ -257,7 +262,9 @@ class _StoreState extends State<Store> with TickerProviderStateMixin {
           Tab(text: '商品'),
           Tab(text: '活动'),
           Tab(text: '新品'),
+          Tab(text: '发现'),
           Tab(text: '种草秀'),
+          Tab(text: '会员'),
         ],
       ),
     );
@@ -387,18 +394,6 @@ class _StoreState extends State<Store> with TickerProviderStateMixin {
   /// 构建新品Tab
   Widget _buildNewProductsTab() {
     return _buildProductGrid(_newProducts, '新品上市');
-  }
-
-  /// 构建种草秀Tab
-  Widget _buildUserSharesTab() {
-    return ListView.builder(
-      padding: const EdgeInsets.all(16),
-      itemCount: _userShares.length,
-      itemBuilder: (context, index) {
-        final share = _userShares[index];
-        return _buildUserShareCard(share);
-      },
-    );
   }
 
   /// 构建轮播图
@@ -823,163 +818,6 @@ class _StoreState extends State<Store> with TickerProviderStateMixin {
                 ),
               ],
             ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  /// 构建用户分享卡片
-  Widget _buildUserShareCard(Map<String, dynamic> share) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // 用户信息
-          Row(
-            children: [
-              CircleAvatar(
-                radius: 20,
-                backgroundColor: Colors.grey[200],
-                child: const Icon(Icons.person, color: Colors.grey),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      share['user'] as String,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text(
-                      share['date'] as String,
-                      style: TextStyle(fontSize: 12, color: Colors.grey[500]),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          // 分享内容
-          Text(
-            share['content'] as String,
-            style: const TextStyle(fontSize: 14, height: 1.5),
-          ),
-          const SizedBox(height: 12),
-          // 分享图片
-          if ((share['images'] as List).isNotEmpty)
-            Container(
-              height: 200,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: (share['images'] as List).length,
-                itemBuilder: (context, index) {
-                  return Container(
-                    width: 200,
-                    margin: const EdgeInsets.only(right: 8),
-                    decoration: BoxDecoration(
-                      color: Colors.grey[200],
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: const Center(
-                      child: Icon(Icons.image, size: 40, color: Colors.grey),
-                    ),
-                  );
-                },
-              ),
-            ),
-          const SizedBox(height: 12),
-          // 相关商品
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: Colors.grey[50],
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Row(
-              children: [
-                Container(
-                  width: 60,
-                  height: 60,
-                  decoration: BoxDecoration(
-                    color: Colors.grey[200],
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: const Center(
-                    child: Icon(Icons.image, color: Colors.grey),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        share['product']['name'] as String,
-                        style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                        ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        '¥${share['product']['price'].toString()}',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.red,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 12),
-          // 互动按钮
-          Row(
-            children: [
-              IconButton(
-                onPressed: () {
-                  ScaffoldMessenger.of(
-                    context,
-                  ).showSnackBar(const SnackBar(content: Text('点赞功能开发中...')));
-                },
-                icon: const Icon(Icons.thumb_up_outlined),
-              ),
-              Text('${share['likes']}'),
-              const SizedBox(width: 20),
-              IconButton(
-                onPressed: () {
-                  ScaffoldMessenger.of(
-                    context,
-                  ).showSnackBar(const SnackBar(content: Text('评论功能开发中...')));
-                },
-                icon: const Icon(Icons.comment_outlined),
-              ),
-              Text('${share['comments']}'),
-            ],
           ),
         ],
       ),
