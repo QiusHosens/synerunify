@@ -86,12 +86,12 @@ class _HomeState extends State<Home> {
       body: SafeArea(
         child: SingleChildScrollView(
           controller: _scrollController,
-          child: Column(
-            children: [
+                  child: Column(
+                    children: [
               // 顶部状态栏和位置信息
               _buildTopBar(),
               // 搜索栏
-              _buildSearchBar(),
+                      _buildSearchBar(),
               // 中秋节主题轮播图
               _buildMidAutumnBanner(),
               // 促销卡片
@@ -148,7 +148,7 @@ class _HomeState extends State<Home> {
             },
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              decoration: BoxDecoration(
+      decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
@@ -162,7 +162,7 @@ class _HomeState extends State<Home> {
               child: const Text(
                 '中和锦汇天府店',
                 style: TextStyle(
-                  fontSize: 14,
+          fontSize: 14,
                   fontWeight: FontWeight.w500,
                   color: Colors.black,
                 ),
@@ -221,21 +221,21 @@ class _HomeState extends State<Home> {
           const SizedBox(height: 8),
           // 搜索框
           Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(25),
-              boxShadow: [
-                BoxShadow(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(25),
+        boxShadow: [
+          BoxShadow(
                   color: Colors.grey.withOpacity(0.1),
                   blurRadius: 8,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: TextField(
-              decoration: InputDecoration(
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: TextField(
+        decoration: InputDecoration(
                 hintText: '黄瓜',
-                hintStyle: TextStyle(color: Colors.grey[400]),
+          hintStyle: TextStyle(color: Colors.grey[400]),
                 prefixIcon: const Icon(
                   Icons.qr_code_scanner,
                   color: Colors.grey,
@@ -274,7 +274,7 @@ class _HomeState extends State<Home> {
                     ),
                   ],
                 ),
-                border: InputBorder.none,
+          border: InputBorder.none,
                 contentPadding: const EdgeInsets.symmetric(
                   horizontal: 16,
                   vertical: 12,
@@ -480,30 +480,30 @@ class _HomeState extends State<Home> {
               );
             },
             child: Container(
-              decoration: BoxDecoration(
+            decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
                     color: Colors.grey.withOpacity(0.1),
                     blurRadius: 4,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Stack(
-                    children: [
-                      Container(
+                children: [
+                  Container(
                         width: 40,
                         height: 40,
                         decoration: BoxDecoration(
                           color: category['color'].withOpacity(0.1),
                           borderRadius: BorderRadius.circular(20),
                         ),
-                        child: Icon(
+                      child: Icon(
                           category['icon'],
                           color: category['color'],
                           size: 24,
@@ -521,16 +521,16 @@ class _HomeState extends State<Home> {
                             decoration: BoxDecoration(
                               color: Colors.red,
                               borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Text(
+                      ),
+                      child: Text(
                               category['tag'],
-                              style: const TextStyle(
-                                color: Colors.white,
+                        style: const TextStyle(
+                          color: Colors.white,
                                 fontSize: 8,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
                         ),
                     ],
                   ),
@@ -753,9 +753,9 @@ class _HomeState extends State<Home> {
             ),
           ],
         ),
-      ),
-    );
-  }
+              ),
+            );
+          }
 
   /// 构建主商品展示区域
   Widget _buildMainProductSection() {
@@ -835,40 +835,40 @@ class _HomeState extends State<Home> {
             ),
             Padding(
               padding: const EdgeInsets.all(12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
                     product['name'],
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
                   const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      Text(
+                    Row(
+                      children: [
+                        Text(
                         '¥${product['price']}',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.red,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.red,
+                          ),
                         ),
-                      ),
                       const SizedBox(width: 6),
-                      Text(
+                        Text(
                         '¥${product['originalPrice']}',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey[500],
-                          decoration: TextDecoration.lineThrough,
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey[500],
+                            decoration: TextDecoration.lineThrough,
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
+                      ],
+                    ),
                 ],
               ),
             ),
