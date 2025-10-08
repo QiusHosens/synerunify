@@ -514,7 +514,7 @@ class _InstantDeliveryState extends State<InstantDelivery> {
                 crossAxisCount: 5,
                 crossAxisSpacing: 16,
                 mainAxisSpacing: 16,
-                childAspectRatio: 0.8,
+                childAspectRatio: 0.75, // 降低比例，为文字标签留出更多空间
               ),
               itemCount: _serviceCategories.length,
               itemBuilder: (context, index) {
@@ -561,13 +561,14 @@ class _InstantDeliveryState extends State<InstantDelivery> {
         ).showSnackBar(SnackBar(content: Text('进入${category['name']}')));
       },
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
-            width: 60,
-            height: 60,
+            width: 50, // 减小图标尺寸
+            height: 50,
             decoration: BoxDecoration(
               color: category['color'].withOpacity(0.1),
-              borderRadius: BorderRadius.circular(30),
+              borderRadius: BorderRadius.circular(25),
             ),
             child: Stack(
               children: [
@@ -575,7 +576,7 @@ class _InstantDeliveryState extends State<InstantDelivery> {
                   child: Icon(
                     category['icon'] as IconData,
                     color: category['color'] as Color,
-                    size: 30,
+                    size: 24, // 减小图标尺寸
                   ),
                 ),
                 if (category['tag'] != null)
@@ -584,18 +585,18 @@ class _InstantDeliveryState extends State<InstantDelivery> {
                     right: 0,
                     child: Container(
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 4,
-                        vertical: 2,
+                        horizontal: 3,
+                        vertical: 1,
                       ),
                       decoration: BoxDecoration(
                         color: Colors.red,
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(6),
                       ),
                       child: Text(
                         category['tag'] as String,
                         style: const TextStyle(
                           color: Colors.white,
-                          fontSize: 8,
+                          fontSize: 7,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -604,13 +605,18 @@ class _InstantDeliveryState extends State<InstantDelivery> {
               ],
             ),
           ),
-          const SizedBox(height: 8),
-          Text(
-            category['name'] as String,
-            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
-            textAlign: TextAlign.center,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
+          const SizedBox(height: 6), // 减少间距
+          Expanded( // 使用Expanded确保文字有足够空间
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 2),
+              child: Text(
+                category['name'] as String,
+                style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w500),
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
           ),
         ],
       ),
@@ -796,21 +802,24 @@ class _InstantDeliveryState extends State<InstantDelivery> {
                 padding: const EdgeInsets.all(8),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(
-                      product['name'] as String,
-                      style: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
+                    Expanded( // 使用Expanded确保商品名称有足够空间
+                      child: Text(
+                        product['name'] as String,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 4),
                     Row(
                       children: [
                         Text(
-                          '¥${product['price'].toString()}',
+                          '¥${product['price'].toString()}', 
                           style: const TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
@@ -818,17 +827,20 @@ class _InstantDeliveryState extends State<InstantDelivery> {
                           ),
                         ),
                         const SizedBox(width: 4),
-                        Text(
-                          '¥${product['originalPrice'].toString()}',
-                          style: TextStyle(
-                            fontSize: 10,
-                            color: Colors.grey[500],
-                            decoration: TextDecoration.lineThrough,
+                        Expanded( // 确保原价文字不会溢出
+                          child: Text(
+                            '¥${product['originalPrice'].toString()}',
+                            style: TextStyle(
+                              fontSize: 10,
+                              color: Colors.grey[500],
+                              decoration: TextDecoration.lineThrough,
+                            ),
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
                       ],
                     ),
-                    const Spacer(),
+                    const SizedBox(height: 4), // 添加固定间距
                     Text(
                       product['brand'] as String,
                       style: TextStyle(fontSize: 10, color: Colors.grey[600]),
@@ -1177,22 +1189,24 @@ class _InstantDeliveryState extends State<InstantDelivery> {
               padding: const EdgeInsets.only(top: 4),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   if (product['tag'] != null)
                     Text(
                       product['tag'] as String,
                       style: TextStyle(fontSize: 8, color: Colors.orange[600]),
                     ),
-                  Text(
-                    product['name'] as String,
-                    style: const TextStyle(
-                      fontSize: 10,
-                      fontWeight: FontWeight.w500,
+                  Expanded( // 使用Expanded确保商品名称有足够空间
+                    child: Text(
+                      product['name'] as String,
+                      style: const TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      maxLines: 2, // 允许最多2行
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
                   ),
-                  const Spacer(),
                   if (product['price'] != null)
                     Row(
                       children: [
@@ -1206,12 +1220,15 @@ class _InstantDeliveryState extends State<InstantDelivery> {
                         ),
                         if (product['originalPrice'] != null) ...[
                           const SizedBox(width: 4),
-                          Text(
-                            '¥${product['originalPrice'].toString()}',
-                            style: TextStyle(
-                              fontSize: 8,
-                              color: Colors.grey[500],
-                              decoration: TextDecoration.lineThrough,
+                          Expanded( // 确保原价文字不会溢出
+                            child: Text(
+                              '¥${product['originalPrice'].toString()}',
+                              style: TextStyle(
+                                fontSize: 8,
+                                color: Colors.grey[500],
+                                decoration: TextDecoration.lineThrough,
+                              ),
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
                         ],

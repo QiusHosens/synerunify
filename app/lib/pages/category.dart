@@ -247,7 +247,7 @@ class _CategoryState extends State<Category> {
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 3,
-                  childAspectRatio: 0.8,
+                  childAspectRatio: 0.75, // 降低比例，为文字留出更多空间
                   crossAxisSpacing: 12,
                   mainAxisSpacing: 12,
                 ),
@@ -287,16 +287,21 @@ class _CategoryState extends State<Category> {
           ),
           const SizedBox(height: 8),
           // 商品名称
-          Text(
-            product['name'],
-            style: const TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
-              color: Colors.black87,
+          Expanded( // 使用Expanded确保文字有足够空间
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4),
+              child: Text(
+                product['name'],
+                style: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black87,
+                ),
+                textAlign: TextAlign.center,
+                maxLines: 2, // 允许最多2行
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
-            textAlign: TextAlign.center,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
           ),
         ],
       ),

@@ -461,7 +461,7 @@ class _HomeState extends State<Home> {
         physics: const NeverScrollableScrollPhysics(),
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 4,
-          childAspectRatio: 1,
+          childAspectRatio: 0.85, // 增加高度比例，为文字标签留出更多空间
           crossAxisSpacing: 12,
           mainAxisSpacing: 12,
         ),
@@ -534,16 +534,21 @@ class _HomeState extends State<Home> {
                         ),
                     ],
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    category['name'],
-                    style: const TextStyle(
-                      fontSize: 10,
-                      fontWeight: FontWeight.w500,
+                  const SizedBox(height: 6), // 增加间距
+                  Expanded( // 使用Expanded确保文字有足够空间
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 2),
+                      child: Text(
+                        category['name'],
+                        style: const TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        textAlign: TextAlign.center,
+                        maxLines: 2, // 允许最多2行文字
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
-                    textAlign: TextAlign.center,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),
@@ -643,15 +648,18 @@ class _HomeState extends State<Home> {
                         padding: const EdgeInsets.all(8),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
                           children: [
-                            Text(
-                              product['name'],
-                              style: const TextStyle(
-                                fontSize: 10,
-                                fontWeight: FontWeight.w500,
+                            Expanded( // 使用Expanded确保商品名称有足够空间
+                              child: Text(
+                                product['name'],
+                                style: const TextStyle(
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                                maxLines: 2, // 允许最多2行
+                                overflow: TextOverflow.ellipsis,
                               ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
                             ),
                             const SizedBox(height: 4),
                             Text(
@@ -774,7 +782,7 @@ class _HomeState extends State<Home> {
             physics: const NeverScrollableScrollPhysics(),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
-              childAspectRatio: 0.8,
+              childAspectRatio: 0.75, // 降低比例，为文字内容留出更多空间
               crossAxisSpacing: 12,
               mainAxisSpacing: 12,
             ),
@@ -835,11 +843,13 @@ class _HomeState extends State<Home> {
             ),
             Padding(
               padding: const EdgeInsets.all(12),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                    product['name'],
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min, // 使用最小空间
+                children: [
+                  Expanded( // 使用Expanded确保文字有足够空间
+                    child: Text(
+                      product['name'],
                       style: const TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
@@ -847,28 +857,32 @@ class _HomeState extends State<Home> {
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
+                  ),
                   const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        Text(
+                  Row(
+                    children: [
+                      Text(
                         '¥${product['price']}',
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.red,
-                          ),
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.red,
                         ),
+                      ),
                       const SizedBox(width: 6),
-                        Text(
-                        '¥${product['originalPrice']}',
+                      Expanded( // 确保原价文字不会溢出
+                        child: Text(
+                          '¥${product['originalPrice']}',
                           style: TextStyle(
                             fontSize: 12,
                             color: Colors.grey[500],
                             decoration: TextDecoration.lineThrough,
                           ),
+                          overflow: TextOverflow.ellipsis,
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ),

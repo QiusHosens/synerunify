@@ -779,15 +779,18 @@ class _TakeawayState extends State<Takeaway> {
                 padding: const EdgeInsets.all(8),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(
-                      item['name'] as String,
-                      style: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
+                    Expanded( // 使用Expanded确保商品名称有足够空间
+                      child: Text(
+                        item['name'] as String,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 4),
                     Row(
@@ -801,17 +804,20 @@ class _TakeawayState extends State<Takeaway> {
                           ),
                         ),
                         const SizedBox(width: 4),
-                        Text(
-                          '¥${item['originalPrice'].toString()}',
-                          style: TextStyle(
-                            fontSize: 10,
-                            color: Colors.grey[500],
-                            decoration: TextDecoration.lineThrough,
+                        Expanded( // 确保原价文字不会溢出
+                          child: Text(
+                            '¥${item['originalPrice'].toString()}',
+                            style: TextStyle(
+                              fontSize: 10,
+                              color: Colors.grey[500],
+                              decoration: TextDecoration.lineThrough,
+                            ),
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
                       ],
                     ),
-                    const Spacer(),
+                    const SizedBox(height: 4), // 添加固定间距
                     Text(
                       item['brand'] as String,
                       style: TextStyle(fontSize: 10, color: Colors.grey[600]),
@@ -1280,17 +1286,19 @@ class _TakeawayState extends State<Takeaway> {
               padding: const EdgeInsets.only(top: 4),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(
-                    product['name'] as String,
-                    style: const TextStyle(
-                      fontSize: 10,
-                      fontWeight: FontWeight.w500,
+                  Expanded( // 使用Expanded确保商品名称有足够空间
+                    child: Text(
+                      product['name'] as String,
+                      style: const TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      maxLines: 2, // 允许最多2行
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
                   ),
-                  const Spacer(),
                   if (product['price'] != null)
                     Text(
                       '¥${product['price'].toString()}',
