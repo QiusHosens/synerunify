@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'product_detail.dart';
+import 'store_detail.dart';
 
 class Takeaway extends StatefulWidget {
   const Takeaway({super.key});
@@ -967,22 +968,30 @@ class _TakeawayState extends State<Takeaway> {
 
   /// 构建餐厅卡片
   Widget _buildRestaurantCard(Map<String, dynamic> restaurant) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
+    return GestureDetector(
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => StoreDetail(storeInfo: restaurant),
           ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+        );
+      },
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.1),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
           // 餐厅头部信息
           Padding(
             padding: const EdgeInsets.all(16),
@@ -1204,6 +1213,7 @@ class _TakeawayState extends State<Takeaway> {
           const SizedBox(height: 16),
         ],
       ),
+    ),
     );
   }
 
