@@ -198,7 +198,11 @@ class _StoreDetailState extends State<StoreDetail> {
                           color: Colors.red,
                           borderRadius: BorderRadius.circular(4),
                         ),
-                        child: const Icon(Icons.local_offer, color: Colors.white, size: 16),
+                        child: const Icon(
+                          Icons.local_offer,
+                          color: Colors.white,
+                          size: 16,
+                        ),
                       ),
                     ),
                     IconButton(
@@ -207,7 +211,10 @@ class _StoreDetailState extends State<StoreDetail> {
                     ),
                     IconButton(
                       onPressed: () {},
-                      icon: const Icon(Icons.chat_bubble_outline, color: Colors.grey),
+                      icon: const Icon(
+                        Icons.chat_bubble_outline,
+                        color: Colors.grey,
+                      ),
                     ),
                     IconButton(
                       onPressed: () {},
@@ -228,9 +235,9 @@ class _StoreDetailState extends State<StoreDetail> {
     return GestureDetector(
       onTap: () {
         // 配送方式切换逻辑
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('切换到${text}模式')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('切换到${text}模式')));
       },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -399,20 +406,18 @@ class _StoreDetailState extends State<StoreDetail> {
                     children: [
                       const Text(
                         '自取',
-                        style: TextStyle(
-                          color: Colors.grey,
-                          fontSize: 16,
-                        ),
+                        style: TextStyle(color: Colors.grey, fontSize: 16),
                       ),
                       const SizedBox(width: 4),
-                      const Icon(Icons.location_on, color: Colors.grey, size: 16),
+                      const Icon(
+                        Icons.location_on,
+                        color: Colors.grey,
+                        size: 16,
+                      ),
                       const SizedBox(width: 4),
                       const Text(
                         '距您1.4km',
-                        style: TextStyle(
-                          color: Colors.grey,
-                          fontSize: 12,
-                        ),
+                        style: TextStyle(color: Colors.grey, fontSize: 12),
                       ),
                     ],
                   ),
@@ -446,18 +451,12 @@ class _StoreDetailState extends State<StoreDetail> {
                 const SizedBox(width: 8),
                 const Text(
                   '先享后付',
-                  style: TextStyle(
-                    color: Colors.red,
-                    fontSize: 12,
-                  ),
+                  style: TextStyle(color: Colors.red, fontSize: 12),
                 ),
                 const Spacer(),
                 const Text(
                   '更多优惠 >',
-                  style: TextStyle(
-                    color: Colors.red,
-                    fontSize: 12,
-                  ),
+                  style: TextStyle(color: Colors.red, fontSize: 12),
                 ),
               ],
             ),
@@ -466,10 +465,7 @@ class _StoreDetailState extends State<StoreDetail> {
           // 温馨提示
           Text(
             '温馨提示,请适量点餐———',
-            style: TextStyle(
-              color: Colors.grey[500],
-              fontSize: 12,
-            ),
+            style: TextStyle(color: Colors.grey[500], fontSize: 12),
           ),
         ],
       ),
@@ -481,20 +477,11 @@ class _StoreDetailState extends State<StoreDetail> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          label,
-          style: TextStyle(
-            color: Colors.grey[600],
-            fontSize: 12,
-          ),
-        ),
+        Text(label, style: TextStyle(color: Colors.grey[600], fontSize: 12)),
         const SizedBox(height: 2),
         Text(
           value,
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 14,
-          ),
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
         ),
       ],
     );
@@ -533,7 +520,7 @@ class _StoreDetailState extends State<StoreDetail> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.blue.withOpacity(0.3),
+            color: Colors.blue.withValues(alpha: 0.3),
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),
@@ -549,7 +536,7 @@ class _StoreDetailState extends State<StoreDetail> {
               width: 80,
               height: 80,
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.1),
+                color: Colors.white.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
             ),
@@ -593,10 +580,7 @@ class _StoreDetailState extends State<StoreDetail> {
                       ),
                       const Text(
                         '新品上市!',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 14,
-                        ),
+                        style: TextStyle(color: Colors.white, fontSize: 14),
                       ),
                     ],
                   ),
@@ -606,10 +590,14 @@ class _StoreDetailState extends State<StoreDetail> {
                   width: 80,
                   height: 80,
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.2),
+                    color: Colors.white.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: const Icon(Icons.local_drink, size: 40, color: Colors.white),
+                  child: const Icon(
+                    Icons.local_drink,
+                    size: 40,
+                    color: Colors.white,
+                  ),
                 ),
               ],
             ),
@@ -660,7 +648,9 @@ class _StoreDetailState extends State<StoreDetail> {
                     style: TextStyle(
                       color: isSelected ? Colors.red : Colors.grey[600],
                       fontSize: 10,
-                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                      fontWeight: isSelected
+                          ? FontWeight.bold
+                          : FontWeight.normal,
                     ),
                     textAlign: TextAlign.center,
                     maxLines: 2,
@@ -677,9 +667,9 @@ class _StoreDetailState extends State<StoreDetail> {
 
   /// 构建右侧商品列表
   Widget _buildProductList() {
-    final filteredProducts = _products.where(
-      (product) => product['category'] == _selectedCategory,
-    ).toList();
+    final filteredProducts = _products
+        .where((product) => product['category'] == _selectedCategory)
+        .toList();
 
     return Expanded(
       child: Container(
@@ -705,7 +695,7 @@ class _StoreDetailState extends State<StoreDetail> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha: 0.1),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -747,33 +737,27 @@ class _StoreDetailState extends State<StoreDetail> {
                   if (product['description'] != null)
                     Text(
                       product['description'] as String,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey[600],
-                      ),
+                      style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                     ),
                   const SizedBox(height: 8),
                   // 销售信息
                   Text(
                     product['sales'] as String,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey[500],
-                    ),
+                    style: TextStyle(fontSize: 12, color: Colors.grey[500]),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     product['recent'] as String,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey[500],
-                    ),
+                    style: TextStyle(fontSize: 12, color: Colors.grey[500]),
                   ),
                   const SizedBox(height: 8),
                   // 优惠限制
                   if (product['limit'] != null)
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 2,
+                      ),
                       decoration: BoxDecoration(
                         color: Colors.orange[100],
                         borderRadius: BorderRadius.circular(4),
@@ -801,10 +785,7 @@ class _StoreDetailState extends State<StoreDetail> {
                       const SizedBox(width: 8),
                       Text(
                         '已补¥${product['subsidy'].toString()}',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey[500],
-                        ),
+                        style: TextStyle(fontSize: 12, color: Colors.grey[500]),
                       ),
                       const Spacer(),
                       // 加购按钮
@@ -861,9 +842,7 @@ class _StoreDetailState extends State<StoreDetail> {
           Container(
             width: double.infinity,
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            decoration: BoxDecoration(
-              color: Colors.red,
-            ),
+            decoration: BoxDecoration(color: Colors.red),
             child: Row(
               children: [
                 Container(
@@ -895,7 +874,11 @@ class _StoreDetailState extends State<StoreDetail> {
                 // 购物车图标
                 Stack(
                   children: [
-                    const Icon(Icons.shopping_cart, size: 32, color: Colors.grey),
+                    const Icon(
+                      Icons.shopping_cart,
+                      size: 32,
+                      color: Colors.grey,
+                    ),
                     if (_cartItemCount > 0)
                       Positioned(
                         right: 0,
@@ -925,15 +908,15 @@ class _StoreDetailState extends State<StoreDetail> {
                 // 运费信息
                 Text(
                   '运费¥1.5',
-                  style: TextStyle(
-                    color: Colors.grey[600],
-                    fontSize: 14,
-                  ),
+                  style: TextStyle(color: Colors.grey[600], fontSize: 14),
                 ),
                 const Spacer(),
                 // 起送按钮
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 12,
+                  ),
                   decoration: BoxDecoration(
                     color: _cartTotal >= 9.0 ? Colors.red : Colors.grey[300],
                     borderRadius: BorderRadius.circular(8),
@@ -941,7 +924,9 @@ class _StoreDetailState extends State<StoreDetail> {
                   child: Text(
                     _cartTotal >= 9.0 ? '去结算' : '9元起送',
                     style: TextStyle(
-                      color: _cartTotal >= 9.0 ? Colors.white : Colors.grey[600],
+                      color: _cartTotal >= 9.0
+                          ? Colors.white
+                          : Colors.grey[600],
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                     ),

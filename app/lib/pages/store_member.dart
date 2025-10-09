@@ -146,13 +146,13 @@ class _StoreMemberState extends State<StoreMember> {
           end: Alignment.bottomRight,
           colors: [
             currentLevel['color'] as Color,
-            (currentLevel['color'] as Color).withOpacity(0.8),
+            (currentLevel['color'] as Color).withValues(alpha: 0.8),
           ],
         ),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: currentLevel['color'].withOpacity(0.3),
+            color: currentLevel['color'].withValues(alpha: 0.3),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -169,7 +169,7 @@ class _StoreMemberState extends State<StoreMember> {
                   width: 60,
                   height: 60,
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.2),
+                    color: Colors.white.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(30),
                   ),
                   child: Center(
@@ -241,7 +241,7 @@ class _StoreMemberState extends State<StoreMember> {
                 const SizedBox(height: 12),
                 LinearProgressIndicator(
                   value: _points / (nextLevel['requiredPoints'] as int),
-                  backgroundColor: Colors.white.withOpacity(0.3),
+                  backgroundColor: Colors.white.withValues(alpha: 0.3),
                   valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
                 ),
                 const SizedBox(height: 4),
@@ -293,7 +293,7 @@ class _StoreMemberState extends State<StoreMember> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha: 0.1),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -344,7 +344,7 @@ class _StoreMemberState extends State<StoreMember> {
             width: 60,
             height: 60,
             decoration: BoxDecoration(
-              color: benefit['color'].withOpacity(0.1),
+              color: benefit['color'].withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(30),
             ),
             child: Icon(
@@ -373,7 +373,7 @@ class _StoreMemberState extends State<StoreMember> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha: 0.1),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -467,7 +467,7 @@ class _StoreMemberState extends State<StoreMember> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha: 0.1),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -493,7 +493,7 @@ class _StoreMemberState extends State<StoreMember> {
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
                   color: isCurrentLevel
-                      ? (level['color'] as Color).withOpacity(0.1)
+                      ? (level['color'] as Color).withValues(alpha: 0.1)
                       : Colors.grey[50],
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
@@ -571,7 +571,7 @@ class _StoreMemberState extends State<StoreMember> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha: 0.1),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),

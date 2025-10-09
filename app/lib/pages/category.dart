@@ -111,7 +111,7 @@ class _CategoryState extends State<Category> {
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.grey.withOpacity(0.2),
+                      color: Colors.grey.withValues(alpha: 0.2),
                       blurRadius: 4,
                       offset: const Offset(0, 2),
                     ),
@@ -287,7 +287,8 @@ class _CategoryState extends State<Category> {
           ),
           const SizedBox(height: 8),
           // 商品名称
-          Expanded( // 使用Expanded确保文字有足够空间
+          Expanded(
+            // 使用Expanded确保文字有足够空间
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 4),
               child: Text(

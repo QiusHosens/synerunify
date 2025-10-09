@@ -432,7 +432,7 @@ class _TakeawayState extends State<Takeaway> {
             borderRadius: BorderRadius.circular(25),
             boxShadow: [
               BoxShadow(
-                color: Colors.grey.withOpacity(0.1),
+                color: Colors.grey.withValues(alpha: 0.1),
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),
@@ -598,7 +598,7 @@ class _TakeawayState extends State<Takeaway> {
               height: 50,
               decoration: BoxDecoration(
                 color: isSelected
-                    ? (category['color'] as Color).withOpacity(0.2)
+                    ? (category['color'] as Color).withValues(alpha: 0.2)
                     : Colors.grey[100],
                 borderRadius: BorderRadius.circular(25),
                 border: isSelected
@@ -699,7 +699,7 @@ class _TakeawayState extends State<Takeaway> {
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.1),
+              color: Colors.grey.withValues(alpha: 0.1),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -782,7 +782,8 @@ class _TakeawayState extends State<Takeaway> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Expanded( // 使用Expanded确保商品名称有足够空间
+                    Expanded(
+                      // 使用Expanded确保商品名称有足够空间
                       child: Text(
                         item['name'] as String,
                         style: const TextStyle(
@@ -805,7 +806,8 @@ class _TakeawayState extends State<Takeaway> {
                           ),
                         ),
                         const SizedBox(width: 4),
-                        Expanded( // 确保原价文字不会溢出
+                        Expanded(
+                          // 确保原价文字不会溢出
                           child: Text(
                             '¥${item['originalPrice'].toString()}',
                             style: TextStyle(
@@ -848,7 +850,7 @@ class _TakeawayState extends State<Takeaway> {
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: Colors.red.withOpacity(0.3),
+              color: Colors.red.withValues(alpha: 0.3),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -889,7 +891,7 @@ class _TakeawayState extends State<Takeaway> {
               width: 80,
               height: 60,
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.2),
+                color: Colors.white.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: const Center(
@@ -983,7 +985,7 @@ class _TakeawayState extends State<Takeaway> {
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.1),
+              color: Colors.grey.withValues(alpha: 0.1),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -992,228 +994,232 @@ class _TakeawayState extends State<Takeaway> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-          // 餐厅头部信息
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Row(
-              children: [
-                // 餐厅logo
-                Container(
-                  width: 50,
-                  height: 50,
-                  decoration: BoxDecoration(
-                    color: Colors.grey[200],
-                    borderRadius: BorderRadius.circular(8),
+            // 餐厅头部信息
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                children: [
+                  // 餐厅logo
+                  Container(
+                    width: 50,
+                    height: 50,
+                    decoration: BoxDecoration(
+                      color: Colors.grey[200],
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Center(
+                      child: Icon(Icons.restaurant, color: Colors.grey),
+                    ),
                   ),
-                  child: const Center(
-                    child: Icon(Icons.restaurant, color: Colors.grey),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                // 餐厅信息
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          if (restaurant['brand'] != null)
+                  const SizedBox(width: 12),
+                  // 餐厅信息
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            if (restaurant['brand'] != null)
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 6,
+                                  vertical: 2,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.blue,
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                child: const Text(
+                                  '品牌',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 10,
+                                  ),
+                                ),
+                              ),
+                            if (restaurant['brand'] != null)
+                              const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                restaurant['name'] as String,
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
                             Container(
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 6,
                                 vertical: 2,
                               ),
                               decoration: BoxDecoration(
-                                color: Colors.blue,
+                                color: Colors.orange,
                                 borderRadius: BorderRadius.circular(4),
                               ),
-                              child: const Text(
-                                '品牌',
-                                style: TextStyle(
+                              child: Text(
+                                restaurant['deliveryType'] as String,
+                                style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 10,
                                 ),
                               ),
                             ),
-                          if (restaurant['brand'] != null)
-                            const SizedBox(width: 8),
-                          Expanded(
-                            child: Text(
-                              restaurant['name'] as String,
-                              style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 6,
-                              vertical: 2,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.orange,
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                            child: Text(
-                              restaurant['deliveryType'] as String,
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 10,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 4),
-                      Row(
-                        children: [
-                          Icon(Icons.star, size: 14, color: Colors.orange[300]),
-                          const SizedBox(width: 4),
-                          Text(
-                            '${restaurant['rating']}分',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.grey[600],
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            restaurant['sales'] as String,
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.grey[600],
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 4),
-                      Row(
-                        children: [
-                          Text(
-                            '${restaurant['distance']} ${restaurant['deliveryTime']}',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.grey[600],
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            '起送¥${restaurant['minOrder'].toString()} 运费¥${restaurant['deliveryFee'].toString()}',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.grey[600],
-                            ),
-                          ),
-                        ],
-                      ),
-                      if (restaurant['special'] != null) ...[
+                          ],
+                        ),
                         const SizedBox(height: 4),
-                        Text(
-                          restaurant['special'] as String,
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.blue[600],
-                          ),
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.star,
+                              size: 14,
+                              color: Colors.orange[300],
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              '${restaurant['rating']}分',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.grey[600],
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              restaurant['sales'] as String,
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.grey[600],
+                              ),
+                            ),
+                          ],
                         ),
+                        const SizedBox(height: 4),
+                        Row(
+                          children: [
+                            Text(
+                              '${restaurant['distance']} ${restaurant['deliveryTime']}',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.grey[600],
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              '起送¥${restaurant['minOrder'].toString()} 运费¥${restaurant['deliveryFee'].toString()}',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.grey[600],
+                              ),
+                            ),
+                          ],
+                        ),
+                        if (restaurant['special'] != null) ...[
+                          const SizedBox(height: 4),
+                          Text(
+                            restaurant['special'] as String,
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.blue[600],
+                            ),
+                          ),
+                        ],
                       ],
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          // 餐厅标签
-          if (restaurant['tags'] != null)
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Wrap(
-                spacing: 8,
-                runSpacing: 4,
-                children: (restaurant['tags'] as List)
-                    .map(
-                      (tag) => Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 6,
-                          vertical: 2,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.grey[100],
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        child: Text(
-                          tag as String,
-                          style: TextStyle(
-                            fontSize: 10,
-                            color: Colors.grey[600],
-                          ),
-                        ),
-                      ),
-                    )
-                    .toList(),
-              ),
-            ),
-          // 优惠券
-          if (restaurant['coupon'] != null)
-            Container(
-              margin: const EdgeInsets.all(16),
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Colors.orange[100]!, Colors.orange[50]!],
-                ),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      restaurant['coupon']['title'] as String,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 6,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.orange,
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    child: Text(
-                      restaurant['coupon']['action'] as String,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                      ),
                     ),
                   ),
                 ],
               ),
             ),
-          // 商品列表
-          if (restaurant['products'] != null)
-            SizedBox(
-              height: 120,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
+            // 餐厅标签
+            if (restaurant['tags'] != null)
+              Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
-                itemCount: (restaurant['products'] as List).length,
-                itemBuilder: (context, index) {
-                  final product = (restaurant['products'] as List)[index];
-                  return _buildRestaurantProductCard(product);
-                },
+                child: Wrap(
+                  spacing: 8,
+                  runSpacing: 4,
+                  children: (restaurant['tags'] as List)
+                      .map(
+                        (tag) => Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 6,
+                            vertical: 2,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.grey[100],
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Text(
+                            tag as String,
+                            style: TextStyle(
+                              fontSize: 10,
+                              color: Colors.grey[600],
+                            ),
+                          ),
+                        ),
+                      )
+                      .toList(),
+                ),
               ),
-            ),
-          const SizedBox(height: 16),
-        ],
+            // 优惠券
+            if (restaurant['coupon'] != null)
+              Container(
+                margin: const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Colors.orange[100]!, Colors.orange[50]!],
+                  ),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        restaurant['coupon']['title'] as String,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.orange,
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      child: Text(
+                        restaurant['coupon']['action'] as String,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            // 商品列表
+            if (restaurant['products'] != null)
+              SizedBox(
+                height: 120,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  itemCount: (restaurant['products'] as List).length,
+                  itemBuilder: (context, index) {
+                    final product = (restaurant['products'] as List)[index];
+                    return _buildRestaurantProductCard(product);
+                  },
+                ),
+              ),
+            const SizedBox(height: 16),
+          ],
+        ),
       ),
-    ),
     );
   }
 
@@ -1298,7 +1304,8 @@ class _TakeawayState extends State<Takeaway> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Expanded( // 使用Expanded确保商品名称有足够空间
+                  Expanded(
+                    // 使用Expanded确保商品名称有足够空间
                     child: Text(
                       product['name'] as String,
                       style: const TextStyle(
@@ -1335,8 +1342,8 @@ class _TakeawayState extends State<Takeaway> {
                         color: Colors.grey[500],
                         decoration: TextDecoration.lineThrough,
                       ),
-                    ),
-                  if (product['discount'] != null)
+                    )
+                  else if (product['discount'] != null)
                     Text(
                       product['discount'] as String,
                       style: TextStyle(

@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 
 class AddressMap extends StatefulWidget {
-  final Function(String address, String province, String city, String district)? onAddressSelected;
+  final Function(String address, String province, String city, String district)?
+  onAddressSelected;
 
-  const AddressMap({
-    super.key,
-    this.onAddressSelected,
-  });
+  const AddressMap({super.key, this.onAddressSelected});
 
   @override
   State<AddressMap> createState() => _AddressMapState();
@@ -102,10 +100,7 @@ class _AddressMapState extends State<AddressMap> {
               }
               Navigator.of(context).pop();
             },
-            child: const Text(
-              '确定',
-              style: TextStyle(color: Colors.blue),
-            ),
+            child: const Text('确定', style: TextStyle(color: Colors.blue)),
           ),
         ],
       ),
@@ -126,7 +121,10 @@ class _AddressMapState extends State<AddressMap> {
                   borderRadius: BorderRadius.circular(8),
                   borderSide: const BorderSide(color: Colors.blue),
                 ),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
               ),
               onChanged: (value) {
                 setState(() {
@@ -135,7 +133,7 @@ class _AddressMapState extends State<AddressMap> {
               },
             ),
           ),
-          
+
           // 地图区域（模拟）
           Expanded(
             flex: 2,
@@ -159,26 +157,25 @@ class _AddressMapState extends State<AddressMap> {
                       ),
                     ),
                   ),
-                  
+
                   // 模拟地图标记点
                   Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(
-                          Icons.location_on,
-                          color: Colors.red,
-                          size: 40,
-                        ),
+                        Icon(Icons.location_on, color: Colors.red, size: 40),
                         const SizedBox(height: 8),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 6,
+                          ),
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(15),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withOpacity(0.1),
+                                color: Colors.black.withValues(alpha: 0.1),
                                 blurRadius: 4,
                                 offset: const Offset(0, 2),
                               ),
@@ -196,24 +193,21 @@ class _AddressMapState extends State<AddressMap> {
                       ],
                     ),
                   ),
-                  
+
                   // 地图提供商标识
                   Positioned(
                     bottom: 8,
                     left: 8,
                     child: Text(
                       '高德地图',
-                      style: TextStyle(
-                        fontSize: 10,
-                        color: Colors.grey[600],
-                      ),
+                      style: TextStyle(fontSize: 10, color: Colors.grey[600]),
                     ),
                   ),
                 ],
               ),
             ),
           ),
-          
+
           // 地址列表
           Expanded(
             flex: 3,
@@ -224,7 +218,7 @@ class _AddressMapState extends State<AddressMap> {
                 borderRadius: BorderRadius.circular(8),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.grey.withOpacity(0.1),
+                    color: Colors.grey.withValues(alpha: 0.1),
                     blurRadius: 4,
                     offset: const Offset(0, 2),
                   ),
@@ -245,11 +239,7 @@ class _AddressMapState extends State<AddressMap> {
                     ),
                     child: Row(
                       children: [
-                        Icon(
-                          Icons.location_on,
-                          color: Colors.blue,
-                          size: 20,
-                        ),
+                        Icon(Icons.location_on, color: Colors.blue, size: 20),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Column(
@@ -274,15 +264,11 @@ class _AddressMapState extends State<AddressMap> {
                             ],
                           ),
                         ),
-                        Icon(
-                          Icons.check_circle,
-                          color: Colors.blue,
-                          size: 20,
-                        ),
+                        Icon(Icons.check_circle, color: Colors.blue, size: 20),
                       ],
                     ),
                   ),
-                  
+
                   // 其他地址列表
                   Expanded(
                     child: ListView.builder(

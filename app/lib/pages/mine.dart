@@ -67,7 +67,7 @@ class _MineState extends State<Mine> {
               borderRadius: BorderRadius.circular(20),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.grey.withOpacity(0.2),
+                  color: Colors.grey.withValues(alpha: 0.2),
                   blurRadius: 4,
                   offset: const Offset(0, 2),
                 ),
@@ -143,12 +143,16 @@ class _MineState extends State<Mine> {
           // 快捷操作
           Row(
             children: [
-              _buildQuickAction(Icons.settings, '设置', onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const Settings()),
-                );
-              }),
+              _buildQuickAction(
+                Icons.settings,
+                '设置',
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const Settings()),
+                  );
+                },
+              ),
               const SizedBox(width: 16),
               _buildQuickAction(Icons.message, '消息', hasNotification: true),
               const SizedBox(width: 16),
@@ -338,7 +342,7 @@ class _MineState extends State<Mine> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha: 0.1),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -383,7 +387,7 @@ class _MineState extends State<Mine> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha: 0.1),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -449,7 +453,7 @@ class _MineState extends State<Mine> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha: 0.1),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),

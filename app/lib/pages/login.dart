@@ -84,7 +84,7 @@ class _LoginState extends State<Login> {
           HttpClientConfig.refreshTokenKey,
           response.data!.refreshToken,
         );
-        
+
         // 登录成功，获取用户信息
         final userResponse = await _authService.getUserInfo();
         _authManager.loginSuccess(userResponse.data!);
@@ -291,9 +291,9 @@ class _LoginState extends State<Login> {
               padding: const EdgeInsets.all(12),
               margin: const EdgeInsets.only(bottom: 20),
               decoration: BoxDecoration(
-                color: Colors.red.withOpacity(0.1),
+                color: Colors.red.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: Colors.red.withOpacity(0.3)),
+                border: Border.all(color: Colors.red.withValues(alpha: 0.3)),
               ),
               child: Text(
                 _errorMessage!,
