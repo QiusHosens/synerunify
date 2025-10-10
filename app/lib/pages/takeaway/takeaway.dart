@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'product_detail.dart';
-import 'store_detail.dart';
+import '../product/product_detail.dart';
+import '../store/store_detail.dart';
 
 class Takeaway extends StatefulWidget {
   const Takeaway({super.key});

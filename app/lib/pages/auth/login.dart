@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../services/auth_service.dart';
-import '../utils/auth_manager.dart';
-import '../utils/http_client.dart';
-import 'main_navigation.dart';
+import '../../services/auth_service.dart';
+import '../../utils/auth_manager.dart';
+import '../../utils/http_client.dart';
+import '../main_navigation.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});

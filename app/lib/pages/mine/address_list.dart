@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../models/address_model.dart';
+import '../../models/address_model.dart';
 import 'address_edit.dart';
 
 class AddressList extends StatefulWidget {
@@ -76,10 +76,7 @@ class _AddressListState extends State<AddressList> {
                 ),
               );
             },
-            child: const Text(
-              '新增收货地址',
-              style: TextStyle(color: Colors.blue),
-            ),
+            child: const Text('新增收货地址', style: TextStyle(color: Colors.blue)),
           ),
         ],
       ),
@@ -109,26 +106,16 @@ class _AddressListState extends State<AddressList> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.location_off,
-            size: 100,
-            color: Colors.grey[400],
-          ),
+          Icon(Icons.location_off, size: 100, color: Colors.grey[400]),
           const SizedBox(height: 20),
           Text(
             '暂无收货地址',
-            style: TextStyle(
-              fontSize: 18,
-              color: Colors.grey[600],
-            ),
+            style: TextStyle(fontSize: 18, color: Colors.grey[600]),
           ),
           const SizedBox(height: 10),
           Text(
             '添加收货地址，让购物更便捷',
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey[500],
-            ),
+            style: TextStyle(fontSize: 14, color: Colors.grey[500]),
           ),
           const SizedBox(height: 30),
           ElevatedButton(
@@ -198,7 +185,10 @@ class _AddressListState extends State<AddressList> {
                 children: [
                   // 地址标签
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 2,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.blue,
                       borderRadius: BorderRadius.circular(10),
@@ -213,11 +203,14 @@ class _AddressListState extends State<AddressList> {
                     ),
                   ),
                   const SizedBox(width: 8),
-                  
+
                   // 默认标签
                   if (address.isDefault)
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 2,
+                      ),
                       decoration: BoxDecoration(
                         color: Colors.red,
                         borderRadius: BorderRadius.circular(10),
@@ -232,7 +225,7 @@ class _AddressListState extends State<AddressList> {
                       ),
                     ),
                   if (address.isDefault) const SizedBox(width: 8),
-                  
+
                   // 收货人信息
                   Expanded(
                     child: Row(
@@ -255,7 +248,7 @@ class _AddressListState extends State<AddressList> {
                       ],
                     ),
                   ),
-                  
+
                   // 编辑按钮
                   IconButton(
                     onPressed: () {
@@ -278,18 +271,14 @@ class _AddressListState extends State<AddressList> {
                   ),
                 ],
               ),
-              
+
               const SizedBox(height: 8),
-              
+
               // 地址信息
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(
-                    Icons.location_on,
-                    size: 16,
-                    color: Colors.grey[600],
-                  ),
+                  Icon(Icons.location_on, size: 16, color: Colors.grey[600]),
                   const SizedBox(width: 4),
                   Expanded(
                     child: Text(
@@ -303,9 +292,9 @@ class _AddressListState extends State<AddressList> {
                   ),
                 ],
               ),
-              
+
               const SizedBox(height: 12),
-              
+
               // 操作按钮
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
@@ -316,31 +305,31 @@ class _AddressListState extends State<AddressList> {
                       onPressed: () => _setAsDefault(index),
                       style: TextButton.styleFrom(
                         foregroundColor: Colors.purple,
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 4,
+                        ),
                         minimumSize: Size.zero,
                         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       ),
-                      child: const Text(
-                        '设为默认',
-                        style: TextStyle(fontSize: 12),
-                      ),
+                      child: const Text('设为默认', style: TextStyle(fontSize: 12)),
                     ),
-                  
+
                   if (!address.isDefault) const SizedBox(width: 8),
-                  
+
                   // 删除按钮
                   TextButton(
                     onPressed: () => _deleteAddress(index),
                     style: TextButton.styleFrom(
                       foregroundColor: Colors.red,
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 4,
+                      ),
                       minimumSize: Size.zero,
                       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
-                    child: const Text(
-                      '删除',
-                      style: TextStyle(fontSize: 12),
-                    ),
+                    child: const Text('删除', style: TextStyle(fontSize: 12)),
                   ),
                 ],
               ),
@@ -362,16 +351,16 @@ class _AddressListState extends State<AddressList> {
       _addresses[index].isDefault = true;
       _addresses[index].updateTime = DateTime.now();
     });
-    
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('已设为默认地址')),
-    );
+
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('已设为默认地址')));
   }
 
   // 删除地址
   void _deleteAddress(int index) {
     final address = _addresses[index];
-    
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -388,9 +377,9 @@ class _AddressListState extends State<AddressList> {
                 _addresses.removeAt(index);
               });
               Navigator.of(context).pop();
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('地址已删除')),
-              );
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(const SnackBar(content: Text('地址已删除')));
             },
             child: const Text('确定'),
           ),

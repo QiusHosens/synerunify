@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'home.dart';
-import 'category.dart';
-import 'cart.dart';
-import 'mine.dart';
-import 'instant_delivery.dart';
-import 'takeaway.dart';
+import 'home/home.dart';
+import 'category/category.dart';
+import 'cart/cart.dart';
+import 'mine/mine.dart';
+import 'instant_delivery/instant_delivery.dart';
+import 'takeaway/takeaway.dart';
 
 class MainNavigation extends StatefulWidget {
   const MainNavigation({super.key});

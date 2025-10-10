@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'message.dart';
-import 'product_list.dart';
-import 'category_products.dart';
-import 'store.dart';
+import '../mine/message.dart';
+import '../product/product_list.dart';
+import '../category/category_products.dart';
+import '../store/store.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});

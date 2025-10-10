@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'product_detail.dart';
+import '../product/product_detail.dart';
 
 class InstantDelivery extends StatefulWidget {
   const InstantDelivery({super.key});

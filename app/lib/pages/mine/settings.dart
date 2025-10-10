@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:synerunify/pages/login.dart';
+import 'package:synerunify/pages/auth/login.dart';
 import 'package:synerunify/utils/auth_manager.dart';
-import '../services/auth_service.dart';
+import '../../services/auth_service.dart';
 
 class Settings extends StatefulWidget {
   const Settings({super.key});

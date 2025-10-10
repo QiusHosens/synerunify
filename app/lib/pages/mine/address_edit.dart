@@ -1,17 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../models/address_model.dart';
+import '../../models/address_model.dart';
 import 'address_map.dart';
 
 class AddressEdit extends StatefulWidget {
   final AddressModel? address;
   final Function(AddressModel) onSave;
 
-  const AddressEdit({
-    super.key,
-    this.address,
-    required this.onSave,
-  });
+  const AddressEdit({super.key, this.address, required this.onSave});
 
   @override
   State<AddressEdit> createState() => _AddressEditState();
@@ -22,7 +18,7 @@ class _AddressEditState extends State<AddressEdit> {
   final _nameController = TextEditingController();
   final _phoneController = TextEditingController();
   final _addressController = TextEditingController();
-  
+
   String _selectedProvince = '';
   String _selectedCity = '';
   String _selectedDistrict = '';
@@ -67,10 +63,7 @@ class _AddressEditState extends State<AddressEdit> {
         actions: [
           TextButton(
             onPressed: _saveAddress,
-            child: const Text(
-              '保存',
-              style: TextStyle(color: Colors.blue),
-            ),
+            child: const Text('保存', style: TextStyle(color: Colors.blue)),
           ),
         ],
       ),
@@ -116,9 +109,9 @@ class _AddressEditState extends State<AddressEdit> {
                 return null;
               },
             ),
-            
+
             const SizedBox(height: 24),
-            
+
             // 收货地址
             _buildSectionTitle('收货地址'),
             _buildAddressSelector(),
@@ -134,19 +127,19 @@ class _AddressEditState extends State<AddressEdit> {
                 return null;
               },
             ),
-            
+
             const SizedBox(height: 24),
-            
+
             // 地址标签选择
             _buildAddressTags(),
-            
+
             const SizedBox(height: 24),
-            
+
             // 设为默认地址
             _buildDefaultAddressSwitch(),
-            
+
             const SizedBox(height: 32),
-            
+
             // 保存按钮
             SizedBox(
               width: double.infinity,
@@ -160,10 +153,7 @@ class _AddressEditState extends State<AddressEdit> {
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),
-                child: const Text(
-                  '保存',
-                  style: TextStyle(fontSize: 16),
-                ),
+                child: const Text('保存', style: TextStyle(fontSize: 16)),
               ),
             ),
           ],
@@ -204,14 +194,15 @@ class _AddressEditState extends State<AddressEdit> {
       decoration: InputDecoration(
         labelText: label,
         hintText: hint,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
           borderSide: const BorderSide(color: Colors.blue),
         ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 12,
+        ),
       ),
     );
   }
@@ -248,37 +239,29 @@ class _AddressEditState extends State<AddressEdit> {
                 children: [
                   Text(
                     '收货地址',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey[600],
-                    ),
+                    style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    _selectedProvince.isNotEmpty 
+                    _selectedProvince.isNotEmpty
                         ? '$_selectedProvince $_selectedCity $_selectedDistrict'
                         : '小区/写字楼/学校',
                     style: TextStyle(
                       fontSize: 16,
-                      color: _selectedProvince.isNotEmpty 
-                          ? Colors.black87 
+                      color: _selectedProvince.isNotEmpty
+                          ? Colors.black87
                           : Colors.grey[500],
                     ),
                   ),
                 ],
               ),
             ),
-            Icon(
-              Icons.arrow_forward_ios,
-              size: 16,
-              color: Colors.grey[400],
-            ),
+            Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey[400]),
           ],
         ),
       ),
     );
   }
-
 
   Widget _buildAddressTags() {
     return Column(
@@ -305,7 +288,10 @@ class _AddressEditState extends State<AddressEdit> {
                 },
                 child: Container(
                   margin: const EdgeInsets.only(right: 8),
-                  padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 12,
+                    horizontal: 16,
+                  ),
                   decoration: BoxDecoration(
                     color: isSelected ? Colors.blue : Colors.grey[100],
                     borderRadius: BorderRadius.circular(8),
@@ -318,7 +304,9 @@ class _AddressEditState extends State<AddressEdit> {
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: isSelected ? Colors.white : Colors.black87,
-                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                      fontWeight: isSelected
+                          ? FontWeight.bold
+                          : FontWeight.normal,
                     ),
                   ),
                 ),
@@ -341,19 +329,12 @@ class _AddressEditState extends State<AddressEdit> {
       child: Row(
         children: [
           const SizedBox(width: 16),
-          const Icon(
-            Icons.star,
-            color: Colors.orange,
-            size: 20,
-          ),
+          const Icon(Icons.star, color: Colors.orange, size: 20),
           const SizedBox(width: 12),
           const Expanded(
             child: Text(
               '设为默认地址',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-              ),
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
             ),
           ),
           Switch(
@@ -377,7 +358,9 @@ class _AddressEditState extends State<AddressEdit> {
     }
 
     final address = AddressModel(
-      id: _isEditing ? widget.address!.id : DateTime.now().millisecondsSinceEpoch.toString(),
+      id: _isEditing
+          ? widget.address!.id
+          : DateTime.now().millisecondsSinceEpoch.toString(),
       name: _nameController.text.trim(),
       phone: _phoneController.text.trim(),
       province: _selectedProvince,
@@ -391,13 +374,11 @@ class _AddressEditState extends State<AddressEdit> {
     );
 
     widget.onSave(address);
-    
+
     Navigator.of(context).pop();
-    
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(_isEditing ? '地址修改成功' : '地址添加成功'),
-      ),
-    );
+
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(_isEditing ? '地址修改成功' : '地址添加成功')));
   }
 }
