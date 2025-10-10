@@ -999,13 +999,7 @@ class _CartState extends State<Cart> with TickerProviderStateMixin {
       totalAmount += (item['price'] ?? 0.0) * (item['quantity'] ?? 1);
     }
 
-    // 跳转到结算页面
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) =>
-            Checkout(cartItems: selectedItems, totalAmount: totalAmount),
-      ),
-    );
+    // 显示结算弹窗
+    Checkout.show(context, cartItems: selectedItems, totalAmount: totalAmount);
   }
 }

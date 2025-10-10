@@ -13,6 +13,21 @@ class Checkout extends StatefulWidget {
 
   @override
   State<Checkout> createState() => _CheckoutState();
+
+  // 静态方法显示结算弹窗
+  static void show(
+    BuildContext context, {
+    required List<Map<String, dynamic>> cartItems,
+    required double totalAmount,
+  }) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) =>
+          Checkout(cartItems: cartItems, totalAmount: totalAmount),
+    );
+  }
 }
 
 class _CheckoutState extends State<Checkout> {
@@ -22,6 +37,7 @@ class _CheckoutState extends State<Checkout> {
   String _notes = '';
   bool _outOfStockContact = true;
   bool _tablewareProvided = true;
+  String _deliveryMode = '配送'; // 配送/自取
 
   // 模拟地址数据
   final List<AddressModel> _addresses = [
@@ -48,21 +64,21 @@ class _CheckoutState extends State<Checkout> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey[50],
-      appBar: AppBar(
-        title: const Text('确认订单'),
-        backgroundColor: Colors.white,
-        elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.black),
-        titleTextStyle: const TextStyle(
-          color: Colors.black,
-          fontSize: 18,
-          fontWeight: FontWeight.w600,
+    return Container(
+      height: MediaQuery.of(context).size.height * 0.9,
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
         ),
       ),
-      body: Column(
+      child: Column(
         children: [
+          // 弹窗顶部拖拽条和标题
+          _buildModalHeader(),
+
+          // 主要内容区域
           Expanded(
             child: SingleChildScrollView(
               child: Column(
@@ -89,6 +105,7 @@ class _CheckoutState extends State<Checkout> {
 
                   // 支付方式区域
                   _buildPaymentSection(),
+                  const SizedBox(height: 100), // 为底部按钮留出空间
                 ],
               ),
             ),
@@ -96,6 +113,147 @@ class _CheckoutState extends State<Checkout> {
 
           // 底部结算栏
           _buildBottomBar(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildModalHeader() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        children: [
+          // 拖拽条
+          Container(
+            width: 40,
+            height: 4,
+            decoration: BoxDecoration(
+              color: Colors.grey[300],
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+          const SizedBox(height: 16),
+
+          // 配送/自取切换
+          Row(
+            children: [
+              Expanded(
+                child: GestureDetector(
+                  onTap: () => setState(() => _deliveryMode = '配送'),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    decoration: BoxDecoration(
+                      color: _deliveryMode == '配送'
+                          ? Colors.red
+                          : Colors.transparent,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          '配送',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: _deliveryMode == '配送'
+                                ? Colors.white
+                                : Colors.black87,
+                          ),
+                        ),
+                        if (_deliveryMode == '配送') ...[
+                          const SizedBox(width: 4),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 6,
+                              vertical: 2,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: const Text(
+                              '快21分钟',
+                              style: TextStyle(
+                                fontSize: 10,
+                                color: Colors.red,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: GestureDetector(
+                  onTap: () => setState(() => _deliveryMode = '自取'),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    decoration: BoxDecoration(
+                      color: _deliveryMode == '自取'
+                          ? Colors.red
+                          : Colors.transparent,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          '自取',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: _deliveryMode == '自取'
+                                ? Colors.white
+                                : Colors.black87,
+                          ),
+                        ),
+                        if (_deliveryMode == '自取') ...[
+                          const SizedBox(width: 4),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 6,
+                              vertical: 2,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: const Text(
+                              '快28分钟',
+                              style: TextStyle(
+                                fontSize: 10,
+                                color: Colors.red,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 16),
+              // 关闭按钮
+              GestureDetector(
+                onTap: () => Navigator.pop(context),
+                child: Container(
+                  width: 32,
+                  height: 32,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[100],
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: const Icon(Icons.close, size: 20, color: Colors.grey),
+                ),
+              ),
+            ],
+          ),
         ],
       ),
     );
@@ -525,23 +683,402 @@ class _CheckoutState extends State<Checkout> {
             style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
           ),
           const SizedBox(height: 12),
+
+          // 先享后付
+          _buildPayLaterMethod(),
+          const SizedBox(height: 8),
+
+          // 京东支付
+          _buildJDPayMethod(),
+          const SizedBox(height: 8),
+
+          // 京东白条
+          _buildBaitiaoMethod(),
+          const SizedBox(height: 8),
+
+          // 微信支付
           _buildPaymentMethod(
             '微信支付',
-            'assets/images/wechat_pay.png',
+            Icons.wechat,
             _selectedPaymentMethod == '微信支付',
+            '支持微信免密',
           ),
           const SizedBox(height: 8),
-          _buildPaymentMethod(
-            '支付宝',
-            'assets/images/alipay.png',
-            _selectedPaymentMethod == '支付宝',
+
+          // 更多支付方式
+          _buildMorePaymentMethods(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPayLaterMethod() {
+    return GestureDetector(
+      onTap: () => setState(() => _selectedPaymentMethod = '先享后付'),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+        decoration: BoxDecoration(
+          border: Border.all(
+            color: _selectedPaymentMethod == '先享后付'
+                ? Colors.green
+                : Colors.grey[300]!,
+            width: _selectedPaymentMethod == '先享后付' ? 2 : 1,
+          ),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 24,
+              height: 24,
+              decoration: BoxDecoration(
+                color: Colors.green,
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: const Icon(
+                Icons.shopping_bag,
+                size: 16,
+                color: Colors.white,
+              ),
+            ),
+            const SizedBox(width: 12),
+            const Text(
+              '先享后付0元下单,15天后再付款',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+            ),
+            const Spacer(),
+            if (_selectedPaymentMethod == '先享后付')
+              const Icon(Icons.check_circle, color: Colors.green, size: 20)
+            else
+              Container(
+                width: 20,
+                height: 20,
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey[400]!),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildJDPayMethod() {
+    return GestureDetector(
+      onTap: () => setState(() => _selectedPaymentMethod = '京东支付'),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+        decoration: BoxDecoration(
+          border: Border.all(
+            color: _selectedPaymentMethod == '京东支付'
+                ? Colors.red
+                : Colors.grey[300]!,
+            width: _selectedPaymentMethod == '京东支付' ? 2 : 1,
+          ),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Container(
+                  width: 24,
+                  height: 24,
+                  decoration: BoxDecoration(
+                    color: Colors.red,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: const Text(
+                    '京东',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                const Text(
+                  '京东支付',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                ),
+                const Spacer(),
+                if (_selectedPaymentMethod == '京东支付')
+                  const Icon(Icons.check_circle, color: Colors.red, size: 20)
+                else
+                  Container(
+                    width: 20,
+                    height: 20,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey[400]!),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                const SizedBox(width: 36),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildBankCard('工商银行储蓄卡 (7688)'),
+                      const SizedBox(height: 8),
+                      _buildBankCard('农业银行储蓄卡 (3974)'),
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          const Text(
+                            '切换支付方式',
+                            style: TextStyle(fontSize: 14, color: Colors.blue),
+                          ),
+                          const Spacer(),
+                          Icon(
+                            Icons.arrow_forward_ios,
+                            size: 14,
+                            color: Colors.grey[400],
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBankCard(String cardInfo) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+      decoration: BoxDecoration(
+        color: Colors.grey[50],
+        borderRadius: BorderRadius.circular(6),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(cardInfo, style: const TextStyle(fontSize: 14)),
+                const SizedBox(height: 4),
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 2,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.red,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: const Text(
+                        '满10减¥0.35',
+                        style: TextStyle(color: Colors.white, fontSize: 10),
+                      ),
+                    ),
+                    const SizedBox(width: 4),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 2,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.red,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: const Text(
+                        '返5元滋补保健券',
+                        style: TextStyle(color: Colors.white, fontSize: 10),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          Container(
+            width: 20,
+            height: 20,
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey[400]!),
+              borderRadius: BorderRadius.circular(10),
+            ),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildPaymentMethod(String name, String iconPath, bool isSelected) {
+  Widget _buildBaitiaoMethod() {
+    return GestureDetector(
+      onTap: () => setState(() => _selectedPaymentMethod = '京东白条'),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+        decoration: BoxDecoration(
+          border: Border.all(
+            color: _selectedPaymentMethod == '京东白条'
+                ? Colors.red
+                : Colors.grey[300]!,
+            width: _selectedPaymentMethod == '京东白条' ? 2 : 1,
+          ),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Container(
+                  width: 24,
+                  height: 24,
+                  decoration: BoxDecoration(
+                    color: Colors.red,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: const Text(
+                    '白条',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                const Text(
+                  '京东白条',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                ),
+                const SizedBox(width: 8),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 6,
+                    vertical: 2,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.green,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: const Text(
+                    '国家贴息',
+                    style: TextStyle(color: Colors.white, fontSize: 10),
+                  ),
+                ),
+                const Spacer(),
+                if (_selectedPaymentMethod == '京东白条')
+                  const Icon(Icons.check_circle, color: Colors.red, size: 20)
+                else
+                  Container(
+                    width: 20,
+                    height: 20,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey[400]!),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                _buildInstallmentOption('不分期', '0服务费', true),
+                const SizedBox(width: 8),
+                _buildInstallmentOption('¥4.53 x 3期', '含服务费¥0.05/期', false),
+                const SizedBox(width: 8),
+                _buildInstallmentOption('¥2.30 x 6期', '含服务费¥0', false),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                const SizedBox(width: 36),
+                Text(
+                  '由成都银行和京东小贷提供信用购服务',
+                  style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInstallmentOption(
+    String title,
+    String subtitle,
+    bool isSelected,
+  ) {
+    return Expanded(
+      child: GestureDetector(
+        onTap: () => setState(() {}),
+        child: Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: isSelected ? Colors.red[50] : Colors.grey[50],
+            border: Border.all(
+              color: isSelected ? Colors.red : Colors.grey[300]!,
+              width: isSelected ? 2 : 1,
+            ),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Column(
+            children: [
+              if (isSelected)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Container(
+                      width: 16,
+                      height: 16,
+                      decoration: const BoxDecoration(
+                        color: Colors.red,
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.check,
+                        color: Colors.white,
+                        size: 12,
+                      ),
+                    ),
+                  ],
+                ),
+              Text(
+                title,
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: isSelected ? Colors.red : Colors.black87,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                subtitle,
+                style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPaymentMethod(
+    String name,
+    IconData icon,
+    bool isSelected,
+    String subtitle,
+  ) {
     return GestureDetector(
       onTap: () => setState(() => _selectedPaymentMethod = name),
       child: Container(
@@ -559,23 +1096,95 @@ class _CheckoutState extends State<Checkout> {
               width: 24,
               height: 24,
               decoration: BoxDecoration(
-                color: Colors.grey[200],
+                color: Colors.green,
                 borderRadius: BorderRadius.circular(4),
               ),
-              child: Icon(
-                name == '微信支付' ? Icons.wechat : Icons.account_balance_wallet,
-                size: 16,
-                color: Colors.grey[600],
-              ),
+              child: Icon(icon, size: 16, color: Colors.white),
             ),
             const SizedBox(width: 12),
-            Text(
-              name,
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    name,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  Text(
+                    subtitle,
+                    style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                  ),
+                ],
+              ),
+            ),
+            if (isSelected)
+              const Icon(Icons.check_circle, color: Colors.blue, size: 20)
+            else
+              Container(
+                width: 20,
+                height: 20,
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey[400]!),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMorePaymentMethods() {
+    return GestureDetector(
+      onTap: _showMorePaymentMethods,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.grey[300]!),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Row(
+          children: [
+            Row(
+              children: [
+                Container(
+                  width: 24,
+                  height: 24,
+                  decoration: BoxDecoration(
+                    color: Colors.red,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                ),
+                const SizedBox(width: 4),
+                Container(
+                  width: 24,
+                  height: 24,
+                  decoration: BoxDecoration(
+                    color: Colors.pink,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                ),
+                const SizedBox(width: 4),
+                Container(
+                  width: 24,
+                  height: 24,
+                  decoration: BoxDecoration(
+                    color: Colors.blue,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(width: 12),
+            const Text(
+              '更多支付方式',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
             ),
             const Spacer(),
-            if (isSelected)
-              const Icon(Icons.check_circle, color: Colors.blue, size: 20),
+            Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey[400]),
           ],
         ),
       ),

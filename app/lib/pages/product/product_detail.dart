@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../widgets/specification_modal.dart';
+import '../cart/checkout.dart';
 
 class ProductDetail extends StatefulWidget {
   final Map<String, dynamic> product;
@@ -1000,8 +1001,26 @@ class _ProductDetailState extends State<ProductDetail>
 
   /// 确认立即购买
   void _confirmBuyNow() {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text('跳转到结算页面...')));
+    Navigator.of(context).pop(); // 关闭规格选择弹窗
+
+    // 创建商品项目数据
+    final cartItem = {
+      'id': widget.product['id'] ?? DateTime.now().millisecondsSinceEpoch,
+      'name': widget.product['name'] ?? '商品名称',
+      'price': widget.product['price'] ?? 0.0,
+      'quantity': _quantity,
+      'image': widget.product['image'] ?? 'assets/images/placeholder.png',
+      'selected': true,
+      'specifications': {
+        'color': _colors[_selectedColorIndex],
+        'size': _sizes[_selectedSizeIndex],
+      },
+    };
+
+    // 计算总金额
+    double totalAmount = (widget.product['price'] ?? 0.0) * _quantity;
+
+    // 显示结算弹窗
+    Checkout.show(context, cartItems: [cartItem], totalAmount: totalAmount);
   }
 }
