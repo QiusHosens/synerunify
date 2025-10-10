@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'checkout.dart';
 
 class Cart extends StatefulWidget {
   const Cart({super.key});
@@ -950,27 +951,60 @@ class _CartState extends State<Cart> with TickerProviderStateMixin {
               ),
               const SizedBox(width: 16),
               // 结算按钮
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 12,
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.blue,
-                  borderRadius: BorderRadius.circular(25),
-                ),
-                child: const Text(
-                  '结算',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
+              GestureDetector(
+                onTap: _goToCheckout,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 12,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.blue,
+                    borderRadius: BorderRadius.circular(25),
+                  ),
+                  child: const Text(
+                    '结算',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),
             ],
           ),
         ],
+      ),
+    );
+  }
+
+  // 跳转到结算页面
+  void _goToCheckout() {
+    // 获取选中的商品
+    final selectedItems = _cartItems
+        .where((item) => item['selected'] == true)
+        .toList();
+
+    if (selectedItems.isEmpty) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('请选择要结算的商品')));
+      return;
+    }
+
+    // 计算总金额
+    double totalAmount = 0.0;
+    for (var item in selectedItems) {
+      totalAmount += (item['price'] ?? 0.0) * (item['quantity'] ?? 1);
+    }
+
+    // 跳转到结算页面
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) =>
+            Checkout(cartItems: selectedItems, totalAmount: totalAmount),
       ),
     );
   }
