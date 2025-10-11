@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../product/product_list.dart';
+import 'product_list.dart';
 
 class Category extends StatefulWidget {
   const Category({super.key});
@@ -29,6 +31,7 @@ class _CategoryState extends State<Category> {
 
   // 精选推荐商品数据
   final List<Map<String, dynamic>> _featuredProducts = [
+    {'name': 'iPhone', 'image': 'assets/images/iphone.png', 'type': 'iphone'},
     {'name': '月饼', 'image': 'assets/images/mooncake.png'},
     {'name': '中秋礼盒', 'image': 'assets/images/gift_box.png'},
     {'name': '中秋家宴', 'image': 'assets/images/feast.png'},
@@ -268,9 +271,24 @@ class _CategoryState extends State<Category> {
   Widget _buildProductItem(Map<String, dynamic> product) {
     return GestureDetector(
       onTap: () {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('点击了${product['name']}')));
+        // 根据商品类型跳转到不同页面
+        if (product['type'] == 'iphone') {
+          // 跳转到iPhone商品列表页面
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) =>
+                  ProductListPage(categoryName: product['name']),
+            ),
+          );
+        } else {
+          // 跳转到普通商品列表页面
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) =>
+                  ProductList(category: product['name'], searchKeyword: ''),
+            ),
+          );
+        }
       },
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
