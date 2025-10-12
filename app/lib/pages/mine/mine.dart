@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'orders.dart';
 import 'settings.dart';
 import 'address_list.dart';
+import '../coupon/coupon_page.dart';
 
 class Mine extends StatefulWidget {
   Mine({super.key});
@@ -361,19 +362,29 @@ class _MineState extends State<Mine> {
   }
 
   Widget _buildFinancialItem(String value, String label) {
-    return Column(
-      children: [
-        Text(
-          value,
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-            color: Colors.black87,
+    return GestureDetector(
+      onTap: () {
+        if (label == '红包卡券') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const CouponPage()),
+          );
+        }
+      },
+      child: Column(
+        children: [
+          Text(
+            value,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
+            ),
           ),
-        ),
-        const SizedBox(height: 4),
-        Text(label, style: const TextStyle(fontSize: 12, color: Colors.grey)),
-      ],
+          const SizedBox(height: 4),
+          Text(label, style: const TextStyle(fontSize: 12, color: Colors.grey)),
+        ],
+      ),
     );
   }
 
