@@ -5,6 +5,7 @@ import 'cart/cart.dart';
 import 'mine/mine.dart';
 import 'instant_delivery/instant_delivery.dart';
 import 'takeaway/takeaway.dart';
+import 'customer_service/customer_service_chat.dart';
 
 class MainNavigation extends StatefulWidget {
   const MainNavigation({super.key});
@@ -22,6 +23,7 @@ class _MainNavigationState extends State<MainNavigation> {
     const Takeaway(),
     const Category(),
     const Cart(),
+    const CustomerServiceChat(),
     Mine(),
   ];
 
@@ -51,6 +53,7 @@ class _MainNavigationState extends State<MainNavigation> {
             icon: Icon(Icons.shopping_cart),
             label: '购物车',
           ),
+          BottomNavigationBarItem(icon: Icon(Icons.support_agent), label: '客服'),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: '我的'),
         ],
       ),
