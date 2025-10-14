@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../product/product_detail.dart';
 
 class CategoryProducts extends StatefulWidget {
   final String categoryName;
@@ -347,133 +348,144 @@ class _CategoryProductsState extends State<CategoryProducts> {
 
   /// 构建商品卡片
   Widget _buildProductCard(Map<String, dynamic> product) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // 商品图片
-          Container(
-            width: 100,
-            height: 100,
-            decoration: BoxDecoration(
-              color: Colors.grey[200],
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Stack(
-              children: [
-                const Center(
-                  child: Icon(Icons.image, size: 40, color: Colors.grey),
-                ),
-                if (product['tag'] != null)
-                  Positioned(
-                    top: 4,
-                    left: 4,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 6,
-                        vertical: 2,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.orange,
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: Text(
-                        product['tag'],
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 8,
-                          fontWeight: FontWeight.bold,
+    return GestureDetector(
+      onTap: () {
+        // 跳转到商品详情页面
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ProductDetail(product: product),
+          ),
+        );
+      },
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 16),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // 商品图片
+            Container(
+              width: 100,
+              height: 100,
+              decoration: BoxDecoration(
+                color: Colors.grey[200],
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Stack(
+                children: [
+                  const Center(
+                    child: Icon(Icons.image, size: 40, color: Colors.grey),
+                  ),
+                  if (product['tag'] != null)
+                    Positioned(
+                      top: 4,
+                      left: 4,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 2,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.orange,
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Text(
+                          product['tag'],
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 8,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-              ],
+                ],
+              ),
             ),
-          ),
-          const SizedBox(width: 12),
-          // 商品信息
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  product['name'],
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    height: 1.2,
+            const SizedBox(width: 12),
+            // 商品信息
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    product['name'],
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      height: 1.2,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  product['subtitle'],
-                  style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  product['sales'],
-                  style: TextStyle(fontSize: 10, color: Colors.grey[500]),
-                ),
-                const SizedBox(height: 8),
-                Row(
-                  children: [
-                    Text(
-                      product['price'],
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.red,
+                  const SizedBox(height: 4),
+                  Text(
+                    product['subtitle'],
+                    style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    product['sales'],
+                    style: TextStyle(fontSize: 10, color: Colors.grey[500]),
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Text(
+                        product['price'],
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.red,
+                        ),
                       ),
-                    ),
-                    Text(
-                      product['unit'],
-                      style: const TextStyle(fontSize: 12, color: Colors.red),
-                    ),
-                    const Spacer(),
+                      Text(
+                        product['unit'],
+                        style: const TextStyle(fontSize: 12, color: Colors.red),
+                      ),
+                      const Spacer(),
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: Colors.blue,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: const Icon(
+                          Icons.shopping_cart,
+                          color: Colors.white,
+                          size: 16,
+                        ),
+                      ),
+                    ],
+                  ),
+                  if (product['badge'] != null) ...[
+                    const SizedBox(height: 8),
                     Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: Colors.blue,
-                        borderRadius: BorderRadius.circular(20),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
                       ),
-                      child: const Icon(
-                        Icons.shopping_cart,
-                        color: Colors.white,
-                        size: 16,
+                      decoration: BoxDecoration(
+                        color:
+                            product['badgeColor']?.withValues(alpha: 0.1) ??
+                            Colors.grey[100],
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Text(
+                        product['badge'],
+                        style: TextStyle(
+                          fontSize: 10,
+                          color: product['badgeColor'] ?? Colors.grey[600],
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ),
                   ],
-                ),
-                if (product['badge'] != null) ...[
-                  const SizedBox(height: 8),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color:
-                          product['badgeColor']?.withValues(alpha: 0.1) ??
-                          Colors.grey[100],
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child: Text(
-                      product['badge'],
-                      style: TextStyle(
-                        fontSize: 10,
-                        color: product['badgeColor'] ?? Colors.grey[600],
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
                 ],
-              ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
