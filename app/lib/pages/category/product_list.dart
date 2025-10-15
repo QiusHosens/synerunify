@@ -15,6 +15,7 @@ class _ProductListPageState extends State<ProductListPage> {
   bool _isPriceAscending = false;
   String _selectedFilter = '推荐';
   List<Map<String, dynamic>> _filteredProducts = [];
+  bool _isGridView = false; // 网格模式状态
 
   // 商品数据，支持不同类型的商品
   List<Map<String, dynamic>> _products = [];
@@ -276,14 +277,7 @@ class _ProductListPageState extends State<ProductListPage> {
                   _buildFilterBar(),
                   // 商品列表
                   Expanded(
-                    child: ListView.builder(
-                      padding: const EdgeInsets.all(16),
-                      itemCount: _filteredProducts.length,
-                      itemBuilder: (context, index) {
-                        final product = _filteredProducts[index];
-                        return _buildProductCard(product);
-                      },
-                    ),
+                    child: _isGridView ? _buildGridView() : _buildListView(),
                   ),
                 ],
               ),
@@ -323,8 +317,15 @@ class _ProductListPageState extends State<ProductListPage> {
               const Spacer(),
               // 右侧图标
               IconButton(
-                icon: const Icon(Icons.grid_view, color: Colors.black),
-                onPressed: () {},
+                icon: Icon(
+                  _isGridView ? Icons.view_list : Icons.grid_view,
+                  color: Colors.black,
+                ),
+                onPressed: () {
+                  setState(() {
+                    _isGridView = !_isGridView;
+                  });
+                },
               ),
               IconButton(
                 icon: const Icon(Icons.more_vert, color: Colors.black),
@@ -454,6 +455,36 @@ class _ProductListPageState extends State<ProductListPage> {
           ),
         ),
       ),
+    );
+  }
+
+  /// 构建列表视图
+  Widget _buildListView() {
+    return ListView.builder(
+      padding: const EdgeInsets.all(16),
+      itemCount: _filteredProducts.length,
+      itemBuilder: (context, index) {
+        final product = _filteredProducts[index];
+        return _buildProductCard(product);
+      },
+    );
+  }
+
+  /// 构建网格视图
+  Widget _buildGridView() {
+    return GridView.builder(
+      padding: const EdgeInsets.all(16),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        childAspectRatio: 0.7,
+        crossAxisSpacing: 12,
+        mainAxisSpacing: 12,
+      ),
+      itemCount: _filteredProducts.length,
+      itemBuilder: (context, index) {
+        final product = _filteredProducts[index];
+        return _buildGridProductCard(product);
+      },
     );
   }
 
@@ -754,6 +785,164 @@ class _ProductListPageState extends State<ProductListPage> {
                       ),
                     ),
                   ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// 构建网格模式商品卡片
+  Widget _buildGridProductCard(Map<String, dynamic> product) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            spreadRadius: 1,
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => ProductDetail(product: product),
+              ),
+            );
+          },
+          borderRadius: BorderRadius.circular(8),
+          child: Padding(
+            padding: const EdgeInsets.all(8),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // 商品图片
+                Expanded(
+                  flex: 3,
+                  child: Stack(
+                    children: [
+                      Container(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: Colors.grey[200],
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Center(
+                          child: Icon(
+                            widget.categoryName == 'iPhone'
+                                ? Icons.phone_iphone
+                                : Icons.shopping_bag,
+                            size: 40,
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ),
+                      // 标签
+                      if (product['tags'] != null)
+                        ...(product['tags'] as List)
+                            .map(
+                              (tag) => Positioned(
+                                top: 4,
+                                left: 4,
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 4,
+                                    vertical: 2,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: tag == 'HOT'
+                                        ? Colors.red
+                                        : Colors.orange,
+                                    borderRadius: BorderRadius.circular(3),
+                                  ),
+                                  child: Text(
+                                    tag as String,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 8,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            )
+                            .toList(),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 8),
+                // 商品名称
+                Expanded(
+                  flex: 2,
+                  child: Text(
+                    product['name'] as String,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                      height: 1.2,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                // 价格信息
+                Row(
+                  children: [
+                    Text(
+                      '¥${product['price']}',
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.red,
+                      ),
+                    ),
+                    if (product['originalPrice'] != null) ...[
+                      const SizedBox(width: 4),
+                      Text(
+                        '¥${product['originalPrice']}',
+                        style: TextStyle(
+                          fontSize: 10,
+                          color: Colors.grey[500],
+                          decoration: TextDecoration.lineThrough,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+                const SizedBox(height: 4),
+                // 销量信息
+                Text(
+                  product['sales'] as String,
+                  style: TextStyle(fontSize: 10, color: Colors.grey[600]),
+                ),
+                const SizedBox(height: 4),
+                // 进店按钮
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.blue,
+                    borderRadius: BorderRadius.circular(3),
+                  ),
+                  child: const Text(
+                    '进店>',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 10,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
                 ),
               ],
             ),
