@@ -303,20 +303,12 @@ class _ProductListPageState extends State<ProductListPage> {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: Row(
             children: [
-              // 时间显示
-              const Text(
-                '15:29',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                ),
-              ),
-              const SizedBox(width: 8),
-              const Icon(
-                Icons.signal_cellular_4_bar,
-                size: 16,
-                color: Colors.black,
+              // 回退按钮
+              IconButton(
+                icon: const Icon(Icons.arrow_back, color: Colors.black),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
               ),
               const Spacer(),
               // 页面标题
