@@ -83,70 +83,70 @@ class _CategoryState extends State<Category> {
     return Column(
       children: [
         // 状态栏
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          child: Row(
-            children: [
-              // 时间显示
-              const Text(
-                '14:01',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                ),
-              ),
-              const SizedBox(width: 8),
-              const Icon(
-                Icons.signal_cellular_4_bar,
-                size: 16,
-                color: Colors.black,
-              ),
-              const Spacer(),
-              // 店铺位置
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 6,
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withValues(alpha: 0.2),
-                      blurRadius: 4,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: const Text(
-                  '中和锦汇天府店',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.black,
-                  ),
-                ),
-              ),
-              const Spacer(),
-              // 状态栏图标
-              Row(
-                children: [
-                  const Icon(
-                    Icons.signal_cellular_4_bar,
-                    size: 16,
-                    color: Colors.black,
-                  ),
-                  const SizedBox(width: 4),
-                  const Icon(Icons.wifi, size: 16, color: Colors.black),
-                  const SizedBox(width: 4),
-                  const Icon(Icons.battery_full, size: 16, color: Colors.black),
-                ],
-              ),
-            ],
-          ),
-        ),
+        // Container(
+        //   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        //   child: Row(
+        //     children: [
+        //       // 时间显示
+        //       const Text(
+        //         '14:01',
+        //         style: TextStyle(
+        //           fontSize: 16,
+        //           fontWeight: FontWeight.bold,
+        //           color: Colors.black,
+        //         ),
+        //       ),
+        //       const SizedBox(width: 8),
+        //       const Icon(
+        //         Icons.signal_cellular_4_bar,
+        //         size: 16,
+        //         color: Colors.black,
+        //       ),
+        //       const Spacer(),
+        //       // 店铺位置
+        //       Container(
+        //         padding: const EdgeInsets.symmetric(
+        //           horizontal: 12,
+        //           vertical: 6,
+        //         ),
+        //         decoration: BoxDecoration(
+        //           color: Colors.white,
+        //           borderRadius: BorderRadius.circular(20),
+        //           boxShadow: [
+        //             BoxShadow(
+        //               color: Colors.grey.withValues(alpha: 0.2),
+        //               blurRadius: 4,
+        //               offset: const Offset(0, 2),
+        //             ),
+        //           ],
+        //         ),
+        //         child: const Text(
+        //           '中和锦汇天府店',
+        //           style: TextStyle(
+        //             fontSize: 14,
+        //             fontWeight: FontWeight.w500,
+        //             color: Colors.black,
+        //           ),
+        //         ),
+        //       ),
+        //       const Spacer(),
+        //       // 状态栏图标
+        //       Row(
+        //         children: [
+        //           const Icon(
+        //             Icons.signal_cellular_4_bar,
+        //             size: 16,
+        //             color: Colors.black,
+        //           ),
+        //           const SizedBox(width: 4),
+        //           const Icon(Icons.wifi, size: 16, color: Colors.black),
+        //           const SizedBox(width: 4),
+        //           const Icon(Icons.battery_full, size: 16, color: Colors.black),
+        //         ],
+        //       ),
+        //     ],
+        //   ),
+        // ),
         // 蓝色标题栏
         Container(
           width: double.infinity,
