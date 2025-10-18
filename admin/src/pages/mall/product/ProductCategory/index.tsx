@@ -140,12 +140,14 @@ export default function MallProductCategory() {
   const loadImages = (list: Array<MallProductCategoryResponse>) => {
     for (let index = 0, len = list.length; index < len; index++) {
       const category = list[index];
-      // 设置图片
-      downloadSystemFile(category.file_id, (progress) => { }).then(file => {
-        setRecords(prev =>
-          prev.map(item => item.id === category.id ? { ...item, previewUrl: window.URL.createObjectURL(file) } : item)
-        )
-      })
+      if (category.file_id) {
+        // 设置图片
+        downloadSystemFile(category.file_id, (progress) => { }).then(file => {
+          setRecords(prev =>
+            prev.map(item => item.id === category.id ? { ...item, previewUrl: window.URL.createObjectURL(file) } : item)
+          )
+        })
+      }
     }
   }
 

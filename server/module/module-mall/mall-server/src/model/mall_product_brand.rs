@@ -12,7 +12,7 @@ pub struct Model {
     
     pub name: String, // 品牌名称
     
-    pub file_id: i64, // 品牌图片ID
+    pub file_id: Option<i64>, // 品牌图片ID
     
     pub sort: Option<i32>, // 品牌排序
     

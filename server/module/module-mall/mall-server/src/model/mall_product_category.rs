@@ -14,7 +14,7 @@ pub struct Model {
     
     pub name: String, // 分类名称
     
-    pub file_id: i64, // 分类图片ID
+    pub file_id: Option<i64>, // 分类图片ID
     
     pub sort: Option<i32>, // 分类排序
     

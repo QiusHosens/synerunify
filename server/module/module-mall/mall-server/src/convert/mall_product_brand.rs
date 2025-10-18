@@ -20,7 +20,7 @@ pub fn update_request_to_model(request: &UpdateMallProductBrandRequest, existing
         active_model.name = Set(name.clone());
     }
     if let Some(file_id) = &request.file_id { 
-        active_model.file_id = Set(file_id.clone());
+        active_model.file_id = Set(Some(file_id.clone()));
     }
     if let Some(sort) = &request.sort { 
         active_model.sort = Set(Some(sort.clone()));

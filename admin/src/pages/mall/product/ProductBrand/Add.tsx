@@ -58,10 +58,6 @@ const MallProductBrandAdd = forwardRef(({ onSubmit }: MallProductBrandAddProps, 
       newErrors.name = t('global.error.input.please') + t('common.title.name');
     }
 
-    if (!formValues.file_id && formValues.file_id != 0) {
-      newErrors.file_id = t('global.error.select.please') + t('page.mall.product.brand.title.file');
-    }
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };

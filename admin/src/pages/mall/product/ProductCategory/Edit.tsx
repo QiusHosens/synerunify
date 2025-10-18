@@ -123,10 +123,6 @@ const MallProductCategoryEdit = forwardRef(({ onSubmit }: MallProductCategoryEdi
       newErrors.name = t('common.error.name');
     }
 
-    if (!mallProductCategory.file_id && mallProductCategory.file_id != 0) {
-      newErrors.file_id = t('global.error.select.please') + t('page.mall.product.category.title.file');
-    }
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };

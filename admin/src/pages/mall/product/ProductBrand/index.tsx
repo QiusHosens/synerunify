@@ -131,12 +131,14 @@ export default function MallProductBrand() {
   const loadImages = (list: Array<MallProductBrandResponse>) => {
     for (let index = 0, len = list.length; index < len; index++) {
       const brand = list[index];
-      // 设置图片
-      downloadSystemFile(brand.file_id, (progress) => { }).then(file => {
-        setRecords(prev =>
-          prev.map(item => item.id === brand.id ? { ...item, previewUrl: window.URL.createObjectURL(file) } : item)
-        )
-      })
+      if (brand.file_id) {
+        // 设置图片
+        downloadSystemFile(brand.file_id, (progress) => { }).then(file => {
+          setRecords(prev =>
+            prev.map(item => item.id === brand.id ? { ...item, previewUrl: window.URL.createObjectURL(file) } : item)
+          )
+        })
+      }
     }
   }
 
