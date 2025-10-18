@@ -11,7 +11,7 @@
  Target Server Version : 80200 (8.2.0)
  File Encoding         : 65001
 
- Date: 13/09/2025 14:08:12
+ Date: 18/10/2025 23:15:19
 */
 
 SET NAMES utf8mb4;
@@ -1190,7 +1190,7 @@ DROP TABLE IF EXISTS `mall_product_brand`;
 CREATE TABLE `mall_product_brand`  (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '品牌编号',
   `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '品牌名称',
-  `file_id` bigint NOT NULL COMMENT '品牌图片ID',
+  `file_id` bigint NULL DEFAULT NULL COMMENT '品牌图片ID',
   `sort` int NULL DEFAULT 0 COMMENT '品牌排序',
   `description` varchar(1024) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '品牌描述',
   `status` tinyint NOT NULL DEFAULT 0 COMMENT '状态',
@@ -1240,7 +1240,7 @@ CREATE TABLE `mall_product_category`  (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '分类编号',
   `parent_id` bigint NOT NULL COMMENT '父分类编号',
   `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '分类名称',
-  `file_id` bigint NOT NULL COMMENT '分类图片ID',
+  `file_id` bigint NULL DEFAULT NULL COMMENT '分类图片ID',
   `sort` int NULL DEFAULT 0 COMMENT '分类排序',
   `status` tinyint NOT NULL DEFAULT 0 COMMENT '状态',
   `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
@@ -1250,15 +1250,73 @@ CREATE TABLE `mall_product_category`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '商品分类' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 67 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '商品分类' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_product_category
 -- ----------------------------
-INSERT INTO `mall_product_category` VALUES (1, 0, '手机', 78, 0, 0, 1, '2025-08-12 02:20:15', 1, '2025-08-12 08:07:04', b'0', 1);
-INSERT INTO `mall_product_category` VALUES (2, 0, '电脑', 72, 1, 0, 1, '2025-08-12 02:56:31', 1, '2025-08-12 02:56:31', b'0', 1);
-INSERT INTO `mall_product_category` VALUES (3, 1, '普通手机', 73, 0, 0, 1, '2025-08-12 03:00:54', 1, '2025-08-12 03:00:54', b'0', 1);
-INSERT INTO `mall_product_category` VALUES (4, 1, '智能手机', 73, 1, 0, 1, '2025-08-12 03:01:10', 1, '2025-08-12 05:51:46', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (5, 0, '食品', NULL, 0, 0, 1, '2025-10-18 13:16:31', 1, '2025-10-18 13:16:31', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (6, 0, '电器', NULL, 1, 0, 1, '2025-10-18 13:18:19', 1, '2025-10-18 13:18:19', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (7, 0, '洗护', NULL, 2, 0, 1, '2025-10-18 13:18:23', 1, '2025-10-18 13:18:23', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (8, 0, '女装', NULL, 3, 0, 1, '2025-10-18 13:18:30', 1, '2025-10-18 13:18:30', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (9, 0, '手机', NULL, 4, 0, 1, '2025-10-18 13:18:38', 1, '2025-10-18 13:18:38', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (10, 0, '健康', NULL, 5, 0, 1, '2025-10-18 13:18:45', 1, '2025-10-18 13:18:45', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (11, 0, '男装', NULL, 6, 0, 1, '2025-10-18 13:18:52', 1, '2025-10-18 13:18:52', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (12, 0, '美妆', NULL, 7, 0, 1, '2025-10-18 13:19:02', 1, '2025-10-18 13:19:02', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (13, 0, '电脑', NULL, 8, 0, 1, '2025-10-18 13:19:07', 1, '2025-10-18 13:19:07', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (14, 0, '运动', NULL, 9, 0, 1, '2025-10-18 13:19:15', 1, '2025-10-18 13:19:15', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (15, 0, '内衣', NULL, 10, 0, 1, '2025-10-18 13:19:30', 1, '2025-10-18 13:19:30', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (16, 0, '母婴', NULL, 11, 0, 1, '2025-10-18 13:19:37', 1, '2025-10-18 13:19:37', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (17, 0, '数码', NULL, 12, 0, 1, '2025-10-18 13:19:43', 1, '2025-10-18 13:19:43', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (18, 0, '百货', NULL, 13, 0, 1, '2025-10-18 13:19:52', 1, '2025-10-18 13:19:52', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (19, 0, '鞋包', NULL, 14, 0, 1, '2025-10-18 13:19:58', 1, '2025-10-18 13:19:58', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (20, 0, '办公', NULL, 15, 0, 1, '2025-10-18 13:20:05', 1, '2025-10-18 13:20:05', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (21, 0, '家装', NULL, 16, 0, 1, '2025-10-18 13:20:15', 1, '2025-10-18 13:20:15', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (22, 0, '饰品', NULL, 17, 0, 1, '2025-10-18 13:20:26', 1, '2025-10-18 13:20:26', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (23, 0, '车品', NULL, 18, 0, 1, '2025-10-18 13:20:41', 1, '2025-10-18 13:20:41', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (24, 0, '图书', NULL, 19, 0, 1, '2025-10-18 13:20:48', 1, '2025-10-18 13:20:48', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (25, 0, '生鲜', NULL, 20, 0, 1, '2025-10-18 13:21:01', 1, '2025-10-18 13:21:01', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (26, 0, '家纺', NULL, 21, 0, 1, '2025-10-18 13:21:11', 1, '2025-10-18 13:21:11', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (27, 0, '宠物', NULL, 22, 0, 1, '2025-10-18 13:21:17', 1, '2025-10-18 13:21:17', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (28, 0, '奢品', NULL, 23, 0, 1, '2025-10-18 13:21:26', 1, '2025-10-18 13:21:26', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (29, 9, '热卖品牌', NULL, 0, 0, 1, '2025-10-18 13:38:17', 1, '2025-10-18 13:38:17', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (30, 9, '手机配件', NULL, 1, 0, 1, '2025-10-18 13:38:33', 1, '2025-10-18 13:38:33', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (31, 9, '手机', NULL, 2, 0, 1, '2025-10-18 13:38:40', 1, '2025-10-18 13:38:40', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (32, 9, '运营商', NULL, 3, 0, 1, '2025-10-18 13:39:05', 1, '2025-10-18 13:39:05', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (33, 29, 'iPhone', 112, 0, 0, 1, '2025-10-18 13:40:08', 1, '2025-10-18 13:40:08', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (34, 29, '小米', 113, 1, 0, 1, '2025-10-18 13:41:01', 1, '2025-10-18 13:41:01', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (35, 29, '华为', 114, 2, 0, 1, '2025-10-18 13:41:47', 1, '2025-10-18 13:41:47', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (36, 29, '荣耀', 115, 3, 0, 1, '2025-10-18 13:41:59', 1, '2025-10-18 13:41:59', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (37, 29, 'OPPO', 116, 4, 0, 1, '2025-10-18 13:42:39', 1, '2025-10-18 13:42:39', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (38, 29, '一加', 117, 5, 0, 1, '2025-10-18 13:43:25', 1, '2025-10-18 13:43:25', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (39, 29, 'vivo', 118, 6, 0, 1, '2025-10-18 13:43:39', 1, '2025-10-18 13:43:39', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (40, 29, '三星', 119, 7, 0, 1, '2025-10-18 13:43:48', 1, '2025-10-18 13:43:48', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (41, 29, '魅族', 120, 8, 0, 1, '2025-10-18 13:44:01', 1, '2025-10-18 13:44:01', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (42, 29, 'realme', 121, 9, 0, 1, '2025-10-18 13:44:21', 1, '2025-10-18 13:44:21', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (43, 29, '努比亚', 122, 10, 0, 1, '2025-10-18 13:44:38', 1, '2025-10-18 13:44:38', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (44, 29, '摩托罗拉', 123, 11, 0, 1, '2025-10-18 13:45:05', 1, '2025-10-18 13:45:05', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (45, 30, '苹果周边', 124, 0, 0, 1, '2025-10-18 13:56:41', 1, '2025-10-18 13:56:41', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (46, 30, '手机饰品', 125, 1, 0, 1, '2025-10-18 13:57:17', 1, '2025-10-18 13:57:17', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (47, 30, '充电宝', 126, 2, 0, 1, '2025-10-18 13:57:28', 1, '2025-10-18 13:57:28', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (48, 30, '手机散热器', 127, 3, 0, 1, '2025-10-18 13:57:46', 1, '2025-10-18 13:57:46', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (49, 30, '手机壳/保护套', 128, 4, 0, 1, '2025-10-18 13:58:28', 1, '2025-10-18 13:58:28', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (50, 30, '手机贴膜', 129, 5, 0, 1, '2025-10-18 13:58:40', 1, '2025-10-18 13:58:40', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (51, 30, '直插充电器', 130, 6, 0, 1, '2025-10-18 13:59:08', 1, '2025-10-18 13:59:08', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (52, 30, '手机支架', 131, 7, 0, 1, '2025-10-18 13:59:54', 1, '2025-10-18 13:59:54', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (53, 30, '拍照配件', 132, 8, 0, 1, '2025-10-18 14:13:51', 1, '2025-10-18 14:13:51', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (54, 30, '无线充电器', 133, 9, 0, 1, '2025-10-18 14:14:10', 1, '2025-10-18 14:14:10', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (55, 30, '手机辅助配件', 134, 10, 0, 1, '2025-10-18 14:14:31', 1, '2025-10-18 14:14:31', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (56, 31, '游戏手机', 135, 0, 0, 1, '2025-10-18 14:14:55', 1, '2025-10-18 14:14:55', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (57, 31, '功能机', 136, 1, 0, 1, '2025-10-18 14:15:07', 1, '2025-10-18 14:15:07', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (58, 31, '拍照手机', 137, 2, 0, 1, '2025-10-18 14:15:37', 1, '2025-10-18 14:15:37', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (59, 31, '5G手机', 138, 3, 0, 1, '2025-10-18 14:16:10', 1, '2025-10-18 14:16:10', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (60, 31, '长续航手机', 139, 4, 0, 1, '2025-10-18 14:16:25', 1, '2025-10-18 14:16:25', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (61, 32, '中国移动', 140, 0, 0, 1, '2025-10-18 14:18:12', 1, '2025-10-18 14:18:12', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (62, 32, '中国联通', 141, 1, 0, 1, '2025-10-18 14:18:20', 1, '2025-10-18 14:18:20', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (63, 32, '中国电信', 142, 2, 0, 1, '2025-10-18 14:18:31', 1, '2025-10-18 14:18:31', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (64, 32, '号卡', 143, 3, 0, 1, '2025-10-18 14:19:03', 1, '2025-10-18 14:19:03', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (65, 32, '上网卡', 144, 4, 0, 1, '2025-10-18 14:19:25', 1, '2025-10-18 14:19:25', b'0', 1);
+INSERT INTO `mall_product_category` VALUES (66, 32, '5G流量包', 145, 5, 0, 1, '2025-10-18 14:19:41', 1, '2025-10-18 14:19:41', b'0', 1);
 
 -- ----------------------------
 -- Table structure for mall_product_comment
@@ -2506,11 +2564,12 @@ CREATE TABLE `mall_trade_delivery_pick_up_store`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '自提门店' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '自提门店' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_trade_delivery_pick_up_store
 -- ----------------------------
+INSERT INTO `mall_trade_delivery_pick_up_store` VALUES (1, '测试门店', '测试门店简介', '18888888888', 110101, '1号', 111, '10:05:00', '23:05:00', 31.012, 104.0123, '', 0, 1, '2025-09-13 13:22:49', 1, '2025-09-14 02:22:54', b'0', 1);
 
 -- ----------------------------
 -- Table structure for mall_trade_order
@@ -2861,7 +2920,7 @@ CREATE TABLE `system_file`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 110 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '文件信息表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 146 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '文件信息表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of system_file
@@ -2975,6 +3034,42 @@ INSERT INTO `system_file` VALUES (106, '手机.png', 'image/png', 2741, '2025/09
 INSERT INTO `system_file` VALUES (107, '笔记本.png', 'image/png', 2492, '2025/09/05/89624721355706368_笔记本.png', 1, '0000', 1, 1, '2025-09-05 07:36:38', 1, '2025-09-05 07:36:38', b'0', 1);
 INSERT INTO `system_file` VALUES (108, '手机.png', 'image/png', 2741, '2025/09/05/89624804289679360_手机.png', 1, '0000', 1, 1, '2025-09-05 07:36:58', 1, '2025-09-05 07:36:58', b'0', 1);
 INSERT INTO `system_file` VALUES (109, '手机.png', 'image/png', 2741, '2025/09/11/91799217550397440_手机.png', 1, '0000', 1, 1, '2025-09-11 07:37:16', 1, '2025-09-11 07:37:16', b'0', 1);
+INSERT INTO `system_file` VALUES (110, '1980835f395ef4922a05d135b99c62e.jpg', 'image/jpeg', 48337, '2025/09/13/92536958315663360_1980835f395ef4922a05d135b99c62e.jpg', 1, '0000', 1, 1, '2025-09-13 08:28:50', 1, '2025-09-13 08:28:50', b'0', 1);
+INSERT INTO `system_file` VALUES (111, '1980835f395ef4922a05d135b99c62e.jpg', 'image/jpeg', 48337, '2025/09/13/92537620336218112_1980835f395ef4922a05d135b99c62e.jpg', 1, '0000', 1, 1, '2025-09-13 08:31:28', 1, '2025-09-13 08:31:28', b'0', 1);
+INSERT INTO `system_file` VALUES (112, 'iPhone.jpg', 'image/jpeg', 3871, '2025/10/18/105298809872977920_iPhone.jpg', 1, '0000', 1, 1, '2025-10-18 13:40:04', 1, '2025-10-18 13:40:04', b'0', 1);
+INSERT INTO `system_file` VALUES (113, '小米.jpg', 'image/jpeg', 8365, '2025/10/18/105299022490636288_小米.jpg', 1, '0000', 1, 1, '2025-10-18 13:40:55', 1, '2025-10-18 13:40:55', b'0', 1);
+INSERT INTO `system_file` VALUES (114, '华为.jpg', 'image/jpeg', 14834, '2025/10/18/105299234718224384_华为.jpg', 1, '0000', 1, 1, '2025-10-18 13:41:46', 1, '2025-10-18 13:41:46', b'0', 1);
+INSERT INTO `system_file` VALUES (115, '荣耀.jpg', 'image/jpeg', 4041, '2025/10/18/105299281233055744_荣耀.jpg', 1, '0000', 1, 1, '2025-10-18 13:41:57', 1, '2025-10-18 13:41:57', b'0', 1);
+INSERT INTO `system_file` VALUES (116, 'OPPO.png', 'image/png', 109772, '2025/10/18/105299441971367936_OPPO.png', 1, '0000', 1, 1, '2025-10-18 13:42:35', 1, '2025-10-18 13:42:35', b'0', 1);
+INSERT INTO `system_file` VALUES (117, '一加.jpg', 'image/jpeg', 4158, '2025/10/18/105299626227142656_一加.jpg', 1, '0000', 1, 1, '2025-10-18 13:43:19', 1, '2025-10-18 13:43:19', b'0', 1);
+INSERT INTO `system_file` VALUES (118, 'vivo.jpg', 'image/jpeg', 6450, '2025/10/18/105299687879217152_vivo.jpg', 1, '0000', 1, 1, '2025-10-18 13:43:34', 1, '2025-10-18 13:43:34', b'0', 1);
+INSERT INTO `system_file` VALUES (119, '三星.jpg', 'image/jpeg', 3722, '2025/10/18/105299738806456320_三星.jpg', 1, '0000', 1, 1, '2025-10-18 13:43:46', 1, '2025-10-18 13:43:46', b'0', 1);
+INSERT INTO `system_file` VALUES (120, '魅族.jpg', 'image/jpeg', 4771, '2025/10/18/105299788194385920_魅族.jpg', 1, '0000', 1, 1, '2025-10-18 13:43:57', 1, '2025-10-18 13:43:57', b'0', 1);
+INSERT INTO `system_file` VALUES (121, 'realme.jpg', 'image/jpeg', 8916, '2025/10/18/105299860730679296_realme.jpg', 1, '0000', 1, 1, '2025-10-18 13:44:15', 1, '2025-10-18 13:44:15', b'0', 1);
+INSERT INTO `system_file` VALUES (122, '努比亚.jpg', 'image/jpeg', 6849, '2025/10/18/105299942972592128_努比亚.jpg', 1, '0000', 1, 1, '2025-10-18 13:44:34', 1, '2025-10-18 13:44:34', b'0', 1);
+INSERT INTO `system_file` VALUES (123, '摩托罗拉.jpg', 'image/jpeg', 6009, '2025/10/18/105300050590044160_摩托罗拉.jpg', 1, '0000', 1, 1, '2025-10-18 13:45:00', 1, '2025-10-18 13:45:00', b'0', 1);
+INSERT INTO `system_file` VALUES (124, '苹果周边.png', 'image/png', 6182, '2025/10/18/105302984254033920_苹果周边.png', 1, '0000', 1, 1, '2025-10-18 13:56:39', 1, '2025-10-18 13:56:39', b'0', 1);
+INSERT INTO `system_file` VALUES (125, '手机饰品.jpg', 'image/jpeg', 8012, '2025/10/18/105303121596518400_手机饰品.jpg', 1, '0000', 1, 1, '2025-10-18 13:57:12', 1, '2025-10-18 13:57:12', b'0', 1);
+INSERT INTO `system_file` VALUES (126, '充电宝.jpg', 'image/jpeg', 2073, '2025/10/18/105303180375494656_充电宝.jpg', 1, '0000', 1, 1, '2025-10-18 13:57:26', 1, '2025-10-18 13:57:26', b'0', 1);
+INSERT INTO `system_file` VALUES (127, '手机散热器.jpg', 'image/jpeg', 10313, '2025/10/18/105303239993331712_手机散热器.jpg', 1, '0000', 1, 1, '2025-10-18 13:57:40', 1, '2025-10-18 13:57:40', b'0', 1);
+INSERT INTO `system_file` VALUES (128, '手机壳_保护套.jpg', 'image/jpeg', 5296, '2025/10/18/105303421866741760_手机壳_保护套.jpg', 1, '0000', 1, 1, '2025-10-18 13:58:24', 1, '2025-10-18 13:58:24', b'0', 1);
+INSERT INTO `system_file` VALUES (129, '手机贴膜.png', 'image/png', 16745, '2025/10/18/105303478389182464_手机贴膜.png', 1, '0000', 1, 1, '2025-10-18 13:58:37', 1, '2025-10-18 13:58:37', b'0', 1);
+INSERT INTO `system_file` VALUES (130, '直插充电器.png', 'image/png', 8423, '2025/10/18/105303588279947264_直插充电器.png', 1, '0000', 1, 1, '2025-10-18 13:59:03', 1, '2025-10-18 13:59:03', b'0', 1);
+INSERT INTO `system_file` VALUES (131, '手机支架.png', 'image/png', 11671, '2025/10/18/105303771814301696_手机支架.png', 1, '0000', 1, 1, '2025-10-18 13:59:47', 1, '2025-10-18 13:59:47', b'0', 1);
+INSERT INTO `system_file` VALUES (132, '拍照配件.jpg', 'image/jpeg', 2788, '2025/10/18/105307259940114432_拍照配件.jpg', 1, '0000', 1, 1, '2025-10-18 14:13:39', 1, '2025-10-18 14:13:39', b'0', 1);
+INSERT INTO `system_file` VALUES (133, '无线充电器.png', 'image/png', 15484, '2025/10/18/105307367180079104_无线充电器.png', 1, '0000', 1, 1, '2025-10-18 14:14:04', 1, '2025-10-18 14:14:04', b'0', 1);
+INSERT INTO `system_file` VALUES (134, '手游辅助配件.jpg', 'image/jpeg', 6864, '2025/10/18/105307436784553984_手游辅助配件.jpg', 1, '0000', 1, 1, '2025-10-18 14:14:21', 1, '2025-10-18 14:14:21', b'0', 1);
+INSERT INTO `system_file` VALUES (135, '游戏手机.png', 'image/png', 10657, '2025/10/18/105307555374305280_游戏手机.png', 1, '0000', 1, 1, '2025-10-18 14:14:49', 1, '2025-10-18 14:14:49', b'0', 1);
+INSERT INTO `system_file` VALUES (136, '功能机.png', 'image/png', 16328, '2025/10/18/105307622978097152_功能机.png', 1, '0000', 1, 1, '2025-10-18 14:15:05', 1, '2025-10-18 14:15:05', b'0', 1);
+INSERT INTO `system_file` VALUES (137, '拍照手机.jpg', 'image/jpeg', 4847, '2025/10/18/105307743237181440_拍照手机.jpg', 1, '0000', 1, 1, '2025-10-18 14:15:34', 1, '2025-10-18 14:15:34', b'0', 1);
+INSERT INTO `system_file` VALUES (138, '5G手机.jpg', 'image/jpeg', 4616, '2025/10/18/105307855002800128_5G手机.jpg', 1, '0000', 1, 1, '2025-10-18 14:16:01', 1, '2025-10-18 14:16:01', b'0', 1);
+INSERT INTO `system_file` VALUES (139, '长续航手机.jpg', 'image/jpeg', 3663, '2025/10/18/105307940361080832_长续航手机.jpg', 1, '0000', 1, 1, '2025-10-18 14:16:21', 1, '2025-10-18 14:16:21', b'0', 1);
+INSERT INTO `system_file` VALUES (140, '中国移动.png', 'image/png', 6944, '2025/10/18/105308387771682816_中国移动.png', 1, '0000', 1, 1, '2025-10-18 14:18:08', 1, '2025-10-18 14:18:08', b'0', 1);
+INSERT INTO `system_file` VALUES (141, '中国联通.png', 'image/png', 14380, '2025/10/18/105308431010762752_中国联通.png', 1, '0000', 1, 1, '2025-10-18 14:18:18', 1, '2025-10-18 14:18:18', b'0', 1);
+INSERT INTO `system_file` VALUES (142, '中国电信.png', 'image/png', 5595, '2025/10/18/105308475692683264_中国电信.png', 1, '0000', 1, 1, '2025-10-18 14:18:29', 1, '2025-10-18 14:18:29', b'0', 1);
+INSERT INTO `system_file` VALUES (143, '办号卡.png', 'image/png', 7913, '2025/10/18/105308601882513408_办号卡.png', 1, '0000', 1, 1, '2025-10-18 14:18:59', 1, '2025-10-18 14:18:59', b'0', 1);
+INSERT INTO `system_file` VALUES (144, '上网卡.jpg', 'image/jpeg', 5874, '2025/10/18/105308699957923840_上网卡.jpg', 1, '0000', 1, 1, '2025-10-18 14:19:22', 1, '2025-10-18 14:19:22', b'0', 1);
+INSERT INTO `system_file` VALUES (145, '5G流量包.jpg', 'image/jpeg', 4377, '2025/10/18/105308761203150848_5G流量包.jpg', 1, '0000', 1, 1, '2025-10-18 14:19:37', 1, '2025-10-18 14:19:37', b'0', 1);
 
 -- ----------------------------
 -- Table structure for system_menu
@@ -4038,7 +4133,7 @@ CREATE TABLE `system_user`  (
 -- ----------------------------
 -- Records of system_user
 -- ----------------------------
-INSERT INTO `system_user` VALUES (1, 'admin', '$2b$06$Ohq86rDIvNuy/4ZvsTF4dOw.7I7QJj620LC25PwgYDmrKqKmKsJz6', '超级管理员', '超级管理员', '123@qq.com', '18888888888', 0, '', 0, '127.0.0.1', '2025-09-11 01:34:13', '0000', 1, 1, '2025-03-08 10:14:52', 1, '2025-09-11 01:34:10', b'0', 1);
+INSERT INTO `system_user` VALUES (1, 'admin', '$2b$06$Ohq86rDIvNuy/4ZvsTF4dOw.7I7QJj620LC25PwgYDmrKqKmKsJz6', '超级管理员', '超级管理员', '123@qq.com', '18888888888', 0, '', 0, '127.0.0.1', '2025-10-18 08:28:03', '0000', 1, 1, '2025-03-08 10:14:52', 1, '2025-10-18 08:28:14', b'0', 1);
 INSERT INTO `system_user` VALUES (11, 'test', '$2b$06$S2yMOy4Mp5gImLOEl8X3K.T8XAWrfXVwGXK/vOBL.30PGNnnGIDzy', '测试管理员', NULL, '', '15555555555', 0, '', 0, '127.0.0.1', '2025-05-23 08:16:27', '0000-0000', 7, 1, '2025-05-23 08:16:00', 1, '2025-05-23 08:16:25', b'0', 2);
 
 -- ----------------------------
