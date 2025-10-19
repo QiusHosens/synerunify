@@ -14,7 +14,7 @@ const apis = {
 
 export interface {{ request_model_name }} {
   {% for column in columns_request_update -%}
-  {{ column.column_name }}: {{ column.ts_type  }}; // {{ column.column_comment  }}
+  {{ column.column_name }}: {{ column.ts_type }}; // {{ column.column_comment  }}
   {% endfor -%}
 }
 

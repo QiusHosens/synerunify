@@ -107,6 +107,39 @@ fn ts_map_data_type(mysql_type: &str) -> &'static str {
     }
 }
 
+fn dart_map_data_type(mysql_type: &str) -> &'static str {
+    match mysql_type.to_lowercase().as_str() {
+        // 整数类型
+        "tinyint" | "smallint" | "mediumint" | "int" | "integer" | "bigint" => "int",
+
+        // 浮点数类型
+        "float" | "double" | "real" => "double",
+        "decimal" | "numeric" => "String", // 避免精度丢失，推荐用字符串存储
+
+        // 字符串类型
+        "char" | "varchar" | "tinytext" | "text" | "mediumtext" | "longtext" | "enum" => "String",
+
+        // 二进制类型
+        "binary" | "varbinary" | "tinyblob" | "blob" | "mediumblob" | "longblob" | "bit" => "Uint8List", // 需要 dart:typed_data
+
+        // 时间类型
+        "date" | "time" | "datetime" | "timestamp" => "DateTime",
+
+        // 布尔类型
+        "boolean" | "bool" | "tinyint(1)" => "bool",
+
+        // JSON 类型
+        "json" => "Map<String, dynamic>",
+
+        // 集合类型
+        "set" => "List<String>",
+
+        // 默认处理未知类型
+        _ => "String",
+    }
+}
+
+
 /**
  * 获取列名,关键字需转义
  */
@@ -167,6 +200,8 @@ fn main() {
     tera.add_template_file(format!("{}/templates/front_delete.tera", template_base_path),  Some("front_delete")).unwrap();
     tera.add_template_file(format!("{}/templates/front_translation.tera", template_base_path),  Some("front_translation")).unwrap();
 
+    tera.add_template_file(format!("{}/templates/dart_api.tera", template_base_path),  Some("dart_api")).unwrap();
+
     // 遍历表
     let mut mod_context = Context::new();
     let mut table_names: Vec<String> = Vec::with_capacity(tables.len());
@@ -209,10 +244,13 @@ fn main() {
             let mut map = serde_json::Map::new();
             let column_name = get_column_name(&c.column_name);
             map.insert("column_name".to_string(), column_name.clone().into());
+            map.insert("column_name_camel".to_string(), inflections::case::to_camel_case(column_name.clone().as_str()).into());
             let data_type = map_data_type(&c.data_type);
             map.insert("rust_type".to_string(), data_type.into());
             let ts_data_type = ts_map_data_type(&c.data_type);
             map.insert("ts_type".to_string(), ts_data_type.into());
+            let dart_data_type = dart_map_data_type(&c.data_type);
+            map.insert("dart_type".to_string(), dart_data_type.into());
             map.insert("is_date_formatter".to_string(), (data_type == "NaiveDateTime" || data_type == "NaiveDate" || data_type == "NaiveTime").into());
             map.insert("is_date_time".to_string(), (data_type == "NaiveDateTime").into());
             map.insert("is_date".to_string(), (data_type == "NaiveDate").into());
@@ -325,6 +363,11 @@ fn main() {
         let front_translation_code = tera.render("front_translation",  &context).unwrap();
         let file_path = format!("{}/front_translation/{}.json", code_base_path, table);
         write_file(&file_path, &front_translation_code).unwrap();
+
+        // dart api
+        let dart_api_code = tera.render("dart_api",  &context).unwrap();
+        let file_path = format!("{}/dart_api/{}.dart", code_base_path, table);
+        write_file(&file_path, &dart_api_code).unwrap();
     }
     mod_context.insert("table_names", &table_names);
     mod_context.insert("table_info_list", &table_info_list);

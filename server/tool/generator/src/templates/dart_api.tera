@@ -1,0 +1,130 @@
+import 'package:synerunify/models/base.dart';
+
+import '../utils/http_client.dart';
+import '../utils/type_utils.dart';
+
+const apis = {
+  'create': '/{{ api_prefix }}/{{ table_name }}/create', // 新增
+  'update': '/{{ api_prefix }}/{{ table_name }}/update', // 修改
+  'delete': '/{{ api_prefix }}/{{ table_name }}/delete', // 删除
+  'get': '/{{ api_prefix }}/{{ table_name }}/get', // 单条查询
+  'list': '/{{ api_prefix }}/{{ table_name }}/list', // 列表查询
+  'page': '/{{ api_prefix }}/{{ table_name }}/page', // 分页查询{% if has_status_field  %}
+  'enable': '/{{ api_prefix }}/{{ table_name }}/enable', // 启用
+  'disable': '/{{ api_prefix }}/{{ table_name }}/disable', // 禁用{% endif %}
+}
+
+class {{ request_model_name }} {
+  {% for column in columns_request_update -%}
+  final {{ column.dart_type }}{% if column.nullable %}?{% endif %} {{ column.column_name_camel }}; // {{ column.column_comment  }}
+  {% endfor %}
+
+  {{ request_model_name }}({
+    {% for column in columns_request_update -%}
+    {% if not column.nullable %}required {% endif %}this.{{ column.column_name_camel }},
+    {% endfor -%}
+  });
+
+  factory {{ request_model_name }}.fromJson(Map<String, dynamic> json) {
+    return {{ request_model_name }}(
+      {% for column in columns_request_update -%}
+      {{ column.column_name_camel }}: json['{{ column.column_name }}'] as {{ column.dart_type }}{% if column.nullable %}?{% endif %},
+      {% endfor -%}
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      {% for column in columns_request_update -%}
+      '{{ column.column_name }}': {{ column.column_name_camel }},
+      {% endfor -%}
+    };
+  }
+}
+
+class {{ model_name }}QueryCondition extends PaginatedRequest {
+  {{ model_name }}QueryCondition({
+    required int page,
+    required int size,
+    String? keyword,
+    String? sortField,
+    String? sort,
+    String? filterField,
+    String? filterOperator,
+    String? filterValue,
+  }) : super(
+          page: page,
+          size: size,
+          keyword: keyword,
+          sortField: sortField,
+          sort: sort,
+          filterField: filterField,
+          filterOperator: filterOperator,
+          filterValue: filterValue,
+        );
+}
+
+class {{ response_model_name }} {
+  {% for column in columns_response -%}
+  final {{ column.dart_type }}{% if column.nullable %}?{% endif %} {{ column.column_name_camel }}; // {{ column.column_comment  }}
+  {% endfor -%}
+
+  {{ response_model_name }}({
+    {% for column in columns_response -%}
+    {% if not column.nullable %}required {% endif %}this.{{ column.column_name_camel }},
+    {% endfor -%}
+  });
+
+  factory {{ response_model_name }}.fromJson(Map<String, dynamic> json) {
+    return {{ response_model_name }}(
+      {% for column in columns_response -%}
+      {{ column.column_name_camel }}: json['{{ column.column_name }}'] as {{ column.dart_type }}{% if column.nullable %}?{% endif %},
+      {% endfor -%}
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      {% for column in columns_response -%}
+      '{{ column.column_name }}': {{ column.column_name_camel }},
+      {% endfor -%}
+    };
+  }
+}
+
+class {{ model_name }}Service {
+
+    final HttpClient _httpClient = HttpClient();
+
+    Future<ApiResponse<int>> create{{ model_name }}({{ request_model_name }} {{ model_name_lower }}) async {
+        return await _httpClient.post<int>(apis['create']!, data: {{ model_name_lower }});
+    }
+
+    Future<ApiResponse<int>> update{{ model_name }}({{ request_model_name }} {{ model_name_lower }}) async {
+        return await _httpClient.post<int>(apis['update']!, data: {{ model_name_lower }});
+    }
+
+    Future<ApiResponse<void>> delete{{ model_name }}(int id) async {
+        return await _httpClient.post<void>('${apis['delete']!}/$id');
+    }
+
+    Future<ApiResponse<{{ response_model_name }}>> get{{ model_name }}(int id) async {
+        return await _httpClient.get<{{ response_model_name }}>('${apis['get']!}/$id');
+    }
+
+    Future<ApiResponse<List<{{ response_model_name }}>>> list{{ model_name }}() async {
+        return await _httpClient.get<List<{{ response_model_name }}>>(apis['list']!);
+    }
+
+    Future<ApiResponse<PaginatedResponse<{{ response_model_name }}>>> page{{ model_name }}({{ model_name }}QueryCondition condition) async {
+        return await _httpClient.get<PaginatedResponse<{{ response_model_name }}>>(apis['page']!, queryParameters: condition.toJson());
+    }
+    {% if has_status_field  %}
+    Future<ApiResponse<void>> enable{{ model_name }}(int id) async {
+      return await _httpClient.post<void>('${apis['enable']!}/$id');
+    }
+
+    Future<ApiResponse<void>> disable{{ model_name }}(int id) async {
+      return await _httpClient.post<void>('${apis['disable']!}/$id');
+    }{% endif %}
+}
