@@ -12,7 +12,7 @@ const apis = {
   'page': '/{{ api_prefix }}/{{ table_name }}/page', // 分页查询{% if has_status_field  %}
   'enable': '/{{ api_prefix }}/{{ table_name }}/enable', // 启用
   'disable': '/{{ api_prefix }}/{{ table_name }}/disable', // 禁用{% endif %}
-}
+};
 
 class {{ request_model_name }} {
   {% for column in columns_request_update -%}
