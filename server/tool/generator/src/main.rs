@@ -120,13 +120,13 @@ fn dart_map_data_type(mysql_type: &str) -> &'static str {
         "char" | "varchar" | "tinytext" | "text" | "mediumtext" | "longtext" | "enum" => "String",
 
         // 二进制类型
-        "binary" | "varbinary" | "tinyblob" | "blob" | "mediumblob" | "longblob" | "bit" => "Uint8List", // 需要 dart:typed_data
+        "binary" | "varbinary" | "tinyblob" | "blob" | "mediumblob" | "longblob" => "Uint8List", // 需要 dart:typed_data
 
         // 时间类型
         "date" | "time" | "datetime" | "timestamp" => "DateTime",
 
         // 布尔类型
-        "boolean" | "bool" | "tinyint(1)" => "bool",
+        "bit" | "boolean" | "bool" | "tinyint(1)" => "bool",
 
         // JSON 类型
         "json" => "Map<String, dynamic>",
