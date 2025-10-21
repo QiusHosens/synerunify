@@ -6,7 +6,7 @@ use mall_model::response::mall_product_category::MallProductCategoryResponse;
 use crate::convert::mall_product_category::{create_request_to_model, update_request_to_model, model_to_response};
 use anyhow::{Result, anyhow};
 use sea_orm::ActiveValue::Set;
-use common::constants::enum_constants::{STATUS_DISABLE, STATUS_ENABLE};
+use common::constants::enum_constants::{ROOT_TENANT_ID, STATUS_DISABLE, STATUS_ENABLE};
 use common::base::page::PaginatedResponse;
 use common::context::context::LoginUserContext;
 use common::interceptor::orm::active_filter::ActiveFilterEntityTrait;
@@ -55,7 +55,8 @@ pub async fn get_by_id(db: &DatabaseConnection, login_user: LoginUserContext, id
 }
 
 pub async fn get_paginated(db: &DatabaseConnection, login_user: LoginUserContext, params: PaginatedKeywordRequest) -> Result<PaginatedResponse<MallProductCategoryResponse>> {
-    let condition = Condition::all().add(Column::TenantId.eq(login_user.tenant_id));let paginator = MallProductCategoryEntity::find_active_with_condition(condition)
+    let condition = Condition::all().add(Column::TenantId.eq(login_user.tenant_id));
+    let paginator = MallProductCategoryEntity::find_active_with_condition(condition)
         .support_filter(params.base.filter_field, params.base.filter_operator, params.base.filter_value)
         .support_order(params.base.sort_field, params.base.sort, Some(vec![(Column::Id, Order::Asc)]))
         .paginate(db, params.base.size);
@@ -80,6 +81,15 @@ pub async fn get_paginated(db: &DatabaseConnection, login_user: LoginUserContext
 
 pub async fn list(db: &DatabaseConnection, login_user: LoginUserContext) -> Result<Vec<MallProductCategoryResponse>> {
     let condition = Condition::all().add(Column::TenantId.eq(login_user.tenant_id));let list = MallProductCategoryEntity::find_active_with_condition(condition)
+        .all(db).await?;
+    Ok(list.into_iter().map(model_to_response).collect())
+}
+
+pub async fn list_root_by_parent_id(db: &DatabaseConnection, parent_id: i64) -> Result<Vec<MallProductCategoryResponse>> {
+    let list = MallProductCategoryEntity::find_active()
+        .filter(Column::TenantId.eq(ROOT_TENANT_ID))
+        .filter(Column::ParentId.eq(parent_id))
+        .support_order(None, None, Some(vec![(Column::Sort, Order::Asc)]))
         .all(db).await?;
     Ok(list.into_iter().map(model_to_response).collect())
 }

@@ -9,7 +9,7 @@ use common::utils::jwt_utils::AccessClaims;
 use std::sync::Arc;
 use crate::api::mall_product_brand::{ mall_product_brand_route, mall_product_brand_router };
 use crate::api::mall_product_browse_history::{ mall_product_browse_history_route, mall_product_browse_history_router };
-use crate::api::mall_product_category::{ mall_product_category_route, mall_product_category_router };
+use crate::api::mall_product_category::{mall_product_category_no_auth_router, mall_product_category_route, mall_product_category_router};
 use crate::api::mall_product_comment::{ mall_product_comment_route, mall_product_comment_router };
 use crate::api::mall_product_favorite::{ mall_product_favorite_route, mall_product_favorite_router };
 use crate::api::mall_product_property::{ mall_product_property_route, mall_product_property_router };
@@ -123,6 +123,7 @@ pub struct ApiDocument;
 
 pub async fn api(state: AppState) -> Router {
     let (router, api) = OpenApiRouter::with_openapi(ApiDocument::openapi())
+        .nest("/mall", no_auth_router(state.clone()).await)
         .nest("/mall", auth_router(state.clone()).await)
         .split_for_parts();
 
@@ -131,6 +132,14 @@ pub async fn api(state: AppState) -> Router {
 
     router
         .merge(utoipa_swagger_ui::SwaggerUi::new("/mall/swagger-ui").url("/mall/api-docs/openapi.json", api.clone()))
+}
+
+pub async fn no_auth_router(state: AppState) -> OpenApiRouter {
+    OpenApiRouter::new()
+        .nest("/mall_product_category", mall_product_category_no_auth_router(state.clone()).await)
+        .layer(axum::middleware::from_fn(authorize_handler))
+        .layer(axum::middleware::from_fn(operation_logger_handler))
+        .layer(axum::middleware::from_fn_with_state(state.clone(), request_context_handler))
 }
 
 pub async fn auth_router(state: AppState) -> OpenApiRouter {

@@ -2,6 +2,7 @@
 pub const DEPARTMENT_ROOT_ID: i64 = 1; // 根部门id
 pub const DEPARTMENT_ROOT_CODE: &str = "0000"; // 根部门code
 
+pub const ROOT_TENANT_ID: i64 = 1; // 跟租户id
 pub const ROLE_ID_TENANT_ADMIN: i64 = 2; // 租户管理员角色id
 
 /// 枚举常量
