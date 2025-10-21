@@ -1,4 +1,5 @@
 import 'package:synerunify/models/base.dart';
+import 'package:synerunify/utils/logger.dart';
 
 import '../utils/http_client.dart';
 import '../utils/type_utils.dart';
@@ -12,6 +13,9 @@ const apis = {
   'page': '/mall/mall_product_category/page', // 分页查询
   'enable': '/mall/mall_product_category/enable', // 启用
   'disable': '/mall/mall_product_category/disable', // 禁用
+
+  'list_root_by_parent_id':
+      '/mall/mall_product_category/list_root_by_parent_id', // 列表查询
 };
 
 class MallProductCategoryRequest {
@@ -21,7 +25,6 @@ class MallProductCategoryRequest {
   final int? fileId; // 分类图片ID
   final int? sort; // 分类排序
   final int status; // 状态
-  
 
   MallProductCategoryRequest({
     required this.id,
@@ -30,7 +33,7 @@ class MallProductCategoryRequest {
     this.fileId,
     this.sort,
     required this.status,
-    });
+  });
 
   factory MallProductCategoryRequest.fromJson(Map<String, dynamic> json) {
     return MallProductCategoryRequest(
@@ -40,7 +43,7 @@ class MallProductCategoryRequest {
       fileId: json['file_id'] as int?,
       sort: json['sort'] as int?,
       status: json['status'] as int,
-      );
+    );
   }
 
   Map<String, dynamic> toJson() {
@@ -51,7 +54,7 @@ class MallProductCategoryRequest {
       'file_id': fileId,
       'sort': sort,
       'status': status,
-      };
+    };
   }
 }
 
@@ -66,15 +69,15 @@ class MallProductCategoryQueryCondition extends PaginatedRequest {
     String? filterOperator,
     String? filterValue,
   }) : super(
-          page: page,
-          size: size,
-          keyword: keyword,
-          sortField: sortField,
-          sort: sort,
-          filterField: filterField,
-          filterOperator: filterOperator,
-          filterValue: filterValue,
-        );
+         page: page,
+         size: size,
+         keyword: keyword,
+         sortField: sortField,
+         sort: sort,
+         filterField: filterField,
+         filterOperator: filterOperator,
+         filterValue: filterValue,
+       );
 }
 
 class MallProductCategoryResponse {
@@ -85,9 +88,10 @@ class MallProductCategoryResponse {
   final int? sort; // 分类排序
   final int status; // 状态
   final int? creator; // 创建者ID
-  final DateTime createTime; // 创建时间
+  final String createTime; // 创建时间
   final int? updater; // 更新者ID
-  final DateTime updateTime; // 更新时间
+  final String updateTime; // 更新时间
+
   MallProductCategoryResponse({
     required this.id,
     required this.parentId,
@@ -99,7 +103,7 @@ class MallProductCategoryResponse {
     required this.createTime,
     this.updater,
     required this.updateTime,
-    });
+  });
 
   factory MallProductCategoryResponse.fromJson(Map<String, dynamic> json) {
     return MallProductCategoryResponse(
@@ -110,10 +114,10 @@ class MallProductCategoryResponse {
       sort: json['sort'] as int?,
       status: json['status'] as int,
       creator: json['creator'] as int?,
-      createTime: json['create_time'] as DateTime,
+      createTime: ['create_time'] as String,
       updater: json['updater'] as int?,
-      updateTime: json['update_time'] as DateTime,
-      );
+      updateTime: json['update_time'] as String,
+    );
   }
 
   Map<String, dynamic> toJson() {
@@ -128,43 +132,85 @@ class MallProductCategoryResponse {
       'create_time': createTime,
       'updater': updater,
       'update_time': updateTime,
-      };
+    };
   }
 }
 
 class MallProductCategoryService {
+  final HttpClient _httpClient = HttpClient();
 
-    final HttpClient _httpClient = HttpClient();
+  Future<ApiResponse<int>> createMallProductCategory(
+    MallProductCategoryRequest mallProductCategory,
+  ) async {
+    return await _httpClient.post<int>(
+      apis['create']!,
+      data: mallProductCategory,
+    );
+  }
 
-    Future<ApiResponse<int>> createMallProductCategory(MallProductCategoryRequest mallProductCategory) async {
-        return await _httpClient.post<int>(apis['create']!, data: mallProductCategory);
-    }
+  Future<ApiResponse<int>> updateMallProductCategory(
+    MallProductCategoryRequest mallProductCategory,
+  ) async {
+    return await _httpClient.post<int>(
+      apis['update']!,
+      data: mallProductCategory,
+    );
+  }
 
-    Future<ApiResponse<int>> updateMallProductCategory(MallProductCategoryRequest mallProductCategory) async {
-        return await _httpClient.post<int>(apis['update']!, data: mallProductCategory);
-    }
+  Future<ApiResponse<void>> deleteMallProductCategory(int id) async {
+    return await _httpClient.post<void>('${apis['delete']!}/$id');
+  }
 
-    Future<ApiResponse<void>> deleteMallProductCategory(int id) async {
-        return await _httpClient.post<void>('${apis['delete']!}/$id');
-    }
+  Future<ApiResponse<MallProductCategoryResponse>> getMallProductCategory(
+    int id,
+  ) async {
+    return await _httpClient.get<MallProductCategoryResponse>(
+      '${apis['get']!}/$id',
+    );
+  }
 
-    Future<ApiResponse<MallProductCategoryResponse>> getMallProductCategory(int id) async {
-        return await _httpClient.get<MallProductCategoryResponse>('${apis['get']!}/$id');
-    }
+  Future<ApiResponse<List<MallProductCategoryResponse>>>
+  listMallProductCategory() async {
+    return await _httpClient.get<List<MallProductCategoryResponse>>(
+      apis['list']!,
+    );
+  }
 
-    Future<ApiResponse<List<MallProductCategoryResponse>>> listMallProductCategory() async {
-        return await _httpClient.get<List<MallProductCategoryResponse>>(apis['list']!);
-    }
+  Future<ApiResponse<List<MallProductCategoryResponse>>>
+  listRootMallProductCategoryByParentId(int parentId) async {
+    return await _httpClient.get<List<MallProductCategoryResponse>>(
+      '${apis['list_root_by_parent_id']!}/$parentId', fromJson: (list) {
+        Logger.info('listRootMallProductCategoryByParentId1: ${list.toString()}', tag: 'MallProductCategoryService');
+        return list.map((e) {
+          Logger.info('listRootMallProductCategoryByParentId2, isMap: ${e is Map<String, dynamic>}, ${e.toString()}', tag: 'MallProductCategoryService');
+          try {
+            final category = MallProductCategoryResponse.fromJson(e);
+            Logger.info('listRootMallProductCategoryByParentId3: ${category.toString()}', tag: 'MallProductCategoryService');
+            return category;
+          } catch (e, stackTrace) {
+            Logger.error('listRootMallProductCategoryByParentId3: ${e.toString()}', tag: 'MallProductCategoryService');
+            Logger.error('堆栈信息: $stackTrace', tag: 'MallProductCategoryService');
+            return null;
+          }
+        }).toList();
+      },
+    );
+  }
 
-    Future<ApiResponse<PaginatedResponse<MallProductCategoryResponse>>> pageMallProductCategory(MallProductCategoryQueryCondition condition) async {
-        return await _httpClient.get<PaginatedResponse<MallProductCategoryResponse>>(apis['page']!, queryParameters: condition.toJson());
-    }
-    
-    Future<ApiResponse<void>> enableMallProductCategory(int id) async {
-      return await _httpClient.post<void>('${apis['enable']!}/$id');
-    }
+  Future<ApiResponse<PaginatedResponse<MallProductCategoryResponse>>>
+  pageMallProductCategory(MallProductCategoryQueryCondition condition) async {
+    return await _httpClient
+        .get<PaginatedResponse<MallProductCategoryResponse>>(
+          apis['page']!,
+          queryParameters: condition.toJson(),
+        );
+  }
 
-    Future<ApiResponse<void>> disableMallProductCategory(int id) async {
-      return await _httpClient.post<void>('${apis['disable']!}/$id');
-    }
+  Future<ApiResponse<void>> enableMallProductCategory(int id) async {
+    return await _httpClient.post<void>('${apis['enable']!}/$id');
+  }
+
+  Future<ApiResponse<void>> disableMallProductCategory(int id) async {
+    return await _httpClient.post<void>('${apis['disable']!}/$id');
+  }
 }

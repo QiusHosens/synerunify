@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:synerunify/services/mall_product_category.dart';
+import 'package:synerunify/utils/logger.dart';
 import '../product/product_list.dart';
 import 'product_list.dart';
 
@@ -10,24 +12,25 @@ class Category extends StatefulWidget {
 }
 
 class _CategoryState extends State<Category> {
-  int _selectedCategoryIndex = 0; // 选中的分类索引
+  int _selectedCategoryId = 0; // 选中的分类
 
   // 主分类数据
-  final List<Map<String, dynamic>> _mainCategories = [
-    {'name': '为你推荐', 'isSelected': true},
-    {'name': '休闲零食', 'isSelected': false},
-    {'name': '水饮冲调', 'isSelected': false},
-    {'name': '中外名酒', 'isSelected': false},
-    {'name': '粮油调味', 'isSelected': false},
-    {'name': '美妆个护', 'isSelected': false},
-    {'name': '保健数码', 'isSelected': false},
-    {'name': '纸品家清', 'isSelected': false},
-    {'name': '母婴萌宠', 'isSelected': false},
-    {'name': '家纺百货', 'isSelected': false},
-    {'name': '餐饮面点', 'isSelected': false},
-    {'name': '乳品烘焙', 'isSelected': false},
-    {'name': '水果鲜花', 'isSelected': false},
-  ];
+  List<MallProductCategoryResponse> _mainCategories = [];
+  // final List<MallProductCategoryResponse> _mainCategories = [
+  //   {'name': '为你推荐', 'isSelected': true},
+  //   {'name': '休闲零食', 'isSelected': false},
+  //   {'name': '水饮冲调', 'isSelected': false},
+  //   {'name': '中外名酒', 'isSelected': false},
+  //   {'name': '粮油调味', 'isSelected': false},
+  //   {'name': '美妆个护', 'isSelected': false},
+  //   {'name': '保健数码', 'isSelected': false},
+  //   {'name': '纸品家清', 'isSelected': false},
+  //   {'name': '母婴萌宠', 'isSelected': false},
+  //   {'name': '家纺百货', 'isSelected': false},
+  //   {'name': '餐饮面点', 'isSelected': false},
+  //   {'name': '乳品烘焙', 'isSelected': false},
+  //   {'name': '水果鲜花', 'isSelected': false},
+  // ];
 
   // 精选推荐商品数据
   final List<Map<String, dynamic>> _featuredProducts = [
@@ -51,6 +54,26 @@ class _CategoryState extends State<Category> {
     {'name': '啤酒', 'image': 'assets/images/beer.png'},
     {'name': '切片面包', 'image': 'assets/images/sliced_bread.png'},
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadMainCategories();
+  }
+
+  void _loadMainCategories() async {
+    final response = await MallProductCategoryService().listRootMallProductCategoryByParentId(0);
+    Logger.info('loadMainCategories: ${response.toJson()}');
+    if (response.success) {
+      setState(() {
+        Logger.info('loadMainCategories: ${response.data}');
+        _mainCategories = response.data ?? [];
+        if (_mainCategories.isNotEmpty) {
+          _selectedCategoryId = _mainCategories.first.id;
+        }
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -189,16 +212,16 @@ class _CategoryState extends State<Category> {
         itemCount: _mainCategories.length,
         itemBuilder: (context, index) {
           final category = _mainCategories[index];
-          final isSelected = index == _selectedCategoryIndex;
+          final isSelected = category.id == _selectedCategoryId;
 
           return GestureDetector(
             onTap: () {
               setState(() {
-                _selectedCategoryIndex = index;
+                _selectedCategoryId = category.id;
                 // 更新所有分类的选中状态
-                for (int i = 0; i < _mainCategories.length; i++) {
-                  _mainCategories[i]['isSelected'] = i == index;
-                }
+                // for (int i = 0; i < _mainCategories.length; i++) {
+                //   _mainCategories[i]['isSelected'] = i == index;
+                // }
               });
             },
             child: Container(
@@ -206,7 +229,7 @@ class _CategoryState extends State<Category> {
               color: isSelected ? Colors.blue : Colors.transparent,
               child: Center(
                 child: Text(
-                  category['name'],
+                  category.name,
                   style: TextStyle(
                     color: isSelected ? Colors.white : Colors.black87,
                     fontSize: 12,

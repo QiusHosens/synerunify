@@ -36,6 +36,14 @@ class ApiResponse<T> {
     Map<String, dynamic> json,
     T Function(dynamic)? fromJsonT,
   ) {
+    final data = json['data'];
+    Logger.info('from json, isMap: ${data is Map<String, dynamic>}, isString: ${data is String}, isList: ${data is List<dynamic>}, ${data.toString()}', tag: 'HttpClient');
+    T? parsedData = null;
+    if (data is Map<String, dynamic>) {
+      parsedData = fromJsonT!(data);
+    } else if (data is List<dynamic>) {
+      parsedData = fromJsonT!(data);
+    }
     return ApiResponse<T>(
       success: json['code'] == 200 ? true : false,
       message: json['message'] ?? '',
@@ -131,7 +139,6 @@ class HttpClient {
         options: options,
         cancelToken: cancelToken,
       );
-      Logger.network('HTTP Client Response: ${response.toString()}', tag: 'HttpClient');
       return _handleResponse<T>(response, fromJson);
     } catch (e) {
       return _handleError<T>(e);
@@ -195,7 +202,7 @@ class HttpClient {
       final data = response.data;
 
        Logger.network(
-         'HTTP Response Data: ${data.toString()}, isMap: ${data is Map<String, dynamic>}, isString: ${data is String}',
+         'HTTP Response Data, isMap: ${data is Map<String, dynamic>}, isString: ${data is String}, isList: ${data is List<dynamic>}, ${data.toString()}',
          tag: 'HttpClient',
        );
       // 确保 data 是 Map，否则直接包装
