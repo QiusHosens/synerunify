@@ -36,14 +36,6 @@ class ApiResponse<T> {
     Map<String, dynamic> json,
     T Function(dynamic)? fromJsonT,
   ) {
-    final data = json['data'];
-    Logger.info('from json, isMap: ${data is Map<String, dynamic>}, isString: ${data is String}, isList: ${data is List<dynamic>}, ${data.toString()}', tag: 'HttpClient');
-    T? parsedData = null;
-    if (data is Map<String, dynamic>) {
-      parsedData = fromJsonT!(data);
-    } else if (data is List<dynamic>) {
-      parsedData = fromJsonT!(data);
-    }
     return ApiResponse<T>(
       success: json['code'] == 200 ? true : false,
       message: json['message'] ?? '',
@@ -117,7 +109,8 @@ class HttpClient {
         cancelToken: cancelToken,
       );
       return _handleResponse<T>(response, fromJson);
-    } catch (e) {
+    } catch (e, stackTrace) {
+      Logger.error('Stack trace: $stackTrace', tag: 'http get');
       return _handleError<T>(e);
     }
   }
@@ -140,7 +133,8 @@ class HttpClient {
         cancelToken: cancelToken,
       );
       return _handleResponse<T>(response, fromJson);
-    } catch (e) {
+    } catch (e, stackTrace) {
+      Logger.error('Stack trace: $stackTrace', tag: 'http post');
       return _handleError<T>(e);
     }
   }
@@ -163,7 +157,8 @@ class HttpClient {
         cancelToken: cancelToken,
       );
       return _handleResponse<T>(response, fromJson);
-    } catch (e) {
+    } catch (e, stackTrace) {
+      Logger.error('Stack trace: $stackTrace', tag: 'http put');
       return _handleError<T>(e);
     }
   }
@@ -186,7 +181,8 @@ class HttpClient {
         cancelToken: cancelToken,
       );
       return _handleResponse<T>(response, fromJson);
-    } catch (e) {
+    } catch (e, stackTrace) {
+      Logger.error('Stack trace: $stackTrace', tag: 'http delete');
       return _handleError<T>(e);
     }
   }
@@ -201,10 +197,10 @@ class HttpClient {
     if (statusCode >= 200 && statusCode < 300) {
       final data = response.data;
 
-       Logger.network(
-         'HTTP Response Data, isMap: ${data is Map<String, dynamic>}, isString: ${data is String}, isList: ${data is List<dynamic>}, ${data.toString()}',
-         tag: 'HttpClient',
-       );
+      Logger.network(
+        'HTTP Response Data, isMap: ${data is Map<String, dynamic>}, isString: ${data is String}, isList: ${data is List<dynamic>}, ${data.toString()}',
+        tag: 'HttpClient',
+      );
       // 确保 data 是 Map，否则直接包装
       if (data is Map<String, dynamic>) {
         final code = TypeUtils.parseInt(data['code']);
@@ -223,25 +219,16 @@ class HttpClient {
       } else if (data is String) {
         // data 不是 Map<String, dynamic>（可能是 String/数组/空）
         final dataMap = TypeUtils.stringToMap(data);
-         Logger.network(
-           'HTTP String Data Parsed: ${dataMap.toString()}',
-           tag: 'HttpClient',
-         );
+        Logger.network(
+          'HTTP String Data Parsed: ${dataMap.toString()}',
+          tag: 'HttpClient',
+        );
         final code = TypeUtils.parseInt(dataMap['code']);
         final success = code == 200;
         if (success) {
-          // final parsed =
-          //     (fromJson != null ? fromJson(dataMap['data']) : dataMap['data'])
-          //         as T;
           return ApiResponse.fromJson(dataMap, fromJson);
-          // return ApiResponse<T>(
-          //   success: true,
-          //   message: dataMap['message'] ?? '',
-          //   data: parsed,
-          //   code: dataMap['code'],
-          // );
-         } else {
-           Logger.error('HTTP Request Failed: $data', tag: 'HttpClient');
+        } else {
+          Logger.error('HTTP Request Failed: $data', tag: 'HttpClient');
           return ApiResponse<T>(
             success: false,
             message: dataMap['message'] ?? '',
@@ -422,24 +409,42 @@ class _AuthInterceptor extends Interceptor {
 class _LogInterceptor extends Interceptor {
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-    Logger.info('🚀 Request: ${options.method} ${options.uri}', tag: 'RequestInterceptor');
-    Logger.info('📤 Request Headers: ${options.headers}', tag: 'RequestInterceptor');
+    Logger.info(
+      '🚀 Request: ${options.method} ${options.uri}',
+      tag: 'RequestInterceptor',
+    );
+    Logger.info(
+      '📤 Request Headers: ${options.headers}',
+      tag: 'RequestInterceptor',
+    );
     if (options.data != null) {
-      Logger.info('📤 Request Body: ${options.data}', tag: 'RequestInterceptor');
+      Logger.info(
+        '📤 Request Body: ${options.data}',
+        tag: 'RequestInterceptor',
+      );
     }
     handler.next(options);
   }
 
   @override
   void onResponse(Response response, ResponseInterceptorHandler handler) {
-    Logger.network('✅ Response: ${response.statusCode} ${response.requestOptions.uri}', tag: 'ResponseInterceptor');
-    Logger.debug('📥 Response Data: ${response.data}', tag: 'ResponseInterceptor');
+    Logger.network(
+      '✅ Response: ${response.statusCode} ${response.requestOptions.uri}',
+      tag: 'ResponseInterceptor',
+    );
+    Logger.debug(
+      '📥 Response Data: ${response.data}',
+      tag: 'ResponseInterceptor',
+    );
     handler.next(response);
   }
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
-    Logger.error('❌ Error: ${err.type} ${err.requestOptions.uri}', tag: 'ErrorInterceptor');
+    Logger.error(
+      '❌ Error: ${err.type} ${err.requestOptions.uri}',
+      tag: 'ErrorInterceptor',
+    );
     Logger.error('📥 Error Message: ${err.message}', tag: 'ErrorInterceptor');
     handler.next(err);
   }

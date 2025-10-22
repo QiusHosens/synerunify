@@ -2,7 +2,6 @@ import 'package:synerunify/models/base.dart';
 import 'package:synerunify/utils/logger.dart';
 
 import '../utils/http_client.dart';
-import '../utils/type_utils.dart';
 
 const apis = {
   'create': '/mall/mall_product_category/create', // 新增
@@ -114,7 +113,7 @@ class MallProductCategoryResponse {
       sort: json['sort'] as int?,
       status: json['status'] as int,
       creator: json['creator'] as int?,
-      createTime: ['create_time'] as String,
+      createTime: json['create_time'] as String,
       updater: json['updater'] as int?,
       updateTime: json['update_time'] as String,
     );
@@ -179,20 +178,17 @@ class MallProductCategoryService {
   Future<ApiResponse<List<MallProductCategoryResponse>>>
   listRootMallProductCategoryByParentId(int parentId) async {
     return await _httpClient.get<List<MallProductCategoryResponse>>(
-      '${apis['list_root_by_parent_id']!}/$parentId', fromJson: (list) {
-        Logger.info('listRootMallProductCategoryByParentId1: ${list.toString()}', tag: 'MallProductCategoryService');
-        return list.map((e) {
-          Logger.info('listRootMallProductCategoryByParentId2, isMap: ${e is Map<String, dynamic>}, ${e.toString()}', tag: 'MallProductCategoryService');
-          try {
-            final category = MallProductCategoryResponse.fromJson(e);
-            Logger.info('listRootMallProductCategoryByParentId3: ${category.toString()}', tag: 'MallProductCategoryService');
-            return category;
-          } catch (e, stackTrace) {
-            Logger.error('listRootMallProductCategoryByParentId3: ${e.toString()}', tag: 'MallProductCategoryService');
-            Logger.error('堆栈信息: $stackTrace', tag: 'MallProductCategoryService');
-            return null;
-          }
-        }).toList();
+      '${apis['list_root_by_parent_id']!}/$parentId',
+      fromJson: (list) {
+        Logger.info(
+          'listRootMallProductCategoryByParentId1: ${list.toString()}',
+          tag: 'MallProductCategoryService',
+        );
+        return list
+            .map((e) => MallProductCategoryResponse.fromJson(e))
+            .where((category) => category != null)
+            .cast<MallProductCategoryResponse>()
+            .toList();
       },
     );
   }
