@@ -199,6 +199,31 @@ pub async fn get_file_data(db: &DatabaseConnection, login_user: LoginUserContext
     Ok(Some(model_to_data_response(system_file, data)))
 }
 
+pub async fn get_file_data_no_auth(db: &DatabaseConnection, minio: Option<MinioClient>, id: i64) -> Result<Option<SystemFileDataResponse>> {
+    if minio.is_none() {
+        return Err(anyhow!("客户端初始化失败"));
+    }
+    let minio = minio.unwrap();
+
+    let condition = Condition::all()
+        .add(Column::Id.eq(id));
+
+    let system_file = SystemFileEntity::find_active_with_condition(condition)
+        .one(db).await?;
+
+    if system_file.is_none() {
+        return Err(anyhow!("文件未找到"));
+    }
+    let system_file = system_file.unwrap();
+
+    let data = match minio.download_file(system_file.file_path.clone()).await {
+        std::result::Result::Ok(data) => data,
+        Err(_) => return Err(anyhow!("文件下载失败")),
+    };
+
+    Ok(Some(model_to_data_response(system_file, data)))
+}
+
 pub async fn get_file_data_by_path(minio: Option<MinioClient>, file_path: String) -> Result<Option<Vec<u8>>> {
     if minio.is_none() {
         return Err(anyhow!("客户端初始化失败"));

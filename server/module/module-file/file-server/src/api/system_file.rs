@@ -27,6 +27,12 @@ pub async fn system_file_router(state: AppState) -> OpenApiRouter {
         .with_state(state)
 }
 
+pub async fn system_file_no_auth_router(state: AppState) -> OpenApiRouter {
+    OpenApiRouter::new()
+        .routes(routes!(preview))
+        .with_state(state)
+}
+
 pub async fn system_file_route(state: AppState) -> Router {
     Router::new()
         .route("/create", post(create))
@@ -320,6 +326,53 @@ async fn download_with_suffix(
             (
                 axum::http::header::CONTENT_DISPOSITION,
                 format!("attachment; filename=\"{}\"", file.file_name)
+            ),
+        ],
+        file.data,
+    ))
+}
+
+#[utoipa::path(
+    get,
+    path = "/preview/{id}",
+    operation_id = "system_file_preview",
+    params(
+        ("id" = i64, Path, description = "id")
+    ),
+    responses(
+        (status = 200, description = "preview", content_type = "application/octet-stream"),
+        (status = 404, description = "File not found"),
+        (status = 500, description = "Internal server error")
+    ),
+    tag = "system_file",
+)]
+async fn preview(
+    State(state): State<AppState>,
+    Path(id): Path<i64>,
+) -> Result<impl IntoResponse, StatusCode> {
+    let file = match service::system_file::get_file_data_no_auth(&state.db, state.minio, id).await {
+        Ok(Some(data)) => data,
+        Ok(None) => {
+            return Err(StatusCode::NOT_FOUND)
+        },
+        Err(_) => return Err(StatusCode::INTERNAL_SERVER_ERROR),
+    };
+
+    let mut content_type = mime::APPLICATION_OCTET_STREAM;
+    if file.file_type.is_some() {
+        content_type = file.file_type
+            .unwrap()
+            .parse::<mime::Mime>()
+            .unwrap_or(mime::APPLICATION_OCTET_STREAM);
+    }
+
+    Ok((
+        StatusCode::OK,
+        [
+            (axum::http::header::CONTENT_TYPE, content_type.to_string()),
+            (
+                axum::http::header::CONTENT_DISPOSITION,
+                format!("inline; filename=\"{}\"", file.file_name)
             ),
         ],
         file.data,

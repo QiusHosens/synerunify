@@ -1,5 +1,5 @@
 use common::interceptor::orm::simple_support::SimpleSupport;
-use sea_orm::{DatabaseConnection, EntityTrait, Order, ColumnTrait, ActiveModelTrait, PaginatorTrait, QueryOrder, QueryFilter, Condition};
+use sea_orm::{DatabaseConnection, EntityTrait, Order, ColumnTrait, ActiveModelTrait, PaginatorTrait, QueryOrder, QueryFilter, Condition, Statement, FromQueryResult, DatabaseBackend};
 use crate::model::mall_product_category::{Model as MallProductCategoryModel, ActiveModel as MallProductCategoryActiveModel, Entity as MallProductCategoryEntity, Column};
 use mall_model::request::mall_product_category::{CreateMallProductCategoryRequest, UpdateMallProductCategoryRequest, PaginatedKeywordRequest};
 use mall_model::response::mall_product_category::MallProductCategoryResponse;
@@ -91,6 +91,28 @@ pub async fn list_root_by_parent_id(db: &DatabaseConnection, parent_id: i64) -> 
         .filter(Column::ParentId.eq(parent_id))
         .support_order(None, None, Some(vec![(Column::Sort, Order::Asc)]))
         .all(db).await?;
+    Ok(list.into_iter().map(model_to_response).collect())
+}
+
+pub async fn list_root_all_by_parent_id(db: &DatabaseConnection, parent_id: i64) -> Result<Vec<MallProductCategoryResponse>> {
+    let stmt = Statement::from_sql_and_values(
+        DatabaseBackend::MySql,
+        r#"
+            WITH RECURSIVE category_tree AS (
+                SELECT * FROM mall_product_category WHERE parent_id = ? AND tenant_id = ? AND deleted = false AND status = ?
+                UNION ALL
+                SELECT c.* FROM mall_product_category c
+                INNER JOIN category_tree ct ON c.parent_id = ct.id
+                WHERE c.deleted = false AND c.status = ?
+            )
+            SELECT * FROM category_tree ORDER BY sort ASC
+        "#,
+        [parent_id.into(), ROOT_TENANT_ID.into(), STATUS_ENABLE.into(), STATUS_ENABLE.into()],
+    );
+    
+    let list = MallProductCategoryModel::find_by_statement(stmt)
+        .all(db)
+        .await?;
     Ok(list.into_iter().map(model_to_response).collect())
 }
 

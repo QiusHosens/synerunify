@@ -4,6 +4,7 @@ use axum::Router;
 use common::{middleware::{authorize::{authorize_handler, init_route_authorizes}, operation_logger::operation_logger_handler, request_context::request_context_handler}, utils::jwt_utils::AccessClaims};
 use utoipa::{Modify, OpenApi};
 use utoipa_axum::router::OpenApiRouter;
+use crate::api::system_file::system_file_no_auth_router;
 
 // openapi document
 #[derive(OpenApi)]
@@ -22,6 +23,7 @@ pub struct ApiDocument;
 
 pub async fn api(state: AppState) -> Router {
     let (router, api) = OpenApiRouter::with_openapi(ApiDocument::openapi())
+        .nest("/file", no_auth_router(state.clone()).await)
         .nest("/file", auth_router(state.clone()).await)
         .split_for_parts();
 
@@ -30,6 +32,14 @@ pub async fn api(state: AppState) -> Router {
 
     router
         .merge(utoipa_swagger_ui::SwaggerUi::new("/file/swagger-ui").url("/file/api-docs/openapi.json", api.clone()))
+}
+
+pub async fn no_auth_router(state: AppState) -> OpenApiRouter {
+    OpenApiRouter::new()
+        .nest("/system_file", system_file_no_auth_router(state.clone()).await)
+        .layer(axum::middleware::from_fn(authorize_handler))
+        .layer(axum::middleware::from_fn(operation_logger_handler))
+        .layer(axum::middleware::from_fn_with_state(state.clone(), request_context_handler))
 }
 
 pub async fn auth_router(state: AppState) -> OpenApiRouter {

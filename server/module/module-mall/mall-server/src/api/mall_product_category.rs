@@ -29,6 +29,7 @@ pub async fn mall_product_category_router(state: AppState) -> OpenApiRouter {
 pub async fn mall_product_category_no_auth_router(state: AppState) -> OpenApiRouter {
     OpenApiRouter::new()
         .routes(routes!(list_root_by_parent_id))
+        .routes(routes!(list_root_all_by_parent_id))
         .with_state(state)
 }
 
@@ -217,6 +218,28 @@ async fn list_root_by_parent_id(
     Path(id): Path<i64>,
 ) -> CommonResult<Vec<MallProductCategoryResponse>> {
     match service::mall_product_category::list_root_by_parent_id(&state.db, id).await {
+        Ok(data) => {CommonResult::with_data(data)}
+        Err(e) => {CommonResult::with_err(&e.to_string())}
+    }
+}
+
+#[utoipa::path(
+    get,
+    path = "/list_root_all_by_parent_id/{id}",
+    operation_id = "mall_product_category_list_root_all_by_parent_id",
+    params(
+        ("id" = i64, Path, description = "id")
+    ),
+    responses(
+        (status = 200, description = "list root all by parent id", body = CommonResult<Vec<MallProductCategoryResponse>>)
+    ),
+    tag = "mall_product_category",
+)]
+async fn list_root_all_by_parent_id(
+    State(state): State<AppState>,
+    Path(id): Path<i64>,
+) -> CommonResult<Vec<MallProductCategoryResponse>> {
+    match service::mall_product_category::list_root_all_by_parent_id(&state.db, id).await {
         Ok(data) => {CommonResult::with_data(data)}
         Err(e) => {CommonResult::with_err(&e.to_string())}
     }

@@ -15,6 +15,9 @@ const apis = {
 
   'list_root_by_parent_id':
       '/mall/mall_product_category/list_root_by_parent_id', // 列表查询
+
+  'list_root_all_by_parent_id':
+      '/mall/mall_product_category/list_root_all_by_parent_id', // 列表查询
 };
 
 class MallProductCategoryRequest {
@@ -91,6 +94,8 @@ class MallProductCategoryResponse {
   final int? updater; // 更新者ID
   final String updateTime; // 更新时间
 
+  List<MallProductCategoryResponse>? children; // 子分类
+
   MallProductCategoryResponse({
     required this.id,
     required this.parentId,
@@ -102,6 +107,8 @@ class MallProductCategoryResponse {
     required this.createTime,
     this.updater,
     required this.updateTime,
+
+    this.children,
   });
 
   factory MallProductCategoryResponse.fromJson(Map<String, dynamic> json) {
@@ -116,6 +123,7 @@ class MallProductCategoryResponse {
       createTime: json['create_time'] as String,
       updater: json['updater'] as int?,
       updateTime: json['update_time'] as String,
+      children: [],
     );
   }
 
@@ -131,6 +139,7 @@ class MallProductCategoryResponse {
       'create_time': createTime,
       'updater': updater,
       'update_time': updateTime,
+      'children': children?.map((e) => e.toJson()).toList(),
     };
   }
 }
@@ -179,17 +188,21 @@ class MallProductCategoryService {
   listRootMallProductCategoryByParentId(int parentId) async {
     return await _httpClient.get<List<MallProductCategoryResponse>>(
       '${apis['list_root_by_parent_id']!}/$parentId',
-      fromJson: (list) {
-        Logger.info(
-          'listRootMallProductCategoryByParentId1: ${list.toString()}',
-          tag: 'MallProductCategoryService',
-        );
-        return list
-            .map((e) => MallProductCategoryResponse.fromJson(e))
+      fromJson: (list) => list.map((e) => MallProductCategoryResponse.fromJson(e))
             .where((category) => category != null)
             .cast<MallProductCategoryResponse>()
-            .toList();
-      },
+            .toList(),
+    );
+  }
+
+  Future<ApiResponse<List<MallProductCategoryResponse>>>
+  listRootAllMallProductCategoryByParentId(int parentId) async {
+    return await _httpClient.get<List<MallProductCategoryResponse>>(
+      '${apis['list_root_all_by_parent_id']!}/$parentId',
+      fromJson: (list) => list.map((e) => MallProductCategoryResponse.fromJson(e))
+            .where((category) => category != null)
+            .cast<MallProductCategoryResponse>()
+            .toList(),
     );
   }
 

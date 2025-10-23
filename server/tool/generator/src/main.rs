@@ -123,7 +123,7 @@ fn dart_map_data_type(mysql_type: &str) -> &'static str {
         "binary" | "varbinary" | "tinyblob" | "blob" | "mediumblob" | "longblob" => "Uint8List", // 需要 dart:typed_data
 
         // 时间类型
-        "date" | "time" | "datetime" | "timestamp" => "DateTime",
+        "date" | "time" | "datetime" | "timestamp" => "String",
 
         // 布尔类型
         "bit" | "boolean" | "bool" | "tinyint(1)" => "bool",

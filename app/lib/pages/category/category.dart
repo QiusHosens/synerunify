@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:synerunify/services/mall_product_category.dart';
+import 'package:synerunify/services/system_file.dart';
 import 'package:synerunify/utils/logger.dart';
 import '../product/product_list.dart';
 import 'product_list.dart';
@@ -12,6 +13,9 @@ class Category extends StatefulWidget {
 }
 
 class _CategoryState extends State<Category> {
+  final SystemFileService _systemFileService = SystemFileService();
+  final MallProductCategoryService _mallProductCategoryService =
+      MallProductCategoryService();
   int _selectedCategoryId = 0; // 选中的分类
 
   // 主分类数据
@@ -33,27 +37,7 @@ class _CategoryState extends State<Category> {
   // ];
 
   // 精选推荐商品数据
-  final List<Map<String, dynamic>> _featuredProducts = [
-    {'name': 'iPhone', 'image': 'assets/images/iphone.png', 'type': 'iphone'},
-    {'name': '月饼', 'image': 'assets/images/mooncake.png'},
-    {'name': '中秋礼盒', 'image': 'assets/images/gift_box.png'},
-    {'name': '中秋家宴', 'image': 'assets/images/feast.png'},
-    {'name': '热食', 'image': 'assets/images/hot_food.png'},
-    {'name': '绿叶菜', 'image': 'assets/images/vegetables.png'},
-    {'name': '现烤面包', 'image': 'assets/images/bread.png'},
-    {'name': '快手菜', 'image': 'assets/images/quick_dish.png'},
-    {'name': '包子', 'image': 'assets/images/baozi.png'},
-    {'name': '当季鲜果', 'image': 'assets/images/fruits.png'},
-    {'name': '速食', 'image': 'assets/images/instant_food.png'},
-    {'name': '鲜奶', 'image': 'assets/images/milk.png'},
-    {'name': '青菜', 'image': 'assets/images/greens.png'},
-    {'name': '薯片', 'image': 'assets/images/chips.png'},
-    {'name': '水', 'image': 'assets/images/water.png'},
-    {'name': '牛肉', 'image': 'assets/images/beef.png'},
-    {'name': '毛豆', 'image': 'assets/images/edamame.png'},
-    {'name': '啤酒', 'image': 'assets/images/beer.png'},
-    {'name': '切片面包', 'image': 'assets/images/sliced_bread.png'},
-  ];
+  List<MallProductCategoryResponse> _categorySections = [];
 
   @override
   void initState() {
@@ -62,7 +46,8 @@ class _CategoryState extends State<Category> {
   }
 
   void _loadMainCategories() async {
-    final response = await MallProductCategoryService().listRootMallProductCategoryByParentId(0);
+    final response = await _mallProductCategoryService
+        .listRootMallProductCategoryByParentId(0);
     Logger.info('loadMainCategories: ${response.toJson()}');
     if (response.success) {
       setState(() {
@@ -70,7 +55,39 @@ class _CategoryState extends State<Category> {
         _mainCategories = response.data ?? [];
         if (_mainCategories.isNotEmpty) {
           _selectedCategoryId = _mainCategories.first.id;
+          _loadFeaturedProducts();
         }
+      });
+    }
+  }
+
+  void _loadFeaturedProducts() async {
+    final response = await _mallProductCategoryService
+        .listRootAllMallProductCategoryByParentId(_selectedCategoryId);
+    if (response.success) {
+      List<MallProductCategoryResponse> data = response.data ?? [];
+      List<MallProductCategoryResponse> featuredProducts = [];
+      for (var category in data) {
+        if (category.parentId == _selectedCategoryId) {
+          featuredProducts.add(category);
+        }
+      }
+      featuredProducts.sort((a, b) => a.sort!.compareTo(b.sort!));
+      for (var category in featuredProducts) {
+        List<MallProductCategoryResponse> children = [];
+        for (var child in data) {
+          if (child.parentId == category.id) {
+            children.add(child);
+          }
+        }
+        children.sort((a, b) => a.sort!.compareTo(b.sort!));
+        category.children = children;
+      }
+
+      Logger.info('featuredProducts: ${featuredProducts.map((e) => e.toJson()).toList()}');
+
+      setState(() {
+        _categorySections = featuredProducts;
       });
     }
   }
@@ -90,8 +107,8 @@ class _CategoryState extends State<Category> {
                 children: [
                   // 左侧主分类列表
                   _buildCategoryList(),
-                  // 右侧精选推荐
-                  _buildFeaturedSection(),
+                  // 右侧商品分类
+                  _buildCategorySection(),
                 ],
               ),
             ),
@@ -105,71 +122,6 @@ class _CategoryState extends State<Category> {
   Widget _buildTopBar() {
     return Column(
       children: [
-        // 状态栏
-        // Container(
-        //   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        //   child: Row(
-        //     children: [
-        //       // 时间显示
-        //       const Text(
-        //         '14:01',
-        //         style: TextStyle(
-        //           fontSize: 16,
-        //           fontWeight: FontWeight.bold,
-        //           color: Colors.black,
-        //         ),
-        //       ),
-        //       const SizedBox(width: 8),
-        //       const Icon(
-        //         Icons.signal_cellular_4_bar,
-        //         size: 16,
-        //         color: Colors.black,
-        //       ),
-        //       const Spacer(),
-        //       // 店铺位置
-        //       Container(
-        //         padding: const EdgeInsets.symmetric(
-        //           horizontal: 12,
-        //           vertical: 6,
-        //         ),
-        //         decoration: BoxDecoration(
-        //           color: Colors.white,
-        //           borderRadius: BorderRadius.circular(20),
-        //           boxShadow: [
-        //             BoxShadow(
-        //               color: Colors.grey.withValues(alpha: 0.2),
-        //               blurRadius: 4,
-        //               offset: const Offset(0, 2),
-        //             ),
-        //           ],
-        //         ),
-        //         child: const Text(
-        //           '中和锦汇天府店',
-        //           style: TextStyle(
-        //             fontSize: 14,
-        //             fontWeight: FontWeight.w500,
-        //             color: Colors.black,
-        //           ),
-        //         ),
-        //       ),
-        //       const Spacer(),
-        //       // 状态栏图标
-        //       Row(
-        //         children: [
-        //           const Icon(
-        //             Icons.signal_cellular_4_bar,
-        //             size: 16,
-        //             color: Colors.black,
-        //           ),
-        //           const SizedBox(width: 4),
-        //           const Icon(Icons.wifi, size: 16, color: Colors.black),
-        //           const SizedBox(width: 4),
-        //           const Icon(Icons.battery_full, size: 16, color: Colors.black),
-        //         ],
-        //       ),
-        //     ],
-        //   ),
-        // ),
         // 蓝色标题栏
         Container(
           width: double.infinity,
@@ -218,6 +170,7 @@ class _CategoryState extends State<Category> {
             onTap: () {
               setState(() {
                 _selectedCategoryId = category.id;
+                _loadFeaturedProducts();
                 // 更新所有分类的选中状态
                 // for (int i = 0; i < _mainCategories.length; i++) {
                 //   _mainCategories[i]['isSelected'] = i == index;
@@ -247,71 +200,88 @@ class _CategoryState extends State<Category> {
     );
   }
 
-  /// 构建右侧精选推荐区域
-  Widget _buildFeaturedSection() {
+  /// 构建右侧区域
+  Widget _buildCategorySection() {
     return Expanded(
       child: Container(
         color: Colors.white,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // 标题
-            Container(
-              padding: const EdgeInsets.all(16),
-              child: const Text(
-                '精选推荐',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
+        child: ListView.builder(
+          itemCount: _categorySections.length,
+          itemBuilder: (context, index) {
+            final category = _categorySections[index];
+            final categories = category.children ?? [];
+            Logger.info('category: ${category.toJson()}');
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // 标题
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  child: Text(
+                    category.name,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
+                  ),
                 ),
-              ),
-            ),
-            // 商品网格
-            Expanded(
-              child: GridView.builder(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3,
-                  childAspectRatio: 0.75, // 降低比例，为文字留出更多空间
-                  crossAxisSpacing: 12,
-                  mainAxisSpacing: 12,
+                // 商品网格
+                Expanded(
+                  child: GridView.builder(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 3,
+                          childAspectRatio: 0.75, // 降低比例，为文字留出更多空间
+                          crossAxisSpacing: 12,
+                          mainAxisSpacing: 12,
+                        ),
+                    itemCount: categories.length,
+                    itemBuilder: (context, index) {
+                      final product = categories[index];
+                      return _buildProductItem(product);
+                    },
+                  ),
                 ),
-                itemCount: _featuredProducts.length,
-                itemBuilder: (context, index) {
-                  final product = _featuredProducts[index];
-                  return _buildProductItem(product);
-                },
-              ),
-            ),
-          ],
+              ],
+            );
+          },
         ),
       ),
     );
   }
 
   /// 构建商品项
-  Widget _buildProductItem(Map<String, dynamic> product) {
+  Widget _buildProductItem(MallProductCategoryResponse category) {
+    String previewUrl = _systemFileService.getPreviewUrl(category.fileId!);
+    Logger.info('previewUrl: ${previewUrl}');
     return GestureDetector(
       onTap: () {
         // 根据商品类型跳转到不同页面
-        if (product['type'] == 'iphone') {
-          // 跳转到iPhone商品列表页面
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) =>
-                  ProductListPage(categoryName: product['name']),
-            ),
-          );
-        } else {
-          // 跳转到普通商品列表页面
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) =>
-                  ProductList(category: product['name'], searchKeyword: ''),
-            ),
-          );
-        }
+        // if (product.type == 'iphone') {
+        //   // 跳转到iPhone商品列表页面
+        //   Navigator.of(context).push(
+        //     MaterialPageRoute(
+        //       builder: (context) =>
+        //           ProductListPage(categoryName: product['name']),
+        //     ),
+        //   );
+        // } else {
+        //   // 跳转到普通商品列表页面
+        //   Navigator.of(context).push(
+        //     MaterialPageRoute(
+        //       builder: (context) =>
+        //           ProductList(category: product['name'], searchKeyword: ''),
+        //     ),
+        //   );
+        // }
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) =>
+                ProductList(category: category.name, searchKeyword: ''),
+          ),
+        );
       },
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -324,7 +294,8 @@ class _CategoryState extends State<Category> {
               color: Colors.grey[200],
               borderRadius: BorderRadius.circular(30),
             ),
-            child: const Icon(Icons.image, color: Colors.grey, size: 30),
+            // child: const Icon(Icons.image, color: Colors.grey, size: 30),
+            child: Image.network(previewUrl),
           ),
           const SizedBox(height: 8),
           // 商品名称
@@ -333,7 +304,7 @@ class _CategoryState extends State<Category> {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 4),
               child: Text(
-                product['name'],
+                category.name,
                 style: const TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w500,
