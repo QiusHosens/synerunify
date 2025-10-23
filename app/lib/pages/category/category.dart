@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:synerunify/pages/product/product_list.dart';
 import 'package:synerunify/services/mall_product_category.dart';
 import 'package:synerunify/services/system_file.dart';
 import 'package:synerunify/utils/logger.dart';
-import '../product/product_list.dart';
 import 'product_list.dart';
 
 class Category extends StatefulWidget {
@@ -227,22 +227,21 @@ class _CategoryState extends State<Category> {
                   ),
                 ),
                 // 商品网格
-                Expanded(
-                  child: GridView.builder(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 3,
-                          childAspectRatio: 0.75, // 降低比例，为文字留出更多空间
-                          crossAxisSpacing: 12,
-                          mainAxisSpacing: 12,
-                        ),
-                    itemCount: categories.length,
-                    itemBuilder: (context, index) {
-                      final product = categories[index];
-                      return _buildProductItem(product);
-                    },
+                GridView.builder(
+                  shrinkWrap: true, // 让GridView根据内容调整大小
+                  physics: const NeverScrollableScrollPhysics(), // 禁用滚动，让外层ListView处理
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3,
+                    childAspectRatio: 0.75, // 降低比例，为文字留出更多空间
+                    crossAxisSpacing: 12,
+                    mainAxisSpacing: 12,
                   ),
+                  itemCount: categories.length,
+                  itemBuilder: (context, index) {
+                    final product = categories[index];
+                    return _buildProductItem(product);
+                  },
                 ),
               ],
             );
@@ -299,8 +298,8 @@ class _CategoryState extends State<Category> {
           ),
           const SizedBox(height: 8),
           // 商品名称
-          Expanded(
-            // 使用Expanded确保文字有足够空间
+          Flexible(
+            // 使用Flexible替代Expanded，允许文字根据内容调整大小
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 4),
               child: Text(
