@@ -167,7 +167,7 @@ where
             Ok(None) => Err(AuthError::UserExpired),
             Err(_) => Err(AuthError::UserExpired),
         }?;
-        info!("login user: {:?}", login_user);
+        // info!("login user: {:?}", login_user);
         parts.extensions.insert(login_user);
         // parts.extensions.insert(UserTenantContext {
         //     id: claims.sub.clone(),  // 用户id

@@ -48,7 +48,7 @@ pub async fn request_context_handler(State(state): State<AppState>, user_agent: 
         .map(|ua| ua.as_str().to_string())
         .unwrap_or_else(|| "Unknown".to_string());
 
-    info!("user agent: {:?}", user_agent.clone());
+    // info!("user agent: {:?}", user_agent.clone());
     // 设备类型
     // 简单解析设备类型
     let device_type = if ua.contains("Mobile")
@@ -62,7 +62,7 @@ pub async fn request_context_handler(State(state): State<AppState>, user_agent: 
     } else {
         DeviceType::Web
     };
-    info!("device type: {:?}", device_type);
+    // info!("device type: {:?}", device_type);
     let device_str: &'static str = device_type.into(); 
     // 精确解析,110ms耗时太长
     // let ua_parser = &state.ua_parser.clone();
@@ -88,7 +88,7 @@ pub async fn request_context_handler(State(state): State<AppState>, user_agent: 
         user_agent: user_agent_header.to_string(),
         device_type: device_str.to_string(),
     };
-    info!("request context: {:?}", request_context);
+    // info!("request context: {:?}", request_context);
     let mut request = Request::from_parts(parts, Body::from(bytes));
 
     request.extensions_mut().insert(request_context);
