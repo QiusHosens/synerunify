@@ -78,6 +78,7 @@ export interface DownloadProps {
     previewUrl?: string;
     status: 'downloading' | 'done' | 'error';
     progress?: number;
+    errorMessage?: string;
 }
 
 // Upload 组件属性
@@ -121,6 +122,8 @@ const CustomizedFileUpload: React.FC<UploadProps> = ({
     const [isDragging, setIsDragging] = useState(false);
     const dragStartRef = useRef({ x: 0, y: 0 });
     const imageRef = useRef<HTMLImageElement | null>(null);
+
+    console.log("download", download);
 
     // 处理文件选择
     const handleFileChange = useCallback(
@@ -175,6 +178,13 @@ const CustomizedFileUpload: React.FC<UploadProps> = ({
             URL.revokeObjectURL(blobUrlRef.current);
             blobUrlRef.current = null;
         }
+        onChange?.(null, 'remove');
+    }, [onChange]);
+
+    // 处理下载文件删除
+    const handleDownloadRemove = useCallback(() => {
+        // 这里可以触发父组件的回调来处理下载文件的删除
+        // 由于下载文件不是通过 onChange 管理的，可能需要额外的回调
         onChange?.(null, 'remove');
     }, [onChange]);
 
@@ -277,10 +287,33 @@ const CustomizedFileUpload: React.FC<UploadProps> = ({
                             {download.filename}
                         </Typography>}
                     </>
+                ) : (download && download?.status === 'error') ? (
+                    <>
+                        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', color: 'error.main' }}>
+                            <Typography variant="body1" color="error" sx={{ mb: 1 }}>
+                                {t('global.helper.file.download.error')}
+                            </Typography>
+                            {download.errorMessage && (
+                                <Typography variant="caption" color="error" sx={{ textAlign: 'center', maxWidth: '80%' }}>
+                                    {download.errorMessage}
+                                </Typography>
+                            )}
+                        </Box>
+                        {canRemove && <DeleteButton className='file-upload-delete' sx={{ display: 'none' }} onClick={(e) => { e.stopPropagation(); handleDownloadRemove(); }}>
+                            <DeleteIcon fontSize="small" />
+                        </DeleteButton>}
+                        {showFilename && <Typography
+                            variant="caption"
+                            color="error"
+                            sx={{ position: 'absolute', bottom: 8, maxWidth: '90%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+                        >
+                            {download.filename}
+                        </Typography>}
+                    </>
                 ) : (download && download?.status === 'done') ? (
                     <>
                         <PreviewImage src={download.previewUrl} />
-                        {canRemove && <DeleteButton className='file-upload-delete' sx={{ display: 'none' }} onClick={(e) => { e.stopPropagation(); handleRemove(); }}>
+                        {canRemove && <DeleteButton className='file-upload-delete' sx={{ display: 'none' }} onClick={(e) => { e.stopPropagation(); handleDownloadRemove(); }}>
                             <DeleteIcon fontSize="small" />
                         </DeleteButton>}
                         {showFilename && <Typography

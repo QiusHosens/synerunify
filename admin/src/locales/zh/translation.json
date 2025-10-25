@@ -142,6 +142,7 @@
   "global.helper.file.upload.type": "点击或拖拽文件到此区域上传",
   "global.helper.file.upload.support": "支持{{type}},最大{{size}}MB",
   "global.helper.file.upload.support.all": "所有文件类型",
+  "global.helper.file.download.error": "文件加载失败",
 
   "gloabl.page.login": "登录",
   "gloabl.page.dashboard": "仪表盘",

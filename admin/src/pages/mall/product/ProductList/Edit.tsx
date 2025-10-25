@@ -350,16 +350,27 @@ const MallProductSpuEdit = forwardRef(({ onSubmit }: MallProductSpuEditProps, re
         newMap.set(result.file_id, data);
         return newMap;
       })
-    }).then((blob) => {
+    }).catch((error) => {
       setDownloadImages(prev => {
         const data: DownloadProps = {
-          status: 'done',
-          previewUrl: window.URL.createObjectURL(blob),
+          status: 'error',
         };
         const newMap = new Map(prev);
         newMap.set(result.file_id, data);
         return newMap;
       })
+    }).then((blob) => {
+      if (blob) {
+        setDownloadImages(prev => {
+          const data: DownloadProps = {
+            status: 'done',
+            previewUrl: window.URL.createObjectURL(blob),
+          };
+          const newMap = new Map(prev);
+          newMap.set(result.file_id, data);
+          return newMap;
+        })
+      }
     });
     // 设置轮播图片
     const slider_file_ids = result.slider_file_ids.split(',');
@@ -376,22 +387,36 @@ const MallProductSpuEdit = forwardRef(({ onSubmit }: MallProductSpuEditProps, re
           newMap.set(file_id, data);
           return newMap;
         })
-      }).then((blob) => {
+      }).catch((error) => {
         setDownloadImages(prev => {
           const data: DownloadProps = {
-            status: 'done',
-            previewUrl: window.URL.createObjectURL(blob),
+            status: 'error',
           };
           const newMap = new Map(prev);
           newMap.set(file_id, data);
           return newMap;
         })
+      }).then((blob) => {
+        if (blob) {
+          setDownloadImages(prev => {
+            const data: DownloadProps = {
+              status: 'done',
+              previewUrl: window.URL.createObjectURL(blob),
+            };
+            const newMap = new Map(prev);
+            newMap.set(file_id, data);
+            return newMap;
+          })
+        }
       });
     }
     // 设置sku图片
     for (const sku of result.skus) {
       const file_id = sku.file_id;
       if (!file_id) {
+        continue;
+      }
+      if (downloadImages?.get(file_id)) {
         continue;
       }
       downloadSystemFile(file_id, (progress) => {
@@ -404,16 +429,27 @@ const MallProductSpuEdit = forwardRef(({ onSubmit }: MallProductSpuEditProps, re
           newMap.set(file_id, data);
           return newMap;
         })
-      }).then((blob) => {
+      }).catch((error) => {
         setDownloadImages(prev => {
           const data: DownloadProps = {
-            status: 'done',
-            previewUrl: window.URL.createObjectURL(blob),
+            status: 'error',
           };
           const newMap = new Map(prev);
           newMap.set(file_id, data);
           return newMap;
         })
+      }).then((blob) => {
+        if (blob) {
+          setDownloadImages(prev => {
+            const data: DownloadProps = {
+              status: 'done',
+              previewUrl: window.URL.createObjectURL(blob),
+            };
+            const newMap = new Map(prev);
+            newMap.set(file_id, data);
+            return newMap;
+          })
+        }
       });
     }
     setErrors({
@@ -1235,6 +1271,7 @@ const MallProductSpuEdit = forwardRef(({ onSubmit }: MallProductSpuEditProps, re
                               maxSize={100}
                               onChange={(file, action) => handleSkuFileChange(file, action, index)}
                               file={item.file}
+                              download={downloadImages?.get(item.file_id!)}
                               width={fileWidth}
                               height={fileHeight}
                               error={!!(errors.skus[index]?.file_id)}
