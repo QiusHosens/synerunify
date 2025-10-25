@@ -39,7 +39,7 @@ const ErpPurchaseOrderInfo = forwardRef(({ }, ref) => {
     for (const attachment of result.purchase_attachment) {
       const file_id = attachment.file_id;
       const filename = attachment.file_name.indexOf('.') > 0 ? attachment.file_name.substring(0, attachment.file_name.lastIndexOf('.')) : attachment.file_name;
-      const result = await downloadSystemFile(file_id, (progress) => {
+      downloadSystemFile(file_id, (progress) => {
         setDownloadImages(prev => {
           const data: DownloadProps = {
             filename,
@@ -50,18 +50,30 @@ const ErpPurchaseOrderInfo = forwardRef(({ }, ref) => {
           newMap.set(file_id, data);
           return newMap;
         })
-      })
-
-      setDownloadImages(prev => {
-        const data: DownloadProps = {
-          filename,
-          status: 'done',
-          previewUrl: window.URL.createObjectURL(result),
-        };
-        const newMap = new Map(prev);
-        newMap.set(file_id, data);
-        return newMap;
-      })
+      }).catch(() => {
+        setDownloadImages(prev => {
+          const data: DownloadProps = {
+            filename,
+            status: 'error',
+          };
+          const newMap = new Map(prev);
+          newMap.set(file_id, data);
+          return newMap;
+        })
+      }).then((blob) => {
+        if (blob) {
+          setDownloadImages(prev => {
+            const data: DownloadProps = {
+              filename,
+              status: 'done',
+              previewUrl: window.URL.createObjectURL(blob),
+            };
+            const newMap = new Map(prev);
+            newMap.set(file_id, data);
+            return newMap;
+          })
+        }
+      });
     }
   }
 

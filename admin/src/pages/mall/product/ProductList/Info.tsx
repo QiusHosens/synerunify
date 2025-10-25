@@ -121,16 +121,27 @@ const MallProductSpuInfo = forwardRef(({ }, ref) => {
                 newMap.set(result.file_id, data);
                 return newMap;
             })
-        }).then((blob) => {
+        }).catch(() => {
             setDownloadImages(prev => {
                 const data: DownloadProps = {
-                    status: 'done',
-                    previewUrl: window.URL.createObjectURL(blob),
+                    status: 'error',
                 };
                 const newMap = new Map(prev);
                 newMap.set(result.file_id, data);
                 return newMap;
             })
+        }).then((blob) => {
+            if (blob) {
+                setDownloadImages(prev => {
+                    const data: DownloadProps = {
+                        status: 'done',
+                        previewUrl: window.URL.createObjectURL(blob),
+                    };
+                    const newMap = new Map(prev);
+                    newMap.set(result.file_id, data);
+                    return newMap;
+                })
+            }
         });
         // 设置轮播图片
         const slider_file_ids = result.slider_file_ids.split(',');
@@ -147,21 +158,38 @@ const MallProductSpuInfo = forwardRef(({ }, ref) => {
                     newMap.set(file_id, data);
                     return newMap;
                 })
-            }).then((blob) => {
+            }).catch(() => {
                 setDownloadImages(prev => {
                     const data: DownloadProps = {
-                        status: 'done',
-                        previewUrl: window.URL.createObjectURL(blob),
+                        status: 'error',
                     };
                     const newMap = new Map(prev);
                     newMap.set(file_id, data);
                     return newMap;
                 })
+            }).then((blob) => {
+                if (blob) {
+                    setDownloadImages(prev => {
+                        const data: DownloadProps = {
+                            status: 'done',
+                            previewUrl: window.URL.createObjectURL(blob),
+                        };
+                        const newMap = new Map(prev);
+                        newMap.set(file_id, data);
+                        return newMap;
+                    })
+                }
             });
         }
         // 设置sku图片
         for (const sku of result.skus) {
             const file_id = sku.file_id;
+            if (!file_id) {
+                continue;
+            }
+            if (downloadImages?.get(file_id)) {
+                continue;
+            }
             downloadSystemFile(file_id, (progress) => {
                 setDownloadImages(prev => {
                     const data: DownloadProps = {
@@ -172,16 +200,27 @@ const MallProductSpuInfo = forwardRef(({ }, ref) => {
                     newMap.set(file_id, data);
                     return newMap;
                 })
-            }).then((blob) => {
+            }).catch(() => {
                 setDownloadImages(prev => {
                     const data: DownloadProps = {
-                        status: 'done',
-                        previewUrl: window.URL.createObjectURL(blob),
+                        status: 'error',
                     };
                     const newMap = new Map(prev);
                     newMap.set(file_id, data);
                     return newMap;
                 })
+            }).then((blob) => {
+                if (blob) {
+                    setDownloadImages(prev => {
+                        const data: DownloadProps = {
+                            status: 'done',
+                            previewUrl: window.URL.createObjectURL(blob),
+                        };
+                        const newMap = new Map(prev);
+                        newMap.set(file_id, data);
+                        return newMap;
+                    })
+                }
             });
         }
     }

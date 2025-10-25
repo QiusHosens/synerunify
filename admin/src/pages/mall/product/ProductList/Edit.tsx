@@ -350,7 +350,7 @@ const MallProductSpuEdit = forwardRef(({ onSubmit }: MallProductSpuEditProps, re
         newMap.set(result.file_id, data);
         return newMap;
       })
-    }).catch((error) => {
+    }).catch(() => {
       setDownloadImages(prev => {
         const data: DownloadProps = {
           status: 'error',
@@ -387,7 +387,7 @@ const MallProductSpuEdit = forwardRef(({ onSubmit }: MallProductSpuEditProps, re
           newMap.set(file_id, data);
           return newMap;
         })
-      }).catch((error) => {
+      }).catch(() => {
         setDownloadImages(prev => {
           const data: DownloadProps = {
             status: 'error',
@@ -429,7 +429,7 @@ const MallProductSpuEdit = forwardRef(({ onSubmit }: MallProductSpuEditProps, re
           newMap.set(file_id, data);
           return newMap;
         })
-      }).catch((error) => {
+      }).catch(() => {
         setDownloadImages(prev => {
           const data: DownloadProps = {
             status: 'error',

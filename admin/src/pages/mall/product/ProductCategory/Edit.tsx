@@ -140,21 +140,29 @@ const MallProductCategoryEdit = forwardRef(({ onSubmit }: MallProductCategoryEdi
       ...mallProductCategory,
     })
     // 设置图片
-    const result = await downloadSystemFile(mallProductCategory.file_id, (progress) => {
-      setDownloadImage(prev => {
+    downloadSystemFile(mallProductCategory.file_id, (progress) => {
+      setDownloadImage(() => {
         return {
           status: 'downloading',
           progress
         };
       })
-    })
-
-    setDownloadImage(prev => {
-      return {
-        status: 'done',
-        previewUrl: window.URL.createObjectURL(result),
-      };
-    })
+    }).catch(() => {
+      setDownloadImage(() => {
+        return {
+          status: 'error',
+        };
+      })
+    }).then((blob) => {
+      if (blob) {
+        setDownloadImage(() => {
+          return {
+            status: 'done',
+            previewUrl: window.URL.createObjectURL(blob),
+          };
+        })
+      }
+    });
     setErrors({});
   }
 

@@ -69,21 +69,29 @@ const MallProductBrandEdit = forwardRef(({ onSubmit }: MallProductBrandEditProps
       ...mallProductBrand,
     })
     // 设置图片
-    const result = await downloadSystemFile(mallProductBrand.file_id, (progress) => {
+    downloadSystemFile(mallProductBrand.file_id, (progress) => {
       setDownloadImage(() => {
         return {
           status: 'downloading',
           progress
         };
       })
-    })
-
-    setDownloadImage(() => {
-      return {
-        status: 'done',
-        previewUrl: window.URL.createObjectURL(result),
-      };
-    })
+    }).catch(() => {
+      setDownloadImage(() => {
+        return {
+          status: 'error',
+        };
+      })
+    }).then((blob) => {
+      if (blob) {
+        setDownloadImage(() => {
+          return {
+            status: 'done',
+            previewUrl: window.URL.createObjectURL(blob),
+          };
+        })
+      }
+    });
     setErrors({});
   }
 
