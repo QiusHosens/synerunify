@@ -261,7 +261,8 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
       newErrors.give_integral = t('global.error.input.please') + t('page.mall.product.title.give.integral');
     }
 
-    formValues.skus.forEach((sku, index) => {
+    const skus = formValues.spec_type == 0 ? formValues.skus.slice(0, 1) : formValues.skus.slice(1);
+    skus.forEach((sku, index) => {
       if (!sku.file_id && sku.file_id != 0) {
         newErrors.skus[index].file_id = t('global.error.select.please') + t('page.mall.product.sku.title.file');
       }
@@ -1180,8 +1181,6 @@ const MallProductSpuAdd = forwardRef(({ onSubmit }: MallProductSpuAddProps, ref)
                               file={item.file}
                               width={fileWidth}
                               height={fileHeight}
-                              error={!!(errors.skus[index]?.file_id)}
-                              helperText={errors.skus[index]?.file_id}
                             />
                           </Box>
                           {item.property_list && item.property_list.map((property) => (
