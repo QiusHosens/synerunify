@@ -353,11 +353,11 @@ class _StoreCategoryState extends State<StoreCategory> {
   Widget _buildProductCard(Map<String, dynamic> product) {
     return GestureDetector(
       onTap: () {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => ProductDetail(product: product),
-          ),
-        );
+        // Navigator.of(context).push(
+        //   MaterialPageRoute(
+        //     builder: (context) => ProductDetail(product: product),
+        //   ),
+        // );
       },
       child: Container(
         decoration: BoxDecoration(

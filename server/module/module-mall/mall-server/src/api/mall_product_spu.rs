@@ -6,7 +6,7 @@ use ctor;
 use macros::require_authorize;
 use axum::{routing::{get, post}, Router, extract::{State, Path, Json, Query}, response::IntoResponse, Extension};
 use common::base::page::PaginatedResponse;
-use mall_model::request::mall_product_spu::{CreateMallProductSpuRequest, UpdateMallProductSpuRequest, PaginatedKeywordRequest};
+use mall_model::request::mall_product_spu::{CreateMallProductSpuRequest, UpdateMallProductSpuRequest, PaginatedKeywordRequest, PaginatedCategoryKeywordRequest};
 use mall_model::response::mall_product_spu::{MallProductSpuBaseResponse, MallProductSpuInfoResponse, MallProductSpuResponse};
 use common::base::response::CommonResult;
 use common::context::context::LoginUserContext;
@@ -25,6 +25,12 @@ pub async fn mall_product_spu_router(state: AppState) -> OpenApiRouter {
         .routes(routes!(page))
         .routes(routes!(enable))
         .routes(routes!(disable))
+        .with_state(state)
+}
+
+pub async fn mall_product_spu_no_auth_router(state: AppState) -> OpenApiRouter {
+    OpenApiRouter::new()
+        .routes(routes!(page_all))
         .with_state(state)
 }
 
@@ -225,6 +231,31 @@ async fn page(
     Query(params): Query<PaginatedKeywordRequest>,
 ) -> CommonResult<PaginatedResponse<MallProductSpuResponse>> {
     match service::mall_product_spu::get_paginated(&state.db, login_user, params).await {
+        Ok(data) => {CommonResult::with_data(data)}
+        Err(e) => {CommonResult::with_err(&e.to_string())}
+    }
+}
+
+#[utoipa::path(
+    get,
+    path = "/page_all",
+    operation_id = "mall_product_spu_page_all",
+    params(
+        ("page" = u64, Query, description = "page number"),
+        ("size" = u64, Query, description = "page size"),
+        ("category_id" = Option<i64>, Query, description = "category id"),
+        ("keyword" = Option<String>, Query, description = "keyword")
+    ),
+    responses(
+        (status = 200, description = "get page all tenant", body = CommonResult<PaginatedResponse<MallProductSpuResponse>>)
+    ),
+    tag = "mall_product_spu",
+)]
+async fn page_all(
+    State(state): State<AppState>,
+    Query(params): Query<PaginatedCategoryKeywordRequest>,
+) -> CommonResult<PaginatedResponse<MallProductSpuResponse>> {
+    match service::mall_product_spu::get_paginated_all(&state.db, params).await {
         Ok(data) => {CommonResult::with_data(data)}
         Err(e) => {CommonResult::with_err(&e.to_string())}
     }

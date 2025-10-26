@@ -100,3 +100,11 @@ pub struct PaginatedKeywordRequest {
     pub base: PaginatedRequest,
     pub keyword: Option<String>,
 }
+
+#[derive(Serialize, Deserialize, Debug, ToSchema)]
+pub struct PaginatedCategoryKeywordRequest {
+    #[serde(flatten)]
+    pub base: PaginatedRequest,
+    pub category_id: Option<i64>, // 商品分类编号
+    pub keyword: Option<String>,
+}

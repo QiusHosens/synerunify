@@ -687,9 +687,9 @@ class _TakeawayState extends State<Takeaway> {
   Widget _buildFeaturedItemCard(Map<String, dynamic> item) {
     return GestureDetector(
       onTap: () {
-        Navigator.of(context).push(
-          MaterialPageRoute(builder: (context) => ProductDetail(product: item)),
-        );
+        // Navigator.of(context).push(
+        //   MaterialPageRoute(builder: (context) => ProductDetail(product: item)),
+        // );
       },
       child: Container(
         width: 150,

@@ -254,7 +254,7 @@ class _CategoryState extends State<Category> {
   /// 构建商品项
   Widget _buildProductItem(MallProductCategoryResponse category) {
     String previewUrl = _systemFileService.getPreviewUrl(category.fileId!);
-    Logger.info('previewUrl: ${previewUrl}');
+    // Logger.info('previewUrl: ${previewUrl}');
     return GestureDetector(
       onTap: () {
         // 根据商品类型跳转到不同页面
@@ -278,7 +278,8 @@ class _CategoryState extends State<Category> {
         Navigator.of(context).push(
           MaterialPageRoute(
             builder: (context) =>
-                ProductList(category: category.name, searchKeyword: ''),
+                // ProductList(category: category.name, searchKeyword: ''),
+                ProductListPage(category: category),
           ),
         );
       },

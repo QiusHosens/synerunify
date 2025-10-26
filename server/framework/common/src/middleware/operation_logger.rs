@@ -87,7 +87,7 @@ async fn add_logger_redis(request_context: RequestContext, login_user: Option<Lo
         Ok(id) => operation_logger.id = Some(id),
         Err(e) => operation_logger.id = None
     }
-    // info!("operation logger: {:?}", operation_logger);
+    info!("operation logger: {:?}", operation_logger);
     RedisManager::push_list::<_, String>(REDIS_KEY_LOGGER_OPERATION_PREFIX, serde_json::to_string(&operation_logger)?)?;
     Ok(())
 }

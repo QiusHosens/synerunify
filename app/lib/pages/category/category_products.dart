@@ -351,12 +351,12 @@ class _CategoryProductsState extends State<CategoryProducts> {
     return GestureDetector(
       onTap: () {
         // 跳转到商品详情页面
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ProductDetail(product: product),
-          ),
-        );
+        // Navigator.push(
+        //   context,
+        //   MaterialPageRoute(
+        //     builder: (context) => ProductDetail(product: product),
+        //   ),
+        // );
       },
       child: Container(
         margin: const EdgeInsets.only(bottom: 16),

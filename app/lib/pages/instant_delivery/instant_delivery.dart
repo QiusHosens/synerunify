@@ -733,11 +733,11 @@ class _InstantDeliveryState extends State<InstantDelivery> {
   Widget _buildFeaturedProductCard(Map<String, dynamic> product) {
     return GestureDetector(
       onTap: () {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => ProductDetail(product: product),
-          ),
-        );
+        // Navigator.of(context).push(
+        //   MaterialPageRoute(
+        //     builder: (context) => ProductDetail(product: product),
+        //   ),
+        // );
       },
       child: Container(
         width: 150,

@@ -1,74 +1,90 @@
 import 'package:flutter/material.dart';
+import 'package:synerunify/services/mall_product_category.dart';
+import 'package:synerunify/services/mall_product_spu.dart';
 import '../product/product_detail.dart';
 
 class ProductListPage extends StatefulWidget {
-  final String categoryName;
+  final MallProductCategoryResponse category;
 
-  const ProductListPage({super.key, required this.categoryName});
+  const ProductListPage({super.key, required this.category});
 
   @override
   State<ProductListPage> createState() => _ProductListPageState();
 }
 
 class _ProductListPageState extends State<ProductListPage> {
+  final MallProductSpuService _mallProductSpuService = MallProductSpuService();
   String _sortBy = '综合推荐';
   bool _isPriceAscending = false;
   String _selectedFilter = '推荐';
-  List<Map<String, dynamic>> _filteredProducts = [];
+  List<MallProductSpuResponse> _filteredProducts = [];
   bool _isGridView = false; // 网格模式状态
 
   // 商品数据，支持不同类型的商品
-  List<Map<String, dynamic>> _products = [];
+  List<MallProductSpuResponse> _products = [];
 
   @override
   void initState() {
     super.initState();
     _loadProducts();
-    _filteredProducts = List.from(_products);
   }
 
   /// 根据分类名称加载对应的商品数据
-  void _loadProducts() {
-    _products = _getGeneralProducts();
+  Future<void> _loadProducts() async {
+    _products = await _getGeneralProducts();
+    setState(() {
+      _filteredProducts = List.from(_products);
+    });
   }
 
   /// 通用商品数据
-  List<Map<String, dynamic>> _getGeneralProducts() {
-    return [
-      {
-        'id': '1',
-        'name': '${widget.categoryName}商品 1',
-        'price': 299,
-        'originalPrice': 399,
-        'sales': '已售1000+',
-        'rating': '95%好评',
-        'store': '${widget.categoryName}专营店',
-        'storeCustomers': '店铺回头客500',
-        'delivery': '24小时送达',
-        'location': '在你身边',
-        'tags': ['热销'],
-        'isAd': false,
-        'image': 'assets/images/product1.png',
-      },
-      {
-        'id': '2',
-        'name': '${widget.categoryName}商品 2',
-        'price': 599,
-        'originalPrice': null,
-        'sales': '已售500+',
-        'rating': '98%好评',
-        'store': '${widget.categoryName}自营店',
-        'storeCustomers': '已关注',
-        'delivery': '当日达',
-        'location': '',
-        'tags': ['新品'],
-        'specs': ['高品质', '耐用', '性价比高'],
-        'offers': ['包邮', '7天无理由退货'],
-        'subsidy': '立减50元',
-        'installment': '3期免息',
-        'image': 'assets/images/product2.png',
-      },
-    ];
+  Future<List<MallProductSpuResponse>> _getGeneralProducts() async {
+    final response = await _mallProductSpuService.pageAllMallProductSpu(
+      MallProductSpuQueryCondition(
+        page: 1,
+        size: 20,
+        categoryId: widget.category.id,
+      ),
+    );
+    if (response.success) {
+      return response.data?.list ?? [];
+    }
+    return [];
+    // return [
+    //   {
+    //     'id': '1',
+    //     'name': '${widget.categoryName}商品 1',
+    //     'price': 299,
+    //     'originalPrice': 399,
+    //     'sales': '已售1000+',
+    //     'rating': '95%好评',
+    //     'store': '${widget.categoryName}专营店',
+    //     'storeCustomers': '店铺回头客500',
+    //     'delivery': '24小时送达',
+    //     'location': '在你身边',
+    //     'tags': ['热销'],
+    //     'isAd': false,
+    //     'image': 'assets/images/product1.png',
+    //   },
+    //   {
+    //     'id': '2',
+    //     'name': '${widget.categoryName}商品 2',
+    //     'price': 599,
+    //     'originalPrice': null,
+    //     'sales': '已售500+',
+    //     'rating': '98%好评',
+    //     'store': '${widget.categoryName}自营店',
+    //     'storeCustomers': '已关注',
+    //     'delivery': '当日达',
+    //     'location': '',
+    //     'tags': ['新品'],
+    //     'specs': ['高品质', '耐用', '性价比高'],
+    //     'offers': ['包邮', '7天无理由退货'],
+    //     'subsidy': '立减50元',
+    //     'installment': '3期免息',
+    //     'image': 'assets/images/product2.png',
+    //   },
+    // ];
   }
 
   /// 筛选商品
@@ -84,23 +100,19 @@ class _ProductListPageState extends State<ProductListPage> {
         case '好礼':
           // 筛选有礼品标签的商品
           _filteredProducts = _products
-              .where((product) => product['offers']?.contains('京补合约') == true)
+              .where((product) => product.name.contains('好礼'))
               .toList();
           break;
         case '果切':
           // 筛选果切相关商品（这里用iPhone 15作为示例）
           _filteredProducts = _products
-              .where(
-                (product) => product['name'].toString().contains('iPhone 15'),
-              )
+              .where((product) => product.name.contains('iPhone 15'))
               .toList();
           break;
         case '尝秋果':
           // 筛选秋季新品（这里用iPhone 17作为示例）
           _filteredProducts = _products
-              .where(
-                (product) => product['name'].toString().contains('iPhone 17'),
-              )
+              .where((product) => product.name.contains('iPhone 17'))
               .toList();
           break;
       }
@@ -118,16 +130,16 @@ class _ProductListPageState extends State<ProductListPage> {
           break;
         case '销量':
           _filteredProducts.sort((a, b) {
-            // 按销量排序（这里用价格作为销量参考）
-            return b['price'].compareTo(a['price']);
+            // 按销量排序
+            return (b.salesCount ?? 0).compareTo(a.salesCount ?? 0);
           });
           break;
         case '价格':
           _filteredProducts.sort((a, b) {
             if (_isPriceAscending) {
-              return a['price'].compareTo(b['price']);
+              return a.price.compareTo(b.price);
             } else {
-              return b['price'].compareTo(a['price']);
+              return b.price.compareTo(a.price);
             }
           });
           break;
@@ -182,7 +194,7 @@ class _ProductListPageState extends State<ProductListPage> {
               const Spacer(),
               // 页面标题
               Text(
-                widget.categoryName,
+                widget.category.name,
                 style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -364,7 +376,7 @@ class _ProductListPageState extends State<ProductListPage> {
   }
 
   /// 构建商品卡片
-  Widget _buildProductCard(Map<String, dynamic> product) {
+  Widget _buildProductCard(MallProductSpuResponse product) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
@@ -402,7 +414,7 @@ class _ProductListPageState extends State<ProductListPage> {
                           ),
                           child: Center(
                             child: Icon(
-                              widget.categoryName == 'iPhone'
+                              widget.category.name == 'iPhone'
                                   ? Icons.phone_iphone
                                   : Icons.shopping_bag,
                               size: 50,
@@ -411,35 +423,35 @@ class _ProductListPageState extends State<ProductListPage> {
                           ),
                         ),
                         // 标签
-                        if (product['tags'] != null)
-                          ...(product['tags'] as List)
-                              .map(
-                                (tag) => Positioned(
-                                  top: 4,
-                                  left: 4,
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 4,
-                                      vertical: 2,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: tag == 'HOT'
-                                          ? Colors.red
-                                          : Colors.orange,
-                                      borderRadius: BorderRadius.circular(3),
-                                    ),
-                                    child: Text(
-                                      tag as String,
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 8,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              )
-                              .toList(),
+                        // if (product['tags'] != null)
+                        //   ...(product['tags'] as List)
+                        //       .map(
+                        //         (tag) => Positioned(
+                        //           top: 4,
+                        //           left: 4,
+                        //           child: Container(
+                        //             padding: const EdgeInsets.symmetric(
+                        //               horizontal: 4,
+                        //               vertical: 2,
+                        //             ),
+                        //             decoration: BoxDecoration(
+                        //               color: tag == 'HOT'
+                        //                   ? Colors.red
+                        //                   : Colors.orange,
+                        //               borderRadius: BorderRadius.circular(3),
+                        //             ),
+                        //             child: Text(
+                        //               tag as String,
+                        //               style: const TextStyle(
+                        //                 color: Colors.white,
+                        //                 fontSize: 8,
+                        //                 fontWeight: FontWeight.bold,
+                        //               ),
+                        //             ),
+                        //           ),
+                        //         ),
+                        //       )
+                        //       .toList(),
                       ],
                     ),
                     const SizedBox(width: 12),
@@ -450,7 +462,7 @@ class _ProductListPageState extends State<ProductListPage> {
                         children: [
                           // 商品名称
                           Text(
-                            product['name'] as String,
+                            product.name as String,
                             style: const TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
@@ -462,50 +474,50 @@ class _ProductListPageState extends State<ProductListPage> {
                           const SizedBox(height: 6),
 
                           // 规格信息
-                          if (product['specs'] != null)
-                            Wrap(
-                              spacing: 2,
-                              runSpacing: 2,
-                              children: (product['specs'] as List)
-                                  .take(4)
-                                  .map(
-                                    (spec) => Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 4,
-                                        vertical: 1,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color: Colors.grey[100],
-                                        borderRadius: BorderRadius.circular(2),
-                                      ),
-                                      child: Text(
-                                        spec as String,
-                                        style: TextStyle(
-                                          fontSize: 8,
-                                          color: Colors.grey[600],
-                                        ),
-                                      ),
-                                    ),
-                                  )
-                                  .toList(),
-                            ),
-                          const SizedBox(height: 6),
+                          // if (product['specs'] != null)
+                          //   Wrap(
+                          //     spacing: 2,
+                          //     runSpacing: 2,
+                          //     children: (product['specs'] as List)
+                          //         .take(4)
+                          //         .map(
+                          //           (spec) => Container(
+                          //             padding: const EdgeInsets.symmetric(
+                          //               horizontal: 4,
+                          //               vertical: 1,
+                          //             ),
+                          //             decoration: BoxDecoration(
+                          //               color: Colors.grey[100],
+                          //               borderRadius: BorderRadius.circular(2),
+                          //             ),
+                          //             child: Text(
+                          //               spec as String,
+                          //               style: TextStyle(
+                          //                 fontSize: 8,
+                          //                 color: Colors.grey[600],
+                          //               ),
+                          //             ),
+                          //           ),
+                          //         )
+                          //         .toList(),
+                          //   ),
+                          // const SizedBox(height: 6),
 
                           // 价格信息
                           Row(
                             children: [
                               Text(
-                                '¥${product['price']}',
+                                '¥${product.price}',
                                 style: const TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.red,
                                 ),
                               ),
-                              if (product['originalPrice'] != null) ...[
+                              if (product.marketPrice != null) ...[
                                 const SizedBox(width: 6),
                                 Text(
-                                  '¥${product['originalPrice']}',
+                                  '¥${product.marketPrice}',
                                   style: TextStyle(
                                     fontSize: 12,
                                     color: Colors.grey[500],
@@ -515,31 +527,31 @@ class _ProductListPageState extends State<ProductListPage> {
                               ],
                               const Spacer(),
                               // 广告标签
-                              if (product['isAd'] == true)
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 4,
-                                    vertical: 1,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: Colors.grey[300],
-                                    borderRadius: BorderRadius.circular(2),
-                                  ),
-                                  child: const Text(
-                                    '广告',
-                                    style: TextStyle(
-                                      fontSize: 8,
-                                      color: Colors.grey,
-                                    ),
-                                  ),
-                                ),
+                              // if (product['isAd'] == true)
+                              //   Container(
+                              //     padding: const EdgeInsets.symmetric(
+                              //       horizontal: 4,
+                              //       vertical: 1,
+                              //     ),
+                              //     decoration: BoxDecoration(
+                              //       color: Colors.grey[300],
+                              //       borderRadius: BorderRadius.circular(2),
+                              //     ),
+                              //     child: const Text(
+                              //       '广告',
+                              //       style: TextStyle(
+                              //         fontSize: 8,
+                              //         color: Colors.grey,
+                              //       ),
+                              //     ),
+                              //   ),
                             ],
                           ),
                           const SizedBox(height: 4),
 
                           // 销量和好评
                           Text(
-                            '${product['sales']} ${product['rating']}',
+                            '${product.salesCount}', // ${product['rating']}
                             style: TextStyle(
                               fontSize: 11,
                               color: Colors.grey[600],
@@ -548,92 +560,92 @@ class _ProductListPageState extends State<ProductListPage> {
                           const SizedBox(height: 4),
 
                           // 店铺信息
-                          Text(
-                            '${product['storeCustomers']} ${product['store']}',
-                            style: TextStyle(
-                              fontSize: 11,
-                              color: Colors.grey[600],
-                            ),
-                          ),
-                          const SizedBox(height: 6),
+                          // Text(
+                          //   '${product['storeCustomers']} ${product['store']}',
+                          //   style: TextStyle(
+                          //     fontSize: 11,
+                          //     color: Colors.grey[600],
+                          //   ),
+                          // ),
+                          // const SizedBox(height: 6),
 
                           // 优惠信息
-                          if (product['offers'] != null)
-                            Wrap(
-                              spacing: 2,
-                              runSpacing: 2,
-                              children: (product['offers'] as List)
-                                  .map(
-                                    (offer) => Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 4,
-                                        vertical: 1,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color: Colors.blue.withValues(
-                                          alpha: 0.1,
-                                        ),
-                                        borderRadius: BorderRadius.circular(2),
-                                      ),
-                                      child: Text(
-                                        offer as String,
-                                        style: const TextStyle(
-                                          fontSize: 8,
-                                          color: Colors.blue,
-                                        ),
-                                      ),
-                                    ),
-                                  )
-                                  .toList(),
-                            ),
-                          const SizedBox(height: 6),
+                          // if (product['offers'] != null)
+                          //   Wrap(
+                          //     spacing: 2,
+                          //     runSpacing: 2,
+                          //     children: (product['offers'] as List)
+                          //         .map(
+                          //           (offer) => Container(
+                          //             padding: const EdgeInsets.symmetric(
+                          //               horizontal: 4,
+                          //               vertical: 1,
+                          //             ),
+                          //             decoration: BoxDecoration(
+                          //               color: Colors.blue.withValues(
+                          //                 alpha: 0.1,
+                          //               ),
+                          //               borderRadius: BorderRadius.circular(2),
+                          //             ),
+                          //             child: Text(
+                          //               offer as String,
+                          //               style: const TextStyle(
+                          //                 fontSize: 8,
+                          //                 color: Colors.blue,
+                          //               ),
+                          //             ),
+                          //           ),
+                          //         )
+                          //         .toList(),
+                          //   ),
+                          // const SizedBox(height: 6),
 
                           // 底部信息
                           Row(
                             children: [
-                              if (product['subsidy'] != null &&
-                                  (product['subsidy'] as String).isNotEmpty)
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 4,
-                                    vertical: 1,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: Colors.green.withValues(alpha: 0.1),
-                                    borderRadius: BorderRadius.circular(2),
-                                  ),
-                                  child: Text(
-                                    product['subsidy'] as String,
-                                    style: const TextStyle(
-                                      fontSize: 8,
-                                      color: Colors.green,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ),
-                              if (product['subsidy'] != null &&
-                                  (product['subsidy'] as String).isNotEmpty)
-                                const SizedBox(width: 4),
-                              if (product['installment'] != null &&
-                                  (product['installment'] as String).isNotEmpty)
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 4,
-                                    vertical: 1,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: Colors.orange.withValues(alpha: 0.1),
-                                    borderRadius: BorderRadius.circular(2),
-                                  ),
-                                  child: Text(
-                                    product['installment'] as String,
-                                    style: const TextStyle(
-                                      fontSize: 8,
-                                      color: Colors.orange,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ),
+                              // if (product['subsidy'] != null &&
+                              //     (product['subsidy'] as String).isNotEmpty)
+                              //   Container(
+                              //     padding: const EdgeInsets.symmetric(
+                              //       horizontal: 4,
+                              //       vertical: 1,
+                              //     ),
+                              //     decoration: BoxDecoration(
+                              //       color: Colors.green.withValues(alpha: 0.1),
+                              //       borderRadius: BorderRadius.circular(2),
+                              //     ),
+                              //     child: Text(
+                              //       product['subsidy'] as String,
+                              //       style: const TextStyle(
+                              //         fontSize: 8,
+                              //         color: Colors.green,
+                              //         fontWeight: FontWeight.w500,
+                              //       ),
+                              //     ),
+                              //   ),
+                              // if (product['subsidy'] != null &&
+                              //     (product['subsidy'] as String).isNotEmpty)
+                              //   const SizedBox(width: 4),
+                              // if (product['installment'] != null &&
+                              //     (product['installment'] as String).isNotEmpty)
+                              //   Container(
+                              //     padding: const EdgeInsets.symmetric(
+                              //       horizontal: 4,
+                              //       vertical: 1,
+                              //     ),
+                              //     decoration: BoxDecoration(
+                              //       color: Colors.orange.withValues(alpha: 0.1),
+                              //       borderRadius: BorderRadius.circular(2),
+                              //     ),
+                              //     child: Text(
+                              //       product['installment'] as String,
+                              //       style: const TextStyle(
+                              //         fontSize: 8,
+                              //         color: Colors.orange,
+                              //         fontWeight: FontWeight.w500,
+                              //       ),
+                              //     ),
+                              //   ),
                               const Spacer(),
                               // 进店按钮
                               Container(
@@ -670,14 +682,14 @@ class _ProductListPageState extends State<ProductListPage> {
   }
 
   /// 构建网格模式商品卡片
-  Widget _buildGridProductCard(Map<String, dynamic> product) {
+  Widget _buildGridProductCard(MallProductSpuResponse product) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(8),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha: 0.1),
             spreadRadius: 1,
             blurRadius: 4,
             offset: const Offset(0, 2),
@@ -713,7 +725,7 @@ class _ProductListPageState extends State<ProductListPage> {
                         ),
                         child: Center(
                           child: Icon(
-                            widget.categoryName == 'iPhone'
+                            widget.category.name == 'iPhone'
                                 ? Icons.phone_iphone
                                 : Icons.shopping_bag,
                             size: 40,
@@ -722,35 +734,35 @@ class _ProductListPageState extends State<ProductListPage> {
                         ),
                       ),
                       // 标签
-                      if (product['tags'] != null)
-                        ...(product['tags'] as List)
-                            .map(
-                              (tag) => Positioned(
-                                top: 4,
-                                left: 4,
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 4,
-                                    vertical: 2,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: tag == 'HOT'
-                                        ? Colors.red
-                                        : Colors.orange,
-                                    borderRadius: BorderRadius.circular(3),
-                                  ),
-                                  child: Text(
-                                    tag as String,
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 8,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            )
-                            .toList(),
+                      // if (product['tags'] != null)
+                      //   ...(product['tags'] as List)
+                      //       .map(
+                      //         (tag) => Positioned(
+                      //           top: 4,
+                      //           left: 4,
+                      //           child: Container(
+                      //             padding: const EdgeInsets.symmetric(
+                      //               horizontal: 4,
+                      //               vertical: 2,
+                      //             ),
+                      //             decoration: BoxDecoration(
+                      //               color: tag == 'HOT'
+                      //                   ? Colors.red
+                      //                   : Colors.orange,
+                      //               borderRadius: BorderRadius.circular(3),
+                      //             ),
+                      //             child: Text(
+                      //               tag as String,
+                      //               style: const TextStyle(
+                      //                 color: Colors.white,
+                      //                 fontSize: 8,
+                      //                 fontWeight: FontWeight.bold,
+                      //               ),
+                      //             ),
+                      //           ),
+                      //         ),
+                      //       )
+                      //       .toList(),
                     ],
                   ),
                 ),
@@ -759,7 +771,7 @@ class _ProductListPageState extends State<ProductListPage> {
                 Expanded(
                   flex: 2,
                   child: Text(
-                    product['name'] as String,
+                    product.name,
                     style: const TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w500,
@@ -774,17 +786,17 @@ class _ProductListPageState extends State<ProductListPage> {
                 Row(
                   children: [
                     Text(
-                      '¥${product['price']}',
+                      '¥${product.price}',
                       style: const TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
                         color: Colors.red,
                       ),
                     ),
-                    if (product['originalPrice'] != null) ...[
+                    if (product.marketPrice != null) ...[
                       const SizedBox(width: 4),
                       Text(
-                        '¥${product['originalPrice']}',
+                        '¥${product.marketPrice}',
                         style: TextStyle(
                           fontSize: 10,
                           color: Colors.grey[500],
@@ -797,7 +809,7 @@ class _ProductListPageState extends State<ProductListPage> {
                 const SizedBox(height: 4),
                 // 销量信息
                 Text(
-                  product['sales'] as String,
+                  product.salesCount.toString(),
                   style: TextStyle(fontSize: 10, color: Colors.grey[600]),
                 ),
                 const SizedBox(height: 4),

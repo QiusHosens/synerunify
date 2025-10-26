@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:synerunify/services/mall_product_spu.dart';
+import 'package:synerunify/services/system_file.dart';
 import '../../widgets/specification_modal.dart';
 import '../cart/checkout.dart';
 
 class ProductDetail extends StatefulWidget {
-  final Map<String, dynamic> product;
+  final MallProductSpuResponse product;
 
   const ProductDetail({super.key, required this.product});
 
@@ -13,6 +15,7 @@ class ProductDetail extends StatefulWidget {
 
 class _ProductDetailState extends State<ProductDetail>
     with TickerProviderStateMixin {
+  final SystemFileService _systemFileService = SystemFileService();
   late TabController _tabController;
   late PageController _imagePageController;
 
@@ -960,7 +963,7 @@ class _ProductDetailState extends State<ProductDetail>
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (context) => SpecificationModal(
-        product: widget.product,
+        product: widget.product.toJson(),
         selectedColorIndex: _selectedColorIndex,
         selectedSizeIndex: _selectedSizeIndex,
         quantity: _quantity,
@@ -987,7 +990,7 @@ class _ProductDetailState extends State<ProductDetail>
   void _confirmAddToCart() {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('已加入购物车：${widget.product['name']} x$_quantity'),
+        content: Text('已加入购物车：${widget.product.name} x$_quantity'),
         action: SnackBarAction(
           label: '查看购物车',
           onPressed: () {
@@ -1003,13 +1006,15 @@ class _ProductDetailState extends State<ProductDetail>
   void _confirmBuyNow() {
     Navigator.of(context).pop(); // 关闭规格选择弹窗
 
+    String previewUrl = _systemFileService.getPreviewUrl(widget.product.fileId);
+
     // 创建商品项目数据
     final cartItem = {
-      'id': widget.product['id'] ?? DateTime.now().millisecondsSinceEpoch,
-      'name': widget.product['name'] ?? '商品名称',
-      'price': widget.product['price'] ?? 0.0,
+      'id': widget.product.id,
+      'name': widget.product.name,
+      'price': widget.product.price,
       'quantity': _quantity,
-      'image': widget.product['image'] ?? 'assets/images/placeholder.png',
+      'image': previewUrl ?? 'assets/images/placeholder.png',
       'selected': true,
       'specifications': {
         'color': _colors[_selectedColorIndex],
@@ -1018,7 +1023,7 @@ class _ProductDetailState extends State<ProductDetail>
     };
 
     // 计算总金额
-    double totalAmount = (widget.product['price'] ?? 0.0) * _quantity;
+    double totalAmount = widget.product.price.toDouble() * _quantity;
 
     // 显示结算弹窗
     Checkout.show(context, cartItems: [cartItem], totalAmount: totalAmount);

@@ -229,11 +229,11 @@ class _ProductListState extends State<ProductList> {
         color: Colors.transparent,
         child: InkWell(
           onTap: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => ProductDetail(product: product),
-              ),
-            );
+            // Navigator.of(context).push(
+            //   MaterialPageRoute(
+            //     builder: (context) => ProductDetail(product: product),
+            //   ),
+            // );
           },
           borderRadius: BorderRadius.circular(12),
           child: Padding(

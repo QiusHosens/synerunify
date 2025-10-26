@@ -15,7 +15,7 @@ use crate::api::mall_product_favorite::{ mall_product_favorite_route, mall_produ
 use crate::api::mall_product_property::{ mall_product_property_route, mall_product_property_router };
 use crate::api::mall_product_property_value::{ mall_product_property_value_route, mall_product_property_value_router };
 use crate::api::mall_product_sku::{ mall_product_sku_route, mall_product_sku_router };
-use crate::api::mall_product_spu::{ mall_product_spu_route, mall_product_spu_router };
+use crate::api::mall_product_spu::{mall_product_spu_no_auth_router, mall_product_spu_route, mall_product_spu_router};
 use crate::api::mall_product_statistics::{ mall_product_statistics_route, mall_product_statistics_router };
 use crate::api::mall_promotion_article::{ mall_promotion_article_route, mall_promotion_article_router };
 use crate::api::mall_promotion_article_category::{ mall_promotion_article_category_route, mall_promotion_article_category_router };
@@ -137,6 +137,7 @@ pub async fn api(state: AppState) -> Router {
 pub async fn no_auth_router(state: AppState) -> OpenApiRouter {
     OpenApiRouter::new()
         .nest("/mall_product_category", mall_product_category_no_auth_router(state.clone()).await)
+        .nest("/mall_product_spu", mall_product_spu_no_auth_router(state.clone()).await)
         .layer(axum::middleware::from_fn(authorize_handler))
         .layer(axum::middleware::from_fn(operation_logger_handler))
         .layer(axum::middleware::from_fn_with_state(state.clone(), request_context_handler))

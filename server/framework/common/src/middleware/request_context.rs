@@ -88,7 +88,7 @@ pub async fn request_context_handler(State(state): State<AppState>, user_agent: 
         user_agent: user_agent_header.to_string(),
         device_type: device_str.to_string(),
     };
-    // info!("request context: {:?}", request_context);
+    info!("request context: {:?}", request_context);
     let mut request = Request::from_parts(parts, Body::from(bytes));
 
     request.extensions_mut().insert(request_context);

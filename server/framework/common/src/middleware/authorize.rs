@@ -172,7 +172,7 @@ pub async fn authorize_handler(request: Request, next: Next) -> Result<Response,
     let path = format!("/{}", original_uri_path.replacen(&(config.api_prefix.clone() + "/"), "", 1));
     // 获取目标路由的权限要求
     let mut authorizes = get_authorizes(path.as_str());
-    // info!("path: {:?}, authorizes: {:?}", path, authorizes);
+    info!("path: {:?}, authorizes: {:?}", path, authorizes);
     
     // 没有授权,则直接请求
     match authorizes {

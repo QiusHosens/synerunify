@@ -1,3 +1,5 @@
+import 'package:synerunify/utils/logger.dart';
+
 import '../utils/type_utils.dart';
 
 class PaginatedRequest {
@@ -63,9 +65,20 @@ class PaginatedResponse<T> {
     required this.total,
   });
 
-  factory PaginatedResponse.fromJson(Map<String, dynamic> json) {
+  factory PaginatedResponse.fromJson(
+    Map<String, dynamic> json,
+    T Function(dynamic)? fromJson,
+  ) {
+    // Logger.info('page list: ${json['list']}');
+    List<T> list = [];
+    if (fromJson != null) {
+      for (var item in json['list']) {
+        // Logger.info('item: ${item}');
+        list.add(fromJson(item));
+      }
+    }
     return PaginatedResponse(
-      list: json['list'] as List<T>,
+      list: fromJson != null ? list : json['list'] as List<T>,
       totalPages: TypeUtils.parseInt(json['total_pages']),
       page: TypeUtils.parseInt(json['page']),
       size: TypeUtils.parseInt(json['size']),

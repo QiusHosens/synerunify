@@ -1096,7 +1096,7 @@ const MallProductSpuEdit = forwardRef(({ onSubmit }: MallProductSpuEditProps, re
                 <FormControl sx={{ mt: 2, minWidth: 120, '& .MuiSelect-root': { width: '240px' } }}>
                   <SelectTree
                     expandToSelected
-                    name='parent_id'
+                    name='category_id'
                     size="small"
                     label={t('page.mall.product.title.category')}
                     treeData={treeData}

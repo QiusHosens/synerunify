@@ -1,4 +1,5 @@
 import 'package:synerunify/models/base.dart';
+import 'package:synerunify/utils/logger.dart';
 
 import '../utils/http_client.dart';
 import '../utils/type_utils.dart';
@@ -12,6 +13,8 @@ const apis = {
   'page': '/mall/mall_product_spu/page', // 分页查询
   'enable': '/mall/mall_product_spu/enable', // 启用
   'disable': '/mall/mall_product_spu/disable', // 禁用
+
+  'page_all': '/mall/mall_product_spu/page_all', // 分页查询
 };
 
 class MallProductSpuRequest {
@@ -38,7 +41,6 @@ class MallProductSpuRequest {
   final int? salesCount; // 商品销量
   final int? virtualSalesCount; // 虚拟销量
   final int? browseCount; // 商品点击量
-  
 
   MallProductSpuRequest({
     required this.id,
@@ -64,7 +66,7 @@ class MallProductSpuRequest {
     this.salesCount,
     this.virtualSalesCount,
     this.browseCount,
-    });
+  });
 
   factory MallProductSpuRequest.fromJson(Map<String, dynamic> json) {
     return MallProductSpuRequest(
@@ -91,7 +93,7 @@ class MallProductSpuRequest {
       salesCount: json['sales_count'] as int?,
       virtualSalesCount: json['virtual_sales_count'] as int?,
       browseCount: json['browse_count'] as int?,
-      );
+    );
   }
 
   Map<String, dynamic> toJson() {
@@ -119,14 +121,17 @@ class MallProductSpuRequest {
       'sales_count': salesCount,
       'virtual_sales_count': virtualSalesCount,
       'browse_count': browseCount,
-      };
+    };
   }
 }
 
 class MallProductSpuQueryCondition extends PaginatedRequest {
+  final int? categoryId;
+
   MallProductSpuQueryCondition({
     required int page,
     required int size,
+    this.categoryId,
     String? keyword,
     String? sortField,
     String? sort,
@@ -134,15 +139,24 @@ class MallProductSpuQueryCondition extends PaginatedRequest {
     String? filterOperator,
     String? filterValue,
   }) : super(
-          page: page,
-          size: size,
-          keyword: keyword,
-          sortField: sortField,
-          sort: sort,
-          filterField: filterField,
-          filterOperator: filterOperator,
-          filterValue: filterValue,
-        );
+         page: page,
+         size: size,
+         keyword: keyword,
+         sortField: sortField,
+         sort: sort,
+         filterField: filterField,
+         filterOperator: filterOperator,
+         filterValue: filterValue,
+       );
+
+  @override
+  Map<String, dynamic> toJson() {
+    final json = super.toJson();
+    if (categoryId != null) {
+      json['category_id'] = categoryId;
+    }
+    return json;
+  }
 }
 
 class MallProductSpuResponse {
@@ -170,9 +184,9 @@ class MallProductSpuResponse {
   final int? virtualSalesCount; // 虚拟销量
   final int? browseCount; // 商品点击量
   final int? creator; // 创建者ID
-  final DateTime createTime; // 创建时间
+  final String createTime; // 创建时间
   final int? updater; // 更新者ID
-  final DateTime updateTime; // 更新时间
+  final String updateTime; // 更新时间
   MallProductSpuResponse({
     required this.id,
     required this.name,
@@ -201,7 +215,7 @@ class MallProductSpuResponse {
     required this.createTime,
     this.updater,
     required this.updateTime,
-    });
+  });
 
   factory MallProductSpuResponse.fromJson(Map<String, dynamic> json) {
     return MallProductSpuResponse(
@@ -229,10 +243,10 @@ class MallProductSpuResponse {
       virtualSalesCount: json['virtual_sales_count'] as int?,
       browseCount: json['browse_count'] as int?,
       creator: json['creator'] as int?,
-      createTime: json['create_time'] as DateTime,
+      createTime: json['create_time'] as String,
       updater: json['updater'] as int?,
-      updateTime: json['update_time'] as DateTime,
-      );
+      updateTime: json['update_time'] as String,
+    );
   }
 
   Map<String, dynamic> toJson() {
@@ -264,43 +278,65 @@ class MallProductSpuResponse {
       'create_time': createTime,
       'updater': updater,
       'update_time': updateTime,
-      };
+    };
   }
 }
 
 class MallProductSpuService {
+  final HttpClient _httpClient = HttpClient();
 
-    final HttpClient _httpClient = HttpClient();
+  Future<ApiResponse<int>> createMallProductSpu(
+    MallProductSpuRequest mallProductSpu,
+  ) async {
+    return await _httpClient.post<int>(apis['create']!, data: mallProductSpu);
+  }
 
-    Future<ApiResponse<int>> createMallProductSpu(MallProductSpuRequest mallProductSpu) async {
-        return await _httpClient.post<int>(apis['create']!, data: mallProductSpu);
-    }
+  Future<ApiResponse<int>> updateMallProductSpu(
+    MallProductSpuRequest mallProductSpu,
+  ) async {
+    return await _httpClient.post<int>(apis['update']!, data: mallProductSpu);
+  }
 
-    Future<ApiResponse<int>> updateMallProductSpu(MallProductSpuRequest mallProductSpu) async {
-        return await _httpClient.post<int>(apis['update']!, data: mallProductSpu);
-    }
+  Future<ApiResponse<void>> deleteMallProductSpu(int id) async {
+    return await _httpClient.post<void>('${apis['delete']!}/$id');
+  }
 
-    Future<ApiResponse<void>> deleteMallProductSpu(int id) async {
-        return await _httpClient.post<void>('${apis['delete']!}/$id');
-    }
+  Future<ApiResponse<MallProductSpuResponse>> getMallProductSpu(int id) async {
+    return await _httpClient.get<MallProductSpuResponse>('${apis['get']!}/$id');
+  }
 
-    Future<ApiResponse<MallProductSpuResponse>> getMallProductSpu(int id) async {
-        return await _httpClient.get<MallProductSpuResponse>('${apis['get']!}/$id');
-    }
+  Future<ApiResponse<List<MallProductSpuResponse>>> listMallProductSpu() async {
+    return await _httpClient.get<List<MallProductSpuResponse>>(apis['list']!);
+  }
 
-    Future<ApiResponse<List<MallProductSpuResponse>>> listMallProductSpu() async {
-        return await _httpClient.get<List<MallProductSpuResponse>>(apis['list']!);
-    }
+  Future<ApiResponse<PaginatedResponse<MallProductSpuResponse>>>
+  pageMallProductSpu(MallProductSpuQueryCondition condition) async {
+    return await _httpClient.get<PaginatedResponse<MallProductSpuResponse>>(
+      apis['page']!,
+      queryParameters: condition.toJson(),
+    );
+  }
 
-    Future<ApiResponse<PaginatedResponse<MallProductSpuResponse>>> pageMallProductSpu(MallProductSpuQueryCondition condition) async {
-        return await _httpClient.get<PaginatedResponse<MallProductSpuResponse>>(apis['page']!, queryParameters: condition.toJson());
-    }
-    
-    Future<ApiResponse<void>> enableMallProductSpu(int id) async {
-      return await _httpClient.post<void>('${apis['enable']!}/$id');
-    }
+  Future<ApiResponse<PaginatedResponse<MallProductSpuResponse>>>
+  pageAllMallProductSpu(MallProductSpuQueryCondition condition) async {
+    return await _httpClient.get<PaginatedResponse<MallProductSpuResponse>>(
+      apis['page_all']!,
+      queryParameters: condition.toJson(),
+      fromJson: (response) {
+        Logger.info('page all list: ${response}');
+        return PaginatedResponse.fromJson(
+          response,
+          (json) => MallProductSpuResponse.fromJson(json),
+        );
+      },
+    );
+  }
 
-    Future<ApiResponse<void>> disableMallProductSpu(int id) async {
-      return await _httpClient.post<void>('${apis['disable']!}/$id');
-    }
+  Future<ApiResponse<void>> enableMallProductSpu(int id) async {
+    return await _httpClient.post<void>('${apis['enable']!}/$id');
+  }
+
+  Future<ApiResponse<void>> disableMallProductSpu(int id) async {
+    return await _httpClient.post<void>('${apis['disable']!}/$id');
+  }
 }

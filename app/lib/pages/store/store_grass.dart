@@ -339,11 +339,11 @@ class _StoreGrassState extends State<StoreGrass> {
   Widget _buildRelatedProduct(Map<String, dynamic> product) {
     return GestureDetector(
       onTap: () {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => ProductDetail(product: product),
-          ),
-        );
+        // Navigator.of(context).push(
+        //   MaterialPageRoute(
+        //     builder: (context) => ProductDetail(product: product),
+        //   ),
+        // );
       },
       child: Container(
         padding: const EdgeInsets.all(8),
