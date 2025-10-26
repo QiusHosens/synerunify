@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:synerunify/services/mall_product_category.dart';
 import 'package:synerunify/services/mall_product_spu.dart';
 import 'package:synerunify/services/system_file.dart';
+import 'package:easy_refresh/easy_refresh.dart';
 import '../product/product_detail.dart';
 
 class ProductListPage extends StatefulWidget {
@@ -16,6 +17,10 @@ class ProductListPage extends StatefulWidget {
 class _ProductListPageState extends State<ProductListPage> {
   final MallProductSpuService _mallProductSpuService = MallProductSpuService();
   final SystemFileService _systemFileService = SystemFileService();
+  final EasyRefreshController _refreshController = EasyRefreshController(
+    controlFinishRefresh: true,
+    controlFinishLoad: true,
+  );
   String _sortBy = '综合推荐';
   bool _isPriceAscending = false;
   String _selectedFilter = '推荐';
@@ -31,12 +36,25 @@ class _ProductListPageState extends State<ProductListPage> {
     _loadProducts();
   }
 
+  @override
+  void dispose() {
+    _refreshController.dispose();
+    super.dispose();
+  }
+
   /// 根据分类名称加载对应的商品数据
   Future<void> _loadProducts() async {
-    _products = await _getGeneralProducts();
-    setState(() {
-      _filteredProducts = List.from(_products);
-    });
+    try {
+      _products = await _getGeneralProducts();
+      setState(() {
+        _filteredProducts = List.from(_products);
+      });
+      // 重新应用当前的筛选条件
+      _filterProducts(_selectedFilter);
+    } finally {
+      // 完成刷新
+      _refreshController.finishRefresh();
+    }
   }
 
   /// 通用商品数据
@@ -163,7 +181,7 @@ class _ProductListPageState extends State<ProductListPage> {
               child: Column(
                 children: [
                   // 筛选栏
-                  // _buildFilterBar(),
+                  _buildFilterBar(),
                   // 商品列表
                   Expanded(
                     child: _isGridView ? _buildGridView() : _buildListView(),
@@ -349,31 +367,63 @@ class _ProductListPageState extends State<ProductListPage> {
 
   /// 构建列表视图
   Widget _buildListView() {
-    return ListView.builder(
-      padding: const EdgeInsets.all(16),
-      itemCount: _filteredProducts.length,
-      itemBuilder: (context, index) {
-        final product = _filteredProducts[index];
-        return _buildProductCard(product);
+    return EasyRefresh(
+      controller: _refreshController,
+      onRefresh: () async {
+        await _loadProducts();
       },
+      header: const ClassicHeader(
+        dragText: '下拉刷新',
+        armedText: '释放刷新',
+        readyText: '正在刷新...',
+        processingText: '正在刷新...',
+        processedText: '刷新完成',
+        noMoreText: '没有更多数据',
+        failedText: '刷新失败',
+        messageText: '最后更新于 %T',
+      ),
+      child: ListView.builder(
+        padding: const EdgeInsets.all(16),
+        itemCount: _filteredProducts.length,
+        itemBuilder: (context, index) {
+          final product = _filteredProducts[index];
+          return _buildProductCard(product);
+        },
+      ),
     );
   }
 
   /// 构建网格视图
   Widget _buildGridView() {
-    return GridView.builder(
-      padding: const EdgeInsets.all(16),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        childAspectRatio: 0.7,
-        crossAxisSpacing: 12,
-        mainAxisSpacing: 12,
-      ),
-      itemCount: _filteredProducts.length,
-      itemBuilder: (context, index) {
-        final product = _filteredProducts[index];
-        return _buildGridProductCard(product);
+    return EasyRefresh(
+      controller: _refreshController,
+      onRefresh: () async {
+        await _loadProducts();
       },
+      header: const ClassicHeader(
+        dragText: '下拉刷新',
+        armedText: '释放刷新',
+        readyText: '正在刷新...',
+        processingText: '正在刷新...',
+        processedText: '刷新完成',
+        noMoreText: '没有更多数据',
+        failedText: '刷新失败',
+        messageText: '最后更新于 %T',
+      ),
+      child: GridView.builder(
+        padding: const EdgeInsets.all(16),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          childAspectRatio: 0.7,
+          crossAxisSpacing: 12,
+          mainAxisSpacing: 12,
+        ),
+        itemCount: _filteredProducts.length,
+        itemBuilder: (context, index) {
+          final product = _filteredProducts[index];
+          return _buildGridProductCard(product);
+        },
+      ),
     );
   }
 
