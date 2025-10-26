@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:synerunify/services/mall_product_category.dart';
 import 'package:synerunify/services/mall_product_spu.dart';
+import 'package:synerunify/services/system_file.dart';
 import '../product/product_detail.dart';
 
 class ProductListPage extends StatefulWidget {
@@ -14,6 +15,7 @@ class ProductListPage extends StatefulWidget {
 
 class _ProductListPageState extends State<ProductListPage> {
   final MallProductSpuService _mallProductSpuService = MallProductSpuService();
+  final SystemFileService _systemFileService = SystemFileService();
   String _sortBy = '综合推荐';
   bool _isPriceAscending = false;
   String _selectedFilter = '推荐';
@@ -161,7 +163,7 @@ class _ProductListPageState extends State<ProductListPage> {
               child: Column(
                 children: [
                   // 筛选栏
-                  _buildFilterBar(),
+                  // _buildFilterBar(),
                   // 商品列表
                   Expanded(
                     child: _isGridView ? _buildGridView() : _buildListView(),
@@ -377,6 +379,7 @@ class _ProductListPageState extends State<ProductListPage> {
 
   /// 构建商品卡片
   Widget _buildProductCard(MallProductSpuResponse product) {
+    String previewUrl = _systemFileService.getPreviewUrl(product.fileId);
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
@@ -408,19 +411,21 @@ class _ProductListPageState extends State<ProductListPage> {
                         Container(
                           width: 100,
                           height: 100,
-                          decoration: BoxDecoration(
-                            color: Colors.grey[200],
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                          child: Center(
-                            child: Icon(
-                              widget.category.name == 'iPhone'
-                                  ? Icons.phone_iphone
-                                  : Icons.shopping_bag,
-                              size: 50,
-                              color: Colors.grey,
-                            ),
-                          ),
+                          // fit: BoxFit.cover,
+                          // decoration: BoxDecoration(
+                          //   color: Colors.grey[200],
+                          //   borderRadius: BorderRadius.circular(6),
+                          // ),
+                          child: Image.network(previewUrl),
+                          // child: Center(
+                          //   child: Icon(
+                          //     widget.category.name == 'iPhone'
+                          //         ? Icons.phone_iphone
+                          //         : Icons.shopping_bag,
+                          //     size: 50,
+                          //     color: Colors.grey,
+                          //   ),
+                          // ),
                         ),
                         // 标签
                         // if (product['tags'] != null)
@@ -462,7 +467,7 @@ class _ProductListPageState extends State<ProductListPage> {
                         children: [
                           // 商品名称
                           Text(
-                            product.name as String,
+                            product.name,
                             style: const TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
@@ -683,6 +688,7 @@ class _ProductListPageState extends State<ProductListPage> {
 
   /// 构建网格模式商品卡片
   Widget _buildGridProductCard(MallProductSpuResponse product) {
+    String previewUrl = _systemFileService.getPreviewUrl(product.fileId);
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -724,13 +730,14 @@ class _ProductListPageState extends State<ProductListPage> {
                           borderRadius: BorderRadius.circular(6),
                         ),
                         child: Center(
-                          child: Icon(
-                            widget.category.name == 'iPhone'
-                                ? Icons.phone_iphone
-                                : Icons.shopping_bag,
-                            size: 40,
-                            color: Colors.grey,
-                          ),
+                          // child: Icon(
+                          //   widget.category.name == 'iPhone'
+                          //       ? Icons.phone_iphone
+                          //       : Icons.shopping_bag,
+                          //   size: 40,
+                          //   color: Colors.grey,
+                          // ),
+                          child: Image.network(previewUrl),
                         ),
                       ),
                       // 标签
