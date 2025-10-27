@@ -29,6 +29,12 @@ class _ProductListPageState extends State<ProductListPage> {
 
   // 商品数据，支持不同类型的商品
   List<MallProductSpuResponse> _products = [];
+  
+  // 分页相关变量
+  int _currentPage = 1;
+  int _pageSize = 20;
+  bool _hasMoreData = true;
+  bool _isLoadingMore = false;
 
   @override
   void initState() {
@@ -42,27 +48,60 @@ class _ProductListPageState extends State<ProductListPage> {
     super.dispose();
   }
 
-  /// 根据分类名称加载对应的商品数据
-  Future<void> _loadProducts() async {
+  /// 根据分类名称加载对应的商品数据（刷新时重置分页）
+  Future<void> _loadProducts({bool isRefresh = true}) async {
     try {
-      _products = await _getGeneralProducts();
+      if (isRefresh) {
+        // 刷新时重置分页
+        _currentPage = 1;
+        _hasMoreData = true;
+        _isLoadingMore = false;
+      }
+      
+      final newProducts = await _getGeneralProducts(_currentPage);
+      
       setState(() {
+        if (isRefresh) {
+          _products = newProducts;
+        } else {
+          _products.addAll(newProducts);
+        }
         _filteredProducts = List.from(_products);
       });
+      
       // 重新应用当前的筛选条件
       _filterProducts(_selectedFilter);
+      
+      // 检查是否还有更多数据
+      _hasMoreData = newProducts.length >= _pageSize;
+      
     } finally {
-      // 完成刷新
-      _refreshController.finishRefresh();
+      if (isRefresh) {
+        // 完成刷新
+        _refreshController.finishRefresh();
+      } else {
+        // 完成加载更多
+        _refreshController.finishLoad(_hasMoreData ? IndicatorResult.success : IndicatorResult.noMore);
+      }
     }
   }
 
+  /// 加载更多数据
+  Future<void> _loadMoreProducts() async {
+    if (_isLoadingMore || !_hasMoreData) return;
+    
+    _isLoadingMore = true;
+    _currentPage++;
+    await _loadProducts(isRefresh: false);
+    _isLoadingMore = false;
+  }
+
   /// 通用商品数据
-  Future<List<MallProductSpuResponse>> _getGeneralProducts() async {
+  Future<List<MallProductSpuResponse>> _getGeneralProducts(int page) async {
     final response = await _mallProductSpuService.pageAllMallProductSpu(
       MallProductSpuQueryCondition(
-        page: 1,
-        size: 20,
+        page: page,
+        size: _pageSize,
         categoryId: widget.category.id,
       ),
     );
@@ -370,7 +409,10 @@ class _ProductListPageState extends State<ProductListPage> {
     return EasyRefresh(
       controller: _refreshController,
       onRefresh: () async {
-        await _loadProducts();
+        await _loadProducts(isRefresh: true);
+      },
+      onLoad: () async {
+        await _loadMoreProducts();
       },
       header: const ClassicHeader(
         dragText: '下拉刷新',
@@ -380,6 +422,16 @@ class _ProductListPageState extends State<ProductListPage> {
         processedText: '刷新完成',
         noMoreText: '没有更多数据',
         failedText: '刷新失败',
+        messageText: '最后更新于 %T',
+      ),
+      footer: const ClassicFooter(
+        dragText: '上拉加载',
+        armedText: '释放加载',
+        readyText: '正在加载...',
+        processingText: '正在加载...',
+        processedText: '加载完成',
+        noMoreText: '没有更多数据了',
+        failedText: '加载失败',
         messageText: '最后更新于 %T',
       ),
       child: ListView.builder(
@@ -398,7 +450,10 @@ class _ProductListPageState extends State<ProductListPage> {
     return EasyRefresh(
       controller: _refreshController,
       onRefresh: () async {
-        await _loadProducts();
+        await _loadProducts(isRefresh: true);
+      },
+      onLoad: () async {
+        await _loadMoreProducts();
       },
       header: const ClassicHeader(
         dragText: '下拉刷新',
@@ -408,6 +463,16 @@ class _ProductListPageState extends State<ProductListPage> {
         processedText: '刷新完成',
         noMoreText: '没有更多数据',
         failedText: '刷新失败',
+        messageText: '最后更新于 %T',
+      ),
+      footer: const ClassicFooter(
+        dragText: '上拉加载',
+        armedText: '释放加载',
+        readyText: '正在加载...',
+        processingText: '正在加载...',
+        processedText: '加载完成',
+        noMoreText: '没有更多数据了',
+        failedText: '加载失败',
         messageText: '最后更新于 %T',
       ),
       child: GridView.builder(
