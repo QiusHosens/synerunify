@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:synerunify/pages/product/product_list.dart';
 import 'package:synerunify/services/mall_product_category.dart';
 import 'package:synerunify/services/system_file.dart';
 import 'package:synerunify/utils/logger.dart';
+import 'package:easy_refresh/easy_refresh.dart';
 import 'product_list.dart';
 
 class Category extends StatefulWidget {
@@ -16,6 +16,10 @@ class _CategoryState extends State<Category> {
   final SystemFileService _systemFileService = SystemFileService();
   final MallProductCategoryService _mallProductCategoryService =
       MallProductCategoryService();
+  final EasyRefreshController _refreshController = EasyRefreshController(
+    controlFinishRefresh: true,
+    controlFinishLoad: true,
+  );
   int _selectedCategoryId = 0; // 选中的分类
 
   // 主分类数据
@@ -45,6 +49,12 @@ class _CategoryState extends State<Category> {
     _loadMainCategories();
   }
 
+  @override
+  void dispose() {
+    _refreshController.dispose();
+    super.dispose();
+  }
+
   void _loadMainCategories() async {
     final response = await _mallProductCategoryService
         .listRootMallProductCategoryByParentId(0);
@@ -59,6 +69,8 @@ class _CategoryState extends State<Category> {
         }
       });
     }
+    // 完成刷新
+    _refreshController.finishRefresh();
   }
 
   void _loadFeaturedProducts() async {
@@ -92,6 +104,11 @@ class _CategoryState extends State<Category> {
     }
   }
 
+  /// 刷新数据
+  Future<void> _onRefresh() async {
+    _loadMainCategories();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -103,13 +120,27 @@ class _CategoryState extends State<Category> {
             _buildTopBar(),
             // 主要内容区域
             Expanded(
-              child: Row(
-                children: [
-                  // 左侧主分类列表
-                  _buildCategoryList(),
-                  // 右侧商品分类
-                  _buildCategorySection(),
-                ],
+              child: EasyRefresh(
+                controller: _refreshController,
+                onRefresh: _onRefresh,
+                header: const ClassicHeader(
+                  dragText: '下拉刷新',
+                  armedText: '释放刷新',
+                  readyText: '正在刷新...',
+                  processingText: '正在刷新...',
+                  processedText: '刷新完成',
+                  noMoreText: '没有更多数据',
+                  failedText: '刷新失败',
+                  messageText: '最后更新于 %T',
+                ),
+                child: Row(
+                  children: [
+                    // 左侧主分类列表
+                    _buildCategoryList(),
+                    // 右侧商品分类
+                    _buildCategorySection(),
+                  ],
+                ),
               ),
             ),
           ],
