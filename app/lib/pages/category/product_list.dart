@@ -220,7 +220,7 @@ class _ProductListPageState extends State<ProductListPage> {
               child: Column(
                 children: [
                   // 筛选栏
-                  _buildFilterBar(),
+                  // _buildFilterBar(),
                   // 商品列表
                   Expanded(
                     child: _isGridView ? _buildGridView() : _buildListView(),

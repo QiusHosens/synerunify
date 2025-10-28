@@ -175,3 +175,10 @@ pub async fn list_base_by_spu_id(db: &DatabaseConnection, login_user: LoginUserC
         .all(db).await?;
     Ok(list.into_iter().map(model_to_base_response).collect())
 }
+
+pub async fn list_base_by_spu_id_without_user(db: &DatabaseConnection, spu_id: i64) -> Result<Vec<MallProductSkuBaseResponse>> {
+    let list = MallProductSkuEntity::find_active()
+        .filter(Column::SpuId.eq(spu_id))
+        .all(db).await?;
+    Ok(list.into_iter().map(model_to_base_response).collect())
+}

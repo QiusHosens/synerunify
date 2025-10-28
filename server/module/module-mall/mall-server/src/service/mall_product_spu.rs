@@ -123,6 +123,27 @@ pub async fn get_info_by_id(db: &DatabaseConnection, login_user: LoginUserContex
     Ok(Some(model_to_info_response(product_spu, category, brand, delivery_template, skus)))
 }
 
+pub async fn get_info_by_id_without_user(db: &DatabaseConnection, id: i64) -> Result<Option<MallProductSpuInfoResponse>> {
+    let mall_product_spu = MallProductSpuEntity::find_active()
+        .filter(Column::Id.eq(id))
+        .select_also(MallProductCategoryEntity)
+        .select_also(MallProductBrandEntity)
+        .join(JoinType::LeftJoin, Relation::ProductCategory.def())
+        .join(JoinType::LeftJoin, Relation::ProductBrand.def())
+        .one(db).await?;
+
+    if mall_product_spu.is_none() {
+        return Ok(None);
+    }
+    let (product_spu, category, brand) = mall_product_spu.unwrap();
+    let mut delivery_template = None;
+    if let Some(delivery_template_id) = product_spu.delivery_template_id {
+        delivery_template = mall_trade_delivery_express_template::find_by_id_without_user(&db, delivery_template_id).await?;
+    }
+    let skus = mall_product_sku::list_base_by_spu_id_without_user(&db, id).await?;
+    Ok(Some(model_to_info_response(product_spu, category, brand, delivery_template, skus)))
+}
+
 pub async fn get_paginated(db: &DatabaseConnection, login_user: LoginUserContext, params: PaginatedKeywordRequest) -> Result<PaginatedResponse<MallProductSpuResponse>> {
     let condition = Condition::all().add(Column::TenantId.eq(login_user.tenant_id));
     let paginator = MallProductSpuEntity::find_active_with_condition(condition)

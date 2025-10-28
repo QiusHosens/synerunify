@@ -31,6 +31,7 @@ pub async fn mall_product_spu_router(state: AppState) -> OpenApiRouter {
 pub async fn mall_product_spu_no_auth_router(state: AppState) -> OpenApiRouter {
     OpenApiRouter::new()
         .routes(routes!(page_all))
+        .routes(routes!(get_info_by_id_without_user))
         .with_state(state)
 }
 
@@ -201,6 +202,29 @@ async fn get_info_by_id(
     Path(id): Path<i64>,
 ) -> CommonResult<MallProductSpuInfoResponse> {
     match service::mall_product_spu::get_info_by_id(&state.db, login_user, id).await {
+        Ok(Some(data)) => {CommonResult::with_data(data)}
+        Ok(None) => {CommonResult::with_none()}
+        Err(e) => {CommonResult::with_err(&e.to_string())}
+    }
+}
+
+#[utoipa::path(
+    get,
+    path = "/get_info_without_user/{id}",
+    operation_id = "mall_product_spu_get_info_by_id_without_user",
+    params(
+        ("id" = i64, Path, description = "id")
+    ),
+    responses(
+        (status = 200, description = "get info by id without user", body = CommonResult<MallProductSpuInfoResponse>)
+    ),
+    tag = "mall_product_spu",
+)]
+async fn get_info_by_id_without_user(
+    State(state): State<AppState>,
+    Path(id): Path<i64>,
+) -> CommonResult<MallProductSpuInfoResponse> {
+    match service::mall_product_spu::get_info_by_id_without_user(&state.db, id).await {
         Ok(Some(data)) => {CommonResult::with_data(data)}
         Ok(None) => {CommonResult::with_none()}
         Err(e) => {CommonResult::with_err(&e.to_string())}
