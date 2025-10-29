@@ -1,4 +1,5 @@
 import 'package:synerunify/models/base.dart';
+import 'package:synerunify/services/mall_product_sku.dart';
 import 'package:synerunify/utils/logger.dart';
 
 import '../utils/http_client.dart';
@@ -15,6 +16,7 @@ const apis = {
   'disable': '/mall/mall_product_spu/disable', // 禁用
 
   'page_all': '/mall/mall_product_spu/page_all', // 分页查询
+  'get_info_without_user': '/mall/mall_product_spu/get_info_without_user', // 单条查询
 };
 
 class MallProductSpuRequest {
@@ -183,10 +185,16 @@ class MallProductSpuResponse {
   final int? salesCount; // 商品销量
   final int? virtualSalesCount; // 虚拟销量
   final int? browseCount; // 商品点击量
-  final int? creator; // 创建者ID
-  final String createTime; // 创建时间
-  final int? updater; // 更新者ID
-  final String updateTime; // 更新时间
+  // final int? creator; // 创建者ID
+  // final String createTime; // 创建时间
+  // final int? updater; // 更新者ID
+  // final String updateTime; // 更新时间
+
+  final String? brandName; // 品牌名称
+  final String? categoryName; // 分类名称
+  final String? deliveryTemplateName; // 物流配置模板名称
+  final List<MallProductSkuResponse>? skus; // 商品SKU列表
+
   MallProductSpuResponse({
     required this.id,
     required this.name,
@@ -211,10 +219,14 @@ class MallProductSpuResponse {
     this.salesCount,
     this.virtualSalesCount,
     this.browseCount,
-    this.creator,
-    required this.createTime,
-    this.updater,
-    required this.updateTime,
+    // this.creator,
+    // required this.createTime,
+    // this.updater,
+    // required this.updateTime,
+    this.brandName,
+    this.categoryName,
+    this.deliveryTemplateName,
+    this.skus,
   });
 
   factory MallProductSpuResponse.fromJson(Map<String, dynamic> json) {
@@ -242,10 +254,14 @@ class MallProductSpuResponse {
       salesCount: json['sales_count'] as int?,
       virtualSalesCount: json['virtual_sales_count'] as int?,
       browseCount: json['browse_count'] as int?,
-      creator: json['creator'] as int?,
-      createTime: json['create_time'] as String,
-      updater: json['updater'] as int?,
-      updateTime: json['update_time'] as String,
+      // creator: json['creator'] as int?,
+      // createTime: json['create_time'] as String,
+      // updater: json['updater'] as int?,
+      // updateTime: json['update_time'] as String,
+      brandName: json['brand_name'] as String?,
+      categoryName: json['category_name'] as String?,
+      deliveryTemplateName: json['delivery_template_name'] as String?,
+      skus: json['skus'] != null ? (json['skus'] as List).map((sku) => MallProductSkuResponse.fromJson(sku)).toList() : null,
     );
   }
 
@@ -274,10 +290,14 @@ class MallProductSpuResponse {
       'sales_count': salesCount,
       'virtual_sales_count': virtualSalesCount,
       'browse_count': browseCount,
-      'creator': creator,
-      'create_time': createTime,
-      'updater': updater,
-      'update_time': updateTime,
+      // 'creator': creator,
+      // 'create_time': createTime,
+      // 'updater': updater,
+      // 'update_time': updateTime,
+      'brand_name': brandName,
+      'category_name': categoryName,
+      'delivery_template_name': deliveryTemplateName,
+      'skus': skus?.map((sku) => sku.toJson()).toList(),
     };
   }
 }
@@ -303,6 +323,10 @@ class MallProductSpuService {
 
   Future<ApiResponse<MallProductSpuResponse>> getMallProductSpu(int id) async {
     return await _httpClient.get<MallProductSpuResponse>('${apis['get']!}/$id');
+  }
+
+  Future<ApiResponse<MallProductSpuResponse>> getMallProductSpuInfoWithoutUser(int id) async {
+    return await _httpClient.get<MallProductSpuResponse>('${apis['get_info_without_user']!}/$id', fromJson: (response) =>MallProductSpuResponse.fromJson(response));
   }
 
   Future<ApiResponse<List<MallProductSpuResponse>>> listMallProductSpu() async {

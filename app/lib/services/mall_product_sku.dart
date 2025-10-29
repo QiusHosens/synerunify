@@ -122,10 +122,11 @@ class MallProductSkuResponse {
   final int? firstBrokeragePrice; // 一级分销的佣金，单位：分
   final int? secondBrokeragePrice; // 二级分销的佣金，单位：分
   final int? salesCount; // 商品销量
-  final int? creator; // 创建者ID
-  final DateTime createTime; // 创建时间
-  final int? updater; // 更新者ID
-  final DateTime updateTime; // 更新时间
+  // final int? creator; // 创建者ID
+  // final DateTime createTime; // 创建时间
+  // final int? updater; // 更新者ID
+  // final DateTime updateTime; // 更新时间
+
   MallProductSkuResponse({
     required this.id,
     required this.spuId,
@@ -141,10 +142,10 @@ class MallProductSkuResponse {
     this.firstBrokeragePrice,
     this.secondBrokeragePrice,
     this.salesCount,
-    this.creator,
-    required this.createTime,
-    this.updater,
-    required this.updateTime,
+    // this.creator,
+    // required this.createTime,
+    // this.updater,
+    // required this.updateTime,
     });
 
   factory MallProductSkuResponse.fromJson(Map<String, dynamic> json) {
@@ -163,10 +164,10 @@ class MallProductSkuResponse {
       firstBrokeragePrice: json['first_brokerage_price'] as int?,
       secondBrokeragePrice: json['second_brokerage_price'] as int?,
       salesCount: json['sales_count'] as int?,
-      creator: json['creator'] as int?,
-      createTime: json['create_time'] as DateTime,
-      updater: json['updater'] as int?,
-      updateTime: json['update_time'] as DateTime,
+      // creator: json['creator'] as int?,
+      // createTime: json['create_time'] as DateTime,
+      // updater: json['updater'] as int?,
+      // updateTime: json['update_time'] as DateTime,
       );
   }
 
@@ -186,10 +187,10 @@ class MallProductSkuResponse {
       'first_brokerage_price': firstBrokeragePrice,
       'second_brokerage_price': secondBrokeragePrice,
       'sales_count': salesCount,
-      'creator': creator,
-      'create_time': createTime,
-      'updater': updater,
-      'update_time': updateTime,
+      // 'creator': creator,
+      // 'create_time': createTime,
+      // 'updater': updater,
+      // 'update_time': updateTime,
       };
   }
 }

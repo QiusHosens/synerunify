@@ -15,9 +15,12 @@ class ProductDetail extends StatefulWidget {
 
 class _ProductDetailState extends State<ProductDetail>
     with TickerProviderStateMixin {
+  final MallProductSpuService _mallProductSpuService = MallProductSpuService();
   final SystemFileService _systemFileService = SystemFileService();
   late TabController _tabController;
   late PageController _imagePageController;
+
+  late MallProductSpuResponse _product;
 
   int _currentImageIndex = 0;
   int _quantity = 1;
@@ -25,14 +28,15 @@ class _ProductDetailState extends State<ProductDetail>
   int _selectedColorIndex = 0;
   int _selectedSizeIndex = 0;
 
+  List<String> _productImages = [];
   // 模拟商品详情数据
-  final List<String> _productImages = [
-    'assets/images/chicken_diced_1.jpg',
-    'assets/images/chicken_diced_2.jpg',
-    'assets/images/chicken_diced_3.jpg',
-    'assets/images/chicken_diced_4.jpg',
-    'assets/images/chicken_diced_5.jpg',
-  ];
+  // final List<String> _productImages = [
+  //   'assets/images/chicken_diced_1.jpg',
+  //   'assets/images/chicken_diced_2.jpg',
+  //   'assets/images/chicken_diced_3.jpg',
+  //   'assets/images/chicken_diced_4.jpg',
+  //   'assets/images/chicken_diced_5.jpg',
+  // ];
 
   // 商品标签
   final List<Map<String, dynamic>> _productTags = [
@@ -124,6 +128,27 @@ class _ProductDetailState extends State<ProductDetail>
     super.initState();
     _tabController = TabController(length: 5, vsync: this);
     _imagePageController = PageController();
+    _getProductInfo();
+  }
+
+  void _getProductInfo() async {
+    final response = await _mallProductSpuService
+        .getMallProductSpuInfoWithoutUser(widget.product.id);
+    if (response.success && response.data != null) {
+      setState(() {
+        _product = response.data!;
+        _productImages = [];
+        if (_product.sliderFileIds != null) {
+          List<String> sliderFileIds = _product.sliderFileIds!.split(',');
+          for (String fileId in sliderFileIds) {
+            String previewUrl = _systemFileService.getPreviewUrl(
+              int.parse(fileId),
+            );
+            _productImages.add(previewUrl);
+          }
+        }
+      });
+    }
   }
 
   @override
@@ -274,8 +299,9 @@ class _ProductDetailState extends State<ProductDetail>
             itemBuilder: (context, index) {
               return Container(
                 color: Colors.grey[100],
-                child: const Center(
-                  child: Icon(Icons.image, size: 100, color: Colors.grey),
+                child: Center(
+                  // child: Icon(Icons.image, size: 100, color: Colors.grey),
+                  child: Image.network(_productImages[index]),
                 ),
               );
             },
@@ -311,24 +337,25 @@ class _ProductDetailState extends State<ProductDetail>
           // 价格信息
           Row(
             children: [
-              const Text(
-                '¥5.8',
+              Text(
+                '¥${_product.price}',
                 style: TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
                   color: Colors.red,
                 ),
               ),
-              const Text(
-                '/盒',
-                style: TextStyle(fontSize: 16, color: Colors.red),
-              ),
+              // const Text(
+              //   '/盒',
+              //   style: TextStyle(fontSize: 16, color: Colors.red),
+              // ),
             ],
           ),
           const SizedBox(height: 8),
           // 商品名称
-          const Text(
-            '冷鲜 鸡腿肉丁 300g/盒',
+          Text(
+            // '冷鲜 鸡腿肉丁 300g/盒',
+            _product.name,
             style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
           ),
           const SizedBox(height: 8),
