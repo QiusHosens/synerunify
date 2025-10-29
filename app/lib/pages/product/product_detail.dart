@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:synerunify/services/mall_product_spu.dart';
 import 'package:synerunify/services/system_file.dart';
+import 'package:easy_refresh/easy_refresh.dart';
 import '../../widgets/specification_modal.dart';
 import '../cart/checkout.dart';
 
@@ -17,6 +18,9 @@ class _ProductDetailState extends State<ProductDetail>
     with TickerProviderStateMixin {
   final MallProductSpuService _mallProductSpuService = MallProductSpuService();
   final SystemFileService _systemFileService = SystemFileService();
+  final EasyRefreshController _refreshController = EasyRefreshController(
+    controlFinishRefresh: true,
+  );
   late TabController _tabController;
   late PageController _imagePageController;
 
@@ -131,7 +135,7 @@ class _ProductDetailState extends State<ProductDetail>
     _getProductInfo();
   }
 
-  void _getProductInfo() async {
+  Future<void> _getProductInfo() async {
     final response = await _mallProductSpuService
         .getMallProductSpuInfoWithoutUser(widget.product.id);
     if (response.success && response.data != null) {
@@ -151,10 +155,17 @@ class _ProductDetailState extends State<ProductDetail>
     }
   }
 
+  /// 下拉刷新商品信息
+  Future<void> _refreshProductInfo() async {
+    await _getProductInfo();
+    _refreshController.finishRefresh();
+  }
+
   @override
   void dispose() {
     _tabController.dispose();
     _imagePageController.dispose();
+    _refreshController.dispose();
     super.dispose();
   }
 
@@ -169,24 +180,38 @@ class _ProductDetailState extends State<ProductDetail>
           _buildNavigationBar(),
           // 商品内容
           Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  // 商品图片轮播
-                  _buildImageCarousel(),
-                  // 商品基本信息
-                  _buildProductInfo(),
-                  // 商品标签
-                  _buildProductTags(),
-                  // 商品描述
-                  _buildProductDescription(),
-                  // 品牌信息
-                  _buildBrandInfo(),
-                  // 评价统计
-                  _buildReviewStats(),
-                  // Tab切换内容
-                  _buildTabContent(),
-                ],
+            child: EasyRefresh(
+              controller: _refreshController,
+              onRefresh: _refreshProductInfo,
+              header: const ClassicHeader(
+                dragText: '下拉刷新',
+                armedText: '释放刷新',
+                readyText: '正在刷新...',
+                processingText: '正在刷新...',
+                processedText: '刷新完成',
+                failedText: '刷新失败',
+                messageText: '最后更新于 %T',
+              ),
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: Column(
+                  children: [
+                    // 商品图片轮播
+                    _buildImageCarousel(),
+                    // 商品基本信息
+                    _buildProductInfo(),
+                    // 商品标签
+                    _buildProductTags(),
+                    // 商品描述
+                    _buildProductDescription(),
+                    // 品牌信息
+                    _buildBrandInfo(),
+                    // 评价统计
+                    _buildReviewStats(),
+                    // Tab切换内容
+                    _buildTabContent(),
+                  ],
+                ),
               ),
             ),
           ),
