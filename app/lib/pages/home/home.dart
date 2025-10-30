@@ -651,17 +651,14 @@ class _HomeState extends State<Home> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Expanded(
-                              // 使用Expanded确保商品名称有足够空间
-                              child: Text(
-                                product['name'],
-                                style: const TextStyle(
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                                maxLines: 2, // 允许最多2行
-                                overflow: TextOverflow.ellipsis,
+                            Text(
+                              product['name'],
+                              style: const TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.w500,
                               ),
+                              maxLines: 2, // 允许最多2行
+                              overflow: TextOverflow.ellipsis,
                             ),
                             const SizedBox(height: 4),
                             Text(
@@ -849,8 +846,8 @@ class _HomeState extends State<Home> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min, // 使用最小空间
                 children: [
-                  Expanded(
-                    // 使用Expanded确保文字有足够空间
+                  Flexible(
+                    fit: FlexFit.loose,
                     child: Text(
                       product['name'],
                       style: const TextStyle(
