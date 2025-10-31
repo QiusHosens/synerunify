@@ -29,6 +29,7 @@ class _ProductDetailState extends State<ProductDetail>
   int _currentImageIndex = 0;
   int _quantity = 1;
   bool _isFavorite = false;
+  bool _isLoading = true;
   int _selectedColorIndex = 0;
   int _selectedSizeIndex = 0;
 
@@ -132,10 +133,15 @@ class _ProductDetailState extends State<ProductDetail>
     super.initState();
     _tabController = TabController(length: 5, vsync: this);
     _imagePageController = PageController();
+    _product = widget.product; // 初始化产品数据
     _getProductInfo();
   }
 
   Future<void> _getProductInfo() async {
+    setState(() {
+      _isLoading = true;
+    });
+    
     final response = await _mallProductSpuService
         .getMallProductSpuInfoWithoutUser(widget.product.id);
     if (response.success && response.data != null) {
@@ -151,6 +157,11 @@ class _ProductDetailState extends State<ProductDetail>
             _productImages.add(previewUrl);
           }
         }
+        _isLoading = false;
+      });
+    } else {
+      setState(() {
+        _isLoading = false;
       });
     }
   }
@@ -180,45 +191,49 @@ class _ProductDetailState extends State<ProductDetail>
           _buildNavigationBar(),
           // 商品内容
           Expanded(
-            child: EasyRefresh(
-              controller: _refreshController,
-              onRefresh: _refreshProductInfo,
-              header: const ClassicHeader(
-                dragText: '下拉刷新',
-                armedText: '释放刷新',
-                readyText: '正在刷新...',
-                processingText: '正在刷新...',
-                processedText: '刷新完成',
-                failedText: '刷新失败',
-                messageText: '最后更新于 %T',
-              ),
-              child: SingleChildScrollView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                child: Column(
-                  children: [
-                    // 商品图片轮播
-                    _buildImageCarousel(),
-                    // 商品基本信息
-                    _buildProductInfo(),
-                    // 商品标签
-                    _buildProductTags(),
-                    // 商品描述
-                    _buildProductDescription(),
-                    // 品牌信息
-                    _buildBrandInfo(),
-                    // 评价统计
-                    _buildReviewStats(),
-                    // Tab切换内容
-                    _buildTabContent(),
-                  ],
-                ),
-              ),
-            ),
+            child: _isLoading
+                ? const Center(
+                    child: CircularProgressIndicator(),
+                  )
+                : EasyRefresh(
+                    controller: _refreshController,
+                    onRefresh: _refreshProductInfo,
+                    header: const ClassicHeader(
+                      dragText: '下拉刷新',
+                      armedText: '释放刷新',
+                      readyText: '正在刷新...',
+                      processingText: '正在刷新...',
+                      processedText: '刷新完成',
+                      failedText: '刷新失败',
+                      messageText: '最后更新于 %T',
+                    ),
+                    child: SingleChildScrollView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      child: Column(
+                        children: [
+                          // 商品图片轮播
+                          _buildImageCarousel(),
+                          // 商品基本信息
+                          _buildProductInfo(),
+                          // 商品标签
+                          _buildProductTags(),
+                          // 商品描述
+                          _buildProductDescription(),
+                          // 品牌信息
+                          _buildBrandInfo(),
+                          // 评价统计
+                          _buildReviewStats(),
+                          // Tab切换内容
+                          _buildTabContent(),
+                        ],
+                      ),
+                    ),
+                  ),
           ),
           // 会员优惠横幅
-          _buildMembershipBanner(),
+          if (!_isLoading) _buildMembershipBanner(),
           // 底部操作栏
-          _buildBottomBar(),
+          if (!_isLoading) _buildBottomBar(),
         ],
       ),
     );
