@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:easy_refresh/easy_refresh.dart';
 import '../mine/message.dart';
 import '../product/product_list.dart';
 import '../category/category_products.dart';
@@ -13,6 +14,9 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   final ScrollController _scrollController = ScrollController();
+  final EasyRefreshController _refreshController = EasyRefreshController(
+    controlFinishRefresh: true,
+  );
 
   // 商品分类数据
   final List<Map<String, dynamic>> _categories = [
@@ -84,32 +88,57 @@ class _HomeState extends State<Home> {
     return Scaffold(
       backgroundColor: Colors.grey[50],
       body: SafeArea(
-        child: SingleChildScrollView(
-          controller: _scrollController,
-          child: Column(
-            children: [
-              // 顶部状态栏和位置信息
-              _buildTopBar(),
-              // 搜索栏
-              _buildSearchBar(),
-              // 中秋节主题轮播图
-              _buildMidAutumnBanner(),
-              // 促销卡片
-              _buildPromoCards(),
-              // 商品分类网格
-              _buildCategoryGrid(),
-              // 今日疯抢区域
-              _buildFlashSaleSection(),
-              // 特色商品区域
-              _buildFeaturedSection(),
-              // 主商品展示区域
-              _buildMainProductSection(),
-              const SizedBox(height: 100), // 为底部导航栏留出空间
-            ],
+        child: EasyRefresh(
+          controller: _refreshController,
+          onRefresh: _refreshHomeData,
+          header: const ClassicHeader(
+            dragText: '下拉刷新',
+            armedText: '释放刷新',
+            readyText: '正在刷新...',
+            processingText: '正在刷新...',
+            processedText: '刷新完成',
+            failedText: '刷新失败',
+            messageText: '最后更新于 %T',
+          ),
+          child: SingleChildScrollView(
+            controller: _scrollController,
+            child: Column(
+              children: [
+                // 顶部状态栏和位置信息
+                _buildTopBar(),
+                // 搜索栏
+                _buildSearchBar(),
+                // 中秋节主题轮播图
+                _buildMidAutumnBanner(),
+                // 促销卡片
+                _buildPromoCards(),
+                // 商品分类网格
+                _buildCategoryGrid(),
+                // 今日疯抢区域
+                _buildFlashSaleSection(),
+                // 特色商品区域
+                _buildFeaturedSection(),
+                // 主商品展示区域
+                _buildMainProductSection(),
+                const SizedBox(height: 100), // 为底部导航栏留出空间
+              ],
+            ),
           ),
         ),
       ),
     );
+  }
+
+  /// 刷新首页数据
+  Future<void> _refreshHomeData() async {
+    // TODO: 在这里添加实际的数据刷新逻辑
+    // 例如：重新获取商品列表、轮播图等数据
+    
+    // 模拟网络请求延迟
+    await Future.delayed(const Duration(seconds: 1));
+    
+    // 刷新完成后通知 EasyRefresh
+    _refreshController.finishRefresh();
   }
 
   /// 构建顶部状态栏和位置信息
@@ -891,5 +920,12 @@ class _HomeState extends State<Home> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    _refreshController.dispose();
+    super.dispose();
   }
 }
