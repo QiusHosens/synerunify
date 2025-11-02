@@ -273,10 +273,10 @@ class _MineState extends State<Mine> {
             ),
           ),
           const SizedBox(width: 8),
-          Expanded(child: _buildPromoCard('免运费', [Colors.orange], '', '')),
+          Expanded(child: _buildPromoCard('免运费', [Colors.orange, Colors.deepOrange], '', '')),
           const SizedBox(width: 8),
           Expanded(
-            child: _buildPromoCard('专享券', [Colors.purple], '¥5', '蔬菜肉禽券'),
+            child: _buildPromoCard('专享券', [Colors.purple, Colors.deepPurple], '¥5', '蔬菜肉禽券'),
           ),
         ],
       ),
