@@ -4,6 +4,7 @@ import 'package:synerunify/services/mall_product_spu.dart';
 import 'package:synerunify/services/system_file.dart';
 import 'package:easy_refresh/easy_refresh.dart';
 import '../product/product_detail.dart';
+import '../../utils/date_utils.dart';
 
 class ProductListPage extends StatefulWidget {
   final MallProductCategoryResponse category;
@@ -26,6 +27,7 @@ class _ProductListPageState extends State<ProductListPage> {
   String _selectedFilter = '推荐';
   List<MallProductSpuResponse> _filteredProducts = [];
   bool _isGridView = false; // 网格模式状态
+  DateTime? _lastRefreshTime;
 
   // 商品数据，支持不同类型的商品
   List<MallProductSpuResponse> _products = [];
@@ -74,6 +76,11 @@ class _ProductListPageState extends State<ProductListPage> {
       
       // 检查是否还有更多数据
       _hasMoreData = newProducts.length >= _pageSize;
+      
+      // 如果是刷新操作，更新最后刷新时间（东八区时间）
+      if (isRefresh) {
+        _lastRefreshTime = DateTime.now();
+      }
       
     } finally {
       if (isRefresh) {
@@ -414,7 +421,7 @@ class _ProductListPageState extends State<ProductListPage> {
       onLoad: () async {
         await _loadMoreProducts();
       },
-      header: const ClassicHeader(
+      header: ClassicHeader(
         dragText: '下拉刷新',
         armedText: '释放刷新',
         readyText: '正在刷新...',
@@ -422,9 +429,9 @@ class _ProductListPageState extends State<ProductListPage> {
         processedText: '刷新完成',
         noMoreText: '没有更多数据',
         failedText: '刷新失败',
-        messageText: '最后更新于 %T',
+        messageText: AppDateUtils.getTimeDisplayText(_lastRefreshTime),
       ),
-      footer: const ClassicFooter(
+      footer: ClassicFooter(
         dragText: '上拉加载',
         armedText: '释放加载',
         readyText: '正在加载...',
@@ -432,7 +439,7 @@ class _ProductListPageState extends State<ProductListPage> {
         processedText: '加载完成',
         noMoreText: '没有更多数据了',
         failedText: '加载失败',
-        messageText: '最后更新于 %T',
+        messageText: AppDateUtils.getTimeDisplayText(_lastRefreshTime),
       ),
       child: ListView.builder(
         padding: const EdgeInsets.all(16),
@@ -455,7 +462,7 @@ class _ProductListPageState extends State<ProductListPage> {
       onLoad: () async {
         await _loadMoreProducts();
       },
-      header: const ClassicHeader(
+      header: ClassicHeader(
         dragText: '下拉刷新',
         armedText: '释放刷新',
         readyText: '正在刷新...',
@@ -463,9 +470,9 @@ class _ProductListPageState extends State<ProductListPage> {
         processedText: '刷新完成',
         noMoreText: '没有更多数据',
         failedText: '刷新失败',
-        messageText: '最后更新于 %T',
+        messageText: AppDateUtils.getTimeDisplayText(_lastRefreshTime),
       ),
-      footer: const ClassicFooter(
+      footer: ClassicFooter(
         dragText: '上拉加载',
         armedText: '释放加载',
         readyText: '正在加载...',
@@ -473,7 +480,7 @@ class _ProductListPageState extends State<ProductListPage> {
         processedText: '加载完成',
         noMoreText: '没有更多数据了',
         failedText: '加载失败',
-        messageText: '最后更新于 %T',
+        messageText: AppDateUtils.getTimeDisplayText(_lastRefreshTime),
       ),
       child: GridView.builder(
         padding: const EdgeInsets.all(16),

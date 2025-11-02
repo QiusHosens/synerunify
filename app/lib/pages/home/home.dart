@@ -4,6 +4,7 @@ import '../mine/message.dart';
 import '../product/product_list.dart';
 import '../category/category_products.dart';
 import '../store/store.dart';
+import '../../utils/date_utils.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -17,6 +18,7 @@ class _HomeState extends State<Home> {
   final EasyRefreshController _refreshController = EasyRefreshController(
     controlFinishRefresh: true,
   );
+  DateTime? _lastRefreshTime;
 
   // 商品分类数据
   final List<Map<String, dynamic>> _categories = [
@@ -91,14 +93,14 @@ class _HomeState extends State<Home> {
         child: EasyRefresh(
           controller: _refreshController,
           onRefresh: _refreshHomeData,
-          header: const ClassicHeader(
+          header: ClassicHeader(
             dragText: '下拉刷新',
             armedText: '释放刷新',
             readyText: '正在刷新...',
             processingText: '正在刷新...',
             processedText: '刷新完成',
             failedText: '刷新失败',
-            messageText: '最后更新于 %T',
+            messageText: AppDateUtils.getTimeDisplayText(_lastRefreshTime),
           ),
           child: SingleChildScrollView(
             controller: _scrollController,
@@ -136,6 +138,11 @@ class _HomeState extends State<Home> {
     
     // 模拟网络请求延迟
     await Future.delayed(const Duration(seconds: 1));
+    
+    // 更新最后刷新时间（东八区时间）
+    setState(() {
+      _lastRefreshTime = DateTime.now();
+    });
     
     // 刷新完成后通知 EasyRefresh
     _refreshController.finishRefresh();

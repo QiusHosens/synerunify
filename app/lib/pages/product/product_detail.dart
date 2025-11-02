@@ -4,6 +4,7 @@ import 'package:synerunify/services/system_file.dart';
 import 'package:easy_refresh/easy_refresh.dart';
 import '../../widgets/specification_modal.dart';
 import '../cart/checkout.dart';
+import '../../utils/date_utils.dart';
 
 class ProductDetail extends StatefulWidget {
   final MallProductSpuResponse product;
@@ -30,6 +31,7 @@ class _ProductDetailState extends State<ProductDetail>
   int _quantity = 1;
   bool _isFavorite = false;
   bool _isLoading = true;
+  DateTime? _lastRefreshTime;
   int _selectedColorIndex = 0;
   int _selectedSizeIndex = 0;
 
@@ -169,6 +171,12 @@ class _ProductDetailState extends State<ProductDetail>
   /// 下拉刷新商品信息
   Future<void> _refreshProductInfo() async {
     await _getProductInfo();
+    
+    // 更新最后刷新时间（东八区时间）
+    setState(() {
+      _lastRefreshTime = DateTime.now();
+    });
+    
     _refreshController.finishRefresh();
   }
 
@@ -198,14 +206,14 @@ class _ProductDetailState extends State<ProductDetail>
                 : EasyRefresh(
                     controller: _refreshController,
                     onRefresh: _refreshProductInfo,
-                    header: const ClassicHeader(
+                    header: ClassicHeader(
                       dragText: '下拉刷新',
                       armedText: '释放刷新',
                       readyText: '正在刷新...',
                       processingText: '正在刷新...',
                       processedText: '刷新完成',
                       failedText: '刷新失败',
-                      messageText: '最后更新于 %T',
+                      messageText: AppDateUtils.getTimeDisplayText(_lastRefreshTime),
                     ),
                     child: SingleChildScrollView(
                       physics: const AlwaysScrollableScrollPhysics(),

@@ -4,6 +4,7 @@ import 'package:synerunify/services/system_file.dart';
 import 'package:synerunify/utils/logger.dart';
 import 'package:easy_refresh/easy_refresh.dart';
 import 'product_list.dart';
+import '../../utils/date_utils.dart';
 
 class Category extends StatefulWidget {
   const Category({super.key});
@@ -21,6 +22,7 @@ class _CategoryState extends State<Category> {
     controlFinishLoad: true,
   );
   int _selectedCategoryId = 0; // 选中的分类
+  DateTime? _lastRefreshTime;
 
   // 主分类数据
   List<MallProductCategoryResponse> _mainCategories = [];
@@ -107,6 +109,11 @@ class _CategoryState extends State<Category> {
   /// 刷新数据
   Future<void> _onRefresh() async {
     _loadMainCategories();
+    
+    // 更新最后刷新时间（东八区时间）
+    setState(() {
+      _lastRefreshTime = DateTime.now();
+    });
   }
 
   @override
@@ -123,7 +130,7 @@ class _CategoryState extends State<Category> {
               child: EasyRefresh(
                 controller: _refreshController,
                 onRefresh: _onRefresh,
-                header: const ClassicHeader(
+                header: ClassicHeader(
                   dragText: '下拉刷新',
                   armedText: '释放刷新',
                   readyText: '正在刷新...',
@@ -131,7 +138,7 @@ class _CategoryState extends State<Category> {
                   processedText: '刷新完成',
                   noMoreText: '没有更多数据',
                   failedText: '刷新失败',
-                  messageText: '最后更新于 %T',
+                  messageText: AppDateUtils.getTimeDisplayText(_lastRefreshTime),
                 ),
                 child: Row(
                   children: [
