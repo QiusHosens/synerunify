@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:easy_refresh/easy_refresh.dart';
 import 'orders.dart';
 import 'settings.dart';
 import 'address_list.dart';
@@ -12,36 +13,71 @@ class Mine extends StatefulWidget {
 }
 
 class _MineState extends State<Mine> {
+  final EasyRefreshController _refreshController = EasyRefreshController(
+    controlFinishRefresh: true,
+  );
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[50],
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              // 顶部状态栏和店铺信息
-              _buildTopBar(),
-              // 用户信息区域
-              _buildUserProfile(),
-              // 会员信息横幅
-              _buildMembershipBanner(),
-              // 促销卡片
-              _buildPromoCards(),
-              // 财务概览
-              _buildFinancialOverview(),
-              // 订单状态
-              _buildOrderStatus(),
-              // 服务工具网格
-              _buildServiceGrid(),
-              // 底部促销横幅
-              _buildBottomBanners(),
-              const SizedBox(height: 100), // 为底部导航栏留出空间
-            ],
+        child: EasyRefresh(
+          controller: _refreshController,
+          onRefresh: _refreshMineData,
+          header: const ClassicHeader(
+            dragText: '下拉刷新',
+            armedText: '释放刷新',
+            readyText: '正在刷新...',
+            processingText: '正在刷新...',
+            processedText: '刷新完成',
+            failedText: '刷新失败',
+            messageText: '最后更新于 %T',
+          ),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                // 顶部状态栏和店铺信息
+                _buildTopBar(),
+                // 用户信息区域
+                _buildUserProfile(),
+                // 会员信息横幅
+                _buildMembershipBanner(),
+                // 促销卡片
+                _buildPromoCards(),
+                // 财务概览
+                _buildFinancialOverview(),
+                // 订单状态
+                _buildOrderStatus(),
+                // 服务工具网格
+                _buildServiceGrid(),
+                // 底部促销横幅
+                _buildBottomBanners(),
+                const SizedBox(height: 100), // 为底部导航栏留出空间
+              ],
+            ),
           ),
         ),
       ),
     );
+  }
+
+  /// 刷新我的页面数据
+  Future<void> _refreshMineData() async {
+    // TODO: 在这里添加实际的数据刷新逻辑
+    // 例如：重新获取用户信息、订单状态、财务数据等
+    
+    // 模拟网络请求延迟
+    await Future.delayed(const Duration(seconds: 1));
+    
+    // 刷新完成后通知 EasyRefresh
+    _refreshController.finishRefresh();
+  }
+
+  @override
+  void dispose() {
+    _refreshController.dispose();
+    super.dispose();
   }
 
   /// 构建顶部状态栏和店铺信息
