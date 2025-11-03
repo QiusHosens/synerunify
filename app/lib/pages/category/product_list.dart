@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:synerunify/pages/store/store.dart';
 import 'package:synerunify/services/mall_product_category.dart';
 import 'package:synerunify/services/mall_product_spu.dart';
 import 'package:synerunify/services/system_file.dart';
@@ -31,7 +32,7 @@ class _ProductListPageState extends State<ProductListPage> {
 
   // 商品数据，支持不同类型的商品
   List<MallProductSpuResponse> _products = [];
-  
+
   // 分页相关变量
   int _currentPage = 1;
   int _pageSize = 20;
@@ -59,9 +60,9 @@ class _ProductListPageState extends State<ProductListPage> {
         _hasMoreData = true;
         _isLoadingMore = false;
       }
-      
+
       final newProducts = await _getGeneralProducts(_currentPage);
-      
+
       setState(() {
         if (isRefresh) {
           _products = newProducts;
@@ -70,25 +71,26 @@ class _ProductListPageState extends State<ProductListPage> {
         }
         _filteredProducts = List.from(_products);
       });
-      
+
       // 重新应用当前的筛选条件
       _filterProducts(_selectedFilter);
-      
+
       // 检查是否还有更多数据
       _hasMoreData = newProducts.length >= _pageSize;
-      
+
       // 如果是刷新操作，更新最后刷新时间（东八区时间）
       if (isRefresh) {
         _lastRefreshTime = DateTime.now();
       }
-      
     } finally {
       if (isRefresh) {
         // 完成刷新
         _refreshController.finishRefresh();
       } else {
         // 完成加载更多
-        _refreshController.finishLoad(_hasMoreData ? IndicatorResult.success : IndicatorResult.noMore);
+        _refreshController.finishLoad(
+          _hasMoreData ? IndicatorResult.success : IndicatorResult.noMore,
+        );
       }
     }
   }
@@ -96,7 +98,7 @@ class _ProductListPageState extends State<ProductListPage> {
   /// 加载更多数据
   Future<void> _loadMoreProducts() async {
     if (_isLoadingMore || !_hasMoreData) return;
-    
+
     _isLoadingMore = true;
     _currentPage++;
     await _loadProducts(isRefresh: false);
@@ -774,6 +776,7 @@ class _ProductListPageState extends State<ProductListPage> {
                               //     ),
                               //   ),
                               const Spacer(),
+
                               // 进店按钮
                               Container(
                                 padding: const EdgeInsets.symmetric(
@@ -943,20 +946,29 @@ class _ProductListPageState extends State<ProductListPage> {
                 ),
                 const SizedBox(height: 4),
                 // 进店按钮
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.symmetric(vertical: 4),
-                  decoration: BoxDecoration(
-                    color: Colors.blue,
-                    borderRadius: BorderRadius.circular(3),
-                  ),
-                  child: const Text(
-                    '进店>',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 10,
-                      fontWeight: FontWeight.w500,
+                InkWell(
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => Store(storeId: product.tenantId),
+                      ),
+                    );
+                  },
+                  child: Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(vertical: 4),
+                    decoration: BoxDecoration(
+                      color: Colors.blue,
+                      borderRadius: BorderRadius.circular(3),
+                    ),
+                    child: const Text(
+                      '进店>',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                   ),
                 ),

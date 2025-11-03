@@ -169,18 +169,18 @@ class _HomeState extends State<Home> {
           // 店铺位置
           GestureDetector(
             onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => Store(
-                    storeInfo: {
-                      'name': '中和锦汇天府店',
-                      'followers': '222.6万',
-                      'category': '生鲜',
-                      'rating': 4.9,
-                    },
-                  ),
-                ),
-              );
+              // Navigator.of(context).push(
+              //   MaterialPageRoute(
+              //     builder: (context) => Store(
+              //       storeInfo: {
+              //         'name': '中和锦汇天府店',
+              //         'followers': '222.6万',
+              //         'category': '生鲜',
+              //         'rating': 4.9,
+              //       },
+              //     ),
+              //   ),
+              // );
             },
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),

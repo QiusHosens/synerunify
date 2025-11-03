@@ -65,6 +65,8 @@ pub struct MallProductSpuResponse {
     #[serde_as(as = "common::formatter::string_date_time::StringDateTime")]
     #[schema(value_type = String, format = Date)]
     pub update_time: NaiveDateTime, // 更新时间
+
+    pub tenant_id: i64, // 租户编号
     
 }
 
@@ -171,6 +173,8 @@ pub struct MallProductSpuInfoResponse {
     pub virtual_sales_count: Option<i32>, // 虚拟销量
 
     pub browse_count: Option<i32>, // 商品点击量
+
+    pub tenant_id: i64, // 租户编号
 
     /****************** 信息 ******************/
 

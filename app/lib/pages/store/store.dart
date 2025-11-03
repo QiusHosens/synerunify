@@ -5,19 +5,22 @@ import 'store_discover.dart';
 import 'store_grass.dart';
 import 'store_member.dart';
 
-class Store extends StatefulWidget {
-  final Map<String, dynamic> storeInfo;
+class Store extends StatefulWidget { 
+  final int storeId;
 
-  const Store({super.key, required this.storeInfo});
+  const Store({super.key, required this.storeId});
 
   @override
   State<Store> createState() => _StoreState();
 }
 
 class _StoreState extends State<Store> with TickerProviderStateMixin {
+  
   late TabController _tabController;
   final ScrollController _scrollController = ScrollController();
   bool _isFollowing = false;
+
+  late Map<String, dynamic> storeInfo;
 
   // 模拟店铺数据
   final List<Map<String, dynamic>> _featuredProducts = [];

@@ -190,6 +190,8 @@ class MallProductSpuResponse {
   // final int? updater; // 更新者ID
   // final String updateTime; // 更新时间
 
+  final int tenantId; // 租户ID
+
   final String? brandName; // 品牌名称
   final String? categoryName; // 分类名称
   final String? deliveryTemplateName; // 物流配置模板名称
@@ -219,6 +221,7 @@ class MallProductSpuResponse {
     this.salesCount,
     this.virtualSalesCount,
     this.browseCount,
+    required this.tenantId,
     // this.creator,
     // required this.createTime,
     // this.updater,
@@ -254,6 +257,7 @@ class MallProductSpuResponse {
       salesCount: json['sales_count'] as int?,
       virtualSalesCount: json['virtual_sales_count'] as int?,
       browseCount: json['browse_count'] as int?,
+      tenantId: json['tenant_id'] as int,
       // creator: json['creator'] as int?,
       // createTime: json['create_time'] as String,
       // updater: json['updater'] as int?,
@@ -290,6 +294,7 @@ class MallProductSpuResponse {
       'sales_count': salesCount,
       'virtual_sales_count': virtualSalesCount,
       'browse_count': browseCount,
+      'tenant_id': tenantId,
       // 'creator': creator,
       // 'create_time': createTime,
       // 'updater': updater,

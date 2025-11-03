@@ -136,6 +136,7 @@ pub fn model_to_response(model: MallProductSpu) -> MallProductSpuResponse {
         create_time: model.create_time,
         updater: model.updater,
         update_time: model.update_time,
+        tenant_id: model.tenant_id,
     }
 }
 
@@ -198,6 +199,7 @@ pub fn model_to_info_response(model: MallProductSpu, model_category: Option<Mall
         sales_count: model.sales_count,
         virtual_sales_count: model.virtual_sales_count,
         browse_count: model.browse_count,
+        tenant_id: model.tenant_id,
 
         category_name,
         brand_name,
