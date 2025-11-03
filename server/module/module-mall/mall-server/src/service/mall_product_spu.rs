@@ -1,7 +1,7 @@
 use common::interceptor::orm::simple_support::SimpleSupport;
 use sea_orm::{DatabaseConnection, EntityTrait, Order, ColumnTrait, ActiveModelTrait, PaginatorTrait, QueryOrder, QueryFilter, Condition, TransactionTrait, QuerySelect, JoinType, RelationTrait};
 use crate::model::mall_product_spu::{Model as MallProductSpuModel, ActiveModel as MallProductSpuActiveModel, Entity as MallProductSpuEntity, Column, Relation};
-use mall_model::request::mall_product_spu::{CreateMallProductSpuRequest, UpdateMallProductSpuRequest, PaginatedKeywordRequest, PaginatedCategoryKeywordRequest};
+use mall_model::request::mall_product_spu::{CreateMallProductSpuRequest, UpdateMallProductSpuRequest, PaginatedKeywordRequest, PaginatedCategoryKeywordRequest, PaginatedTenantKeywordRequest};
 use mall_model::response::mall_product_spu::{MallProductSpuBaseResponse, MallProductSpuInfoResponse, MallProductSpuResponse};
 use crate::model::mall_product_category::{Entity as MallProductCategoryEntity};
 use crate::model::mall_product_brand::{Entity as MallProductBrandEntity};
@@ -174,6 +174,34 @@ pub async fn get_paginated_all(db: &DatabaseConnection, params: PaginatedCategor
         .add(Column::CategoryId.eq(params.category_id))
         .add(Column::Status.eq(STATUS_ENABLE));
         
+    let paginator = MallProductSpuEntity::find_active_with_condition(condition)
+        .support_filter(params.base.filter_field, params.base.filter_operator, params.base.filter_value)
+        .support_order(params.base.sort_field, params.base.sort, Some(vec![(Column::Id, Order::Asc)]))
+        .paginate(db, params.base.size);
+
+    let total = paginator.num_items().await?;
+    let total_pages = (total + params.base.size - 1) / params.base.size; // 向上取整
+    let list = paginator
+        .fetch_page(params.base.page - 1) // SeaORM 页码从 0 开始，所以减 1
+        .await?
+        .into_iter()
+        .map(model_to_response)
+        .collect();
+
+    Ok(PaginatedResponse {
+        list,
+        total_pages,
+        page: params.base.page,
+        size: params.base.size,
+        total,
+    })
+}
+
+pub async fn get_paginated_tenant(db: &DatabaseConnection, params: PaginatedTenantKeywordRequest) -> Result<PaginatedResponse<MallProductSpuResponse>> {
+    let condition = Condition::all()
+        .add(Column::TenantId.eq(params.tenant_id))
+        .add(Column::Status.eq(STATUS_ENABLE));
+
     let paginator = MallProductSpuEntity::find_active_with_condition(condition)
         .support_filter(params.base.filter_field, params.base.filter_operator, params.base.filter_value)
         .support_order(params.base.sort_field, params.base.sort, Some(vec![(Column::Id, Order::Asc)]))
