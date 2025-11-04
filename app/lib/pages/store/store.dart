@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:synerunify/services/system_tenant.dart';
 import '../product/product_detail.dart';
 import 'store_category.dart';
 import 'store_discover.dart';
@@ -15,12 +16,12 @@ class Store extends StatefulWidget {
 }
 
 class _StoreState extends State<Store> with TickerProviderStateMixin {
-  
+  final SystemTenantService _systemTenantService = SystemTenantService();
   late TabController _tabController;
   final ScrollController _scrollController = ScrollController();
   bool _isFollowing = false;
 
-  late Map<String, dynamic> storeInfo;
+  late SystemTenantResponse tenantInfo;
 
   // 模拟店铺数据
   final List<Map<String, dynamic>> _featuredProducts = [];
@@ -33,7 +34,7 @@ class _StoreState extends State<Store> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     _tabController = TabController(length: 8, vsync: this);
-    _loadStoreData();
+    _getStoreInfo();
   }
 
   @override
@@ -41,6 +42,15 @@ class _StoreState extends State<Store> with TickerProviderStateMixin {
     _tabController.dispose();
     _scrollController.dispose();
     super.dispose();
+  }
+
+  Future<void> _getStoreInfo() async {
+    final response = await _systemTenantService.getSystemTenantNoAuth(widget.storeId);
+    if (response.success && response.data != null) {
+      setState(() {
+        tenantInfo = response.data!;
+      });
+    }
   }
 
   /// 加载店铺数据
@@ -63,7 +73,7 @@ class _StoreState extends State<Store> with TickerProviderStateMixin {
     for (int i = 0; i < count; i++) {
       products.add({
         'id': '$type-$i',
-        'name': '${widget.storeInfo['name']}商品 ${i + 1}',
+        'name': '${tenantInfo.name}商品 ${i + 1}',
         'price': (99 + i * 10).toDouble(),
         'originalPrice': (199 + i * 20).toDouble(),
         'image': 'https://via.placeholder.com/200x200',
@@ -223,13 +233,13 @@ class _StoreState extends State<Store> with TickerProviderStateMixin {
           controller: _tabController,
           children: [
             _buildFeaturedTab(),
-            StoreCategory(storeInfo: widget.storeInfo),
+            // StoreCategory(tenantInfo: tenantInfo),
             _buildProductsTab(),
             _buildActivitiesTab(),
             _buildNewProductsTab(),
-            StoreDiscover(storeInfo: widget.storeInfo),
-            StoreGrass(storeInfo: widget.storeInfo),
-            StoreMember(storeInfo: widget.storeInfo),
+            // StoreDiscover(tenantInfo: tenantInfo),
+            // StoreGrass(tenantInfo: tenantInfo),
+            // StoreMember(tenantInfo: tenantInfo),
           ],
         ),
       ),
@@ -294,7 +304,7 @@ class _StoreState extends State<Store> with TickerProviderStateMixin {
             ),
             child: Center(
               child: Text(
-                widget.storeInfo['name']?.substring(0, 2) ?? '店铺',
+                tenantInfo.name.substring(0, 2),
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 16,
@@ -310,7 +320,7 @@ class _StoreState extends State<Store> with TickerProviderStateMixin {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  widget.storeInfo['name'] ?? '店铺名称',
+                  tenantInfo.name,
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -324,14 +334,14 @@ class _StoreState extends State<Store> with TickerProviderStateMixin {
                     const Text('4.9', style: TextStyle(fontSize: 12)),
                     const SizedBox(width: 8),
                     Text(
-                      '${widget.storeInfo['followers'] ?? '222.6万'}人关注',
+                      '222.6万人关注',
                       style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                     ),
                   ],
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  '京东店铺榜 | 入选${widget.storeInfo['category'] ?? '分类'}店铺榜',
+                  '店铺榜 | 入选${'分类'}店铺榜',
                   style: TextStyle(fontSize: 10, color: Colors.grey[500]),
                 ),
               ],

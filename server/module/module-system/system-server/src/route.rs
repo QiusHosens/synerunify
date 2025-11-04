@@ -10,7 +10,7 @@ use crate::api::system_post::system_post_router;
 use crate::api::system_role::system_role_router;
 use crate::api::system_role_menu::system_role_menu_router;
 use crate::api::system_role_menu_data_scope::system_role_menu_data_scope_router;
-use crate::api::system_tenant::system_tenant_router;
+use crate::api::system_tenant::{system_tenant_no_auth_router, system_tenant_router};
 use crate::api::system_tenant_package::system_tenant_package_router;
 use crate::api::system_user::system_user_router;
 use crate::api::system_user_post::system_user_post_router;
@@ -72,6 +72,7 @@ pub async fn no_auth_router(state: AppState) -> OpenApiRouter {
     OpenApiRouter::new()
         .nest("/system_auth", system_auth_router(state.clone()).await)
         .nest("/system_area", system_area_router().await)
+        .nest("/system_tenant", system_tenant_no_auth_router(state.clone()).await)
         .layer(axum::middleware::from_fn(authorize_handler))
         .layer(axum::middleware::from_fn(operation_logger_handler))
         .layer(axum::middleware::from_fn_with_state(state.clone(), request_context_handler))

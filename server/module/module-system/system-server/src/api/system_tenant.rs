@@ -26,6 +26,12 @@ pub async fn system_tenant_router(state: AppState) -> OpenApiRouter {
         .with_state(state)
 }
 
+pub async fn system_tenant_no_auth_router(state: AppState) -> OpenApiRouter {
+    OpenApiRouter::new()
+        .routes(routes!(get_by_id_no_auth))
+        .with_state(state)
+}
+
 pub async fn system_tenant_route(state: AppState) -> Router {
     Router::new()
         .route("/create", post(create))
@@ -139,6 +145,29 @@ async fn get_by_id(
     Path(id): Path<i64>,
 ) -> CommonResult<SystemTenantResponse> {
     match service::system_tenant::get_by_id(&state.db, login_user, id).await {
+        Ok(Some(data)) => {CommonResult::with_data(data)}
+        Ok(None) => {CommonResult::with_none()}
+        Err(e) => {CommonResult::with_err(&e.to_string())}
+    }
+}
+
+#[utoipa::path(
+    get,
+    path = "/get_no_auth/{id}",
+    operation_id = "system_tenant_get_by_id_no_auth",
+    params(
+        ("id" = i64, Path, description = "id")
+    ),
+    responses(
+        (status = 200, description = "get by id", body = CommonResult<SystemTenantResponse>)
+    ),
+    tag = "system_tenant"
+)]
+async fn get_by_id_no_auth(
+    State(state): State<AppState>,
+    Path(id): Path<i64>,
+) -> CommonResult<SystemTenantResponse> {
+    match service::system_tenant::get_by_id_no_auth(&state.db, id).await {
         Ok(Some(data)) => {CommonResult::with_data(data)}
         Ok(None) => {CommonResult::with_none()}
         Err(e) => {CommonResult::with_err(&e.to_string())}

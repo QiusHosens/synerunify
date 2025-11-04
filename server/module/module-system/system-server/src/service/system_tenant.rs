@@ -89,6 +89,14 @@ pub async fn get_by_id(db: &DatabaseConnection, login_user: LoginUserContext, id
     Ok(system_tenant.map(model_to_response))
 }
 
+pub async fn get_by_id_no_auth(db: &DatabaseConnection, id: i64) -> Result<Option<SystemTenantResponse>> {
+    let condition = Condition::all()
+        .add(Column::Id.eq(id));
+    let system_tenant = SystemTenantEntity::find_active_with_condition(condition)
+        .one(db).await?;
+    Ok(system_tenant.map(model_to_response))
+}
+
 pub async fn get_paginated(db: &DatabaseConnection, login_user: LoginUserContext, params: PaginatedKeywordRequest) -> Result<PaginatedResponse<SystemTenantPageResponse>> {
     let mut query = SystemTenantEntity::find_active()
         .select_also(SystemTenantPackageEntity)
