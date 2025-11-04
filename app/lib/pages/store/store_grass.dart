@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:synerunify/services/system_tenant.dart';
 import '../product/product_detail.dart';
 
 class StoreGrass extends StatefulWidget {
-  final Map<String, dynamic> storeInfo;
+  final SystemTenantResponse tenantInfo;
 
-  const StoreGrass({super.key, required this.storeInfo});
+  const StoreGrass({super.key, required this.tenantInfo});
 
   @override
   State<StoreGrass> createState() => _StoreGrassState();

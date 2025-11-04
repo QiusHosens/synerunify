@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:synerunify/services/system_tenant.dart';
 
 class StoreMember extends StatefulWidget {
-  final Map<String, dynamic> storeInfo;
+  final SystemTenantResponse tenantInfo;
 
-  const StoreMember({super.key, required this.storeInfo});
+  const StoreMember({super.key, required this.tenantInfo});
 
   @override
   State<StoreMember> createState() => _StoreMemberState();
@@ -174,7 +175,9 @@ class _StoreMemberState extends State<StoreMember> {
                   ),
                   child: Center(
                     child: Text(
-                      widget.storeInfo['name']?.substring(0, 2) ?? '店铺',
+                      widget.tenantInfo.name.length >= 2
+                          ? widget.tenantInfo.name.substring(0, 2)
+                          : widget.tenantInfo.name,
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 18,
@@ -189,7 +192,7 @@ class _StoreMemberState extends State<StoreMember> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '${widget.storeInfo['name']}会员卡',
+                        '${widget.tenantInfo.name}会员卡',
                         style: const TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,

@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:synerunify/pages/store/store_category.dart';
+import 'package:synerunify/pages/store/store_discover.dart';
+import 'package:synerunify/pages/store/store_grass.dart';
+import 'package:synerunify/pages/store/store_member.dart';
 import 'package:synerunify/services/system_tenant.dart';
-import '../product/product_detail.dart';
-import 'store_category.dart';
-import 'store_discover.dart';
-import 'store_grass.dart';
-import 'store_member.dart';
 
 class Store extends StatefulWidget { 
   final int storeId;
@@ -20,8 +19,9 @@ class _StoreState extends State<Store> with TickerProviderStateMixin {
   late TabController _tabController;
   final ScrollController _scrollController = ScrollController();
   bool _isFollowing = false;
+  bool _isLoading = true;
 
-  late SystemTenantResponse tenantInfo;
+  SystemTenantResponse? tenantInfo;
 
   // 模拟店铺数据
   final List<Map<String, dynamic>> _featuredProducts = [];
@@ -45,10 +45,21 @@ class _StoreState extends State<Store> with TickerProviderStateMixin {
   }
 
   Future<void> _getStoreInfo() async {
+    setState(() {
+      _isLoading = true;
+    });
+    
     final response = await _systemTenantService.getSystemTenantNoAuth(widget.storeId);
     if (response.success && response.data != null) {
       setState(() {
         tenantInfo = response.data!;
+        _isLoading = false;
+        // 加载店铺数据
+        _loadStoreData();
+      });
+    } else {
+      setState(() {
+        _isLoading = false;
       });
     }
   }
@@ -70,10 +81,11 @@ class _StoreState extends State<Store> with TickerProviderStateMixin {
   /// 生成模拟商品数据
   List<Map<String, dynamic>> _generateProducts(String type, int count) {
     final products = <Map<String, dynamic>>[];
+    final storeName = tenantInfo?.name ?? '店铺';
     for (int i = 0; i < count; i++) {
       products.add({
         'id': '$type-$i',
-        'name': '${tenantInfo.name}商品 ${i + 1}',
+        'name': '$storeName商品 ${i + 1}',
         'price': (99 + i * 10).toDouble(),
         'originalPrice': (199 + i * 20).toDouble(),
         'image': 'https://via.placeholder.com/200x200',
@@ -152,97 +164,109 @@ class _StoreState extends State<Store> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[50],
-      body: NestedScrollView(
-        controller: _scrollController,
-        headerSliverBuilder: (context, innerBoxIsScrolled) {
-          return [
-            // 自定义AppBar
-            SliverAppBar(
-              expandedHeight: 200,
-              floating: false,
-              pinned: true,
-              backgroundColor: Colors.blue,
-              foregroundColor: Colors.white,
-              flexibleSpace: FlexibleSpaceBar(
-                background: Container(
-                  decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [Colors.blue, Colors.blueAccent],
-                    ),
-                  ),
-                  child: Column(
-                    children: [
-                      const SizedBox(height: 30),
-                      // Tab切换
-                      _buildTabBar(),
-                      const SizedBox(height: 20),
-                      // 店铺信息
-                      _buildStoreHeader(),
-                    ],
-                  ),
-                ),
-              ),
-              actions: [
-                IconButton(
-                  icon: const Icon(Icons.search),
-                  onPressed: () {
-                    ScaffoldMessenger.of(
-                      context,
-                    ).showSnackBar(const SnackBar(content: Text('搜索功能开发中...')));
-                  },
-                ),
-                IconButton(
-                  icon: Stack(
-                    children: [
-                      const Icon(Icons.more_vert),
-                      Positioned(
-                        right: 0,
-                        top: 0,
-                        child: Container(
-                          padding: const EdgeInsets.all(2),
-                          decoration: BoxDecoration(
-                            color: Colors.red,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          constraints: const BoxConstraints(
-                            minWidth: 16,
-                            minHeight: 16,
-                          ),
-                          child: const Text(
-                            '5+',
-                            style: TextStyle(color: Colors.white, fontSize: 10),
-                            textAlign: TextAlign.center,
+      body: _isLoading
+          ? const Center(
+              child: CircularProgressIndicator(),
+            )
+          : NestedScrollView(
+              controller: _scrollController,
+              headerSliverBuilder: (context, innerBoxIsScrolled) {
+                return [
+                  // 自定义AppBar
+                  SliverAppBar(
+                    expandedHeight: 200,
+                    floating: false,
+                    pinned: true,
+                    backgroundColor: Colors.blue,
+                    foregroundColor: Colors.white,
+                    flexibleSpace: FlexibleSpaceBar(
+                      background: Container(
+                        decoration: const BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [Colors.blue, Colors.blueAccent],
                           ),
                         ),
+                        child: Column(
+                          children: [
+                            const SizedBox(height: 30),
+                            // Tab切换
+                            _buildTabBar(),
+                            const SizedBox(height: 20),
+                            // 店铺信息
+                            _buildStoreHeader(),
+                          ],
+                        ),
+                      ),
+                    ),
+                    actions: [
+                      IconButton(
+                        icon: const Icon(Icons.search),
+                        onPressed: () {
+                          ScaffoldMessenger.of(
+                            context,
+                          ).showSnackBar(const SnackBar(content: Text('搜索功能开发中...')));
+                        },
+                      ),
+                      IconButton(
+                        icon: Stack(
+                          children: [
+                            const Icon(Icons.more_vert),
+                            Positioned(
+                              right: 0,
+                              top: 0,
+                              child: Container(
+                                padding: const EdgeInsets.all(2),
+                                decoration: BoxDecoration(
+                                  color: Colors.red,
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                constraints: const BoxConstraints(
+                                  minWidth: 16,
+                                  minHeight: 16,
+                                ),
+                                child: const Text(
+                                  '5+',
+                                  style: TextStyle(color: Colors.white, fontSize: 10),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        onPressed: () {
+                          ScaffoldMessenger.of(
+                            context,
+                          ).showSnackBar(const SnackBar(content: Text('更多功能开发中...')));
+                        },
                       ),
                     ],
                   ),
-                  onPressed: () {
-                    ScaffoldMessenger.of(
-                      context,
-                    ).showSnackBar(const SnackBar(content: Text('更多功能开发中...')));
-                  },
-                ),
-              ],
+                ];
+              },
+              body: TabBarView(
+                controller: _tabController,
+                children: [
+                  _buildFeaturedTab(),
+                  tenantInfo != null
+                      ? StoreCategory(tenantInfo: tenantInfo!)
+                      : const Center(child: CircularProgressIndicator()),
+                  _buildProductsTab(),
+                  _buildActivitiesTab(),
+                  _buildNewProductsTab(),
+                  tenantInfo != null
+                      ? StoreDiscover(tenantInfo: tenantInfo!)
+                      : const Center(child: CircularProgressIndicator()),
+                  tenantInfo != null
+                      ? StoreGrass(tenantInfo: tenantInfo!)
+                      : const Center(child: CircularProgressIndicator()),
+                  tenantInfo != null
+                      ? StoreMember(tenantInfo: tenantInfo!)
+                      : const Center(child: CircularProgressIndicator()),
+                ],
+              ),
             ),
-          ];
-        },
-        body: TabBarView(
-          controller: _tabController,
-          children: [
-            _buildFeaturedTab(),
-            // StoreCategory(tenantInfo: tenantInfo),
-            _buildProductsTab(),
-            _buildActivitiesTab(),
-            _buildNewProductsTab(),
-            // StoreDiscover(tenantInfo: tenantInfo),
-            // StoreGrass(tenantInfo: tenantInfo),
-            // StoreMember(tenantInfo: tenantInfo),
-          ],
-        ),
-      ),
     );
   }
 
@@ -285,6 +309,10 @@ class _StoreState extends State<Store> with TickerProviderStateMixin {
 
   /// 构建店铺头部信息
   Widget _buildStoreHeader() {
+    if (tenantInfo == null) {
+      return const SizedBox.shrink();
+    }
+    
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20),
       padding: const EdgeInsets.all(16),
@@ -304,7 +332,9 @@ class _StoreState extends State<Store> with TickerProviderStateMixin {
             ),
             child: Center(
               child: Text(
-                tenantInfo.name.substring(0, 2),
+                tenantInfo!.name.length >= 2 
+                    ? tenantInfo!.name.substring(0, 2)
+                    : tenantInfo!.name,
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 16,
@@ -320,7 +350,7 @@ class _StoreState extends State<Store> with TickerProviderStateMixin {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  tenantInfo.name,
+                  tenantInfo!.name,
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,

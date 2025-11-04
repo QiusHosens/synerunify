@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:synerunify/services/system_tenant.dart';
 import '../product/product_detail.dart';
 
 class StoreDiscover extends StatefulWidget {
-  final Map<String, dynamic> storeInfo;
+  final SystemTenantResponse tenantInfo;
 
-  const StoreDiscover({super.key, required this.storeInfo});
+  const StoreDiscover({super.key, required this.tenantInfo});
 
   @override
   State<StoreDiscover> createState() => _StoreDiscoverState();
