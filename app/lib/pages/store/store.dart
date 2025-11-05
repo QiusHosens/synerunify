@@ -1,8 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:synerunify/pages/store/store_category.dart';
-import 'package:synerunify/pages/store/store_discover.dart';
-import 'package:synerunify/pages/store/store_grass.dart';
-import 'package:synerunify/pages/store/store_member.dart';
 import 'package:synerunify/services/system_tenant.dart';
 
 class Store extends StatefulWidget { 
@@ -33,7 +29,7 @@ class _StoreState extends State<Store> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 8, vsync: this);
+    _tabController = TabController(length: 5, vsync: this);
     _getStoreInfo();
   }
 
@@ -249,21 +245,10 @@ class _StoreState extends State<Store> with TickerProviderStateMixin {
                 controller: _tabController,
                 children: [
                   _buildFeaturedTab(),
-                  tenantInfo != null
-                      ? StoreCategory(tenantInfo: tenantInfo!)
-                      : const Center(child: CircularProgressIndicator()),
                   _buildProductsTab(),
                   _buildActivitiesTab(),
                   _buildNewProductsTab(),
-                  tenantInfo != null
-                      ? StoreDiscover(tenantInfo: tenantInfo!)
-                      : const Center(child: CircularProgressIndicator()),
-                  tenantInfo != null
-                      ? StoreGrass(tenantInfo: tenantInfo!)
-                      : const Center(child: CircularProgressIndicator()),
-                  tenantInfo != null
-                      ? StoreMember(tenantInfo: tenantInfo!)
-                      : const Center(child: CircularProgressIndicator()),
+                  _buildRankingTab(),
                 ],
               ),
             ),
@@ -295,13 +280,14 @@ class _StoreState extends State<Store> with TickerProviderStateMixin {
         ),
         tabs: const [
           Tab(text: '精选'),
-          Tab(text: '分类'),
           Tab(text: '商品'),
           Tab(text: '活动'),
           Tab(text: '新品'),
-          Tab(text: '发现'),
-          Tab(text: '种草秀'),
-          Tab(text: '会员'),
+          Tab(text: '榜单'),
+          // Tab(text: '分类'),
+          // Tab(text: '发现'),
+          // Tab(text: '种草秀'),
+          // Tab(text: '会员'),
         ],
       ),
     );
@@ -437,6 +423,16 @@ class _StoreState extends State<Store> with TickerProviderStateMixin {
   /// 构建新品Tab
   Widget _buildNewProductsTab() {
     return _buildProductGrid(_newProducts, '新品上市');
+  }
+
+  /// 构建榜单Tab
+  Widget _buildRankingTab() {
+    return const Center(
+      child: Text(
+        '榜单功能开发中...',
+        style: TextStyle(fontSize: 16, color: Colors.grey),
+      ),
+    );
   }
 
   /// 构建轮播图

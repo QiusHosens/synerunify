@@ -4,15 +4,15 @@ import '../utils/http_client.dart';
 import '../utils/type_utils.dart';
 
 const apis = {
-  'create': '/mall/system_tenant/create', // 新增
-  'update': '/mall/system_tenant/update', // 修改
-  'delete': '/mall/system_tenant/delete', // 删除
-  'get': '/mall/system_tenant/get', // 单条查询
-  'get_no_auth': '/mall/system_tenant/get_no_auth', // 单条查询
-  'list': '/mall/system_tenant/list', // 列表查询
-  'page': '/mall/system_tenant/page', // 分页查询
-  'enable': '/mall/system_tenant/enable', // 启用
-  'disable': '/mall/system_tenant/disable', // 禁用
+  'create': '/system/system_tenant/create', // 新增
+  'update': '/system/system_tenant/update', // 修改
+  'delete': '/system/system_tenant/delete', // 删除
+  'get': '/system/system_tenant/get', // 单条查询
+  'get_no_auth': '/system/system_tenant/get_no_auth', // 单条查询
+  'list': '/system/system_tenant/list', // 列表查询
+  'page': '/system/system_tenant/page', // 分页查询
+  'enable': '/system/system_tenant/enable', // 启用
+  'disable': '/system/system_tenant/disable', // 禁用
 };
 
 class SystemTenantRequest {
@@ -102,8 +102,8 @@ class SystemTenantResponse {
   final int status; // 租户状态（0正常 1停用）
   final String? website; // 绑定域名
   final int packageId; // 租户套餐编号
-  final DateTime expireTime; // 过期时间
-  final int accountCount; // 账号数量
+  // final DateTime expireTime; // 过期时间
+  // final int accountCount; // 账号数量
   // final int? creator; // 创建者id
   // final DateTime createTime; // 创建时间
   // final int? updater; // 更新者id
@@ -117,8 +117,8 @@ class SystemTenantResponse {
     required this.status,
     this.website,
     required this.packageId,
-    required this.expireTime,
-    required this.accountCount,
+    // required this.expireTime,
+    // required this.accountCount,
     // this.creator,
     // required this.createTime,
     // this.updater,
@@ -135,8 +135,8 @@ class SystemTenantResponse {
       status: json['status'] as int,
       website: json['website'] as String?,
       packageId: json['package_id'] as int,
-      expireTime: json['expire_time'] as DateTime,
-      accountCount: json['account_count'] as int,
+      // expireTime: json['expire_time'] as DateTime,
+      // accountCount: json['account_count'] as int,
       // creator: json['creator'] as int?,
       // createTime: json['create_time'] as DateTime,
       // updater: json['updater'] as int?,
@@ -154,8 +154,8 @@ class SystemTenantResponse {
       'status': status,
       'website': website,
       'package_id': packageId,
-      'expire_time': expireTime,
-      'account_count': accountCount,
+      // 'expire_time': expireTime,
+      // 'account_count': accountCount,
       // 'creator': creator,
       // 'create_time': createTime,
       // 'updater': updater,
