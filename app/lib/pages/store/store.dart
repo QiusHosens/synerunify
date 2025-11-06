@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:synerunify/services/system_tenant.dart';
+import '../category/category.dart';
+import '../customer_service/customer_service_chat.dart';
 
 class Store extends StatefulWidget { 
   final int storeId;
@@ -16,6 +18,7 @@ class _StoreState extends State<Store> with TickerProviderStateMixin {
   final ScrollController _scrollController = ScrollController();
   bool _isFollowing = false;
   bool _isLoading = true;
+  int _selectedMenuIndex = 0; // 当前选中的菜单项：0-首页，1-商品，2-分类，3-客服
 
   SystemTenantResponse? tenantInfo;
 
@@ -30,7 +33,24 @@ class _StoreState extends State<Store> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     _tabController = TabController(length: 5, vsync: this);
+    _tabController.addListener(_onTabChanged);
     _getStoreInfo();
+  }
+
+  /// Tab切换监听
+  void _onTabChanged() {
+    if (!_tabController.indexIsChanging) {
+      // 当Tab切换到首页或商品时，同步更新菜单选中状态
+      if (_tabController.index == 0) {
+        setState(() {
+          _selectedMenuIndex = 0; // 首页
+        });
+      } else if (_tabController.index == 1) {
+        setState(() {
+          _selectedMenuIndex = 1; // 商品
+        });
+      }
+    }
   }
 
   @override
@@ -164,93 +184,104 @@ class _StoreState extends State<Store> with TickerProviderStateMixin {
           ? const Center(
               child: CircularProgressIndicator(),
             )
-          : NestedScrollView(
-              controller: _scrollController,
-              headerSliverBuilder: (context, innerBoxIsScrolled) {
-                return [
-                  // 自定义AppBar
-                  SliverAppBar(
-                    expandedHeight: 200,
-                    floating: false,
-                    pinned: true,
-                    backgroundColor: Colors.blue,
-                    foregroundColor: Colors.white,
-                    flexibleSpace: FlexibleSpaceBar(
-                      background: Container(
-                        decoration: const BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [Colors.blue, Colors.blueAccent],
-                          ),
-                        ),
-                        child: Column(
-                          children: [
-                            const SizedBox(height: 30),
-                            // Tab切换
-                            _buildTabBar(),
-                            const SizedBox(height: 20),
-                            // 店铺信息
-                            _buildStoreHeader(),
-                          ],
-                        ),
-                      ),
-                    ),
-                    actions: [
-                      IconButton(
-                        icon: const Icon(Icons.search),
-                        onPressed: () {
-                          ScaffoldMessenger.of(
-                            context,
-                          ).showSnackBar(const SnackBar(content: Text('搜索功能开发中...')));
-                        },
-                      ),
-                      IconButton(
-                        icon: Stack(
-                          children: [
-                            const Icon(Icons.more_vert),
-                            Positioned(
-                              right: 0,
-                              top: 0,
-                              child: Container(
-                                padding: const EdgeInsets.all(2),
-                                decoration: BoxDecoration(
-                                  color: Colors.red,
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                constraints: const BoxConstraints(
-                                  minWidth: 16,
-                                  minHeight: 16,
-                                ),
-                                child: const Text(
-                                  '5+',
-                                  style: TextStyle(color: Colors.white, fontSize: 10),
-                                  textAlign: TextAlign.center,
-                                ),
+          : Stack(
+              children: [
+                NestedScrollView(
+                  controller: _scrollController,
+                  headerSliverBuilder: (context, innerBoxIsScrolled) {
+                    return [
+                      // 自定义AppBar
+                      SliverAppBar(
+                        expandedHeight: 200,
+                        floating: false,
+                        pinned: true,
+                        backgroundColor: Colors.blue,
+                        foregroundColor: Colors.white,
+                        flexibleSpace: FlexibleSpaceBar(
+                          background: Container(
+                            decoration: const BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [Colors.blue, Colors.blueAccent],
                               ),
                             ),
-                          ],
+                            child: Column(
+                              children: [
+                                const SizedBox(height: 30),
+                                // Tab切换
+                                _buildTabBar(),
+                                const SizedBox(height: 20),
+                                // 店铺信息
+                                _buildStoreHeader(),
+                              ],
+                            ),
+                          ),
                         ),
-                        onPressed: () {
-                          ScaffoldMessenger.of(
-                            context,
-                          ).showSnackBar(const SnackBar(content: Text('更多功能开发中...')));
-                        },
+                        actions: [
+                          IconButton(
+                            icon: const Icon(Icons.search),
+                            onPressed: () {
+                              ScaffoldMessenger.of(
+                                context,
+                              ).showSnackBar(const SnackBar(content: Text('搜索功能开发中...')));
+                            },
+                          ),
+                          IconButton(
+                            icon: Stack(
+                              children: [
+                                const Icon(Icons.more_vert),
+                                Positioned(
+                                  right: 0,
+                                  top: 0,
+                                  child: Container(
+                                    padding: const EdgeInsets.all(2),
+                                    decoration: BoxDecoration(
+                                      color: Colors.red,
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    constraints: const BoxConstraints(
+                                      minWidth: 16,
+                                      minHeight: 16,
+                                    ),
+                                    child: const Text(
+                                      '5+',
+                                      style: TextStyle(color: Colors.white, fontSize: 10),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            onPressed: () {
+                              ScaffoldMessenger.of(
+                                context,
+                              ).showSnackBar(const SnackBar(content: Text('更多功能开发中...')));
+                            },
+                          ),
+                        ],
                       ),
+                    ];
+                  },
+                  body: TabBarView(
+                    controller: _tabController,
+                    children: [
+                      _buildFeaturedTab(),
+                      _buildProductsTab(),
+                      _buildActivitiesTab(),
+                      _buildNewProductsTab(),
+                      _buildRankingTab(),
                     ],
                   ),
-                ];
-              },
-              body: TabBarView(
-                controller: _tabController,
-                children: [
-                  _buildFeaturedTab(),
-                  _buildProductsTab(),
-                  _buildActivitiesTab(),
-                  _buildNewProductsTab(),
-                  _buildRankingTab(),
-                ],
-              ),
+                ),
+                // 底部悬浮菜单
+                Positioned(
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  child: _buildFloatingMenu(),
+                ),
+              ],
             ),
     );
   }
@@ -398,6 +429,8 @@ class _StoreState extends State<Store> with TickerProviderStateMixin {
           const SizedBox(height: 16),
           // 品牌故事
           _buildBrandStory(),
+          // 底部padding，避免被悬浮菜单遮挡
+          const SizedBox(height: 100),
         ],
       ),
     );
@@ -405,13 +438,21 @@ class _StoreState extends State<Store> with TickerProviderStateMixin {
 
   /// 构建商品Tab
   Widget _buildProductsTab() {
-    return _buildProductGrid(_allProducts, '全部商品');
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          _buildProductGrid(_allProducts, '全部商品'),
+          // 底部padding，避免被悬浮菜单遮挡
+          const SizedBox(height: 100),
+        ],
+      ),
+    );
   }
 
   /// 构建活动Tab
   Widget _buildActivitiesTab() {
     return ListView.builder(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
       itemCount: _activities.length,
       itemBuilder: (context, index) {
         final activity = _activities[index];
@@ -422,15 +463,26 @@ class _StoreState extends State<Store> with TickerProviderStateMixin {
 
   /// 构建新品Tab
   Widget _buildNewProductsTab() {
-    return _buildProductGrid(_newProducts, '新品上市');
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          _buildProductGrid(_newProducts, '新品上市'),
+          // 底部padding，避免被悬浮菜单遮挡
+          const SizedBox(height: 100),
+        ],
+      ),
+    );
   }
 
   /// 构建榜单Tab
   Widget _buildRankingTab() {
     return const Center(
-      child: Text(
-        '榜单功能开发中...',
-        style: TextStyle(fontSize: 16, color: Colors.grey),
+      child: Padding(
+        padding: EdgeInsets.only(bottom: 100),
+        child: Text(
+          '榜单功能开发中...',
+          style: TextStyle(fontSize: 16, color: Colors.grey),
+        ),
       ),
     );
   }
@@ -861,5 +913,121 @@ class _StoreState extends State<Store> with TickerProviderStateMixin {
         ],
       ),
     );
+  }
+
+  /// 构建底部悬浮菜单
+  Widget _buildFloatingMenu() {
+    return SafeArea(
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(30),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.1),
+              blurRadius: 10,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            _buildMenuItem(
+              icon: Icons.home,
+              label: '首页',
+              index: 0,
+            ),
+            _buildMenuItem(
+              icon: Icons.shopping_bag,
+              label: '商品',
+              index: 1,
+            ),
+            _buildMenuItem(
+              icon: Icons.category,
+              label: '分类',
+              index: 2,
+            ),
+            _buildMenuItem(
+              icon: Icons.support_agent,
+              label: '客服',
+              index: 3,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// 构建菜单项
+  Widget _buildMenuItem({
+    required IconData icon,
+    required String label,
+    required int index,
+  }) {
+    final isSelected = _selectedMenuIndex == index;
+    return Expanded(
+      child: GestureDetector(
+        onTap: () => _handleMenuTap(index),
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                icon,
+                color: isSelected ? Colors.blue : Colors.grey[600],
+                size: 24,
+              ),
+              const SizedBox(height: 4),
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 12,
+                  color: isSelected ? Colors.blue : Colors.grey[600],
+                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// 处理菜单点击
+  void _handleMenuTap(int index) {
+    switch (index) {
+      case 0: // 首页
+        setState(() {
+          _selectedMenuIndex = 0;
+        });
+        _tabController.animateTo(0);
+        break;
+      case 1: // 商品
+        setState(() {
+          _selectedMenuIndex = 1;
+        });
+        _tabController.animateTo(1);
+        break;
+      case 2: // 分类
+        // 导航到分类页面，不更新选中状态（保持当前选中状态）
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => const Category(),
+          ),
+        );
+        break;
+      case 3: // 客服
+        // 导航到客服页面，不更新选中状态（保持当前选中状态）
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => const CustomerServiceChat(),
+          ),
+        );
+        break;
+    }
   }
 }
