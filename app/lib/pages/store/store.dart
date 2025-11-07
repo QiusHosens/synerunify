@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:synerunify/services/system_tenant.dart';
-import '../category/category.dart';
 import '../customer_service/customer_service_chat.dart';
+import 'store_category_page.dart';
 
 class Store extends StatefulWidget { 
   final int storeId;
@@ -19,6 +19,8 @@ class _StoreState extends State<Store> with TickerProviderStateMixin {
   bool _isFollowing = false;
   bool _isLoading = true;
   int _selectedMenuIndex = 0; // 当前选中的菜单项：0-首页，1-商品，2-分类，3-客服
+  int _previousMenuIndex = 0;
+  bool _showCategoryOverlay = false;
 
   SystemTenantResponse? tenantInfo;
 
@@ -42,13 +44,9 @@ class _StoreState extends State<Store> with TickerProviderStateMixin {
     if (!_tabController.indexIsChanging) {
       // 当Tab切换到首页或商品时，同步更新菜单选中状态
       if (_tabController.index == 0) {
-        setState(() {
-          _selectedMenuIndex = 0; // 首页
-        });
+        _updateMenuSelection(0);
       } else if (_tabController.index == 1) {
-        setState(() {
-          _selectedMenuIndex = 1; // 商品
-        });
+        _updateMenuSelection(1);
       }
     }
   }
@@ -272,6 +270,20 @@ class _StoreState extends State<Store> with TickerProviderStateMixin {
                       _buildNewProductsTab(),
                       _buildRankingTab(),
                     ],
+                  ),
+                ),
+              if (_showCategoryOverlay)
+                Positioned(
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 96,
+                  child: Material(
+                    elevation: 8,
+                    color: Colors.white,
+                    child: StoreCategoryPage(
+                      onClose: _closeCategoryOverlay,
+                    ),
                   ),
                 ),
                 // 底部悬浮菜单
@@ -1001,27 +1013,39 @@ class _StoreState extends State<Store> with TickerProviderStateMixin {
   void _handleMenuTap(int index) {
     switch (index) {
       case 0: // 首页
+        final overlayVisible = _showCategoryOverlay;
         setState(() {
           _selectedMenuIndex = 0;
+          if (overlayVisible) {
+            _showCategoryOverlay = false;
+          }
         });
         _tabController.animateTo(0);
         break;
       case 1: // 商品
+        final overlayVisible = _showCategoryOverlay;
         setState(() {
           _selectedMenuIndex = 1;
+          if (overlayVisible) {
+            _showCategoryOverlay = false;
+          }
         });
         _tabController.animateTo(1);
         break;
       case 2: // 分类
-        // 导航到分类页面，不更新选中状态（保持当前选中状态）
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => const Category(),
-          ),
-        );
+        if (_showCategoryOverlay) {
+          _closeCategoryOverlay();
+        } else {
+          setState(() {
+            _previousMenuIndex = _selectedMenuIndex;
+            _selectedMenuIndex = 2;
+            _showCategoryOverlay = true;
+          });
+        }
         break;
       case 3: // 客服
         // 导航到客服页面，不更新选中状态（保持当前选中状态）
+        _closeCategoryOverlay();
         Navigator.of(context).push(
           MaterialPageRoute(
             builder: (context) => const CustomerServiceChat(),
@@ -1029,5 +1053,26 @@ class _StoreState extends State<Store> with TickerProviderStateMixin {
         );
         break;
     }
+  }
+
+  void _closeCategoryOverlay() {
+    if (!_showCategoryOverlay) {
+      return;
+    }
+    setState(() {
+      _showCategoryOverlay = false;
+      if (_selectedMenuIndex == 2) {
+        _selectedMenuIndex = _previousMenuIndex;
+      }
+    });
+  }
+
+  void _updateMenuSelection(int index) {
+    setState(() {
+      _selectedMenuIndex = index;
+      if (_showCategoryOverlay) {
+        _showCategoryOverlay = false;
+      }
+    });
   }
 }
