@@ -40,7 +40,10 @@ use crate::api::mall_promotion_point_product::{ mall_promotion_point_product_rou
 use crate::api::mall_promotion_reward_activity::{ mall_promotion_reward_activity_route, mall_promotion_reward_activity_router };
 use crate::api::mall_promotion_serving_conversation::{ mall_promotion_serving_conversation_route, mall_promotion_serving_conversation_router };
 use crate::api::mall_promotion_serving_message::{ mall_promotion_serving_message_route, mall_promotion_serving_message_router };
-use crate::api::mall_trade_after_sale::{ mall_trade_after_sale_route, mall_trade_after_sale_router };
+use crate::api::mall_store::mall_store_router;
+use crate::api::mall_store_customer_service::mall_store_customer_service_router;
+use crate::api::mall_store_notice::mall_store_notice_router;
+use crate::api::mall_trade_after_sale::{mall_trade_after_sale_route, mall_trade_after_sale_router };
 use crate::api::mall_trade_after_sale_log::{ mall_trade_after_sale_log_route, mall_trade_after_sale_log_router };
 use crate::api::mall_trade_brokerage_record::{ mall_trade_brokerage_record_route, mall_trade_brokerage_record_router };
 use crate::api::mall_trade_brokerage_user::{ mall_trade_brokerage_user_route, mall_trade_brokerage_user_router };
@@ -100,6 +103,9 @@ use crate::AppState;
         (name = "mall_promotion_reward_activity", description = "满减送活动"),
         (name = "mall_promotion_serving_conversation", description = "客服会话"),
         (name = "mall_promotion_serving_message", description = "客服消息"),
+        (name = "mall_store", description = "店铺"),
+        (name = "mall_store_customer_service", description = "店铺客服"),
+        (name = "mall_store_notice", description = "店铺公告"),
         (name = "mall_trade_after_sale", description = "售后订单"),
         (name = "mall_trade_after_sale_log", description = "售后订单日志"),
         (name = "mall_trade_brokerage_record", description = "佣金记录"),
@@ -178,6 +184,9 @@ pub async fn auth_router(state: AppState) -> OpenApiRouter {
         .nest("/mall_promotion_reward_activity", mall_promotion_reward_activity_router(state.clone()).await)
         .nest("/mall_promotion_serving_conversation", mall_promotion_serving_conversation_router(state.clone()).await)
         .nest("/mall_promotion_serving_message", mall_promotion_serving_message_router(state.clone()).await)
+        .nest("/mall_store", mall_store_router(state.clone()).await)
+        .nest("/mall_store_customer_service", mall_store_customer_service_router(state.clone()).await)
+        .nest("/mall_store_notice", mall_store_notice_router(state.clone()).await)
         .nest("/mall_trade_after_sale", mall_trade_after_sale_router(state.clone()).await)
         .nest("/mall_trade_after_sale_log", mall_trade_after_sale_log_router(state.clone()).await)
         .nest("/mall_trade_brokerage_record", mall_trade_brokerage_record_router(state.clone()).await)

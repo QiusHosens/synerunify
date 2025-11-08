@@ -11,7 +11,7 @@
  Target Server Version : 80200 (8.2.0)
  File Encoding         : 65001
 
- Date: 18/10/2025 23:15:19
+ Date: 08/11/2025 15:38:52
 */
 
 SET NAMES utf8mb4;
@@ -1201,12 +1201,14 @@ CREATE TABLE `mall_product_brand`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '商品品牌' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '商品品牌' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_product_brand
 -- ----------------------------
-INSERT INTO `mall_product_brand` VALUES (1, '苹果', 75, 0, 'apple', 0, 1, '2025-08-12 06:10:01', 1, '2025-08-12 06:34:37', b'0', 1);
+INSERT INTO `mall_product_brand` VALUES (1, '苹果', 146, 0, 'apple', 0, 1, '2025-08-12 06:10:01', 1, '2025-10-24 12:48:59', b'0', 1);
+INSERT INTO `mall_product_brand` VALUES (2, '小米', 147, 1, '小米', 0, 1, '2025-10-24 12:49:31', 1, '2025-10-24 12:49:31', b'0', 1);
+INSERT INTO `mall_product_brand` VALUES (3, '华为', 148, 2, '华为', 0, 1, '2025-10-24 12:49:56', 1, '2025-10-24 12:49:56', b'0', 1);
 
 -- ----------------------------
 -- Table structure for mall_product_browse_history
@@ -1423,7 +1425,7 @@ CREATE TABLE `mall_product_property_value`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 11 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '商品属性值' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 19 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '商品属性值' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_product_property_value
@@ -1433,11 +1435,19 @@ INSERT INTO `mall_product_property_value` VALUES (2, 2, '黑色', 0, NULL, 1, '2
 INSERT INTO `mall_product_property_value` VALUES (3, 2, '黄色', 0, NULL, 1, '2025-08-26 14:36:07', 1, '2025-08-26 14:36:07', b'0', 1);
 INSERT INTO `mall_product_property_value` VALUES (4, 2, '绿色', 0, NULL, 1, '2025-08-26 14:36:07', 1, '2025-08-26 14:36:07', b'0', 1);
 INSERT INTO `mall_product_property_value` VALUES (5, 2, '蓝色', 0, NULL, 1, '2025-08-26 14:36:07', 1, '2025-08-26 14:36:07', b'0', 1);
-INSERT INTO `mall_product_property_value` VALUES (6, 3, '1*1', 0, NULL, 1, '2025-08-26 14:36:48', 1, '2025-08-26 14:36:48', b'0', 1);
-INSERT INTO `mall_product_property_value` VALUES (7, 3, '1*2', 0, NULL, 1, '2025-08-26 14:36:48', 1, '2025-08-26 14:36:48', b'0', 1);
-INSERT INTO `mall_product_property_value` VALUES (8, 3, '1*3', 0, NULL, 1, '2025-08-26 14:36:48', 1, '2025-08-26 14:36:48', b'0', 1);
-INSERT INTO `mall_product_property_value` VALUES (9, 3, '2*1', 0, NULL, 1, '2025-08-26 14:36:48', 1, '2025-08-26 14:36:48', b'0', 1);
-INSERT INTO `mall_product_property_value` VALUES (10, 3, '2*2', 0, NULL, 1, '2025-08-26 14:36:48', 1, '2025-08-26 14:36:48', b'0', 1);
+INSERT INTO `mall_product_property_value` VALUES (6, 3, '1*1', 0, NULL, 1, '2025-08-26 14:36:48', 1, '2025-10-29 12:37:34', b'1', 1);
+INSERT INTO `mall_product_property_value` VALUES (7, 3, '1*2', 0, NULL, 1, '2025-08-26 14:36:48', 1, '2025-10-29 12:37:34', b'1', 1);
+INSERT INTO `mall_product_property_value` VALUES (8, 3, '1*3', 0, NULL, 1, '2025-08-26 14:36:48', 1, '2025-10-29 12:37:34', b'1', 1);
+INSERT INTO `mall_product_property_value` VALUES (9, 3, '2*1', 0, NULL, 1, '2025-08-26 14:36:48', 1, '2025-10-29 12:37:34', b'1', 1);
+INSERT INTO `mall_product_property_value` VALUES (10, 3, '2*2', 0, NULL, 1, '2025-08-26 14:36:48', 1, '2025-10-29 12:37:34', b'1', 1);
+INSERT INTO `mall_product_property_value` VALUES (11, 2, '紫色', 0, NULL, 1, '2025-10-25 07:41:13', 1, '2025-10-25 07:41:13', b'0', 1);
+INSERT INTO `mall_product_property_value` VALUES (12, 2, '粉色', 0, NULL, 1, '2025-10-25 07:41:13', 1, '2025-10-25 07:41:13', b'0', 1);
+INSERT INTO `mall_product_property_value` VALUES (13, 2, '银色', 0, NULL, 1, '2025-10-25 07:41:13', 1, '2025-10-25 07:41:13', b'0', 1);
+INSERT INTO `mall_product_property_value` VALUES (14, 3, 'S', 0, NULL, 1, '2025-10-29 12:37:34', 1, '2025-10-29 12:37:34', b'0', 1);
+INSERT INTO `mall_product_property_value` VALUES (15, 3, 'M', 0, NULL, 1, '2025-10-29 12:37:34', 1, '2025-10-29 12:37:34', b'0', 1);
+INSERT INTO `mall_product_property_value` VALUES (16, 3, 'L', 0, NULL, 1, '2025-10-29 12:37:34', 1, '2025-10-29 12:37:34', b'0', 1);
+INSERT INTO `mall_product_property_value` VALUES (17, 3, 'XL', 0, NULL, 1, '2025-10-29 12:37:34', 1, '2025-10-29 12:37:34', b'0', 1);
+INSERT INTO `mall_product_property_value` VALUES (18, 3, 'XXL', 0, NULL, 1, '2025-10-29 12:37:34', 1, '2025-10-29 12:37:34', b'0', 1);
 
 -- ----------------------------
 -- Table structure for mall_product_sku
@@ -1465,18 +1475,42 @@ CREATE TABLE `mall_product_sku`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '商品sku' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 32 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '商品sku' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_product_sku
 -- ----------------------------
-INSERT INTO `mall_product_sku` VALUES (1, 1, '', 9, 8, 7, '1234', 100, 6, 5, 4, 3, 2, 0, 1, '2025-09-05 07:10:18', 1, '2025-09-05 07:10:18', b'0', 1);
-INSERT INTO `mall_product_sku` VALUES (2, 1, '[{\"propertyId\":2,\"propertyName\":\"颜色\",\"valueId\":1,\"valueName\":\"白色\"}]', 9, 8, 7, '1234', 100, 6, 5, 4, 3, 2, 0, 1, '2025-09-05 07:10:18', 1, '2025-09-05 07:10:18', b'0', 1);
-INSERT INTO `mall_product_sku` VALUES (3, 1, '[{\"propertyId\":2,\"propertyName\":\"颜色\",\"valueId\":2,\"valueName\":\"黑色\"}]', 9, 8, 7, '1234', 100, 6, 5, 4, 3, 2, 0, 1, '2025-09-05 07:10:18', 1, '2025-09-05 07:10:18', b'0', 1);
-INSERT INTO `mall_product_sku` VALUES (4, 2, '[{\"propertyId\":2,\"propertyName\":\"颜色\",\"valueId\":1,\"valueName\":\"白色\"}]', 9, 8, 7, '123', 104, 6, 5, 4, 0, 0, 0, 1, '2025-09-05 07:27:13', 1, '2025-09-05 07:27:13', b'0', 1);
-INSERT INTO `mall_product_sku` VALUES (5, 2, '[{\"propertyId\":2,\"propertyName\":\"颜色\",\"valueId\":2,\"valueName\":\"黑色\"}]', 9, 8, 7, '123', 104, 6, 5, 4, 0, 0, 0, 1, '2025-09-05 07:27:13', 1, '2025-09-05 07:27:13', b'0', 1);
-INSERT INTO `mall_product_sku` VALUES (6, 3, '[{\"propertyId\":2,\"valueId\":1}]', 9, 8, 7, '123', 108, 6, 5, 4, 0, 0, 0, 1, '2025-09-05 07:37:13', 1, '2025-09-05 07:37:13', b'0', 1);
-INSERT INTO `mall_product_sku` VALUES (7, 3, '[{\"propertyId\":2,\"valueId\":2}]', 9, 8, 7, '123', 108, 6, 5, 4, 0, 0, 0, 1, '2025-09-05 07:37:13', 1, '2025-09-05 07:37:13', b'0', 1);
+INSERT INTO `mall_product_sku` VALUES (1, 1, '', 9, 8, 7, '1234', 100, 6, 5, 4, 3, 2, 0, 1, '2025-09-05 07:10:18', 1, '2025-10-25 07:54:43', b'1', 1);
+INSERT INTO `mall_product_sku` VALUES (2, 1, '[{\"propertyId\":2,\"propertyName\":\"颜色\",\"valueId\":1,\"valueName\":\"白色\"}]', 9, 8, 7, '1234', 100, 6, 5, 4, 3, 2, 0, 1, '2025-09-05 07:10:18', 1, '2025-10-25 07:54:43', b'1', 1);
+INSERT INTO `mall_product_sku` VALUES (3, 1, '[{\"propertyId\":2,\"propertyName\":\"颜色\",\"valueId\":2,\"valueName\":\"黑色\"}]', 9, 8, 7, '1234', 100, 6, 5, 4, 3, 2, 0, 1, '2025-09-05 07:10:18', 1, '2025-10-25 07:54:43', b'1', 1);
+INSERT INTO `mall_product_sku` VALUES (4, 2, '[{\"propertyId\":2,\"propertyName\":\"颜色\",\"valueId\":1,\"valueName\":\"白色\"}]', 9, 8, 7, '123', 104, 6, 5, 4, 0, 0, 0, 1, '2025-09-05 07:27:13', 1, '2025-10-25 07:56:15', b'1', 1);
+INSERT INTO `mall_product_sku` VALUES (5, 2, '[{\"propertyId\":2,\"propertyName\":\"颜色\",\"valueId\":2,\"valueName\":\"黑色\"}]', 9, 8, 7, '123', 104, 6, 5, 4, 0, 0, 0, 1, '2025-09-05 07:27:13', 1, '2025-10-25 07:56:15', b'1', 1);
+INSERT INTO `mall_product_sku` VALUES (6, 3, '[{\"propertyId\":2,\"valueId\":1}]', 9, 8, 7, '123', 108, 6, 5, 4, 0, 0, 0, 1, '2025-09-05 07:37:13', 1, '2025-10-25 07:57:18', b'1', 1);
+INSERT INTO `mall_product_sku` VALUES (7, 3, '[{\"propertyId\":2,\"valueId\":2}]', 9, 8, 7, '123', 108, 6, 5, 4, 0, 0, 0, 1, '2025-09-05 07:37:13', 1, '2025-10-25 07:57:18', b'1', 1);
+INSERT INTO `mall_product_sku` VALUES (8, 1, '[{\"propertyId\":2,\"valueId\":11}]', 5999, 6999, 4999, '123', 177, 1000, 10, 20, 500, 200, NULL, 1, '2025-10-25 07:54:43', 1, '2025-10-26 10:21:12', b'1', 1);
+INSERT INTO `mall_product_sku` VALUES (9, 1, '[{\"propertyId\":2,\"valueId\":1}]', 5999, 6999, 4999, '123', 178, 1000, 10, 20, 500, 200, NULL, 1, '2025-10-25 07:54:43', 1, '2025-10-26 10:21:12', b'1', 1);
+INSERT INTO `mall_product_sku` VALUES (10, 1, '[{\"propertyId\":2,\"valueId\":12}]', 5999, 6999, 4999, '123', 180, 1000, 10, 20, 500, 200, NULL, 1, '2025-10-25 07:54:43', 1, '2025-10-26 10:21:12', b'1', 1);
+INSERT INTO `mall_product_sku` VALUES (11, 1, '[{\"propertyId\":2,\"valueId\":13}]', 5999, 6999, 4999, '123', 179, 1000, 10, 20, 500, 200, NULL, 1, '2025-10-25 07:54:43', 1, '2025-10-26 10:21:12', b'1', 1);
+INSERT INTO `mall_product_sku` VALUES (12, 2, '[{\"propertyId\":2,\"valueId\":1}]', 5888, 6888, 4888, '123', 184, 2000, 10, 20, 0, 0, NULL, 1, '2025-10-25 07:56:15', 1, '2025-10-26 10:27:11', b'1', 1);
+INSERT INTO `mall_product_sku` VALUES (13, 2, '[{\"propertyId\":2,\"valueId\":12}]', 5888, 6888, 4888, '123', 185, 2000, 10, 20, 0, 0, NULL, 1, '2025-10-25 07:56:15', 1, '2025-10-26 10:27:11', b'1', 1);
+INSERT INTO `mall_product_sku` VALUES (14, 3, '[{\"propertyId\":2,\"valueId\":13}]', 5666, 6666, 4666, '123', 189, 2999, 10, 20, 0, 0, NULL, 1, '2025-10-25 07:57:18', 1, '2025-10-26 10:27:20', b'1', 1);
+INSERT INTO `mall_product_sku` VALUES (15, 3, '[{\"propertyId\":2,\"valueId\":1}]', 5666, 6666, 4666, '123', 190, 2999, 10, 20, 0, 0, NULL, 1, '2025-10-25 07:57:18', 1, '2025-10-26 10:27:20', b'1', 1);
+INSERT INTO `mall_product_sku` VALUES (16, 1, '[{\"propertyId\":2,\"valueId\":11}]', 5999, 6999, 4999, '123', 177, 1000, 10, 20, 500, 200, NULL, 1, '2025-10-26 10:21:12', 1, '2025-10-26 10:23:44', b'1', 1);
+INSERT INTO `mall_product_sku` VALUES (17, 1, '[{\"propertyId\":2,\"valueId\":1}]', 5999, 6999, 4999, '123', 178, 1000, 10, 20, 500, 200, NULL, 1, '2025-10-26 10:21:12', 1, '2025-10-26 10:23:44', b'1', 1);
+INSERT INTO `mall_product_sku` VALUES (18, 1, '[{\"propertyId\":2,\"valueId\":12}]', 5999, 6999, 4999, '123', 180, 1000, 10, 20, 500, 200, NULL, 1, '2025-10-26 10:21:12', 1, '2025-10-26 10:23:44', b'1', 1);
+INSERT INTO `mall_product_sku` VALUES (19, 1, '[{\"propertyId\":2,\"valueId\":13}]', 5999, 6999, 4999, '123', 179, 1000, 10, 20, 500, 200, NULL, 1, '2025-10-26 10:21:12', 1, '2025-10-26 10:23:44', b'1', 1);
+INSERT INTO `mall_product_sku` VALUES (20, 1, '[{\"propertyId\":2,\"valueId\":11}]', 5999, 6999, 4999, '123', 177, 1000, 10, 20, 500, 200, NULL, 1, '2025-10-26 10:23:44', 1, '2025-10-26 10:25:57', b'1', 1);
+INSERT INTO `mall_product_sku` VALUES (21, 1, '[{\"propertyId\":2,\"valueId\":1}]', 5999, 6999, 4999, '123', 178, 1000, 10, 20, 500, 200, NULL, 1, '2025-10-26 10:23:44', 1, '2025-10-26 10:25:57', b'1', 1);
+INSERT INTO `mall_product_sku` VALUES (22, 1, '[{\"propertyId\":2,\"valueId\":12}]', 5999, 6999, 4999, '123', 180, 1000, 10, 20, 500, 200, NULL, 1, '2025-10-26 10:23:44', 1, '2025-10-26 10:25:57', b'1', 1);
+INSERT INTO `mall_product_sku` VALUES (23, 1, '[{\"propertyId\":2,\"valueId\":13}]', 5999, 6999, 4999, '123', 179, 1000, 10, 20, 500, 200, NULL, 1, '2025-10-26 10:23:44', 1, '2025-10-26 10:25:57', b'1', 1);
+INSERT INTO `mall_product_sku` VALUES (24, 1, '[{\"propertyId\":2,\"valueId\":11}]', 5999, 6999, 4999, '123', 177, 1000, 10, 20, 500, 200, NULL, 1, '2025-10-26 10:25:57', 1, '2025-10-26 10:25:57', b'0', 1);
+INSERT INTO `mall_product_sku` VALUES (25, 1, '[{\"propertyId\":2,\"valueId\":1}]', 5999, 6999, 4999, '123', 178, 1000, 10, 20, 500, 200, NULL, 1, '2025-10-26 10:25:57', 1, '2025-10-26 10:25:57', b'0', 1);
+INSERT INTO `mall_product_sku` VALUES (26, 1, '[{\"propertyId\":2,\"valueId\":12}]', 5999, 6999, 4999, '123', 180, 1000, 10, 20, 500, 200, NULL, 1, '2025-10-26 10:25:57', 1, '2025-10-26 10:25:57', b'0', 1);
+INSERT INTO `mall_product_sku` VALUES (27, 1, '[{\"propertyId\":2,\"valueId\":13}]', 5999, 6999, 4999, '123', 179, 1000, 10, 20, 500, 200, NULL, 1, '2025-10-26 10:25:57', 1, '2025-10-26 10:25:57', b'0', 1);
+INSERT INTO `mall_product_sku` VALUES (28, 2, '[{\"propertyId\":2,\"valueId\":1}]', 5888, 6888, 4888, '123', 184, 2000, 10, 20, 0, 0, NULL, 1, '2025-10-26 10:27:11', 1, '2025-10-26 10:27:11', b'0', 1);
+INSERT INTO `mall_product_sku` VALUES (29, 2, '[{\"propertyId\":2,\"valueId\":12}]', 5888, 6888, 4888, '123', 185, 2000, 10, 20, 0, 0, NULL, 1, '2025-10-26 10:27:11', 1, '2025-10-26 10:27:11', b'0', 1);
+INSERT INTO `mall_product_sku` VALUES (30, 3, '[{\"propertyId\":2,\"valueId\":13}]', 5666, 6666, 4666, '123', 189, 2999, 10, 20, 0, 0, NULL, 1, '2025-10-26 10:27:20', 1, '2025-10-26 10:27:20', b'0', 1);
+INSERT INTO `mall_product_sku` VALUES (31, 3, '[{\"propertyId\":2,\"valueId\":1}]', 5666, 6666, 4666, '123', 190, 2999, 10, 20, 0, 0, NULL, 1, '2025-10-26 10:27:20', 1, '2025-10-26 10:27:20', b'0', 1);
 
 -- ----------------------------
 -- Table structure for mall_product_spu
@@ -1518,9 +1552,9 @@ CREATE TABLE `mall_product_spu`  (
 -- ----------------------------
 -- Records of mall_product_spu
 -- ----------------------------
-INSERT INTO `mall_product_spu` VALUES (1, 'iPhone 15 Plus', 'iPhone', 'iPhone 15 Plus', '<p>iPhone 15 Plus 商品详情</p>', 1, 1, 97, '98,99', 0, 0, 1, 9, 8, 7, 6, '0', 1, 100, 1, 0, 5, 0, 1, '2025-09-05 07:10:18', 1, '2025-09-05 07:13:57', b'0', 1);
-INSERT INTO `mall_product_spu` VALUES (2, 'iPhone 15 Pro', 'iPhone', 'iPhone 15 Pro', '<p>iPhone 15 Pro 商品详情</p>', 1, 1, 101, '103,102', 0, 0, 1, 9, 8, 7, 6, '0', 1, 100, 0, 0, 10, 0, 1, '2025-09-05 07:27:13', 1, '2025-09-05 07:27:13', b'0', 1);
-INSERT INTO `mall_product_spu` VALUES (3, 'iPhone 15 Pro Max', 'iPhone', 'iPhone 15 Pro Max', '<p>iPhone 15 Pro Max 商品详情</p>', 1, 1, 105, '107,106', 0, 0, 1, 9, 8, 7, 6, '0', 1, 100, 0, 0, 20, 0, 1, '2025-09-05 07:37:13', 1, '2025-09-05 07:37:13', b'0', 1);
+INSERT INTO `mall_product_spu` VALUES (1, 'iPhone 15 Plus', 'iPhone', 'iPhone 15 Plus', '<p>iPhone 15 Plus 商品详情</p>', 33, 1, 172, '173,174,176,175', 0, 0, 1, 5999, 6999, 4999, 1000, '0', 1, 100, 1, 0, 5, 0, 1, '2025-09-05 07:10:18', 1, '2025-10-26 10:25:57', b'0', 1);
+INSERT INTO `mall_product_spu` VALUES (2, 'iPhone 15 Pro', 'iPhone', 'iPhone 15 Pro', '<p>iPhone 15 Pro 商品详情</p>', 33, 1, 181, '182,183', 1, 0, 1, 5888, 6888, 4888, 2000, '0', 1, 100, 0, 0, 10, 0, 1, '2025-09-05 07:27:13', 1, '2025-10-26 10:27:11', b'0', 1);
+INSERT INTO `mall_product_spu` VALUES (3, 'iPhone 15 Pro Max', 'iPhone', 'iPhone 15 Pro Max', '<p>iPhone 15 Pro Max 商品详情</p>', 33, 1, 186, '187,188', 2, 0, 1, 5666, 6666, 4666, 2999, '0', 1, 100, 0, 0, 20, 0, 1, '2025-09-05 07:37:13', 1, '2025-10-26 10:27:20', b'0', 1);
 
 -- ----------------------------
 -- Table structure for mall_product_statistics
@@ -2205,6 +2239,93 @@ CREATE TABLE `mall_promotion_serving_message`  (
 
 -- ----------------------------
 -- Records of mall_promotion_serving_message
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for mall_store
+-- ----------------------------
+DROP TABLE IF EXISTS `mall_store`;
+CREATE TABLE `mall_store`  (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '店铺编号',
+  `number` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '店铺编号（业务唯一，例：S202410080001）',
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '店铺名称',
+  `short_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '店铺简称',
+  `file_id` bigint NOT NULL COMMENT '店铺封面ID',
+  `slider_file_ids` varchar(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '店铺轮播图id数组，以逗号分隔最多上传15张',
+  `sort` int NULL DEFAULT 0 COMMENT '店铺排序',
+  `slogan` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '店铺广告语',
+  `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL COMMENT '店铺描述',
+  `tags` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '店铺标签，逗号分隔，如：正品保障,7天无理由',
+  `status` tinyint NOT NULL DEFAULT 0 COMMENT '状态:0-待审核,1-营业中,2-暂停营业,3-审核驳回,4-永久关闭',
+  `audit_remark` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '审核备注',
+  `audit_time` datetime NULL DEFAULT NULL COMMENT '审核通过时间',
+  `score_desc` int NULL DEFAULT 500 COMMENT '描述相符评分',
+  `score_service` int NULL DEFAULT 500 COMMENT '服务态度评分',
+  `score_delivery` int NULL DEFAULT 500 COMMENT '发货速度评分',
+  `total_sales_amount` int NULL DEFAULT 0 COMMENT '累计销售额',
+  `total_order_count` bigint NULL DEFAULT 0 COMMENT '累计订单数',
+  `total_goods_count` int NULL DEFAULT 0 COMMENT '商品总数',
+  `total_fans_count` int NULL DEFAULT 0 COMMENT '粉丝数',
+  `is_recommend` tinyint NULL DEFAULT 0 COMMENT '是否平台推荐：0-否,1-是',
+  `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updater` bigint NULL DEFAULT NULL COMMENT '更新者ID',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+  `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE INDEX `number`(`number` ASC) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '店铺表' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of mall_store
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for mall_store_customer_service
+-- ----------------------------
+DROP TABLE IF EXISTS `mall_store_customer_service`;
+CREATE TABLE `mall_store_customer_service`  (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '客服编号',
+  `store_id` bigint NOT NULL COMMENT '店铺编号',
+  `user_id` bigint UNSIGNED NOT NULL COMMENT '用户编号',
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '店铺名称',
+  `type` tinyint NOT NULL COMMENT '1-在线客服,2-电话,3-QQ,4-微信',
+  `sort` int NOT NULL DEFAULT 0 COMMENT '排序',
+  `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updater` bigint NULL DEFAULT NULL COMMENT '更新者ID',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+  `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '店铺客服表' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of mall_store_customer_service
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for mall_store_notice
+-- ----------------------------
+DROP TABLE IF EXISTS `mall_store_notice`;
+CREATE TABLE `mall_store_notice`  (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '公告编号',
+  `store_id` bigint NOT NULL COMMENT '店铺编号',
+  `title` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '公告标题',
+  `content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '公告内容',
+  `top` tinyint NOT NULL DEFAULT 1 COMMENT '是否置顶:0-置顶,1-不置顶',
+  `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updater` bigint NULL DEFAULT NULL COMMENT '更新者ID',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+  `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '店铺公告表' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of mall_store_notice
 -- ----------------------------
 
 -- ----------------------------
@@ -2920,7 +3041,7 @@ CREATE TABLE `system_file`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 146 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '文件信息表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 191 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '文件信息表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of system_file
@@ -3070,6 +3191,51 @@ INSERT INTO `system_file` VALUES (142, '中国电信.png', 'image/png', 5595, '2
 INSERT INTO `system_file` VALUES (143, '办号卡.png', 'image/png', 7913, '2025/10/18/105308601882513408_办号卡.png', 1, '0000', 1, 1, '2025-10-18 14:18:59', 1, '2025-10-18 14:18:59', b'0', 1);
 INSERT INTO `system_file` VALUES (144, '上网卡.jpg', 'image/jpeg', 5874, '2025/10/18/105308699957923840_上网卡.jpg', 1, '0000', 1, 1, '2025-10-18 14:19:22', 1, '2025-10-18 14:19:22', b'0', 1);
 INSERT INTO `system_file` VALUES (145, '5G流量包.jpg', 'image/jpeg', 4377, '2025/10/18/105308761203150848_5G流量包.jpg', 1, '0000', 1, 1, '2025-10-18 14:19:37', 1, '2025-10-18 14:19:37', b'0', 1);
+INSERT INTO `system_file` VALUES (146, 'iPhone.jpg', 'image/jpeg', 3871, '2025/10/24/107460261706731520_iPhone.jpg', 1, '0000', 1, 1, '2025-10-24 12:48:53', 1, '2025-10-24 12:48:53', b'0', 1);
+INSERT INTO `system_file` VALUES (147, '小米.jpg', 'image/jpeg', 8365, '2025/10/24/107460384130076672_小米.jpg', 1, '0000', 1, 1, '2025-10-24 12:49:22', 1, '2025-10-24 12:49:22', b'0', 1);
+INSERT INTO `system_file` VALUES (148, '华为.jpg', 'image/jpeg', 14834, '2025/10/24/107460493622382592_华为.jpg', 1, '0000', 1, 1, '2025-10-24 12:49:48', 1, '2025-10-24 12:49:48', b'0', 1);
+INSERT INTO `system_file` VALUES (149, 'iphone_16__drr03yfz644m_large_2x.jpg', 'image/jpeg', 52527, '2025/10/24/107473656333996032_iphone_16__drr03yfz644m_large_2x.jpg', 1, '0000', 1, 1, '2025-10-24 13:42:07', 1, '2025-10-24 13:42:07', b'0', 1);
+INSERT INTO `system_file` VALUES (150, 'iphone_16__drr03yfz644m_large_2x.jpg', 'image/jpeg', 52527, '2025/10/24/107473700034449408_iphone_16__drr03yfz644m_large_2x.jpg', 1, '0000', 1, 1, '2025-10-24 13:42:17', 1, '2025-10-24 13:42:17', b'0', 1);
+INSERT INTO `system_file` VALUES (151, 'iphone_16__drr03yfz644m_large_2x.jpg', 'image/jpeg', 52527, '2025/10/25/107744825201135616_iphone_16__drr03yfz644m_large_2x.jpg', 1, '0000', 1, 1, '2025-10-25 07:39:38', 1, '2025-10-25 07:39:38', b'0', 1);
+INSERT INTO `system_file` VALUES (152, 'iphone_16__drr03yfz644m_large_2x.jpg', 'image/jpeg', 52527, '2025/10/25/107744850622812160_iphone_16__drr03yfz644m_large_2x.jpg', 1, '0000', 1, 1, '2025-10-25 07:39:45', 1, '2025-10-25 07:39:45', b'0', 1);
+INSERT INTO `system_file` VALUES (153, 'iphone_16e__dar81seif0cy_large_2x.jpg', 'image/jpeg', 29723, '2025/10/25/107744868071116800_iphone_16e__dar81seif0cy_large_2x.jpg', 1, '0000', 1, 1, '2025-10-25 07:39:49', 1, '2025-10-25 07:39:49', b'0', 1);
+INSERT INTO `system_file` VALUES (154, 'iphone_17__ck7zzemcw37m_large_2x.jpg', 'image/jpeg', 42117, '2025/10/25/107744929987432448_iphone_17__ck7zzemcw37m_large_2x.jpg', 1, '0000', 1, 1, '2025-10-25 07:40:03', 1, '2025-10-25 07:40:03', b'0', 1);
+INSERT INTO `system_file` VALUES (155, 'iphone_air__f0t56fef3oey_large_2x.jpg', 'image/jpeg', 42842, '2025/10/25/107744941832146944_iphone_air__f0t56fef3oey_large_2x.jpg', 1, '0000', 1, 1, '2025-10-25 07:40:06', 1, '2025-10-25 07:40:06', b'0', 1);
+INSERT INTO `system_file` VALUES (156, 'iphone_16__drr03yfz644m_large_2x.jpg', 'image/jpeg', 52527, '2025/10/25/107745762330284032_iphone_16__drr03yfz644m_large_2x.jpg', 1, '0000', 1, 1, '2025-10-25 07:43:22', 1, '2025-10-25 07:43:22', b'0', 1);
+INSERT INTO `system_file` VALUES (157, 'iphone_16e__dar81seif0cy_large_2x.jpg', 'image/jpeg', 29723, '2025/10/25/107745764561653760_iphone_16e__dar81seif0cy_large_2x.jpg', 1, '0000', 1, 1, '2025-10-25 07:43:22', 1, '2025-10-25 07:43:22', b'0', 1);
+INSERT INTO `system_file` VALUES (158, 'iphone_17__ck7zzemcw37m_large_2x.jpg', 'image/jpeg', 42117, '2025/10/25/107745774959333376_iphone_17__ck7zzemcw37m_large_2x.jpg', 1, '0000', 1, 1, '2025-10-25 07:43:25', 1, '2025-10-25 07:43:25', b'0', 1);
+INSERT INTO `system_file` VALUES (159, 'iphone_air__f0t56fef3oey_large_2x.jpg', 'image/jpeg', 42842, '2025/10/25/107745784316825600_iphone_air__f0t56fef3oey_large_2x.jpg', 1, '0000', 1, 1, '2025-10-25 07:43:27', 1, '2025-10-25 07:43:27', b'0', 1);
+INSERT INTO `system_file` VALUES (160, 'iphone_16__drr03yfz644m_large_2x.jpg', 'image/jpeg', 52527, '2025/10/25/107747042691911680_iphone_16__drr03yfz644m_large_2x.jpg', 1, '0000', 1, 1, '2025-10-25 07:48:27', 1, '2025-10-25 07:48:27', b'0', 1);
+INSERT INTO `system_file` VALUES (161, 'iphone_17__ck7zzemcw37m_large_2x.jpg', 'image/jpeg', 42117, '2025/10/25/107747051671916544_iphone_17__ck7zzemcw37m_large_2x.jpg', 1, '0000', 1, 1, '2025-10-25 07:48:29', 1, '2025-10-25 07:48:29', b'0', 1);
+INSERT INTO `system_file` VALUES (162, 'iphone_16__drr03yfz644m_large_2x.jpg', 'image/jpeg', 52527, '2025/10/25/107747084949524480_iphone_16__drr03yfz644m_large_2x.jpg', 1, '0000', 1, 1, '2025-10-25 07:48:37', 1, '2025-10-25 07:48:37', b'0', 1);
+INSERT INTO `system_file` VALUES (163, 'iphone_16__drr03yfz644m_large_2x.jpg', 'image/jpeg', 52527, '2025/10/25/107747144479281152_iphone_16__drr03yfz644m_large_2x.jpg', 1, '0000', 1, 1, '2025-10-25 07:48:51', 1, '2025-10-25 07:48:51', b'0', 1);
+INSERT INTO `system_file` VALUES (164, 'iphone_16__drr03yfz644m_large_2x.jpg', 'image/jpeg', 52527, '2025/10/25/107747166621011968_iphone_16__drr03yfz644m_large_2x.jpg', 1, '0000', 1, 1, '2025-10-25 07:48:57', 1, '2025-10-25 07:48:57', b'0', 1);
+INSERT INTO `system_file` VALUES (165, 'iphone_16e__dar81seif0cy_large_2x.jpg', 'image/jpeg', 29723, '2025/10/25/107747175500353536_iphone_16e__dar81seif0cy_large_2x.jpg', 1, '0000', 1, 1, '2025-10-25 07:48:59', 1, '2025-10-25 07:48:59', b'0', 1);
+INSERT INTO `system_file` VALUES (166, 'iphone_17__ck7zzemcw37m_large_2x.jpg', 'image/jpeg', 42117, '2025/10/25/107747181284298752_iphone_17__ck7zzemcw37m_large_2x.jpg', 1, '0000', 1, 1, '2025-10-25 07:49:00', 1, '2025-10-25 07:49:00', b'0', 1);
+INSERT INTO `system_file` VALUES (167, 'iphone_air__f0t56fef3oey_large_2x.jpg', 'image/jpeg', 42842, '2025/10/25/107747191119941632_iphone_air__f0t56fef3oey_large_2x.jpg', 1, '0000', 1, 1, '2025-10-25 07:49:03', 1, '2025-10-25 07:49:03', b'0', 1);
+INSERT INTO `system_file` VALUES (168, 'iphone_16e__dar81seif0cy_large_2x.jpg', 'image/jpeg', 29723, '2025/10/25/107747366907416576_iphone_16e__dar81seif0cy_large_2x.jpg', 1, '0000', 1, 1, '2025-10-25 07:49:45', 1, '2025-10-25 07:49:45', b'0', 1);
+INSERT INTO `system_file` VALUES (169, 'iphone_16__drr03yfz644m_large_2x.jpg', 'image/jpeg', 52527, '2025/10/25/107747366957748224_iphone_16__drr03yfz644m_large_2x.jpg', 1, '0000', 1, 1, '2025-10-25 07:49:45', 1, '2025-10-25 07:49:45', b'0', 1);
+INSERT INTO `system_file` VALUES (170, 'iphone_17__ck7zzemcw37m_large_2x.jpg', 'image/jpeg', 42117, '2025/10/25/107747374704627712_iphone_17__ck7zzemcw37m_large_2x.jpg', 1, '0000', 1, 1, '2025-10-25 07:49:46', 1, '2025-10-25 07:49:46', b'0', 1);
+INSERT INTO `system_file` VALUES (171, 'iphone_air__f0t56fef3oey_large_2x.jpg', 'image/jpeg', 42842, '2025/10/25/107747382506033152_iphone_air__f0t56fef3oey_large_2x.jpg', 1, '0000', 1, 1, '2025-10-25 07:49:48', 1, '2025-10-25 07:49:48', b'0', 1);
+INSERT INTO `system_file` VALUES (172, 'iphone_16__drr03yfz644m_large_2x.jpg', 'image/jpeg', 52527, '2025/10/25/107748401180839936_iphone_16__drr03yfz644m_large_2x.jpg', 1, '0000', 1, 1, '2025-10-25 07:53:51', 1, '2025-10-25 07:53:51', b'0', 1);
+INSERT INTO `system_file` VALUES (173, 'iphone_16__drr03yfz644m_large_2x.jpg', 'image/jpeg', 52527, '2025/10/25/107748427038724096_iphone_16__drr03yfz644m_large_2x.jpg', 1, '0000', 1, 1, '2025-10-25 07:53:57', 1, '2025-10-25 07:53:57', b'0', 1);
+INSERT INTO `system_file` VALUES (174, 'iphone_16e__dar81seif0cy_large_2x.jpg', 'image/jpeg', 29723, '2025/10/25/107748435364417536_iphone_16e__dar81seif0cy_large_2x.jpg', 1, '0000', 1, 1, '2025-10-25 07:53:59', 1, '2025-10-25 07:53:59', b'0', 1);
+INSERT INTO `system_file` VALUES (175, 'iphone_air__f0t56fef3oey_large_2x.jpg', 'image/jpeg', 42842, '2025/10/25/107748449398558720_iphone_air__f0t56fef3oey_large_2x.jpg', 1, '0000', 1, 1, '2025-10-25 07:54:03', 1, '2025-10-25 07:54:03', b'0', 1);
+INSERT INTO `system_file` VALUES (176, 'iphone_17__ck7zzemcw37m_large_2x.jpg', 'image/jpeg', 42117, '2025/10/25/107748449864126464_iphone_17__ck7zzemcw37m_large_2x.jpg', 1, '0000', 1, 1, '2025-10-25 07:54:03', 1, '2025-10-25 07:54:03', b'0', 1);
+INSERT INTO `system_file` VALUES (177, 'iphone_16__drr03yfz644m_large_2x.jpg', 'image/jpeg', 52527, '2025/10/25/107748570483920896_iphone_16__drr03yfz644m_large_2x.jpg', 1, '0000', 1, 1, '2025-10-25 07:54:31', 1, '2025-10-25 07:54:31', b'0', 1);
+INSERT INTO `system_file` VALUES (178, 'iphone_16e__dar81seif0cy_large_2x.jpg', 'image/jpeg', 29723, '2025/10/25/107748576171397120_iphone_16e__dar81seif0cy_large_2x.jpg', 1, '0000', 1, 1, '2025-10-25 07:54:33', 1, '2025-10-25 07:54:33', b'0', 1);
+INSERT INTO `system_file` VALUES (179, 'iphone_air__f0t56fef3oey_large_2x.jpg', 'image/jpeg', 42842, '2025/10/25/107748594085269504_iphone_air__f0t56fef3oey_large_2x.jpg', 1, '0000', 1, 1, '2025-10-25 07:54:37', 1, '2025-10-25 07:54:37', b'0', 1);
+INSERT INTO `system_file` VALUES (180, 'iphone_17__ck7zzemcw37m_large_2x.jpg', 'image/jpeg', 42117, '2025/10/25/107748597507821568_iphone_17__ck7zzemcw37m_large_2x.jpg', 1, '0000', 1, 1, '2025-10-25 07:54:38', 1, '2025-10-25 07:54:38', b'0', 1);
+INSERT INTO `system_file` VALUES (181, 'iphone_17__ck7zzemcw37m_large_2x.jpg', 'image/jpeg', 42117, '2025/10/25/107748752785149952_iphone_17__ck7zzemcw37m_large_2x.jpg', 1, '0000', 1, 1, '2025-10-25 07:55:15', 1, '2025-10-25 07:55:15', b'0', 1);
+INSERT INTO `system_file` VALUES (182, 'iphone_17__ck7zzemcw37m_large_2x.jpg', 'image/jpeg', 42117, '2025/10/25/107748787484626944_iphone_17__ck7zzemcw37m_large_2x.jpg', 1, '0000', 1, 1, '2025-10-25 07:55:23', 1, '2025-10-25 07:55:23', b'0', 1);
+INSERT INTO `system_file` VALUES (183, 'iphone_16e__dar81seif0cy_large_2x.jpg', 'image/jpeg', 29723, '2025/10/25/107748791523741696_iphone_16e__dar81seif0cy_large_2x.jpg', 1, '0000', 1, 1, '2025-10-25 07:55:24', 1, '2025-10-25 07:55:24', b'0', 1);
+INSERT INTO `system_file` VALUES (184, 'iphone_16e__dar81seif0cy_large_2x.jpg', 'image/jpeg', 29723, '2025/10/25/107748977587261440_iphone_16e__dar81seif0cy_large_2x.jpg', 1, '0000', 1, 1, '2025-10-25 07:56:08', 1, '2025-10-25 07:56:08', b'0', 1);
+INSERT INTO `system_file` VALUES (185, 'iphone_17__ck7zzemcw37m_large_2x.jpg', 'image/jpeg', 42117, '2025/10/25/107748978325458944_iphone_17__ck7zzemcw37m_large_2x.jpg', 1, '0000', 1, 1, '2025-10-25 07:56:09', 1, '2025-10-25 07:56:09', b'0', 1);
+INSERT INTO `system_file` VALUES (186, 'iphone_air__f0t56fef3oey_large_2x.jpg', 'image/jpeg', 42842, '2025/10/25/107749057669107712_iphone_air__f0t56fef3oey_large_2x.jpg', 1, '0000', 1, 1, '2025-10-25 07:56:28', 1, '2025-10-25 07:56:28', b'0', 1);
+INSERT INTO `system_file` VALUES (187, 'iphone_air__f0t56fef3oey_large_2x.jpg', 'image/jpeg', 42842, '2025/10/25/107749075419402240_iphone_air__f0t56fef3oey_large_2x.jpg', 1, '0000', 1, 1, '2025-10-25 07:56:32', 1, '2025-10-25 07:56:32', b'0', 1);
+INSERT INTO `system_file` VALUES (188, 'iphone_16e__dar81seif0cy_large_2x.jpg', 'image/jpeg', 29723, '2025/10/25/107749084500070400_iphone_16e__dar81seif0cy_large_2x.jpg', 1, '0000', 1, 1, '2025-10-25 07:56:34', 1, '2025-10-25 07:56:34', b'0', 1);
+INSERT INTO `system_file` VALUES (189, 'iphone_air__f0t56fef3oey_large_2x.jpg', 'image/jpeg', 42842, '2025/10/25/107749248476385280_iphone_air__f0t56fef3oey_large_2x.jpg', 1, '0000', 1, 1, '2025-10-25 07:57:13', 1, '2025-10-25 07:57:13', b'0', 1);
+INSERT INTO `system_file` VALUES (190, 'iphone_16e__dar81seif0cy_large_2x.jpg', 'image/jpeg', 29723, '2025/10/25/107749258932785152_iphone_16e__dar81seif0cy_large_2x.jpg', 1, '0000', 1, 1, '2025-10-25 07:57:16', 1, '2025-10-25 07:57:16', b'0', 1);
 
 -- ----------------------------
 -- Table structure for system_menu
