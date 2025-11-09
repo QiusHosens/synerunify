@@ -1,9 +1,20 @@
 import { Box, Button, FormControl, Switch, TextField, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { forwardRef, useImperativeHandle, useState } from 'react';
+import { forwardRef, useCallback, useImperativeHandle, useRef, useState } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
 import { createMallStore, MallStoreRequest } from '@/api';
 import CustomizedDialog from '@/components/CustomizedDialog';
+import CustomizedFileUpload, { UploadFile } from '@/components/CustomizedFileUpload';
+import { uploadSystemFile } from '@/api/system_file';
+import CustomizedNumberInput from '@/components/CustomizedNumberInput';
+import CustomizedTagsInput, { Tag } from '@/components/CustomizedTagsInput';
+import { Editor } from '@tinymce/tinymce-react';
+
+interface AttachmentValues {
+  file_id?: number; // 文件ID
+
+  file?: UploadFile | null;
+}
 
 interface FormValues {
   number: string; // 店铺编号（业务唯一，例：S202410080001）
@@ -18,21 +29,13 @@ interface FormValues {
   status: number; // 状态:0-待审核,1-营业中,2-暂停营业,3-审核驳回,4-永久关闭
   audit_remark: string; // 审核备注
   audit_time: string; // 审核通过时间
-  score_desc: number; // 描述相符评分
-  score_service: number; // 服务态度评分
-  score_delivery: number; // 发货速度评分
-  total_sales_amount: number; // 累计销售额
-  total_order_count: number; // 累计订单数
-  total_goods_count: number; // 商品总数
-  total_fans_count: number; // 粉丝数
-  is_recommend: number; // 是否平台推荐：0-否,1-是
-  }
 
-interface FormErrors { 
-  number?: string; // 店铺编号（业务唯一，例：S202410080001）
+  file?: UploadFile | null; // 店铺封面文件
+}
+
+interface FormErrors {
   name?: string; // 店铺名称
   file_id?: string; // 店铺封面ID
-  status?: string; // 状态:0-待审核,1-营业中,2-暂停营业,3-审核驳回,4-永久关闭
 }
 
 interface MallStoreAddProps {
@@ -43,7 +46,9 @@ const MallStoreAdd = forwardRef(({ onSubmit }: MallStoreAddProps, ref) => {
   const { t } = useTranslation();
 
   const [open, setOpen] = useState(false);
-  const [maxWidth] = useState<DialogProps['maxWidth']>('sm');
+  const [maxWidth] = useState<DialogProps['maxWidth']>('xl');
+  const [sliderFiles, setSliderFiles] = useState<AttachmentValues[]>([]);
+  const [tags, setTags] = useState<Tag[]>([]);
   const [formValues, setFormValues] = useState<FormValues>({
     number: '',
     name: '',
@@ -57,16 +62,13 @@ const MallStoreAdd = forwardRef(({ onSubmit }: MallStoreAddProps, ref) => {
     status: 0,
     audit_remark: '',
     audit_time: '',
-    score_desc: 0,
-    score_service: 0,
-    score_delivery: 0,
-    total_sales_amount: 0,
-    total_order_count: 0,
-    total_goods_count: 0,
-    total_fans_count: 0,
-    is_recommend: 0,
-    });
+  });
   const [errors, setErrors] = useState<FormErrors>({});
+
+  const [fileWidth] = useState<number>(240);
+  const [fileHeight] = useState<number>(160);
+
+  const editorRef = useRef<any>(null);
 
   useImperativeHandle(ref, () => ({
     show() {
@@ -79,23 +81,15 @@ const MallStoreAdd = forwardRef(({ onSubmit }: MallStoreAddProps, ref) => {
 
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
-    
-    if (!formValues.number.trim()) {
-      newErrors.number = t('page.mall.store.error.number');
-    }
-    
+
     if (!formValues.name.trim()) {
-      newErrors.name = t('page.mall.store.error.name');
+      newErrors.name = t('global.error.input.please') + t('page.mall.product.title.name');
     }
-    
+
     if (!formValues.file_id && formValues.file_id != 0) {
-      newErrors.file_id = t('page.mall.store.error.file');
+      newErrors.file_id = t('global.error.select.please') + t('page.mall.store.title.file');
     }
-    
-    if (!formValues.status && formValues.status != 0) {
-      newErrors.status = t('page.mall.store.error.status');
-    }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -124,15 +118,7 @@ const MallStoreAdd = forwardRef(({ onSubmit }: MallStoreAddProps, ref) => {
       status: 0,
       audit_remark: '',
       audit_time: '',
-      score_desc: 0,
-      score_service: 0,
-      score_delivery: 0,
-      total_sales_amount: 0,
-      total_order_count: 0,
-      total_goods_count: 0,
-      total_fans_count: 0,
-      is_recommend: 0,
-      });
+    });
     setErrors({});
   }
 
@@ -182,6 +168,94 @@ const MallStoreAdd = forwardRef(({ onSubmit }: MallStoreAddProps, ref) => {
     }
   };
 
+  const handleFileChange = useCallback(async (file: UploadFile | null, action: 'upload' | 'remove') => {
+    if (action === 'upload' && file) {
+      // 更新文件列表,增加一个附件,等待上传完成后在写入信息
+      setFormValues((prev) => {
+        return { ...prev, file };
+      })
+
+      // 上传文件
+      try {
+        const result = await uploadSystemFile(file.file, (progress) => {
+          setFormValues((prev) => {
+            return { ...prev, file: { ...prev.file!, progress } };
+          });
+        });
+
+        // 上传完成
+        setFormValues((prev) => {
+          return { ...prev, file_id: result, file: { ...prev.file!, status: 'done' as const } };
+        });
+      } catch (error) {
+        console.error('upload file error', error);
+        // 上传失败
+        setFormValues((prev) => {
+          return { ...prev, file: { ...prev.file!, status: 'error' as const } };
+        });
+      }
+    } else if (action === 'remove') {
+      // 删除文件并移除上传框
+      setFormValues((prev) => {
+        return { ...prev, file: undefined };
+      });
+    }
+  }, []);
+
+  const handleSliderFileChange = useCallback(async (file: UploadFile | null, action: 'upload' | 'remove', index: number) => {
+    if (action === 'upload' && file) {
+      // 更新文件列表,增加一个附件,等待上传完成后在写入信息
+      setSliderFiles((prev) => {
+        return [...prev, { file }];
+      })
+
+      // 上传文件
+      try {
+        const result = await uploadSystemFile(file.file, (progress) => {
+          setSliderFiles((prev) =>
+            prev.map((item, idx) => {
+              if (idx !== index) return item;
+              return { ...item, file: { ...item.file!, progress } };
+            })
+          );
+        });
+
+        // 上传完成
+        setSliderFiles((prev) =>
+          prev.map((item, idx) => {
+            if (idx !== index) return item;
+            return { ...item, file_id: result, file: { ...item.file!, status: 'done' as const } };
+          })
+        );
+      } catch (error) {
+        console.error('upload file error', error);
+        // 上传失败
+        setSliderFiles((prev) =>
+          prev.map((item, idx) => {
+            if (idx !== index) return item;
+            return { ...item, file: { ...item.file!, status: 'error' as const } };
+          })
+        );
+      }
+    } else if (action === 'remove') {
+      // 删除文件并移除上传框
+      setSliderFiles((prev) =>
+        prev.filter((_, idx) => idx !== index)
+      );
+    }
+  }, []);
+
+  const handleTagsChange = (name: string, newTags: Tag[]) => {
+    setTags(newTags);
+    const values = newTags.map(tag => {
+      return { name: tag.label }
+    });
+    setFormValues(prev => ({
+      ...prev,
+      [name]: values
+    }));
+  };
+
   return (
     <CustomizedDialog
       open={open}
@@ -199,13 +273,15 @@ const MallStoreAdd = forwardRef(({ onSubmit }: MallStoreAddProps, ref) => {
       <Box
         noValidate
         component="form"
-        sx={ {display: 'flex',
+        sx={{
+          display: 'flex',
           flexDirection: 'column',
           m: 'auto',
-          width: 'fit-content',} }
+          width: 'fit-content',
+        }}
       >
-        <FormControl sx={ {minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' }} }>
-          <TextField
+        <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' } }}>
+          {/* <TextField
             required
             size="small"
             label={t("page.mall.store.title.number")}
@@ -214,7 +290,7 @@ const MallStoreAdd = forwardRef(({ onSubmit }: MallStoreAddProps, ref) => {
             onChange={handleInputChange}
             error={!!errors.number}
             helperText={errors.number}
-          />
+          /> */}
           <TextField
             required
             size="small"
@@ -227,16 +303,23 @@ const MallStoreAdd = forwardRef(({ onSubmit }: MallStoreAddProps, ref) => {
           />
           <TextField
             size="small"
-            label={t("page.mall.store.title.short_name")}
+            label={t("page.mall.store.title.short.name")}
             name='short_name'
             value={formValues.short_name}
             onChange={handleInputChange}
           />
           <TextField
+            size="small"
+            label={t("page.mall.store.title.slogan")}
+            name='slogan'
+            value={formValues.slogan}
+            onChange={handleInputChange}
+          />
+          {/* <TextField
             required
             size="small"
             type="number"
-            label={t("page.mall.store.title.file_id")}
+            label={t("page.mall.store.title.file")}
             name='file_id'
             value={formValues.file_id}
             onChange={handleInputChange}
@@ -249,132 +332,114 @@ const MallStoreAdd = forwardRef(({ onSubmit }: MallStoreAddProps, ref) => {
             name='slider_file_ids'
             value={formValues.slider_file_ids}
             onChange={handleInputChange}
-          />
-          <TextField
+          /> */}
+        </FormControl>
+        <Typography sx={{ mt: 2, mb: 1 }}>
+          {t('page.mall.product.title.file')}
+        </Typography>
+        <CustomizedFileUpload
+          canRemove={false}
+          showFilename={false}
+          id={'file-upload'}
+          accept=".jpg,jpeg,.png"
+          maxSize={100}
+          onChange={(file, action) => handleFileChange(file, action)}
+          file={formValues.file}
+          width={fileWidth}
+          height={fileHeight}
+          error={!!(errors.file_id)}
+          helperText={errors.file_id}
+        />
+        <Typography sx={{ mt: 2, mb: 1 }}>
+          {t('page.mall.product.title.slider.files')}
+        </Typography>
+        <Box
+          gap={2}
+          sx={{
+            display: 'flex',
+            flexWrap: 'wrap',
+          }}
+        >
+          {sliderFiles.map((item, index) => (
+            <Box key={index}>
+              <CustomizedFileUpload
+                showFilename={false}
+                id={'file-upload-slider-' + index}
+                accept=".jpg,jpeg,.png"
+                maxSize={100}
+                onChange={(files, action) => handleSliderFileChange(files, action, index)}
+                file={item.file}
+                width={fileWidth}
+                height={fileHeight}
+              />
+            </Box>
+          ))}
+          <Box>
+            <CustomizedFileUpload
+              showFilename={false}
+              id={'file-upload-slider-' + sliderFiles.length}
+              accept=".jpg,jpeg,.png"
+              maxSize={100}
+              onChange={(file, action) => handleSliderFileChange(file, action, sliderFiles.length)}
+              width={fileWidth}
+              height={fileHeight}
+            />
+          </Box>
+        </Box>
+        <CustomizedTagsInput
+          size="small"
+          name='values'
+          tags={tags}
+          onTagsChange={handleTagsChange}
+          tagName={t("page.mall.product.property.value")}
+          placeholder={t("page.mall.product.property.placeholder.value")}
+          sx={{ mt: 2, width: '240px' }}
+        />
+        <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '240px' } }}>
+          <CustomizedNumberInput
+            required
             size="small"
-            type="number"
+            step={1}
+            min={0}
             label={t("page.mall.store.title.sort")}
             name='sort'
             value={formValues.sort}
             onChange={handleInputChange}
           />
-          <TextField
-            size="small"
-            label={t("page.mall.store.title.slogan")}
-            name='slogan'
-            value={formValues.slogan}
-            onChange={handleInputChange}
-          />
-          <TextField
-            size="small"
-            label={t("page.mall.store.title.description")}
-            name='description'
-            value={formValues.description}
-            onChange={handleInputChange}
-          />
-          <TextField
-            size="small"
-            label={t("page.mall.store.title.tags")}
-            name='tags'
-            value={formValues.tags}
-            onChange={handleInputChange}
-          />
-          <TextField
-            size="small"
-            type="number"
-            label={t("page.mall.store.title.status")}
-            name='status'
-            value={formValues.status}
-            onChange={handleInputChange}
-            error={!!errors.status}
-            helperText={errors.status}
-          />
-          <TextField
-            size="small"
-            label={t("page.mall.store.title.audit_remark")}
-            name='audit_remark'
-            value={formValues.audit_remark}
-            onChange={handleInputChange}
-          />
-          <TextField
-            size="small"
-            label={t("page.mall.store.title.audit_time")}
-            name='audit_time'
-            value={formValues.audit_time}
-            onChange={handleInputChange}
-          />
-          <TextField
-            size="small"
-            type="number"
-            label={t("page.mall.store.title.score_desc")}
-            name='score_desc'
-            value={formValues.score_desc}
-            onChange={handleInputChange}
-          />
-          <TextField
-            size="small"
-            type="number"
-            label={t("page.mall.store.title.score_service")}
-            name='score_service'
-            value={formValues.score_service}
-            onChange={handleInputChange}
-          />
-          <TextField
-            size="small"
-            type="number"
-            label={t("page.mall.store.title.score_delivery")}
-            name='score_delivery'
-            value={formValues.score_delivery}
-            onChange={handleInputChange}
-          />
-          <TextField
-            size="small"
-            type="number"
-            label={t("page.mall.store.title.total_sales_amount")}
-            name='total_sales_amount'
-            value={formValues.total_sales_amount}
-            onChange={handleInputChange}
-          />
-          <TextField
-            size="small"
-            type="number"
-            label={t("page.mall.store.title.total_order_count")}
-            name='total_order_count'
-            value={formValues.total_order_count}
-            onChange={handleInputChange}
-          />
-          <TextField
-            size="small"
-            type="number"
-            label={t("page.mall.store.title.total_goods_count")}
-            name='total_goods_count'
-            value={formValues.total_goods_count}
-            onChange={handleInputChange}
-          />
-          <TextField
-            size="small"
-            type="number"
-            label={t("page.mall.store.title.total_fans_count")}
-            name='total_fans_count'
-            value={formValues.total_fans_count}
-            onChange={handleInputChange}
-          />
-          <TextField
-            size="small"
-            type="number"
-            label={t("page.mall.store.title.is_recommend")}
-            name='is_recommend'
-            value={formValues.is_recommend}
-            onChange={handleInputChange}
-          />
-          </FormControl>
-        <Box sx={ {mt: 2, display: 'flex', alignItems: 'center'} }>
-          <Typography sx={ {mr: 4} }>{t("global.title.status")}</Typography>
-          <Switch sx={ {mr: 2} } name='status' checked={!formValues.status} onChange={handleStatusChange} />
+        </FormControl>
+        <Box id="product" sx={{ mb: 4 }}>
+          <Typography variant="h4" component="h2" gutterBottom>
+            {t('page.mall.store.title.description')}
+          </Typography>
+          <Box sx={{
+            // width: 760,
+            '& .tox-promotion-button': { display: 'none !important' },
+            '& .tox-statusbar__branding': { display: 'none' }
+          }}>
+            <Editor
+              apiKey='f88rshir3x1vuar3lr0tj1vaq6muvonldxm25o6wxr23vy96'
+              onInit={(_evt, editor) => (editorRef.current = editor)}
+              initialValue={"<p>" + t("page.mall.product.placeholder.description") + "</p>"}
+              init={{
+                height: 600,
+                language: "zh_CN",
+                language_url: "/tinymce/langs/zh_CN.js",
+                plugins: [
+                  'anchor', 'autolink', 'charmap', 'codesample', 'emoticons', 'link', 'lists', 'media', 'searchreplace', 'table', 'visualblocks', 'wordcount',
+                ],
+                toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography uploadcare | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+                content_style: "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
+              }}
+            />
+          </Box>
+        </Box>
+        <Box sx={{ mt: 2, display: 'flex', alignItems: 'center' }}>
+          <Typography sx={{ mr: 4 }}>{t("global.title.status")}</Typography>
+          <Switch sx={{ mr: 2 }} name='status' checked={!formValues.status} onChange={handleStatusChange} />
           <Typography>{formValues.status == 0 ? t('global.switch.status.true') : t('global.switch.status.false')}</Typography>
         </Box>
-      </Box>
-    </CustomizedDialog>
+      </Box >
+    </CustomizedDialog >
   )
 });
 
