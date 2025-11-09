@@ -111,7 +111,7 @@ export default function RoleManage() {
             {hasOperatePermission('system:role:edit') && <Button
               size="small"
               variant='customOperate'
-              title={t('page.role.operate.edit')}
+              title={t('global.operate.edit') + t('global.page.role')}
               startIcon={<EditIcon />}
               onClick={() => handleClickOpenEdit(params.row)}
             />}

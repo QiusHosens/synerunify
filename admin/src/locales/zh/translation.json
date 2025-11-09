@@ -105,6 +105,10 @@
   "global.menu.mall.statistics.user": "会员统计",
   "global.menu.mall.statistics.product": "商品统计",
   "global.menu.mall.statistics.trade": "交易统计",
+  "global.menu.mall.store": "店铺管理",
+  "global.menu.mall.store.list": "店铺列表",
+  "global.menu.mall.store.customer.service": "客服管理",
+  "global.menu.mall.store.notice": "公告管理",
 
   "global.condition.keyword": "请输入关键字",
   "global.operate.add": "新增",
@@ -182,6 +186,9 @@
   "global.page.mall.trade.delivery.express": "快递公司",
   "global.page.mall.trade.delivery.express.template": "运费模板",
   "global.page.mall.trade.delivery.store": "门店",
+  "global.page.mall.store": "店铺",
+  "global.page.mall.store.customer.service": "客服",
+  "global.page.mall.store.notice": "公告",
 
   "global.order.placeholder.order.number": "订单编号,由系统自动生成",
   "global.title.erp.purchase.list": "采购订单列表",
@@ -582,6 +589,35 @@
       "title.latitude": "纬度",
       "title.longitude": "经度",
       "title.verify.user.ids": "核销用户编号数组"
+    }
+  },
+  "page.mall.store": {
+    "title.number": "店铺编号",
+    "title.name": "店铺名称",
+    "title.short.name": "店铺简称",
+    "title.file": "店铺封面",
+    "title.slider.files": "店铺轮播图",
+    "title.sort": "店铺排序",
+    "title.slogan": "店铺广告语",
+    "title.description": "店铺描述",
+    "title.tags": "店铺标签",
+    "title.status": "状态",
+    "title.audit.remark": "审核备注",
+    "title.audit.time": "审核通过时间",
+    "title.score.desc": "描述相符评分",
+    "title.score.service": "服务态度评分",
+    "title.score.delivery": "发货速度评分",
+    "title.total.sales.amount": "累计销售额",
+    "title.total.order.count": "累计订单数",
+    "title.total.goods.count": "商品总数",
+    "title.total.fans.count": "粉丝数",
+    "title.is.recommend": "是否平台推荐",
+
+    "notice": {
+      "title.store": "店铺",
+      "title.title": "公告标题",
+      "title.content": "公告内容",
+      "title.top": "是否置顶"
     }
   }
 }

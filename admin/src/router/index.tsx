@@ -53,6 +53,8 @@ const componentMap: { [key: string]: React.LazyExoticComponent<React.ComponentTy
   'pages/mall/trade/delivery/express/Company': lazy(() => import('@/pages/mall/trade/delivery/express/Company')),
   'pages/mall/trade/delivery/express/Template': lazy(() => import('@/pages/mall/trade/delivery/express/Template')),
   'pages/mall/trade/delivery/store/Store': lazy(() => import('@/pages/mall/trade/delivery/store/Store')),
+  'pages/mall/store/StoreList': lazy(() => import('@/pages/mall/store/StoreList')),
+  'pages/mall/store/StoreNotice': lazy(() => import('@/pages/mall/store/StoreNotice')),
 };
 
 export default function Router() {
