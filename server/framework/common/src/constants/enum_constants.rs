@@ -39,3 +39,10 @@ pub const RECORD_TYPE_INBOUND_OTHER: i8 = 2; // 记录类型-其他入库
 pub const RECORD_TYPE_OUTBOUND_OTHER: i8 = 3; // 记录类型-其他出库
 pub const RECORD_TYPE_INBOUND_TRANSFER: i8 = 4; // 记录类型-调拨入库
 pub const RECORD_TYPE_OUTBOUND_TRANSFER: i8 = 5; // 记录类型-调拨出库
+
+pub const STORE_STATUS_REVIEW_PENDING: i8 = 0; // 店铺状态-待审核
+pub const STORE_STATUS_REVIEW_ACCEPT: i8 = 1; // 店铺状态-审核通过
+pub const STORE_STATUS_OPENING: i8 = 2; // 店铺状态-营业中
+pub const STORE_STATUS_PAUSE: i8 = 3; // 店铺状态-暂停营业
+pub const STORE_STATUS_REVIEW_REJECTED: i8 = 4; // 店铺状态-审核驳回
+pub const STORE_STATUS_CLOSED: i8 = 5; // 店铺状态-永久关闭

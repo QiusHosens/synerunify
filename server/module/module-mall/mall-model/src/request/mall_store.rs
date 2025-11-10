@@ -55,3 +55,12 @@ pub struct PaginatedKeywordRequest {
     pub base: PaginatedRequest,
     pub keyword: Option<String>,
 }
+
+#[derive(Serialize, Deserialize, Debug, ToSchema)]
+pub struct RejectMallStoreRequest {
+
+    pub id: i64, // 店铺编号
+
+    pub audit_remark: Option<String>, // 审核备注
+
+}

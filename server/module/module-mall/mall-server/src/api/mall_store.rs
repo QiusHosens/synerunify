@@ -6,7 +6,7 @@ use ctor;
 use macros::require_authorize;
 use axum::{routing::{get, post}, Router, extract::{State, Path, Json, Query}, response::IntoResponse, Extension};
 use common::base::page::PaginatedResponse;
-use mall_model::request::mall_store::{CreateMallStoreRequest, UpdateMallStoreRequest, PaginatedKeywordRequest};
+use mall_model::request::mall_store::{CreateMallStoreRequest, UpdateMallStoreRequest, PaginatedKeywordRequest, RejectMallStoreRequest};
 use mall_model::response::mall_store::MallStoreResponse;
 use common::base::response::CommonResult;
 use common::context::context::LoginUserContext;
@@ -23,6 +23,8 @@ pub async fn mall_store_router(state: AppState) -> OpenApiRouter {
         .routes(routes!(page))
         .routes(routes!(enable))
         .routes(routes!(disable))
+        .routes(routes!(accept))
+        .routes(routes!(reject))
         .with_state(state)
 }
 
@@ -243,6 +245,58 @@ async fn disable(
     Path(id): Path<i64>,
 ) -> CommonResult<()> {
     match service::mall_store::disable(&state.db, login_user, id).await {
+        Ok(_) => {CommonResult::with_none()}
+        Err(e) => {CommonResult::with_err(&e.to_string())}
+    }
+}
+
+#[utoipa::path(
+    post,
+    path = "/accept/{id}",
+    operation_id = "mall_store_accept",
+    params(
+        ("id" = i64, Path, description = "id")
+    ),
+    responses(
+        (status = 204, description = "accept")
+    ),
+    tag = "mall_store",
+    security(
+        ("bearerAuth" = [])
+    )
+)]
+#[require_authorize(operation_id = "mall_store_accept", authorize = "")]
+async fn accept(
+    State(state): State<AppState>,
+    Extension(login_user): Extension<LoginUserContext>,
+    Path(id): Path<i64>,
+) -> CommonResult<()> {
+    match service::mall_store::accept(&state.db, login_user, id).await {
+        Ok(_) => {CommonResult::with_none()}
+        Err(e) => {CommonResult::with_err(&e.to_string())}
+    }
+}
+
+#[utoipa::path(
+    post,
+    path = "/reject",
+    operation_id = "mall_store_reject",
+    request_body(content = RejectMallStoreRequest, description = "reject", content_type = "application/json"),
+    responses(
+        (status = 200, description = "id", body = CommonResult<i64>)
+    ),
+    tag = "mall_store",
+    security(
+        ("bearerAuth" = [])
+    )
+)]
+#[require_authorize(operation_id = "mall_store_reject", authorize = "")]
+async fn reject(
+    State(state): State<AppState>,
+    Extension(login_user): Extension<LoginUserContext>,
+    Json(payload): Json<RejectMallStoreRequest>,
+) -> CommonResult<i64> {
+    match service::mall_store::reject(&state.db, login_user, payload).await {
         Ok(_) => {CommonResult::with_none()}
         Err(e) => {CommonResult::with_err(&e.to_string())}
     }

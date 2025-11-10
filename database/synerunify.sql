@@ -2256,7 +2256,7 @@ CREATE TABLE `mall_store`  (
   `slogan` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '店铺广告语',
   `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL COMMENT '店铺描述',
   `tags` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '店铺标签，逗号分隔，如：正品保障,7天无理由',
-  `status` tinyint NOT NULL DEFAULT 0 COMMENT '状态:0-待审核,1-营业中,2-暂停营业,3-审核驳回,4-永久关闭',
+  `status` tinyint NOT NULL DEFAULT 0 COMMENT '状态:0-待审核,1-审核通过,2-营业中,3-暂停营业,4-审核驳回,5-永久关闭',
   `audit_remark` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '审核备注',
   `audit_time` datetime NULL DEFAULT NULL COMMENT '审核通过时间',
   `score_desc` int NULL DEFAULT 500 COMMENT '描述相符评分',
