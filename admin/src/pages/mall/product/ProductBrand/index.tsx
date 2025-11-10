@@ -133,7 +133,7 @@ export default function MallProductBrand() {
       const brand = list[index];
       if (brand.file_id) {
         // 设置图片
-        downloadSystemFile(brand.file_id, (progress) => { }).then(file => {
+        downloadSystemFile(brand.file_id, () => { }).then(file => {
           setRecords(prev =>
             prev.map(item => item.id === brand.id ? { ...item, previewUrl: window.URL.createObjectURL(file) } : item)
           )
