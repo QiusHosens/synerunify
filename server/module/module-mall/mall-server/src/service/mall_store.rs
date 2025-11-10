@@ -7,7 +7,7 @@ use crate::convert::mall_store::{create_request_to_model, update_request_to_mode
 use anyhow::{Result, anyhow};
 use chrono::Utc;
 use sea_orm::ActiveValue::Set;
-use common::constants::enum_constants::{STATUS_DISABLE, STATUS_ENABLE, STORE_STATUS_OPENING, STORE_STATUS_PAUSE, STORE_STATUS_REVIEW_ACCEPT, STORE_STATUS_REVIEW_PENDING, STORE_STATUS_REVIEW_REJECTED};
+use common::constants::enum_constants::{STATUS_DISABLE, STATUS_ENABLE, STORE_STATUS_CLOSED, STORE_STATUS_OPENING, STORE_STATUS_PAUSE, STORE_STATUS_REVIEW_ACCEPT, STORE_STATUS_REVIEW_PENDING, STORE_STATUS_REVIEW_REJECTED};
 use common::base::page::PaginatedResponse;
 use common::context::context::LoginUserContext;
 use common::interceptor::orm::active_filter::ActiveFilterEntityTrait;
@@ -104,7 +104,7 @@ pub async fn list(db: &DatabaseConnection, login_user: LoginUserContext) -> Resu
     Ok(list.into_iter().map(model_to_response).collect())
 }
 
-pub async fn enable(db: &DatabaseConnection, login_user: LoginUserContext, id: i64) -> Result<()> {
+pub async fn open(db: &DatabaseConnection, login_user: LoginUserContext, id: i64) -> Result<()> {
     let mall_store = MallStoreActiveModel {
         id: Set(id),
         updater: Set(Some(login_user.id)),
@@ -115,7 +115,7 @@ pub async fn enable(db: &DatabaseConnection, login_user: LoginUserContext, id: i
     Ok(())
 }
 
-pub async fn disable(db: &DatabaseConnection, login_user: LoginUserContext, id: i64) -> Result<()> {
+pub async fn pause(db: &DatabaseConnection, login_user: LoginUserContext, id: i64) -> Result<()> {
     let mall_store = MallStoreActiveModel {
         id: Set(id),
         updater: Set(Some(login_user.id)),
@@ -152,5 +152,16 @@ pub async fn reject(db: &DatabaseConnection, login_user: LoginUserContext, reque
     }
     active_model.updater = Set(Some(login_user.id));
     active_model.update(db).await?;
+    Ok(())
+}
+
+pub async fn close(db: &DatabaseConnection, login_user: LoginUserContext, id: i64) -> Result<()> {
+    let mall_store = MallStoreActiveModel {
+        id: Set(id),
+        updater: Set(Some(login_user.id)),
+        status: Set(STORE_STATUS_CLOSED),
+        ..Default::default()
+    };
+    mall_store.update(db).await?;
     Ok(())
 }

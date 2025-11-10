@@ -21,10 +21,11 @@ pub async fn mall_store_router(state: AppState) -> OpenApiRouter {
         .routes(routes!(get_by_id))
         .routes(routes!(list))
         .routes(routes!(page))
-        .routes(routes!(enable))
-        .routes(routes!(disable))
+        .routes(routes!(open))
+        .routes(routes!(pause))
         .routes(routes!(accept))
         .routes(routes!(reject))
+        .routes(routes!(close))
         .with_state(state)
 }
 
@@ -198,26 +199,26 @@ async fn list(
 
 #[utoipa::path(
     post,
-    path = "/enable/{id}",
-    operation_id = "mall_store_enable",
+    path = "/open/{id}",
+    operation_id = "mall_store_open",
     params(
         ("id" = i64, Path, description = "id")
     ),
     responses(
-        (status = 204, description = "enable")
+        (status = 204, description = "open")
     ),
     tag = "mall_store",
     security(
         ("bearerAuth" = [])
     )
 )]
-#[require_authorize(operation_id = "mall_store_enable", authorize = "")]
-async fn enable(
+#[require_authorize(operation_id = "mall_store_open", authorize = "")]
+async fn open(
     State(state): State<AppState>,
     Extension(login_user): Extension<LoginUserContext>,
     Path(id): Path<i64>,
 ) -> CommonResult<()> {
-    match service::mall_store::enable(&state.db, login_user, id).await {
+    match service::mall_store::open(&state.db, login_user, id).await {
         Ok(_) => {CommonResult::with_none()}
         Err(e) => {CommonResult::with_err(&e.to_string())}
     }
@@ -225,26 +226,26 @@ async fn enable(
 
 #[utoipa::path(
     post,
-    path = "/disable/{id}",
-    operation_id = "mall_store_disable",
+    path = "/pause/{id}",
+    operation_id = "mall_store_pause",
     params(
         ("id" = i64, Path, description = "id")
     ),
     responses(
-        (status = 204, description = "disable")
+        (status = 204, description = "pause")
     ),
     tag = "mall_store",
     security(
         ("bearerAuth" = [])
     )
 )]
-#[require_authorize(operation_id = "mall_store_disable", authorize = "")]
-async fn disable(
+#[require_authorize(operation_id = "mall_store_pause", authorize = "")]
+async fn pause(
     State(state): State<AppState>,
     Extension(login_user): Extension<LoginUserContext>,
     Path(id): Path<i64>,
 ) -> CommonResult<()> {
-    match service::mall_store::disable(&state.db, login_user, id).await {
+    match service::mall_store::pause(&state.db, login_user, id).await {
         Ok(_) => {CommonResult::with_none()}
         Err(e) => {CommonResult::with_err(&e.to_string())}
     }
@@ -297,6 +298,33 @@ async fn reject(
     Json(payload): Json<RejectMallStoreRequest>,
 ) -> CommonResult<i64> {
     match service::mall_store::reject(&state.db, login_user, payload).await {
+        Ok(_) => {CommonResult::with_none()}
+        Err(e) => {CommonResult::with_err(&e.to_string())}
+    }
+}
+
+#[utoipa::path(
+    post,
+    path = "/close/{id}",
+    operation_id = "mall_store_close",
+    params(
+        ("id" = i64, Path, description = "id")
+    ),
+    responses(
+        (status = 204, description = "close")
+    ),
+    tag = "mall_store",
+    security(
+        ("bearerAuth" = [])
+    )
+)]
+#[require_authorize(operation_id = "mall_store_close", authorize = "")]
+async fn close(
+    State(state): State<AppState>,
+    Extension(login_user): Extension<LoginUserContext>,
+    Path(id): Path<i64>,
+) -> CommonResult<()> {
+    match service::mall_store::close(&state.db, login_user, id).await {
         Ok(_) => {CommonResult::with_none()}
         Err(e) => {CommonResult::with_err(&e.to_string())}
     }

@@ -8,13 +8,15 @@ const apis = {
   get: '/mall/mall_store/get', // 单条查询
   list: '/mall/mall_store/list', // 列表查询
   page: '/mall/mall_store/page', // 分页查询
-  enable: '/mall/mall_store/enable', // 启用
-  disable: '/mall/mall_store/disable', // 禁用
+  open: '/mall/mall_store/open', // 开始营业
+  pause: '/mall/mall_store/pause', // 暂停营业
+  accept: '/mall/mall_store/accept', // 审核通过
+  reject: '/mall/mall_store/reject', // 审核驳回
+  close: '/mall/mall_store/close', // 永久关闭
 }
 
 export interface MallStoreRequest {
-  id: number; // 店铺编号
-  number: string; // 店铺编号（业务唯一，例：S202410080001）
+  id?: number; // 店铺编号
   name: string; // 店铺名称
   short_name: string; // 店铺简称
   file_id: number; // 店铺封面ID
@@ -23,18 +25,7 @@ export interface MallStoreRequest {
   slogan: string; // 店铺广告语
   description: string; // 店铺描述
   tags: string; // 店铺标签，逗号分隔，如：正品保障,7天无理由
-  status: number; // 状态:0-待审核,1-营业中,2-暂停营业,3-审核驳回,4-永久关闭
-  audit_remark: string; // 审核备注
-  audit_time: string; // 审核通过时间
-  score_desc: number; // 描述相符评分
-  score_service: number; // 服务态度评分
-  score_delivery: number; // 发货速度评分
-  total_sales_amount: number; // 累计销售额
-  total_order_count: number; // 累计订单数
-  total_goods_count: number; // 商品总数
-  total_fans_count: number; // 粉丝数
-  is_recommend: number; // 是否平台推荐：0-否,1-是
-  }
+}
 
 export interface MallStoreResponse {
   id: number; // 店铺编号
@@ -62,10 +53,15 @@ export interface MallStoreResponse {
   create_time: string; // 创建时间
   updater: number; // 更新者ID
   update_time: string; // 更新时间
-  }
+}
+
+export interface MallStoreRejectRequest {
+  id: number; // 店铺编号
+  audit_remark: string; // 审核备注
+}
 
 export interface MallStoreQueryCondition extends PaginatedRequest {
-  
+
 }
 
 export const createMallStore = (mall_store: MallStoreRequest): Promise<number> => {
@@ -92,10 +88,22 @@ export const pageMallStore = (condition: MallStoreQueryCondition): Promise<Pagin
   return api.get<PaginatedResponse<MallStoreResponse>>(apis.page, condition);
 }
 
-export const enableMallStore = (id: number): Promise<void> => {
-  return api.post<void>(`${apis.enable}/${id}`);
+export const openMallStore = (id: number): Promise<void> => {
+  return api.post<void>(`${apis.open}/${id}`);
 }
 
-export const disableMallStore = (id: number): Promise<void> => {
-  return api.post<void>(`${apis.disable}/${id}`);
+export const pauseMallStore = (id: number): Promise<void> => {
+  return api.post<void>(`${apis.pause}/${id}`);
+}
+
+export const acceptMallStore = (id: number): Promise<void> => {
+  return api.post<void>(`${apis.accept}/${id}`);
+}
+
+export const rejectMallStore = (mall_store: MallStoreRejectRequest): Promise<void> => {
+  return api.post<void>(apis.reject, mall_store);
+}
+
+export const closeMallStore = (id: number): Promise<void> => {
+  return api.post<void>(`${apis.close}/${id}`);
 }
