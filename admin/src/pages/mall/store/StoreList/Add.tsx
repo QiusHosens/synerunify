@@ -226,8 +226,8 @@ const MallStoreAdd = forwardRef(({ onSubmit }: MallStoreAddProps, ref) => {
   const handleTagsChange = (name: string, newTags: Tag[]) => {
     setTags(newTags);
     const values = newTags.map(tag => {
-      return { name: tag.label }
-    });
+      return tag.label;
+    }).join(',');
     setFormValues(prev => ({
       ...prev,
       [name]: values
@@ -337,7 +337,7 @@ const MallStoreAdd = forwardRef(({ onSubmit }: MallStoreAddProps, ref) => {
         </Box>
         <CustomizedTagsInput
           size="small"
-          name='values'
+          name='tags'
           tags={tags}
           onTagsChange={handleTagsChange}
           tagName={t("page.mall.product.property.value")}

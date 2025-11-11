@@ -1,4 +1,5 @@
 import { PaginatedRequest, PaginatedResponse } from '@/base/page';
+import { UploadFile } from '@/components/CustomizedFileUpload';
 import { api } from '@/utils/request';
 
 const apis = {
@@ -25,6 +26,8 @@ export interface MallStoreRequest {
   slogan: string; // 店铺广告语
   description: string; // 店铺描述
   tags: string; // 店铺标签，逗号分隔，如：正品保障,7天无理由
+
+  file?: UploadFile | null; // 商品封面文件
 }
 
 export interface MallStoreResponse {
@@ -53,6 +56,9 @@ export interface MallStoreResponse {
   create_time: string; // 创建时间
   updater: number; // 更新者ID
   update_time: string; // 更新时间
+
+  previewUrl?: string; // 店铺封面预览地址
+  sliderPreviewUrls: string[]; // 店铺轮播图预览地址
 }
 
 export interface MallStoreRejectRequest {
