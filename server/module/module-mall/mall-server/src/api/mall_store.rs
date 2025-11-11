@@ -29,6 +29,12 @@ pub async fn mall_store_router(state: AppState) -> OpenApiRouter {
         .with_state(state)
 }
 
+pub async fn mall_store_no_auth_router(state: AppState) -> OpenApiRouter {
+    OpenApiRouter::new()
+        .routes(routes!(get_by_id_without_user))
+        .with_state(state)
+}
+
 pub async fn mall_store_route(state: AppState) -> Router {
     Router::new()
         .route("/create", post(create))
@@ -139,6 +145,29 @@ async fn get_by_id(
     Path(id): Path<i64>,
 ) -> CommonResult<MallStoreResponse> {
     match service::mall_store::get_by_id(&state.db, login_user, id).await {
+        Ok(Some(data)) => {CommonResult::with_data(data)}
+        Ok(None) => {CommonResult::with_none()}
+        Err(e) => {CommonResult::with_err(&e.to_string())}
+    }
+}
+
+#[utoipa::path(
+    get,
+    path = "/get_without_user/{id}",
+    operation_id = "mall_store_get_by_id_without_user",
+    params(
+        ("id" = i64, Path, description = "id")
+    ),
+    responses(
+        (status = 200, description = "get by id without user", body = CommonResult<MallStoreResponse>)
+    ),
+    tag = "mall_store",
+)]
+async fn get_by_id_without_user(
+    State(state): State<AppState>,
+    Path(id): Path<i64>,
+) -> CommonResult<MallStoreResponse> {
+    match service::mall_store::get_by_id_without_user(&state.db, id).await {
         Ok(Some(data)) => {CommonResult::with_data(data)}
         Ok(None) => {CommonResult::with_none()}
         Err(e) => {CommonResult::with_err(&e.to_string())}
