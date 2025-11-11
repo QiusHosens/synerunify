@@ -26,9 +26,6 @@ interface FormValues {
   slogan: string; // 店铺广告语
   description: string; // 店铺描述
   tags: string; // 店铺标签，逗号分隔，如：正品保障,7天无理由
-  status: number; // 状态:0-待审核,1-营业中,2-暂停营业,3-审核驳回,4-永久关闭
-  audit_remark: string; // 审核备注
-  audit_time: string; // 审核通过时间
 
   file?: UploadFile | null; // 店铺封面文件
 }
@@ -59,9 +56,6 @@ const MallStoreAdd = forwardRef(({ onSubmit }: MallStoreAddProps, ref) => {
     slogan: '',
     description: '',
     tags: '',
-    status: 0,
-    audit_remark: '',
-    audit_time: '',
   });
   const [errors, setErrors] = useState<FormErrors>({});
 
@@ -115,24 +109,24 @@ const MallStoreAdd = forwardRef(({ onSubmit }: MallStoreAddProps, ref) => {
       slogan: '',
       description: '',
       tags: '',
-      status: 0,
-      audit_remark: '',
-      audit_time: '',
     });
     setErrors({});
   }
 
   const handleSubmit = async () => {
     if (validateForm()) {
-      await createMallStore(formValues as MallStoreRequest);
+      const request: MallStoreRequest = {
+        name: formValues.name,
+        short_name: formValues.short_name,
+        file_id: formValues.file_id,
+        slider_file_ids: sliderFiles.map(item => item.file_id).join(','),
+        sort: formValues.sort,
+        slogan: formValues.slogan,
+        description: editorRef.current.getContent(),
+        tags: formValues.tags,
+      }
+      await createMallStore(request);
       handleClose();
-      onSubmit();
-    }
-  };
-
-  const handleSubmitAndContinue = async () => {
-    if (validateForm()) {
-      await createMallStore(formValues as MallStoreRequest);
       onSubmit();
     }
   };
@@ -142,22 +136,6 @@ const MallStoreAdd = forwardRef(({ onSubmit }: MallStoreAddProps, ref) => {
     setFormValues((prev) => ({
       ...prev,
       [name]: type === 'number' ? Number(value) : value,
-    }));
-
-    if (errors[name as keyof FormErrors]) {
-      setErrors(prev => ({
-        ...prev,
-        [name]: undefined
-      }));
-    }
-  };
-
-  const handleStatusChange = (e: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
-    const { name } = e.target;
-
-    setFormValues(prev => ({
-      ...prev,
-      [name]: checked ? 0 : 1
     }));
 
     if (errors[name as keyof FormErrors]) {
@@ -264,7 +242,6 @@ const MallStoreAdd = forwardRef(({ onSubmit }: MallStoreAddProps, ref) => {
       maxWidth={maxWidth}
       actions={
         <>
-          <Button onClick={handleSubmitAndContinue}>{t('global.operate.confirm.continue')}</Button>
           <Button onClick={handleSubmit}>{t('global.operate.confirm')}</Button>
           <Button onClick={handleCancel}>{t('global.operate.cancel')}</Button>
         </>
@@ -280,17 +257,7 @@ const MallStoreAdd = forwardRef(({ onSubmit }: MallStoreAddProps, ref) => {
           width: 'fit-content',
         }}
       >
-        <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '200px' } }}>
-          {/* <TextField
-            required
-            size="small"
-            label={t("page.mall.store.title.number")}
-            name='number'
-            value={formValues.number}
-            onChange={handleInputChange}
-            error={!!errors.number}
-            helperText={errors.number}
-          /> */}
+        <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '240px' } }}>
           <TextField
             required
             size="small"
@@ -315,24 +282,6 @@ const MallStoreAdd = forwardRef(({ onSubmit }: MallStoreAddProps, ref) => {
             value={formValues.slogan}
             onChange={handleInputChange}
           />
-          {/* <TextField
-            required
-            size="small"
-            type="number"
-            label={t("page.mall.store.title.file")}
-            name='file_id'
-            value={formValues.file_id}
-            onChange={handleInputChange}
-            error={!!errors.file_id}
-            helperText={errors.file_id}
-          />
-          <TextField
-            size="small"
-            label={t("page.mall.store.title.slider_file_ids")}
-            name='slider_file_ids'
-            value={formValues.slider_file_ids}
-            onChange={handleInputChange}
-          /> */}
         </FormControl>
         <Typography sx={{ mt: 2, mb: 1 }}>
           {t('page.mall.product.title.file')}
@@ -419,7 +368,7 @@ const MallStoreAdd = forwardRef(({ onSubmit }: MallStoreAddProps, ref) => {
             <Editor
               apiKey='f88rshir3x1vuar3lr0tj1vaq6muvonldxm25o6wxr23vy96'
               onInit={(_evt, editor) => (editorRef.current = editor)}
-              initialValue={"<p>" + t("page.mall.product.placeholder.description") + "</p>"}
+              initialValue={"<p>" + t("page.mall.store.placeholder.description") + "</p>"}
               init={{
                 height: 600,
                 language: "zh_CN",
@@ -432,11 +381,6 @@ const MallStoreAdd = forwardRef(({ onSubmit }: MallStoreAddProps, ref) => {
               }}
             />
           </Box>
-        </Box>
-        <Box sx={{ mt: 2, display: 'flex', alignItems: 'center' }}>
-          <Typography sx={{ mr: 4 }}>{t("global.title.status")}</Typography>
-          <Switch sx={{ mr: 2 }} name='status' checked={!formValues.status} onChange={handleStatusChange} />
-          <Typography>{formValues.status == 0 ? t('global.switch.status.true') : t('global.switch.status.false')}</Typography>
         </Box>
       </Box >
     </CustomizedDialog >

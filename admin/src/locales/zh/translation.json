@@ -612,6 +612,7 @@
     "title.total.goods.count": "商品总数",
     "title.total.fans.count": "粉丝数",
     "title.is.recommend": "是否平台推荐",
+    "placeholder.description": "请输入店铺详情...",
 
     "notice": {
       "title.store": "店铺",

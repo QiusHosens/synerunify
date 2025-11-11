@@ -1,15 +1,17 @@
-import { Box, Button, Switch } from '@mui/material';
+import { Box, Button, styled, Switch } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { DataGrid, GridCallbackDetails, GridColDef, GridFilterModel, GridRenderCellParams, GridSortModel } from '@mui/x-data-grid';
 import EditIcon from '@/assets/image/svg/edit.svg';
 import DeleteIcon from '@/assets/image/svg/delete.svg';
-import { disableMallStore, enableMallStore, pageMallStore, MallStoreQueryCondition, MallStoreResponse } from '@/api';
+import { pageMallStore, MallStoreQueryCondition, MallStoreResponse, openMallStore, pauseMallStore } from '@/api';
 import MallStoreAdd from './Add';
 import MallStoreEdit from './Edit';
 import MallStoreDelete from './Delete';
 import { useHomeStore } from '@/store';
 import CustomizedAutoMore from '@/components/CustomizedAutoMore';
+import { downloadSystemFile } from '@/api/system_file';
+import CustomizedDictTag from '@/components/CustomizedDictTag';
 
 export default function MallStore() {
   const { t } = useTranslation();
@@ -29,12 +31,19 @@ export default function MallStore() {
   const editMallStore = useRef(null);
   const deleteMallStore = useRef(null);
 
+  const PreviewImage = styled('img')({
+    height: '60%',
+    objectFit: 'contain',
+    top: 0,
+    left: 0,
+  });
+
   const handleStatusChange = useCallback(
     async (e: React.ChangeEvent<HTMLInputElement>, checked: boolean, data: MallStoreResponse) => {
       if (checked) {
-        await enableMallStore(data.id);
+        await openMallStore(data.id);
       } else {
-        await disableMallStore(data.id);
+        await pauseMallStore(data.id);
       }
 
       // 更新表格
@@ -48,19 +57,27 @@ export default function MallStore() {
   );
 
   const statusDisabled = (status: number): boolean => {
-    return (status && !hasOperatePermission('mall:store:list:enable')) || (!status && !hasOperatePermission('mall:store:list:disable'));
+    return (status && !hasOperatePermission('mall:store:list:open')) || (!status && !hasOperatePermission('mall:store:list:pause'));
   }
 
   const columns: GridColDef[] = useMemo(
     () => [
-      { field: 'number', headerName: t("page.mall.store.title.number"), flex: 1, minWidth: 100 },
+      { field: 'number', headerName: t("page.mall.store.title.number"), flex: 1.5, minWidth: 150 },
       { field: 'name', headerName: t("page.mall.store.title.name"), flex: 1, minWidth: 100 },
       { field: 'short_name', headerName: t("page.mall.store.title.short.name"), flex: 1, minWidth: 100 },
-      { field: 'file_id', headerName: t("page.mall.store.title.file"), flex: 1, minWidth: 100 },
-      { field: 'sort', headerName: t("page.mall.store.title.sort"), flex: 1, minWidth: 100 },
+      {
+        field: 'file_id',
+        headerName: t("page.mall.store.title.file"),
+        flex: 1,
+        minWidth: 100,
+        renderCell: (params: GridRenderCellParams) => (
+          <Box sx={{ height: '100%', display: 'flex', gap: 1, alignItems: 'center' }}>
+            <PreviewImage src={params.row.previewUrl} />
+          </Box>
+        ),
+      },
       { field: 'slogan', headerName: t("page.mall.store.title.slogan"), flex: 1, minWidth: 100 },
-      { field: 'description', headerName: t("page.mall.store.title.description"), flex: 1, minWidth: 100 },
-      { field: 'tags', headerName: t("page.mall.store.title.tags"), flex: 1, minWidth: 100 },
+      { field: 'sort', headerName: t("page.mall.store.title.sort"), flex: 1, minWidth: 100 },
       {
         field: 'status',
         sortable: false,
@@ -68,8 +85,9 @@ export default function MallStore() {
         flex: 1,
         minWidth: 80,
         renderCell: (params: GridRenderCellParams) => (
-          <Box sx={ { height: '100%', display: 'flex', gap: 1, alignItems: 'center' } }>
-            <Switch name="status" checked={!params.row.status} disabled={statusDisabled(params.row.status)} onChange={(event, checked) => handleStatusChange(event, checked, params.row)} />
+          <Box sx={{ height: '100%', display: 'flex', gap: 1, alignItems: 'center' }}>
+            {params.row.status != 1 && params.row.status != 2 && params.row.status != 3 && <CustomizedDictTag type='store_status' value={params.row.status} />}
+            {params.row.status == 1 && <Switch name="status" checked={!params.row.status} disabled={statusDisabled(params.row.status)} onChange={(event, checked) => handleStatusChange(event, checked, params.row)} />}
           </Box>
         ),
       },
@@ -91,7 +109,7 @@ export default function MallStore() {
               onClick={() => handleClickOpenEdit(params.row)}
             />}
             {hasOperatePermission('mall:store:list:delete') && <Button
-              sx={ {color: 'error.main'} }
+              sx={{ color: 'error.main' }}
               size="small"
               variant='customOperate'
               title={t('global.operate.delete') + t('global.page.mall.store')}
@@ -107,9 +125,26 @@ export default function MallStore() {
 
   const queryRecords = async (condition: MallStoreQueryCondition) => {
     const result = await pageMallStore(condition);
-    setRecords(result.list);
+    const list = result.list;
+    setRecords(list);
     setTotal(result.total);
+
+    loadImages(list);
   };
+
+  const loadImages = (list: Array<MallStoreResponse>) => {
+    for (let index = 0, len = list.length; index < len; index++) {
+      const brand = list[index];
+      if (brand.file_id) {
+        // 设置图片
+        downloadSystemFile(brand.file_id, () => { }).then(file => {
+          setRecords(prev =>
+            prev.map(item => item.id === brand.id ? { ...item, previewUrl: window.URL.createObjectURL(file) } : item)
+          )
+        })
+      }
+    }
+  }
 
   const handleClickOpenAdd = () => {
     (addMallStore.current as any).show();
@@ -146,8 +181,8 @@ export default function MallStore() {
   };
 
   return (
-    <Box sx={ {height: '100%', display: 'flex', flexDirection: 'column'} }>
-      <Box sx={ {mb: 2, display: 'flex', justifyContent: 'space-between'} }>
+    <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+      <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between' }}>
         <Box></Box>
         {hasOperatePermission('mall:store:list:add') && <Button variant="customContained" onClick={handleClickOpenAdd}>
           {t('global.operate.add')}
@@ -166,7 +201,7 @@ export default function MallStore() {
         filterModel={filterModel}
         onFilterModelChange={handleFilterModelChange}
         pageSizeOptions={[10, 20, 50, 100]}
-        paginationModel={ {page: condition.page - 1, pageSize: condition.size} }
+        paginationModel={{ page: condition.page - 1, pageSize: condition.size }}
         onPaginationModelChange={(model) => {
           setCondition((prev) => ({
             ...prev,
