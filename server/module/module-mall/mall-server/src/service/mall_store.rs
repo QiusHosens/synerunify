@@ -74,6 +74,15 @@ pub async fn get_by_id(db: &DatabaseConnection, login_user: LoginUserContext, id
     Ok(mall_store.map(model_to_response))
 }
 
+pub async fn get_by_id_without_user(db: &DatabaseConnection, id: i64) -> Result<Option<MallStoreResponse>> {
+    let condition = Condition::all()
+        .add(Column::Id.eq(id));
+
+    let mall_store = MallStoreEntity::find_active_with_condition(condition)
+        .one(db).await?;
+    Ok(mall_store.map(model_to_response))
+}
+
 pub async fn get_paginated(db: &DatabaseConnection, login_user: LoginUserContext, params: PaginatedKeywordRequest) -> Result<PaginatedResponse<MallStoreResponse>> {
     let condition = Condition::all().add(Column::TenantId.eq(login_user.tenant_id));let paginator = MallStoreEntity::find_active_with_condition(condition)
         .support_filter(params.base.filter_field, params.base.filter_operator, params.base.filter_value)

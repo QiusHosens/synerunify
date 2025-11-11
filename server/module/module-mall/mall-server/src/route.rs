@@ -40,7 +40,7 @@ use crate::api::mall_promotion_point_product::{ mall_promotion_point_product_rou
 use crate::api::mall_promotion_reward_activity::{ mall_promotion_reward_activity_route, mall_promotion_reward_activity_router };
 use crate::api::mall_promotion_serving_conversation::{ mall_promotion_serving_conversation_route, mall_promotion_serving_conversation_router };
 use crate::api::mall_promotion_serving_message::{ mall_promotion_serving_message_route, mall_promotion_serving_message_router };
-use crate::api::mall_store::mall_store_router;
+use crate::api::mall_store::{mall_store_no_auth_router, mall_store_router};
 use crate::api::mall_store_customer_service::mall_store_customer_service_router;
 use crate::api::mall_store_notice::mall_store_notice_router;
 use crate::api::mall_trade_after_sale::{mall_trade_after_sale_route, mall_trade_after_sale_router };
@@ -144,6 +144,7 @@ pub async fn no_auth_router(state: AppState) -> OpenApiRouter {
     OpenApiRouter::new()
         .nest("/mall_product_category", mall_product_category_no_auth_router(state.clone()).await)
         .nest("/mall_product_spu", mall_product_spu_no_auth_router(state.clone()).await)
+        .nest("/mall_store", mall_store_no_auth_router(state.clone()).await)
         .layer(axum::middleware::from_fn(authorize_handler))
         .layer(axum::middleware::from_fn(operation_logger_handler))
         .layer(axum::middleware::from_fn_with_state(state.clone(), request_context_handler))
