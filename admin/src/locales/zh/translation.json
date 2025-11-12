@@ -126,6 +126,8 @@
   "global.operate.copy": "复制",
   "global.operate.copied": "已复制",
   "global.operate.preview": "预览",
+  "global.operate.review": "审核",
+  "global.operate.close": "关闭",
 
   "global.title.name": "名称",
   "global.title.status": "状态",
@@ -138,6 +140,9 @@
   "global.error.select.please": "请选择",
   
   "global.description.delete": "确定删除记录【{{name}}】?",
+  "global.description.accept": "确定通过【{{name}}】?",
+  "global.description.reject": "确定驳回【{{name}}】?",
+  "global.description.close": "确定永久关闭【{{name}}】?",
 
   "global.helper.password.show": "显示密码",
   "global.helper.password.hide": "隐藏密码",
@@ -613,6 +618,9 @@
     "title.total.fans.count": "粉丝数",
     "title.is.recommend": "是否平台推荐",
     "placeholder.description": "请输入店铺详情...",
+    "operate.accept": "审核通过",
+    "operate.reject": "审核驳回",
+    "operate.close": "永久关闭",
 
     "notice": {
       "title.store": "店铺",

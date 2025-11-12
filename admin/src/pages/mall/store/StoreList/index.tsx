@@ -4,6 +4,9 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { DataGrid, GridCallbackDetails, GridColDef, GridFilterModel, GridRenderCellParams, GridSortModel } from '@mui/x-data-grid';
 import EditIcon from '@/assets/image/svg/edit.svg';
 import DeleteIcon from '@/assets/image/svg/delete.svg';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
+import CancelIcon from '@mui/icons-material/Cancel';
 import { pageMallStore, MallStoreQueryCondition, MallStoreResponse, openMallStore, pauseMallStore } from '@/api';
 import MallStoreAdd from './Add';
 import MallStoreEdit from './Edit';
@@ -12,6 +15,9 @@ import { useHomeStore } from '@/store';
 import CustomizedAutoMore from '@/components/CustomizedAutoMore';
 import { downloadSystemFile } from '@/api/system_file';
 import CustomizedDictTag from '@/components/CustomizedDictTag';
+import MallStoreAccept from './Accept';
+import MallStoreReject from './Reject';
+import MallStoreClose from './Close';
 
 export default function MallStore() {
   const { t } = useTranslation();
@@ -30,6 +36,9 @@ export default function MallStore() {
   const addMallStore = useRef(null);
   const editMallStore = useRef(null);
   const deleteMallStore = useRef(null);
+  const acceptMallStore = useRef(null);
+  const rejectMallStore = useRef(null);
+  const closeMallStore = useRef(null);
 
   const PreviewImage = styled('img')({
     height: '60%',
@@ -49,7 +58,7 @@ export default function MallStore() {
       // 更新表格
       setRecords((prev) =>
         prev.map((r) =>
-          r.id === data.id ? { ...r, status: checked ? 0 : 1 } : r
+          r.id === data.id ? { ...r, status: checked ? 2 : 3 } : r
         )
       );
     },
@@ -87,7 +96,7 @@ export default function MallStore() {
         renderCell: (params: GridRenderCellParams) => (
           <Box sx={{ height: '100%', display: 'flex', gap: 1, alignItems: 'center' }}>
             {params.row.status != 1 && params.row.status != 2 && params.row.status != 3 && <CustomizedDictTag type='store_status' value={params.row.status} />}
-            {params.row.status == 1 && <Switch name="status" checked={!params.row.status} disabled={statusDisabled(params.row.status)} onChange={(event, checked) => handleStatusChange(event, checked, params.row)} />}
+            {(params.row.status == 1 || params.row.status == 2 || params.row.status == 3) && <Switch name="status" checked={params.row.status == 2} disabled={statusDisabled(params.row.status)} onChange={(event, checked) => handleStatusChange(event, checked, params.row)} />}
           </Box>
         ),
       },
@@ -115,6 +124,29 @@ export default function MallStore() {
               title={t('global.operate.delete') + t('global.page.mall.store')}
               startIcon={<DeleteIcon />}
               onClick={() => handleClickOpenDelete(params.row)}
+            />}
+            {hasOperatePermission('mall:store:list:accept') && params.row.status == 0 && <Button
+              size="small"
+              variant='customOperate'
+              title={t('page.mall.store.operate.accept')}
+              startIcon={<CheckCircleIcon />}
+              onClick={() => handleClickReviewAccept(params.row)}
+            />}
+            {hasOperatePermission('mall:store:list:reject') && params.row.status == 0 && <Button
+              sx={{ color: 'error.main' }}
+              size="small"
+              variant='customOperate'
+              title={t('page.mall.store.operate.reject')}
+              startIcon={<RemoveCircleIcon />}
+              onClick={() => handleClickReviewReject(params.row)}
+            />}
+            {hasOperatePermission('mall:store:list:close') && <Button
+              sx={{ color: 'error.main' }}
+              size="small"
+              variant='customOperate'
+              title={t('page.mall.store.operate.close')}
+              startIcon={<CancelIcon />}
+              onClick={() => handleClickClose(params.row)}
             />}
           </CustomizedAutoMore>
         ),
@@ -156,6 +188,18 @@ export default function MallStore() {
 
   const handleClickOpenDelete = (mallStore: MallStoreResponse) => {
     (deleteMallStore.current as any).show(mallStore);
+  };
+
+  const handleClickReviewAccept = (mallStore: MallStoreResponse) => {
+    (acceptMallStore.current as any).show(mallStore);
+  };
+
+  const handleClickReviewReject = (mallStore: MallStoreResponse) => {
+    (rejectMallStore.current as any).show(mallStore);
+  };
+
+  const handleClickClose = (mallStore: MallStoreResponse) => {
+    (closeMallStore.current as any).show(mallStore);
   };
 
   useEffect(() => {
@@ -213,6 +257,9 @@ export default function MallStore() {
       <MallStoreAdd ref={addMallStore} onSubmit={refreshData} />
       <MallStoreEdit ref={editMallStore} onSubmit={refreshData} />
       <MallStoreDelete ref={deleteMallStore} onSubmit={refreshData} />
+      <MallStoreAccept ref={acceptMallStore} onSubmit={refreshData} />
+      <MallStoreReject ref={rejectMallStore} onSubmit={refreshData} />
+      <MallStoreClose ref={closeMallStore} onSubmit={refreshData} />
     </Box>
   );
 }

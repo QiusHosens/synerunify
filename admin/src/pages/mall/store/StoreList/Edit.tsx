@@ -1,4 +1,4 @@
-import { Box, Button, FormControl, Switch, TextField, Typography } from '@mui/material';
+import { Box, Button, FormControl, Stack, Switch, TextField, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { forwardRef, useCallback, useImperativeHandle, useRef, useState } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
@@ -9,6 +9,7 @@ import { downloadSystemFile, uploadSystemFile } from '@/api/system_file';
 import CustomizedTagsInput, { Tag } from '@/components/CustomizedTagsInput';
 import { Editor } from '@tinymce/tinymce-react';
 import CustomizedNumberInput from '@/components/CustomizedNumberInput';
+import CustomizedTag from '@/components/CustomizedTag';
 
 interface AttachmentValues {
   file_id?: number; // 文件ID
@@ -324,6 +325,12 @@ const MallStoreEdit = forwardRef(({ onSubmit }: MallStoreEditProps, ref) => {
           width: 'fit-content',
         }}
       >
+        <FormControl sx={{ minWidth: 120, '& .MuiStack-root': { mt: 2 } }}>
+          <Stack direction="row" spacing={2} sx={{ display: "flex", alignItems: "center" }}>
+            <Box>{t('page.mall.store.title.number')}</Box>
+            <Box>{mallStore && <CustomizedTag label={mallStore.number} />}</Box>
+          </Stack>
+        </FormControl>
         <FormControl sx={{ minWidth: 120, '& .MuiTextField-root': { mt: 2, width: '240px' } }}>
           <TextField
             required
