@@ -11,7 +11,7 @@
  Target Server Version : 80200 (8.2.0)
  File Encoding         : 65001
 
- Date: 08/11/2025 15:38:52
+ Date: 12/11/2025 21:50:14
 */
 
 SET NAMES utf8mb4;
@@ -1590,6 +1590,27 @@ CREATE TABLE `mall_product_statistics`  (
 -- ----------------------------
 
 -- ----------------------------
+-- Table structure for mall_product_store
+-- ----------------------------
+DROP TABLE IF EXISTS `mall_product_store`;
+CREATE TABLE `mall_product_store`  (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '编号',
+  `product_id` bigint NOT NULL COMMENT '商品编号',
+  `store_id` bigint NOT NULL COMMENT '店铺编号',
+  `creator` bigint NULL DEFAULT NULL COMMENT '创建者ID',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updater` bigint NULL DEFAULT NULL COMMENT '更新者ID',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+  `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '商品店铺表' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of mall_product_store
+-- ----------------------------
+
+-- ----------------------------
 -- Table structure for mall_promotion_article
 -- ----------------------------
 DROP TABLE IF EXISTS `mall_promotion_article`;
@@ -2275,11 +2296,13 @@ CREATE TABLE `mall_store`  (
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `number`(`number` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '店铺表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '店铺表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_store
 -- ----------------------------
+INSERT INTO `mall_store` VALUES (2, 'S113625594507300864', 'iPhone旗舰店', 'iPhone旗舰店', 195, '196,197', 0, '好手机', '<p>手机/电脑等</p>', '', 2, '', '2025-11-12 11:53:56', 0, 0, 0, 0, 0, 0, 0, 0, 1, '2025-11-10 13:07:44', 1, '2025-11-12 13:43:39', b'0', 1);
+INSERT INTO `mall_store` VALUES (3, 'S113988672818253824', '小米旗舰店', '小米旗舰店', 198, '199,200', 1, '性价比', '<table class=\"sticky w-full table-fixed z-[3] bg-whiteCard md:bg-whiteFix\">\n<tbody>\n<tr>\n<td class=\"border-b w-[192px] text-left sticky left-0 px-6 py-4 md:px-2 text-base md:text-sm md:w-[112px] md:px-2 md:py-3 border-b md:border-t border-dark-50 bg-white md:bg-whiteFix\">统一零售价\n<div class=\"border-r absolute top-0 bottom-0 right-0 border-inherit\">&nbsp;</div>\n</td>\n<td class=\"flex-1 text-center py-4 text-base md:text-sm whitespace-pre-wrap md:px-2 md:py-3 border-dark-50 border-r border-b md:border-t\">\n<div class=\"text-xl md:text-lg font-medium\">SU7</div>\n<div class=\"text-lg md:text-sm font-regular mt-2\">&yen; 215,900</div>\n</td>\n<td class=\"flex-1 text-center py-4 text-base md:text-sm whitespace-pre-wrap md:px-2 md:py-3 border-dark-50 border-r border-b md:border-t\">\n<div class=\"text-xl md:text-lg font-medium\">SU7 Pro</div>\n<div class=\"text-lg md:text-sm font-regular mt-2\">&yen; 245,900</div>\n</td>\n<td class=\"flex-1 text-center py-4 text-base md:text-sm whitespace-pre-wrap md:px-2 md:py-3 md:border-t border-dark-50 border-b md:border-r\">\n<div class=\"text-xl md:text-lg font-medium\">SU7 Max</div>\n<div class=\"text-lg md:text-sm font-regular mt-2\">&yen; 299,900</div>\n</td>\n</tr>\n</tbody>\n</table>\n<table class=\"w-full table-fixed bg-whiteCard md:bg-whiteFix\">\n<tbody>\n<tr>\n<td class=\"border-b w-[192px] text-left sticky left-0 px-6 py-4 md:px-2 text-base md:text-sm md:w-[112px] md:px-2 md:py-3 bg-whiteCard md:bg-whiteFix border-dark-50\">能源类型\n<div class=\"absolute border-r right-0 top-0 bottom-0 border-inherit\">&nbsp;</div>\n</td>\n<td class=\"flex-1 text-center py-4 text-base md:text-sm whitespace-pre-wrap border-b md:px-2 md:py-3 border-b border-dark-50 md:border-r\">纯电动</td>\n</tr>\n</tbody>\n</table>\n<table class=\"w-full table-fixed bg-whiteCard md:bg-whiteFix\">\n<tbody>\n<tr>\n<td class=\"border-b w-[192px] text-left sticky left-0 px-6 py-4 md:px-2 text-base md:text-sm md:w-[112px] md:px-2 md:py-3 bg-whiteCard md:bg-whiteFix border-dark-50\">外观颜色\n<div class=\"absolute border-r right-0 top-0 bottom-0 border-inherit\">&nbsp;</div>\n</td>\n<td class=\"flex-1 text-center py-4 text-base md:text-sm whitespace-pre-wrap md:px-2 md:py-3 border-b border-dark-50 md:border-r\">● 海湾蓝、雅灰、橄榄绿 ○ 璀璨洋红、珍珠白、钻石黑、霞光紫</td>\n</tr>\n</tbody>\n</table>\n<table class=\"w-full table-fixed bg-whiteCard md:bg-whiteFix\">\n<tbody>\n<tr>\n<td class=\"border-b w-[192px] text-left sticky left-0 px-6 py-4 md:px-2 text-base md:text-sm md:w-[112px] md:px-2 md:py-3 bg-whiteCard md:bg-whiteFix border-dark-50\">内饰颜色\n<div class=\"absolute border-r right-0 top-0 bottom-0 border-inherit\">&nbsp;</div>\n</td>\n<td class=\"flex-1 text-center py-4 text-base md:text-sm whitespace-pre-wrap md:px-2 md:py-3 border-b border-dark-50 md:border-r\">● 米灰色、暮光红、迷雾紫</td>\n</tr>\n</tbody>\n</table>\n<div>\n<div id=\"基本参数\" class=\"sticky sm:min-w-[418px] mx-auto sm:mb-[8px] z-[2] bg-whiteFix\" data-pin=\"nav\">\n<div class=\"flex md:bg-whiteFix\">\n<div class=\"flex text-left sticky left-0 px-6 py-4 items-center text-lg md:px-2 font-medium\">基本参数</div>\n</div>\n</div>\n<table class=\"sm:min-w-[418px] table-fixed w-full\">\n<tbody>\n<tr>\n<td class=\"w-[192px] text-left sticky left-0 px-6 py-4 md:px-2 text-base md:text-sm border-b bg-whiteCard md:bg-whiteFix border-dark-50 md:w-[112px] md:px-2 md:py-3 border-t\">\n<div class=\"absolute left-0 top-0 bottom-0 border-inherit md:border-l\">&nbsp;</div>\n车长 &times; 车宽 &times; 车高（mm）\n<div class=\"absolute right-0 top-0 bottom-0 border-inherit border-r\">&nbsp;</div>\n</td>\n<td class=\"border-b border-dark-50 text-center px-6 py-4 md:px-2 text-base md:text-sm whitespace-pre-wrap border-dark-50 border-t md:px-2 md:py-3 border-r md:border-r\" colspan=\"2\">\n<div class=\"font-regular\">4997 &times; 1963 &times; 1455</div>\n</td>\n<td class=\"border-b border-dark-50 text-center px-6 py-4 md:px-2 text-base md:text-sm whitespace-pre-wrap border-dark-50 border-t md:px-2 md:py-3 md:border-r\" colspan=\"1\">4997 &times; 1963 &times; 1440</td>\n</tr>\n</tbody>\n</table>\n<table class=\"sm:min-w-[418px] table-fixed w-full\">\n<tbody>\n<tr>\n<td class=\"w-[192px] text-left sticky left-0 px-6 py-4 md:px-2 text-base md:text-sm border-b bg-whiteCard md:bg-whiteFix border-dark-50 md:w-[112px] md:px-2 md:py-3\">\n<div class=\"absolute left-0 top-0 bottom-0 border-inherit md:border-l\">&nbsp;</div>\n轴距（mm）\n<div class=\"absolute right-0 top-0 bottom-0 border-inherit border-r\">&nbsp;</div>\n</td>\n<td class=\"border-b border-dark-50 text-center px-6 py-4 md:px-2 text-base md:text-sm whitespace-pre-wrap border-dark-50 md:px-2 md:py-3 md:border-r\" colspan=\"1\">3000</td>\n</tr>\n</tbody>\n</table>\n<table class=\"sm:min-w-[418px] table-fixed w-full\">\n<tbody>\n<tr>\n<td class=\"w-[192px] text-left sticky left-0 px-6 py-4 md:px-2 text-base md:text-sm border-b bg-whiteCard md:bg-whiteFix border-dark-50 md:w-[112px] md:px-2 md:py-3\">\n<div class=\"absolute left-0 top-0 bottom-0 border-inherit md:border-l\">&nbsp;</div>\n最小转弯半径（m）\n<div class=\"absolute right-0 top-0 bottom-0 border-inherit border-r\">&nbsp;</div>\n</td>\n<td class=\"border-b border-dark-50 text-center px-6 py-4 md:px-2 text-base md:text-sm whitespace-pre-wrap border-dark-50 md:px-2 md:py-3 md:border-r\" colspan=\"1\">5.7</td>\n</tr>\n</tbody>\n</table>\n<table class=\"sm:min-w-[418px] table-fixed w-full\">\n<tbody>\n<tr>\n<td class=\"w-[192px] text-left sticky left-0 px-6 py-4 md:px-2 text-base md:text-sm border-b bg-whiteCard md:bg-whiteFix border-dark-50 md:w-[112px] md:px-2 md:py-3\">\n<div class=\"absolute left-0 top-0 bottom-0 border-inherit md:border-l\">&nbsp;</div>\n前备箱容积（L）\n<div class=\"absolute right-0 top-0 bottom-0 border-inherit border-r\">&nbsp;</div>\n</td>\n<td class=\"border-b border-dark-50 text-center px-6 py-4 md:px-2 text-base md:text-sm whitespace-pre-wrap border-dark-50 md:px-2 md:py-3 md:border-r\" colspan=\"1\">105</td>\n</tr>\n</tbody>\n</table>\n<table class=\"sm:min-w-[418px] table-fixed w-full\">\n<tbody>\n<tr>\n<td class=\"w-[192px] text-left sticky left-0 px-6 py-4 md:px-2 text-base md:text-sm border-b bg-whiteCard md:bg-whiteFix border-dark-50 md:w-[112px] md:px-2 md:py-3\">\n<div class=\"absolute left-0 top-0 bottom-0 border-inherit md:border-l\">&nbsp;</div>\n后备厢容积（L）\n<div class=\"absolute right-0 top-0 bottom-0 border-inherit border-r\">&nbsp;</div>\n</td>\n<td class=\"border-b border-dark-50 text-center px-6 py-4 md:px-2 text-base md:text-sm whitespace-pre-wrap border-dark-50 md:px-2 md:py-3 border-r md:border-r\" colspan=\"2\">\n<div class=\"font-regular\">517</div>\n</td>\n<td class=\"border-b border-dark-50 text-center px-6 py-4 md:px-2 text-base md:text-sm whitespace-pre-wrap border-dark-50 md:px-2 md:py-3 md:border-r\" colspan=\"1\">493</td>\n</tr>\n</tbody>\n</table>\n<table class=\"sm:min-w-[418px] table-fixed w-full\">\n<tbody>\n<tr>\n<td class=\"w-[192px] text-left sticky left-0 px-6 py-4 md:px-2 text-base md:text-sm border-b bg-whiteCard md:bg-whiteFix border-dark-50 md:w-[112px] md:px-2 md:py-3\">\n<div class=\"absolute left-0 top-0 bottom-0 border-inherit md:border-l\">&nbsp;</div>\n风阻系数\n<div class=\"absolute right-0 top-0 bottom-0 border-inherit border-r\">&nbsp;</div>\n</td>\n<td class=\"border-b border-dark-50 text-center px-6 py-4 md:px-2 text-base md:text-sm whitespace-pre-wrap border-dark-50 md:px-2 md:py-3 md:border-r\" colspan=\"1\">0.195</td>\n</tr>\n</tbody>\n</table>\n</div>\n<p>&nbsp;</p>', '正品保障,七天无理由', 0, '', NULL, 0, 0, 0, 0, 0, 0, 0, 0, 1, '2025-11-11 13:10:28', 1, '2025-11-11 13:13:40', b'0', 1);
 
 -- ----------------------------
 -- Table structure for mall_store_customer_service
@@ -2299,7 +2322,7 @@ CREATE TABLE `mall_store_customer_service`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '店铺客服表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '店铺客服表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_store_customer_service
@@ -2322,7 +2345,7 @@ CREATE TABLE `mall_store_notice`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '店铺公告表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '店铺公告表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of mall_store_notice
@@ -2940,7 +2963,7 @@ CREATE TABLE `system_dict_data`  (
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 42 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '字典数据表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 48 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '字典数据表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of system_dict_data
@@ -2985,6 +3008,12 @@ INSERT INTO `system_dict_data` VALUES (38, 1, '用户自提', '1', 'delivery_typ
 INSERT INTO `system_dict_data` VALUES (39, 0, '按件', '0', 'charge_type', 0, '', '', '按件', 1, '2025-04-30 07:04:27', 1, '2025-04-30 07:04:27', b'0');
 INSERT INTO `system_dict_data` VALUES (40, 1, '按重量', '1', 'charge_type', 0, '', '', '按重量', 1, '2025-04-30 07:04:39', 1, '2025-04-30 07:04:39', b'0');
 INSERT INTO `system_dict_data` VALUES (41, 2, '按体积', '2', 'charge_type', 0, '', '', '按体积', 1, '2025-04-30 07:04:39', 1, '2025-09-04 03:17:58', b'0');
+INSERT INTO `system_dict_data` VALUES (42, 0, '待审核', '0', 'store_status', 0, '', '', '待审核', 1, '2025-04-30 07:04:27', 1, '2025-04-30 07:04:27', b'0');
+INSERT INTO `system_dict_data` VALUES (43, 1, '审核通过', '1', 'store_status', 0, '', '', '审核通过', 1, '2025-04-30 07:04:39', 1, '2025-04-30 07:04:39', b'0');
+INSERT INTO `system_dict_data` VALUES (44, 2, '营业中', '2', 'store_status', 0, '', '', '营业中', 1, '2025-04-30 07:04:39', 1, '2025-09-04 03:17:58', b'0');
+INSERT INTO `system_dict_data` VALUES (45, 3, '暂停营业', '3', 'store_status', 0, '', '', '暂停营业', 1, '2025-04-30 07:04:27', 1, '2025-04-30 07:04:27', b'0');
+INSERT INTO `system_dict_data` VALUES (46, 4, '审核驳回', '4', 'store_status', 0, '', '', '审核驳回', 1, '2025-04-30 07:04:39', 1, '2025-04-30 07:04:39', b'0');
+INSERT INTO `system_dict_data` VALUES (47, 5, '永久关闭', '5', 'store_status', 0, '', '', '永久关闭', 1, '2025-04-30 07:04:39', 1, '2025-09-04 03:17:58', b'0');
 
 -- ----------------------------
 -- Table structure for system_dict_type
@@ -3002,7 +3031,7 @@ CREATE TABLE `system_dict_type`  (
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 14 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '字典类型表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 15 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '字典类型表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of system_dict_type
@@ -3020,6 +3049,7 @@ INSERT INTO `system_dict_type` VALUES (10, '分销类型', 'sub_commission_type'
 INSERT INTO `system_dict_type` VALUES (11, '商品规格类型', 'spec_type', 0, '商品规格类型', 1, '2025-06-25 12:54:19', 1, '2025-06-25 12:54:19', b'0');
 INSERT INTO `system_dict_type` VALUES (12, '配送方式', 'delivery_type', 0, '配送方式', 1, '2025-06-25 12:54:19', 1, '2025-06-25 12:54:19', b'0');
 INSERT INTO `system_dict_type` VALUES (13, '计费方式', 'charge_type', 0, '计费方式', 1, '2025-06-25 12:54:19', 1, '2025-06-25 12:54:19', b'0');
+INSERT INTO `system_dict_type` VALUES (14, '店铺状态', 'store_status', 0, '店铺状态', 1, '2025-06-25 12:54:19', 1, '2025-06-25 12:54:19', b'0');
 
 -- ----------------------------
 -- Table structure for system_file
@@ -3041,7 +3071,7 @@ CREATE TABLE `system_file`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 191 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '文件信息表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 201 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '文件信息表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of system_file
@@ -3236,6 +3266,16 @@ INSERT INTO `system_file` VALUES (187, 'iphone_air__f0t56fef3oey_large_2x.jpg', 
 INSERT INTO `system_file` VALUES (188, 'iphone_16e__dar81seif0cy_large_2x.jpg', 'image/jpeg', 29723, '2025/10/25/107749084500070400_iphone_16e__dar81seif0cy_large_2x.jpg', 1, '0000', 1, 1, '2025-10-25 07:56:34', 1, '2025-10-25 07:56:34', b'0', 1);
 INSERT INTO `system_file` VALUES (189, 'iphone_air__f0t56fef3oey_large_2x.jpg', 'image/jpeg', 42842, '2025/10/25/107749248476385280_iphone_air__f0t56fef3oey_large_2x.jpg', 1, '0000', 1, 1, '2025-10-25 07:57:13', 1, '2025-10-25 07:57:13', b'0', 1);
 INSERT INTO `system_file` VALUES (190, 'iphone_16e__dar81seif0cy_large_2x.jpg', 'image/jpeg', 29723, '2025/10/25/107749258932785152_iphone_16e__dar81seif0cy_large_2x.jpg', 1, '0000', 1, 1, '2025-10-25 07:57:16', 1, '2025-10-25 07:57:16', b'0', 1);
+INSERT INTO `system_file` VALUES (191, 'iphone_16__drr03yfz644m_large_2x.jpg', 'image/jpeg', 52527, '2025/11/10/113622506409037824_iphone_16__drr03yfz644m_large_2x.jpg', 1, '0000', 1, 1, '2025-11-10 12:55:28', 1, '2025-11-10 12:55:28', b'0', 1);
+INSERT INTO `system_file` VALUES (192, 'iphone_16__drr03yfz644m_large_2x.jpg', 'image/jpeg', 52527, '2025/11/10/113622511144407040_iphone_16__drr03yfz644m_large_2x.jpg', 1, '0000', 1, 1, '2025-11-10 12:55:29', 1, '2025-11-10 12:55:29', b'0', 1);
+INSERT INTO `system_file` VALUES (193, 'iphone_16e__dar81seif0cy_large_2x.jpg', 'image/jpeg', 29723, '2025/11/10/113622517901430784_iphone_16e__dar81seif0cy_large_2x.jpg', 1, '0000', 1, 1, '2025-11-10 12:55:30', 1, '2025-11-10 12:55:30', b'0', 1);
+INSERT INTO `system_file` VALUES (194, 'iphone_17__ck7zzemcw37m_large_2x.jpg', 'image/jpeg', 42117, '2025/11/10/113622531876851712_iphone_17__ck7zzemcw37m_large_2x.jpg', 1, '0000', 1, 1, '2025-11-10 12:55:34', 1, '2025-11-10 12:55:34', b'0', 1);
+INSERT INTO `system_file` VALUES (195, 'iphone_16__drr03yfz644m_large_2x.jpg', 'image/jpeg', 52527, '2025/11/10/113624980448612352_iphone_16__drr03yfz644m_large_2x.jpg', 1, '0000', 1, 1, '2025-11-10 13:05:18', 1, '2025-11-10 13:05:18', b'0', 1);
+INSERT INTO `system_file` VALUES (196, 'iphone_16__drr03yfz644m_large_2x.jpg', 'image/jpeg', 52527, '2025/11/10/113624986765234176_iphone_16__drr03yfz644m_large_2x.jpg', 1, '0000', 1, 1, '2025-11-10 13:05:19', 1, '2025-11-10 13:05:19', b'0', 1);
+INSERT INTO `system_file` VALUES (197, 'iphone_16e__dar81seif0cy_large_2x.jpg', 'image/jpeg', 29723, '2025/11/10/113625004263870464_iphone_16e__dar81seif0cy_large_2x.jpg', 1, '0000', 1, 1, '2025-11-10 13:05:23', 1, '2025-11-10 13:05:23', b'0', 1);
+INSERT INTO `system_file` VALUES (198, 'pms_1761032449.06259669.png', 'image/png', 114147, '2025/11/11/113987579677773824_pms_1761032449.06259669.png', 1, '0000', 1, 1, '2025-11-11 13:06:08', 1, '2025-11-11 13:06:08', b'0', 1);
+INSERT INTO `system_file` VALUES (199, 'pms_1761032449.06259669.png', 'image/png', 114147, '2025/11/11/113987597402902528_pms_1761032449.06259669.png', 1, '0000', 1, 1, '2025-11-11 13:06:12', 1, '2025-11-11 13:06:12', b'0', 1);
+INSERT INTO `system_file` VALUES (200, 'su7_1_20241226.jpg', 'image/jpeg', 1671768, '2025/11/11/113987598631833600_su7_1_20241226.jpg', 1, '0000', 1, 1, '2025-11-11 13:06:12', 1, '2025-11-11 13:06:12', b'0', 1);
 
 -- ----------------------------
 -- Table structure for system_menu
@@ -3263,7 +3303,7 @@ CREATE TABLE `system_menu`  (
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 409 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '菜单权限表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 425 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '菜单权限表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of system_menu
@@ -3662,6 +3702,22 @@ INSERT INTO `system_menu` VALUES (405, '启用', 'mall:trade:delivery:express:co
 INSERT INTO `system_menu` VALUES (406, '禁用', 'mall:trade:delivery:express:company:disable', 3, 5, 229, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:13:54', 1, '2025-06-10 02:13:54', b'0');
 INSERT INTO `system_menu` VALUES (407, '启用', 'mall:trade:delivery:store:store:enable', 3, 4, 231, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:13:36', 1, '2025-06-10 02:13:36', b'0');
 INSERT INTO `system_menu` VALUES (408, '禁用', 'mall:trade:delivery:store:store:disable', 3, 5, 231, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:13:54', 1, '2025-06-10 02:13:54', b'0');
+INSERT INTO `system_menu` VALUES (409, '店铺管理', '', 1, 401, 211, '/mall/store', '', '', '', 'global.menu.mall.store', 0, b'1', b'1', b'1', 1, '2025-11-09 05:56:16', 1, '2025-11-09 05:56:16', b'0');
+INSERT INTO `system_menu` VALUES (410, '店铺列表', 'mall:store:list', 2, 4011, 409, '/mall/store/list', '', 'pages/mall/store/StoreList', 'StoreList', 'global.menu.mall.store.list', 0, b'1', b'1', b'1', 1, '2025-11-09 06:05:11', 1, '2025-11-09 06:21:24', b'0');
+INSERT INTO `system_menu` VALUES (411, '店铺公告', 'mall:store:notice', 2, 4012, 409, '/mall/store/notice', '', 'pages/mall/store/StoreNotice', 'StoreNotice', 'global.menu.mall.store.notice', 0, b'1', b'1', b'1', 1, '2025-11-09 06:07:37', 1, '2025-11-09 06:21:38', b'0');
+INSERT INTO `system_menu` VALUES (412, '查看', 'mall:store:list:get', 3, 0, 410, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:12:20', 1, '2025-06-10 02:12:20', b'0');
+INSERT INTO `system_menu` VALUES (413, '新增', 'mall:store:list:add', 3, 1, 410, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:13:19', 1, '2025-06-10 02:13:19', b'0');
+INSERT INTO `system_menu` VALUES (414, '修改', 'mall:store:list:edit', 3, 2, 410, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:13:36', 1, '2025-06-10 02:13:36', b'0');
+INSERT INTO `system_menu` VALUES (415, '删除', 'mall:store:list:delete', 3, 3, 410, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:13:54', 1, '2025-06-10 02:13:54', b'0');
+INSERT INTO `system_menu` VALUES (416, '查看', 'mall:store:notice:get', 3, 0, 411, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:12:20', 1, '2025-06-10 02:12:20', b'0');
+INSERT INTO `system_menu` VALUES (417, '新增', 'mall:store:notice:add', 3, 1, 411, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:13:19', 1, '2025-06-10 02:13:19', b'0');
+INSERT INTO `system_menu` VALUES (418, '修改', 'mall:store:notice:edit', 3, 2, 411, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:13:36', 1, '2025-06-10 02:13:36', b'0');
+INSERT INTO `system_menu` VALUES (419, '删除', 'mall:store:notice:delete', 3, 3, 411, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:13:54', 1, '2025-06-10 02:13:54', b'0');
+INSERT INTO `system_menu` VALUES (420, '开始营业', 'mall:store:list:open', 3, 4, 410, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:13:36', 1, '2025-06-10 02:13:36', b'0');
+INSERT INTO `system_menu` VALUES (421, '暂停营业', 'mall:store:list:pause', 3, 5, 410, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:13:54', 1, '2025-06-10 02:13:54', b'0');
+INSERT INTO `system_menu` VALUES (422, '审核通过', 'mall:store:list:accept', 3, 6, 410, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:13:36', 1, '2025-06-10 02:13:36', b'0');
+INSERT INTO `system_menu` VALUES (423, '审核拒绝', 'mall:store:list:reject', 3, 7, 410, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:13:54', 1, '2025-06-10 02:13:54', b'0');
+INSERT INTO `system_menu` VALUES (424, '永久关闭', 'mall:store:list:close', 3, 8, 410, '', '', '', '', '', 0, b'1', b'0', b'1', 1, '2025-06-10 02:13:54', 1, '2025-06-10 02:13:54', b'0');
 
 -- ----------------------------
 -- Table structure for system_notice
@@ -3758,7 +3814,7 @@ CREATE TABLE `system_role_menu`  (
   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 511 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '角色和菜单关联表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 527 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '角色和菜单关联表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of system_role_menu
@@ -4193,6 +4249,22 @@ INSERT INTO `system_role_menu` VALUES (507, 1, 405, 1, '2025-09-11 07:05:34', 1,
 INSERT INTO `system_role_menu` VALUES (508, 1, 406, 1, '2025-09-11 07:05:34', 1, '2025-09-11 07:05:34', b'0', 1);
 INSERT INTO `system_role_menu` VALUES (509, 1, 407, 1, '2025-09-12 14:20:25', 1, '2025-09-12 14:20:25', b'0', 1);
 INSERT INTO `system_role_menu` VALUES (510, 1, 408, 1, '2025-09-12 14:20:25', 1, '2025-09-12 14:20:25', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (511, 1, 419, 1, '2025-11-09 06:32:40', 1, '2025-11-09 06:32:40', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (512, 1, 409, 1, '2025-11-09 06:32:40', 1, '2025-11-09 06:32:40', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (513, 1, 412, 1, '2025-11-09 06:32:40', 1, '2025-11-09 06:32:40', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (514, 1, 417, 1, '2025-11-09 06:32:40', 1, '2025-11-09 06:32:40', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (515, 1, 418, 1, '2025-11-09 06:32:40', 1, '2025-11-09 06:32:40', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (516, 1, 413, 1, '2025-11-09 06:32:40', 1, '2025-11-09 06:32:40', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (517, 1, 416, 1, '2025-11-09 06:32:40', 1, '2025-11-09 06:32:40', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (518, 1, 415, 1, '2025-11-09 06:32:40', 1, '2025-11-09 06:32:40', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (519, 1, 414, 1, '2025-11-09 06:32:40', 1, '2025-11-09 06:32:40', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (520, 1, 410, 1, '2025-11-09 06:32:40', 1, '2025-11-09 06:32:40', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (521, 1, 411, 1, '2025-11-09 06:32:40', 1, '2025-11-09 06:32:40', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (522, 1, 421, 1, '2025-11-10 13:19:16', 1, '2025-11-10 13:19:16', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (523, 1, 422, 1, '2025-11-10 13:19:16', 1, '2025-11-10 13:19:16', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (524, 1, 423, 1, '2025-11-10 13:19:16', 1, '2025-11-10 13:19:16', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (525, 1, 424, 1, '2025-11-10 13:19:16', 1, '2025-11-10 13:19:16', b'0', 1);
+INSERT INTO `system_role_menu` VALUES (526, 1, 420, 1, '2025-11-10 13:19:16', 1, '2025-11-10 13:19:16', b'0', 1);
 
 -- ----------------------------
 -- Table structure for system_role_menu_data_scope
