@@ -8,6 +8,7 @@ pub mod mall_product_property_value;
 pub mod mall_product_sku;
 pub mod mall_product_spu;
 pub mod mall_product_statistics;
+pub mod mall_product_store;
 pub mod mall_promotion_article;
 pub mod mall_promotion_article_category;
 pub mod mall_promotion_banner;

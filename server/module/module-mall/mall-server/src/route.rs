@@ -17,6 +17,7 @@ use crate::api::mall_product_property_value::{ mall_product_property_value_route
 use crate::api::mall_product_sku::{ mall_product_sku_route, mall_product_sku_router };
 use crate::api::mall_product_spu::{mall_product_spu_no_auth_router, mall_product_spu_route, mall_product_spu_router};
 use crate::api::mall_product_statistics::{ mall_product_statistics_route, mall_product_statistics_router };
+use crate::api::mall_product_store::{ mall_product_store_route, mall_product_store_router };
 use crate::api::mall_promotion_article::{ mall_promotion_article_route, mall_promotion_article_router };
 use crate::api::mall_promotion_article_category::{ mall_promotion_article_category_route, mall_promotion_article_category_router };
 use crate::api::mall_promotion_banner::{ mall_promotion_banner_route, mall_promotion_banner_router };
@@ -80,6 +81,7 @@ use crate::AppState;
         (name = "mall_product_sku", description = "商品sku"),
         (name = "mall_product_spu", description = "商品spu"),
         (name = "mall_product_statistics", description = "商品统计"),
+        (name = "mall_product_store", description = "商品店铺"),
         (name = "mall_promotion_article", description = "文章管理"),
         (name = "mall_promotion_article_category", description = "文章分类"),
         (name = "mall_promotion_banner", description = "Banner 广告位"),
@@ -162,6 +164,7 @@ pub async fn auth_router(state: AppState) -> OpenApiRouter {
         .nest("/mall_product_sku", mall_product_sku_router(state.clone()).await)
         .nest("/mall_product_spu", mall_product_spu_router(state.clone()).await)
         .nest("/mall_product_statistics", mall_product_statistics_router(state.clone()).await)
+        .nest("/mall_product_store", mall_product_store_router(state.clone()).await)
         .nest("/mall_promotion_article", mall_promotion_article_router(state.clone()).await)
         .nest("/mall_promotion_article_category", mall_promotion_article_category_router(state.clone()).await)
         .nest("/mall_promotion_banner", mall_promotion_banner_router(state.clone()).await)
