@@ -6,6 +6,7 @@ from PIL import Image
 import io
 import pytesseract
 import os
+from src.utils.ocr_detection_util import parse_document
 
 app = Flask(__name__)
 
@@ -93,6 +94,64 @@ def process_image_path():
         return jsonify({'error': f"MinIO error: {str(e)}"}), 500
     except Exception as e:
         return jsonify({'error': f"Processing error: {str(e)}"}), 500
+
+@app.route('/parse_document', methods=['POST'])
+def parse_document_endpoint():
+    """
+    Parse document (invoice) and perform OCR recognition
+    
+    Request body (JSON):
+    {
+        "source_file": "bucket/object/path",  # MinIO source file path
+        "output_dir": "bucket/output/path"     # MinIO output directory path
+    }
+    
+    Returns:
+        JSON response with OCR results including:
+        - results: List of OCR recognition results
+        - output_files: List of uploaded file paths
+        - error: Error message if any
+    """
+    # Check if request contains JSON data
+    if not request.json:
+        return jsonify({'error': 'No JSON data provided'}), 400
+    
+    # Get required parameters
+    source_file = request.json.get('source_file')
+    output_dir = request.json.get('output_dir')
+    
+    # Validate required parameters
+    if not source_file:
+        return jsonify({'error': 'Missing required parameter: source_file'}), 400
+    
+    if not output_dir:
+        return jsonify({'error': 'Missing required parameter: output_dir'}), 400
+    
+    try:
+        # Call parse_document function
+        result = parse_document(source_file=source_file, output_dir=output_dir)
+        
+        # Check if there was an error
+        if result.get('error'):
+            return jsonify({
+                'error': result['error'],
+                'results': result.get('results', []),
+                'output_files': result.get('output_files', [])
+            }), 500
+        
+        # Return success response
+        return jsonify({
+            'success': True,
+            'results': result.get('results', []),
+            'output_files': result.get('output_files', []),
+            'result_count': len(result.get('results', []))
+        }), 200
+        
+    except Exception as e:
+        return jsonify({
+            'error': f"Failed to parse document: {str(e)}",
+            'success': False
+        }), 500
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080, debug=True)

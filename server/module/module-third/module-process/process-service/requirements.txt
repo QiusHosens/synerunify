@@ -9,3 +9,6 @@ pdfminer.six==20250506
 pdfminer==20191125
 PyMuPDF==1.26.3
 minio==7.2.16
+paddleocr==3.3.1
+paddlepaddle==3.2.1
+paddlex==3.3.9
