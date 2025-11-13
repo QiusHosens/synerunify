@@ -132,19 +132,22 @@ def parse_document_endpoint():
         result = parse_document(source_file=source_file, output_dir=output_dir)
         
         # Check if there was an error
-        if result.get('error'):
-            return jsonify({
-                'error': result['error'],
-                'results': result.get('results', []),
-                'output_files': result.get('output_files', [])
-            }), 500
+        # if result.get('error'):
+        #     return jsonify({
+        #         'error': result['error'],
+        #         'results': result.get('results', []),
+        #         'output_files': result.get('output_files', [])
+        #     }), 500
         
         # Return success response
+        # return jsonify({
+        #     'success': True,
+        #     'results': result.get('results', []),
+        #     'output_files': result.get('output_files', []),
+        #     'result_count': len(result.get('results', []))
+        # }), 200
         return jsonify({
-            'success': True,
-            'results': result.get('results', []),
-            'output_files': result.get('output_files', []),
-            'result_count': len(result.get('results', []))
+            'data': result
         }), 200
         
     except Exception as e:

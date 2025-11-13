@@ -10,9 +10,9 @@ from minio import Minio
 from minio.error import S3Error
 
 # MinIO 配置（可以从环境变量读取）
-MINIO_ENDPOINT = os.getenv("MINIO_ENDPOINT", "your-minio-endpoint:9000")
-MINIO_ACCESS_KEY = os.getenv("MINIO_ACCESS_KEY", "your-access-key")
-MINIO_SECRET_KEY = os.getenv("MINIO_SECRET_KEY", "your-secret-key")
+MINIO_ENDPOINT = os.getenv("MINIO_ENDPOINT", "192.168.1.18:9000")
+MINIO_ACCESS_KEY = os.getenv("MINIO_ACCESS_KEY", "synerunify")
+MINIO_SECRET_KEY = os.getenv("MINIO_SECRET_KEY", "synerunify")
 MINIO_SECURE = os.getenv("MINIO_SECURE", "false").lower() == "true"
 
 # 初始化 MinIO 客户端

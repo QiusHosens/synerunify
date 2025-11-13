@@ -84,7 +84,7 @@ def upload_result_images_to_minio(
     return uploaded_paths
 
 
-def parse_document(source_file: str, output_dir: str) -> Dict[str, Any]:
+def parse_document(source_file: str, output_dir: str) -> str | None:
     """
     解析文档（发票）并进行 OCR 识别
     
@@ -98,11 +98,11 @@ def parse_document(source_file: str, output_dir: str) -> Dict[str, Any]:
         - output_files: 输出文件路径列表
         - error: 错误信息（如果有）
     """
-    result_data = {
-        "results": [],
-        "output_files": [],
-        "error": None
-    }
+    # result_data = {
+    #     "results": [],
+    #     "output_files": [],
+    #     "error": None
+    # }
     
     try:
         # 从 MinIO 下载源文件
@@ -114,11 +114,16 @@ def parse_document(source_file: str, output_dir: str) -> Dict[str, Any]:
         
         # Perform OCR prediction
         result = ocr.predict(file_data)
+
+        print('ocr predict result')
         
         # Process each OCR result
-        for res_idx, res in enumerate(result):
+        for res in result:
+            res.print()
             # Get image dictionary from result
             result_img_dict = res.img
+
+            print('res img')
             
             # Upload images directly to MinIO
             uploaded_paths = upload_result_images_to_minio(
@@ -127,22 +132,24 @@ def parse_document(source_file: str, output_dir: str) -> Dict[str, Any]:
                 source_file_name=source_file_name,
                 image_format="PNG"
             )
+
+            return json.dumps(res.img, ensure_ascii=False, indent=4)
             
-            # Add uploaded paths to output files list
-            result_data["output_files"].extend(uploaded_paths)
+            # # Add uploaded paths to output files list
+            # result_data["output_files"].extend(uploaded_paths)
+            #
+            # # Save result information
+            # result_info = {
+            #     "result_index": res_idx + 1,
+            #     "json": res.json if hasattr(res, 'json') else None,
+            #     "output_files": uploaded_paths
+            # }
+            # result_data["results"].append(result_info)
             
-            # Save result information
-            result_info = {
-                "result_index": res_idx + 1,
-                "json": res.json if hasattr(res, 'json') else None,
-                "output_files": uploaded_paths
-            }
-            result_data["results"].append(result_info)
-            
-        return result_data
+        return None
         
-    except Exception as e:
-        result_data["error"] = str(e)
+    except Exception:
         import traceback
-        traceback.print_exc()
-        return result_data
+        # 暂时注释掉堆栈打印以避免接口服务端输出
+        # traceback.print_exc()
+        return None
