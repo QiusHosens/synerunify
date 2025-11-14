@@ -102,4 +102,38 @@ impl MinioClient {
             .to_vec();
         Ok(data)
     }
+
+    pub async fn download_file_with_mime(
+        &self,
+        object_name: String,
+    ) -> Result<(Vec<u8>, String), MinioError> {
+        let response = self
+            .client
+            .get_object(BUCKET_NAME, &object_name)
+            .send()
+            .await
+            .map_err(|e: minio::s3::error::Error| {
+                if e.to_string().contains("NoSuchKey") {
+                    MinioError::NotFound
+                } else {
+                    MinioError::Other(e.into())
+                }
+            })?;
+
+        let content_type = response
+            .headers
+            .get("content-type")
+            .and_then(|v| v.to_str().ok())
+            .unwrap_or("application/octet-stream")
+            .to_string();
+
+        let data = response
+            .content
+            .to_segmented_bytes()
+            .await
+            .map_err(|e| MinioError::Other(e.into()))?
+            .to_bytes()
+            .to_vec();
+        Ok((data, content_type))
+    }
 }

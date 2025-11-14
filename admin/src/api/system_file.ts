@@ -13,6 +13,7 @@ const apis = {
   upload_for_path: "/file/system_file/upload_for_path", // 上传文件,返回path
   upload_oss: "/file/system_file/upload_oss", // 上传文件,返回path,无需登录
   download: "/file/system_file/download", // 下载
+  preview_path: "/file/system_file/preview_path", // 预览路径
 };
 
 export interface SystemFileRequest {
@@ -171,3 +172,7 @@ export const downloadSystemFile = (id: number, onProgress: (progress: number) =>
       return response as Blob;
     });
 }
+
+export const previewSystemFile = (path: string): string => {
+  return `/api${apis.preview_path}/${encodeURIComponent(path)}`;
+};

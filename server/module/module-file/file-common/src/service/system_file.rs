@@ -225,12 +225,11 @@ pub async fn upload_oss(minio: Option<MinioClient>, mut multipart: Multipart) ->
     while let Some(field) = multipart.next_field().await.context("文件读取失败")? {
         if field.name() == Some("file") {
             let file_name = field.file_name().unwrap_or("unnamed").to_string();
-            let content_type = field.content_type().unwrap_or("application/octet-stream").to_string();
             let data = field.bytes().await.context("文件读取失败")?;
 
             // Upload to MinIO
             let path = match minio.upload_file(&file_name, &data).await {
-                std::result::Result::Ok(path) => path,
+                Result::Ok(path) => path,
                 Err(_) => {
                     return Err(anyhow!("文件上传失败"));
                 },
@@ -294,16 +293,16 @@ pub async fn get_file_data_no_auth(db: &DatabaseConnection, minio: Option<MinioC
     Ok(Some(model_to_data_response(system_file, data)))
 }
 
-pub async fn get_file_data_by_path(minio: Option<MinioClient>, file_path: String) -> Result<Option<Vec<u8>>> {
+pub async fn get_file_data_by_path(minio: Option<MinioClient>, file_path: String) -> Result<Option<(Vec<u8>, String)>> {
     if minio.is_none() {
         return Err(anyhow!("客户端初始化失败"));
     }
     let minio = minio.unwrap();
 
-    let data = match minio.download_file(file_path).await {
+    let (data, content_type) = match minio.download_file_with_mime(file_path).await {
         std::result::Result::Ok(data) => data,
         Err(_) => return Err(anyhow!("文件下载失败")),
     };
 
-    Ok(Some(data))
+    Ok(Some((data.clone(), content_type.clone())))
 }

@@ -31,6 +31,7 @@ pub async fn system_file_router(state: AppState) -> OpenApiRouter {
 pub async fn system_file_no_auth_router(state: AppState) -> OpenApiRouter {
     OpenApiRouter::new()
         .routes(routes!(preview))
+        .routes(routes!(preview_path))
         .routes(routes!(upload_oss))
         .with_state(state)
 }
@@ -425,5 +426,44 @@ async fn preview(
             ),
         ],
         file.data,
+    ))
+}
+
+#[utoipa::path(
+    get,
+    path = "/preview_path/{path}",
+    operation_id = "system_file_preview_path",
+    params(
+        ("path" = String, Path, description = "path")
+    ),
+    responses(
+        (status = 200, description = "preview", content_type = "application/octet-stream"),
+        (status = 404, description = "File not found"),
+        (status = 500, description = "Internal server error")
+    ),
+    tag = "system_file",
+)]
+async fn preview_path(
+    State(state): State<AppState>,
+    Path(path): Path<String>,
+) -> Result<impl IntoResponse, StatusCode> {
+    let (data, content_type) = match service::system_file::get_file_data_by_path(state.minio, path).await {
+        Ok(Some(data)) => data,
+        Ok(None) => {
+            return Err(StatusCode::NOT_FOUND)
+        },
+        Err(_) => return Err(StatusCode::INTERNAL_SERVER_ERROR),
+    };
+
+    Ok((
+        StatusCode::OK,
+        [
+            (axum::http::header::CONTENT_TYPE, content_type.to_string()),
+            (
+                axum::http::header::CONTENT_DISPOSITION,
+                format!("inline; filename=\"{}\"", "image")
+            ),
+        ],
+        data,
     ))
 }
