@@ -235,7 +235,7 @@ async fn upload(
     operation_id = "system_file_upload_for_path",
     request_body(content_type = "multipart/form-data", content = UploadSystemFileRequest),
     responses(
-        (status = 204, description = "upload")
+        (status = 204, description = "upload for path")
     ),
     tag = "system_file",
     security(
@@ -258,10 +258,10 @@ async fn upload_for_path(
 #[utoipa::path(
     post,
     path = "/upload_oss",
-    operation_id = "system_file_upload_for_path",
+    operation_id = "system_file_upload_oss",
     request_body(content_type = "multipart/form-data", content = UploadSystemFileRequest),
     responses(
-        (status = 204, description = "upload")
+        (status = 204, description = "upload oss")
     ),
     tag = "system_file"
 )]

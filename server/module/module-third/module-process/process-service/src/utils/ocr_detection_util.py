@@ -2,6 +2,8 @@ import base64
 import gzip
 import json
 import io
+import random
+import time
 from pathlib import Path
 from typing import Dict, List
 import numpy as np
@@ -71,14 +73,22 @@ def upload_result_images_to_minio(
     for key, img in result_img_dict.items():
         # Convert PIL Image to bytes
         img_bytes = _image_to_bytes(img, format=image_format)
-        
+
+        # 获取当前时间戳（整数形式）
+        timestamp = str(int(time.time()))
+
+        # 生成一个 4 位随机数（你可以调整范围）
+        random_num = str(random.randint(1000, 9999))
+
+        # 拼接成字符串
+        result = timestamp + random_num
         # Generate output path
         if len(result_img_dict) == 1:
             # Single image: use source file name directly
-            output_path = f"{base_output_path}/{source_file_name}{file_ext}"
+            output_path = f"{base_output_path}/{source_file_name}_{result}{file_ext}"
         else:
             # Multiple images: append key to filename
-            output_path = f"{base_output_path}/{source_file_name}_{key}{file_ext}"
+            output_path = f"{base_output_path}/{source_file_name}_{result}_{key}{file_ext}"
         
         # Upload to MinIO
         upload_to_minio(img_bytes, output_path, content_type)
@@ -101,11 +111,11 @@ def parse_document(source_file: str, output_dir: str) -> dict[str, list[str] | s
         - output_files: 输出文件路径列表
         - error: 错误信息（如果有）
     """
-    # result_data = {
-    #     "results": [],
-    #     "output_files": [],
-    #     "error": None
-    # }
+    ocr = PaddleOCR(
+        use_doc_orientation_classify=False, # 通过 use_doc_orientation_classify 参数指定不使用文档方向分类模型
+        use_doc_unwarping=False, # 通过 use_doc_unwarping 参数指定不使用文本图像矫正模型
+        use_textline_orientation=False, # 通过 use_textline_orientation 参数指定不使用文本行方向分类模型
+    )
     
     try:
         print('parse document start')
@@ -161,20 +171,9 @@ def parse_document(source_file: str, output_dir: str) -> dict[str, list[str] | s
             print(f"Compression ratio: {len(json_bytes) / len(compressed_bytes):.2f}x")
 
             return {
-                "path": uploaded_paths,
+                "path": uploaded_paths[0],
                 "json": compressed_str
             }
-            
-            # # Add uploaded paths to output files list
-            # result_data["output_files"].extend(uploaded_paths)
-            #
-            # # Save result information
-            # result_info = {
-            #     "result_index": res_idx + 1,
-            #     "json": res.json if hasattr(res, 'json') else None,
-            #     "output_files": uploaded_paths
-            # }
-            # result_data["results"].append(result_info)
             
         return None
         

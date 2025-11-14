@@ -1,4 +1,6 @@
 import { api } from "@/utils/request";
+import type { InternalAxiosRequestConfig } from 'axios';
+import { AxiosHeaders } from 'axios';
 
 const apis = {
   detect: '/process/parse_document', // 检测
@@ -15,5 +17,9 @@ export interface DetectResponse {
 }
 
 export const detect = (request: DetectRequest): Promise<DetectResponse> => {
-  return api.post<DetectResponse>(apis.detect, request);
+  const config: InternalAxiosRequestConfig = {
+    timeout: 1000 * 1000, // 1000s
+    headers: new AxiosHeaders(),
+  };
+  return api.post<DetectResponse>(apis.detect, request, config);
 };
