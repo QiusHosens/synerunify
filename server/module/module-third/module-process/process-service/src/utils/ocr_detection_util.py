@@ -1,3 +1,5 @@
+import base64
+import gzip
 import json
 import io
 import tempfile
@@ -146,9 +148,22 @@ def parse_document(source_file: str, output_dir: str) -> dict[str, list[str] | s
                 image_format="PNG"
             )
 
+            json_str = json.dumps(res.json, separators=(',', ':'), ensure_ascii=False, indent=4)
+            json_bytes = json_str.encode('utf-8')
+
+            # gzip compress
+            compressed_bytes = gzip.compress(json_bytes)
+
+            compressed_str = base64.b64encode(compressed_bytes).decode('utf-8')
+
+            print(f"Minified JSON size: {len(json_bytes)} bytes")
+            print(f"Gzipped size: {len(compressed_bytes)} bytes")
+            print(f"Gzipped base64 size: {len(compressed_str)} bytes")
+            print(f"Compression ratio: {len(json_bytes) / len(compressed_bytes):.2f}x")
+
             return {
                 "path": uploaded_paths,
-                "json": json.dumps(res.json, ensure_ascii=False, indent=4)
+                "json": compressed_str
             }
             
             # # Add uploaded paths to output files list
