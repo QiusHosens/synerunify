@@ -68,6 +68,33 @@ const parseDetectionVisualization = (json: string): DetectionVisualization | nul
   }
 };
 
+const decompressDetectionJson = async (gzipBase64: string): Promise<string> => {
+  if (!gzipBase64) {
+    return '';
+  }
+  try {
+    if (typeof DecompressionStream === 'undefined') {
+      console.warn('DecompressionStream is not supported in this environment');
+      return gzipBase64;
+    }
+
+    const binaryString = atob(gzipBase64);
+    const len = binaryString.length;
+    const bytes = new Uint8Array(len);
+    for (let i = 0; i < len; i += 1) {
+      bytes[i] = binaryString.charCodeAt(i);
+    }
+
+    const decompressionStream = new DecompressionStream('gzip');
+    const stream = new Blob([bytes]).stream().pipeThrough(decompressionStream);
+    const arrayBuffer = await new Response(stream).arrayBuffer();
+    return new TextDecoder().decode(arrayBuffer);
+  } catch (error) {
+    console.error('decompress detection json error', error);
+    return gzipBase64;
+  }
+};
+
 export default function Detection() {
   const navigate = useNavigate();
 
@@ -111,13 +138,14 @@ export default function Detection() {
             output_dir: outputDir,
           };
           const detectionResponse = await detect(detectionRequest);
-          const parsedDetection = parseDetectionVisualization(detectionResponse.json);
+          const decompressedJson = await decompressDetectionJson(detectionResponse.json);
+          const parsedDetection = parseDetectionVisualization(decompressedJson);
 
           setFormValues((prev) => ({
             ...prev,
             path,
             detection_path: detectionResponse.path,
-            detection_json: detectionResponse.json,
+            detection_json: decompressedJson,
             file: prev.file ? { ...prev.file, status: 'done' } : prev.file,
           }));
           setDetectionData(parsedDetection);
