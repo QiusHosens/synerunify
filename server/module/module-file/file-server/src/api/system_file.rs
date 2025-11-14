@@ -220,7 +220,7 @@ async fn list(
 async fn upload(
     State(state): State<AppState>,
     Extension(login_user): Extension<LoginUserContext>,
-    mut multipart: Multipart,
+    multipart: Multipart,
 ) -> CommonResult<i64> {
     match service::system_file::upload(&state.db, login_user, state.minio, multipart).await {
         Ok(Some(id)) => {CommonResult::with_data(id)}
@@ -246,7 +246,7 @@ async fn upload(
 async fn upload_for_path(
     State(state): State<AppState>,
     Extension(login_user): Extension<LoginUserContext>,
-    mut multipart: Multipart,
+    multipart: Multipart,
 ) -> CommonResult<String> {
     match service::system_file::upload_for_path(&state.db, login_user, state.minio, multipart).await {
         Ok(Some(path)) => {CommonResult::with_data(path)}
@@ -267,9 +267,9 @@ async fn upload_for_path(
 )]
 async fn upload_oss(
     State(state): State<AppState>,
-    mut multipart: Multipart,
+    multipart: Multipart,
 ) -> CommonResult<String> {
-    match service::system_file::upload_oss(&state.db, state.minio, multipart).await {
+    match service::system_file::upload_oss(state.minio, multipart).await {
         Ok(Some(path)) => {CommonResult::with_data(path)}
         Ok(None) => {CommonResult::with_none()}
         Err(e) => {CommonResult::with_err(&e.to_string())}

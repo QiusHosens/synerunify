@@ -1,26 +1,20 @@
-from flask import Flask, jsonify, request
-from minio import Minio
-from minio.error import S3Error
-import fitz  # PyMuPDF
-from PIL import Image
 import io
-import pytesseract
 import os
+
+import fitz  # PyMuPDF
+import pytesseract
+from flask import Flask, jsonify, request
+from minio.error import S3Error
+from PIL import Image
+
+from src import config  # noqa: F401  # 确保 .env 被加载
+from src.utils.minio_util import download_from_minio
 from src.utils.ocr_detection_util import parse_document
 
 app = Flask(__name__)
 
-# MinIO 配置
-MINIO_ENDPOINT = "your-minio-endpoint:9000"  # 替换为你的 MinIO 地址
-MINIO_ACCESS_KEY = "your-access-key"  # 替换为你的 MinIO 访问密钥
-MINIO_SECRET_KEY = "your-secret-key"  # 替换为你的 MinIO 密钥
-MINIO_BUCKET = "your-bucket-name"  # 替换为你的 MinIO 存储桶名称
-minio_client = Minio(
-    MINIO_ENDPOINT,
-    access_key=MINIO_ACCESS_KEY,
-    secret_key=MINIO_SECRET_KEY,
-    secure=False  # 根据需要设置为 True（HTTPS）或 False（HTTP）
-)
+FLASK_PORT = int(os.getenv("FLASK_PORT", "8080"))
+FLASK_DEBUG = os.getenv("FLASK_DEBUG", "false").lower() == "true"
 
 @app.route('/process/process_image', methods=['POST'])
 def process_image():
@@ -52,10 +46,7 @@ def process_image_path():
 
     try:
         # 从 MinIO 获取文件
-        response = minio_client.get_object(MINIO_BUCKET, file_path)
-        file_data = response.read()
-        response.close()
-        response.release_conn()
+        file_data, file_ext = download_from_minio(file_path)
 
         # 将文件数据转为 BinaryIO
         file_stream = io.BytesIO(file_data)
@@ -143,4 +134,4 @@ def parse_document_endpoint():
         }), 500
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=9990, debug=True)
+    app.run(host='0.0.0.0', port=FLASK_PORT, debug=FLASK_DEBUG)

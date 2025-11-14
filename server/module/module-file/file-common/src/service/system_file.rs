@@ -207,7 +207,7 @@ pub async fn upload_for_path(db: &DatabaseConnection, login_user: LoginUserConte
                 tenant_id: Set(login_user.tenant_id),
                 ..Default::default()
             };
-            let system_file = system_file.insert(db).await?;
+            system_file.insert(db).await?;
             let all_path = format!("{}/{}", BUCKET_NAME, path);
             return Ok(Some(all_path))
         }
@@ -216,7 +216,7 @@ pub async fn upload_for_path(db: &DatabaseConnection, login_user: LoginUserConte
     Ok(None)
 }
 
-pub async fn upload_oss(db: &DatabaseConnection, minio: Option<MinioClient>, mut multipart: Multipart) -> Result<Option<String>> {
+pub async fn upload_oss(minio: Option<MinioClient>, mut multipart: Multipart) -> Result<Option<String>> {
     if minio.is_none() {
         return Err(anyhow!("客户端初始化失败"));
     }

@@ -28,7 +28,11 @@ process-service/
 
 ## Setup
 
-1. **Build Docker Image**:
+1. **配置环境变量**  
+
+   `.env` 中的变量会在本地启动 HTTP / gRPC 服务时自动加载（通过 `python-dotenv`），例如 MinIO 连接信息以及 HTTP 服务监听的主机和端口。
+
+2. **Build Docker Image**:
 
    ```bash
    docker build -t process-service .

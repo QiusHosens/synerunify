@@ -6,8 +6,11 @@ import os
 import io
 from pathlib import Path
 from typing import Tuple
+
 from minio import Minio
 from minio.error import S3Error
+
+from src import config  # noqa: F401  # 确保 .env 被加载
 
 # MinIO 配置（可以从环境变量读取）
 MINIO_ENDPOINT = os.getenv("MINIO_ENDPOINT", "192.168.1.18:9000")
