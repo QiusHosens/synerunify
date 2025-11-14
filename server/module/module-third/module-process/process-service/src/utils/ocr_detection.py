@@ -1,5 +1,7 @@
 import json
 
+import numpy as np
+from PIL import Image
 from paddleocr import PaddleOCR
 
 ocr = PaddleOCR(
@@ -17,10 +19,25 @@ ocr = PaddleOCR(
 #     use_doc_unwarping=False,
 #     use_textline_orientation=False,
 # ) # 更换 PP-OCRv5_server 模型
-result = ocr.predict("./invoice.jpg")
-for res in result:
-    res.print()
-    res.save_to_img("output")
-    print(json.dumps(res.img, ensure_ascii=False, indent=4))
-    # print(json.dumps(res.json, ensure_ascii=False, indent=4))
-    res.save_to_json("output")
+# result = ocr.predict("./invoice.jpg")
+# for res in result:
+#     res.print()
+#     res.save_to_img("output")
+#     print(json.dumps(res.img, ensure_ascii=False, indent=4))
+#     # print(json.dumps(res.json, ensure_ascii=False, indent=4))
+#     res.save_to_json("output")
+
+path = "./invoice.jpg"
+with open(path, "rb") as f:
+    img = Image.open(f)
+    # Convert PIL Image to numpy array for PaddleOCR
+    # PaddleOCR predict only accepts file path (str) or numpy.ndarray
+    rgb_image = img.convert('RGB')
+    img_array = np.array(rgb_image)
+    result = ocr.predict(img_array)
+    for res in result:
+        res.print()
+        res.save_to_img("output")
+        # print(json.dumps(res.img, ensure_ascii=False, indent=4))
+        # print(json.dumps(res.json, ensure_ascii=False, indent=4))
+        res.save_to_json("output")

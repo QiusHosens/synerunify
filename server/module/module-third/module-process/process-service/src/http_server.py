@@ -114,7 +114,7 @@ def parse_document_endpoint():
     """
     # Check if request contains JSON data
     if not request.json:
-        return jsonify({'error': 'No JSON data provided'}), 400
+        return jsonify({'code': 400, 'message': 'No JSON data provided'}), 400
     
     # Get required parameters
     source_file = request.json.get('source_file')
@@ -122,10 +122,10 @@ def parse_document_endpoint():
     
     # Validate required parameters
     if not source_file:
-        return jsonify({'error': 'Missing required parameter: source_file'}), 400
+        return jsonify({'code': 400, 'message': 'Missing required parameter: source_file'}), 400
     
     if not output_dir:
-        return jsonify({'error': 'Missing required parameter: output_dir'}), 400
+        return jsonify({'code': 400, 'message': 'Missing required parameter: output_dir'}), 400
     
     try:
         # Call parse_document function
@@ -147,13 +147,14 @@ def parse_document_endpoint():
         #     'result_count': len(result.get('results', []))
         # }), 200
         return jsonify({
+            'code': 200,
             'data': result
         }), 200
         
     except Exception as e:
         return jsonify({
-            'error': f"Failed to parse document: {str(e)}",
-            'success': False
+            'code': 500,
+            'message': f"Failed to parse document: {str(e)}",
         }), 500
 
 if __name__ == '__main__':

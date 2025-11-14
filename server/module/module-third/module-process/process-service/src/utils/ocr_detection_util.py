@@ -1,7 +1,9 @@
 import json
 import io
+import tempfile
 from pathlib import Path
 from typing import Dict, Any, List
+import numpy as np
 from PIL import Image
 
 from paddleocr import PaddleOCR
@@ -84,7 +86,7 @@ def upload_result_images_to_minio(
     return uploaded_paths
 
 
-def parse_document(source_file: str, output_dir: str) -> str | None:
+def parse_document(source_file: str, output_dir: str) -> dict[str, list[str] | str] | None:
     """
     解析文档（发票）并进行 OCR 识别
     
@@ -105,15 +107,26 @@ def parse_document(source_file: str, output_dir: str) -> str | None:
     # }
     
     try:
+        print('parse document start')
         # 从 MinIO 下载源文件
         file_data, file_ext = download_from_minio(source_file)
 
+        print('download file')
         # Parse source file path to get file name
         _, source_object = parse_minio_path(source_file)
         source_file_name = Path(source_object).stem
         
+        # Convert bytes to numpy array for PaddleOCR
+        # PaddleOCR predict only accepts file path (str) or numpy.ndarray
+        img = Image.open(io.BytesIO(file_data))
+        # Convert to RGB
+        rgb_image = img.convert('RGB')
+        # Convert PIL Image to numpy array
+        img_array = np.array(rgb_image)
+
+        print('convert file')
         # Perform OCR prediction
-        result = ocr.predict(file_data)
+        result = ocr.predict(img_array)
 
         print('ocr predict result')
         
@@ -133,7 +146,10 @@ def parse_document(source_file: str, output_dir: str) -> str | None:
                 image_format="PNG"
             )
 
-            return json.dumps(res.img, ensure_ascii=False, indent=4)
+            return {
+                "path": uploaded_paths,
+                "json": json.dumps(res.json, ensure_ascii=False, indent=4)
+            }
             
             # # Add uploaded paths to output files list
             # result_data["output_files"].extend(uploaded_paths)
