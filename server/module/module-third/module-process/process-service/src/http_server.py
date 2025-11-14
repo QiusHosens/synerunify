@@ -22,7 +22,7 @@ minio_client = Minio(
     secure=False  # 根据需要设置为 True（HTTPS）或 False（HTTP）
 )
 
-@app.route('/process_image', methods=['POST'])
+@app.route('/process/process_image', methods=['POST'])
 def process_image():
     if 'image' not in request.files:
         return jsonify({'error': 'No image provided'}), 400
@@ -41,7 +41,7 @@ def process_image():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-@app.route('/process_image_path', methods=['POST'])
+@app.route('/process/process_image_path', methods=['POST'])
 def process_image_path():
     # 检查请求中是否包含文件路径
     if not request.json or 'file_path' not in request.json:
@@ -95,7 +95,7 @@ def process_image_path():
     except Exception as e:
         return jsonify({'error': f"Processing error: {str(e)}"}), 500
 
-@app.route('/parse_document', methods=['POST'])
+@app.route('/process/parse_document', methods=['POST'])
 def parse_document_endpoint():
     """
     Parse document (invoice) and perform OCR recognition
@@ -130,22 +130,7 @@ def parse_document_endpoint():
     try:
         # Call parse_document function
         result = parse_document(source_file=source_file, output_dir=output_dir)
-        
-        # Check if there was an error
-        # if result.get('error'):
-        #     return jsonify({
-        #         'error': result['error'],
-        #         'results': result.get('results', []),
-        #         'output_files': result.get('output_files', [])
-        #     }), 500
-        
-        # Return success response
-        # return jsonify({
-        #     'success': True,
-        #     'results': result.get('results', []),
-        #     'output_files': result.get('output_files', []),
-        #     'result_count': len(result.get('results', []))
-        # }), 200
+
         return jsonify({
             'code': 200,
             'data': result
@@ -158,4 +143,4 @@ def parse_document_endpoint():
         }), 500
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8080, debug=True)
+    app.run(host='0.0.0.0', port=9990, debug=True)
