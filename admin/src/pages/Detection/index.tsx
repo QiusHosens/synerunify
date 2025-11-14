@@ -148,7 +148,11 @@ export default function Detection() {
             detection_json: decompressedJson,
             file: prev.file ? { ...prev.file, status: 'done' } : prev.file,
           }));
-          setDetectionData(parsedDetection);
+          setDetectionData({
+            width: detectionResponse.width,
+            height: detectionResponse.height,
+            boxes: parsedDetection?.boxes ?? []
+          });
         } catch (error) {
           console.error('upload file error', error);
           setUploadError('文件上传失败，请稍后重试');
@@ -158,7 +162,7 @@ export default function Detection() {
           }));
         }
       } else if (action === 'remove') {
-        setFormValues((prev) => ({
+        setFormValues(() => ({
           path: '',
           file: undefined,
           detection_path: undefined,

@@ -130,6 +130,7 @@ def parse_document(source_file: str, output_dir: str) -> dict[str, list[str] | s
         # Convert bytes to numpy array for PaddleOCR
         # PaddleOCR predict only accepts file path (str) or numpy.ndarray
         img = Image.open(io.BytesIO(file_data))
+        width, height = img.size
         # Convert to RGB
         rgb_image = img.convert('RGB')
         # Convert PIL Image to numpy array
@@ -171,6 +172,8 @@ def parse_document(source_file: str, output_dir: str) -> dict[str, list[str] | s
             print(f"Compression ratio: {len(json_bytes) / len(compressed_bytes):.2f}x")
 
             return {
+                "width": width,
+                "height": height,
                 "path": uploaded_paths[0],
                 "json": compressed_str
             }

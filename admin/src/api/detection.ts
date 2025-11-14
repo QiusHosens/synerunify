@@ -12,6 +12,8 @@ export interface DetectRequest {
 }
 
 export interface DetectResponse {
+  width: number;
+  height: number;
   path: string;
   json: string;
 }
