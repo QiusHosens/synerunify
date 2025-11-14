@@ -8,7 +8,7 @@ use minio::s3::{
 
 use crate::utils::snowflake_generator::SnowflakeGenerator;
 
-const BUCKET_NAME: &str = "synerunify"; // 桶名
+pub const BUCKET_NAME: &str = "synerunify"; // 桶名
 
 #[derive(Debug)]
 pub enum MinioError {

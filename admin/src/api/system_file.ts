@@ -10,6 +10,8 @@ const apis = {
   list: "/file/system_file/list", // 列表查询
   page: "/file/system_file/page", // 分页查询
   upload: "/file/system_file/upload", // 上传
+  upload_for_path: "/file/system_file/upload_for_path", // 上传文件,返回path
+  upload_oss: "/file/system_file/upload_oss", // 上传文件,返回path,无需登录
   download: "/file/system_file/download", // 下载
 };
 
@@ -93,6 +95,62 @@ export const uploadSystemFile = (
     })
     .then((response: AxiosResponse<number> | number) => {
       const data = typeof response === 'number' ? response : response.data;
+      return data;
+    });
+};
+
+export const uploadSystemFileForPath = (
+  file: File,
+  onProgress: (progress: number) => void
+): Promise<string> => {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  return request
+    .post<number>(apis.upload_for_path, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+      onUploadProgress: (progressEvent: AxiosProgressEvent) => {
+        if (progressEvent.total) {
+          const percentCompleted = Math.round(
+            (progressEvent.loaded * 100) / progressEvent.total
+          );
+          console.debug("upload file percent", percentCompleted);
+          onProgress(percentCompleted);
+        }
+      },
+    })
+    .then((response: AxiosResponse<any> | string) => {
+      const data = typeof response === 'string' ? response : response.data;
+      return data;
+    });
+};
+
+export const uploadSystemFileOss = (
+  file: File,
+  onProgress: (progress: number) => void
+): Promise<string> => {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  return request
+    .post<number>(apis.upload_oss, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+      onUploadProgress: (progressEvent: AxiosProgressEvent) => {
+        if (progressEvent.total) {
+          const percentCompleted = Math.round(
+            (progressEvent.loaded * 100) / progressEvent.total
+          );
+          console.debug("upload file percent", percentCompleted);
+          onProgress(percentCompleted);
+        }
+      },
+    })
+    .then((response: AxiosResponse<any> | string) => {
+      const data = typeof response === 'string' ? response : response.data;
       return data;
     });
 };

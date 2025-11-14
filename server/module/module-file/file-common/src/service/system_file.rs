@@ -1,5 +1,5 @@
 use axum::extract::Multipart;
-use common::utils::minio_utils::{MinioClient, MinioError};
+use common::utils::minio_utils::{MinioClient, MinioError, BUCKET_NAME};
 use sea_orm::prelude::Expr;
 use sea_orm::{ActiveModelTrait, ColumnTrait, Condition, DatabaseConnection, DatabaseTransaction, EntityTrait, PaginatorTrait, QueryFilter, QueryOrder};
 use crate::model::system_file::{Model as SystemFileModel, ActiveModel as SystemFileActiveModel, Entity as SystemFileEntity, Column};
@@ -8,7 +8,7 @@ use file_model::response::system_file::{SystemFileDataResponse, SystemFileRespon
 use crate::convert::system_file::{create_request_to_model, model_to_data_response, model_to_response, update_request_to_model};
 use anyhow::{anyhow, Context, Ok, Result};
 use sea_orm::ActiveValue::Set;
-use common::constants::enum_constants::{STATUS_DISABLE, STATUS_ENABLE};
+use common::constants::enum_constants::{ROOT_TENANT_ID, STATUS_DISABLE, STATUS_ENABLE};
 use common::base::page::PaginatedResponse;
 use common::context::context::LoginUserContext;
 use common::interceptor::orm::active_filter::ActiveFilterEntityTrait;
@@ -167,6 +167,76 @@ pub async fn upload(db: &DatabaseConnection, login_user: LoginUserContext, minio
             };
             let system_file = system_file.insert(db).await?;
             return Ok(Some(system_file.id))
+        }
+    }
+
+    Ok(None)
+}
+
+pub async fn upload_for_path(db: &DatabaseConnection, login_user: LoginUserContext, minio: Option<MinioClient>, mut multipart: Multipart) -> Result<Option<String>> {
+    if minio.is_none() {
+        return Err(anyhow!("客户端初始化失败"));
+    }
+    let minio = minio.unwrap();
+
+    while let Some(field) = multipart.next_field().await.context("文件读取失败")? {
+        if field.name() == Some("file") {
+            let file_name = field.file_name().unwrap_or("unnamed").to_string();
+            let content_type = field.content_type().unwrap_or("application/octet-stream").to_string();
+            let data = field.bytes().await.context("文件读取失败")?;
+
+            // Upload to MinIO
+            let path = match minio.upload_file(&file_name, &data).await {
+                std::result::Result::Ok(path) => path,
+                Err(_) => {
+                    return Err(anyhow!("文件上传失败"));
+                },
+            };
+
+            // 保存到数据库,默认停用
+            let system_file = SystemFileActiveModel {
+                file_name: Set(file_name),
+                file_type: Set(Some(content_type)),
+                file_size: Set(data.len() as i64),
+                file_path: Set(path.clone()),
+                status: Set(STATUS_DISABLE),
+                department_code: Set(login_user.department_code),
+                department_id: Set(login_user.department_id),
+                creator: Set(Some(login_user.id)),
+                updater: Set(Some(login_user.id)),
+                tenant_id: Set(login_user.tenant_id),
+                ..Default::default()
+            };
+            let system_file = system_file.insert(db).await?;
+            let all_path = format!("{}/{}", BUCKET_NAME, path);
+            return Ok(Some(all_path))
+        }
+    }
+
+    Ok(None)
+}
+
+pub async fn upload_oss(db: &DatabaseConnection, minio: Option<MinioClient>, mut multipart: Multipart) -> Result<Option<String>> {
+    if minio.is_none() {
+        return Err(anyhow!("客户端初始化失败"));
+    }
+    let minio = minio.unwrap();
+
+    while let Some(field) = multipart.next_field().await.context("文件读取失败")? {
+        if field.name() == Some("file") {
+            let file_name = field.file_name().unwrap_or("unnamed").to_string();
+            let content_type = field.content_type().unwrap_or("application/octet-stream").to_string();
+            let data = field.bytes().await.context("文件读取失败")?;
+
+            // Upload to MinIO
+            let path = match minio.upload_file(&file_name, &data).await {
+                std::result::Result::Ok(path) => path,
+                Err(_) => {
+                    return Err(anyhow!("文件上传失败"));
+                },
+            };
+            let all_path = format!("{}/{}", BUCKET_NAME, path);
+            return Ok(Some(all_path))
         }
     }
 

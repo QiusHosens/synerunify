@@ -2,9 +2,8 @@ import base64
 import gzip
 import json
 import io
-import tempfile
 from pathlib import Path
-from typing import Dict, Any, List
+from typing import Dict, List
 import numpy as np
 from PIL import Image
 

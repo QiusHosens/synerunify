@@ -8,6 +8,9 @@ import Layout from '@/layout/MainLayout/Layout';
 import React from 'react';
 import LoginLayout from '@/layout/LoginLayout';
 import { Box, CircularProgress, Typography } from '@mui/material';
+import Detection from '@/pages/Detection';
+
+const publicPaths = ['/login', '/detection'];
 
 // 动态组件映射
 const componentMap: { [key: string]: React.LazyExoticComponent<React.ComponentType<Element>> } = {
@@ -85,8 +88,9 @@ export default function Router() {
   }
 
   // console.log('location', location.pathname);
-  // // 未登录时跳转到登录页
-  if (!access_token && location.pathname != '/login') {
+
+  // 未登录时跳转到登录页（公共路由除外）
+  if (!access_token && !publicPaths.includes(location.pathname)) {
     navigate('/login');
   }
 
@@ -116,6 +120,8 @@ export default function Router() {
                 <Login />
               </LoginLayout>}
           />
+          {/* 静态路由：系统检测页面 */}
+          <Route path="/detection" element={<Detection />} />
           {/* 动态路由 */}
           {routes.map((route) => (
             <Route

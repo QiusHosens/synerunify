@@ -22,6 +22,7 @@ pub async fn system_file_router(state: AppState) -> OpenApiRouter {
         .routes(routes!(list))
         .routes(routes!(page))
         .routes(routes!(upload))
+        .routes(routes!(upload_for_path))
         .routes(routes!(download))
         .routes(routes!(download_with_suffix))
         .with_state(state)
@@ -30,6 +31,7 @@ pub async fn system_file_router(state: AppState) -> OpenApiRouter {
 pub async fn system_file_no_auth_router(state: AppState) -> OpenApiRouter {
     OpenApiRouter::new()
         .routes(routes!(preview))
+        .routes(routes!(upload_oss))
         .with_state(state)
 }
 
@@ -222,6 +224,53 @@ async fn upload(
 ) -> CommonResult<i64> {
     match service::system_file::upload(&state.db, login_user, state.minio, multipart).await {
         Ok(Some(id)) => {CommonResult::with_data(id)}
+        Ok(None) => {CommonResult::with_none()}
+        Err(e) => {CommonResult::with_err(&e.to_string())}
+    }
+}
+
+#[utoipa::path(
+    post,
+    path = "/upload_for_path",
+    operation_id = "system_file_upload_for_path",
+    request_body(content_type = "multipart/form-data", content = UploadSystemFileRequest),
+    responses(
+        (status = 204, description = "upload")
+    ),
+    tag = "system_file",
+    security(
+        ("bearerAuth" = [])
+    )
+)]
+#[require_authorize(operation_id = "system_file_upload_for_path", authorize = "")]
+async fn upload_for_path(
+    State(state): State<AppState>,
+    Extension(login_user): Extension<LoginUserContext>,
+    mut multipart: Multipart,
+) -> CommonResult<String> {
+    match service::system_file::upload_for_path(&state.db, login_user, state.minio, multipart).await {
+        Ok(Some(path)) => {CommonResult::with_data(path)}
+        Ok(None) => {CommonResult::with_none()}
+        Err(e) => {CommonResult::with_err(&e.to_string())}
+    }
+}
+
+#[utoipa::path(
+    post,
+    path = "/upload_oss",
+    operation_id = "system_file_upload_for_path",
+    request_body(content_type = "multipart/form-data", content = UploadSystemFileRequest),
+    responses(
+        (status = 204, description = "upload")
+    ),
+    tag = "system_file"
+)]
+async fn upload_oss(
+    State(state): State<AppState>,
+    mut multipart: Multipart,
+) -> CommonResult<String> {
+    match service::system_file::upload_oss(&state.db, state.minio, multipart).await {
+        Ok(Some(path)) => {CommonResult::with_data(path)}
         Ok(None) => {CommonResult::with_none()}
         Err(e) => {CommonResult::with_err(&e.to_string())}
     }
