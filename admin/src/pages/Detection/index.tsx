@@ -107,18 +107,31 @@ const measureTextWidth = (text: string, fontSize: number, fontFamily = 'sans-ser
   return context.measureText(text).width;
 };
 
-// 计算合适的字体大小，使文字不换行
-const calculateTextFitFontSize = (
+// 根据区域高度计算合适的字体大小
+const calculateFontSizeByHeight = (
+  boxHeightPx: number,
+  paddingY: number = 2, // px 上下的 padding
+  minFontSize: number = 8,
+  maxFontSize: number = 40
+): number => {
+  const availableHeight = boxHeightPx - paddingY * 2;
+  // 根据高度估算字体大小（通常行高为字体大小的1.2倍）
+  const fontSize = Math.min(maxFontSize, Math.max(minFontSize, availableHeight / 1.2));
+  return fontSize;
+};
+
+// 根据区域宽度计算合适的字体大小（估算，通过文字长度）
+const calculateFontSizeByWidth = (
   text: string,
   boxWidthPx: number,
-  defaultFontSize: number,
-  paddingX: number = 4, // px 左右的 padding
-  minFontSize: number = 8
+  paddingX: number = 8, // px 左右的 padding
+  minFontSize: number = 8,
+  maxFontSize: number = 40
 ): number => {
-  const availableWidth = boxWidthPx - paddingX * 2;
+  const availableWidth = boxWidthPx - paddingX;
   
-  // 先尝试使用默认字体大小
-  let fontSize = defaultFontSize;
+  // 尝试使用最大字体大小
+  let fontSize = maxFontSize;
   const textWidth = measureTextWidth(text, fontSize);
   
   // 如果文字宽度超过可用宽度，缩小字体
@@ -127,6 +140,25 @@ const calculateTextFitFontSize = (
   }
   
   return Math.max(minFontSize, fontSize);
+};
+
+// 计算文字宽度，并返回所需的宽度比例（如果宽度不够）
+const calculateWidthScale = (
+  text: string,
+  fontSize: number,
+  boxWidthPx: number,
+  paddingX: number = 8 // px 左右的 padding（0.5 * 2 * 8px = 8px，因为 MUI 的 spacing 单位通常是 8px）
+): number => {
+  const availableWidth = boxWidthPx - paddingX;
+  const textWidth = measureTextWidth(text, fontSize);
+  
+  // 如果文字宽度超过可用宽度，计算需要的扩大比例
+  if (textWidth > availableWidth) {
+    // 确保有足够的空间显示文字，加上 padding
+    return (textWidth + paddingX) / boxWidthPx;
+  }
+  
+  return 1; // 不需要扩大
 };
 
 export default function Detection() {
@@ -276,12 +308,11 @@ export default function Detection() {
     };
   }, [detectionData]);
 
-  // 计算统一的字体大小（所有区域中最小的）
-  const uniformFontSize = useMemo(() => {
-    if (!detectionData) return 11; // 默认字体大小
+  // 计算容器需要的缩放比例（根据文字宽度是否超出区域）
+  const containerScale = useMemo(() => {
+    if (!detectionData || containerWidth === 0) return 1;
 
-    const defaultFontSize = 11;
-    const fontSizes: number[] = [];
+    let maxScale = 1;
 
     detectionData.boxes
       .filter((item) => item.box[2] > item.box[0] + 2 && item.box[3] > item.box[1] + 2 && item.text)
@@ -294,15 +325,28 @@ export default function Detection() {
         const boxWidthPx = (containerWidth * widthPercent) / 100;
         const boxHeightPx = (containerWidth * aspectRatio * heightPercent) / 100;
         
-        // 如果 height 大于 width，不计算文字大小，使用默认字体
-        if (boxHeightPx <= boxWidthPx) {
-          const fontSize = calculateTextFitFontSize(item.text, boxWidthPx, defaultFontSize);
-          fontSizes.push(fontSize);
+        // 判断是否为竖长区域
+        const boxWidth = x2 - x1;
+        const boxHeight = y2 - y1;
+        const isVerticalBox = boxHeight > boxWidth;
+        
+        // 根据更小的一边计算字体大小
+        const paddingX = 8; // px 左右的 padding
+        
+        if (isVerticalBox) {
+          // 竖长区域：根据宽度计算字体大小
+          const fontSize = calculateFontSizeByWidth(item.text, boxWidthPx, paddingX);
+          const scale = calculateWidthScale(item.text, fontSize, boxWidthPx, paddingX);
+          maxScale = Math.max(maxScale, scale);
+        } else {
+          // 横长区域：根据高度计算字体大小
+          const fontSize = calculateFontSizeByHeight(boxHeightPx);
+          const scale = calculateWidthScale(item.text, fontSize, boxWidthPx, paddingX);
+          maxScale = Math.max(maxScale, scale);
         }
       });
 
-    // 如果有计算出的字体大小，返回最小的；否则返回默认字体大小
-    return fontSizes.length > 0 ? Math.min(...fontSizes) : defaultFontSize;
+    return maxScale;
   }, [detectionData, containerWidth, aspectRatio]);
 
   useEffect(() => {
@@ -475,23 +519,25 @@ export default function Detection() {
               ref={visualizationContainerRef}
               sx={{
                 position: 'relative',
-                width: '100%',
+                width: containerScale > 1 ? `${containerScale * 100}%` : '100%',
+                maxWidth: containerScale > 1 ? 'none' : '100%',
                 borderRadius: 3,
-                overflow: 'hidden',
+                overflow: 'visible',
                 border: '1px solid',
                 borderColor: 'divider',
                 backgroundColor: '#0f172a',
                 boxShadow: (theme) => theme.shadows[3],
+                margin: '0 auto',
               }}>
               <Box
                 sx={{
                   position: 'relative',
                   width: '100%',
                   paddingTop: `${Math.max(aspectRatio, 0.4) * 100}%`,
-                  backgroundImage: detectionImageUrl ? `url(${detectionImageUrl})` : 'none',
-                  backgroundSize: 'contain',
-                  backgroundRepeat: 'no-repeat',
-                  backgroundPosition: 'center',
+                  // backgroundImage: detectionImageUrl ? `url(${detectionImageUrl})` : 'none',
+                  // backgroundSize: 'contain',
+                  // backgroundRepeat: 'no-repeat',
+                  // backgroundPosition: 'center',
                 }}>
                 {detectionData.boxes
                   .filter(
@@ -505,10 +551,34 @@ export default function Detection() {
                     const widthPercent = ((x2 - x1) / detectionData.width) * 100;
                     const heightPercent = ((y2 - y1) / detectionData.height) * 100;
                     
+                    // 计算 box 的实际像素尺寸（基于缩放后的容器宽度）
+                    const scaledContainerWidth = containerWidth * containerScale;
+                    const boxWidthPx = (scaledContainerWidth * widthPercent) / 100;
+                    const boxHeightPx = (scaledContainerWidth * aspectRatio * heightPercent) / 100;
+                    
                     // 判断是否为竖长区域
                     const boxWidth = x2 - x1;
                     const boxHeight = y2 - y1;
                     const isVerticalBox = boxHeight > boxWidth;
+                    
+                    // 根据更小的一边计算字体大小（基于扩大后的容器尺寸）
+                    let fontSize: number;
+                    const paddingX = 8; // px 左右的 padding（对应 sx 中的 px: 0.5，即 0.5 * 8 * 2 = 8px）
+                    
+                    if (isVerticalBox) {
+                      // 竖长区域：根据宽度计算字体大小
+                      fontSize = calculateFontSizeByWidth(item.text, boxWidthPx, paddingX);
+                    } else {
+                      // 横长区域：根据高度计算字体大小
+                      fontSize = calculateFontSizeByHeight(boxHeightPx);
+                      // 验证文字宽度是否能在 box 宽度内显示（基于扩大后的容器）
+                      const textWidth = measureTextWidth(item.text, fontSize);
+                      const availableWidth = boxWidthPx - paddingX;
+                      if (textWidth > availableWidth) {
+                        // 如果仍然超出，按宽度重新计算字体大小
+                        fontSize = calculateFontSizeByWidth(item.text, boxWidthPx, paddingX);
+                      }
+                    }
                     
                     return (
                       <Box
@@ -523,17 +593,17 @@ export default function Detection() {
                           borderRadius: 1,
                           backgroundColor: 'rgba(15,23,42,0.35)',
                           color: '#e2e8f0',
-                          fontSize: `${uniformFontSize}px`,
+                          fontSize: `${fontSize}px`,
                           display: 'flex',
                           alignItems: 'flex-start',
                           justifyContent: 'flex-start',
                           textAlign: 'left',
-                          px: 0.5,
-                          py: 0.2,
-                          lineHeight: 1.2,
+                          px: 0,
+                          py: 0,
+                          lineHeight: 1,
                           whiteSpace: isVerticalBox ? 'normal' : 'nowrap',
-                          overflow: 'hidden',
-                          textOverflow: 'ellipsis',
+                          overflow: 'visible',
+                          wordBreak: isVerticalBox ? 'break-word' : 'normal',
                         }}>
                         {item.text}
                       </Box>
