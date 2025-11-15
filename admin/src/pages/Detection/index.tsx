@@ -2,7 +2,7 @@ import { detect, DetectRequest } from '@/api/detection';
 import { previewSystemFile, uploadSystemFileOss } from '@/api/system_file';
 import CustomizedFileUpload, { UploadFile } from '@/components/CustomizedFileUpload';
 import { Box, Button, Divider, Paper, Stack, Typography } from '@mui/material';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 interface FormValues {
@@ -57,10 +57,12 @@ const parseDetectionVisualization = (width: number, height: number, json: string
       polygon: Array.isArray(polygons[index]) ? polygons[index] : undefined,
     }));
 
+    const filteredDetectionBoxes = detectionBoxes.filter(item => (item.score && item.score >= 0.8 && item.text.trim() !== ''));
+
     return {
       width,
       height,
-      boxes: detectionBoxes,
+      boxes: filteredDetectionBoxes,
     };
   } catch (error) {
     console.error('parse detection json error', error);
@@ -95,6 +97,38 @@ const decompressDetectionJson = async (gzipBase64: string): Promise<string> => {
   }
 };
 
+// 测量文字宽度
+const measureTextWidth = (text: string, fontSize: number, fontFamily = 'sans-serif'): number => {
+  const canvas = document.createElement('canvas');
+  const context = canvas.getContext('2d');
+  if (!context) return text.length * fontSize * 0.6; // 备用估算值
+  
+  context.font = `${fontSize}px ${fontFamily}`;
+  return context.measureText(text).width;
+};
+
+// 计算合适的字体大小，使文字不换行
+const calculateTextFitFontSize = (
+  text: string,
+  boxWidthPx: number,
+  defaultFontSize: number,
+  paddingX: number = 4, // px 左右的 padding
+  minFontSize: number = 8
+): number => {
+  const availableWidth = boxWidthPx - paddingX * 2;
+  
+  // 先尝试使用默认字体大小
+  let fontSize = defaultFontSize;
+  const textWidth = measureTextWidth(text, fontSize);
+  
+  // 如果文字宽度超过可用宽度，缩小字体
+  if (textWidth > availableWidth) {
+    fontSize = Math.max(minFontSize, (availableWidth / textWidth) * fontSize);
+  }
+  
+  return Math.max(minFontSize, fontSize);
+};
+
 export default function Detection() {
   const navigate = useNavigate();
 
@@ -104,6 +138,8 @@ export default function Detection() {
 
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [detectionData, setDetectionData] = useState<DetectionVisualization | null>(null);
+  const [containerWidth, setContainerWidth] = useState<number>(960); // 默认值，会在 useEffect 中更新
+  const visualizationContainerRef = useRef<HTMLDivElement>(null);
 
   const handleBackToLogin = useCallback(() => {
     navigate('/login');
@@ -179,7 +215,7 @@ export default function Detection() {
         setDetectionData(null);
       }
     },
-    []
+    [uploadFile]
   );
 
   const detectionEntries = useMemo(() => {
@@ -188,7 +224,7 @@ export default function Detection() {
     //   key: `文本 ${index + 1}`,
     //   value: `${item.text || '-'}  (score ${(item.score ?? 0).toFixed(3)})`,
     // }));
-    return detectionData.boxes.filter(item => (item.score && item.score >= 0.8 && (item.text.includes(':') || item.text.includes('：')))).map((item, index) => {
+    return detectionData.boxes.filter(item => (item.score && item.score >= 0.8 && (item.text.includes(':') || item.text.includes('：')))).map((item) => {
       const text = item.text.replace('：', ':')
       const strs = text.split(':');
       return {
@@ -215,6 +251,59 @@ export default function Detection() {
     previewSystemFile(formValues.detection_path || formValues.path || formValues.file?.previewUrl || '');
 
   const aspectRatio = detectionData ? detectionData.height / detectionData.width : 0.65;
+
+  // 监听容器宽度变化
+  useEffect(() => {
+    const container = visualizationContainerRef.current;
+    if (!container) return;
+
+    const updateWidth = () => {
+      setContainerWidth(container.offsetWidth);
+    };
+
+    // 初始设置
+    updateWidth();
+
+    // 使用 ResizeObserver 监听容器大小变化
+    const resizeObserver = new ResizeObserver(() => {
+      updateWidth();
+    });
+
+    resizeObserver.observe(container);
+
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, [detectionData]);
+
+  // 计算统一的字体大小（所有区域中最小的）
+  const uniformFontSize = useMemo(() => {
+    if (!detectionData) return 11; // 默认字体大小
+
+    const defaultFontSize = 11;
+    const fontSizes: number[] = [];
+
+    detectionData.boxes
+      .filter((item) => item.box[2] > item.box[0] + 2 && item.box[3] > item.box[1] + 2 && item.text)
+      .forEach((item) => {
+        const [x1, y1, x2, y2] = item.box;
+        const widthPercent = ((x2 - x1) / detectionData.width) * 100;
+        const heightPercent = ((y2 - y1) / detectionData.height) * 100;
+        
+        // 计算 box 的实际像素尺寸（基于容器宽度）
+        const boxWidthPx = (containerWidth * widthPercent) / 100;
+        const boxHeightPx = (containerWidth * aspectRatio * heightPercent) / 100;
+        
+        // 如果 height 大于 width，不计算文字大小，使用默认字体
+        if (boxHeightPx <= boxWidthPx) {
+          const fontSize = calculateTextFitFontSize(item.text, boxWidthPx, defaultFontSize);
+          fontSizes.push(fontSize);
+        }
+      });
+
+    // 如果有计算出的字体大小，返回最小的；否则返回默认字体大小
+    return fontSizes.length > 0 ? Math.min(...fontSizes) : defaultFontSize;
+  }, [detectionData, containerWidth, aspectRatio]);
 
   useEffect(() => {
     uploadFile(null);
@@ -383,6 +472,7 @@ export default function Detection() {
               根据检测返回的坐标信息，将文字块精准映射到图片上，方便快速核对识别位置。
             </Typography>
             <Box
+              ref={visualizationContainerRef}
               sx={{
                 position: 'relative',
                 width: '100%',
@@ -397,8 +487,6 @@ export default function Detection() {
                 sx={{
                   position: 'relative',
                   width: '100%',
-                  // width: detectionData.width,
-                  // height: detectionData.height,
                   paddingTop: `${Math.max(aspectRatio, 0.4) * 100}%`,
                   backgroundImage: detectionImageUrl ? `url(${detectionImageUrl})` : 'none',
                   backgroundSize: 'contain',
@@ -414,8 +502,14 @@ export default function Detection() {
                     const [x1, y1, x2, y2] = item.box;
                     const left = (x1 / detectionData.width) * 100;
                     const top = (y1 / detectionData.height) * 100;
-                    const width = ((x2 - x1) / detectionData.width) * 100;
-                    const height = ((y2 - y1) / detectionData.height) * 100;
+                    const widthPercent = ((x2 - x1) / detectionData.width) * 100;
+                    const heightPercent = ((y2 - y1) / detectionData.height) * 100;
+                    
+                    // 判断是否为竖长区域
+                    const boxWidth = x2 - x1;
+                    const boxHeight = y2 - y1;
+                    const isVerticalBox = boxHeight > boxWidth;
+                    
                     return (
                       <Box
                         key={`${item.text}-${index}`}
@@ -423,20 +517,23 @@ export default function Detection() {
                           position: 'absolute',
                           left: `${left}%`,
                           top: `${top}%`,
-                          width: `${width}%`,
-                          height: `${height}%`,
+                          width: `${widthPercent}%`,
+                          height: `${heightPercent}%`,
                           border: '1.5px solid rgba(59,130,246,0.95)',
                           borderRadius: 1,
                           backgroundColor: 'rgba(15,23,42,0.35)',
                           color: '#e2e8f0',
-                          fontSize: { xs: 10, md: 11 },
+                          fontSize: `${uniformFontSize}px`,
                           display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          textAlign: 'center',
+                          alignItems: 'flex-start',
+                          justifyContent: 'flex-start',
+                          textAlign: 'left',
                           px: 0.5,
                           py: 0.2,
                           lineHeight: 1.2,
+                          whiteSpace: isVerticalBox ? 'normal' : 'nowrap',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
                         }}>
                         {item.text}
                       </Box>
