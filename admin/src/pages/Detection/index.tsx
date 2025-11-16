@@ -531,11 +531,11 @@ export default function Detection() {
         {detectionData && (
           <Box mt={4}>
             <Typography variant="h6" fontWeight={600} gutterBottom>
-              文字定位可视化
+              文字定位
             </Typography>
-            <Typography variant="body2" color="text.secondary" mb={2}>
+            {/* <Typography variant="body2" color="text.secondary" mb={2}>
               根据检测返回的坐标信息，将文字块精准映射到图片上，方便快速核对识别位置。
-            </Typography>
+            </Typography> */}
             <Box
               ref={visualizationContainerRef}
               sx={{
@@ -615,6 +615,13 @@ export default function Detection() {
                     );
                   })}
               </Box>
+            </Box>
+
+            <Typography mt={4} variant="h6" fontWeight={600} gutterBottom>
+              图片展示
+            </Typography>
+            <Box>
+              <img src={detectionImageUrl} alt="detection" style={{ width: '100%', height: 'auto' }} />
             </Box>
           </Box>
         )}
