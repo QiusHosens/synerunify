@@ -102,7 +102,7 @@ const measureTextWidth = (text: string, fontSize: number, fontFamily = 'sans-ser
   const canvas = document.createElement('canvas');
   const context = canvas.getContext('2d');
   if (!context) return text.length * fontSize * 0.6; // 备用估算值
-  
+
   context.font = `${fontSize}px ${fontFamily}`;
   return context.measureText(text).width;
 };
@@ -131,17 +131,17 @@ const calculateFontSizeByWidth = (
 ): number => {
   const availableWidth = boxWidthPx - paddingX;
   if (availableWidth <= 0) return minFontSize;
-  
+
   // 使用二分查找找到合适的字体大小
   let min = minFontSize;
   let max = maxFontSize;
   let fontSize = min;
-  
+
   // 最多迭代 20 次
   for (let i = 0; i < 20; i++) {
     fontSize = (min + max) / 2;
     const textWidth = measureTextWidth(text, fontSize);
-    
+
     if (textWidth <= availableWidth) {
       min = fontSize;
       if (max - min < 0.1) break; // 精度足够
@@ -149,7 +149,7 @@ const calculateFontSizeByWidth = (
       max = fontSize;
     }
   }
-  
+
   return Math.max(minFontSize, Math.min(maxFontSize, fontSize * 0.95)); // 留 5% 余量
 };
 
@@ -162,13 +162,13 @@ const calculateWidthScale = (
 ): number => {
   const availableWidth = boxWidthPx - paddingX;
   const textWidth = measureTextWidth(text, fontSize);
-  
+
   // 如果文字宽度超过可用宽度，计算需要的扩大比例
   if (textWidth > availableWidth) {
     // 确保有足够的空间显示文字，加上 padding
     return (textWidth + paddingX) / boxWidthPx;
   }
-  
+
   return 1; // 不需要扩大
 };
 
@@ -188,15 +188,14 @@ export default function Detection() {
     navigate('/login');
   }, [navigate]);
 
-  const uploadFile = useCallback(async (file: UploadFile | null) => {
+  const uploadFile = useCallback(async (file: UploadFile) => {
     try {
-      // const response = (await uploadSystemFileOss(file.file, (progress) => {
-      //   setFormValues((prev) => {
-      //     if (!prev.file) return prev;
-      //     return { ...prev, file: { ...prev.file, progress } };
-      //   });
-      // })) as string;
-      const response = 'synerunify/2025/11/14/115096784300150784_invoice.jpg';
+      const response = (await uploadSystemFileOss(file.file, (progress) => {
+        setFormValues((prev) => {
+          if (!prev.file) return prev;
+          return { ...prev, file: { ...prev.file, progress } };
+        });
+      })) as string;
 
       const path = response;
       const path_array = path.split('/').slice(0, -1);
@@ -206,13 +205,7 @@ export default function Detection() {
         source_file: response,
         output_dir: outputDir,
       };
-      // const detectionResponse = await detect(detectionRequest);
-      const detectionResponse = {
-        height: 1180,
-        json: "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",
-        path: "synerunify/detection/2025/11/14/115086440643170304_invoice_17631286138342.png",
-        width: 1831
-      };
+      const detectionResponse = await detect(detectionRequest);
       const decompressedJson = await decompressDetectionJson(detectionResponse.json);
       const parsedDetection = parseDetectionVisualization(detectionResponse.width, detectionResponse.height, decompressedJson);
 
@@ -331,48 +324,71 @@ export default function Detection() {
         const [x1, y1, x2, y2] = item.box;
         const widthPercent = ((x2 - x1) / detectionData.width) * 100;
         const heightPercent = ((y2 - y1) / detectionData.height) * 100;
-        
+
         // 计算 box 的实际像素尺寸（基于容器宽度，不使用缩放）
         const boxWidthPx = (containerWidth * widthPercent) / 100;
         const boxHeightPx = (containerWidth * aspectRatio * heightPercent) / 100;
-        
+
         // 计算实际的 padding
         const paddingXTotal = 8; // 左右总 padding
         const paddingYTotal = 4; // 上下总 padding
-        
+
         // 计算可用空间
         const availableWidth = boxWidthPx - paddingXTotal;
         const availableHeight = boxHeightPx - paddingYTotal;
-        
+
         // 根据宽度计算字体大小
         const fontSizeByWidth = calculateFontSizeByWidth(item.text, boxWidthPx, paddingXTotal);
-        
+
         // 根据高度计算字体大小
         const fontSizeByHeight = calculateFontSizeByHeight(boxHeightPx, paddingYTotal);
-        
+
         // 取两者较小值
         let fontSize = Math.min(fontSizeByWidth, fontSizeByHeight);
-        
+
         // 最后验证：确保文字完全在框内
         const finalTextWidth = measureTextWidth(item.text, fontSize);
         const finalTextHeight = fontSize * 1.2;
-        
+
         if (finalTextWidth > availableWidth) {
           fontSize = Math.max(8, (availableWidth / finalTextWidth) * fontSize * 0.95);
         }
         if (finalTextHeight > availableHeight) {
           fontSize = Math.max(8, (availableHeight / finalTextHeight) * fontSize * 0.95);
         }
-        
+
         fontSizeMap.set(`${item.text}-${x1}-${y1}`, fontSize);
       });
 
     return fontSizeMap;
   }, [detectionData, containerWidth, aspectRatio]);
 
+  const testDetection = async () => {
+    // 测试数据
+    const path = 'synerunify/2025/11/14/115096784300150784_invoice.jpg';
+    const detectionResponse = {
+      width: 1831,
+      height: 1180,
+      json: "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",
+      path: "synerunify/detection/2025/11/14/115019272073252864_invoice_17631125408342.png"
+    };
+    const decompressedJson = await decompressDetectionJson(detectionResponse.json);
+    const parsedDetection = parseDetectionVisualization(detectionResponse.width, detectionResponse.height, decompressedJson);
+
+    const detection_path = detectionResponse.path.split('/').slice(1).join('/');
+    setFormValues((prev) => ({
+      ...prev,
+      path,
+      detection_path: detection_path,
+      detection_json: decompressedJson,
+      file: prev.file ? { ...prev.file, status: 'done' } : prev.file,
+    }));
+    setDetectionData(parsedDetection ?? null);
+  }
+
   useEffect(() => {
-    uploadFile(null);
-  }, [uploadFile]);
+    testDetection();
+  }, []);
 
   return (
     <Box
@@ -570,23 +586,23 @@ export default function Detection() {
                     const top = (y1 / detectionData.height) * 100;
                     const widthPercent = ((x2 - x1) / detectionData.width) * 100;
                     const heightPercent = ((y2 - y1) / detectionData.height) * 100;
-                    
+
                     // 判断是否为竖长区域
                     const boxWidth = x2 - x1;
                     const boxHeight = y2 - y1;
                     const isVerticalBox = boxHeight > boxWidth;
                     const isHorizontalBox = boxWidth > boxHeight;
-                    
+
                     // 从缓存的 Map 中获取字体大小
                     const fontSize = boxFontSizes.get(`${item.text}-${x1}-${y1}`) || 12;
-                    
+
                     // 根据宽高比设置对齐方式
                     // width > height: 上下居中对齐，向左对齐
                     // 否则: 左右居中对齐，向上对齐
                     const alignItems = isHorizontalBox ? 'center' : 'flex-start';
                     const justifyContent = isHorizontalBox ? 'flex-start' : 'center';
                     const textAlign = isHorizontalBox ? 'left' : 'center';
-                    
+
                     return (
                       <Box
                         key={`${item.text}-${index}`}
