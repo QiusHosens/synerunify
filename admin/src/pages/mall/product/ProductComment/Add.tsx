@@ -1,4 +1,4 @@
-import { Box, Button, FormControl, Switch, TextField, Typography } from '@mui/material';
+import { Box, Button, FormControl, FormControlLabel, Switch, TextField, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
@@ -6,6 +6,7 @@ import { createMallProductComment, MallProductCommentRequest } from '@/api';
 import CustomizedDialog from '@/components/CustomizedDialog';
 
 interface FormValues {
+  id: number; // 评论编号
   user_id: number; // 评价人的用户编号，关联 MemberUserDO 的 id 编号
   user_nickname: string; // 评价人名称
   user_avatar: string; // 评价人头像
@@ -15,6 +16,7 @@ interface FormValues {
   spu_id: number; // 商品 SPU 编号，关联 ProductSpuDO 的 id
   spu_name: string; // 商品 SPU 名称
   sku_id: number; // 商品 SKU 编号，关联 ProductSkuDO 的 id 编号
+  file_id: number; // 图片ID
   sku_pic_url: string; // 图片地址
   sku_properties: string; // 属性数组，JSON 格式 [{propertId: , valueId: }, {propertId: , valueId: }]
   visible: boolean; // 是否可见，true:显示false:隐藏
@@ -23,6 +25,7 @@ interface FormValues {
   benefit_scores: number; // 服务星级 1-5 星
   content: string; // 评论内容
   pic_urls: string; // 评论图片地址数组
+  file_ids: string; // 评论图片id数组
   reply_status: boolean; // 商家是否回复
   reply_user_id: number; // 回复管理员编号，关联 AdminUserDO 的 id 编号
   reply_content: string; // 商家回复内容
@@ -31,7 +34,6 @@ interface FormValues {
 
 interface FormErrors {
   user_id?: string; // 评价人的用户编号，关联 MemberUserDO 的 id 编号
-  anonymous?: string; // 是否匿名
   spu_id?: string; // 商品 SPU 编号，关联 ProductSpuDO 的 id
   sku_id?: string; // 商品 SKU 编号，关联 ProductSkuDO 的 id 编号
   sku_pic_url?: string; // 图片地址
@@ -51,24 +53,27 @@ const MallProductCommentAdd = forwardRef(({ onSubmit }: MallProductCommentAddPro
   const [open, setOpen] = useState(false);
   const [maxWidth] = useState<DialogProps['maxWidth']>('sm');
   const [formValues, setFormValues] = useState<FormValues>({
+    id: 0,
     user_id: 0,
     user_nickname: '',
     user_avatar: '',
-    anonymous: '',
+    anonymous: false,
     order_id: 0,
     order_item_id: 0,
     spu_id: 0,
     spu_name: '',
     sku_id: 0,
+    file_id: 0,
     sku_pic_url: '',
     sku_properties: '',
-    visible: '',
+    visible: true,
     scores: 0,
     description_scores: 0,
     benefit_scores: 0,
     content: '',
     pic_urls: '',
-    reply_status: '',
+    file_ids: '',
+    reply_status: false,
     reply_user_id: 0,
     reply_content: '',
     reply_time: '',
@@ -89,10 +94,6 @@ const MallProductCommentAdd = forwardRef(({ onSubmit }: MallProductCommentAddPro
 
     if (!formValues.user_id && formValues.user_id != 0) {
       newErrors.user_id = t('page.mall.product.comment.error.user_id');
-    }
-
-    if (!formValues.anonymous.trim()) {
-      newErrors.anonymous = t('page.mall.product.comment.error.anonymous');
     }
 
     if (!formValues.spu_id && formValues.spu_id != 0) {
@@ -139,24 +140,27 @@ const MallProductCommentAdd = forwardRef(({ onSubmit }: MallProductCommentAddPro
 
   const reset = () => {
     setFormValues({
+      id: 0,
       user_id: 0,
       user_nickname: '',
       user_avatar: '',
-      anonymous: '',
+      anonymous: false,
       order_id: 0,
       order_item_id: 0,
       spu_id: 0,
       spu_name: '',
       sku_id: 0,
+      file_id: 0,
       sku_pic_url: '',
       sku_properties: '',
-      visible: '',
+      visible: true,
       scores: 0,
       description_scores: 0,
       benefit_scores: 0,
       content: '',
       pic_urls: '',
-      reply_status: '',
+      file_ids: '',
+      reply_status: false,
       reply_user_id: 0,
       reply_content: '',
       reply_time: '',
@@ -207,15 +211,8 @@ const MallProductCommentAdd = forwardRef(({ onSubmit }: MallProductCommentAddPro
 
     setFormValues(prev => ({
       ...prev,
-      [name]: checked ? 0 : 1
+      [name]: checked
     }));
-
-    if (errors[name as keyof FormErrors]) {
-      setErrors(prev => ({
-        ...prev,
-        [name]: undefined
-      }));
-    }
   };
 
   return (
@@ -268,15 +265,16 @@ const MallProductCommentAdd = forwardRef(({ onSubmit }: MallProductCommentAddPro
             value={formValues.user_avatar}
             onChange={handleInputChange}
           />
-          <TextField
-            required
-            size="small"
+          <FormControlLabel
+            sx={{ mt: 2 }}
+            control={
+              <Switch
+                name='anonymous'
+                checked={formValues.anonymous}
+                onChange={handleStatusChange}
+              />
+            }
             label={t("page.mall.product.comment.title.anonymous")}
-            name='anonymous'
-            value={formValues.anonymous}
-            onChange={handleInputChange}
-            error={!!errors.anonymous}
-            helperText={errors.anonymous}
           />
           <TextField
             size="small"
@@ -340,12 +338,16 @@ const MallProductCommentAdd = forwardRef(({ onSubmit }: MallProductCommentAddPro
             value={formValues.sku_properties}
             onChange={handleInputChange}
           />
-          <TextField
-            size="small"
+          <FormControlLabel
+            sx={{ mt: 2 }}
+            control={
+              <Switch
+                name='visible'
+                checked={formValues.visible}
+                onChange={handleStatusChange}
+              />
+            }
             label={t("page.mall.product.comment.title.visible")}
-            name='visible'
-            value={formValues.visible}
-            onChange={handleInputChange}
           />
           <TextField
             required
@@ -397,12 +399,16 @@ const MallProductCommentAdd = forwardRef(({ onSubmit }: MallProductCommentAddPro
             value={formValues.pic_urls}
             onChange={handleInputChange}
           />
-          <TextField
-            size="small"
+          <FormControlLabel
+            sx={{ mt: 2 }}
+            control={
+              <Switch
+                name='reply_status'
+                checked={formValues.reply_status}
+                onChange={handleStatusChange}
+              />
+            }
             label={t("page.mall.product.comment.title.reply_status")}
-            name='reply_status'
-            value={formValues.reply_status}
-            onChange={handleInputChange}
           />
           <TextField
             size="small"

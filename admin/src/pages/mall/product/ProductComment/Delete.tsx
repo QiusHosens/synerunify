@@ -57,7 +57,7 @@ const MallProductCommentDelete = forwardRef(({ onSubmit }: MallProductCommentDel
       }
     >
       <DialogContentText>
-        {t('global.description.delete', { name: mallProductComment && mallProductComment.name })}
+        {t('global.description.delete', { name: mallProductComment?.spu_name || '' })}
       </DialogContentText>
     </CustomizedDialog>
   )

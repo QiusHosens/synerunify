@@ -4,7 +4,7 @@ import { forwardRef, useCallback, useImperativeHandle, useState } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
 import { ErpInventoryCheckAttachmentRequest, ErpInventoryCheckDetailRequest, ErpInventoryCheckRequest, ErpInventoryCheckResponse, ErpProductResponse, ErpWarehouseResponse, getBaseErpInventoryCheck, listErpProduct, listErpWarehouse, updateErpInventoryCheck } from '@/api';
 import CustomizedDialog from '@/components/CustomizedDialog';
-import { Dayjs } from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 import CustomizedFileUpload, { DownloadProps, UploadFile } from '@/components/CustomizedFileUpload';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { downloadSystemFile, uploadSystemFile } from '@/api/system_file';
@@ -132,7 +132,7 @@ const ErpInventoryCheckEdit = forwardRef(({ onSubmit }: ErpInventoryCheckEditPro
       details,
     })
     setErpInventoryCheck(erpInventoryCheckRequest);
-    setCheckDate(new AdapterDayjs().dayjs(result.check_date));
+    setCheckDate(dayjs(result.check_date));
     // 设置图片
     for (const attachment of result.attachments) {
       const file_id = attachment.file_id;

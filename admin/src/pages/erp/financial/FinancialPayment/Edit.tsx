@@ -5,7 +5,7 @@ import { DialogProps } from '@mui/material/Dialog';
 import { ErpInboundOrderResponse, ErpPaymentAttachmentRequest, ErpPaymentDetailRequest, ErpPaymentRequest, ErpPaymentResponse, ErpPurchaseReturnResponse, ErpSettlementAccountResponse, ErpSupplierResponse, getBaseErpPayment, listErpSettlementAccount, listErpSupplier, listSupplierErpInboundOrder, listSupplierErpPurchaseReturn, updateErpPayment } from '@/api';
 import CustomizedDialog from '@/components/CustomizedDialog';
 import CustomizedFileUpload, { DownloadProps, UploadFile } from '@/components/CustomizedFileUpload';
-import { Dayjs } from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { downloadSystemFile, uploadSystemFile } from '@/api/system_file';
 import { PickerValue } from '@mui/x-date-pickers/internals';
@@ -156,7 +156,7 @@ const ErpPaymentEdit = forwardRef(({ onSubmit }: ErpPaymentEditProps, ref) => {
       details,
     })
     setErpPayment(erpPaymentRequest);
-    setPaymentDate(new AdapterDayjs().dayjs(result.payment_date));
+    setPaymentDate(dayjs(result.payment_date));
     // 设置图片
     for (const attachment of result.attachments) {
       const file_id = attachment.file_id;
