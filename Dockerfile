@@ -57,6 +57,7 @@ COPY --from=build-server /app/server/target/release/system-server ./system-serve
 COPY --from=build-server /app/server/target/release/logger-server ./logger-server
 COPY --from=build-server /app/server/target/release/file-server ./file-server
 COPY --from=build-server /app/server/target/release/erp-server ./erp-server
+COPY --from=build-server /app/server/target/release/mall-server ./mall-server
 COPY --from=build-server /app/server/regexes.yaml ./regexes.yaml
 
 COPY --from=build-captcha /app/captcha-service/captcha-service .
@@ -70,6 +71,6 @@ COPY entrypoint.sh /app/entrypoint.sh
 
 RUN ["chmod", "+x", "./entrypoint.sh"]
 
-EXPOSE 80 9000 9010 9020 9030 8080 50051
+EXPOSE 80 9000 9010 9020 9030 9040 8080 50051
 
 ENTRYPOINT ["/app/entrypoint.sh"]
