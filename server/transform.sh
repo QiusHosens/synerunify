@@ -14,3 +14,7 @@ rm service-file.tar
 docker save -o service-erp.tar synerunify/service-erp
 ctr -n k8s.io images import service-erp.tar
 rm service-erp.tar
+
+docker save -o service-mall.tar synerunify/service-mall
+ctr -n k8s.io images import service-mall.tar
+rm service-mall.tar

@@ -4,7 +4,7 @@ import { forwardRef, useCallback, useImperativeHandle, useState } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
 import { ErpSalesOrderDetailBaseResponse, ErpSalesOrderInfoResponse, ErpSalesReturnAttachmentRequest, ErpSalesReturnDetailRequest, ErpSalesReturnRequest, ErpSalesReturnResponse, ErpSettlementAccountResponse, ErpWarehouseResponse, getBaseErpSalesReturn, getErpSalesOrderInfo, listErpSettlementAccount, listErpWarehouse, updateErpSalesReturn } from '@/api';
 import CustomizedDialog from '@/components/CustomizedDialog';
-import { Dayjs } from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 import CustomizedFileUpload, { DownloadProps, UploadFile } from '@/components/CustomizedFileUpload';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { downloadSystemFile, uploadSystemFile } from '@/api/system_file';
@@ -143,7 +143,7 @@ const ErpSalesReturnEdit = forwardRef(({ onSubmit }: ErpSalesReturnEditProps, re
     setErpSalesReturnRequest({
       ...result,
     })
-    setReturnDate(new AdapterDayjs().dayjs(result.return_date));
+    setReturnDate(dayjs(result.return_date));
     // 设置图片
     for (const attachment of result.attachments) {
       const file_id = attachment.file_id;

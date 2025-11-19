@@ -4,7 +4,7 @@ import { forwardRef, useCallback, useImperativeHandle, useState } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
 import { ErpInboundOrderAttachmentRequest, ErpInboundOrderBaseResponse, ErpInboundOrderRequest, ErpInboundOrderResponse, ErpProductResponse, ErpSettlementAccountResponse, ErpSupplierResponse, ErpWarehouseResponse, getBaseOtherErpInboundOrder, listErpProduct, listErpSettlementAccount, listErpSupplier, listErpWarehouse, updateOtherErpInboundOrder } from '@/api';
 import CustomizedDialog from '@/components/CustomizedDialog';
-import { Dayjs } from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import CustomizedFileUpload, { DownloadProps, UploadFile } from '@/components/CustomizedFileUpload';
 import { downloadSystemFile, uploadSystemFile } from '@/api/system_file';
@@ -120,7 +120,7 @@ const ErpInboundOrderEdit = forwardRef(({ onSubmit }: ErpInboundOrderEditProps, 
       ...result,
       details,
     })
-    setInboundDate(new AdapterDayjs().dayjs(result.inbound_date));
+    setInboundDate(dayjs(result.inbound_date));
     // 设置图片
     for (const attachment of result.attachments) {
       const file_id = attachment.file_id;

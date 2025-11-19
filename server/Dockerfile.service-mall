@@ -1,0 +1,33 @@
+# build mall
+FROM rust AS builder
+
+RUN apt update && apt install -y musl-tools musl-dev curl unzip
+RUN update-ca-certificates
+
+WORKDIR /app
+
+# install protoc
+ARG PROTOC_VERSION=31.1
+RUN curl -Lo protoc.zip "https://github.com/protocolbuffers/protobuf/releases/download/v${PROTOC_VERSION}/protoc-${PROTOC_VERSION}-linux-x86_64.zip" && \
+    unzip protoc.zip -d /usr/local && \
+    rm protoc.zip && \
+    chmod +x /usr/local/bin/protoc
+
+COPY ./ ./
+
+RUN cd . && \
+    cargo build --release --bin mall-server
+
+# build final
+FROM debian:bookworm-slim
+
+WORKDIR /app
+
+RUN apt-get update && apt-get install -y libssl3
+
+COPY --from=builder /app/target/release/mall-server ./mall-server
+COPY --from=builder /app/regexes.yaml ./regexes.yaml
+
+EXPOSE 8080
+
+CMD ["/app/mall-server"]

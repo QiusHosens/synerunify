@@ -5,7 +5,7 @@ import { DialogProps } from '@mui/material/Dialog';
 import { ErpProductResponse, ErpPurchaseOrderAttachmentRequest, ErpPurchaseOrderDetailRequest, ErpPurchaseOrderRequest, ErpPurchaseOrderResponse, ErpSettlementAccountResponse, ErpSupplierResponse, getErpPurchaseOrderBase, listErpProduct, listErpSettlementAccount, listErpSupplier, updateErpPurchaseOrder } from '@/api';
 import CustomizedDialog from '@/components/CustomizedDialog';
 import CustomizedTag from '@/components/CustomizedTag';
-import { Dayjs } from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 import AddCircleSharpIcon from '@mui/icons-material/AddCircleSharp';
 import DeleteIcon from '@/assets/image/svg/delete.svg';
 import { PickerValue } from '@mui/x-date-pickers/internals';
@@ -159,7 +159,7 @@ const ErpPurchaseOrderEdit = forwardRef(({ onSubmit }: ErpPurchaseOrderEditProps
       purchase_products,
     })
     setErpPurchaseOrder(erpPurchaseOrder)
-    setPurchaseDate(new AdapterDayjs().dayjs(result.purchase_date));
+    setPurchaseDate(dayjs(result.purchase_date));
     // 设置图片
     for (const attachment of result.purchase_attachment) {
       const file_id = attachment.file_id;

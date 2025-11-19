@@ -1,4 +1,4 @@
-import { Box, Button, FormControl, Switch, TextField, Typography } from '@mui/material';
+import { Box, Button, FormControl, FormControlLabel, Switch, TextField, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 import { DialogProps } from '@mui/material/Dialog';
@@ -7,7 +7,6 @@ import CustomizedDialog from '@/components/CustomizedDialog';
 
 interface FormErrors {
   user_id?: string; // 评价人的用户编号，关联 MemberUserDO 的 id 编号
-  anonymous?: string; // 是否匿名
   spu_id?: string; // 商品 SPU 编号，关联 ProductSpuDO 的 id
   sku_id?: string; // 商品 SKU 编号，关联 ProductSkuDO 的 id 编号
   sku_pic_url?: string; // 图片地址
@@ -21,31 +20,38 @@ interface MallProductCommentEditProps {
   onSubmit: () => void;
 }
 
+type MallProductCommentForm = MallProductCommentRequest & {
+  sku_pic_url?: string;
+  pic_urls?: string;
+};
+
 const MallProductCommentEdit = forwardRef(({ onSubmit }: MallProductCommentEditProps, ref) => {
   const { t } = useTranslation();
 
   const [open, setOpen] = useState(false);
   const [maxWidth] = useState<DialogProps['maxWidth']>('sm');
-  const [mallProductComment, setMallProductComment] = useState<MallProductCommentRequest>({
+  const [mallProductComment, setMallProductComment] = useState<MallProductCommentForm>({
     id: 0,
     user_id: 0,
     user_nickname: '',
     user_avatar: '',
-    anonymous: '',
+    anonymous: false,
     order_id: 0,
     order_item_id: 0,
     spu_id: 0,
     spu_name: '',
     sku_id: 0,
+    file_id: 0,
     sku_pic_url: '',
     sku_properties: '',
-    visible: '',
+    visible: true,
     scores: 0,
     description_scores: 0,
     benefit_scores: 0,
     content: '',
     pic_urls: '',
-    reply_status: '',
+    file_ids: '',
+    reply_status: false,
     reply_user_id: 0,
     reply_content: '',
     reply_time: '',
@@ -69,10 +75,6 @@ const MallProductCommentEdit = forwardRef(({ onSubmit }: MallProductCommentEditP
       newErrors.user_id = t('page.mall.product.comment.error.user_id');
     }
 
-    if (!mallProductComment.anonymous.trim()) {
-      newErrors.anonymous = t('page.mall.product.comment.error.anonymous');
-    }
-
     if (!mallProductComment.spu_id && mallProductComment.spu_id != 0) {
       newErrors.spu_id = t('page.mall.product.comment.error.spu_id');
     }
@@ -81,9 +83,9 @@ const MallProductCommentEdit = forwardRef(({ onSubmit }: MallProductCommentEditP
       newErrors.sku_id = t('page.mall.product.comment.error.sku_id');
     }
 
-    if (!mallProductComment.sku_pic_url.trim()) {
-      newErrors.sku_pic_url = t('page.mall.product.comment.error.sku_pic_url');
-    }
+    // if (!mallProductComment.sku_pic_url.trim()) {
+    //   newErrors.sku_pic_url = t('page.mall.product.comment.error.sku_pic_url');
+    // }
 
     if (!mallProductComment.scores && mallProductComment.scores != 0) {
       newErrors.scores = t('page.mall.product.comment.error.scores');
@@ -156,7 +158,7 @@ const MallProductCommentEdit = forwardRef(({ onSubmit }: MallProductCommentEditP
 
     setMallProductComment(prev => ({
       ...prev,
-      [name]: checked ? 0 : 1
+      [name]: checked
     }));
 
     if (errors[name as keyof FormErrors]) {
@@ -216,15 +218,16 @@ const MallProductCommentEdit = forwardRef(({ onSubmit }: MallProductCommentEditP
             value={mallProductComment.user_avatar}
             onChange={handleInputChange}
           />
-          <TextField
-            required
-            size="small"
+          <FormControlLabel
+            sx={{ mt: 2 }}
+            control={
+              <Switch
+                name='anonymous'
+                checked={mallProductComment.anonymous}
+                onChange={handleStatusChange}
+              />
+            }
             label={t("page.mall.product.comment.title.anonymous")}
-            name='anonymous'
-            value={mallProductComment.anonymous}
-            onChange={handleInputChange}
-            error={!!errors.anonymous}
-            helperText={errors.anonymous}
           />
           <TextField
             size="small"
@@ -288,12 +291,16 @@ const MallProductCommentEdit = forwardRef(({ onSubmit }: MallProductCommentEditP
             value={mallProductComment.sku_properties}
             onChange={handleInputChange}
           />
-          <TextField
-            size="small"
+          <FormControlLabel
+            sx={{ mt: 2 }}
+            control={
+              <Switch
+                name='visible'
+                checked={mallProductComment.visible}
+                onChange={handleStatusChange}
+              />
+            }
             label={t("page.mall.product.comment.title.visible")}
-            name='visible'
-            value={mallProductComment.visible}
-            onChange={handleInputChange}
           />
           <TextField
             required
@@ -345,12 +352,16 @@ const MallProductCommentEdit = forwardRef(({ onSubmit }: MallProductCommentEditP
             value={mallProductComment.pic_urls}
             onChange={handleInputChange}
           />
-          <TextField
-            size="small"
+          <FormControlLabel
+            sx={{ mt: 2 }}
+            control={
+              <Switch
+                name='reply_status'
+                checked={mallProductComment.reply_status}
+                onChange={handleStatusChange}
+              />
+            }
             label={t("page.mall.product.comment.title.reply_status")}
-            name='reply_status'
-            value={mallProductComment.reply_status}
-            onChange={handleInputChange}
           />
           <TextField
             size="small"

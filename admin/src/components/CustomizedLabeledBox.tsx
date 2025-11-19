@@ -89,10 +89,10 @@ const CustomizedLabeledBox = ({
                 : {
 
                   // filled: 顶部留一条边，近似 TextField filled 样式
-                  borderTopLeftRadius: theme.shape.borderRadius * radius,
-                  borderTopRightRadius: theme.shape.borderRadius * radius,
-                  borderBottomLeftRadius: theme.shape.borderRadius * radius,
-                  borderBottomRightRadius: theme.shape.borderRadius * radius,
+                  borderTopLeftRadius: Number(theme.shape.borderRadius) * radius,
+                  borderTopRightRadius: Number(theme.shape.borderRadius) * radius,
+                  borderBottomLeftRadius: Number(theme.shape.borderRadius) * radius,
+                  borderBottomRightRadius: Number(theme.shape.borderRadius) * radius,
                   borderTop: '1px solid',
                   borderLeft: '1px solid',
                   borderRight: '1px solid',

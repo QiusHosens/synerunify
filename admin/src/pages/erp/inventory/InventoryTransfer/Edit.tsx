@@ -5,7 +5,7 @@ import { DialogProps } from '@mui/material/Dialog';
 import { ErpInventoryTransferAttachmentRequest, ErpInventoryTransferDetailRequest, ErpInventoryTransferRequest, ErpInventoryTransferResponse, ErpProductResponse, ErpWarehouseResponse, getBaseErpInventoryTransfer, listErpProduct, listErpWarehouse, updateErpInventoryTransfer } from '@/api';
 import CustomizedDialog from '@/components/CustomizedDialog';
 import { useMessage } from '@/components/GlobalMessage';
-import { Dayjs } from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 import CustomizedFileUpload, { DownloadProps, UploadFile } from '@/components/CustomizedFileUpload';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { downloadSystemFile, uploadSystemFile } from '@/api/system_file';
@@ -137,7 +137,7 @@ const ErpInventoryTransferEdit = forwardRef(({ onSubmit }: ErpInventoryTransferE
       details,
     })
     setErpInventoryTransfer(erpInventoryTransferRequest);
-    setTransferDate(new AdapterDayjs().dayjs(result.transfer_date));
+    setTransferDate(dayjs(result.transfer_date));
     // 设置图片
     for (const attachment of result.attachments) {
       const file_id = attachment.file_id;
