@@ -14,3 +14,4 @@ paddlepaddle==3.2.1
 paddlex==3.3.9
 numpy==2.3.4
 python-dotenv==1.0.1
+potracer==0.0.4
