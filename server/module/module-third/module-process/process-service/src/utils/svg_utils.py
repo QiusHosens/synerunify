@@ -319,32 +319,113 @@ def _find_color_regions(img_array: np.ndarray, min_area: int = 100, color_tolera
     
     # 改进策略：先检测所有轮廓（包括内部被包含的区域），然后对每个轮廓单独计算颜色
     # 这样可以更准确地识别被包含的区域（如圆形内的星星）
+    # 内孔中可能包含独立区域，需要单独处理
     
     # 使用RETR_TREE检测所有轮廓（包括内部被包含的区域）
     contours, hierarchy = cv2.findContours(non_white_mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     
-    # 处理所有轮廓
+    if hierarchy is None or len(contours) == 0:
+        return regions
+    
+    # 处理所有轮廓，考虑外圆和内孔的关系
+    # 内孔中可能包含独立区域，不能直接排除
+    processed_indices = set()  # 记录已处理的轮廓索引
+    
     for i, contour in enumerate(contours):
         if cv2.contourArea(contour) < min_area:
             continue
+        
+        if i in processed_indices:
+            continue
+        
+        # 检查是否有子轮廓（内孔）
+        child_idx = hierarchy[0][i][2]
+        has_children = child_idx >= 0
         
         # 创建该轮廓的掩码
         contour_mask = np.zeros((h, w), dtype=np.uint8)
         cv2.fillPoly(contour_mask, [contour], 255)
         
-        # 提取该轮廓区域的实际颜色
+        # 收集子轮廓（内孔），判断哪些是真正的孔，哪些是独立区域
+        holes = []  # 真正的内孔（需要排除的）
+        
+        if has_children:
+            current_child = child_idx
+            while current_child >= 0:
+                child_contour = contours[current_child]
+                if cv2.contourArea(child_contour) >= min_area:
+                    # 检查内孔内部是否有颜色内容
+                    child_mask = np.zeros((h, w), dtype=np.uint8)
+                    cv2.fillPoly(child_mask, [child_contour], 255)
+                    child_pixels = rgb_img[child_mask > 0]
+                    
+                    if len(child_pixels) > 0:
+                        # 检查内孔内部是否有非白色内容
+                        avg_color = np.mean(child_pixels, axis=0)
+                        # 如果平均颜色不是白色（RGB值都小于240），说明是独立区域，不排除
+                        is_white = (avg_color[0] > 240 and avg_color[1] > 240 and avg_color[2] > 240)
+                        
+                        if is_white:
+                            # 这是真正的内孔，需要排除
+                            cv2.fillPoly(contour_mask, [child_contour], 0)
+                            holes.append(child_contour)
+                        # 如果不是白色，说明是独立区域，不排除，稍后会单独处理
+                    else:
+                        # 没有像素，可能是真正的孔
+                        cv2.fillPoly(contour_mask, [child_contour], 0)
+                        holes.append(child_contour)
+                
+                # 移动到下一个同级子轮廓
+                current_child = hierarchy[0][current_child][0]
+        
+        # 提取该轮廓区域的实际颜色（排除真正的内孔区域）
         contour_pixels = rgb_img[contour_mask > 0]
-        if len(contour_pixels) == 0:
-            continue
+        if len(contour_pixels) > 0:
+            # 计算主要颜色
+            dominant_color = _get_dominant_color(contour_pixels)
+            
+            regions.append({
+                'mask': contour_mask,
+                'color': dominant_color,
+                'contour': contour,
+                'holes': holes  # 真正的内孔列表
+            })
+            
+            processed_indices.add(i)
         
-        # 计算主要颜色
-        dominant_color = _get_dominant_color(contour_pixels)
-        
-        regions.append({
-            'mask': contour_mask,
-            'color': dominant_color,
-            'contour': contour
-        })
+        # 处理内孔中的独立区域（递归处理子轮廓）
+        if has_children:
+            current_child = child_idx
+            while current_child >= 0:
+                if current_child not in processed_indices:
+                    child_contour = contours[current_child]
+                    child_mask = np.zeros((h, w), dtype=np.uint8)
+                    cv2.fillPoly(child_mask, [child_contour], 255)
+                    
+                    # 检查是否有子轮廓（嵌套的内孔）
+                    child_child_idx = hierarchy[0][current_child][2]
+                    child_holes = []
+                    if child_child_idx >= 0:
+                        current_grandchild = child_child_idx
+                        while current_grandchild >= 0:
+                            grandchild_contour = contours[current_grandchild]
+                            if cv2.contourArea(grandchild_contour) >= min_area:
+                                cv2.fillPoly(child_mask, [grandchild_contour], 0)
+                                child_holes.append(grandchild_contour)
+                            current_grandchild = hierarchy[0][current_grandchild][0]
+                    
+                    child_pixels = rgb_img[child_mask > 0]
+                    if len(child_pixels) > 0:
+                        child_color = _get_dominant_color(child_pixels)
+                        regions.append({
+                            'mask': child_mask,
+                            'color': child_color,
+                            'contour': child_contour,
+                            'holes': child_holes
+                        })
+                        processed_indices.add(current_child)
+                
+                current_child = hierarchy[0][current_child][0]
     
     return regions
 
@@ -353,6 +434,7 @@ def _find_color_regions_simple(img_array: np.ndarray, min_area: int = 100, color
     """
     简单的颜色区域检测方法（不使用K-means）
     直接使用轮廓检测，能够识别被包含的内部区域
+    处理外圆和内孔的情况
     """
     if not CV2_AVAILABLE:
         raise ImportError("OpenCV is required for color region detection")
@@ -370,46 +452,129 @@ def _find_color_regions_simple(img_array: np.ndarray, min_area: int = 100, color
     # 使用RETR_TREE检测所有轮廓（包括内部被包含的区域）
     contours, hierarchy = cv2.findContours(non_white_mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     
-    # 处理所有轮廓
+    if hierarchy is None or len(contours) == 0:
+        return regions
+    
+    # 处理所有轮廓，考虑外圆和内孔的关系
+    # 内孔中可能包含独立区域，不能直接排除
+    processed_indices = set()  # 记录已处理的轮廓索引
+    
     for i, contour in enumerate(contours):
         if cv2.contourArea(contour) < min_area:
             continue
+        
+        if i in processed_indices:
+            continue
+        
+        # 检查是否有子轮廓（内孔）
+        child_idx = hierarchy[0][i][2]
+        has_children = child_idx >= 0
         
         # 创建该轮廓的掩码
         contour_mask = np.zeros((h, w), dtype=np.uint8)
         cv2.fillPoly(contour_mask, [contour], 255)
         
-        # 提取该轮廓区域的实际颜色
+        # 收集子轮廓（内孔），判断哪些是真正的孔，哪些是独立区域
+        holes = []  # 真正的内孔（需要排除的）
+        
+        if has_children:
+            current_child = child_idx
+            while current_child >= 0:
+                child_contour = contours[current_child]
+                if cv2.contourArea(child_contour) >= min_area:
+                    # 检查内孔内部是否有颜色内容
+                    child_mask = np.zeros((h, w), dtype=np.uint8)
+                    cv2.fillPoly(child_mask, [child_contour], 255)
+                    child_pixels = rgb_img[child_mask > 0]
+                    
+                    if len(child_pixels) > 0:
+                        # 检查内孔内部是否有非白色内容
+                        avg_color = np.mean(child_pixels, axis=0)
+                        # 如果平均颜色不是白色（RGB值都小于240），说明是独立区域，不排除
+                        is_white = (avg_color[0] > 240 and avg_color[1] > 240 and avg_color[2] > 240)
+                        
+                        if is_white:
+                            # 这是真正的内孔，需要排除
+                            cv2.fillPoly(contour_mask, [child_contour], 0)
+                            holes.append(child_contour)
+                        # 如果不是白色，说明是独立区域，不排除，稍后会单独处理
+                    else:
+                        # 没有像素，可能是真正的孔
+                        cv2.fillPoly(contour_mask, [child_contour], 0)
+                        holes.append(child_contour)
+                
+                # 移动到下一个同级子轮廓
+                current_child = hierarchy[0][current_child][0]
+        
+        # 提取该轮廓区域的实际颜色（排除真正的内孔区域）
         contour_pixels = rgb_img[contour_mask > 0]
-        if len(contour_pixels) == 0:
-            continue
+        if len(contour_pixels) > 0:
+            # 计算主要颜色
+            dominant_color = _get_dominant_color(contour_pixels)
+            
+            regions.append({
+                'mask': contour_mask,
+                'color': dominant_color,
+                'contour': contour,
+                'holes': holes  # 真正的内孔列表
+            })
+            
+            processed_indices.add(i)
         
-        # 计算主要颜色
-        dominant_color = _get_dominant_color(contour_pixels)
-        
-        regions.append({
-            'mask': contour_mask,
-            'color': dominant_color,
-            'contour': contour
-        })
+        # 处理内孔中的独立区域（递归处理子轮廓）
+        if has_children:
+            current_child = child_idx
+            while current_child >= 0:
+                if current_child not in processed_indices:
+                    child_contour = contours[current_child]
+                    child_mask = np.zeros((h, w), dtype=np.uint8)
+                    cv2.fillPoly(child_mask, [child_contour], 255)
+                    
+                    # 检查是否有子轮廓（嵌套的内孔）
+                    child_child_idx = hierarchy[0][current_child][2]
+                    child_holes = []
+                    if child_child_idx >= 0:
+                        current_grandchild = child_child_idx
+                        while current_grandchild >= 0:
+                            grandchild_contour = contours[current_grandchild]
+                            if cv2.contourArea(grandchild_contour) >= min_area:
+                                cv2.fillPoly(child_mask, [grandchild_contour], 0)
+                                child_holes.append(grandchild_contour)
+                            current_grandchild = hierarchy[0][current_grandchild][0]
+                    
+                    child_pixels = rgb_img[child_mask > 0]
+                    if len(child_pixels) > 0:
+                        child_color = _get_dominant_color(child_pixels)
+                        regions.append({
+                            'mask': child_mask,
+                            'color': child_color,
+                            'contour': child_contour,
+                            'holes': child_holes
+                        })
+                        processed_indices.add(current_child)
+                
+                current_child = hierarchy[0][current_child][0]
     
     return regions
 
 
-def _contour_to_svg_path(contour: np.ndarray) -> str:
+def _contour_to_svg_path(contour: np.ndarray, holes: list = None) -> str:
     """
-    将OpenCV轮廓转换为SVG路径字符串
+    将OpenCV轮廓转换为SVG路径字符串，支持内孔
     
     Args:
-        contour: OpenCV轮廓点数组
+        contour: OpenCV轮廓点数组（外轮廓）
+        holes: 内孔轮廓列表（可选）
         
     Returns:
-        SVG路径字符串
+        SVG路径字符串，包含外轮廓和内孔
     """
     if len(contour) < 3:
         return ""
     
     path_parts = []
+    
+    # 添加外轮廓
     for i, point in enumerate(contour):
         x, y = point[0]
         if i == 0:
@@ -417,6 +582,19 @@ def _contour_to_svg_path(contour: np.ndarray) -> str:
         else:
             path_parts.append(f"L {x},{y}")
     path_parts.append("Z")
+    
+    # 添加内孔（如果有）
+    if holes:
+        for hole in holes:
+            if len(hole) < 3:
+                continue
+            for i, point in enumerate(hole):
+                x, y = point[0]
+                if i == 0:
+                    path_parts.append(f"M {x},{y}")
+                else:
+                    path_parts.append(f"L {x},{y}")
+            path_parts.append("Z")
     
     return " ".join(path_parts)
 
@@ -492,14 +670,16 @@ def process_image_and_generate_svg(
             color = region['color']
             color_hex = _rgb_to_hex(color)
             
-            # 将轮廓转换为SVG路径
-            path_data = _contour_to_svg_path(contour)
+            # 将轮廓转换为SVG路径（包含外轮廓和内孔）
+            holes = region.get('holes', [])
+            path_data = _contour_to_svg_path(contour, holes)
             if path_data:
                 svg_paths.append({
                     'path': path_data,
                     'fill': color_hex,
                     'stroke': color_hex,
-                    'stroke_width': stroke_width
+                    'stroke_width': stroke_width,
+                    'has_holes': len(holes) > 0
                 })
         
         # 7. 构建完整的SVG文档
@@ -510,6 +690,9 @@ def process_image_and_generate_svg(
             svg_content += f'fill="{svg_path_info["fill"]}" '
             svg_content += f'stroke="{svg_path_info["stroke"]}" '
             svg_content += f'stroke-width="{svg_path_info["stroke_width"]}" '
+            # 如果有内孔，使用evenodd填充规则
+            if svg_path_info.get('has_holes', False):
+                svg_content += f'fill-rule="evenodd" '
             svg_content += f'stroke-linejoin="round" stroke-linecap="round"/>\n'
         
         svg_content += '</svg>'
@@ -603,13 +786,15 @@ def process_image_bytes_and_generate_svg(
             color = region['color']
             color_hex = _rgb_to_hex(color)
             
-            path_data = _contour_to_svg_path(contour)
+            holes = region.get('holes', [])  # 获取内孔列表
+            path_data = _contour_to_svg_path(contour, holes)
             if path_data:
                 svg_paths.append({
                     'path': path_data,
                     'fill': color_hex,
                     'stroke': color_hex,
-                    'stroke_width': stroke_width
+                    'stroke_width': stroke_width,
+                    'has_holes': len(holes) > 0
                 })
         
         # 构建SVG文档
@@ -620,6 +805,9 @@ def process_image_bytes_and_generate_svg(
             svg_content += f'fill="{svg_path_info["fill"]}" '
             svg_content += f'stroke="{svg_path_info["stroke"]}" '
             svg_content += f'stroke-width="{svg_path_info["stroke_width"]}" '
+            # 如果有内孔，使用evenodd填充规则
+            if svg_path_info.get('has_holes', False):
+                svg_content += f'fill-rule="evenodd" '
             svg_content += f'stroke-linejoin="round" stroke-linecap="round"/>\n'
         
         svg_content += '</svg>'
