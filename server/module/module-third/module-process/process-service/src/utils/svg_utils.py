@@ -558,13 +558,14 @@ def _find_color_regions_simple(img_array: np.ndarray, min_area: int = 100, color
     return regions
 
 
-def _contour_to_svg_path(contour: np.ndarray, holes: list = None) -> str:
+def _contour_to_svg_path(contour: np.ndarray, holes: list = None, scale: float = 1.0) -> str:
     """
     将OpenCV轮廓转换为SVG路径字符串，支持内孔
     
     Args:
         contour: OpenCV轮廓点数组（外轮廓）
         holes: 内孔轮廓列表（可选）
+        scale: 缩放因子，用于缩小或放大坐标（默认1.0）
         
     Returns:
         SVG路径字符串，包含外轮廓和内孔
@@ -577,10 +578,12 @@ def _contour_to_svg_path(contour: np.ndarray, holes: list = None) -> str:
     # 添加外轮廓
     for i, point in enumerate(contour):
         x, y = point[0]
+        x_scaled = x * scale
+        y_scaled = y * scale
         if i == 0:
-            path_parts.append(f"M {x},{y}")
+            path_parts.append(f"M {x_scaled},{y_scaled}")
         else:
-            path_parts.append(f"L {x},{y}")
+            path_parts.append(f"L {x_scaled},{y_scaled}")
     path_parts.append("Z")
     
     # 添加内孔（如果有）
@@ -590,10 +593,12 @@ def _contour_to_svg_path(contour: np.ndarray, holes: list = None) -> str:
                 continue
             for i, point in enumerate(hole):
                 x, y = point[0]
+                x_scaled = x * scale
+                y_scaled = y * scale
                 if i == 0:
-                    path_parts.append(f"M {x},{y}")
+                    path_parts.append(f"M {x_scaled},{y_scaled}")
                 else:
-                    path_parts.append(f"L {x},{y}")
+                    path_parts.append(f"L {x_scaled},{y_scaled}")
             path_parts.append("Z")
     
     return " ".join(path_parts)
@@ -664,26 +669,32 @@ def process_image_and_generate_svg(
         # 这样可以确保内部区域显示在外部区域之上
         regions_sorted = sorted(regions, key=lambda r: cv2.contourArea(r['contour']), reverse=True)
         
+        # 缩小4倍（因为之前用EDSR放大了4倍）
+        scale_factor = 0.25
+        svg_w = int(w * scale_factor)
+        svg_h = int(h * scale_factor)
+        svg_stroke_width = stroke_width * scale_factor
+        
         svg_paths = []
         for region in regions_sorted:
             contour = region['contour']
             color = region['color']
             color_hex = _rgb_to_hex(color)
             
-            # 将轮廓转换为SVG路径（包含外轮廓和内孔）
+            # 将轮廓转换为SVG路径（包含外轮廓和内孔），坐标缩小4倍
             holes = region.get('holes', [])
-            path_data = _contour_to_svg_path(contour, holes)
+            path_data = _contour_to_svg_path(contour, holes, scale_factor)
             if path_data:
                 svg_paths.append({
                     'path': path_data,
                     'fill': color_hex,
                     'stroke': color_hex,
-                    'stroke_width': stroke_width,
+                    'stroke_width': svg_stroke_width,
                     'has_holes': len(holes) > 0
                 })
         
         # 7. 构建完整的SVG文档
-        svg_content = f'<svg xmlns="http://www.w3.org/2000/svg" width="{w}" height="{h}">\n'
+        svg_content = f'<svg xmlns="http://www.w3.org/2000/svg" width="{svg_w}" height="{svg_h}">\n'
         
         for svg_path_info in svg_paths:
             svg_content += f'  <path d="{svg_path_info["path"]}" '
@@ -705,7 +716,7 @@ def process_image_and_generate_svg(
             f.write(svg_content)
         
         print(f"Successfully processed image and generated SVG: {input_path} -> {output_path}")
-        print(f"Original size: {original_w}x{original_h}, Upscaled size: {w}x{h}")
+        print(f"Original size: {original_w}x{original_h}, Upscaled size: {w}x{h}, SVG size: {svg_w}x{svg_h}")
         print(f"Found {len(svg_paths)} color regions")
         return True
         
@@ -780,6 +791,12 @@ def process_image_bytes_and_generate_svg(
         # 按轮廓面积排序，先绘制大的（外部）轮廓，再绘制小的（内部）轮廓
         regions_sorted = sorted(regions, key=lambda r: cv2.contourArea(r['contour']), reverse=True)
         
+        # 缩小4倍（因为之前用EDSR放大了4倍）
+        scale_factor = 0.25
+        svg_w = int(w * scale_factor)
+        svg_h = int(h * scale_factor)
+        svg_stroke_width = stroke_width * scale_factor
+        
         svg_paths = []
         for region in regions_sorted:
             contour = region['contour']
@@ -787,18 +804,19 @@ def process_image_bytes_and_generate_svg(
             color_hex = _rgb_to_hex(color)
             
             holes = region.get('holes', [])  # 获取内孔列表
-            path_data = _contour_to_svg_path(contour, holes)
+            # 将轮廓转换为SVG路径（包含外轮廓和内孔），坐标缩小4倍
+            path_data = _contour_to_svg_path(contour, holes, scale_factor)
             if path_data:
                 svg_paths.append({
                     'path': path_data,
                     'fill': color_hex,
                     'stroke': color_hex,
-                    'stroke_width': stroke_width,
+                    'stroke_width': svg_stroke_width,
                     'has_holes': len(holes) > 0
                 })
         
         # 构建SVG文档
-        svg_content = f'<svg xmlns="http://www.w3.org/2000/svg" width="{w}" height="{h}">\n'
+        svg_content = f'<svg xmlns="http://www.w3.org/2000/svg" width="{svg_w}" height="{svg_h}">\n'
         
         for svg_path_info in svg_paths:
             svg_content += f'  <path d="{svg_path_info["path"]}" '
@@ -820,7 +838,7 @@ def process_image_bytes_and_generate_svg(
             f.write(svg_content)
         
         print(f"Successfully processed image bytes and generated SVG: {output_path}")
-        print(f"Original size: {original_w}x{original_h}, Upscaled size: {w}x{h}")
+        print(f"Original size: {original_w}x{original_h}, Upscaled size: {w}x{h}, SVG size: {svg_w}x{svg_h}")
         print(f"Found {len(svg_paths)} color regions")
         return True
         
