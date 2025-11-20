@@ -1,4 +1,4 @@
-from PIL import Image
+from PIL import Image, ImageFilter, ImageEnhance
 import numpy as np
 from pathlib import Path
 
@@ -18,10 +18,147 @@ except ImportError:
     print("Warning: scikit-learn is not installed. Install it for color clustering:")
     print("  pip install scikit-learn")
 
+# Global variable to store EDSR model
+_EDSR_MODEL = None
+_EDSR_MODEL_PATH = '../../models/EDSR_x4.pb'
+_EDSR_AVAILABLE = False
+
+# Check if dnn_superres is available
+try:
+    from cv2 import dnn_superres
+    _EDSR_AVAILABLE = True
+except ImportError:
+    _EDSR_AVAILABLE = False
+
 
 def _rgb_to_hex(rgb):
     """将RGB颜色转换为十六进制格式"""
     return f"#{rgb[0]:02x}{rgb[1]:02x}{rgb[2]:02x}"
+
+
+def load_edsr_model() -> bool:
+    """
+    加载EDSR (Enhanced Deep Super-Resolution) 模型用于图片放大
+    
+    Returns:
+        True if model loaded successfully, False otherwise
+    """
+    global _EDSR_MODEL, _EDSR_MODEL_PATH, _EDSR_AVAILABLE
+
+    if not CV2_AVAILABLE:
+        print("Error: OpenCV (cv2) is required to use EDSR model.")
+        print("Please install it: pip install opencv-python")
+        return False
+
+    if not _EDSR_AVAILABLE:
+        print("Error: OpenCV dnn_superres module is not available.")
+        print("Please install OpenCV with contrib modules: pip install opencv-contrib-python")
+        return False
+
+    if _EDSR_MODEL_PATH is None:
+        print("Error: EDSR model path is not set.")
+        return False
+
+    try:
+        # Check if model file exists
+        model_file = Path(_EDSR_MODEL_PATH)
+        if not model_file.exists():
+            print(f"Warning: EDSR model file not found: {_EDSR_MODEL_PATH}")
+            print("Falling back to LANCZOS resampling.")
+            return False
+
+        # Create DnnSuperResImpl object
+        _EDSR_MODEL = dnn_superres.DnnSuperResImpl_create()
+
+        # Read model
+        _EDSR_MODEL.readModel(str(model_file))
+
+        # Set model type and scale (EDSR x4)
+        _EDSR_MODEL.setModel("edsr", 4)
+
+        print(f"Successfully loaded EDSR model from: {_EDSR_MODEL_PATH}")
+        return True
+
+    except Exception as e:
+        print(f"Warning: Error loading EDSR model: {e}")
+        print("Falling back to LANCZOS resampling.")
+        return False
+
+
+def upscale_image_with_edsr(image: Image.Image) -> Image.Image:
+    """
+    使用EDSR模型将图片放大4倍
+    
+    Args:
+        image: PIL Image对象
+        
+    Returns:
+        放大4倍后的PIL Image，如果EDSR不可用则使用LANCZOS重采样
+    """
+    global _EDSR_MODEL, _EDSR_MODEL_PATH
+
+    if not CV2_AVAILABLE:
+        print("Warning: OpenCV (cv2) is not available. Falling back to LANCZOS resampling.")
+        width, height = image.size
+        return image.resize((width * 4, height * 4), Image.Resampling.LANCZOS)
+
+    # Load model if not already loaded
+    if _EDSR_MODEL is None:
+        if not load_edsr_model():
+            print("Warning: EDSR model not loaded. Falling back to LANCZOS resampling.")
+            width, height = image.size
+            return image.resize((width * 4, height * 4), Image.Resampling.LANCZOS)
+
+    try:
+        # Convert PIL Image to numpy array (BGR format for OpenCV)
+        img_array = np.array(image.convert('RGB'))
+        img_bgr = cv2.cvtColor(img_array, cv2.COLOR_RGB2BGR)
+
+        # Get original dimensions
+        height, width = img_bgr.shape[:2]
+
+        # Use dnn_superres upsample method
+        upscaled_bgr = _EDSR_MODEL.upsample(img_bgr)
+
+        # Convert BGR back to RGB
+        upscaled_rgb = cv2.cvtColor(upscaled_bgr, cv2.COLOR_BGR2RGB)
+
+        # Convert back to PIL Image
+        upscaled_image = Image.fromarray(upscaled_rgb)
+
+        print(f"Successfully upscaled image using EDSR: {width}x{height} -> {upscaled_image.width}x{upscaled_image.height}")
+        return upscaled_image
+
+    except Exception as e:
+        print(f"Warning: Error during EDSR upscaling: {e}")
+        print("Falling back to LANCZOS resampling.")
+        width, height = image.size
+        return image.resize((width * 4, height * 4), Image.Resampling.LANCZOS)
+
+
+def _sharpen_image(img_array: np.ndarray, sharpen_factor: float = 2.0) -> np.ndarray:
+    """
+    锐化图片
+    
+    Args:
+        img_array: RGB图像数组 (H, W, 3)
+        sharpen_factor: 锐化因子，值越大锐化效果越强（默认2.0）
+        
+    Returns:
+        锐化后的图像数组
+    """
+    # 转换为PIL Image
+    img = Image.fromarray(img_array, mode='RGB')
+    
+    # 使用ImageEnhance.Sharpness进行锐化
+    enhancer = ImageEnhance.Sharpness(img)
+    img_sharpened = enhancer.enhance(sharpen_factor)
+    
+    # 可选：应用UnsharpMask滤镜进一步增强锐化效果
+    img_sharpened = img_sharpened.filter(ImageFilter.UnsharpMask(radius=2, percent=150, threshold=3))
+    
+    # 转换回numpy数组
+    return np.array(img_sharpened)
 
 
 def _remove_white_background(img_array: np.ndarray, white_threshold: int = 240) -> np.ndarray:
@@ -289,14 +426,16 @@ def process_image_and_generate_svg(
     output_path: str,
     white_threshold: int = 240,
     min_area: int = 100,
-    stroke_width: int = 2
+    stroke_width: int = 2,
+    sharpen_factor: float = 2.0
 ) -> bool:
     """
     处理图片并生成SVG：
-    1. 去掉图片白色背景
-    2. 对图片中有色部分分别描边
-    3. 对于每个部分，根据其颜色进行染色，染成单色
-    4. 根据以上结果生成SVG图片
+    1. 锐化图片
+    2. 去掉图片白色背景
+    3. 对图片中有色部分分别描边
+    4. 对于每个部分，根据其颜色进行染色，染成单色
+    5. 根据以上结果生成SVG图片
     
     Args:
         input_path: 输入图片路径
@@ -304,6 +443,7 @@ def process_image_and_generate_svg(
         white_threshold: 白色阈值 (0-255)，超过此值被认为是白色
         min_area: 最小区域面积，小于此值的区域将被忽略
         stroke_width: 描边宽度（像素）
+        sharpen_factor: 锐化因子，值越大锐化效果越强（默认2.0）
         
     Returns:
         True if successful, False otherwise
@@ -319,20 +459,29 @@ def process_image_and_generate_svg(
         if img.mode != 'RGB':
             img = img.convert('RGB')
         
-        img_array = np.array(img)
+        original_w, original_h = img.size
+        
+        # 2. 使用EDSR放大4倍
+        img_upscaled = upscale_image_with_edsr(img)
+        
+        # 3. 转换为numpy数组并锐化
+        img_array = np.array(img_upscaled)
+        img_array = _sharpen_image(img_array, sharpen_factor)
+        
+        # 记录放大后的尺寸
         h, w = img_array.shape[:2]
         
-        # 2. 去除白色背景
+        # 4. 去除白色背景
         img_rgba = _remove_white_background(img_array, white_threshold)
         
-        # 3. 识别颜色区域
+        # 5. 识别颜色区域
         regions = _find_color_regions(img_rgba, min_area)
         
         if len(regions) == 0:
             print("Warning: No color regions found in the image")
             return False
         
-        # 4. 生成SVG内容
+        # 6. 生成SVG内容
         # 按轮廓面积排序，先绘制大的（外部）轮廓，再绘制小的（内部）轮廓
         # 这样可以确保内部区域显示在外部区域之上
         regions_sorted = sorted(regions, key=lambda r: cv2.contourArea(r['contour']), reverse=True)
@@ -353,7 +502,7 @@ def process_image_and_generate_svg(
                     'stroke_width': stroke_width
                 })
         
-        # 5. 构建完整的SVG文档
+        # 7. 构建完整的SVG文档
         svg_content = f'<svg xmlns="http://www.w3.org/2000/svg" width="{w}" height="{h}">\n'
         
         for svg_path_info in svg_paths:
@@ -373,6 +522,7 @@ def process_image_and_generate_svg(
             f.write(svg_content)
         
         print(f"Successfully processed image and generated SVG: {input_path} -> {output_path}")
+        print(f"Original size: {original_w}x{original_h}, Upscaled size: {w}x{h}")
         print(f"Found {len(svg_paths)} color regions")
         return True
         
@@ -391,7 +541,8 @@ def process_image_bytes_and_generate_svg(
     output_path: str,
     white_threshold: int = 240,
     min_area: int = 100,
-    stroke_width: int = 2
+    stroke_width: int = 2,
+    sharpen_factor: float = 2.0
 ) -> bool:
     """
     处理图片字节数据并生成SVG（功能同process_image_and_generate_svg）
@@ -402,6 +553,7 @@ def process_image_bytes_and_generate_svg(
         white_threshold: 白色阈值 (0-255)
         min_area: 最小区域面积
         stroke_width: 描边宽度（像素）
+        sharpen_factor: 锐化因子，值越大锐化效果越强（默认2.0）
         
     Returns:
         True if successful, False otherwise
@@ -419,7 +571,16 @@ def process_image_bytes_and_generate_svg(
         if img.mode != 'RGB':
             img = img.convert('RGB')
         
-        img_array = np.array(img)
+        original_w, original_h = img.size
+        
+        # 使用EDSR放大4倍
+        img_upscaled = upscale_image_with_edsr(img)
+        
+        # 转换为numpy数组并锐化
+        img_array = np.array(img_upscaled)
+        img_array = _sharpen_image(img_array, sharpen_factor)
+        
+        # 记录放大后的尺寸
         h, w = img_array.shape[:2]
         
         # 去除白色背景
@@ -471,6 +632,7 @@ def process_image_bytes_and_generate_svg(
             f.write(svg_content)
         
         print(f"Successfully processed image bytes and generated SVG: {output_path}")
+        print(f"Original size: {original_w}x{original_h}, Upscaled size: {w}x{h}")
         print(f"Found {len(svg_paths)} color regions")
         return True
         
@@ -485,21 +647,24 @@ def show_processed_image(
     input_path: str,
     white_threshold: int = 240,
     min_area: int = 100,
-    window_title: str = "Processed Image"
+    window_title: str = "Processed Image",
+    sharpen_factor: float = 2.0
 ) -> bool:
     """
     显示处理后的图片（用于调试和预览）
     显示所有处理步骤的结果：
     1. 原始图片
-    2. 去除白色背景后的图片
-    3. 轮廓检测结果（显示所有轮廓）
-    4. 最终处理结果（每个区域用单色填充）
+    2. 锐化后的图片
+    3. 去除白色背景后的图片
+    4. 轮廓检测结果（显示所有轮廓）
+    5. 最终处理结果（每个区域用单色填充）
     
     Args:
         input_path: 输入图片路径
         white_threshold: 白色阈值 (0-255)
         min_area: 最小区域面积
         window_title: 窗口标题
+        sharpen_factor: 锐化因子，值越大锐化效果越强（默认2.0）
         
     Returns:
         True if successful, False otherwise
@@ -517,64 +682,83 @@ def show_processed_image(
         if img.mode != 'RGB':
             img = img.convert('RGB')
         
-        img_array = np.array(img)
-        h, w = img_array.shape[:2]
+        original_w, original_h = img.size
         
-        # 步骤2: 去除白色背景
-        img_rgba = _remove_white_background(img_array, white_threshold)
+        # 步骤2: 使用EDSR放大4倍
+        img_upscaled = upscale_image_with_edsr(img)
+        
+        # 步骤3: 锐化图片
+        img_array = np.array(img_upscaled)
+        img_sharpened = _sharpen_image(img_array, sharpen_factor)
+        
+        h, w = img_sharpened.shape[:2]
+        
+        # 步骤4: 去除白色背景
+        img_rgba = _remove_white_background(img_sharpened, white_threshold)
         img_no_white = img_rgba[:, :, :3].copy()
         # 将透明区域显示为黑色背景
         alpha_channel = img_rgba[:, :, 3]
         img_no_white[alpha_channel == 0] = [0, 0, 0]
         
-        # 步骤3: 识别颜色区域
+        # 步骤4: 识别颜色区域
         regions = _find_color_regions(img_rgba, min_area)
         
         # 创建轮廓检测结果图像（显示所有轮廓）
-        contour_img = img_array.copy()
+        contour_img = img_sharpened.copy()
         for region in regions:
             contour = region['contour']
             color = region['color']
             # 绘制轮廓
             cv2.drawContours(contour_img, [contour], -1, tuple(map(int, color)), 2)
         
-        # 步骤4: 创建最终结果图像（每个区域用单色填充）
-        result_img = np.zeros_like(img_array)
+        # 步骤5: 创建最终结果图像（每个区域用单色填充）
+        result_img = np.zeros_like(img_sharpened)
         for region in regions:
             mask = region['mask']
             color = region['color']
             result_img[mask > 0] = color
         
-        # 创建2x2的子图显示所有步骤
-        fig, axes = plt.subplots(2, 2, figsize=(16, 16))
+        # 创建2x3的子图显示所有步骤
+        fig, axes = plt.subplots(2, 3, figsize=(24, 16))
         fig.suptitle(window_title, fontsize=16, fontweight='bold')
         
         # 步骤1: 原始图片
         axes[0, 0].imshow(img)
-        axes[0, 0].set_title('步骤1: 原始图片', fontsize=14, fontweight='bold')
+        axes[0, 0].set_title(f'步骤1: 原始图片 ({original_w}x{original_h})', fontsize=14, fontweight='bold')
         axes[0, 0].axis('off')
         
-        # 步骤2: 去除白色背景后的图片
-        axes[0, 1].imshow(img_no_white)
-        axes[0, 1].set_title(f'步骤2: 去除白色背景 (阈值={white_threshold})', fontsize=14, fontweight='bold')
+        # 步骤2: EDSR放大4倍后的图片
+        axes[0, 1].imshow(img_upscaled)
+        axes[0, 1].set_title(f'步骤2: EDSR放大4倍 ({img_upscaled.width}x{img_upscaled.height})', fontsize=14, fontweight='bold')
         axes[0, 1].axis('off')
         
-        # 步骤3: 轮廓检测结果
-        axes[1, 0].imshow(contour_img)
-        axes[1, 0].set_title(f'步骤3: 轮廓检测结果 (检测到 {len(regions)} 个区域)', fontsize=14, fontweight='bold')
+        # 步骤3: 锐化后的图片
+        axes[0, 2].imshow(img_sharpened)
+        axes[0, 2].set_title(f'步骤3: 锐化处理 (锐化因子={sharpen_factor})', fontsize=14, fontweight='bold')
+        axes[0, 2].axis('off')
+        
+        # 步骤4: 去除白色背景后的图片
+        axes[1, 0].imshow(img_no_white)
+        axes[1, 0].set_title(f'步骤4: 去除白色背景 (阈值={white_threshold})', fontsize=14, fontweight='bold')
         axes[1, 0].axis('off')
         
-        # 步骤4: 最终处理结果（单色填充）
-        axes[1, 1].imshow(result_img)
-        axes[1, 1].set_title(f'步骤4: 最终结果 (每个区域单色填充)', fontsize=14, fontweight='bold')
+        # 步骤5: 轮廓检测结果
+        axes[1, 1].imshow(contour_img)
+        axes[1, 1].set_title(f'步骤5: 轮廓检测结果 (检测到 {len(regions)} 个区域)', fontsize=14, fontweight='bold')
         axes[1, 1].axis('off')
+        
+        # 步骤6: 最终处理结果（单色填充）
+        axes[1, 2].imshow(result_img)
+        axes[1, 2].set_title(f'步骤6: 最终结果 (每个区域单色填充)', fontsize=14, fontweight='bold')
+        axes[1, 2].axis('off')
         
         plt.tight_layout()
         plt.show()
         
         # 打印详细信息
         print(f"\n处理完成: {input_path}")
-        print(f"  原始图片尺寸: {w}x{h}")
+        print(f"  原始图片尺寸: {original_w}x{original_h}")
+        print(f"  放大后尺寸: {w}x{h}")
         print(f"  白色阈值: {white_threshold}")
         print(f"  最小区域面积: {min_area}")
         print(f"  检测到的区域数量: {len(regions)}")
@@ -605,21 +789,24 @@ def show_processed_image_from_bytes(
     image_bytes: bytes,
     white_threshold: int = 240,
     min_area: int = 100,
-    window_title: str = "Processed Image"
+    window_title: str = "Processed Image",
+    sharpen_factor: float = 2.0
 ) -> bool:
     """
     从字节数据显示处理后的图片（用于调试和预览）
     显示所有处理步骤的结果：
     1. 原始图片
-    2. 去除白色背景后的图片
-    3. 轮廓检测结果（显示所有轮廓）
-    4. 最终处理结果（每个区域用单色填充）
+    2. 锐化后的图片
+    3. 去除白色背景后的图片
+    4. 轮廓检测结果（显示所有轮廓）
+    5. 最终处理结果（每个区域用单色填充）
     
     Args:
         image_bytes: 图片字节数据
         white_threshold: 白色阈值 (0-255)
         min_area: 最小区域面积
         window_title: 窗口标题
+        sharpen_factor: 锐化因子，值越大锐化效果越强（默认2.0）
         
     Returns:
         True if successful, False otherwise
@@ -638,64 +825,83 @@ def show_processed_image_from_bytes(
         if img.mode != 'RGB':
             img = img.convert('RGB')
         
-        img_array = np.array(img)
-        h, w = img_array.shape[:2]
+        original_w, original_h = img.size
         
-        # 步骤2: 去除白色背景
-        img_rgba = _remove_white_background(img_array, white_threshold)
+        # 步骤2: 使用EDSR放大4倍
+        img_upscaled = upscale_image_with_edsr(img)
+        
+        # 步骤3: 锐化图片
+        img_array = np.array(img_upscaled)
+        img_sharpened = _sharpen_image(img_array, sharpen_factor)
+        
+        h, w = img_sharpened.shape[:2]
+        
+        # 步骤4: 去除白色背景
+        img_rgba = _remove_white_background(img_sharpened, white_threshold)
         img_no_white = img_rgba[:, :, :3].copy()
         # 将透明区域显示为黑色背景
         alpha_channel = img_rgba[:, :, 3]
         img_no_white[alpha_channel == 0] = [0, 0, 0]
         
-        # 步骤3: 识别颜色区域
+        # 步骤4: 识别颜色区域
         regions = _find_color_regions(img_rgba, min_area)
         
         # 创建轮廓检测结果图像（显示所有轮廓）
-        contour_img = img_array.copy()
+        contour_img = img_sharpened.copy()
         for region in regions:
             contour = region['contour']
             color = region['color']
             # 绘制轮廓
             cv2.drawContours(contour_img, [contour], -1, tuple(map(int, color)), 2)
         
-        # 步骤4: 创建最终结果图像（每个区域用单色填充）
-        result_img = np.zeros_like(img_array)
+        # 步骤6: 创建最终结果图像（每个区域用单色填充）
+        result_img = np.zeros_like(img_sharpened)
         for region in regions:
             mask = region['mask']
             color = region['color']
             result_img[mask > 0] = color
         
-        # 创建2x2的子图显示所有步骤
-        fig, axes = plt.subplots(2, 2, figsize=(16, 16))
+        # 创建2x3的子图显示所有步骤
+        fig, axes = plt.subplots(2, 3, figsize=(24, 16))
         fig.suptitle(window_title, fontsize=16, fontweight='bold')
         
         # 步骤1: 原始图片
         axes[0, 0].imshow(img)
-        axes[0, 0].set_title('步骤1: 原始图片', fontsize=14, fontweight='bold')
+        axes[0, 0].set_title(f'步骤1: 原始图片 ({original_w}x{original_h})', fontsize=14, fontweight='bold')
         axes[0, 0].axis('off')
         
-        # 步骤2: 去除白色背景后的图片
-        axes[0, 1].imshow(img_no_white)
-        axes[0, 1].set_title(f'步骤2: 去除白色背景 (阈值={white_threshold})', fontsize=14, fontweight='bold')
+        # 步骤2: EDSR放大4倍后的图片
+        axes[0, 1].imshow(img_upscaled)
+        axes[0, 1].set_title(f'步骤2: EDSR放大4倍 ({img_upscaled.width}x{img_upscaled.height})', fontsize=14, fontweight='bold')
         axes[0, 1].axis('off')
         
-        # 步骤3: 轮廓检测结果
-        axes[1, 0].imshow(contour_img)
-        axes[1, 0].set_title(f'步骤3: 轮廓检测结果 (检测到 {len(regions)} 个区域)', fontsize=14, fontweight='bold')
+        # 步骤3: 锐化后的图片
+        axes[0, 2].imshow(img_sharpened)
+        axes[0, 2].set_title(f'步骤3: 锐化处理 (锐化因子={sharpen_factor})', fontsize=14, fontweight='bold')
+        axes[0, 2].axis('off')
+        
+        # 步骤4: 去除白色背景后的图片
+        axes[1, 0].imshow(img_no_white)
+        axes[1, 0].set_title(f'步骤4: 去除白色背景 (阈值={white_threshold})', fontsize=14, fontweight='bold')
         axes[1, 0].axis('off')
         
-        # 步骤4: 最终处理结果（单色填充）
-        axes[1, 1].imshow(result_img)
-        axes[1, 1].set_title(f'步骤4: 最终结果 (每个区域单色填充)', fontsize=14, fontweight='bold')
+        # 步骤5: 轮廓检测结果
+        axes[1, 1].imshow(contour_img)
+        axes[1, 1].set_title(f'步骤5: 轮廓检测结果 (检测到 {len(regions)} 个区域)', fontsize=14, fontweight='bold')
         axes[1, 1].axis('off')
+        
+        # 步骤6: 最终处理结果（单色填充）
+        axes[1, 2].imshow(result_img)
+        axes[1, 2].set_title(f'步骤6: 最终结果 (每个区域单色填充)', fontsize=14, fontweight='bold')
+        axes[1, 2].axis('off')
         
         plt.tight_layout()
         plt.show()
         
         # 打印详细信息
         print(f"\n处理完成: (从字节数据)")
-        print(f"  原始图片尺寸: {w}x{h}")
+        print(f"  原始图片尺寸: {original_w}x{original_h}")
+        print(f"  放大后尺寸: {w}x{h}")
         print(f"  白色阈值: {white_threshold}")
         print(f"  最小区域面积: {min_area}")
         print(f"  检测到的区域数量: {len(regions)}")
