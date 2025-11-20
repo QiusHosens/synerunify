@@ -54,6 +54,9 @@ def _remove_white_background(img_array: np.ndarray, white_threshold: int = 240) 
 def _get_dominant_color(region_pixels: np.ndarray) -> tuple:
     """
     获取区域的主要颜色
+    - 如果平均颜色接近最深的颜色，使用最深的颜色
+    - 如果平均颜色接近白色，使用白色
+    - 否则使用平均颜色
     
     Args:
         region_pixels: 区域像素数组 (N, 3) RGB格式
@@ -66,6 +69,83 @@ def _get_dominant_color(region_pixels: np.ndarray) -> tuple:
     
     # 计算平均颜色
     avg_color = np.mean(region_pixels, axis=0).astype(np.uint8)
+    
+    # # 计算每个像素的亮度（灰度值）
+    # # 使用标准亮度公式: 0.299*R + 0.587*G + 0.114*B
+    # brightness = (region_pixels[:, 0] * 0.299 + 
+    #               region_pixels[:, 1] * 0.587 + 
+    #               region_pixels[:, 2] * 0.114)
+    
+    # # 找到最深的颜色（亮度最低的像素）
+    # darkest_idx = np.argmin(brightness)
+    # darkest_color = region_pixels[darkest_idx].astype(np.uint8)
+    
+    # # 找到最浅的颜色（亮度最高的像素，可能是白色）
+    # lightest_idx = np.argmax(brightness)
+    # lightest_color = region_pixels[lightest_idx].astype(np.uint8)
+    
+    # # 计算平均颜色的亮度
+    # avg_brightness = (avg_color[0] * 0.299 + 
+    #                   avg_color[1] * 0.587 + 
+    #                   avg_color[2] * 0.114)
+    
+    # # 计算最深颜色的亮度
+    # darkest_brightness = (darkest_color[0] * 0.299 + 
+    #                       darkest_color[1] * 0.587 + 
+    #                       darkest_color[2] * 0.114)
+    
+    # # 计算最浅颜色的亮度
+    # lightest_brightness = (lightest_color[0] * 0.299 + 
+    #                        lightest_color[1] * 0.587 + 
+    #                        lightest_color[2] * 0.114)
+    
+    # # 计算颜色距离（使用欧氏距离）
+    # def color_distance(c1, c2):
+    #     return np.sqrt(np.sum((c1 - c2) ** 2))
+    
+    # # 计算平均颜色与最深颜色和最浅颜色的距离
+    # dist_to_darkest = color_distance(avg_color, darkest_color)
+    # dist_to_lightest = color_distance(avg_color, lightest_color)
+    
+    # # 判断平均颜色是否接近白色（RGB值都大于240）
+    # is_near_white = (avg_color[0] > 240 and avg_color[1] > 240 and avg_color[2] > 240)
+    
+    # # 判断平均颜色是否接近最深颜色（距离小于阈值）
+    # # 阈值设为30，可以根据需要调整
+    # threshold = 30
+    # is_near_darkest = dist_to_darkest < threshold
+    
+    # # 判断平均颜色是否接近最浅颜色（距离小于阈值）
+    # is_near_lightest = dist_to_lightest < threshold
+    
+    # # 计算白色区域占比
+    # # 白色阈值：RGB值都大于240的像素被认为是白色
+    # white_threshold = 240
+    # white_pixels = np.sum((region_pixels[:, 0] > white_threshold) & 
+    #                       (region_pixels[:, 1] > white_threshold) & 
+    #                       (region_pixels[:, 2] > white_threshold))
+    # white_ratio = white_pixels / len(region_pixels) if len(region_pixels) > 0 else 0.0
+
+    # print("--------------------------------")
+    # print(f"avg_color: {avg_color}, darkest_color: {darkest_color}, lightest_color: {lightest_color}")
+    # print(f"dist_to_darkest: {dist_to_darkest}, dist_to_lightest: {dist_to_lightest}")
+    # print(f"is_near_white: {is_near_white}, is_near_darkest: {is_near_darkest}, is_near_lightest: {is_near_lightest}")
+    # print(f"lightest_brightness: {lightest_brightness}, darkest_brightness: {darkest_brightness}")
+    # print(f"white_ratio: {white_ratio:.2%} ({white_pixels}/{len(region_pixels)})")
+    # print("--------------------------------")
+    
+    # # 根据条件选择颜色
+    # # 如果白色占比很高（>50%），也使用白色
+    # # if is_near_white or (is_near_lightest and lightest_brightness > 200):
+    # if is_near_white or white_ratio > 0.7:
+    #     # 接近白色，使用白色
+    #     return (255, 255, 255)
+    # elif is_near_darkest:
+    #     # 接近最深颜色，使用最深的颜色
+    #     return tuple(darkest_color)
+    # else:
+    #     # 否则使用平均颜色
+    #     return tuple(avg_color)
     return tuple(avg_color)
 
 
