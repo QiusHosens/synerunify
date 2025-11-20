@@ -409,6 +409,11 @@ def show_processed_image(
 ) -> bool:
     """
     显示处理后的图片（用于调试和预览）
+    显示所有处理步骤的结果：
+    1. 原始图片
+    2. 去除白色背景后的图片
+    3. 轮廓检测结果（显示所有轮廓）
+    4. 最终处理结果（每个区域用单色填充）
     
     Args:
         input_path: 输入图片路径
@@ -419,41 +424,211 @@ def show_processed_image(
     Returns:
         True if successful, False otherwise
     """
+    if not CV2_AVAILABLE:
+        print("Error: OpenCV (cv2) is required for this function.")
+        print("Please install it: pip install opencv-python")
+        return False
+    
     try:
         import matplotlib.pyplot as plt
         
-        # 加载并处理图片
+        # 步骤1: 加载原始图片
         img = Image.open(input_path)
         if img.mode != 'RGB':
             img = img.convert('RGB')
         
         img_array = np.array(img)
+        h, w = img_array.shape[:2]
+        
+        # 步骤2: 去除白色背景
         img_rgba = _remove_white_background(img_array, white_threshold)
+        img_no_white = img_rgba[:, :, :3].copy()
+        # 将透明区域显示为黑色背景
+        alpha_channel = img_rgba[:, :, 3]
+        img_no_white[alpha_channel == 0] = [0, 0, 0]
+        
+        # 步骤3: 识别颜色区域
         regions = _find_color_regions(img_rgba, min_area)
         
-        # 创建结果图像
+        # 创建轮廓检测结果图像（显示所有轮廓）
+        contour_img = img_array.copy()
+        for region in regions:
+            contour = region['contour']
+            color = region['color']
+            # 绘制轮廓
+            cv2.drawContours(contour_img, [contour], -1, tuple(map(int, color)), 2)
+        
+        # 步骤4: 创建最终结果图像（每个区域用单色填充）
         result_img = np.zeros_like(img_array)
         for region in regions:
             mask = region['mask']
             color = region['color']
             result_img[mask > 0] = color
         
-        # 显示原图和处理后的图
-        fig, axes = plt.subplots(1, 2, figsize=(16, 8))
-        fig.suptitle(window_title, fontsize=14)
+        # 创建2x2的子图显示所有步骤
+        fig, axes = plt.subplots(2, 2, figsize=(16, 16))
+        fig.suptitle(window_title, fontsize=16, fontweight='bold')
         
-        axes[0].imshow(img)
-        axes[0].set_title('Original Image', fontsize=12)
-        axes[0].axis('off')
+        # 步骤1: 原始图片
+        axes[0, 0].imshow(img)
+        axes[0, 0].set_title('步骤1: 原始图片', fontsize=14, fontweight='bold')
+        axes[0, 0].axis('off')
         
-        axes[1].imshow(result_img)
-        axes[1].set_title(f'Processed Image ({len(regions)} regions)', fontsize=12)
-        axes[1].axis('off')
+        # 步骤2: 去除白色背景后的图片
+        axes[0, 1].imshow(img_no_white)
+        axes[0, 1].set_title(f'步骤2: 去除白色背景 (阈值={white_threshold})', fontsize=14, fontweight='bold')
+        axes[0, 1].axis('off')
+        
+        # 步骤3: 轮廓检测结果
+        axes[1, 0].imshow(contour_img)
+        axes[1, 0].set_title(f'步骤3: 轮廓检测结果 (检测到 {len(regions)} 个区域)', fontsize=14, fontweight='bold')
+        axes[1, 0].axis('off')
+        
+        # 步骤4: 最终处理结果（单色填充）
+        axes[1, 1].imshow(result_img)
+        axes[1, 1].set_title(f'步骤4: 最终结果 (每个区域单色填充)', fontsize=14, fontweight='bold')
+        axes[1, 1].axis('off')
         
         plt.tight_layout()
         plt.show()
         
-        print(f"Displayed processed image: {input_path}")
+        # 打印详细信息
+        print(f"\n处理完成: {input_path}")
+        print(f"  原始图片尺寸: {w}x{h}")
+        print(f"  白色阈值: {white_threshold}")
+        print(f"  最小区域面积: {min_area}")
+        print(f"  检测到的区域数量: {len(regions)}")
+        if len(regions) > 0:
+            print(f"  区域颜色信息:")
+            for i, region in enumerate(regions[:10]):  # 只显示前10个区域
+                color = region['color']
+                area = cv2.contourArea(region['contour'])
+                color_hex = _rgb_to_hex(color)
+                print(f"    区域 {i+1}: RGB{color}, {color_hex}, 面积={area:.0f}")
+            if len(regions) > 10:
+                print(f"    ... 还有 {len(regions) - 10} 个区域")
+        
+        return True
+        
+    except ImportError:
+        print("Error: matplotlib is required for image display.")
+        print("Please install it: pip install matplotlib")
+        return False
+    except Exception as e:
+        print(f"Error occurred during display: {e}")
+        import traceback
+        traceback.print_exc()
+        return False
+
+
+def show_processed_image_from_bytes(
+    image_bytes: bytes,
+    white_threshold: int = 240,
+    min_area: int = 100,
+    window_title: str = "Processed Image"
+) -> bool:
+    """
+    从字节数据显示处理后的图片（用于调试和预览）
+    显示所有处理步骤的结果：
+    1. 原始图片
+    2. 去除白色背景后的图片
+    3. 轮廓检测结果（显示所有轮廓）
+    4. 最终处理结果（每个区域用单色填充）
+    
+    Args:
+        image_bytes: 图片字节数据
+        white_threshold: 白色阈值 (0-255)
+        min_area: 最小区域面积
+        window_title: 窗口标题
+        
+    Returns:
+        True if successful, False otherwise
+    """
+    if not CV2_AVAILABLE:
+        print("Error: OpenCV (cv2) is required for this function.")
+        print("Please install it: pip install opencv-python")
+        return False
+    
+    try:
+        from io import BytesIO
+        import matplotlib.pyplot as plt
+        
+        # 步骤1: 从字节数据加载原始图片
+        img = Image.open(BytesIO(image_bytes))
+        if img.mode != 'RGB':
+            img = img.convert('RGB')
+        
+        img_array = np.array(img)
+        h, w = img_array.shape[:2]
+        
+        # 步骤2: 去除白色背景
+        img_rgba = _remove_white_background(img_array, white_threshold)
+        img_no_white = img_rgba[:, :, :3].copy()
+        # 将透明区域显示为黑色背景
+        alpha_channel = img_rgba[:, :, 3]
+        img_no_white[alpha_channel == 0] = [0, 0, 0]
+        
+        # 步骤3: 识别颜色区域
+        regions = _find_color_regions(img_rgba, min_area)
+        
+        # 创建轮廓检测结果图像（显示所有轮廓）
+        contour_img = img_array.copy()
+        for region in regions:
+            contour = region['contour']
+            color = region['color']
+            # 绘制轮廓
+            cv2.drawContours(contour_img, [contour], -1, tuple(map(int, color)), 2)
+        
+        # 步骤4: 创建最终结果图像（每个区域用单色填充）
+        result_img = np.zeros_like(img_array)
+        for region in regions:
+            mask = region['mask']
+            color = region['color']
+            result_img[mask > 0] = color
+        
+        # 创建2x2的子图显示所有步骤
+        fig, axes = plt.subplots(2, 2, figsize=(16, 16))
+        fig.suptitle(window_title, fontsize=16, fontweight='bold')
+        
+        # 步骤1: 原始图片
+        axes[0, 0].imshow(img)
+        axes[0, 0].set_title('步骤1: 原始图片', fontsize=14, fontweight='bold')
+        axes[0, 0].axis('off')
+        
+        # 步骤2: 去除白色背景后的图片
+        axes[0, 1].imshow(img_no_white)
+        axes[0, 1].set_title(f'步骤2: 去除白色背景 (阈值={white_threshold})', fontsize=14, fontweight='bold')
+        axes[0, 1].axis('off')
+        
+        # 步骤3: 轮廓检测结果
+        axes[1, 0].imshow(contour_img)
+        axes[1, 0].set_title(f'步骤3: 轮廓检测结果 (检测到 {len(regions)} 个区域)', fontsize=14, fontweight='bold')
+        axes[1, 0].axis('off')
+        
+        # 步骤4: 最终处理结果（单色填充）
+        axes[1, 1].imshow(result_img)
+        axes[1, 1].set_title(f'步骤4: 最终结果 (每个区域单色填充)', fontsize=14, fontweight='bold')
+        axes[1, 1].axis('off')
+        
+        plt.tight_layout()
+        plt.show()
+        
+        # 打印详细信息
+        print(f"\n处理完成: (从字节数据)")
+        print(f"  原始图片尺寸: {w}x{h}")
+        print(f"  白色阈值: {white_threshold}")
+        print(f"  最小区域面积: {min_area}")
+        print(f"  检测到的区域数量: {len(regions)}")
+        if len(regions) > 0:
+            print(f"  区域颜色信息:")
+            for i, region in enumerate(regions[:10]):  # 只显示前10个区域
+                color = region['color']
+                area = cv2.contourArea(region['contour'])
+                color_hex = _rgb_to_hex(color)
+                print(f"    区域 {i+1}: RGB{color}, {color_hex}, 面积={area:.0f}")
+            if len(regions) > 10:
+                print(f"    ... 还有 {len(regions) - 10} 个区域")
+        
         return True
         
     except ImportError:
