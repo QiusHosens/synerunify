@@ -679,6 +679,10 @@ def show_binary_comparison(input_path: str, threshold: int = 127, window_title: 
         # 4. Convert to grayscale
         img_gray = img_sharp.convert('L')
 
+        # enhancer = ImageEnhance.Sharpness(img_original)
+        # img_sharp = enhancer.enhance(2.0)  # Enhance sharpness by 2x
+        # img_gray = img_original.convert('L')
+
         # 5. Convert to numpy array and binarize
         img_array = np.array(img_gray)
         binary_array = (img_array < threshold).astype(np.uint8) * 255
@@ -851,15 +855,156 @@ def show_binary_comparison_from_bytes(image_bytes: bytes, threshold: int = 127, 
         traceback.print_exc()
         return False
 
+def convert_to_svg(input_path: str, output_path: str, threshold: int = 127, use_edsr: bool = False, blacklevel: float = 0.5, scale_down: bool = True, remove_white_bg: bool = True, white_threshold: int = 240) -> bool:
+    """
+    Convert bitmap image to SVG.
+    
+    This method first enlarges the image 4x, binarizes it based on threshold,
+    then uses potrace Bitmap for SVG conversion.
+
+    Args:
+        input_path: Path to input image file
+        output_path: Path to output SVG file
+        threshold: Threshold value for binarization (0-255, default: 127)
+        use_edsr: If True, use EDSR model for upscaling instead of LANCZOS (default: False)
+        blacklevel: Threshold for potrace Bitmap binarization (0.0 to 1.0, default: 0.5)
+        scale_down: If True, scale back down to original size after enhancement (default: True)
+        remove_white_bg: If True, remove white background before conversion (default: True)
+        white_threshold: RGB threshold value (0-255) above which pixels are considered white (default: 240)
+
+    Returns:
+        True if conversion successful, False otherwise
+    """
+    if not POTRACE_BITMAP_AVAILABLE:
+        print("Error: potrace Bitmap library is not available.")
+        print("Please install it: pip install pypotrace")
+        return False
+
+    try:
+        # 1. Open original image
+        img_original = Image.open(input_path)
+        width, height = img_original.size
+
+        # 2. Enlarge image 4x using EDSR model or high-quality resampling
+        if use_edsr:
+            img_enlarged = upscale_image_with_edsr(img_original)
+        else:
+            img_enlarged = img_original.resize((width * 4, height * 4), Image.Resampling.LANCZOS)
+
+        # 3. Enhance sharpness
+        enhancer = ImageEnhance.Sharpness(img_enlarged)
+        img_sharp = enhancer.enhance(2.0)  # Enhance sharpness by 2x
+
+        # 4. Convert to grayscale
+        img_gray = img_sharp.convert('L')
+
+        # 5. Convert to numpy array and binarize based on threshold
+        img_array = np.array(img_gray)
+        binary_array = (img_array < threshold).astype(np.uint8) * 255
+
+        # 6. Convert binary array back to PIL Image
+        img_binary = Image.fromarray(binary_array, mode='L')
+
+        # 7. Optionally remove white background
+        if remove_white_bg:
+            # Convert to RGB for white background removal
+            img_rgb = img_sharp.convert('RGB')
+            img_rgb_array = np.array(img_rgb)
+
+            # Create mask: True for white background, False for colored areas
+            white_mask = (img_rgb_array[:, :, 0] > white_threshold) & \
+                         (img_rgb_array[:, :, 1] > white_threshold) & \
+                         (img_rgb_array[:, :, 2] > white_threshold)
+
+            # Create result image: black background, white points for colored areas
+            result_array = np.zeros_like(img_rgb_array)
+            result_array[~white_mask] = [255, 255, 255]  # Colored areas become white
+            result_array[white_mask] = [0, 0, 0]  # White background becomes black
+
+            img_result = Image.fromarray(result_array, mode='RGB')
+            img_final = img_result.convert('L')
+        else:
+            img_final = img_binary
+
+        # 8. Optionally scale back down to original size
+        if scale_down:
+            img_final = img_final.resize((width, height), Image.Resampling.LANCZOS)
+
+        # 9. Create Bitmap object from PIL Image
+        # potrace Bitmap constructor accepts PIL Image directly
+        bitmap = PotraceBitmap(img_final, blacklevel=blacklevel)
+
+        # 10. Trace bitmap to get path list
+        path_list = bitmap.trace()
+
+        # 11. Build SVG content from paths
+        svg_paths = []
+        for path in path_list:
+            start_point = path.start_point
+            svg_path = f"M{start_point.x},{start_point.y} "
+
+            for segment in path:
+                if segment.is_corner:
+                    # Corner segment: straight line
+                    c = segment.c
+                    end_point = segment.end_point
+                    svg_path += f"L{c.x},{c.y} L{end_point.x},{end_point.y} "
+                else:
+                    # Curve segment: Bezier curve
+                    c1 = segment.c1
+                    c2 = segment.c2
+                    end_point = segment.end_point
+                    svg_path += f"C{c1.x},{c1.y} {c2.x},{c2.y} {end_point.x},{end_point.y} "
+
+            svg_path += "z"  # Close path
+            svg_paths.append(svg_path)
+
+        # 12. Build complete SVG document
+        # Use final image dimensions for SVG
+        svg_content = f'<svg xmlns="http://www.w3.org/2000/svg" width="{img_final.width}" height="{img_final.height}">\n'
+        for svg_path in svg_paths:
+            svg_content += f'  <path d="{svg_path}" fill="black" stroke="none"/>\n'
+        svg_content += '</svg>'
+
+        # 13. Save as SVG file
+        # Ensure output directory exists
+        output_file = Path(output_path)
+        output_file.parent.mkdir(parents=True, exist_ok=True)
+
+        with open(output_path, 'w', encoding='utf-8') as f:
+            f.write(svg_content)
+
+        scale_info = "scaled down" if scale_down else "kept enlarged"
+        bg_info = "white bg removed" if remove_white_bg else "original bg"
+        print(f"Successfully converted to SVG (4x enlarged, threshold={threshold}, {bg_info}, {scale_info}): {input_path} -> {output_path}")
+        print(f"Original size: {img_original.width}x{img_original.height}, Final size: {img_final.width}x{img_final.height}")
+        print(f"Found {len(svg_paths)} paths")
+        return True
+
+    except FileNotFoundError:
+        print(f"Error: File not found: {input_path}")
+        return False
+    except AttributeError as e:
+        print(f"Error: Potrace Bitmap library API mismatch: {e}")
+        print("Please check if pypotrace is correctly installed.")
+        return False
+    except Exception as e:
+        print(f"Error occurred during conversion: {e}")
+        import traceback
+        traceback.print_exc()
+        return False
+
 # Example usage:
 if __name__ == "__main__":
     input_file = "../../samples/png/test.png"  # Replace with your file path
     output_file = "../../samples/svg/test.svg"
 
     # Convert to SVG
-# convert_to_svg_potrace(input_file, output_file)
+    # convert_to_svg_potrace(input_file, output_file)
 
-    convert_to_svg_with_bitmap(input_file, output_file, use_edsr=True)
+    # convert_to_svg_with_bitmap(input_file, output_file, use_edsr=True)
+
+    convert_to_svg(input_file, output_file, threshold=200, use_edsr=True, scale_down=False, remove_white_bg=False)
 
     # Display comparison (optional)
-    show_binary_comparison(input_file, threshold=127, use_edsr=True)
+    show_binary_comparison(input_file, threshold=200, use_edsr=True)
