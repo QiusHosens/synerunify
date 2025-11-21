@@ -41,14 +41,36 @@ def main():
             print("无效的置信度阈值，使用默认值 0.25")
             conf_threshold = 0.25
     
+    # 询问是否保存视频
+    save_video = input("是否保存检测结果为MP4视频? (y/n, 默认: n): ").strip().lower()
+    output_path = None
+    fps = None
+    
+    if save_video == 'y' or save_video == 'yes':
+        output_path = input("请输入输出文件路径 (默认: output_detection.mp4): ").strip()
+        if not output_path:
+            from datetime import datetime
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            output_path = f"output_detection_{timestamp}.mp4"
+        
+        fps_input = input("请输入输出视频帧率 (留空使用输入流帧率): ").strip()
+        if fps_input:
+            try:
+                fps = float(fps_input)
+            except ValueError:
+                print("无效的帧率，将使用输入流帧率")
+                fps = None
+    
     print()
     print(f"开始处理视频流: {stream_url}")
     print(f"置信度阈值: {conf_threshold}")
+    if output_path:
+        print(f"输出视频: {output_path}")
     print("按 'q' 键退出")
     print()
     
     try:
-        test_stream(stream_url, conf_threshold)
+        test_stream(stream_url, conf_threshold, output_path=output_path, fps=fps)
     except KeyboardInterrupt:
         print("\n\n用户中断")
     except Exception as e:

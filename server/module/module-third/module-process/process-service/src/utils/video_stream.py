@@ -129,17 +129,24 @@ class VideoStreamProcessor:
         self.stop()
 
 
-def test_stream(stream_url: str, conf_threshold: float = 0.25):
+def test_stream(stream_url: str, conf_threshold: float = 0.25, 
+                output_path: Optional[str] = None, fps: Optional[float] = None):
     """
-    测试视频流检测（本地显示）
+    测试视频流检测（本地显示并可选保存为MP4）
     
     Args:
         stream_url: 视频流URL
         conf_threshold: 置信度阈值
+        output_path: 输出MP4视频文件路径，如果为None则不保存
+        fps: 输出视频的帧率，如果为None则使用输入流的帧率
     """
+    import os
+    
     detector = get_detector()
     
     print(f"开始处理视频流: {stream_url}")
+    if output_path:
+        print(f"检测结果将保存到: {output_path}")
     print("按 'q' 键退出")
     
     cap = cv2.VideoCapture(stream_url)
@@ -147,6 +154,51 @@ def test_stream(stream_url: str, conf_threshold: float = 0.25):
     if not cap.isOpened():
         print(f"错误: 无法打开视频流 {stream_url}")
         return
+    
+    # 获取视频属性
+    input_fps = cap.get(cv2.CAP_PROP_FPS)
+    if input_fps <= 0:
+        input_fps = 30.0  # 默认帧率
+    output_fps = fps if fps is not None else input_fps
+    
+    width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+    height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+    
+    print(f"视频尺寸: {width}x{height}, 帧率: {output_fps:.2f} FPS")
+    
+    # 初始化视频写入器
+    video_writer = None
+    if output_path:
+        # 确保输出目录存在
+        output_dir = os.path.dirname(output_path)
+        if output_dir and not os.path.exists(output_dir):
+            os.makedirs(output_dir, exist_ok=True)
+        
+        # 尝试使用不同的编码器（按优先级）
+        # 优先使用H.264编码器，如果不支持则尝试其他编码器
+        codecs = [
+            ('avc1', 'H.264 (avc1)'),
+            ('mp4v', 'MPEG-4 (mp4v)'),
+            ('XVID', 'XVID'),
+            ('MJPG', 'Motion-JPEG')
+        ]
+        
+        video_writer = None
+        for fourcc_code, codec_name in codecs:
+            fourcc = cv2.VideoWriter_fourcc(*fourcc_code)
+            video_writer = cv2.VideoWriter(output_path, fourcc, output_fps, (width, height))
+            if video_writer.isOpened():
+                print(f"使用编码器: {codec_name}")
+                break
+            else:
+                video_writer = None
+        
+        if not video_writer:
+            print(f"警告: 无法创建视频文件 {output_path}，将只显示不保存")
+            print("提示: 可能需要安装额外的编解码器支持")
+    
+    frame_count = 0
+    detection_count_total = 0
     
     try:
         while True:
@@ -158,17 +210,34 @@ def test_stream(stream_url: str, conf_threshold: float = 0.25):
             # 执行检测
             annotated_frame, detections = detector.detect_frame(frame, conf_threshold)
             
-            # 显示检测结果
+            # 统计检测结果
             if detections:
-                print(f"检测到 {len(detections)} 个目标")
+                detection_count_total += len(detections)
+                print(f"帧 {frame_count}: 检测到 {len(detections)} 个目标")
+            
+            # 保存到视频文件
+            if video_writer:
+                video_writer.write(annotated_frame)
+            
+            # 显示检测结果
+            # 在图像上添加帧计数和统计信息
+            info_text = f"Frame: {frame_count} | Detections: {len(detections)} | Total: {detection_count_total}"
+            cv2.putText(annotated_frame, info_text, (10, 30),
+                       cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
             
             cv2.imshow('YOLO Detection', annotated_frame)
+            
+            frame_count += 1
             
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
                 
     finally:
         cap.release()
+        if video_writer:
+            video_writer.release()
+            print(f"\n视频已保存到: {output_path}")
+            print(f"总帧数: {frame_count}, 总检测数: {detection_count_total}")
         cv2.destroyAllWindows()
 
 
