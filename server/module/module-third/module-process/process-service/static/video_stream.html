@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YOLO实时视频流检测</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            padding: 30px;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        .input-group {
+            flex: 1;
+            min-width: 250px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: 600;
+        }
+        
+        input[type="text"],
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        button {
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            white-space: nowrap;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        button.stop {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+        
+        .video-container {
+            position: relative;
+            width: 100%;
+            background: #000;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            min-height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        #videoStream {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        
+        .status {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+        
+        .status.info {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+        
+        .status.error {
+            background: #ffebee;
+            color: #c62828;
+        }
+        
+        .status.success {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+        
+        .detection-info {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        
+        .detection-info h3 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+        
+        .detection-item {
+            background: white;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .loading {
+            color: #667eea;
+            font-size: 18px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎥 YOLO实时视频流检测</h1>
+        
+        <div class="controls">
+            <div class="input-group">
+                <label for="streamUrl">视频流URL:</label>
+                <input type="text" id="streamUrl" 
+                       placeholder="例如: rtsp://user:pass@ip:port/stream 或 http://ip:port/video.mjpg"
+                       value="0">
+            </div>
+            
+            <div class="input-group" style="max-width: 150px;">
+                <label for="confThreshold">置信度阈值:</label>
+                <input type="number" id="confThreshold" min="0" max="1" step="0.05" value="0.25">
+            </div>
+            
+            <div class="input-group" style="max-width: 150px;">
+                <label for="modelSize">模型大小:</label>
+                <select id="modelSize">
+                    <option value="n">Nano (最快)</option>
+                    <option value="s">Small</option>
+                    <option value="m">Medium</option>
+                    <option value="l">Large</option>
+                    <option value="x">XLarge (最准确)</option>
+                </select>
+            </div>
+            
+            <button id="startBtn" onclick="startStream()">▶ 开始检测</button>
+            <button id="stopBtn" class="stop hidden" onclick="stopStream()">⏹ 停止检测</button>
+        </div>
+        
+        <div id="status" class="status info hidden"></div>
+        
+        <div class="video-container">
+            <img id="videoStream" class="hidden" alt="视频流">
+            <div id="loading" class="loading hidden">正在加载视频流...</div>
+            <div id="placeholder" style="color: #999; font-size: 18px;">请输入视频流URL并点击"开始检测"</div>
+        </div>
+        
+        <div id="detectionInfo" class="detection-info hidden">
+            <h3>检测结果</h3>
+            <div id="detectionList"></div>
+        </div>
+    </div>
+    
+    <script>
+        let streamInterval = null;
+        const apiBaseUrl = window.location.origin;
+        
+        function showStatus(message, type = 'info') {
+            const statusDiv = document.getElementById('status');
+            statusDiv.textContent = message;
+            statusDiv.className = `status ${type}`;
+            statusDiv.classList.remove('hidden');
+        }
+        
+        function hideStatus() {
+            document.getElementById('status').classList.add('hidden');
+        }
+        
+        function startStream() {
+            const streamUrl = document.getElementById('streamUrl').value.trim();
+            const confThreshold = document.getElementById('confThreshold').value;
+            const modelSize = document.getElementById('modelSize').value;
+            
+            if (!streamUrl) {
+                showStatus('请输入视频流URL', 'error');
+                return;
+            }
+            
+            // 构建API URL
+            const apiUrl = `${apiBaseUrl}/video/stream?` + 
+                `stream_url=${encodeURIComponent(streamUrl)}&` +
+                `conf_threshold=${confThreshold}&` +
+                `model_size=${modelSize}`;
+            
+            // 显示视频流
+            const videoImg = document.getElementById('videoStream');
+            const loading = document.getElementById('loading');
+            const placeholder = document.getElementById('placeholder');
+            
+            videoImg.src = apiUrl;
+            videoImg.classList.remove('hidden');
+            loading.classList.remove('hidden');
+            placeholder.classList.add('hidden');
+            
+            videoImg.onload = function() {
+                loading.classList.add('hidden');
+                showStatus('视频流连接成功', 'success');
+            };
+            
+            videoImg.onerror = function() {
+                loading.classList.add('hidden');
+                showStatus('无法连接到视频流，请检查URL是否正确', 'error');
+                stopStream();
+            };
+            
+            // 更新按钮状态
+            document.getElementById('startBtn').classList.add('hidden');
+            document.getElementById('stopBtn').classList.remove('hidden');
+            
+            // 定期获取检测结果（可选，如果需要显示检测详情）
+            // fetchDetectionResults(streamUrl, confThreshold, modelSize);
+        }
+        
+        function stopStream() {
+            const videoImg = document.getElementById('videoStream');
+            videoImg.src = '';
+            videoImg.classList.add('hidden');
+            document.getElementById('placeholder').classList.remove('hidden');
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('detectionInfo').classList.add('hidden');
+            
+            document.getElementById('startBtn').classList.remove('hidden');
+            document.getElementById('stopBtn').classList.add('hidden');
+            
+            hideStatus();
+            
+            if (streamInterval) {
+                clearInterval(streamInterval);
+                streamInterval = null;
+            }
+        }
+        
+        // 可选：获取检测结果详情
+        async function fetchDetectionResults(streamUrl, confThreshold, modelSize) {
+            try {
+                const response = await fetch(`${apiBaseUrl}/video/detect_frame`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        stream_url: streamUrl,
+                        conf_threshold: parseFloat(confThreshold),
+                        model_size: modelSize
+                    })
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    displayDetections(data.detections);
+                }
+            } catch (error) {
+                console.error('获取检测结果失败:', error);
+            }
+        }
+        
+        function displayDetections(detections) {
+            const detectionList = document.getElementById('detectionList');
+            const detectionInfo = document.getElementById('detectionInfo');
+            
+            if (detections && detections.length > 0) {
+                detectionInfo.classList.remove('hidden');
+                detectionList.innerHTML = detections.map(det => `
+                    <div class="detection-item">
+                        <strong>${det.class_name}</strong> - 置信度: ${(det.confidence * 100).toFixed(2)}%
+                        <br>
+                        <small>位置: [${det.bbox.map(b => b.toFixed(0)).join(', ')}]</small>
+                    </div>
+                `).join('');
+            } else {
+                detectionInfo.classList.add('hidden');
+            }
+        }
+        
+        // 页面加载时隐藏加载提示
+        window.onload = function() {
+            document.getElementById('loading').classList.add('hidden');
+        };
+    </script>
+</body>
+</html>
+

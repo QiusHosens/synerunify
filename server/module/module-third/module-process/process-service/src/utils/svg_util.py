@@ -996,8 +996,8 @@ def convert_to_svg(input_path: str, output_path: str, threshold: int = 127, use_
 
 # Example usage:
 if __name__ == "__main__":
-    input_file = "../../samples/png/test.png"  # Replace with your file path
-    output_file = "../../samples/svg/test.svg"
+    input_file = "../../samples/png/phone.png"  # Replace with your file path
+    output_file = "../../samples/svg/phone.svg"
 
     # Convert to SVG
     # convert_to_svg_potrace(input_file, output_file)

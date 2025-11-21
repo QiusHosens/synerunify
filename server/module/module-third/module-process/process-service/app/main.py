@@ -3,9 +3,11 @@ FastAPI 应用入口
 """
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from pathlib import Path
 
 from app.core.config import settings
-from app.routers import process, convert
+from app.routers import process, convert, video
 
 # 创建 FastAPI 应用实例
 app = FastAPI(
@@ -26,6 +28,12 @@ app.add_middleware(
 # 注册路由
 app.include_router(process.router)
 app.include_router(convert.router)
+app.include_router(video.router)
+
+# 静态文件服务（用于视频流展示页面）
+static_dir = Path(__file__).parent.parent / "static"
+if static_dir.exists():
+    app.mount("/static", StaticFiles(directory=str(static_dir)), name="static")
 
 
 @app.get("/")
@@ -33,7 +41,13 @@ async def root():
     """根路径"""
     return {
         "message": "Process Service API",
-        "version": "1.0.0"
+        "version": "1.0.0",
+        "endpoints": {
+            "video_stream": "/static/video_stream.html",
+            "video_api": "/video/stream",
+            "video_detect": "/video/detect_frame",
+            "video_classes": "/video/classes"
+        }
     }
 
 
