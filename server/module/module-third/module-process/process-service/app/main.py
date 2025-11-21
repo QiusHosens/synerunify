@@ -5,7 +5,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import settings
-from app.routers import process
+from app.routers import process, convert
 
 # 创建 FastAPI 应用实例
 app = FastAPI(
@@ -25,6 +25,7 @@ app.add_middleware(
 
 # 注册路由
 app.include_router(process.router)
+app.include_router(convert.router)
 
 
 @app.get("/")

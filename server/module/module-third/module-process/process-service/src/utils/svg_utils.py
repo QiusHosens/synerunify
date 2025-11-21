@@ -849,6 +849,127 @@ def process_image_bytes_and_generate_svg(
         return False
 
 
+def process_image_bytes_to_svg_string(
+    image_bytes: bytes,
+    white_threshold: int = 240,
+    min_area: int = 100,
+    stroke_width: int = 2,
+    sharpen_factor: float = 2.0
+):
+    """
+    处理图片字节数据并返回SVG字符串内容
+    
+    Args:
+        image_bytes: 图片字节数据
+        white_threshold: 白色阈值 (0-255)
+        min_area: 最小区域面积
+        stroke_width: 描边宽度（像素）
+        sharpen_factor: 锐化因子，值越大锐化效果越强（默认2.0）
+        
+    Returns:
+        如果成功，返回 (svg_content, metadata) 元组，其中：
+        - svg_content: SVG字符串内容
+        - metadata: 包含处理信息的字典（width, height, regions_count等）
+        如果失败，返回 None
+    """
+    if not CV2_AVAILABLE:
+        print("Error: OpenCV (cv2) is required for this function.")
+        print("Please install it: pip install opencv-python")
+        return None
+    
+    try:
+        from io import BytesIO
+        
+        # 从字节数据加载图片
+        img = Image.open(BytesIO(image_bytes))
+        if img.mode != 'RGB':
+            img = img.convert('RGB')
+        
+        original_w, original_h = img.size
+        
+        # 使用EDSR放大4倍
+        img_upscaled = upscale_image_with_edsr(img)
+        
+        # 转换为numpy数组并锐化
+        img_array = np.array(img_upscaled)
+        img_array = _sharpen_image(img_array, sharpen_factor)
+        
+        # 记录放大后的尺寸
+        h, w = img_array.shape[:2]
+        
+        # 去除白色背景
+        img_rgba = _remove_white_background(img_array, white_threshold)
+        
+        # 识别颜色区域
+        regions = _find_color_regions(img_rgba, min_area)
+        
+        if len(regions) == 0:
+            print("Warning: No color regions found in the image")
+            return None
+        
+        # 生成SVG内容
+        # 按轮廓面积排序，先绘制大的（外部）轮廓，再绘制小的（内部）轮廓
+        regions_sorted = sorted(regions, key=lambda r: cv2.contourArea(r['contour']), reverse=True)
+        
+        # 缩小4倍（因为之前用EDSR放大了4倍）
+        scale_factor = 0.25
+        svg_w = int(w * scale_factor)
+        svg_h = int(h * scale_factor)
+        svg_stroke_width = stroke_width * scale_factor
+        
+        svg_paths = []
+        for region in regions_sorted:
+            contour = region['contour']
+            color = region['color']
+            color_hex = _rgb_to_hex(color)
+            
+            holes = region.get('holes', [])  # 获取内孔列表
+            # 将轮廓转换为SVG路径（包含外轮廓和内孔），坐标缩小4倍
+            path_data = _contour_to_svg_path(contour, holes, scale_factor)
+            if path_data:
+                svg_paths.append({
+                    'path': path_data,
+                    'fill': color_hex,
+                    'stroke': color_hex,
+                    'stroke_width': svg_stroke_width,
+                    'has_holes': len(holes) > 0
+                })
+        
+        # 构建SVG文档
+        svg_content = f'<svg xmlns="http://www.w3.org/2000/svg" width="{svg_w}" height="{svg_h}">\n'
+        
+        for svg_path_info in svg_paths:
+            svg_content += f'  <path d="{svg_path_info["path"]}" '
+            svg_content += f'fill="{svg_path_info["fill"]}" '
+            svg_content += f'stroke="{svg_path_info["stroke"]}" '
+            svg_content += f'stroke-width="{svg_path_info["stroke_width"]}" '
+            # 如果有内孔，使用evenodd填充规则
+            if svg_path_info.get('has_holes', False):
+                svg_content += f'fill-rule="evenodd" '
+            svg_content += f'stroke-linejoin="round" stroke-linecap="round"/>\n'
+        
+        svg_content += '</svg>'
+        
+        # 构建元数据
+        metadata = {
+            'original_width': original_w,
+            'original_height': original_h,
+            'upscaled_width': w,
+            'upscaled_height': h,
+            'svg_width': svg_w,
+            'svg_height': svg_h,
+            'regions_count': len(svg_paths)
+        }
+        
+        return svg_content, metadata
+        
+    except Exception as e:
+        print(f"Error occurred during processing: {e}")
+        import traceback
+        traceback.print_exc()
+        return None
+
+
 def show_processed_image(
     input_path: str,
     white_threshold: int = 240,
