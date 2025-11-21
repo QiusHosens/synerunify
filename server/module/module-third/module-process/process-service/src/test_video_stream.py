@@ -1,6 +1,6 @@
 """
 视频流检测测试脚本
-用于测试YOLO视频流检测功能
+用于测试YOLO11视频流检测功能
 """
 import sys
 import os
@@ -15,7 +15,7 @@ from src.utils.yolo import YOLODetector
 def main():
     """主函数"""
     print("=" * 60)
-    print("YOLO视频流检测测试")
+    print("YOLO11视频流检测测试")
     print("=" * 60)
     print()
     print("支持的视频流格式:")
@@ -58,5 +58,6 @@ def main():
 
 
 if __name__ == "__main__":
+    # rtmp://uam-video.digital-aviation.sh.cn/live/test
     main()
 

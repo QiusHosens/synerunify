@@ -1,6 +1,6 @@
 """
 视频流处理模块
-支持RTSP、RTMP、HTTP等视频流协议的拉取和实时处理
+支持RTSP、RTMP、HTTP等视频流协议的拉取和实时YOLO11检测处理
 """
 import cv2
 import numpy as np

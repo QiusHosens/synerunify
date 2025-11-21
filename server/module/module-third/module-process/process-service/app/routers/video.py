@@ -1,6 +1,6 @@
 """
 视频流处理相关的 API 路由
-支持实时视频流拉取和YOLO目标检测
+支持实时视频流拉取和YOLO11目标检测
 """
 from typing import Optional
 from fastapi import APIRouter, Query, HTTPException
@@ -30,16 +30,16 @@ _active_processors: dict = {}
 async def stream_video(
     stream_url: str = Query(..., description="视频流URL（支持RTSP、RTMP、HTTP等）"),
     conf_threshold: float = Query(0.25, description="检测置信度阈值", ge=0.0, le=1.0),
-    model_size: str = Query("n", description="YOLO模型大小: n/s/m/l/x")
+    model_size: str = Query("n", description="YOLO11模型大小: n/s/m/l/x")
 ):
     """
     实时视频流检测端点
-    返回MJPEG格式的视频流，包含YOLO检测结果
+    返回MJPEG格式的视频流，包含YOLO11检测结果
     
     Args:
         stream_url: 视频流URL
         conf_threshold: 检测置信度阈值
-        model_size: YOLO模型大小
+        model_size: YOLO11模型大小
         
     Returns:
         MJPEG格式的视频流
@@ -130,7 +130,7 @@ async def detect_frame(
 @router.get("/classes")
 async def get_classes():
     """
-    获取YOLO模型支持的类别列表
+    获取YOLO11模型支持的类别列表
     
     Returns:
         类别名称字典

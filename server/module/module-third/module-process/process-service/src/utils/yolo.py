@@ -1,6 +1,7 @@
 """
-YOLO目标检测工具模块
+YOLO11目标检测工具模块
 支持实时视频流检测和单帧图像检测
+使用Ultralytics YOLO11模型，提供更高的检测精度和速度
 """
 import cv2
 import numpy as np
@@ -24,8 +25,8 @@ class YOLODetector:
             self.model = YOLO(model_path)
             print(f"加载自定义模型: {model_path}")
         else:
-            # 使用预训练的YOLOv8模型
-            model_name = f"yolov8{model_size}.pt"
+            # 使用预训练的YOLO11模型
+            model_name = f"yolo11{model_size}.pt"
             self.model = YOLO(model_name)
             print(f"加载预训练模型: {model_name}")
         
