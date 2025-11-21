@@ -57,4 +57,4 @@ tsconfig.tsbuildinfo
 tools/parser_result
 
 # go
-__*
+__*.exe
