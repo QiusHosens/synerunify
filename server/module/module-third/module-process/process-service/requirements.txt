@@ -1,4 +1,11 @@
-flask==3.1.1
+# FastAPI 相关依赖
+fastapi==0.115.0
+uvicorn[standard]==0.32.0
+pydantic==2.9.2
+pydantic-settings==2.5.2
+python-multipart==0.0.12
+
+# 原有依赖
 pillow==12.0.0
 pytesseract==0.3.13
 grpcio==1.73.1
@@ -16,3 +23,8 @@ numpy==2.3.4
 python-dotenv==1.0.1
 potracer==0.0.4
 scikit-learn==1.7.2
+
+# 测试依赖（可选）
+pytest==8.3.3
+pytest-asyncio==0.24.0
+httpx==0.27.2
