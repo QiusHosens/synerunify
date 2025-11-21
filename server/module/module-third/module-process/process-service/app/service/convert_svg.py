@@ -17,7 +17,9 @@ def convert_image_bytes_to_svg(
     white_threshold: int = 240,
     min_area: int = 100,
     stroke_width: int = 2,
-    sharpen_factor: float = 2.0
+    sharpen_factor: float = 2.0,
+    enable_upscale: bool = True,
+    enable_sharpen: bool = True
 ) -> ConvertImageToSvgResponse:
     """
     将图片字节数据转换为SVG格式
@@ -28,6 +30,8 @@ def convert_image_bytes_to_svg(
         min_area: 最小区域面积，小于此值的区域将被忽略
         stroke_width: 描边宽度（像素）
         sharpen_factor: 锐化因子，值越大锐化效果越强
+        enable_upscale: 是否启用图片放大（默认True）
+        enable_sharpen: 是否启用图片锐化（默认True）
         
     Returns:
         ConvertImageToSvgResponse 响应对象
@@ -39,7 +43,9 @@ def convert_image_bytes_to_svg(
             white_threshold=white_threshold,
             min_area=min_area,
             stroke_width=stroke_width,
-            sharpen_factor=sharpen_factor
+            sharpen_factor=sharpen_factor,
+            enable_upscale=enable_upscale,
+            enable_sharpen=enable_sharpen
         )
         
         if result is None:
@@ -67,7 +73,9 @@ def convert_image_from_minio_to_svg(
     white_threshold: int = 240,
     min_area: int = 100,
     stroke_width: int = 2,
-    sharpen_factor: float = 2.0
+    sharpen_factor: float = 2.0,
+    enable_upscale: bool = True,
+    enable_sharpen: bool = True
 ) -> ConvertImageToSvgResponse:
     """
     从MinIO路径读取图片并转换为SVG格式
@@ -78,6 +86,8 @@ def convert_image_from_minio_to_svg(
         min_area: 最小区域面积，小于此值的区域将被忽略
         stroke_width: 描边宽度（像素）
         sharpen_factor: 锐化因子，值越大锐化效果越强
+        enable_upscale: 是否启用图片放大（默认True）
+        enable_sharpen: 是否启用图片锐化（默认True）
         
     Returns:
         ConvertImageToSvgResponse 响应对象
@@ -100,7 +110,9 @@ def convert_image_from_minio_to_svg(
             white_threshold=white_threshold,
             min_area=min_area,
             stroke_width=stroke_width,
-            sharpen_factor=sharpen_factor
+            sharpen_factor=sharpen_factor,
+            enable_upscale=enable_upscale,
+            enable_sharpen=enable_sharpen
         )
         
         if result is None:

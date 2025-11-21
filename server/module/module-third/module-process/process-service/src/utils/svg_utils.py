@@ -610,7 +610,9 @@ def process_image_and_generate_svg(
     white_threshold: int = 240,
     min_area: int = 100,
     stroke_width: int = 2,
-    sharpen_factor: float = 2.0
+    sharpen_factor: float = 2.0,
+    enable_upscale: bool = True,
+    enable_sharpen: bool = True
 ) -> bool:
     """
     处理图片并生成SVG：
@@ -627,6 +629,8 @@ def process_image_and_generate_svg(
         min_area: 最小区域面积，小于此值的区域将被忽略
         stroke_width: 描边宽度（像素）
         sharpen_factor: 锐化因子，值越大锐化效果越强（默认2.0）
+        enable_upscale: 是否启用图片放大（默认True）
+        enable_sharpen: 是否启用图片锐化（默认True）
         
     Returns:
         True if successful, False otherwise
@@ -644,12 +648,18 @@ def process_image_and_generate_svg(
         
         original_w, original_h = img.size
         
-        # 2. 使用EDSR放大4倍
-        img_upscaled = upscale_image_with_edsr(img)
+        # 2. 根据选项决定是否放大
+        if enable_upscale:
+            img_upscaled = upscale_image_with_edsr(img)
+        else:
+            img_upscaled = img
         
-        # 3. 转换为numpy数组并锐化
+        # 3. 转换为numpy数组
         img_array = np.array(img_upscaled)
-        img_array = _sharpen_image(img_array, sharpen_factor)
+        
+        # 根据选项决定是否锐化
+        if enable_sharpen:
+            img_array = _sharpen_image(img_array, sharpen_factor)
         
         # 记录放大后的尺寸
         h, w = img_array.shape[:2]
@@ -669,8 +679,12 @@ def process_image_and_generate_svg(
         # 这样可以确保内部区域显示在外部区域之上
         regions_sorted = sorted(regions, key=lambda r: cv2.contourArea(r['contour']), reverse=True)
         
-        # 缩小4倍（因为之前用EDSR放大了4倍）
-        scale_factor = 0.25
+        # 根据是否放大决定缩放因子
+        if enable_upscale:
+            scale_factor = 0.25  # 缩小4倍（因为之前用EDSR放大了4倍）
+        else:
+            scale_factor = 1.0  # 不缩放
+        
         svg_w = int(w * scale_factor)
         svg_h = int(h * scale_factor)
         svg_stroke_width = stroke_width * scale_factor
@@ -736,7 +750,9 @@ def process_image_bytes_and_generate_svg(
     white_threshold: int = 240,
     min_area: int = 100,
     stroke_width: int = 2,
-    sharpen_factor: float = 2.0
+    sharpen_factor: float = 2.0,
+    enable_upscale: bool = True,
+    enable_sharpen: bool = True
 ) -> bool:
     """
     处理图片字节数据并生成SVG（功能同process_image_and_generate_svg）
@@ -748,6 +764,8 @@ def process_image_bytes_and_generate_svg(
         min_area: 最小区域面积
         stroke_width: 描边宽度（像素）
         sharpen_factor: 锐化因子，值越大锐化效果越强（默认2.0）
+        enable_upscale: 是否启用图片放大（默认True）
+        enable_sharpen: 是否启用图片锐化（默认True）
         
     Returns:
         True if successful, False otherwise
@@ -767,12 +785,18 @@ def process_image_bytes_and_generate_svg(
         
         original_w, original_h = img.size
         
-        # 使用EDSR放大4倍
-        img_upscaled = upscale_image_with_edsr(img)
+        # 根据选项决定是否放大
+        if enable_upscale:
+            img_upscaled = upscale_image_with_edsr(img)
+        else:
+            img_upscaled = img
         
-        # 转换为numpy数组并锐化
+        # 转换为numpy数组
         img_array = np.array(img_upscaled)
-        img_array = _sharpen_image(img_array, sharpen_factor)
+        
+        # 根据选项决定是否锐化
+        if enable_sharpen:
+            img_array = _sharpen_image(img_array, sharpen_factor)
         
         # 记录放大后的尺寸
         h, w = img_array.shape[:2]
@@ -791,8 +815,12 @@ def process_image_bytes_and_generate_svg(
         # 按轮廓面积排序，先绘制大的（外部）轮廓，再绘制小的（内部）轮廓
         regions_sorted = sorted(regions, key=lambda r: cv2.contourArea(r['contour']), reverse=True)
         
-        # 缩小4倍（因为之前用EDSR放大了4倍）
-        scale_factor = 0.25
+        # 根据是否放大决定缩放因子
+        if enable_upscale:
+            scale_factor = 0.25  # 缩小4倍（因为之前用EDSR放大了4倍）
+        else:
+            scale_factor = 1.0  # 不缩放
+        
         svg_w = int(w * scale_factor)
         svg_h = int(h * scale_factor)
         svg_stroke_width = stroke_width * scale_factor
@@ -804,7 +832,7 @@ def process_image_bytes_and_generate_svg(
             color_hex = _rgb_to_hex(color)
             
             holes = region.get('holes', [])  # 获取内孔列表
-            # 将轮廓转换为SVG路径（包含外轮廓和内孔），坐标缩小4倍
+            # 将轮廓转换为SVG路径（包含外轮廓和内孔），根据缩放因子调整坐标
             path_data = _contour_to_svg_path(contour, holes, scale_factor)
             if path_data:
                 svg_paths.append({
@@ -854,7 +882,9 @@ def process_image_bytes_to_svg_string(
     white_threshold: int = 240,
     min_area: int = 100,
     stroke_width: int = 2,
-    sharpen_factor: float = 2.0
+    sharpen_factor: float = 2.0,
+    enable_upscale: bool = True,
+    enable_sharpen: bool = True
 ):
     """
     处理图片字节数据并返回SVG字符串内容
@@ -865,6 +895,8 @@ def process_image_bytes_to_svg_string(
         min_area: 最小区域面积
         stroke_width: 描边宽度（像素）
         sharpen_factor: 锐化因子，值越大锐化效果越强（默认2.0）
+        enable_upscale: 是否启用图片放大（默认True）
+        enable_sharpen: 是否启用图片锐化（默认True）
         
     Returns:
         如果成功，返回 (svg_content, metadata) 元组，其中：
@@ -887,12 +919,18 @@ def process_image_bytes_to_svg_string(
         
         original_w, original_h = img.size
         
-        # 使用EDSR放大4倍
-        img_upscaled = upscale_image_with_edsr(img)
+        # 根据选项决定是否放大
+        if enable_upscale:
+            img_upscaled = upscale_image_with_edsr(img)
+        else:
+            img_upscaled = img
         
-        # 转换为numpy数组并锐化
+        # 转换为numpy数组
         img_array = np.array(img_upscaled)
-        img_array = _sharpen_image(img_array, sharpen_factor)
+        
+        # 根据选项决定是否锐化
+        if enable_sharpen:
+            img_array = _sharpen_image(img_array, sharpen_factor)
         
         # 记录放大后的尺寸
         h, w = img_array.shape[:2]
@@ -911,8 +949,12 @@ def process_image_bytes_to_svg_string(
         # 按轮廓面积排序，先绘制大的（外部）轮廓，再绘制小的（内部）轮廓
         regions_sorted = sorted(regions, key=lambda r: cv2.contourArea(r['contour']), reverse=True)
         
-        # 缩小4倍（因为之前用EDSR放大了4倍）
-        scale_factor = 0.25
+        # 根据是否放大决定缩放因子
+        if enable_upscale:
+            scale_factor = 0.25  # 缩小4倍（因为之前用EDSR放大了4倍）
+        else:
+            scale_factor = 1.0  # 不缩放
+        
         svg_w = int(w * scale_factor)
         svg_h = int(h * scale_factor)
         svg_stroke_width = stroke_width * scale_factor
@@ -975,7 +1017,9 @@ def show_processed_image(
     white_threshold: int = 240,
     min_area: int = 100,
     window_title: str = "Processed Image",
-    sharpen_factor: float = 2.0
+    sharpen_factor: float = 2.0,
+    enable_upscale: bool = True,
+    enable_sharpen: bool = True
 ) -> bool:
     """
     显示处理后的图片（用于调试和预览）
@@ -992,6 +1036,8 @@ def show_processed_image(
         min_area: 最小区域面积
         window_title: 窗口标题
         sharpen_factor: 锐化因子，值越大锐化效果越强（默认2.0）
+        enable_upscale: 是否启用图片放大（默认True）
+        enable_sharpen: 是否启用图片锐化（默认True）
         
     Returns:
         True if successful, False otherwise
@@ -1011,12 +1057,20 @@ def show_processed_image(
         
         original_w, original_h = img.size
         
-        # 步骤2: 使用EDSR放大4倍
-        img_upscaled = upscale_image_with_edsr(img)
+        # 步骤2: 根据选项决定是否放大
+        if enable_upscale:
+            img_upscaled = upscale_image_with_edsr(img)
+        else:
+            img_upscaled = img
         
-        # 步骤3: 锐化图片
+        # 步骤3: 转换为numpy数组
         img_array = np.array(img_upscaled)
-        img_sharpened = _sharpen_image(img_array, sharpen_factor)
+        
+        # 根据选项决定是否锐化
+        if enable_sharpen:
+            img_sharpened = _sharpen_image(img_array, sharpen_factor)
+        else:
+            img_sharpened = img_array
         
         h, w = img_sharpened.shape[:2]
         
@@ -1054,14 +1108,21 @@ def show_processed_image(
         axes[0, 0].set_title(f'步骤1: 原始图片 ({original_w}x{original_h})', fontsize=14, fontweight='bold')
         axes[0, 0].axis('off')
         
-        # 步骤2: EDSR放大4倍后的图片
-        axes[0, 1].imshow(img_upscaled)
-        axes[0, 1].set_title(f'步骤2: EDSR放大4倍 ({img_upscaled.width}x{img_upscaled.height})', fontsize=14, fontweight='bold')
+        # 步骤2: 放大后的图片（如果启用）
+        if enable_upscale:
+            axes[0, 1].imshow(img_upscaled)
+            axes[0, 1].set_title(f'步骤2: EDSR放大4倍 ({img_upscaled.width}x{img_upscaled.height})', fontsize=14, fontweight='bold')
+        else:
+            axes[0, 1].imshow(img)
+            axes[0, 1].set_title(f'步骤2: 原始尺寸 (未放大)', fontsize=14, fontweight='bold')
         axes[0, 1].axis('off')
         
-        # 步骤3: 锐化后的图片
+        # 步骤3: 锐化后的图片（如果启用）
         axes[0, 2].imshow(img_sharpened)
-        axes[0, 2].set_title(f'步骤3: 锐化处理 (锐化因子={sharpen_factor})', fontsize=14, fontweight='bold')
+        if enable_sharpen:
+            axes[0, 2].set_title(f'步骤3: 锐化处理 (锐化因子={sharpen_factor})', fontsize=14, fontweight='bold')
+        else:
+            axes[0, 2].set_title(f'步骤3: 未锐化', fontsize=14, fontweight='bold')
         axes[0, 2].axis('off')
         
         # 步骤4: 去除白色背景后的图片
@@ -1085,7 +1146,10 @@ def show_processed_image(
         # 打印详细信息
         print(f"\n处理完成: {input_path}")
         print(f"  原始图片尺寸: {original_w}x{original_h}")
-        print(f"  放大后尺寸: {w}x{h}")
+        if enable_upscale:
+            print(f"  放大后尺寸: {w}x{h}")
+        else:
+            print(f"  处理尺寸: {w}x{h} (未放大)")
         print(f"  白色阈值: {white_threshold}")
         print(f"  最小区域面积: {min_area}")
         print(f"  检测到的区域数量: {len(regions)}")
@@ -1117,7 +1181,9 @@ def show_processed_image_from_bytes(
     white_threshold: int = 240,
     min_area: int = 100,
     window_title: str = "Processed Image",
-    sharpen_factor: float = 2.0
+    sharpen_factor: float = 2.0,
+    enable_upscale: bool = True,
+    enable_sharpen: bool = True
 ) -> bool:
     """
     从字节数据显示处理后的图片（用于调试和预览）
@@ -1134,6 +1200,8 @@ def show_processed_image_from_bytes(
         min_area: 最小区域面积
         window_title: 窗口标题
         sharpen_factor: 锐化因子，值越大锐化效果越强（默认2.0）
+        enable_upscale: 是否启用图片放大（默认True）
+        enable_sharpen: 是否启用图片锐化（默认True）
         
     Returns:
         True if successful, False otherwise
@@ -1154,12 +1222,20 @@ def show_processed_image_from_bytes(
         
         original_w, original_h = img.size
         
-        # 步骤2: 使用EDSR放大4倍
-        img_upscaled = upscale_image_with_edsr(img)
+        # 步骤2: 根据选项决定是否放大
+        if enable_upscale:
+            img_upscaled = upscale_image_with_edsr(img)
+        else:
+            img_upscaled = img
         
-        # 步骤3: 锐化图片
+        # 步骤3: 转换为numpy数组
         img_array = np.array(img_upscaled)
-        img_sharpened = _sharpen_image(img_array, sharpen_factor)
+        
+        # 根据选项决定是否锐化
+        if enable_sharpen:
+            img_sharpened = _sharpen_image(img_array, sharpen_factor)
+        else:
+            img_sharpened = img_array
         
         h, w = img_sharpened.shape[:2]
         
@@ -1197,14 +1273,21 @@ def show_processed_image_from_bytes(
         axes[0, 0].set_title(f'步骤1: 原始图片 ({original_w}x{original_h})', fontsize=14, fontweight='bold')
         axes[0, 0].axis('off')
         
-        # 步骤2: EDSR放大4倍后的图片
-        axes[0, 1].imshow(img_upscaled)
-        axes[0, 1].set_title(f'步骤2: EDSR放大4倍 ({img_upscaled.width}x{img_upscaled.height})', fontsize=14, fontweight='bold')
+        # 步骤2: 放大后的图片（如果启用）
+        if enable_upscale:
+            axes[0, 1].imshow(img_upscaled)
+            axes[0, 1].set_title(f'步骤2: EDSR放大4倍 ({img_upscaled.width}x{img_upscaled.height})', fontsize=14, fontweight='bold')
+        else:
+            axes[0, 1].imshow(img)
+            axes[0, 1].set_title(f'步骤2: 原始尺寸 (未放大)', fontsize=14, fontweight='bold')
         axes[0, 1].axis('off')
         
-        # 步骤3: 锐化后的图片
+        # 步骤3: 锐化后的图片（如果启用）
         axes[0, 2].imshow(img_sharpened)
-        axes[0, 2].set_title(f'步骤3: 锐化处理 (锐化因子={sharpen_factor})', fontsize=14, fontweight='bold')
+        if enable_sharpen:
+            axes[0, 2].set_title(f'步骤3: 锐化处理 (锐化因子={sharpen_factor})', fontsize=14, fontweight='bold')
+        else:
+            axes[0, 2].set_title(f'步骤3: 未锐化', fontsize=14, fontweight='bold')
         axes[0, 2].axis('off')
         
         # 步骤4: 去除白色背景后的图片
@@ -1228,7 +1311,10 @@ def show_processed_image_from_bytes(
         # 打印详细信息
         print(f"\n处理完成: (从字节数据)")
         print(f"  原始图片尺寸: {original_w}x{original_h}")
-        print(f"  放大后尺寸: {w}x{h}")
+        if enable_upscale:
+            print(f"  放大后尺寸: {w}x{h}")
+        else:
+            print(f"  处理尺寸: {w}x{h} (未放大)")
         print(f"  白色阈值: {white_threshold}")
         print(f"  最小区域面积: {min_area}")
         print(f"  检测到的区域数量: {len(regions)}")
@@ -1257,8 +1343,8 @@ def show_processed_image_from_bytes(
 
 # 示例用法
 if __name__ == "__main__":
-    input_file = "../../samples/png/test.png"
-    output_file = "../../samples/svg/test_processed.svg"
+    input_file = "../../samples/png/phone.png"
+    output_file = "../../samples/svg/phone_processed.svg"
     
     # 处理图片并生成SVG
     process_image_and_generate_svg(
@@ -1266,9 +1352,16 @@ if __name__ == "__main__":
         output_file,
         white_threshold=240,
         min_area=0,
-        stroke_width=2
+        stroke_width=2,
+        enable_upscale=False,
+        enable_sharpen=False
     )
     
     # 显示处理结果（可选）
-    show_processed_image(input_file, min_area=1)
+    show_processed_image(
+        input_file,
+        min_area=0,
+        enable_upscale=False,
+        enable_sharpen=False
+    )
 

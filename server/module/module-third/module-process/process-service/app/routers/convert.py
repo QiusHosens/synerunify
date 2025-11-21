@@ -23,7 +23,9 @@ async def convert_image_to_svg(
     white_threshold: Optional[int] = Form(240, description="白色阈值 (0-255)"),
     min_area: Optional[int] = Form(100, description="最小区域面积"),
     stroke_width: Optional[int] = Form(2, description="描边宽度（像素）"),
-    sharpen_factor: Optional[float] = Form(2.0, description="锐化因子")
+    sharpen_factor: Optional[float] = Form(2.0, description="锐化因子"),
+    enable_upscale: Optional[bool] = Form(True, description="是否启用图片放大"),
+    enable_sharpen: Optional[bool] = Form(True, description="是否启用图片锐化")
 ):
     """
     将上传的图片转换为SVG格式
@@ -34,6 +36,8 @@ async def convert_image_to_svg(
         min_area: 最小区域面积，小于此值的区域将被忽略
         stroke_width: 描边宽度（像素）
         sharpen_factor: 锐化因子，值越大锐化效果越强
+        enable_upscale: 是否启用图片放大（默认True）
+        enable_sharpen: 是否启用图片锐化（默认True）
         
     Returns:
         包含SVG内容和元数据的响应
@@ -47,7 +51,9 @@ async def convert_image_to_svg(
         white_threshold=white_threshold or 240,
         min_area=min_area or 100,
         stroke_width=stroke_width or 2,
-        sharpen_factor=sharpen_factor or 2.0
+        sharpen_factor=sharpen_factor or 2.0,
+        enable_upscale=enable_upscale if enable_upscale is not None else True,
+        enable_sharpen=enable_sharpen if enable_sharpen is not None else True
     )
 
 
@@ -68,6 +74,8 @@ async def convert_image_to_svg_path(request: ConvertImageToSvgRequest):
         white_threshold=request.white_threshold or 240,
         min_area=request.min_area or 100,
         stroke_width=request.stroke_width or 2,
-        sharpen_factor=request.sharpen_factor or 2.0
+        sharpen_factor=request.sharpen_factor or 2.0,
+        enable_upscale=request.enable_upscale if request.enable_upscale is not None else True,
+        enable_sharpen=request.enable_sharpen if request.enable_sharpen is not None else True
     )
 
