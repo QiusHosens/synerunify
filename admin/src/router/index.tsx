@@ -9,8 +9,11 @@ import React from 'react';
 import LoginLayout from '@/layout/LoginLayout';
 import { Box, CircularProgress, Typography } from '@mui/material';
 import Detection from '@/pages/Detection';
+import ImageRecognition from '@/pages/Detection/ImageRecognition';
+import ImageConvert from '@/pages/Detection/ImageConvert';
+import ObjectDetection from '@/pages/Detection/ObjectDetection';
 
-const publicPaths = ['/login', '/detection'];
+const publicPaths = ['/login', '/detection', '/detection/image-recognition', '/detection/image-convert', '/detection/object-detection'];
 
 // 动态组件映射
 const componentMap: { [key: string]: React.LazyExoticComponent<React.ComponentType<Element>> } = {
@@ -90,7 +93,8 @@ export default function Router() {
   // console.log('location', location.pathname);
 
   // 未登录时跳转到登录页（公共路由除外）
-  if (!access_token && !publicPaths.includes(location.pathname)) {
+  const isPublicPath = publicPaths.includes(location.pathname) || location.pathname.startsWith('/detection/');
+  if (!access_token && !isPublicPath) {
     navigate('/login');
   }
 
@@ -121,7 +125,12 @@ export default function Router() {
               </LoginLayout>}
           />
           {/* 静态路由：系统检测页面 */}
-          <Route path="/detection" element={<Detection />} />
+          <Route path="/detection" element={<Detection />}>
+            <Route path="image-recognition" element={<ImageRecognition />} />
+            <Route path="image-convert" element={<ImageConvert />} />
+            <Route path="object-detection" element={<ObjectDetection />} />
+            <Route index element={<ImageRecognition />} />
+          </Route>
           {/* 动态路由 */}
           {routes.map((route) => (
             <Route
