@@ -55,10 +55,10 @@ def convert_image_bytes_to_svg(
             )
         
         svg_content, metadata = result
+        metadata['content'] = svg_content
         return ConvertImageToSvgResponse(
             code=200,
-            svg_content=svg_content,
-            metadata=metadata
+            data=metadata
         )
         
     except Exception as e:

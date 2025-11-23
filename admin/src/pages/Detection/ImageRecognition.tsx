@@ -1,7 +1,7 @@
-import { detect, DetectRequest } from '@/api/detection';
+import { detect, DetectRequest } from '@/api/process';
 import { previewSystemFile, uploadSystemFileOss } from '@/api/system_file';
 import CustomizedFileUpload, { UploadFile } from '@/components/CustomizedFileUpload';
-import { Box, Button, Divider, Paper, Stack, Typography } from '@mui/material';
+import { Box, Button, Paper, Stack, Typography } from '@mui/material';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 

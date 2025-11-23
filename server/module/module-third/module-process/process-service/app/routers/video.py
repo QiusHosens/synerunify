@@ -11,7 +11,7 @@ from pydantic import BaseModel
 from src.utils.video_stream import VideoStreamProcessor
 from src.utils.yolo import get_detector
 
-router = APIRouter(prefix="/video", tags=["video"])
+router = APIRouter(prefix="/process/video", tags=["video"])
 
 
 class StreamRequest(BaseModel):

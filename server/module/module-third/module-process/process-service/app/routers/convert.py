@@ -14,7 +14,7 @@ from app.service.convert_svg import (
     convert_image_from_minio_to_svg,
 )
 
-router = APIRouter(prefix="/convert", tags=["convert"])
+router = APIRouter(prefix="/process/convert", tags=["convert"])
 
 
 @router.post("/image_to_svg", response_model=ConvertImageToSvgResponse)

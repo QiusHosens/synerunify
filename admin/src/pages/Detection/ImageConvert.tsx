@@ -1,4 +1,4 @@
-import { previewSystemFile, uploadSystemFileOss } from '@/api/system_file';
+import { convert, ConvertRequest } from '@/api/process';
 import CustomizedFileUpload, { UploadFile } from '@/components/CustomizedFileUpload';
 import { Box, Button, Paper, Stack, Typography, MenuItem, Select, FormControl, InputLabel, Alert } from '@mui/material';
 import { useCallback, useState } from 'react';
@@ -23,35 +23,35 @@ export default function ImageConvert() {
 
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [converting, setConverting] = useState(false);
-  const [convertedImageUrl, setConvertedImageUrl] = useState<string | null>(null);
+  const [convertedSvgContent, setConvertedSvgContent] = useState<string | null>(null);
 
   const handleBackToLogin = useCallback(() => {
     navigate('/login');
   }, [navigate]);
 
-  const uploadFile = useCallback(async (file: UploadFile) => {
-    try {
-      const response = (await uploadSystemFileOss(file.file, (progress) => {
-        setFormValues((prev) => {
-          if (!prev.file) return prev;
-          return { ...prev, file: { ...prev.file, progress } };
-        });
-      })) as string;
+  // const uploadFile = useCallback(async (file: UploadFile) => {
+  //   try {
+  //     const response = (await uploadSystemFileOss(file.file, (progress) => {
+  //       setFormValues((prev) => {
+  //         if (!prev.file) return prev;
+  //         return { ...prev, file: { ...prev.file, progress } };
+  //       });
+  //     })) as string;
 
-      setFormValues((prev) => ({
-        ...prev,
-        path: response,
-        file: prev.file ? { ...prev.file, status: 'done' } : prev.file,
-      }));
-    } catch (error) {
-      console.error('upload file error', error);
-      setUploadError('文件上传失败，请稍后重试');
-      setFormValues((prev) => ({
-        ...prev,
-        file: prev.file ? { ...prev.file, status: 'error' } : prev.file,
-      }));
-    }
-  }, []);
+  //     setFormValues((prev) => ({
+  //       ...prev,
+  //       path: response,
+  //       file: prev.file ? { ...prev.file, status: 'done' } : prev.file,
+  //     }));
+  //   } catch (error) {
+  //     console.error('upload file error', error);
+  //     setUploadError('文件上传失败，请稍后重试');
+  //     setFormValues((prev) => ({
+  //       ...prev,
+  //       file: prev.file ? { ...prev.file, status: 'error' } : prev.file,
+  //     }));
+  //   }
+  // }, []);
 
   const handleFileChange = useCallback(
     async (file: UploadFile | null, action: 'upload' | 'remove') => {
@@ -62,23 +62,23 @@ export default function ImageConvert() {
           file,
           path: '',
         }));
-        setConvertedImageUrl(null);
+        setConvertedSvgContent(null);
 
-        await uploadFile(file);
+        // await uploadFile(file);
       } else if (action === 'remove') {
         setFormValues(() => ({
           path: '',
           file: undefined,
           format: 'png',
         }));
-        setConvertedImageUrl(null);
+        setConvertedSvgContent(null);
       }
     },
-    [uploadFile]
+    []
   );
 
   const handleConvert = useCallback(async () => {
-    if (!formValues.file || !formValues.path) {
+    if (!formValues.file) {
       setUploadError('请先上传图片');
       return;
     }
@@ -87,24 +87,25 @@ export default function ImageConvert() {
     setUploadError(null);
 
     try {
-      // TODO: 调用图片转换 API
-      // 这里暂时模拟转换过程
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      // 模拟转换后的图片 URL
-      const convertedUrl = previewSystemFile(formValues.path);
-      setConvertedImageUrl(convertedUrl);
+      const convertRequest: ConvertRequest = {
+        image: formValues.file?.file as File,
+        white_threshold: 240,
+        min_area: 0,
+        stroke_width: 2,
+        sharpen_factor: 2,
+        enable_upscale: false,
+        enable_sharpen: false,
+      };
+      const convertResponse = await convert(convertRequest);
+      console.log('convertResponse', convertResponse);
+      setConvertedSvgContent(convertResponse.content);
     } catch (error) {
       console.error('convert image error', error);
       setUploadError('图片转换失败，请稍后重试');
     } finally {
       setConverting(false);
     }
-  }, [formValues.file, formValues.path]);
-
-  const originalImageUrl = formValues.path
-    ? previewSystemFile(formValues.path)
-    : formValues.file?.previewUrl || '';
+  }, [formValues.file]);
 
   return (
     <Box
@@ -145,21 +146,57 @@ export default function ImageConvert() {
 
         <Stack spacing={3}>
           <Box>
-            <Typography variant="subtitle1" fontWeight={600} mb={1}>
+            {/* <Typography variant="subtitle1" fontWeight={600} mb={1}>
               上传图片
-            </Typography>
-            <CustomizedFileUpload
-              canRemove
-              id="convert-file-upload"
-              accept=".jpg,.jpeg,.png,.gif,.webp,.bmp"
-              maxSize={100}
-              onChange={handleFileChange}
-              file={formValues.file ?? null}
-              width={FILE_WIDTH}
-              height={FILE_HEIGHT}
-              helperText={uploadError ?? ' '}
-              error={Boolean(uploadError)}
-            />
+            </Typography> */}
+            <Stack direction="row" spacing={3}>
+              <CustomizedFileUpload
+                canRemove
+                id="convert-file-upload"
+                accept=".jpg,.jpeg,.png,.gif,.webp,.bmp"
+                maxSize={100}
+                onChange={handleFileChange}
+                file={formValues.file ?? null}
+                width={FILE_WIDTH}
+                height={FILE_HEIGHT}
+                helperText={uploadError ?? ' '}
+                error={Boolean(uploadError)}
+              />
+
+              {convertedSvgContent && (
+                <Box
+                  sx={{
+                    width: FILE_WIDTH,
+                    height: FILE_HEIGHT,
+                    borderRadius: 2,
+                    border: '1px solid',
+                    borderColor: 'divider',
+                    p: 2,
+                    backgroundColor: 'background.paper',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    overflow: 'hidden',
+                  }}>
+                  <Box
+                    sx={{
+                      width: '100%',
+                      height: '100%',
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      '& svg': {
+                        maxWidth: '100%',
+                        maxHeight: '100%',
+                        width: 'auto',
+                        height: 'auto',
+                      },
+                    }}
+                    dangerouslySetInnerHTML={{ __html: convertedSvgContent }}
+                  />
+                </Box>
+              )}
+            </Stack>
           </Box>
 
           <Box>
@@ -194,7 +231,7 @@ export default function ImageConvert() {
             <Alert severity="error">{uploadError}</Alert>
           )}
 
-          {(originalImageUrl || convertedImageUrl) && (
+          {/* {(originalImageUrl || convertedImageUrl) && (
             <Stack direction={{ xs: 'column', md: 'row' }} spacing={3} mt={2}>
               {originalImageUrl && (
                 <Box flex={1}>
@@ -268,9 +305,9 @@ export default function ImageConvert() {
                 </Box>
               )}
             </Stack>
-          )}
+          )} */}
         </Stack>
       </Paper>
-    </Box>
+    </Box >
   );
 }

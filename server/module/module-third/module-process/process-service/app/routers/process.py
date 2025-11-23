@@ -18,7 +18,7 @@ from app.service.process import (
     parse_document_service,
 )
 
-router = APIRouter(prefix="/process", tags=["process"])
+router = APIRouter(prefix="/process/detection", tags=["process"])
 
 
 @router.post("/process_image", response_model=dict)

@@ -20,7 +20,6 @@ class ConvertImageToSvgRequest(BaseModel):
 class ConvertImageToSvgResponse(BaseModel):
     """图片转SVG响应模型"""
     code: int = Field(200, description="响应状态码")
-    svg_content: Optional[str] = Field(None, description="SVG字符串内容")
-    metadata: Optional[dict] = Field(None, description="处理元数据（尺寸、区域数量等）")
+    data: Optional[dict] = Field(None, description="数据（尺寸、区域数量等）")
     message: Optional[str] = Field(None, description="错误信息")
 
