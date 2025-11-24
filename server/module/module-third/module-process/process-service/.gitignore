@@ -49,3 +49,6 @@ htmlcov/
 .DS_Store
 Thumbs.db
 
+runs
+fire-1
+*.pt
