@@ -16,7 +16,8 @@ def main():
         epochs=100,
         imgsz=640,
         batch=16,
-        name='yolo11_custom_training' # 训练结果保存的文件夹名称
+        name='yolo11_custom_training', # 训练结果保存的文件夹名称
+        device=0
     )
 
     # 3. 训练完成后的验证 (在验证集上测试)
