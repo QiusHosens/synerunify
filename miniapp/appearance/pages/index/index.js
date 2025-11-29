@@ -70,7 +70,7 @@ Page({
     })
 
     // 这里需要替换为你的实际API地址
-    const apiUrl = 'http://192.168.1.4:9990/appearance/predict'
+    const apiUrl = 'https://synerunify.com/api/process/appearance/predict'
     
     // 上传图片
     wx.uploadFile({

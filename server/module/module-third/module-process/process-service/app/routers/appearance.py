@@ -9,7 +9,7 @@ from fastapi import APIRouter, UploadFile, File, HTTPException, Query
 from app.models.appearance import AppearancePredictResponse
 from app.service.appearance import predict_image_from_bytes
 
-router = APIRouter(prefix="/appearance", tags=["appearance"])
+router = APIRouter(prefix="/process/appearance", tags=["appearance"])
 
 
 @router.post("/predict", response_model=AppearancePredictResponse)
