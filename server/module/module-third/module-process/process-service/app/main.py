@@ -1,10 +1,17 @@
 """
 FastAPI 应用入口
 """
+import sys
+from pathlib import Path
+
+# 确保项目根目录在 Python 路径中
+_project_root = Path(__file__).parent.parent.resolve()
+if str(_project_root) not in sys.path:
+    sys.path.insert(0, str(_project_root))
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from pathlib import Path
 
 from app.core.config import settings
 from app.routers import process, convert, video, appearance

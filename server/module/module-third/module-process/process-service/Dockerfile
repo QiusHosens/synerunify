@@ -1,5 +1,5 @@
 # 使用 Python 官方镜像作为基础镜像
-FROM python:3.12
+FROM python:3.13
 
 # 设置非交互式安装，避免提示
 ENV DEBIAN_FRONTEND=noninteractive
@@ -20,8 +20,9 @@ RUN apt-get update && apt-get install -y \
     libcairo2-dev \
     wget \
     git \
-    python3-venv \
     supervisor \
+    libgl1 \
+    libglib2.0-0 \
     && rm -rf /var/lib/apt/lists/*
 
 # 安装 Leptonica（Tesseract 依赖的图像处理库）
@@ -38,31 +39,33 @@ RUN wget http://www.leptonica.org/source/leptonica-1.84.1.tar.gz \
 WORKDIR /app
 
 # 克隆 Tesseract 源码并编译安装
-RUN git clone https://github.com/QiusHosens/tesseract.git \
-    && cd tesseract \
-    && ./autogen.sh \
-    && ./configure \
-    && make \
-    && make install \
-    && ldconfig \
-    && cd .. \
-    && rm -rf tesseract
+#RUN git clone https://github.com/QiusHosens/tesseract.git \
+#    && cd tesseract \
+#    && ./autogen.sh \
+#    && ./configure \
+#    && make \
+#    && make install \
+#    && ldconfig \
+#    && cd .. \
+#    && rm -rf tesseract
 
 # 下载 Tesseract 训练数据
-RUN wget https://github.com/tesseract-ocr/tessdata/raw/main/eng.traineddata -P /usr/local/share/tessdata/ \
-    && wget https://github.com/tesseract-ocr/tessdata/raw/main/chi_sim.traineddata -P /usr/local/share/tessdata/
+#RUN wget https://github.com/tesseract-ocr/tessdata/raw/main/eng.traineddata -P /usr/local/share/tessdata/ \
+#    && wget https://github.com/tesseract-ocr/tessdata/raw/main/chi_sim.traineddata -P /usr/local/share/tessdata/
 
 # 设置 Tesseract 环境变量
-ENV TESSDATA_PREFIX=/usr/local/share/tessdata
+#ENV TESSDATA_PREFIX=/usr/local/share/tessdata
 
 # 复制项目文件
 COPY . .
 
+RUN rm -f .env
+
 # 安装 grpcio-tools 和项目依赖
-RUN pip install grpcio-tools \
-    && python3 -m venv /app/venv \
-    && . /app/venv/bin/activate \
-    && /app/venv/bin/pip install -r requirements.txt
+RUN pip config set global.index-url https://mirrors.aliyun.com/pypi/simple/ \
+    && pip config set global.trusted-host mirrors.aliyun.com \
+    && pip install --no-cache-dir grpcio-tools \
+    && pip install --no-cache-dir -r requirements.txt
 
 # 运行 protoc 命令生成 gRPC 代码
 RUN python3 -m grpc_tools.protoc -Iproto --python_out=src --grpc_python_out=src proto/image_service.proto

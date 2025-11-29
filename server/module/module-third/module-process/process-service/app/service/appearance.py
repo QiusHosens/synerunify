@@ -40,7 +40,7 @@ def get_cached_model(model_path: Optional[str] = None) -> torch.nn.Module:
     if model_path is None:
         # 从appearance目录查找模型文件
         appearance_dir = Path(__file__).parent.parent / "appearance"
-        default_model = appearance_dir / "models_pth" / "final_best_model_full.pth"
+        default_model = appearance_dir / "models" / "final_best_model_full.pth"
         model_path = str(default_model)
     
     # 如果模型已加载且路径相同，直接返回
