@@ -7,7 +7,7 @@ from fastapi.staticfiles import StaticFiles
 from pathlib import Path
 
 from app.core.config import settings
-from app.routers import process, convert, video
+from app.routers import process, convert, video, appearance
 
 # 创建 FastAPI 应用实例
 app = FastAPI(
@@ -29,6 +29,7 @@ app.add_middleware(
 app.include_router(process.router)
 app.include_router(convert.router)
 app.include_router(video.router)
+app.include_router(appearance.router)
 
 # 静态文件服务（用于视频流展示页面）
 static_dir = Path(__file__).parent.parent / "static"
