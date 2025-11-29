@@ -88,7 +88,7 @@ spec:
       protocol: TCP
       port: 8080
       targetPort: 8080
-      nodePort: 40050
+      nodePort: 40060
   selector:
     app: service-mall
   type: NodePort
