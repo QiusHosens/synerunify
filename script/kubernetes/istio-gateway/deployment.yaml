@@ -75,6 +75,14 @@ spec:
               number: 8080
     - match:
         - uri:
+            prefix: /process
+      route:
+        - destination:
+            host: service-process.synerunify.svc.cluster.local
+            port:
+              number: 8080
+    - match:
+        - uri:
             prefix: /onlinePreview
       route:
         - destination:
