@@ -52,3 +52,6 @@ Thumbs.db
 runs
 fire-1
 *.pt
+
+models_pth
+datasets
