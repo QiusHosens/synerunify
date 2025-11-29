@@ -1,0 +1,33 @@
+<!--pages/index/index.wxml-->
+<view class="container">
+  <camera 
+    device-position="{{devicePosition}}" 
+    flash="{{flash}}"
+    class="camera"
+    bindstop="onCameraStop"
+    binderror="onCameraError"
+  >
+    <cover-view class="camera-tap-area" bindtap="captureImage"></cover-view>
+    <cover-view class="float-panel">
+      <cover-view class="float-btn float-btn-left" bindtap="chooseImageFromAlbum">
+        <cover-image class="btn-icon" src="/static/camera.png"></cover-image>
+      </cover-view>
+      <cover-view class="float-score">
+        <cover-image 
+          wx:if="{{currentImage}}" 
+          class="score-image" 
+          src="{{currentImage}}"
+          bindtap="previewImage"
+        ></cover-image>
+        <cover-view class="score-content">
+          <cover-text class="score-label">得分</cover-text>
+          <cover-text class="score-value">{{score !== null ? score : '--'}}</cover-text>
+        </cover-view>
+      </cover-view>
+      <cover-view class="float-btn float-btn-right" bindtap="switchCamera">
+        <cover-image class="btn-icon" src="/static/switch.png"></cover-image>
+      </cover-view>
+    </cover-view>
+  </camera>
+</view>
+
