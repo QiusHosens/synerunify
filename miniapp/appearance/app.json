@@ -5,7 +5,7 @@
   "window": {
     "backgroundTextStyle": "light",
     "navigationBarBackgroundColor": "#fff",
-    "navigationBarTitleText": "实时摄像头检测",
+    "navigationBarTitleText": "测颜值",
     "navigationBarTextStyle": "black"
   },
   "permission": {

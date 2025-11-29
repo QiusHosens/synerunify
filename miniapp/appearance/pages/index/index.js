@@ -1,4 +1,3 @@
-// pages/index/index.js
 Page({
   data: {
     devicePosition: 'back', // 'front' 或 'back'
@@ -94,11 +93,11 @@ Page({
                 score: Math.round(score),
                 currentImage: imagePath // 保存图片路径
               })
-              wx.showToast({
-                title: `得分: ${Math.round(score)}`,
-                icon: 'success',
-                duration: 2000
-              })
+              // wx.showToast({
+              //   title: `得分: ${Math.round(score)}`,
+              //   icon: 'success',
+              //   duration: 2000
+              // })
             } else {
               throw new Error('接口返回格式不正确')
             }

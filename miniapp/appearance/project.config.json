@@ -1,5 +1,5 @@
 {
-  "description": "实时摄像头检测小程序",
+  "description": "测颜值小程序",
   "packOptions": {
     "ignore": [],
     "include": []
@@ -49,7 +49,7 @@
     "disableSWC": true
   },
   "compileType": "miniprogram",
-  "libVersion": "2.19.4",
+  "libVersion": "3.12.0",
   "appid": "wxc24cda24554d4be8",
   "projectname": "appearance",
   "isGameTourist": false,
