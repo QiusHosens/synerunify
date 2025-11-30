@@ -170,7 +170,6 @@
   box-sizing: border-box;
   pointer-events: none;
   z-index: 10;
-  box-shadow: 0 0 20rpx rgba(7, 193, 96, 0.6);
 }
 
 .preview-region-marker::before {
@@ -181,6 +180,5 @@
   right: -3rpx;
   bottom: -3rpx;
   border: 2rpx solid rgba(7, 193, 96, 0.5);
-  box-shadow: 0 0 20rpx rgba(7, 193, 96, 0.4);
 }
 
