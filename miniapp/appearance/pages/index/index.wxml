@@ -17,7 +17,7 @@
             class="score-image" 
             src="{{currentImage}}"
             bindload="onImageLoad"
-            mode="aspectFill"
+            mode="heightFix"
           ></image>
           <view 
             wx:if="{{region && imageSize}}" 
