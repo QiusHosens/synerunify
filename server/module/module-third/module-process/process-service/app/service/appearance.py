@@ -17,9 +17,16 @@ from app.appearance.predict import (
     data_transform,
     device,
     detect_face,
+    detect_faces,
     crop_face_region
 )
-from app.models.appearance import AppearancePredictResponse
+from app.models.appearance import (
+    AppearancePredictResponse,
+    DetectFacesResponse,
+    PredictAllResponse,
+    FaceRegion,
+    FaceRegionWithScore
+)
 
 # 全局模型缓存
 _model_cache: Optional[torch.nn.Module] = None
@@ -177,6 +184,161 @@ def predict_image_from_bytes(
         
     except Exception as e:
         return AppearancePredictResponse(
+            code=500,
+            message=f"预测失败: {str(e)}"
+        )
+
+
+def detect_faces_from_bytes(
+    image_bytes: bytes,
+    face_model_path: Optional[str] = None,
+    conf_threshold: float = 0.5
+) -> DetectFacesResponse:
+    """
+    从图片字节数据检测所有人脸，按面积从大到小排序
+    
+    Args:
+        image_bytes: 图片字节数据
+        face_model_path: 人脸检测模型路径（可选，默认使用yolov11l-face.pt）
+        conf_threshold: 置信度阈值
+        
+    Returns:
+        包含所有人脸区域的响应
+    """
+    try:
+        # 从字节数据加载图片
+        image = Image.open(io.BytesIO(image_bytes)).convert('RGB')
+        original_width, original_height = image.size
+        
+        # 检测所有人脸
+        faces = detect_faces(image, face_model_path=face_model_path, conf_threshold=conf_threshold)
+        
+        # 构建人脸区域列表
+        face_regions = []
+        for x1, y1, x2, y2 in faces:
+            face_regions.append({
+                "x1": int(x1),
+                "y1": int(y1),
+                "x2": int(x2),
+                "y2": int(y2),
+                "width": int(x2 - x1),
+                "height": int(y2 - y1)
+            })
+        
+        return DetectFacesResponse(
+            code=200,
+            data={
+                "faces": face_regions,
+                "count": len(face_regions),
+                "size": {
+                    "width": original_width,
+                    "height": original_height
+                }
+            },
+            message="检测成功"
+        )
+        
+    except Exception as e:
+        return DetectFacesResponse(
+            code=500,
+            message=f"检测失败: {str(e)}"
+        )
+
+
+def predict_all_faces(
+    image_bytes: bytes,
+    model_path: Optional[str] = None,
+    face_model_path: Optional[str] = None,
+    conf_threshold: float = 0.5
+) -> PredictAllResponse:
+    """
+    从图片字节数据预测所有人脸的外观得分
+    
+    Args:
+        image_bytes: 图片字节数据
+        model_path: 模型文件路径（可选，默认使用final_best_model_full.pth）
+        face_model_path: 人脸检测模型路径（可选，默认使用yolov11l-face.pt）
+        conf_threshold: 人脸检测置信度阈值
+        
+    Returns:
+        包含所有人脸区域及评分的响应
+    """
+    try:
+        # 加载模型
+        model = get_cached_model(model_path)
+        
+        # 从字节数据加载图片
+        image = Image.open(io.BytesIO(image_bytes)).convert('RGB')
+        original_width, original_height = image.size
+        
+        # 检测所有人脸
+        faces = detect_faces(image, face_model_path=face_model_path, conf_threshold=conf_threshold)
+        
+        if not faces:
+            return PredictAllResponse(
+                code=500,
+                data={
+                    "faces": [],
+                    "count": 0,
+                    "size": {
+                        "width": original_width,
+                        "height": original_height
+                    }
+                },
+                message="未检测到人脸"
+            )
+        
+        # 对每个人脸进行预测
+        results = []
+        model.eval()
+        
+        for x1, y1, x2, y2 in faces:
+            try:
+                # 裁剪人脸区域
+                bbox = (x1, y1, x2, y2)
+                face_image = crop_face_region(image, bbox)
+                
+                # 预处理图片
+                image_tensor = data_transform(face_image).unsqueeze(0).to(device)
+                
+                # 预测
+                with torch.no_grad():
+                    output = model(image_tensor)
+                    score = output.cpu().item()
+                
+                # 构建人脸区域信息
+                face_region = {
+                    "x1": int(x1),
+                    "y1": int(y1),
+                    "x2": int(x2),
+                    "y2": int(y2),
+                    "width": int(x2 - x1),
+                    "height": int(y2 - y1)
+                }
+                
+                results.append({
+                    "region": face_region,
+                    "score": float(score) * 20
+                })
+            except Exception as e:
+                print(f"预测单个人脸失败: {e}")
+                continue
+        
+        return PredictAllResponse(
+            code=200,
+            data={
+                "faces": results,
+                "count": len(results),
+                "size": {
+                    "width": original_width,
+                    "height": original_height
+                }
+            },
+            message="预测成功"
+        )
+        
+    except Exception as e:
+        return PredictAllResponse(
             code=500,
             message=f"预测失败: {str(e)}"
         )

@@ -126,6 +126,20 @@
   box-shadow: 0 0 10rpx rgba(7, 193, 96, 0.3);
 }
 
+.region-score {
+  position: absolute;
+  top: -40rpx;
+  left: 0;
+  background-color: rgba(7, 193, 96, 0.9);
+  color: #fff;
+  font-size: 24rpx;
+  font-weight: bold;
+  padding: 4rpx 8rpx;
+  border-radius: 4rpx;
+  white-space: nowrap;
+  z-index: 11;
+}
+
 .score-content {
   position: absolute;
   left: 50%;
@@ -135,6 +149,7 @@
   align-items: center;
   justify-content: center;
   z-index: 99;
+  max-width: 50%;
 }
 
 .score-label {
@@ -148,6 +163,10 @@
   font-weight: bold;
   color: #07c160;
   line-height: 70rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
 }
 
 /* 预览遮罩层 */
@@ -184,6 +203,37 @@
   box-sizing: border-box;
   pointer-events: none;
   z-index: 10;
+}
+
+.preview-region-score {
+  position: absolute;
+  background-color: rgba(7, 193, 96, 0.9);
+  color: #fff;
+  font-size: 32rpx;
+  font-weight: bold;
+  padding: 6rpx 12rpx;
+  border-radius: 6rpx;
+  white-space: nowrap;
+  z-index: 11;
+}
+
+.preview-region-score-top {
+  /* 在上方，默认位置 */
+}
+
+.preview-region-score-left {
+  /* 在左边 */
+  transform: translateX(-100%);
+}
+
+.preview-region-score-right {
+  /* 在右边 */
+  transform: translateX(0);
+}
+
+.preview-region-score-bottom {
+  /* 在下方 */
+  transform: translateY(0);
 }
 
 .preview-region-marker::before {

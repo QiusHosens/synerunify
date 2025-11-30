@@ -6,7 +6,7 @@ from torchvision import transforms, models
 from PIL import Image
 import argparse
 from pathlib import Path
-from typing import Optional, Tuple
+from typing import Optional, Tuple, List
 from ultralytics import YOLO
 
 # 设备配置
@@ -157,6 +157,49 @@ def detect_face(image: Image.Image, face_model_path: Optional[str] = None, conf_
     except Exception as e:
         print(f"人脸检测失败: {e}")
         return None
+
+def detect_faces(image: Image.Image, face_model_path: Optional[str] = None, conf_threshold: float = 0.5) -> List[Tuple[int, int, int, int]]:
+    """
+    检测图片中的所有脸，按面积从大到小排序
+    
+    Args:
+        image: PIL Image对象
+        face_model_path: 人脸检测模型路径（可选）
+        conf_threshold: 置信度阈值
+    
+    Returns:
+        所有人脸的边界框坐标列表，按面积从大到小排序 [(x1, y1, x2, y2), ...]
+    """
+    try:
+        # 获取人脸检测模型
+        face_detector = get_face_detector(face_model_path)
+        
+        # 将PIL Image转换为numpy数组
+        img_array = np.array(image)
+        
+        # 执行人脸检测
+        results = face_detector.predict(img_array, conf=conf_threshold, verbose=False)
+        
+        # 处理检测结果
+        faces = []
+        if len(results) > 0 and len(results[0].boxes) > 0:
+            boxes = results[0].boxes
+            
+            for box in boxes:
+                # 获取边界框坐标
+                x1, y1, x2, y2 = box.xyxy[0].cpu().numpy()
+                area = (x2 - x1) * (y2 - y1)
+                faces.append((int(x1), int(y1), int(x2), int(y2), area))
+            
+            # 按面积从大到小排序
+            faces.sort(key=lambda x: x[4], reverse=True)
+            # 返回排序后的边界框（去掉面积信息）
+            return [(x1, y1, x2, y2) for x1, y1, x2, y2, _ in faces]
+        
+        return []
+    except Exception as e:
+        print(f"人脸检测失败: {e}")
+        return []
 
 def crop_face_region(image: Image.Image, bbox: Tuple[int, int, int, int], padding: float = 0.1) -> Image.Image:
     """

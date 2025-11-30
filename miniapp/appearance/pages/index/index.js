@@ -2,19 +2,13 @@ Page({
   data: {
     devicePosition: 'back', // 'front' 或 'back'
     flash: 'auto', // 'on', 'off', 'auto'
-    score: null, // 得分
+    score: null, // 得分（用于显示，逗号分隔的多个分数）
     currentImage: null, // 当前检测的图片路径
-    region: null, // 区域信息
+    faces: [], // 人脸数组
     imageSize: null, // 原始图片尺寸
-    regionLeft: 0, // 区域标记左边距
-    regionTop: 0, // 区域标记上边距
-    regionWidth: 0, // 区域标记宽度
-    regionHeight: 0, // 区域标记高度
+    faceRegions: [], // 人脸区域标记数据（用于小图显示）
     showPreview: false, // 是否显示预览
-    previewRegionLeft: 0, // 预览时的区域标记左边距
-    previewRegionTop: 0, // 预览时的区域标记上边距
-    previewRegionWidth: 0, // 预览时的区域标记宽度
-    previewRegionHeight: 0, // 预览时的区域标记高度
+    previewFaceRegions: [], // 预览时的人脸区域标记数据
     cameraReady: false // 摄像头是否准备好（授权后为true）
   },
 
@@ -176,8 +170,10 @@ Page({
     })
 
     // 这里需要替换为你的实际API地址
-    // const apiUrl = 'http://192.168.1.4:9990/process/appearance/predict' //'https://synerunify.com/api/process/appearance/predict'
-    const apiUrl = 'https://synerunify.com/api/process/appearance/predict'
+    // const apiUrl = 'http://192.168.1.4:9990/process/appearance/predict'
+    // const apiUrl = 'https://synerunify.com/api/process/appearance/predict'
+    // const apiUrl = 'http://192.168.1.4:9990/process/appearance/predict_all'
+    const apiUrl = 'https://synerunify.com/api/process/appearance/predict_all'
     
     // 上传图片
     wx.uploadFile({
@@ -192,15 +188,23 @@ Page({
         try {
           console.log(res)
           const data = JSON.parse(res.data)
-          const score = data.data?.score || 0;
-          const region = data.data?.region || null;
+          const faces = data.data?.faces || [];
           const imageSize = data.data?.size || null;
+          
+          // 处理人脸数据：按 x1 位置从左到右排序
+          const sortedFaces = faces.sort((a, b) => a.region.x1 - b.region.x1);
+          
+          // 生成分数字符串（用逗号分隔）
+          const scores = sortedFaces.map(face => Math.round(face.score)).join(',');
+          
           this.setData({
-            score: Math.round(score),
+            score: scores || '--',
             currentImage: imagePath, // 保存图片路径
-            region: region, // 保存区域信息
-            imageSize: imageSize // 保存原始图片尺寸
+            faces: sortedFaces, // 保存人脸数组
+            imageSize: imageSize, // 保存原始图片尺寸
+            faceRegions: [] // 清空之前的区域标记，等待图片加载后计算
           })
+          
           if (data.code !== 200) {
             wx.showToast({
               title: data.message || '接口返回错误',
@@ -230,18 +234,13 @@ Page({
 
   // 使用模拟得分（用于测试或接口不可用时）
   useMockScore(imagePath) {
-    // 生成一个随机得分（0-100）
-    const mockScore = Math.floor(Math.random() * 100)
+    // 清空数据
     this.setData({
-      score: mockScore,
-      currentImage: imagePath || null, // 如果有图片路径，也保存
-      region: null, // 清空区域信息
-      imageSize: null // 清空图片尺寸
-    })
-    wx.showToast({
-      title: `得分: ${mockScore}`,
-      icon: 'success',
-      duration: 2000
+      score: '--',
+      currentImage: imagePath || null,
+      faces: [],
+      imageSize: null,
+      faceRegions: []
     })
   },
 
@@ -260,10 +259,7 @@ Page({
     if (this.data.currentImage) {
       this.setData({
         showPreview: true,
-        previewRegionLeft: 0,
-        previewRegionTop: 0,
-        previewRegionWidth: 0,
-        previewRegionHeight: 0
+        previewFaceRegions: []
       })
       // 图片加载会在 onPreviewImageLoad 中触发计算
     }
@@ -278,7 +274,7 @@ Page({
 
   // 计算预览时的区域标记位置（根据图片实际渲染位置）
   calculatePreviewRegion(retryCount = 0) {
-    if (!this.data.region || !this.data.imageSize) {
+    if (!this.data.faces || this.data.faces.length === 0 || !this.data.imageSize) {
       return
     }
 
@@ -339,12 +335,137 @@ Page({
       // 计算缩放比例（使用图片的实际渲染尺寸）
       const scale = imageDisplayWidth / originalWidth
 
-      // 计算区域在预览图片上的位置和尺寸（相对于容器）
-      const region = this.data.region
-      const regionLeft = imageOffsetX + region.x1 * scale
-      const regionTop = imageOffsetY + region.y1 * scale
-      const regionWidth = region.width * scale
-      const regionHeight = region.height * scale
+      // 先计算所有人脸区域的位置
+      const regions = this.data.faces.map((face, index) => {
+        const region = face.region
+        return {
+          index: index,
+          left: imageOffsetX + region.x1 * scale,
+          top: imageOffsetY + region.y1 * scale,
+          width: region.width * scale,
+          height: region.height * scale
+        }
+      })
+      
+      // 检查两个矩形是否重叠
+      const isOverlap = (rect1, rect2) => {
+        return !(rect1.left + rect1.width < rect2.left || 
+                 rect2.left + rect2.width < rect1.left ||
+                 rect1.top + rect1.height < rect2.top ||
+                 rect2.top + rect2.height < rect1.top)
+      }
+      
+      // 计算所有人脸区域在预览图片上的位置和尺寸（相对于容器）
+      const previewFaceRegions = this.data.faces.map((face, index) => {
+        const region = regions[index]
+        const regionLeft = region.left
+        const regionTop = region.top
+        const regionWidth = region.width
+        const regionHeight = region.height
+        
+        // 计算分数显示位置（默认在上方，如果遮挡则按左/右/下顺序选择）
+        const scoreHeight = 40 // 分数标签高度（rpx）
+        const scoreWidth = 64 // 分数标签预估宽度（rpx，考虑数字可能较长）
+        let scorePosition = 'top' // 默认位置
+        let scoreLeft = 0
+        let scoreTop = 0
+        
+        // 计算分数标签的位置
+        const getScoreRect = (pos, left, top) => {
+          switch(pos) {
+            case 'top':
+              return {
+                left: regionLeft + left,
+                top: regionTop + top,
+                width: scoreWidth,
+                height: scoreHeight
+              }
+            case 'left':
+              return {
+                left: regionLeft + left,
+                top: regionTop + top,
+                width: scoreWidth,
+                height: scoreHeight
+              }
+            case 'right':
+              return {
+                left: regionLeft + left,
+                top: regionTop + top,
+                width: scoreWidth,
+                height: scoreHeight
+              }
+            case 'bottom':
+              return {
+                left: regionLeft + left,
+                top: regionTop + top,
+                width: scoreWidth,
+                height: scoreHeight
+              }
+            default:
+              return null
+          }
+        }
+        
+        // 检查分数位置是否会遮挡其他区域
+        const checkScorePosition = (pos, left, top) => {
+          // 检查是否超出容器边界
+          const scoreRect = getScoreRect(pos, left, top)
+          if (!scoreRect) return false
+          
+          if (scoreRect.left < 0 || scoreRect.top < 0 ||
+              scoreRect.left + scoreRect.width > containerWidth ||
+              scoreRect.top + scoreRect.height > containerHeight) {
+            return false
+          }
+          
+          // 检查是否会遮挡其他区域
+          for (let i = 0; i < regions.length; i++) {
+            if (i === index) continue // 跳过当前区域
+            if (isOverlap(scoreRect, regions[i])) {
+              return false // 会遮挡其他区域
+            }
+          }
+          
+          return true // 位置可用
+        }
+        
+        // 按顺序尝试位置：上 -> 左 -> 右 -> 下
+        if (checkScorePosition('top', 0, -scoreHeight)) {
+          scorePosition = 'top'
+          scoreLeft = 0
+          scoreTop = -scoreHeight
+        } else if (checkScorePosition('left', -scoreWidth, 0)) {
+          scorePosition = 'left'
+          // scoreLeft = -scoreWidth
+          scoreLeft = 0
+          scoreTop = 0
+        } else if (checkScorePosition('right', regionWidth, 0)) {
+          scorePosition = 'right'
+          scoreLeft = regionWidth
+          scoreTop = 0
+        } else if (checkScorePosition('bottom', 0, regionHeight)) {
+          scorePosition = 'bottom'
+          scoreLeft = 0
+          scoreTop = regionHeight
+        } else {
+          // 所有位置都不可用，强制放在上方（即使会遮挡）
+          scorePosition = 'top'
+          scoreLeft = 0
+          scoreTop = -scoreHeight
+        }
+        
+        return {
+          index: index,
+          score: Math.round(face.score),
+          left: regionLeft,
+          top: regionTop,
+          width: regionWidth,
+          height: regionHeight,
+          scorePosition: scorePosition,
+          scoreLeft: scoreLeft,
+          scoreTop: scoreTop
+        }
+      })
 
       console.log('计算预览区域标记成功', {
         containerWidth,
@@ -356,17 +477,11 @@ Page({
         originalWidth,
         originalHeight,
         scale,
-        regionLeft,
-        regionTop,
-        regionWidth,
-        regionHeight
+        previewFaceRegions
       })
 
       this.setData({
-        previewRegionLeft: regionLeft,
-        previewRegionTop: regionTop,
-        previewRegionWidth: regionWidth,
-        previewRegionHeight: regionHeight
+        previewFaceRegions: previewFaceRegions
       })
     })
   },
@@ -439,7 +554,7 @@ Page({
 
   // 图片加载完成，计算区域标记位置
   onImageLoad(e) {
-    if (!this.data.region || !this.data.imageSize) {
+    if (!this.data.faces || this.data.faces.length === 0 || !this.data.imageSize) {
       return
     }
 
@@ -463,18 +578,21 @@ Page({
       const scaleX = displayWidth / originalWidth
       const scaleY = displayHeight / originalHeight
 
-      // 计算区域在显示图片上的位置和尺寸
-      const region = this.data.region
-      const regionLeft = region.x1 * scaleX
-      const regionTop = region.y1 * scaleY
-      const regionWidth = region.width * scaleX
-      const regionHeight = region.height * scaleY
+      // 计算所有人脸区域在显示图片上的位置和尺寸
+      const faceRegions = this.data.faces.map((face, index) => {
+        const region = face.region
+        return {
+          index: index,
+          score: Math.round(face.score),
+          left: region.x1 * scaleX,
+          top: region.y1 * scaleY,
+          width: region.width * scaleX,
+          height: region.height * scaleY
+        }
+      })
 
       this.setData({
-        regionLeft: regionLeft,
-        regionTop: regionTop,
-        regionWidth: regionWidth,
-        regionHeight: regionHeight
+        faceRegions: faceRegions
       })
     }).exec()
   }

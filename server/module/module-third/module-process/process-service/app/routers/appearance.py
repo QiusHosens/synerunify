@@ -6,8 +6,16 @@ from typing import Optional
 
 from fastapi import APIRouter, UploadFile, File, HTTPException, Query
 
-from app.models.appearance import AppearancePredictResponse
-from app.service.appearance import predict_image_from_bytes
+from app.models.appearance import (
+    AppearancePredictResponse,
+    DetectFacesResponse,
+    PredictAllResponse
+)
+from app.service.appearance import (
+    predict_image_from_bytes,
+    detect_faces_from_bytes,
+    predict_all_faces
+)
 
 router = APIRouter(prefix="/process/appearance", tags=["appearance"])
 
@@ -47,5 +55,90 @@ async def predict_appearance(
     return predict_image_from_bytes(
         image_bytes=file_content,
         model_path=model_path
+    )
+
+
+@router.post("/detect_faces", response_model=DetectFacesResponse)
+async def detect_faces_api(
+    image: UploadFile = File(..., description="上传的图片文件"),
+    face_model_path: Optional[str] = Query(None, description="人脸检测模型文件路径（可选，默认使用yolov11l-face.pt）"),
+    conf_threshold: float = Query(0.5, description="置信度阈值", ge=0.0, le=1.0)
+):
+    """
+    上传图片检测所有人脸，按面积从大到小排序
+    
+    Args:
+        image: 上传的图片文件
+        face_model_path: 人脸检测模型文件路径（可选，默认使用yolov11l-face.pt）
+        conf_threshold: 置信度阈值（0.0-1.0）
+        
+    Returns:
+        包含所有人脸区域的响应
+    """
+    # 验证文件类型
+    if not image.content_type or not image.content_type.startswith('image/'):
+        raise HTTPException(
+            status_code=400,
+            detail="文件必须是图片格式"
+        )
+    
+    # 读取上传的文件
+    try:
+        file_content = await image.read()
+    except Exception as e:
+        raise HTTPException(
+            status_code=400,
+            detail=f"读取文件失败: {str(e)}"
+        )
+    
+    # 调用服务层函数进行检测
+    return detect_faces_from_bytes(
+        image_bytes=file_content,
+        face_model_path=face_model_path,
+        conf_threshold=conf_threshold
+    )
+
+
+@router.post("/predict_all", response_model=PredictAllResponse)
+async def predict_all_api(
+    image: UploadFile = File(..., description="上传的图片文件"),
+    model_path: Optional[str] = Query(None, description="模型文件路径（可选，默认使用final_best_model_full.pth）"),
+    face_model_path: Optional[str] = Query(None, description="人脸检测模型文件路径（可选，默认使用yolov11l-face.pt）"),
+    conf_threshold: float = Query(0.5, description="置信度阈值", ge=0.0, le=1.0)
+):
+    """
+    上传图片预测所有人脸的外观得分
+    
+    Args:
+        image: 上传的图片文件
+        model_path: 模型文件路径（可选，默认使用final_best_model_full.pth）
+        face_model_path: 人脸检测模型文件路径（可选，默认使用yolov11l-face.pt）
+        conf_threshold: 置信度阈值（0.0-1.0）
+        
+    Returns:
+        包含所有人脸区域及评分的响应
+    """
+    # 验证文件类型
+    if not image.content_type or not image.content_type.startswith('image/'):
+        raise HTTPException(
+            status_code=400,
+            detail="文件必须是图片格式"
+        )
+    
+    # 读取上传的文件
+    try:
+        file_content = await image.read()
+    except Exception as e:
+        raise HTTPException(
+            status_code=400,
+            detail=f"读取文件失败: {str(e)}"
+        )
+    
+    # 调用服务层函数进行预测
+    return predict_all_faces(
+        image_bytes=file_content,
+        model_path=model_path,
+        face_model_path=face_model_path,
+        conf_threshold=conf_threshold
     )
 

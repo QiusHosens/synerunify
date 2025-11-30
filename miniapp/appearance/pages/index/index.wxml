@@ -16,15 +16,13 @@
           bindload="onImageLoad"
           mode="heightFix"
         ></image>
-        <view 
-          wx:if="{{region && imageSize}}" 
-          class="region-marker"
-          style="left: {{regionLeft}}rpx; top: {{regionTop}}rpx; width: {{regionWidth}}rpx; height: {{regionHeight}}rpx;"
-        ></view>
+        <block wx:for="{{faceRegions}}" wx:key="index">
+          <view class="region-marker" style="left: {{item.left}}rpx; top: {{item.top}}rpx; width: {{item.width}}rpx; height: {{item.height}}rpx;"></view>
+        </block>
       </view>
       <view class="score-content">
-        <view class="score-label">得分</view>
-        <view class="score-value">{{score !== null ? score : '--'}}</view>
+        <!-- <view class="score-label">得分</view> -->
+        <view class="score-value">{{score !== null ? score : ''}}</view>
       </view>
     </view>
     
@@ -52,11 +50,15 @@
         bindtap="closePreview"
         bindload="onPreviewImageLoad"
       ></image>
-      <view 
-        wx:if="{{region && imageSize}}" 
-        class="preview-region-marker"
-        style="left: {{previewRegionLeft}}rpx; top: {{previewRegionTop}}rpx; width: {{previewRegionWidth}}rpx; height: {{previewRegionHeight}}rpx;"
-      ></view>
+      <block wx:for="{{previewFaceRegions}}" wx:key="index">
+        <view class="preview-region-marker" style="left: {{item.left}}rpx; top: {{item.top}}rpx; width: {{item.width}}rpx; height: {{item.height}}rpx;">
+          <view 
+            wx:if="{{faces.length > 1}}" 
+            class="preview-region-score preview-region-score-{{item.scorePosition}}"
+            style="left: {{item.scoreLeft}}rpx; top: {{item.scoreTop}}rpx;"
+          >{{item.score}}</view>
+        </view>
+      </block>
     </view>
   </view>
 </view>
