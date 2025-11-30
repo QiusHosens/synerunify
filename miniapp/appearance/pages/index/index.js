@@ -81,8 +81,8 @@ Page({
     })
 
     // 这里需要替换为你的实际API地址
-    const apiUrl = 'http://192.168.1.4:9990/process/appearance/predict' //'https://synerunify.com/api/process/appearance/predict'
-    // const apiUrl = 'https://synerunify.com/api/process/appearance/predict'
+    // const apiUrl = 'http://192.168.1.4:9990/process/appearance/predict' //'https://synerunify.com/api/process/appearance/predict'
+    const apiUrl = 'https://synerunify.com/api/process/appearance/predict'
     
     // 上传图片
     wx.uploadFile({
@@ -124,11 +124,11 @@ Page({
         console.error('上传图片失败', err)
         // 如果接口调用失败，使用模拟数据
         wx.showToast({
-          title: '接口调用失败，使用模拟数据',
+          title: '服务调用失败',
           icon: 'none',
           duration: 2000
         })
-        this.useMockScore(imagePath)
+        // this.useMockScore(imagePath)
       }
     })
   },

@@ -6,31 +6,36 @@
     bindstop="onCameraStop"
     binderror="onCameraError"
   >
-    <view class="camera-tap-area" bindtap="captureImage"></view>
-    <view class="float-panel">
-      <view class="float-btn float-btn-left" bindtap="chooseImageFromAlbum">
+    <!-- 顶部面板 -->
+    <view class="top-panel">
+      <view wx:if="{{currentImage}}" class="score-image-wrapper" bindtap="previewImageWapper">
+        <image 
+          class="score-image" 
+          src="{{currentImage}}"
+          bindload="onImageLoad"
+          mode="heightFix"
+        ></image>
+        <view 
+          wx:if="{{region && imageSize}}" 
+          class="region-marker"
+          style="left: {{regionLeft}}rpx; top: {{regionTop}}rpx; width: {{regionWidth}}rpx; height: {{regionHeight}}rpx;"
+        ></view>
+      </view>
+      <view class="score-content">
+        <view class="score-label">得分</view>
+        <view class="score-value">{{score !== null ? score : '--'}}</view>
+      </view>
+    </view>
+    
+    <!-- 底部面板 -->
+    <view class="bottom-panel">
+      <view class="bottom-btn-left" bindtap="chooseImageFromAlbum">
         <image class="btn-icon" src="/static/camera.png"></image>
       </view>
-      <view class="float-score">
-        <view wx:if="{{currentImage}}" class="score-image-wrapper" bindtap="previewImageWapper">
-          <image 
-            class="score-image" 
-            src="{{currentImage}}"
-            bindload="onImageLoad"
-            mode="heightFix"
-          ></image>
-          <view 
-            wx:if="{{region && imageSize}}" 
-            class="region-marker"
-            style="left: {{regionLeft}}rpx; top: {{regionTop}}rpx; width: {{regionWidth}}rpx; height: {{regionHeight}}rpx;"
-          ></view>
-        </view>
-        <view class="score-content">
-          <view class="score-label">得分</view>
-          <view class="score-value">{{score !== null ? score : '--'}}</view>
-        </view>
+      <view class="capture-btn" bindtap="captureImage">
+        <view class="capture-btn-inner"></view>
       </view>
-      <view class="float-btn float-btn-right" bindtap="switchCamera">
+      <view class="bottom-btn-right" bindtap="switchCamera">
         <image class="btn-icon" src="/static/switch.png"></image>
       </view>
     </view>

@@ -12,16 +12,23 @@
   position: relative;
 }
 
-.camera-tap-area {
-  position: absolute;
+/* 顶部面板 */
+.top-panel {
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  bottom: 200rpx;
-  z-index: 1;
+  height: 200rpx;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.3));
+  display: flex;
+  align-items: center;
+  padding: 0 40rpx;
+  box-sizing: border-box;
+  z-index: 10;
 }
 
-.float-panel {
+/* 底部面板 */
+.bottom-panel {
   position: fixed;
   bottom: 0;
   left: 0;
@@ -30,29 +37,42 @@
   background: linear-gradient(to top, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.3));
   display: flex;
   align-items: center;
-  justify-content: space-around;
+  justify-content: space-between;
   padding: 0 40rpx;
   box-sizing: border-box;
+  z-index: 10;
 }
 
-.float-btn {
+.bottom-btn-left,
+.bottom-btn-right {
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: 120rpx;
-  height: 120rpx;
+  width: 80rpx;
+  height: 80rpx;
   background-color: rgba(255, 255, 255, 0.2);
   border-radius: 50%;
   backdrop-filter: blur(10rpx);
 }
 
-.float-btn-left {
-  margin-right: auto;
+/* 拍照按钮 */
+.capture-btn {
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0);
+  border: 8rpx solid rgba(255, 255, 255, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* box-shadow: 0 0 20rpx rgba(0, 0, 0, 0.3); */
 }
 
-.float-btn-right {
-  margin-left: auto;
+.capture-btn-inner {
+  width: 90rpx;
+  height: 90rpx;
+  border-radius: 50%;
+  background-color: #fff;
 }
 
 .btn-icon {
@@ -66,15 +86,6 @@
   margin-top: 5rpx;
 }
 
-.float-score {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  min-width: 300rpx;
-  padding: 0 20rpx;
-  gap: 20rpx;
-}
 
 .score-image-wrapper {
   position: relative;
@@ -84,6 +95,7 @@
   cursor: pointer;
   overflow: hidden;
   border-radius: 12rpx;
+  margin-left: 0;
 }
 
 .score-image {
@@ -115,11 +127,13 @@
 }
 
 .score-content {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  flex: 1;
   z-index: 99;
 }
 
