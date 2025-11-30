@@ -154,10 +154,10 @@ Page({
       },
       fail: (err) => {
         console.error('选择图片失败', err)
-        wx.showToast({
-          title: '选择图片失败',
-          icon: 'none'
-        })
+        // wx.showToast({
+        //   title: '选择图片失败',
+        //   icon: 'none'
+        // })
       }
     })
   },
@@ -198,7 +198,7 @@ Page({
           const scores = sortedFaces.map(face => Math.round(face.score)).join(',');
           
           this.setData({
-            score: scores || '--',
+            score: scores || '-',
             currentImage: imagePath, // 保存图片路径
             faces: sortedFaces, // 保存人脸数组
             imageSize: imageSize, // 保存原始图片尺寸
