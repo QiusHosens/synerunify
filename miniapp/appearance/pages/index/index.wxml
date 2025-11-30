@@ -12,12 +12,19 @@
         <image class="btn-icon" src="/static/camera.png"></image>
       </view>
       <view class="float-score">
-        <image 
-          wx:if="{{currentImage}}" 
-          class="score-image" 
-          src="{{currentImage}}"
-          bindtap="previewImage"
-        ></image>
+        <view wx:if="{{currentImage}}" class="score-image-wrapper" bindtap="previewImageWapper">
+          <image 
+            class="score-image" 
+            src="{{currentImage}}"
+            bindload="onImageLoad"
+            mode="aspectFill"
+          ></image>
+          <view 
+            wx:if="{{region && imageSize}}" 
+            class="region-marker"
+            style="left: {{regionLeft}}rpx; top: {{regionTop}}rpx; width: {{regionWidth}}rpx; height: {{regionHeight}}rpx;"
+          ></view>
+        </view>
         <view class="score-content">
           <view class="score-label">得分</view>
           <view class="score-value">{{score !== null ? score : '--'}}</view>
@@ -28,5 +35,23 @@
       </view>
     </view>
   </camera>
+  
+  <!-- 自定义预览遮罩层 -->
+  <view wx:if="{{showPreview}}" class="preview-mask" bindtap="closePreview">
+    <view class="preview-image-wrapper">
+      <image 
+        class="preview-image" 
+        src="{{currentImage}}"
+        mode="widthFix"
+        bindtap="closePreview"
+        bindload="onPreviewImageLoad"
+      ></image>
+      <view 
+        wx:if="{{region && imageSize}}" 
+        class="preview-region-marker"
+        style="left: {{previewRegionLeft}}rpx; top: {{previewRegionTop}}rpx; width: {{previewRegionWidth}}rpx; height: {{previewRegionHeight}}rpx;"
+      ></view>
+    </view>
+  </view>
 </view>
 

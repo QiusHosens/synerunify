@@ -5,6 +5,9 @@ import torch.nn as nn
 from torchvision import transforms, models
 from PIL import Image
 import argparse
+from pathlib import Path
+from typing import Optional, Tuple
+from ultralytics import YOLO
 
 # 设备配置
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -68,13 +71,136 @@ def load_model(model_path, use_full_model=None):
     
     return model
 
-def predict_single_image(model, image_path):
+# 全局人脸检测模型缓存
+_face_detector: Optional[YOLO] = None
+_face_detector_path: Optional[str] = None
+
+def get_face_detector(face_model_path: Optional[str] = None) -> YOLO:
+    """
+    获取人脸检测模型（单例模式）
+    
+    Args:
+        face_model_path: 人脸检测模型路径，如果为None则使用默认路径
+    
+    Returns:
+        YOLO人脸检测模型
+    """
+    global _face_detector, _face_detector_path
+    
+    # 默认人脸检测模型路径
+    if face_model_path is None:
+        # 从appearance目录查找模型文件
+        appearance_dir = Path(__file__).parent
+        default_face_model = appearance_dir / "models" / "yolov11l-face.pt"
+        face_model_path = str(default_face_model)
+    
+    # 如果模型已加载且路径相同，直接返回
+    if _face_detector is not None and _face_detector_path == face_model_path:
+        return _face_detector
+    
+    # 检查模型文件是否存在
+    if not os.path.exists(face_model_path):
+        raise FileNotFoundError(f"人脸检测模型文件不存在: {face_model_path}")
+    
+    try:
+        # 加载YOLO人脸检测模型
+        _face_detector = YOLO(face_model_path)
+        _face_detector_path = face_model_path
+        return _face_detector
+    except Exception as e:
+        raise RuntimeError(f"加载人脸检测模型失败: {str(e)}")
+
+def detect_face(image: Image.Image, face_model_path: Optional[str] = None, conf_threshold: float = 0.5) -> Optional[Tuple[int, int, int, int]]:
+    """
+    检测图片中的人脸
+    
+    Args:
+        image: PIL Image对象
+        face_model_path: 人脸检测模型路径（可选）
+        conf_threshold: 置信度阈值
+    
+    Returns:
+        如果检测到人脸，返回 (x1, y1, x2, y2) 边界框坐标；否则返回None
+        如果检测到多个人脸，返回最大的人脸区域
+    """
+    try:
+        # 获取人脸检测模型
+        face_detector = get_face_detector(face_model_path)
+        
+        # 将PIL Image转换为numpy数组
+        img_array = np.array(image)
+        
+        # 执行人脸检测
+        results = face_detector.predict(img_array, conf=conf_threshold, verbose=False)
+        
+        # 处理检测结果
+        if len(results) > 0 and len(results[0].boxes) > 0:
+            boxes = results[0].boxes
+            
+            # 如果检测到多个人脸，选择面积最大的
+            max_area = 0
+            best_box = None
+            
+            for box in boxes:
+                # 获取边界框坐标
+                x1, y1, x2, y2 = box.xyxy[0].cpu().numpy()
+                area = (x2 - x1) * (y2 - y1)
+                
+                if area > max_area:
+                    max_area = area
+                    best_box = (int(x1), int(y1), int(x2), int(y2))
+            
+            if best_box:
+                return best_box
+        
+        return None
+    except Exception as e:
+        print(f"人脸检测失败: {e}")
+        return None
+
+def crop_face_region(image: Image.Image, bbox: Tuple[int, int, int, int], padding: float = 0.1) -> Image.Image:
+    """
+    根据边界框裁剪人脸区域
+    
+    Args:
+        image: 原始图片
+        bbox: 边界框坐标 (x1, y1, x2, y2)
+        padding: 边界扩展比例（默认10%）
+    
+    Returns:
+        裁剪后的人脸图片
+    """
+    x1, y1, x2, y2 = bbox
+    width, height = image.size
+    
+    # 计算边界框的宽度和高度
+    bbox_width = x2 - x1
+    bbox_height = y2 - y1
+    
+    # 添加padding
+    padding_x = int(bbox_width * padding)
+    padding_y = int(bbox_height * padding)
+    
+    # 计算裁剪区域，确保不超出图片边界
+    crop_x1 = max(0, x1 - padding_x)
+    crop_y1 = max(0, y1 - padding_y)
+    crop_x2 = min(width, x2 + padding_x)
+    crop_y2 = min(height, y2 + padding_y)
+    
+    # 裁剪图片
+    face_image = image.crop((crop_x1, crop_y1, crop_x2, crop_y2))
+    
+    return face_image
+
+def predict_single_image(model, image_path, use_face_detection: bool = True, face_model_path: Optional[str] = None):
     """
     对单张图片进行预测
     
     Args:
         model: 加载好的模型
         image_path: 图片路径
+        use_face_detection: 是否使用人脸检测（默认True）
+        face_model_path: 人脸检测模型路径（可选）
     
     Returns:
         预测的分数
@@ -82,8 +208,19 @@ def predict_single_image(model, image_path):
     if not os.path.exists(image_path):
         raise FileNotFoundError(f"图片文件不存在: {image_path}")
     
-    # 加载和预处理图片
+    # 加载图片
     image = Image.open(image_path).convert('RGB')
+    
+    # 如果启用人脸检测，先检测人脸并裁剪
+    if use_face_detection:
+        bbox = detect_face(image, face_model_path=face_model_path)
+        if bbox:
+            # 裁剪人脸区域
+            image = crop_face_region(image, bbox)
+        else:
+            print("警告: 未检测到人脸，使用整张图片进行预测")
+    
+    # 预处理图片
     image_tensor = data_transform(image).unsqueeze(0).to(device)
     
     # 预测
@@ -94,7 +231,7 @@ def predict_single_image(model, image_path):
     
     return score
 
-def predict_batch(model, image_dir, image_list=None):
+def predict_batch(model, image_dir, image_list=None, use_face_detection: bool = True, face_model_path: Optional[str] = None):
     """
     批量预测图片
     
@@ -102,6 +239,8 @@ def predict_batch(model, image_dir, image_list=None):
         model: 加载好的模型
         image_dir: 图片目录
         image_list: 图片列表（如果为None，则预测目录下所有jpg图片）
+        use_face_detection: 是否使用人脸检测（默认True）
+        face_model_path: 人脸检测模型路径（可选）
     
     Returns:
         预测结果字典 {图片名: 分数}
@@ -116,7 +255,7 @@ def predict_batch(model, image_dir, image_list=None):
         img_path = os.path.join(image_dir, img_name)
         if os.path.exists(img_path):
             try:
-                score = predict_single_image(model, img_path)
+                score = predict_single_image(model, img_path, use_face_detection=use_face_detection, face_model_path=face_model_path)
                 results[img_name] = score
                 print(f'{img_name}: {score:.4f}')
             except Exception as e:

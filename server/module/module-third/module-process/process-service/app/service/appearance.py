@@ -15,7 +15,9 @@ from app.appearance.predict import (
     get_model,
     load_model,
     data_transform,
-    device
+    device,
+    detect_face,
+    crop_face_region
 )
 from app.models.appearance import AppearancePredictResponse
 
@@ -68,7 +70,9 @@ def get_cached_model(model_path: Optional[str] = None) -> torch.nn.Module:
 
 def predict_image_from_bytes(
     image_bytes: bytes,
-    model_path: Optional[str] = None
+    model_path: Optional[str] = None,
+    use_face_detection: bool = True,
+    face_model_path: Optional[str] = None
 ) -> AppearancePredictResponse:
     """
     从图片字节数据预测外观得分
@@ -76,6 +80,8 @@ def predict_image_from_bytes(
     Args:
         image_bytes: 图片字节数据
         model_path: 模型文件路径（可选，默认使用final_best_model_full.pth）
+        use_face_detection: 是否使用人脸检测（默认True）
+        face_model_path: 人脸检测模型路径（可选，默认使用yolov11l-face.pt）
         
     Returns:
         包含预测得分的字典
@@ -86,6 +92,58 @@ def predict_image_from_bytes(
         
         # 从字节数据加载图片
         image = Image.open(io.BytesIO(image_bytes)).convert('RGB')
+        original_width, original_height = image.size
+        
+        # 初始化人脸区域信息
+        face_region = None
+        
+        # 如果启用人脸检测，先检测人脸并裁剪
+        if use_face_detection:
+            try:
+                bbox = detect_face(image, face_model_path=face_model_path)
+                if bbox:
+                    # 保存人脸检测区域信息（原始图片坐标）
+                    x1, y1, x2, y2 = bbox
+                    face_region = {
+                        "x1": int(x1),
+                        "y1": int(y1),
+                        "x2": int(x2),
+                        "y2": int(y2),
+                        "width": int(x2 - x1),
+                        "height": int(y2 - y1)
+                    }
+                    # 裁剪人脸区域
+                    image = crop_face_region(image, bbox)
+                # 如果人脸检测失败,返回报错
+                else:
+                    print(f"未检测到人脸")
+                    return AppearancePredictResponse(
+                        code=500,
+                        data={
+                            "score": 0,
+                            "region": None,
+                            "size": {
+                                "width": original_width,
+                                "height": original_height
+                            }
+                        },
+                        message=f"未检测到人脸"
+                    )
+            except Exception as e:
+                # 如果人脸检测失败,返回报错
+                print(f"人脸检测失败: {e}")
+                return AppearancePredictResponse(
+                    code=500,
+                    data={
+                        "score": 0,
+                        "region": None,
+                        "size": {
+                            "width": original_width,
+                            "height": original_height
+                        }
+                    },
+                    message=f"未检测到人脸"
+                )
         
         # 预处理图片
         image_tensor = data_transform(image).unsqueeze(0).to(device)
@@ -96,11 +154,24 @@ def predict_image_from_bytes(
             output = model(image_tensor)
             score = output.cpu().item()
         
+        # 构建响应数据
+        response_data = {
+            "score": float(score) * 20,
+            "size": {
+                "width": original_width,
+                "height": original_height
+            }
+        }
+        
+        # 如果检测到人脸，添加人脸区域信息
+        if face_region:
+            response_data["region"] = face_region
+        else:
+            response_data["region"] = None
+        
         return AppearancePredictResponse(
             code=200,
-            data={
-                "score": float(score) * 20
-            },
+            data=response_data,
             message="预测成功"
         )
         
