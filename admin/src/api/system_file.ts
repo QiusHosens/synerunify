@@ -174,5 +174,5 @@ export const downloadSystemFile = (id: number, onProgress: (progress: number) =>
 }
 
 export const previewSystemFile = (path: string): string => {
-  return `/api${apis.preview_path}/${encodeURIComponent(path)}`;
+  return `/api${apis.preview_path}/${path}`;
 };

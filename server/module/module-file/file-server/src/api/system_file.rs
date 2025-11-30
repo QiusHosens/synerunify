@@ -431,7 +431,7 @@ async fn preview(
 
 #[utoipa::path(
     get,
-    path = "/preview_path/{path}",
+    path = "/preview_path/{*path}",
     operation_id = "system_file_preview_path",
     params(
         ("path" = String, Path, description = "path")
