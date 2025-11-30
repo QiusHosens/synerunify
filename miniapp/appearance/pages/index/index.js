@@ -14,29 +14,123 @@ Page({
     previewRegionLeft: 0, // 预览时的区域标记左边距
     previewRegionTop: 0, // 预览时的区域标记上边距
     previewRegionWidth: 0, // 预览时的区域标记宽度
-    previewRegionHeight: 0 // 预览时的区域标记高度
+    previewRegionHeight: 0, // 预览时的区域标记高度
+    cameraReady: false // 摄像头是否准备好（授权后为true）
   },
 
   onLoad() {
-    // 请求摄像头权限
-    this.requestCameraPermission()
-  },
-
-  // 请求摄像头权限
-  requestCameraPermission() {
-    wx.authorize({
-      scope: 'scope.camera',
-      success: () => {
-        console.log('摄像头权限已授权')
-      },
-      fail: () => {
-        wx.showModal({
-          title: '权限申请',
-          content: '需要摄像头权限才能使用此功能',
-          showCancel: false
-        })
+    console.log('onLoad')
+    // 检查权限状态，但不主动请求授权
+    wx.getSetting({
+      success: (res) => {
+        if (res.authSetting['scope.camera']) {
+          // 已授权，直接显示摄像头
+          this.setData({
+            cameraReady: true
+          })
+        } else {
+          // 未授权，先显示摄像头（用于显示授权提示），等用户操作时再请求权限
+          this.setData({
+            cameraReady: true
+          })
+          console.log('页面加载时摄像头权限未授权，等待用户操作时再请求')
+        }
       }
     })
+  },
+
+  // 检查并请求摄像头权限
+  checkCameraPermission(callback) {
+    wx.getSetting({
+      success: (res) => {
+        if (res.authSetting['scope.camera']) {
+          // 已授权
+          console.log('摄像头权限已授权')
+          callback && callback(true)
+        } else if (res.authSetting['scope.camera'] === false) {
+          // 用户曾经拒绝过授权，需要打开设置页面
+          wx.showModal({
+            title: '需要摄像头权限',
+            content: '请在设置中开启摄像头权限',
+            confirmText: '去设置',
+            success: (modalRes) => {
+              if (modalRes.confirm) {
+                wx.openSetting({
+                  success: (settingRes) => {
+                    if (settingRes.authSetting['scope.camera']) {
+                      // 授权成功，重新初始化摄像头
+                      this.reinitCamera()
+                      callback && callback(true)
+                    } else {
+                      callback && callback(false)
+                    }
+                  },
+                  fail: () => {
+                    callback && callback(false)
+                  }
+                })
+              } else {
+                callback && callback(false)
+              }
+            }
+          })
+        } else {
+          // 未授权，请求授权
+          wx.authorize({
+            scope: 'scope.camera',
+            success: () => {
+              console.log('摄像头权限已授权')
+              // 授权成功，重新初始化摄像头
+              this.reinitCamera()
+              callback && callback(true)
+            },
+            fail: () => {
+              wx.showModal({
+                title: '需要摄像头权限',
+                content: '需要摄像头权限才能使用此功能',
+                confirmText: '去设置',
+                success: (modalRes) => {
+                  if (modalRes.confirm) {
+                    wx.openSetting({
+                      success: (settingRes) => {
+                        if (settingRes.authSetting['scope.camera']) {
+                          // 授权成功，重新初始化摄像头
+                          this.reinitCamera()
+                          callback && callback(true)
+                        } else {
+                          callback && callback(false)
+                        }
+                      },
+                      fail: () => {
+                        callback && callback(false)
+                      }
+                    })
+                  } else {
+                    callback && callback(false)
+                  }
+                }
+              })
+            }
+          })
+        }
+      },
+      fail: () => {
+        callback && callback(false)
+      }
+    })
+  },
+
+  // 重新初始化摄像头
+  reinitCamera() {
+    // 先隐藏摄像头，然后重新显示，强制重新渲染
+    this.setData({
+      cameraReady: false
+    })
+    setTimeout(() => {
+      this.setData({
+        cameraReady: true
+      })
+    }, 100)
   },
 
   // 切换摄像头
@@ -53,6 +147,7 @@ Page({
 
   // 从相册选择图片
   chooseImageFromAlbum() {
+    // 选择相册不需要摄像头权限，直接选择
     wx.chooseImage({
       count: 1,
       sizeType: ['original', 'compressed'],
@@ -287,20 +382,30 @@ Page({
 
   // 拍照功能（点击摄像头区域拍照）
   captureImage() {
-    const ctx = wx.createCameraContext()
-    ctx.takePhoto({
-      quality: 'high',
-      success: (res) => {
-        console.log('拍照成功:', res.tempImagePath)
-        // 拍照后自动调用接口获取得分
-        this.uploadImageAndGetScore(res.tempImagePath)
-      },
-      fail: (err) => {
-        console.error('拍照失败', err)
-        wx.showToast({
-          title: '拍照失败',
-          icon: 'none'
+    // 检查摄像头权限
+    this.checkCameraPermission((hasPermission) => {
+      if (hasPermission) {
+        const ctx = wx.createCameraContext()
+        ctx.takePhoto({
+          quality: 'high',
+          success: (res) => {
+            console.log('拍照成功:', res.tempImagePath)
+            // 拍照后自动调用接口获取得分
+            this.uploadImageAndGetScore(res.tempImagePath)
+          },
+          fail: (err) => {
+            console.error('拍照失败', err)
+            // wx.showToast({
+            //   title: '拍照失败',
+            //   icon: 'none'
+            // })
+          }
         })
+      } else {
+        // wx.showToast({
+        //   title: '需要摄像头权限',
+        //   icon: 'none'
+        // })
       }
     })
   },
@@ -313,10 +418,23 @@ Page({
   // 摄像头错误
   onCameraError(err) {
     console.error('摄像头错误', err)
-    wx.showToast({
-      title: '摄像头错误',
-      icon: 'none'
-    })
+    // 如果是权限错误，检查并请求权限
+    if (err.detail && (err.detail.errMsg && err.detail.errMsg.includes('permission'))) {
+      this.checkCameraPermission((hasPermission) => {
+        if (!hasPermission) {
+          // wx.showToast({
+          //   title: '需要摄像头权限',
+          //   icon: 'none',
+          //   duration: 2000
+          // })
+        }
+      })
+    } else {
+      // wx.showToast({
+      //   title: '摄像头错误',
+      //   icon: 'none'
+      // })
+    }
   },
 
   // 图片加载完成，计算区域标记位置

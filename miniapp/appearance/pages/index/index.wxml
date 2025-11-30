@@ -1,5 +1,6 @@
 <view class="container">
   <camera 
+    wx:if="{{cameraReady}}"
     device-position="{{devicePosition}}" 
     flash="{{flash}}"
     class="camera"
