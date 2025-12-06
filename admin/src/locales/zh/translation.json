@@ -128,6 +128,8 @@
   "global.operate.preview": "预览",
   "global.operate.review": "审核",
   "global.operate.close": "关闭",
+  "global.operate.publish": "上架",
+  "global.operate.unpublish": "下架",
 
   "global.title.name": "名称",
   "global.title.status": "状态",
@@ -483,6 +485,7 @@
     "title.property.list": "商品属性列表",
     "placeholder.description": "请输入商品详情...",
     "title.batch.setting": "批量设置",
+    "title.store": "店铺",
     
     "sku": {
       "list.title.batch": "批量设置",

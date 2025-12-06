@@ -6,7 +6,7 @@ use ctor;
 use macros::require_authorize;
 use axum::{routing::{get, post}, Router, extract::{State, Path, Json, Query}, response::IntoResponse, Extension};
 use common::base::page::PaginatedResponse;
-use mall_model::request::mall_product_spu::{CreateMallProductSpuRequest, UpdateMallProductSpuRequest, PaginatedKeywordRequest, PaginatedCategoryKeywordRequest, PaginatedTenantKeywordRequest};
+use mall_model::request::mall_product_spu::{CreateMallProductSpuRequest, UpdateMallProductSpuRequest, PaginatedKeywordRequest, PaginatedCategoryKeywordRequest, PaginatedTenantKeywordRequest, MallProductSpuPublishRequest};
 use mall_model::response::mall_product_spu::{MallProductSpuBaseResponse, MallProductSpuInfoResponse, MallProductSpuResponse};
 use common::base::response::CommonResult;
 use common::context::context::LoginUserContext;
@@ -25,6 +25,8 @@ pub async fn mall_product_spu_router(state: AppState) -> OpenApiRouter {
         .routes(routes!(page))
         .routes(routes!(enable))
         .routes(routes!(disable))
+        .routes(routes!(publish))
+        .routes(routes!(unpublish))
         .with_state(state)
 }
 
@@ -383,6 +385,56 @@ async fn disable(
     Path(id): Path<i64>,
 ) -> CommonResult<()> {
     match service::mall_product_spu::disable(&state.db, login_user, id).await {
+        Ok(_) => {CommonResult::with_none()}
+        Err(e) => {CommonResult::with_err(&e.to_string())}
+    }
+}
+
+#[utoipa::path(
+    post,
+    path = "/publish",
+    operation_id = "mall_product_spu_publish",
+    request_body(content = MallProductSpuPublishRequest, description = "publish", content_type = "application/json"),
+    responses(
+        (status = 204, description = "publish")
+    ),
+    tag = "mall_product_spu",
+    security(
+        ("bearerAuth" = [])
+    )
+)]
+#[require_authorize(operation_id = "mall_product_spu_publish", authorize = "")]
+async fn publish(
+    State(state): State<AppState>,
+    Extension(login_user): Extension<LoginUserContext>,
+    Json(payload): Json<MallProductSpuPublishRequest>,
+) -> CommonResult<()> {
+    match service::mall_product_spu::publish(&state.db, login_user, payload).await {
+        Ok(_) => {CommonResult::with_none()}
+        Err(e) => {CommonResult::with_err(&e.to_string())}
+    }
+}
+
+#[utoipa::path(
+    post,
+    path = "/unpublish",
+    operation_id = "mall_product_spu_unpublish",
+    request_body(content = MallProductSpuPublishRequest, description = "unpublish", content_type = "application/json"),
+    responses(
+        (status = 204, description = "unpublish")
+    ),
+    tag = "mall_product_spu",
+    security(
+        ("bearerAuth" = [])
+    )
+)]
+#[require_authorize(operation_id = "mall_product_spu_unpublish", authorize = "")]
+async fn unpublish(
+    State(state): State<AppState>,
+    Extension(login_user): Extension<LoginUserContext>,
+    Json(payload): Json<MallProductSpuPublishRequest>,
+) -> CommonResult<()> {
+    match service::mall_product_spu::unpublish(&state.db, login_user, payload).await {
         Ok(_) => {CommonResult::with_none()}
         Err(e) => {CommonResult::with_err(&e.to_string())}
     }

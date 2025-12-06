@@ -1,6 +1,7 @@
 use common::interceptor::orm::simple_support::SimpleSupport;
 use sea_orm::{DatabaseConnection, EntityTrait, Order, ColumnTrait, ActiveModelTrait, PaginatorTrait, QueryOrder, QueryFilter, Condition};
 use crate::model::mall_store::{Model as MallStoreModel, ActiveModel as MallStoreActiveModel, Entity as MallStoreEntity, Column};
+use crate::model::mall_product_store::{Model as MallProductStoreModel};
 use mall_model::request::mall_store::{CreateMallStoreRequest, UpdateMallStoreRequest, PaginatedKeywordRequest, RejectMallStoreRequest};
 use mall_model::response::mall_store::MallStoreResponse;
 use crate::convert::mall_store::{create_request_to_model, update_request_to_model, model_to_response};
@@ -12,6 +13,7 @@ use common::base::page::PaginatedResponse;
 use common::context::context::LoginUserContext;
 use common::interceptor::orm::active_filter::ActiveFilterEntityTrait;
 use common::utils::snowflake_generator::SnowflakeGenerator;
+use crate::service::mall_product_store;
 
 pub async fn create(db: &DatabaseConnection, login_user: LoginUserContext, request: CreateMallStoreRequest) -> Result<i64> {
     let mut mall_store = create_request_to_model(&request);
@@ -108,7 +110,19 @@ pub async fn get_paginated(db: &DatabaseConnection, login_user: LoginUserContext
 }
 
 pub async fn list(db: &DatabaseConnection, login_user: LoginUserContext) -> Result<Vec<MallStoreResponse>> {
-    let condition = Condition::all().add(Column::TenantId.eq(login_user.tenant_id));let list = MallStoreEntity::find_active_with_condition(condition)
+    let condition = Condition::all().add(Column::TenantId.eq(login_user.tenant_id));
+    let list = MallStoreEntity::find_active_with_condition(condition)
+        .all(db).await?;
+    Ok(list.into_iter().map(model_to_response).collect())
+}
+
+pub async fn list_by_product(db: &DatabaseConnection, login_user: LoginUserContext, product_id: i64) -> Result<Vec<MallStoreResponse>> {
+    let product_stores = mall_product_store::list_by_product(db, login_user.clone(), product_id).await?;
+    let store_ids = product_stores.iter().map(|store| store.store_id).collect::<Vec<_>>();
+    let condition = Condition::all()
+        .add(Column::Id.is_in(store_ids))
+        .add(Column::TenantId.eq(login_user.tenant_id));
+    let list = MallStoreEntity::find_active_with_condition(condition)
         .all(db).await?;
     Ok(list.into_iter().map(model_to_response).collect())
 }

@@ -95,6 +95,15 @@ pub struct UpdateMallProductSpuRequest {
 }
 
 #[derive(Serialize, Deserialize, Debug, ToSchema)]
+pub struct MallProductSpuPublishRequest {
+
+    pub id: i64, // 商品 SPU 编号，自增
+
+    pub store_ids: Vec<i64>, // 店铺编号列表
+
+}
+
+#[derive(Serialize, Deserialize, Debug, ToSchema)]
 pub struct PaginatedKeywordRequest {
     #[serde(flatten)]
     pub base: PaginatedRequest,

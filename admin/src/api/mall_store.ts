@@ -8,6 +8,7 @@ const apis = {
   delete: '/mall/mall_store/delete', // 删除
   get: '/mall/mall_store/get', // 单条查询
   list: '/mall/mall_store/list', // 列表查询
+  list_by_product: '/mall/mall_store/list_by_product', // 根据商品查询店铺列表
   page: '/mall/mall_store/page', // 分页查询
   open: '/mall/mall_store/open', // 开始营业
   pause: '/mall/mall_store/pause', // 暂停营业
@@ -88,6 +89,10 @@ export const getMallStore = (id: number): Promise<MallStoreResponse> => {
 
 export const listMallStore = (): Promise<Array<MallStoreResponse>> => {
   return api.get<Array<MallStoreResponse>>(apis.list);
+}
+
+export const listMallStoreByProduct = (product_id: number): Promise<Array<MallStoreResponse>> => {
+  return api.get<Array<MallStoreResponse>>(`${apis.list_by_product}/${product_id}`);
 }
 
 export const pageMallStore = (condition: MallStoreQueryCondition): Promise<PaginatedResponse<MallStoreResponse>> => {

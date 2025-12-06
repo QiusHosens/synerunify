@@ -17,6 +17,8 @@ const apis = {
   page: "/mall/mall_product_spu/page", // 分页查询
   enable: "/mall/mall_product_spu/enable", // 启用
   disable: "/mall/mall_product_spu/disable", // 禁用
+  publish: "/mall/mall_product_spu/publish", // 上架
+  unpublish: "/mall/mall_product_spu/unpublish", // 下架
 };
 
 export interface MallProductSpuRequest {
@@ -44,6 +46,11 @@ export interface MallProductSpuRequest {
   skus: MallProductSkuRequest[]; // sku列表
 
   file?: UploadFile | null; // 商品封面文件
+}
+
+export interface MallProductSpuPublishRequest {
+  id?: number; // 商品 SPU 编号，自增
+  store_ids: number[]; // 店铺编号数组
 }
 
 export interface MallProductSpuResponse {
@@ -141,4 +148,16 @@ export const enableMallProductSpu = (id: number): Promise<void> => {
 
 export const disableMallProductSpu = (id: number): Promise<void> => {
   return api.post<void>(`${apis.disable}/${id}`);
+};
+
+export const publishMallProductSpu = (
+  mall_product_spu: MallProductSpuPublishRequest
+): Promise<void> => {
+  return api.post<void>(apis.publish, mall_product_spu);
+};
+
+export const unpublishMallProductSpu = (
+  mall_product_spu: MallProductSpuPublishRequest
+): Promise<void> => {
+  return api.post<void>(apis.unpublish, mall_product_spu);
 };

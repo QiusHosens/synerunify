@@ -20,6 +20,7 @@ pub async fn mall_store_router(state: AppState) -> OpenApiRouter {
         .routes(routes!(delete))
         .routes(routes!(get_by_id))
         .routes(routes!(list))
+        .routes(routes!(list_by_product))
         .routes(routes!(page))
         .routes(routes!(open))
         .routes(routes!(pause))
@@ -221,6 +222,33 @@ async fn list(
     Extension(login_user): Extension<LoginUserContext>,
 ) -> CommonResult<Vec<MallStoreResponse>> {
     match service::mall_store::list(&state.db, login_user).await {
+        Ok(data) => {CommonResult::with_data(data)}
+        Err(e) => {CommonResult::with_err(&e.to_string())}
+    }
+}
+
+#[utoipa::path(
+    get,
+    path = "/list_by_product/{product_id}",
+    operation_id = "mall_store_list_by_product",
+    params(
+        ("product_id" = i64, Path, description = "product id")
+    ),
+    responses(
+        (status = 200, description = "list by product", body = CommonResult<Vec<MallStoreResponse>>)
+    ),
+    tag = "mall_store",
+    security(
+        ("bearerAuth" = [])
+    )
+)]
+#[require_authorize(operation_id = "mall_store_list_by_product", authorize = "")]
+async fn list_by_product(
+    State(state): State<AppState>,
+    Extension(login_user): Extension<LoginUserContext>,
+    Path(product_id): Path<i64>,
+) -> CommonResult<Vec<MallStoreResponse>> {
+    match service::mall_store::list_by_product(&state.db, login_user, product_id).await {
         Ok(data) => {CommonResult::with_data(data)}
         Err(e) => {CommonResult::with_err(&e.to_string())}
     }

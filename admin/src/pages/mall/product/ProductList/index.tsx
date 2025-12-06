@@ -5,6 +5,8 @@ import { DataGrid, GridCallbackDetails, GridColDef, GridFilterModel, GridRenderC
 import ViewIcon from '@/assets/image/svg/view.svg';
 import EditIcon from '@/assets/image/svg/edit.svg';
 import DeleteIcon from '@/assets/image/svg/delete.svg';
+import ArrowDownDoubleIcon from '@/assets/image/svg/arrow_down_double.svg';
+import ArrowTopDoubleIcon from '@/assets/image/svg/arrow_top_double.svg';
 import { disableMallProductSpu, enableMallProductSpu, pageMallProductSpu, MallProductSpuQueryCondition, MallProductSpuResponse } from '@/api';
 import MallProductSpuAdd from './Add';
 import MallProductSpuEdit from './Edit';
@@ -12,6 +14,8 @@ import MallProductSpuDelete from './Delete';
 import { useHomeStore } from '@/store';
 import CustomizedAutoMore from '@/components/CustomizedAutoMore';
 import MallProductSpuInfo from './Info';
+import MallProductSpuPublish from './Publish';
+import MallProductSpuUnpublish from './Unpublish';
 
 export default function MallProductSpu() {
   const { t } = useTranslation();
@@ -31,6 +35,8 @@ export default function MallProductSpu() {
   const addMallProductSpu = useRef(null);
   const editMallProductSpu = useRef(null);
   const deleteMallProductSpu = useRef(null);
+  const publishMallProductSpu = useRef(null);
+  const unpublishMallProductSpu = useRef(null);
 
   const handleStatusChange = useCallback(
     async (e: React.ChangeEvent<HTMLInputElement>, checked: boolean, data: MallProductSpuResponse) => {
@@ -106,6 +112,20 @@ export default function MallProductSpu() {
               startIcon={<DeleteIcon />}
               onClick={() => handleClickOpenDelete(params.row)}
             />}
+            {hasOperatePermission('mall:product:list:publish') && <Button
+              size="small"
+              variant='customOperate'
+              title={t('global.operate.publish') + t('global.page.mall.product')}
+              startIcon={<ArrowTopDoubleIcon />}
+              onClick={() => handleClickOpenPublish(params.row)}
+            />}
+            {hasOperatePermission('mall:product:list:unpublish') && <Button
+              size="small"
+              variant='customOperate'
+              title={t('global.operate.unpublish') + t('global.page.mall.product')}
+              startIcon={<ArrowDownDoubleIcon />}
+              onClick={() => handleClickOpenUnpublish(params.row)}
+            />}
           </CustomizedAutoMore>
         ),
       },
@@ -133,6 +153,14 @@ export default function MallProductSpu() {
 
   const handleClickOpenDelete = (mallProductSpu: MallProductSpuResponse) => {
     (deleteMallProductSpu.current as any).show(mallProductSpu);
+  };
+
+  const handleClickOpenPublish = (mallProductSpu: MallProductSpuResponse) => {
+    (publishMallProductSpu.current as any).show(mallProductSpu);
+  };
+
+  const handleClickOpenUnpublish = (mallProductSpu: MallProductSpuResponse) => {
+    (unpublishMallProductSpu.current as any).show(mallProductSpu);
   };
 
   useEffect(() => {
@@ -191,6 +219,8 @@ export default function MallProductSpu() {
       <MallProductSpuAdd ref={addMallProductSpu} onSubmit={refreshData} />
       <MallProductSpuEdit ref={editMallProductSpu} onSubmit={refreshData} />
       <MallProductSpuDelete ref={deleteMallProductSpu} onSubmit={refreshData} />
+      <MallProductSpuPublish ref={publishMallProductSpu} onSubmit={refreshData} />
+      <MallProductSpuUnpublish ref={unpublishMallProductSpu} onSubmit={refreshData} />
     </Box>
   );
 }

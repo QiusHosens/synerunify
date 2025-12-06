@@ -1,7 +1,7 @@
 use common::interceptor::orm::simple_support::SimpleSupport;
 use sea_orm::{DatabaseConnection, EntityTrait, Order, ColumnTrait, ActiveModelTrait, PaginatorTrait, QueryOrder, QueryFilter, Condition, TransactionTrait, QuerySelect, JoinType, RelationTrait};
 use crate::model::mall_product_spu::{Model as MallProductSpuModel, ActiveModel as MallProductSpuActiveModel, Entity as MallProductSpuEntity, Column, Relation};
-use mall_model::request::mall_product_spu::{CreateMallProductSpuRequest, UpdateMallProductSpuRequest, PaginatedKeywordRequest, PaginatedCategoryKeywordRequest, PaginatedTenantKeywordRequest};
+use mall_model::request::mall_product_spu::{CreateMallProductSpuRequest, UpdateMallProductSpuRequest, PaginatedKeywordRequest, PaginatedCategoryKeywordRequest, PaginatedTenantKeywordRequest, MallProductSpuPublishRequest};
 use mall_model::response::mall_product_spu::{MallProductSpuBaseResponse, MallProductSpuInfoResponse, MallProductSpuResponse};
 use crate::model::mall_product_category::{Entity as MallProductCategoryEntity};
 use crate::model::mall_product_brand::{Entity as MallProductBrandEntity};
@@ -13,7 +13,7 @@ use common::constants::enum_constants::{STATUS_DISABLE, STATUS_ENABLE};
 use common::base::page::PaginatedResponse;
 use common::context::context::LoginUserContext;
 use common::interceptor::orm::active_filter::ActiveFilterEntityTrait;
-use crate::service::{mall_product_sku, mall_trade_delivery_express_template};
+use crate::service::{mall_product_sku, mall_trade_delivery_express_template, mall_product_store};
 
 pub async fn create(db: &DatabaseConnection, login_user: LoginUserContext, request: CreateMallProductSpuRequest) -> Result<i64> {
     if request.skus.is_empty() {
@@ -250,5 +250,15 @@ pub async fn disable(db: &DatabaseConnection, login_user: LoginUserContext, id: 
         ..Default::default()
     };
     mall_product_spu.update(db).await?;
+    Ok(())
+}
+
+pub async fn publish(db: &DatabaseConnection, login_user: LoginUserContext, request: MallProductSpuPublishRequest) -> Result<()> {
+    mall_product_store::create_batch(db, login_user, request.id, request.store_ids).await?;
+    Ok(())
+}
+
+pub async fn unpublish(db: &DatabaseConnection, login_user: LoginUserContext, request: MallProductSpuPublishRequest) -> Result<()> {
+    mall_product_store::delete_batch(db, login_user, request.id, request.store_ids).await?;
     Ok(())
 }
