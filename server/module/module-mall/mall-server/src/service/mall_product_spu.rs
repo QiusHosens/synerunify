@@ -1,12 +1,14 @@
+use std::collections::HashMap;
 use common::interceptor::orm::simple_support::SimpleSupport;
 use sea_orm::{DatabaseConnection, EntityTrait, Order, ColumnTrait, ActiveModelTrait, PaginatorTrait, QueryOrder, QueryFilter, Condition, TransactionTrait, QuerySelect, JoinType, RelationTrait};
 use crate::model::mall_product_spu::{Model as MallProductSpuModel, ActiveModel as MallProductSpuActiveModel, Entity as MallProductSpuEntity, Column, Relation};
 use mall_model::request::mall_product_spu::{CreateMallProductSpuRequest, UpdateMallProductSpuRequest, PaginatedKeywordRequest, PaginatedCategoryKeywordRequest, PaginatedTenantKeywordRequest, MallProductSpuPublishRequest};
-use mall_model::response::mall_product_spu::{MallProductSpuBaseResponse, MallProductSpuInfoResponse, MallProductSpuResponse};
+use mall_model::response::mall_product_spu::{MallProductSpuBaseResponse, MallProductSpuInfoResponse, MallProductSpuPageResponse, MallProductSpuResponse};
+use crate::model::mall_store::{Model as MallStoreModel, Entity as MallStoreEntity};
 use crate::model::mall_product_category::{Entity as MallProductCategoryEntity};
 use crate::model::mall_product_brand::{Entity as MallProductBrandEntity};
 use crate::model::mall_trade_delivery_express_template::{Entity as MallTradeDeliveryExpressTemplateEntity};
-use crate::convert::mall_product_spu::{create_request_to_model, update_request_to_model, model_to_response, model_to_base_response, model_to_info_response};
+use crate::convert::mall_product_spu::{create_request_to_model, update_request_to_model, model_to_response, model_to_base_response, model_to_info_response, model_to_page_response};
 use anyhow::{Result, anyhow, Context};
 use sea_orm::ActiveValue::Set;
 use common::constants::enum_constants::{STATUS_DISABLE, STATUS_ENABLE};
@@ -144,9 +146,13 @@ pub async fn get_info_by_id_without_user(db: &DatabaseConnection, id: i64) -> Re
     Ok(Some(model_to_info_response(product_spu, category, brand, delivery_template, skus)))
 }
 
-pub async fn get_paginated(db: &DatabaseConnection, login_user: LoginUserContext, params: PaginatedKeywordRequest) -> Result<PaginatedResponse<MallProductSpuResponse>> {
+pub async fn get_paginated(db: &DatabaseConnection, login_user: LoginUserContext, params: PaginatedKeywordRequest) -> Result<PaginatedResponse<MallProductSpuPageResponse>> {
     let condition = Condition::all().add(Column::TenantId.eq(login_user.tenant_id));
     let paginator = MallProductSpuEntity::find_active_with_condition(condition)
+        .select_also(MallProductCategoryEntity)
+        .select_also(MallProductBrandEntity)
+        .join(JoinType::LeftJoin, Relation::ProductCategory.def())
+        .join(JoinType::LeftJoin, Relation::ProductBrand.def())
         .support_filter(params.base.filter_field, params.base.filter_operator, params.base.filter_value)
         .support_order(params.base.sort_field, params.base.sort, Some(vec![(Column::Id, Order::Asc)]))
         .paginate(db, params.base.size);
@@ -155,13 +161,17 @@ pub async fn get_paginated(db: &DatabaseConnection, login_user: LoginUserContext
     let total_pages = (total + params.base.size - 1) / params.base.size; // 向上取整
     let list = paginator
         .fetch_page(params.base.page - 1) // SeaORM 页码从 0 开始，所以减 1
-        .await?
-        .into_iter()
-        .map(model_to_response)
-        .collect();
+        .await?;
 
+    let product_ids = list.clone().into_iter().map(|(product, _, _)| product.id).collect();
+    let stores = mall_product_store::list_by_product_ids(&db, login_user, product_ids).await?;
+
+    let result = list.into_iter().map(|(product, category, brand)| {
+        let store_names = stores.clone().into_iter().filter(|store| product.id.eq(&store.product_id)).map(|store| store.store_name).collect::<Vec<_>>();
+        model_to_page_response(product, category, brand, store_names)
+    }).collect();
     Ok(PaginatedResponse {
-        list,
+        list: result,
         total_pages,
         page: params.base.page,
         size: params.base.size,

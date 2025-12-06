@@ -1,7 +1,8 @@
 use sea_orm::{Set, NotSet};
 use crate::model::mall_product_store::{self, Model as MallProductStore, ActiveModel as MallProductStoreActiveModel};
 use mall_model::request::mall_product_store::{CreateMallProductStoreRequest, UpdateMallProductStoreRequest};
-use mall_model::response::mall_product_store::MallProductStoreResponse;
+use mall_model::response::mall_product_store::{MallProductStoreNameResponse, MallProductStoreResponse};
+use crate::model::mall_store::{Model as MallStoreModel};
 
 pub fn create_request_to_model(request: &CreateMallProductStoreRequest) -> MallProductStoreActiveModel {
     MallProductStoreActiveModel {

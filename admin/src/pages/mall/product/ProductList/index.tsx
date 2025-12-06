@@ -16,6 +16,7 @@ import CustomizedAutoMore from '@/components/CustomizedAutoMore';
 import MallProductSpuInfo from './Info';
 import MallProductSpuPublish from './Publish';
 import MallProductSpuUnpublish from './Unpublish';
+import CustomizedTag from '@/components/CustomizedTag';
 
 export default function MallProductSpu() {
   const { t } = useTranslation();
@@ -63,6 +64,21 @@ export default function MallProductSpu() {
   const columns: GridColDef[] = useMemo(
     () => [
       { field: 'name', headerName: t("page.mall.product.title.name"), flex: 1, minWidth: 100 },
+      { field: 'category_name', headerName: t("page.mall.product.title.category"), flex: 1, minWidth: 100 },
+      { field: 'brand_name', headerName: t("page.mall.product.title.brand"), flex: 1, minWidth: 100 },
+      {
+        field: 'store_names',
+        headerName: t("page.mall.product.title.store"),
+        flex: 1.4,
+        minWidth: 100,
+        renderCell: (params: GridRenderCellParams) => (
+          <Box sx={{ height: '100%', display: 'flex', gap: 1, alignItems: 'center' }}>
+            {params.row.store_names?.map((store_name: string) => (
+              <CustomizedTag key={store_name} label={store_name} />
+            ))}
+          </Box>
+        ),
+      },
       { field: 'price', headerName: t("page.mall.product.title.price"), flex: 1, minWidth: 100 },
       { field: 'sales_count', headerName: t("page.mall.product.title.sales.count"), flex: 1, minWidth: 100 },
       { field: 'stock', headerName: t("page.mall.product.title.stock"), flex: 1, minWidth: 100 },

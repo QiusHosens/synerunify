@@ -7,7 +7,7 @@ use macros::require_authorize;
 use axum::{routing::{get, post}, Router, extract::{State, Path, Json, Query}, response::IntoResponse, Extension};
 use common::base::page::PaginatedResponse;
 use mall_model::request::mall_product_spu::{CreateMallProductSpuRequest, UpdateMallProductSpuRequest, PaginatedKeywordRequest, PaginatedCategoryKeywordRequest, PaginatedTenantKeywordRequest, MallProductSpuPublishRequest};
-use mall_model::response::mall_product_spu::{MallProductSpuBaseResponse, MallProductSpuInfoResponse, MallProductSpuResponse};
+use mall_model::response::mall_product_spu::{MallProductSpuBaseResponse, MallProductSpuInfoResponse, MallProductSpuPageResponse, MallProductSpuResponse};
 use common::base::response::CommonResult;
 use common::context::context::LoginUserContext;
 use crate::service;
@@ -244,7 +244,7 @@ async fn get_info_by_id_without_user(
         ("keyword" = Option<String>, Query, description = "keyword")
     ),
     responses(
-        (status = 200, description = "get page", body = CommonResult<PaginatedResponse<MallProductSpuResponse>>)
+        (status = 200, description = "get page", body = CommonResult<PaginatedResponse<MallProductSpuPageResponse>>)
     ),
     tag = "mall_product_spu",
     security(
@@ -256,7 +256,7 @@ async fn page(
     State(state): State<AppState>,
     Extension(login_user): Extension<LoginUserContext>,
     Query(params): Query<PaginatedKeywordRequest>,
-) -> CommonResult<PaginatedResponse<MallProductSpuResponse>> {
+) -> CommonResult<PaginatedResponse<MallProductSpuPageResponse>> {
     match service::mall_product_spu::get_paginated(&state.db, login_user, params).await {
         Ok(data) => {CommonResult::with_data(data)}
         Err(e) => {CommonResult::with_err(&e.to_string())}

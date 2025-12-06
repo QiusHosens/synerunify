@@ -89,6 +89,8 @@ export interface MallProductSpuResponse {
 
   previewUrl?: string; // 商品封面预览地址
   sliderPreviewUrls: string[]; // 商品轮播图预览地址
+
+  store_names?: string[]; // 店铺名称数组
 }
 
 export interface MallProductSpuQueryCondition extends PaginatedRequest {}

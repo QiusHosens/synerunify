@@ -26,3 +26,17 @@ pub struct MallProductStoreResponse {
     pub update_time: NaiveDateTime, // 更新时间
     
 }
+
+#[serde_as]
+#[derive(Deserialize, Serialize, Debug, Clone, ToSchema)]
+pub struct MallProductStoreNameResponse {
+
+    pub id: i64, // 编号
+
+    pub product_id: i64, // 商品编号
+
+    pub store_id: i64, // 店铺编号
+
+    pub store_name: String, // 店铺名称
+
+}

@@ -1,9 +1,10 @@
 use std::collections::HashSet;
 use common::interceptor::orm::simple_support::SimpleSupport;
-use sea_orm::{DatabaseConnection, EntityTrait, Order, ColumnTrait, ActiveModelTrait, PaginatorTrait, QueryOrder, QueryFilter, Condition, DatabaseTransaction};
-use crate::model::mall_product_store::{Model as MallProductStoreModel, ActiveModel as MallProductStoreActiveModel, Entity as MallProductStoreEntity, Column};
+use sea_orm::{DatabaseConnection, EntityTrait, Order, ColumnTrait, ActiveModelTrait, PaginatorTrait, QueryOrder, QueryFilter, Condition, DatabaseTransaction, QuerySelect, JoinType, RelationTrait};
+use crate::model::mall_product_store::{Model as MallProductStoreModel, ActiveModel as MallProductStoreActiveModel, Entity as MallProductStoreEntity, Column, Relation};
+use crate::model::mall_store::{Model as MallStoreModel, Entity as MallStoreEntity};
 use mall_model::request::mall_product_store::{CreateMallProductStoreRequest, UpdateMallProductStoreRequest, PaginatedKeywordRequest};
-use mall_model::response::mall_product_store::MallProductStoreResponse;
+use mall_model::response::mall_product_store::{MallProductStoreNameResponse, MallProductStoreResponse};
 use crate::convert::mall_product_store::{create_request_to_model, update_request_to_model, model_to_response};
 use anyhow::{Result, anyhow};
 use sea_orm::ActiveValue::Set;
@@ -131,4 +132,25 @@ pub async fn list_by_product(db: &DatabaseConnection, login_user: LoginUserConte
     let list = MallProductStoreEntity::find_active_with_condition(condition)
         .all(db).await?;
     Ok(list)
+}
+
+pub async fn list_by_product_ids(db: &DatabaseConnection, login_user: LoginUserContext, product_ids: Vec<i64>) -> Result<Vec<MallProductStoreNameResponse>> {
+    let list = MallProductStoreEntity::find_active()
+        .filter(Column::ProductId.is_in(product_ids))
+        .select_also(MallStoreEntity)
+        .join(JoinType::InnerJoin, Relation::Store.def())
+        .all(db).await?;
+    let stores: Vec<MallProductStoreNameResponse> = list
+        .into_iter()
+        .filter_map(|(model, model_store)| {
+            let store = model_store?;
+            Some(MallProductStoreNameResponse {
+                id: model.id,
+                product_id: model.product_id,
+                store_id: model.store_id,
+                store_name: store.name,
+            })
+        })
+        .collect();
+    Ok(stores)
 }
