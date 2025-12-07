@@ -4,9 +4,10 @@ use crate::model::mall_product_spu::{self, Model as MallProductSpu, ActiveModel 
 use crate::model::mall_product_category::{Model as MallProductCategoryModel};
 use crate::model::mall_product_brand::{Model as MallProductBrandModel};
 use crate::model::mall_trade_delivery_express_template::{Model as MallTradeDeliveryExpressTemplateModel};
+use crate::model::mall_product_store::{self, Model as MallProductStore};
 use mall_model::request::mall_product_spu::{CreateMallProductSpuRequest, UpdateMallProductSpuRequest};
 use mall_model::response::mall_product_sku::MallProductSkuBaseResponse;
-use mall_model::response::mall_product_spu::{MallProductSpuBaseResponse, MallProductSpuInfoResponse, MallProductSpuPageResponse, MallProductSpuResponse};
+use mall_model::response::mall_product_spu::{MallProductSpuBaseResponse, MallProductSpuInfoResponse, MallProductSpuPageResponse, MallProductSpuResponse, MallProductSpuStoreResponse};
 
 pub fn create_request_to_model(request: &CreateMallProductSpuRequest, sku: &CreateMallProductSkuRequest) -> MallProductSpuActiveModel {
     MallProductSpuActiveModel {
@@ -246,5 +247,42 @@ pub fn model_to_info_response(model: MallProductSpu, model_category: Option<Mall
         delivery_template_name,
 
         skus,
+    }
+}
+
+pub fn model_to_store_response(model: MallProductSpu, model_store: Option<MallProductStore>) -> MallProductSpuStoreResponse {
+    let store_id = model_store.map(|store| store.store_id.clone());
+
+    MallProductSpuStoreResponse {
+        id: model.id,
+        name: model.name,
+        keyword: model.keyword,
+        introduction: model.introduction,
+        description: model.description,
+        category_id: model.category_id,
+        brand_id: model.brand_id,
+        file_id: model.file_id,
+        slider_file_ids: model.slider_file_ids,
+        sort: model.sort,
+        status: model.status,
+        spec_type: model.spec_type,
+        price: model.price,
+        market_price: model.market_price,
+        cost_price: model.cost_price,
+        stock: model.stock,
+        delivery_types: model.delivery_types,
+        delivery_template_id: model.delivery_template_id,
+        give_integral: model.give_integral,
+        sub_commission_type: model.sub_commission_type,
+        sales_count: model.sales_count,
+        virtual_sales_count: model.virtual_sales_count,
+        browse_count: model.browse_count,
+        creator: model.creator,
+        create_time: model.create_time,
+        updater: model.updater,
+        update_time: model.update_time,
+        tenant_id: model.tenant_id,
+
+        store_id,
     }
 }

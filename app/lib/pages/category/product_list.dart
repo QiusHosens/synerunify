@@ -797,7 +797,7 @@ class _ProductListPageState extends State<ProductListPage> {
                                     borderRadius: BorderRadius.circular(3),
                                   ),
                                   child: const Text(
-                                    '进店>',
+                                    '进店 >',
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontSize: 10,

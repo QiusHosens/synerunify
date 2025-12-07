@@ -126,7 +126,7 @@ export default function Login() {
           }}
           onClick={handleOpenCaptchaDialog}
         >
-          {t("login")}
+          {t("global.login")}
         </Button>
         <CaptchaDialog ref={captchaDialog} onSubmit={handleLogin}></CaptchaDialog>
       </Box>

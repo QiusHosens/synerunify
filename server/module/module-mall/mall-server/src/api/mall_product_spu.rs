@@ -7,7 +7,7 @@ use macros::require_authorize;
 use axum::{routing::{get, post}, Router, extract::{State, Path, Json, Query}, response::IntoResponse, Extension};
 use common::base::page::PaginatedResponse;
 use mall_model::request::mall_product_spu::{CreateMallProductSpuRequest, UpdateMallProductSpuRequest, PaginatedKeywordRequest, PaginatedCategoryKeywordRequest, PaginatedTenantKeywordRequest, MallProductSpuPublishRequest};
-use mall_model::response::mall_product_spu::{MallProductSpuBaseResponse, MallProductSpuInfoResponse, MallProductSpuPageResponse, MallProductSpuResponse};
+use mall_model::response::mall_product_spu::{MallProductSpuBaseResponse, MallProductSpuInfoResponse, MallProductSpuPageResponse, MallProductSpuResponse, MallProductSpuStoreResponse};
 use common::base::response::CommonResult;
 use common::context::context::LoginUserContext;
 use crate::service;
@@ -274,14 +274,14 @@ async fn page(
         ("keyword" = Option<String>, Query, description = "keyword")
     ),
     responses(
-        (status = 200, description = "get page all tenant", body = CommonResult<PaginatedResponse<MallProductSpuResponse>>)
+        (status = 200, description = "get page all tenant", body = CommonResult<PaginatedResponse<MallProductSpuStoreResponse>>)
     ),
     tag = "mall_product_spu",
 )]
 async fn page_all(
     State(state): State<AppState>,
     Query(params): Query<PaginatedCategoryKeywordRequest>,
-) -> CommonResult<PaginatedResponse<MallProductSpuResponse>> {
+) -> CommonResult<PaginatedResponse<MallProductSpuStoreResponse>> {
     match service::mall_product_spu::get_paginated_all(&state.db, params).await {
         Ok(data) => {CommonResult::with_data(data)}
         Err(e) => {CommonResult::with_err(&e.to_string())}
