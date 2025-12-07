@@ -196,6 +196,7 @@ class MallProductSpuResponse {
   final String? categoryName; // 分类名称
   final String? deliveryTemplateName; // 物流配置模板名称
   final List<MallProductSkuResponse>? skus; // 商品SKU列表
+  final int? storeId; //店铺编号
 
   MallProductSpuResponse({
     required this.id,
@@ -230,6 +231,7 @@ class MallProductSpuResponse {
     this.categoryName,
     this.deliveryTemplateName,
     this.skus,
+    this.storeId,
   });
 
   factory MallProductSpuResponse.fromJson(Map<String, dynamic> json) {
@@ -266,6 +268,7 @@ class MallProductSpuResponse {
       categoryName: json['category_name'] as String?,
       deliveryTemplateName: json['delivery_template_name'] as String?,
       skus: json['skus'] != null ? (json['skus'] as List).map((sku) => MallProductSkuResponse.fromJson(sku)).toList() : null,
+      storeId: json['store_id'] as int?,
     );
   }
 
@@ -303,6 +306,7 @@ class MallProductSpuResponse {
       'category_name': categoryName,
       'delivery_template_name': deliveryTemplateName,
       'skus': skus?.map((sku) => sku.toJson()).toList(),
+      'store_id': storeId,
     };
   }
 }

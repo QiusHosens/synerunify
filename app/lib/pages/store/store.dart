@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:synerunify/services/mall_store.dart';
 import 'package:synerunify/services/system_tenant.dart';
 import '../customer_service/customer_service_chat.dart';
 import 'store_category_page.dart';
@@ -13,7 +14,7 @@ class Store extends StatefulWidget {
 }
 
 class _StoreState extends State<Store> with TickerProviderStateMixin {
-  final SystemTenantService _systemTenantService = SystemTenantService();
+  final MallStoreService _mallStoreService = MallStoreService();
   late TabController _tabController;
   final ScrollController _scrollController = ScrollController();
   bool _isFollowing = false;
@@ -22,7 +23,7 @@ class _StoreState extends State<Store> with TickerProviderStateMixin {
   int _previousMenuIndex = 0;
   bool _showCategoryOverlay = false;
 
-  SystemTenantResponse? tenantInfo;
+  MallStoreResponse? storeInfo;
 
   // 模拟店铺数据
   final List<Map<String, dynamic>> _featuredProducts = [];
@@ -63,10 +64,10 @@ class _StoreState extends State<Store> with TickerProviderStateMixin {
       _isLoading = true;
     });
     
-    final response = await _systemTenantService.getSystemTenantNoAuth(widget.storeId);
+    final response = await _mallStoreService.getMallStoreWithoutUser(widget.storeId);
     if (response.success && response.data != null) {
       setState(() {
-        tenantInfo = response.data!;
+        storeInfo = response.data!;
         _isLoading = false;
         // 加载店铺数据
         _loadStoreData();
@@ -95,7 +96,7 @@ class _StoreState extends State<Store> with TickerProviderStateMixin {
   /// 生成模拟商品数据
   List<Map<String, dynamic>> _generateProducts(String type, int count) {
     final products = <Map<String, dynamic>>[];
-    final storeName = tenantInfo?.name ?? '店铺';
+    final storeName = storeInfo?.name ?? '店铺';
     for (int i = 0; i < count; i++) {
       products.add({
         'id': '$type-$i',
@@ -338,7 +339,7 @@ class _StoreState extends State<Store> with TickerProviderStateMixin {
 
   /// 构建店铺头部信息
   Widget _buildStoreHeader() {
-    if (tenantInfo == null) {
+    if (storeInfo == null) {
       return const SizedBox.shrink();
     }
     
@@ -361,9 +362,9 @@ class _StoreState extends State<Store> with TickerProviderStateMixin {
             ),
             child: Center(
               child: Text(
-                tenantInfo!.name.length >= 2 
-                    ? tenantInfo!.name.substring(0, 2)
-                    : tenantInfo!.name,
+                storeInfo!.name.length >= 2 
+                    ? storeInfo!.name.substring(0, 2)
+                    : storeInfo!.name,
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 16,
@@ -379,7 +380,7 @@ class _StoreState extends State<Store> with TickerProviderStateMixin {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  tenantInfo!.name,
+                  storeInfo!.name,
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
