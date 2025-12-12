@@ -1,6 +1,7 @@
 """
 FastAPI 应用入口
 """
+import logging
 import sys
 from pathlib import Path
 
@@ -8,6 +9,13 @@ from pathlib import Path
 _project_root = Path(__file__).parent.parent.resolve()
 if str(_project_root) not in sys.path:
     sys.path.insert(0, str(_project_root))
+
+# 配置日志
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S'
+)
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware

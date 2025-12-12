@@ -6,6 +6,8 @@ import io
 import os
 from typing import Optional
 from pathlib import Path
+from datetime import datetime
+from snowflake import SnowflakeGenerator
 
 import torch
 from fastapi import HTTPException
@@ -28,10 +30,13 @@ from app.models.appearance import (
     FaceRegionWithScore
 )
 
+from src.utils.minio_util import upload_to_minio
+
 # 全局模型缓存
 _model_cache: Optional[torch.nn.Module] = None
 _model_path: Optional[str] = None
 
+generator = SnowflakeGenerator(1)
 
 def get_cached_model(model_path: Optional[str] = None) -> torch.nn.Module:
     """
@@ -246,6 +251,8 @@ def detect_faces_from_bytes(
 
 
 def predict_all_faces(
+    image_name: str,
+    content_type: str,
     image_bytes: bytes,
     model_path: Optional[str] = None,
     face_model_path: Optional[str] = None,
@@ -264,6 +271,19 @@ def predict_all_faces(
         包含所有人脸区域及评分的响应
     """
     try:
+        # 保存原图
+        now = datetime.now()
+        # 格式化时间部分
+        year = now.strftime("%Y")
+        month = now.strftime("%m")
+        day = now.strftime("%d")
+        time_str = now.strftime("%H%M%S")
+        snowflake_id = next(generator)
+        name = Path(image_name).stem
+        ext = Path(image_name).suffix
+        path = f"synerunify/appearance/{year}/{month}/{day}/{time_str}_{snowflake_id}_{name}/source{ext}"
+        upload_to_minio(image_bytes, path, content_type)
+
         # 加载模型
         model = get_cached_model(model_path)
         
@@ -292,7 +312,10 @@ def predict_all_faces(
         results = []
         model.eval()
         
-        for x1, y1, x2, y2 in faces:
+        # 基础路径（不包含文件名）
+        base_path = f"synerunify/appearance/{year}/{month}/{day}/{time_str}_{snowflake_id}_{name}"
+        
+        for idx, (x1, y1, x2, y2) in enumerate(faces, start=1):
             try:
                 # 裁剪人脸区域
                 bbox = (x1, y1, x2, y2)
@@ -306,6 +329,9 @@ def predict_all_faces(
                     output = model(image_tensor)
                     score = output.cpu().item()
                 
+                # 计算最终得分
+                final_score = float(score) * 20
+                
                 # 构建人脸区域信息
                 face_region = {
                     "x1": int(x1),
@@ -316,14 +342,29 @@ def predict_all_faces(
                     "height": int(y2 - y1)
                 }
                 
+                # 上传区域图片
+                # 文件名格式：序号_得分.png
+                face_filename = f"{idx}_{final_score:.1f}.png"
+                face_path = f"{base_path}/{face_filename}"
+                
+                # 将人脸区域图片转换为字节
+                face_image_bytes = io.BytesIO()
+                face_image.save(face_image_bytes, format='PNG')
+                face_image_bytes.seek(0)
+                face_image_data = face_image_bytes.read()
+                
+                # 上传到MinIO
+                upload_to_minio(face_image_data, face_path, "image/png")
+                
                 results.append({
                     "region": face_region,
-                    "score": float(score) * 20
+                    "score": final_score,
+                    "image_path": face_path
                 })
             except Exception as e:
                 print(f"预测单个人脸失败: {e}")
                 continue
-        
+
         return PredictAllResponse(
             code=200,
             data={

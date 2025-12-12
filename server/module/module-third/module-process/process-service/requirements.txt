@@ -23,6 +23,7 @@ numpy>=2.2.6
 python-dotenv==1.0.1
 potracer==0.0.4
 scikit-learn==1.7.2
+snowflake-id==1.0.2
 
 # 测试依赖（可选）
 pytest==8.3.3
