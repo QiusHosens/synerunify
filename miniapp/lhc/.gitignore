@@ -1,0 +1,67 @@
+# 依赖
+node_modules/
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 构建输出
+dist/
+build/
+*.o
+*.a
+*.so
+*.dylib
+*.dll
+*.exe
+
+# 日志
+*.log
+logs/
+
+# 环境变量
+.env
+.env.local
+.env.*.local
+
+# 操作系统
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.code-workspace
+
+# Taro
+.temp/
+.taro/
+
+# C++
+*.o
+*.a
+*.so
+*.dylib
+*.dll
+*.exe
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+build/
+*.vcxproj
+*.vcxproj.filters
+*.sln
+
+# ATLAS/Geant4
+*.root
+*.h5
+*.hdf5
+*.dat
+
+# Python虚拟环境
+venv/
+env/
+__pycache__/
+*.pyc

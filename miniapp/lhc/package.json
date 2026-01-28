@@ -1,0 +1,26 @@
+{
+  "name": "lhc-simulator",
+  "version": "1.0.0",
+  "description": "粒子对撞机模拟程序 - 基于ATLAS框架",
+  "scripts": {
+    "dev:weapp": "cd frontend && npm run dev:weapp",
+    "dev:h5": "cd frontend && npm run dev:h5",
+    "build:weapp": "cd frontend && npm run build:weapp",
+    "build:h5": "cd frontend && npm run build:h5",
+    "build:backend": "cd backend && mkdir -p build && cd build && cmake .. && make",
+    "install:frontend": "cd frontend && npm install --legacy-peer-deps",
+    "clean:frontend": "cd frontend && (if exist node_modules rmdir /s /q node_modules) && (if exist package-lock.json del /f /q package-lock.json) && npm cache clean --force",
+    "reinstall:frontend": "npm run clean:frontend && npm run install:frontend",
+    "install:all": "npm run install:frontend"
+  },
+  "keywords": [
+    "particle-physics",
+    "lhc",
+    "atlas",
+    "geant4",
+    "taro",
+    "wechat-miniprogram"
+  ],
+  "author": "",
+  "license": "MIT"
+}
