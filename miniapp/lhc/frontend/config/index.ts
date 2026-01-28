@@ -71,7 +71,7 @@ const config: UserConfigExport = defineConfig(async (merge, { command, mode }) =
       publicPath: '/',
       staticDirectory: 'static',
       router: {
-        mode: 'browser', // 使用browser模式
+        mode: 'hash', // 使用hash模式，避免路径问题
         customRoutes: {
           '/': '/pages/index/index'
         }
