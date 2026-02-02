@@ -1,14 +1,13 @@
 import { defineConfig, type UserConfigExport } from '@tarojs/cli'
-import TsconfigPathsPlugin from 'tsconfig-paths-webpack-plugin'
-import * as path from 'path'
+
 import devConfig from './dev'
 import prodConfig from './prod'
 
-// https://taro-docs.jd.com/docs/next/config
-const config: UserConfigExport = defineConfig(async (merge, { command, mode }) => {
-  const baseConfig: UserConfigExport = {
-    projectName: 'lhc-simulator',
-    date: '2026-1-28',
+// https://taro-docs.jd.com/docs/next/config#defineconfig-辅助函数
+export default defineConfig<'vite'>(async (merge, { command, mode }) => {
+  const baseConfig: UserConfigExport<'vite'> = {
+    projectName: 'lhc',
+    date: '2026-2-2',
     designWidth: 750,
     deviceRatio: {
       640: 2.34 / 2,
@@ -18,7 +17,9 @@ const config: UserConfigExport = defineConfig(async (merge, { command, mode }) =
     },
     sourceRoot: 'src',
     outputRoot: 'dist',
-    plugins: ['@tarojs/plugin-framework-react'],
+    plugins: [
+      "@tarojs/plugin-generator"
+    ],
     defineConstants: {
     },
     copy: {
@@ -28,31 +29,13 @@ const config: UserConfigExport = defineConfig(async (merge, { command, mode }) =
       }
     },
     framework: 'react',
-    compiler: {
-      type: 'webpack5',
-      prebundle: { enable: false }
-    },
-    cache: {
-      enable: false // Webpack 持久化缓存配置，建议开启。默认配置请参考：https://docs.taro.zone/docs/config-detail#cache
-    },
-    alias: {
-      '@/components': path.resolve(__dirname, '..', 'src/components'),
-      '@/utils': path.resolve(__dirname, '..', 'src/utils'),
-      '@/services': path.resolve(__dirname, '..', 'src/services'),
-      '@/types': path.resolve(__dirname, '..', 'src/types')
-    },
+    compiler: 'vite',
     mini: {
       postcss: {
         pxtransform: {
           enable: true,
           config: {
-            selectorBlackList: ['nut-']
-          }
-        },
-        url: {
-          enable: true,
-          config: {
-            limit: 1024 // 设定转换尺寸上限
+
           }
         },
         cssModules: {
@@ -63,25 +46,20 @@ const config: UserConfigExport = defineConfig(async (merge, { command, mode }) =
           }
         }
       },
-      webpackChain(chain) {
-        chain.resolve.plugin('tsconfig-paths').use(TsconfigPathsPlugin)
-      }
     },
     h5: {
       publicPath: '/',
       staticDirectory: 'static',
-      router: {
-        mode: 'browser', // 使用browser模式
-        customRoutes: {
-          '/': '/pages/index/index'
-        }
+
+      miniCssExtractPluginOption: {
+        ignoreOrder: true,
+        filename: 'css/[name].[hash].css',
+        chunkFilename: 'css/[name].[chunkhash].css'
       },
-      esnextModules: ['taro-ui'],
       postcss: {
         autoprefixer: {
           enable: true,
-          config: {
-          }
+          config: {}
         },
         cssModules: {
           enable: false, // 默认为 false，如需使用 css modules 功能，则设为 true
@@ -91,12 +69,9 @@ const config: UserConfigExport = defineConfig(async (merge, { command, mode }) =
           }
         }
       },
-      webpackChain(chain) {
-        chain.resolve.plugin('tsconfig-paths').use(TsconfigPathsPlugin)
-      }
     },
     rn: {
-      appName: 'lhcSimulator',
+      appName: 'taroDemo',
       postcss: {
         cssModules: {
           enable: false, // 默认为 false，如需使用 css modules 功能，则设为 true
@@ -104,6 +79,9 @@ const config: UserConfigExport = defineConfig(async (merge, { command, mode }) =
       }
     }
   }
+
+  process.env.BROWSERSLIST_ENV = process.env.NODE_ENV
+
   if (process.env.NODE_ENV === 'development') {
     // 本地开发构建配置（不混淆压缩）
     return merge({}, baseConfig, devConfig)
@@ -111,5 +89,3 @@ const config: UserConfigExport = defineConfig(async (merge, { command, mode }) =
   // 生产构建配置（默认开启压缩混淆等）
   return merge({}, baseConfig, prodConfig)
 })
-
-export default config
