@@ -359,7 +359,7 @@ def predict_all_faces(
                 results.append({
                     "region": face_region,
                     "score": final_score,
-                    "image_path": face_path
+                    # "image_path": face_path
                 })
             except Exception as e:
                 print(f"预测单个人脸失败: {e}")
