@@ -2,10 +2,12 @@ import base64
 import gzip
 import json
 import io
+import logging
 import random
 import time
 from pathlib import Path
-from typing import Dict, List
+from typing import Dict, List, Optional
+
 import numpy as np
 from PIL import Image
 
@@ -16,12 +18,35 @@ from src.utils.minio_util import (
     parse_minio_path
 )
 
-# 初始化 PaddleOCR
-ocr = PaddleOCR(
-    use_doc_orientation_classify=False, # 通过 use_doc_orientation_classify 参数指定不使用文档方向分类模型
-    use_doc_unwarping=False, # 通过 use_doc_unwarping 参数指定不使用文本图像矫正模型
-    use_textline_orientation=False, # 通过 use_textline_orientation 参数指定不使用文本行方向分类模型
-)
+logger = logging.getLogger(__name__)
+
+_ocr_instance: Optional[PaddleOCR] = None
+_ocr_init_error: Optional[Exception] = None
+
+
+def _get_paddle_ocr() -> Optional[PaddleOCR]:
+    """Lazy-init PaddleOCR so process-service can start without local Paddle models."""
+    global _ocr_instance, _ocr_init_error
+    if _ocr_instance is not None:
+        return _ocr_instance
+    if _ocr_init_error is not None:
+        return None
+    try:
+        _ocr_instance = PaddleOCR(
+            use_doc_orientation_classify=False,
+            use_doc_unwarping=False,
+            use_textline_orientation=False,
+        )
+        return _ocr_instance
+    except Exception as e:
+        _ocr_init_error = e
+        logger.warning(
+            "PaddleOCR failed to initialize (%s: %s). "
+            "Document Paddle OCR is disabled until models are available.",
+            type(e).__name__,
+            e,
+        )
+        return None
 
 
 def _image_to_bytes(img: Image.Image, format: str = "PNG") -> bytes:
@@ -111,12 +136,10 @@ def parse_document(source_file: str, output_dir: str) -> dict[str, list[str] | s
         - output_files: 输出文件路径列表
         - error: 错误信息（如果有）
     """
-    ocr = PaddleOCR(
-        use_doc_orientation_classify=False, # 通过 use_doc_orientation_classify 参数指定不使用文档方向分类模型
-        use_doc_unwarping=False, # 通过 use_doc_unwarping 参数指定不使用文本图像矫正模型
-        use_textline_orientation=False, # 通过 use_textline_orientation 参数指定不使用文本行方向分类模型
-    )
-    
+    ocr = _get_paddle_ocr()
+    if ocr is None:
+        return None
+
     try:
         print('parse document start')
         # 从 MinIO 下载源文件
