@@ -28,22 +28,20 @@ router = APIRouter(prefix="/process/appearance", tags=["appearance"])
 @router.post("/predict", response_model=AppearancePredictResponse)
 async def predict_appearance(
     image: UploadFile = File(..., description="上传的图片文件"),
-    model_path: Optional[str] = Query(None, description="模型文件路径（可选，默认使用final_best_model_full.pth）")
 ):
     """
-    上传图片进行外观评分预测
+    上传图片预测所有人脸的外观得分
     
     Args:
         image: 上传的图片文件
-        model_path: 模型文件路径（可选，默认使用final_best_model_full.pth）
         
     Returns:
         包含预测得分的响应
     """
     request_time = datetime.now()
-    interface_path = "/process/appearance/predict"
+    interface_path = "/process/appearance/predict_all"
     logger.info(f"[Request Start] Interface: {interface_path}, Time: {request_time.strftime('%Y-%m-%d %H:%M:%S.%f')}, Filename: {image.filename}")
-    
+
     try:
         # 验证文件类型
         if not image.content_type or not image.content_type.startswith('image/'):
@@ -53,7 +51,7 @@ async def predict_appearance(
                 status_code=400,
                 detail=error_msg
             )
-        
+
         # 读取上传的文件
         try:
             file_content = await image.read()
@@ -64,25 +62,35 @@ async def predict_appearance(
                 status_code=400,
                 detail=error_msg
             )
-        
+
         # 调用服务层函数进行预测
-        response = predict_image_from_bytes(
+        response = predict_all_faces(
+            image_name=image.filename,
+            content_type=image.content_type,
             image_bytes=file_content,
-            model_path=model_path
+            model_path=None,
+            face_model_path=None,
+            conf_threshold=0.5,
+            path_prefix='claw'
         )
-        
+
         # 记录返回结果
         response_time = datetime.now()
         duration = (response_time - request_time).total_seconds()
+        face_count = response.data.get('count') if response.data else 0
+        faces = response.data.get('faces', []) if response.data else []
+        scores = [face.get('score') for face in faces if isinstance(face, dict) and 'score' in face]
+
         logger.info(
             f"[Request Completed] Interface: {interface_path}, "
             f"Time: {response_time.strftime('%Y-%m-%d %H:%M:%S.%f')}, "
             f"Duration: {duration:.3f} seconds, "
             f"Code: {response.code}, "
             f"Message: {response.message}, "
-            f"Score: {response.data.get('score') if response.data else None}"
+            f"Face Count: {face_count}, "
+            f"Scores: {scores}"
         )
-        
+
         return response
     except HTTPException:
         raise

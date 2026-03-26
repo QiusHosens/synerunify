@@ -256,7 +256,8 @@ def predict_all_faces(
     image_bytes: bytes,
     model_path: Optional[str] = None,
     face_model_path: Optional[str] = None,
-    conf_threshold: float = 0.5
+    conf_threshold: float = 0.5,
+    path_prefix: str = 'appearance'
 ) -> PredictAllResponse:
     """
     从图片字节数据预测所有人脸的外观得分
@@ -281,7 +282,7 @@ def predict_all_faces(
         snowflake_id = next(generator)
         name = Path(image_name).stem
         ext = Path(image_name).suffix
-        path = f"synerunify/appearance/{year}/{month}/{day}/{time_str}_{snowflake_id}_{name}/source{ext}"
+        path = f"synerunify/{path_prefix}/{year}/{month}/{day}/{time_str}_{snowflake_id}_{name}/source{ext}"
         upload_to_minio(image_bytes, path, content_type)
 
         # 加载模型
@@ -313,7 +314,7 @@ def predict_all_faces(
         model.eval()
         
         # 基础路径（不包含文件名）
-        base_path = f"synerunify/appearance/{year}/{month}/{day}/{time_str}_{snowflake_id}_{name}"
+        base_path = f"synerunify/{path_prefix}/{year}/{month}/{day}/{time_str}_{snowflake_id}_{name}"
         
         for idx, (x1, y1, x2, y2) in enumerate(faces, start=1):
             try:
